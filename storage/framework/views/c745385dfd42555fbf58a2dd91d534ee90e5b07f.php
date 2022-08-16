@@ -41,8 +41,6 @@ License: You must have a valid license purchased only from themeforest(the above
 			{
 				let numberOfMulteSelects  = $(document).find('select.select2-select').length ;
 				 let maxOptions = [0];
-				//  alert(numberOfMulteSelects);
-
 				  if(numberOfMulteSelects == 1)
 				 {
 					 maxOptions[0] = 100 ;
@@ -54,7 +52,6 @@ License: You must have a valid license purchased only from themeforest(the above
 				 {
 					 maxOptions[0] = 25 ;
 					 maxOptions[1] = 50 ;
-					 maxOptions[1] = 2 ;
 					 maxOptions[2] = 0 ;
 					 maxOptions[3] = 0 ;
 				 }
@@ -148,6 +145,15 @@ License: You must have a valid license purchased only from themeforest(the above
 
 		<!--end::Global Theme Styles -->
         <style>
+			#DataTables_Table_1_info,
+			.dataTables_empty,
+			#DataTables_Table_1_paginate,
+			#DataTables_Table_1_filter,
+			#DataTables_Table_1_length
+			{
+				display: none !important;
+			}
+			.dtfc-fixed-right{right:0 !important}
 			table.dataTable tbody tr.group-color > .dtfc-fixed-right, table.dataTable tbody tr.group-color > .dtfc-fixed-right{
 				right:0 !important;
 				background-color:#086691 !important;
@@ -191,6 +197,7 @@ License: You must have a valid license purchased only from themeforest(the above
 			{
 				cursor: pointer;
 			}
+			
 
 
 
@@ -455,7 +462,6 @@ License: You must have a valid license purchased only from themeforest(the above
 					}
 					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +labelMaxSelection + ' Selected ]');
 
-				
 					}	);
 			});
 
@@ -472,8 +478,19 @@ License: You must have a valid license purchased only from themeforest(the above
 				$('select.select2-select').prop('disabled',false);
 					$('#loader_id').addClass('hide_class');
 			})
+
+
+			
 		</script>
-	
+
+		<script>
+			$(function(){
+				$('.dtfc-fixed-left').on('click',function(e){
+					$('.kt_table_with_no_pagination').DataTable().columns.adjust();
+					// $('.kt_table_with_no_pagination').DataTable().fixedHeader.adjust();
+				})
+			})
+		</script>
 	</body>
 
 	<!-- end::Body -->
