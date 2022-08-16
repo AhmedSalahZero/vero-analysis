@@ -89,6 +89,8 @@ License: You must have a valid license purchased only from themeforest(the above
 							  buttons: ['selectMax', 'disableAll']
 						});
 						$(this).data('max-options',maxOption);
+						
+						$(this).closest('div[class*="col-md"]').find('.max-options-select').html('Maxium Selection [ ' + maxOption + ' ]' );
 						//  $(this).selectpicker({
          		  		//    maxOptions:maxOption,
          		 		// 	});
@@ -441,9 +443,12 @@ License: You must have a valid license purchased only from themeforest(the above
 					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +currentSelectedOptionsNumber + ' Selected ]');
 					if(maxOptionsNumber)
 					{
+						alert(maxOptionsNumber);
 
 						if(currentSelectedOptionsNumber > maxOptionsNumber )
 						{
+							$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +maxOptionsNumber + ' Selected ]');
+
 							$(this).find('option:selected').each((index,value)=>{
 								if((index+1) > maxOptionsNumber )
 								{

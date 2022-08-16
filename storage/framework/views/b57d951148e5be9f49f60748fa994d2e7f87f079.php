@@ -85,7 +85,7 @@
                         <?php endif; ?> 
                         <div class="form-group row">
                             <div class="col-md-<?php echo e($column); ?>">
-                                <label><?php echo e(__('Select Categories ( Multi Selection )')); ?> </label>
+                                <label><?php echo e(__('Select Categories')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select  name="categoriesData[]" required data-live-search="true" data-actions-box="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select"
@@ -104,7 +104,7 @@
                             <?php if( $name_of_selector_label == 'Products Items'): ?>
 
                                 <div class="col-md-<?php echo e($column); ?>">
-                                    <label><?php echo e(__('Select Products ')); ?> <span class="multi_selection"><?php echo e(__('( Multi Selection )')); ?></span>  </label>
+                                    <label><?php echo e(__('Select Products ')); ?> <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>  </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="products">
                                             <select data-live-search="true" data-actions-box="true" name="products[]" required
@@ -119,7 +119,7 @@
                             <?php if( $name_of_selector_label == 'Sales Discount'): ?>
 
                                 <div class="col-md-<?php echo e($column); ?>">
-                                    <label><?php echo e(__('Select '.$name_of_selector_label.' ( Multi Selection )')); ?> </label>
+                                    <label><?php echo e(__('Select '.$name_of_selector_label)); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]"  required  class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"
@@ -136,7 +136,7 @@
 
                             <?php else: ?>
                                 <div class="col-md-<?php echo e($column); ?>">
-                                    <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?>  <span class="multi_selection"><?php echo e(__('( Multi Selection )')); ?></span> </label>
+                                    <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?>  <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="sales_channels">
                                             <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required
@@ -235,9 +235,11 @@
     <!--end::Page Scripts -->
     <script>
         $('#data_type').change(function (e) {
+
+            
             // if($('#data_type').val()  == 'value'){
                 var data_type = 'multiple';
-                $('.multi_selection').html("<?php echo e(__('( Multi Selection )')); ?>");
+                // $('.multi_selection').html("<?php echo e(__('( Multi Selection )')); ?>");
 
             // }
             // else{
@@ -257,9 +259,15 @@
             row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  '+data_type+'  required  ></select>' ;
             $('#products').append(row);
             reinitializeSelect2();
+  
         });
         $(document).on('change', '#categoriesData', function() {
 
+
+                   clearTimeout(wto);
+  wto = setTimeout(()=> {
+
+      
             if(tryParseJSONObject($(this).val()[0])){
                 categoriesData = JSON.parse($(this).val()[0]);
             }else{
@@ -271,8 +279,16 @@
             } else {
                 getSalesChannales(categoriesData,type_of_data);
             }
+
+  }, getNumberOfMillSeconds());
+
+
         });
         $(document).on('change', '[name="categories[]"]', function() {
+
+                   clearTimeout(wto);
+  wto = setTimeout(()=> {
+
 
             if(tryParseJSONObject($('#categoriesData').val()[0])){
                 categoriesData = JSON.parse($('#categoriesData').val()[0]);
@@ -285,8 +301,15 @@
 
             getProducts(categoriesData,categories,'product_or_service',type_of_data)
 
+  }, getNumberOfMillSeconds());
+
+
         });
         $(document).on('change', '[name="products[]"]', function() {
+
+                   clearTimeout(wto);
+  wto = setTimeout(()=> {
+
 
             if(tryParseJSONObject($('#categoriesData').val()[0])){
                 categoriesData = JSON.parse($('#categoriesData').val()[0]);
@@ -298,6 +321,9 @@
 
             type_of_data = "<?php echo e($type); ?>";
             getProductItems(categoriesData,products,type_of_data)
+
+
+  }, getNumberOfMillSeconds());
 
         });
         function tryParseJSONObject(jsonString) {

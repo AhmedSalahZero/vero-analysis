@@ -57,7 +57,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-{{$column}}">
-                                <label>{{ __('Select Products Items ( Multi Selection )') }} </label>
+                                <label>{{ __('Select Products Items') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select data-live-search="true" data-actions-box="true" name="ItemsData[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"
@@ -91,7 +91,7 @@
                             @if ( $name_of_selector_label == 'Sales Discount')
 
                                 <div class="col-md-{{$column}}">
-                                    <label>{{ __('Select '.$name_of_selector_label.' ( Multi Selection )') }} </label>
+                                    <label>{{ __('Select '.$name_of_selector_label) }} </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"
@@ -108,7 +108,7 @@
 
                             @else
                                 <div class="col-md-{{$column}}">
-                                    <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection">{{__('( Multi Selection )')}}</span></label>
+                                    <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection"></span></label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="sales_channels">
                                             <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required
@@ -194,7 +194,7 @@
         $('#data_type').change(function (e) {
             // if($('#data_type').val()  == 'value'){
                 var data_type = 'multiple';
-                $('.multi_selection').html("{{__('( Multi Selection )')}}");
+                // $('.multi_selection').html("{{__('( Multi Selection )')}}");
 
             // }else{
             //     var data_type = '';

@@ -216,7 +216,7 @@
                             <?php $__env->slot('table_header'); ?>
                                 <tr class="table-active text-center">
                                     <th><?php echo e(__('Dates')); ?></th>
-                                    <?php $__currentLoopData = $sales_forecast['previous_year_seasonality']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date => $seasonality): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $sales_forecast['previous_year_seasonality'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date => $seasonality): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <th><?php echo e(date('M-Y', strtotime($date))); ?></th>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tr>
@@ -224,7 +224,7 @@
                             <?php $__env->slot('table_body'); ?>
                                 <tr>
                                     <th class="text-center"><?php echo e(__('Seasonality')); ?></th>
-                                    <?php $__currentLoopData = $sales_forecast['previous_year_seasonality']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date => $seasonality): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $sales_forecast['previous_year_seasonality'] ??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date => $seasonality): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <td class="text-center">
 
                                             <?php echo e(number_format($seasonality, 2) . ' %'); ?>
@@ -271,7 +271,7 @@
                             <?php $__env->slot('table_header'); ?>
                                 <tr class="table-active text-center">
                                     <th><?php echo e(__('Dates')); ?></th>
-                                    <?php $__currentLoopData = $sales_forecast['last_3_years_seasonality']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month => $seasonality): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $sales_forecast['last_3_years_seasonality'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month => $seasonality): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <th><?php echo e($month); ?></th>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tr>
@@ -279,8 +279,8 @@
                             <?php $__env->slot('table_body'); ?>
                                 <tr>
                                     <th class="text-center"><?php echo e(__('Seasonality')); ?></th>
-                                    <?php $sum_totals = array_sum($sales_forecast['last_3_years_seasonality']); ?>
-                                    <?php $__currentLoopData = $sales_forecast['last_3_years_seasonality']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month => $total): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $sum_totals = array_sum($sales_forecast['last_3_years_seasonality'] ?? []); ?>
+                                    <?php $__currentLoopData = $sales_forecast['last_3_years_seasonality'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month => $total): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <td class="text-center">
                                             <?php echo e(number_format(($total / $sum_totals) * 100 ?? 0, 2) . ' %'); ?>
 

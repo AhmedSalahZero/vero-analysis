@@ -92,7 +92,7 @@
                         ?>
                         <div class="form-group row">
                             <div class="col-md-{{$column}}">
-                                <label>{{ __('Select Zones ( Multi Selection )') }} @include('max-option-span') </label>
+                                <label>{{ __('Select Zones') }} @include('max-option-span') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select  data-live-search="true" data-actions-box="true" data-max-options="0" name="zones[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder"
@@ -111,7 +111,7 @@
                             @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Products Items')
 
                                 <div class="col-md-{{$column}}">
-                                    <label>{{ __('Select Categories ') }} <span class="multi_selection">{{__('( Multi Selection )')}}</span> @include('max-option-span') </label>
+                                    <label>{{ __('Select Categories ') }} <span class="multi_selection"></span> @include('max-option-span') </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="categories">
                                             <select data-live-search="true"   data-actions-box="true" name="categories[]" 
@@ -127,7 +127,7 @@
 
                             @if ( $name_of_selector_label == 'Products Items')
                                 <div class="col-md-{{$column}}">
-                                    <label>{{ __('Select Products ') }} <span class="multi_selection">{{__('( Multi Selection )')}}</span> @include('max-option-span') </label>
+                                    <label>{{ __('Select Products ') }} <span class="multi_selection"></span> @include('max-option-span') </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="products">
                                             <select  data-actions-box="true" data-live-search="true" name="products[]" 
@@ -143,7 +143,7 @@
                             @if ( $name_of_selector_label == 'Sales Discount')
 
                                 <div class="col-md-{{$column}}">
-                                    <label>{{ __('Select '.$name_of_selector_label.' ( Multi Selection )') }} @include('max-option-span') </label>
+                                    <label>{{ __('Select '.$name_of_selector_label) }} @include('max-option-span') </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <select  data-actions-box="true" data-live-search="true" name="sales_discounts_fields[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder"
@@ -160,7 +160,7 @@
 
                             @else
                                 <div class="col-md-{{$column}}">
-                                    <label>{{ __('Select '.$name_of_selector_label.' ') }}<span class="multi_selection">{{__('( Multi Selection )')}}</span> @include('max-option-span') </label>
+                                    <label>{{ __('Select '.$name_of_selector_label.' ') }}<span class="multi_selection"></span> @include('max-option-span') </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="sales_channels">
                                             <select  data-actions-box="true" data-live-search="true" name="sales_channels[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" multiple>
@@ -249,7 +249,7 @@
         $('#data_type').change(function (e) {
             // if($('#data_type').val()  == 'value'){
                 var data_type = 'multiple';
-                $('.multi_selection').html("{{__('( Multi Selection )')}}");
+                // $('.multi_selection').html("{{__('( Multi Selection )')}}");
 
             // }
             // else{
