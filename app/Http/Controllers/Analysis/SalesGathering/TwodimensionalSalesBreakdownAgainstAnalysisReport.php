@@ -1,0 +1,273 @@
+<?php
+namespace App\Http\Controllers\Analysis\SalesGathering;
+
+use App\Models\Company;
+use App\Models\SalesGathering;
+use App\Traits\GeneralFunctions;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class TwodimensionalSalesBreakdownAgainstAnalysisReport
+{
+    use GeneralFunctions;
+    public function index(Request $request, Company $company)
+    {
+        if (request()->route()->named('zone.vs.salesChannels.view')) {
+            $main_type = 'zone';
+            $type = 'sales_channel';
+            $view_name = 'Zones Versus Sales Channels' ;
+        }elseif (request()->route()->named('salesChannels.vs.zones.view')) {
+            $main_type = 'sales_channel';
+            $type = 'zone';
+            $view_name = 'Sales Channels Versus Zones' ;
+        }elseif (request()->route()->named('products.vs.zones.view')) {
+            $main_type = 'product_or_service';
+            $type = 'zone';
+            $view_name = 'Products Versus Zones' ;
+        }elseif (request()->route()->named('products.vs.salesChannels.view')) {
+            $main_type = 'product_or_service';
+            $type = 'sales_channel';
+            $view_name = 'Products Versus Sales Channels' ;
+        }elseif (request()->route()->named('Items.vs.salesChannels.view')) {
+            $main_type = 'product_item';
+            $type = 'sales_channel';
+            $view_name = 'Products Items Versus Sales Channels' ;
+        }elseif (request()->route()->named('Items.vs.zones.view')) {
+            $main_type = 'product_item';
+            $type = 'zone';
+            $view_name = 'Products Items Versus Zones' ;
+
+        }elseif (request()->route()->named('categories.vs.salesChannels.view')) {
+            $main_type = 'category';
+            $type = 'sales_channel';
+            $view_name = 'Category Versus Sales Channels' ;
+        }elseif (request()->route()->named('categories.vs.zones.view')) {
+            $main_type = 'category';
+            $type = 'zone';
+            $view_name = 'Category Versus Zones' ;
+        }elseif (request()->route()->named('Items.vs.businessSectors.view')) {
+            $main_type = 'product_item';
+            $type = 'business_sector';
+            $view_name = 'Products Items Versus Business Sectors' ;
+        }elseif (request()->route()->named('products.vs.businessSectors.view')) {
+            $main_type = 'product_or_service';
+            $type = 'business_sector';
+            $view_name = 'Products Versus Business Sectors' ;
+        }
+        
+        elseif (request()->route()->named('categories.vs.businessSectors.view')) {
+            $main_type = 'category';
+            $type = 'business_sector';
+            $view_name = 'Category Versus Business Sectors' ;
+        }
+         elseif (request()->route()->named('categories.vs.branches.view')) {
+            $main_type = 'category';
+            $type = 'branch';
+            $view_name = 'Category Versus Branches' ;
+        }
+
+          elseif (request()->route()->named('Items.vs.branches.view')) {
+            $main_type = 'product_item';
+            $type = 'branch';
+            $view_name = 'Products Items  Versus Branches' ;
+        }
+
+         elseif (request()->route()->named('products.vs.branches.view')) {
+            $main_type = 'product_or_service';
+            $type = 'branch';
+            $view_name = 'Products Versus Branches' ;
+        }
+
+        
+        elseif (request()->route()->named('customers.vs.businessSectors.view')) {
+            $main_type = 'customer_name';
+            $type = 'business_sector';
+            $view_name = 'Customers Versus Business Sectors' ;
+        }
+        
+        elseif (request()->route()->named('customers.vs.salesChannels.view')) {
+            $main_type = 'customer_name';
+            $type = 'sales_channel';
+            $view_name = 'Customers Versus Sales Channels' ;
+        }elseif (request()->route()->named('customers.vs.zones.view')) {
+            $main_type = 'customer_name';
+            $type = 'zone';
+            $view_name = 'Customers Versus Zones' ;
+        }elseif (request()->route()->named('branches.vs.salesChannels.view')) {
+            $main_type = 'branch';
+            $type = 'sales_channel';
+            $view_name = 'Branches Versus Sales Channels' ;
+        }elseif (request()->route()->named('zone.vs.discounts.view')) {
+            $main_type = 'zone';
+            $type = 'discounts';
+            $view_name = 'Zones Versus Discounts' ;
+        }elseif (request()->route()->named('businessSectors.vs.salesChannels.view')) {
+            $main_type = 'business_sector';
+            $type = 'sales_channel';
+            $view_name = 'Business Sectors Versus Sales Channels' ;
+        }elseif (request()->route()->named('customers.vs.salesChannels.view')) {
+            $main_type = 'customer_name';
+            $type = 'sales_channel';
+            $view_name = 'Customers Versus Sales Channels' ;
+        }elseif (request()->route()->named('countries.vs.salesChannels.view')) {
+            $main_type = 'country';
+            $type = 'sales_channel';
+            $view_name = 'Countries Versus Sales Channels' ;
+        }elseif (request()->route()->named('countries.vs.businessSectors.view')) {
+            $main_type = 'country';
+            $type = 'business_sector';
+            $view_name = 'Countries Versus Business Sectors' ;
+        }elseif (request()->route()->named('countries.vs.Items.view')) {
+            $main_type = 'country';
+            $type = 'product_item';
+            $view_name = 'Countries Versus Products Items' ;
+        }
+        // dd($view_name);
+        return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
+    }
+    public function result(Request $request, Company $company)
+    {
+
+        $report_data =[];
+        $main_type = $request->main_type;
+        $type = $request->type;
+        $view_name = $request->view_name;
+
+        $last_date = null;
+        $dates = [
+            'start_date' => date('d-M-Y',strtotime($request->start_date)),
+            'end_date' => date('d-M-Y',strtotime($request->end_date))
+        ];
+        $all_items = [];
+
+        $main_type_items_totals = [];
+
+
+
+        $report_data =collect(DB::select(DB::raw("
+            SELECT DATE_FORMAT(date,'%d-%m-%Y') as date, net_sales_value ,sales_value,".$type.",".$main_type ."
+            FROM sales_gathering
+            WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date."')
+            ORDER BY id "
+            )))->groupBy($main_type)->map(function($item) use($type){
+                return $item->groupBy($type)->map(function($sub_item){
+                    return $sub_item->sum('net_sales_value');
+                });
+            })->toArray();
+
+
+
+        $main_type_items = array_keys(($report_data??[]));
+        foreach ($report_data as  $main_type_item_name => $sales_gathering_data) {
+            $main_type_items_totals[$main_type_item_name] = array_sum($report_data[$main_type_item_name]??[]);
+        }
+
+        $items_totals = $this->finalTotal([$report_data]);
+        $all_items =   array_keys($items_totals);
+        arsort($main_type_items_totals);
+
+
+        if(count($main_type_items_totals) > 50){
+            $report_view_data = collect($main_type_items_totals);
+            $top_20 = $report_view_data->take(50);
+            $report_view_data = $top_20->toArray();
+            $main_type_items_totals = $report_view_data;
+            foreach ($report_view_data as $name_of_main_item => $data) {
+                $result[$name_of_main_item] =$report_data[$name_of_main_item];
+                unset($report_data[$name_of_main_item]);
+            }
+            $result['Others '.count($report_data)] =  $this->finalTotal([$report_data]);
+
+            $main_type_items_totals['Others '.count($report_data)]  = array_sum(($result['Others '.count($report_data)]??[]));
+            $report_data = $result;
+        }
+
+        $last_date = SalesGathering::company()->latest('date')->first()->date ?? null;
+        $last_date = date('d-M-Y',strtotime($last_date));
+        $all_items = array_unique($all_items);
+
+        return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_report',compact('company','view_name', 'main_type','type', 'all_items','main_type_items','report_data','last_date','dates','items_totals','main_type_items_totals'));
+
+    }
+
+
+    public function discountsResult(Request $request, Company $company)
+    {
+        {
+
+            $report_data =[];
+            $main_type = $request->main_type;
+            $type = 'discounts';
+            $view_name = $request->view_name;
+            $last_date = null;
+            $dates = [
+                'start_date' => date('d-M-Y',strtotime($request->start_date)),
+                'end_date' => date('d-M-Y',strtotime($request->end_date))
+            ];
+            $all_items = [];
+            $main_type_items = SalesGathering::company()->whereNotNull($main_type)->groupBy($main_type)->selectRaw($main_type)->whereBetween('date', [$request->start_date, $request->end_date])->get()->pluck($main_type)->toArray();
+            // $items = SalesGathering::company()->whereNotNull($main_type)->groupBy($main_type)->selectRaw($main_type)->whereBetween('date', [$request->start_date, $request->end_date])->get()->pluck($main_type)->toArray();
+            $all_items = [
+                'quantity_discount' => 'Quantity Discount' ,
+                'cash_discount' => 'Cash Discount' ,
+                'special_discount' => 'Special Discount' ,
+                'other_discounts' => 'Other Discount' ,
+            ];
+            $totals_sales_per_main_type = [];
+            $total_sales = 0;
+            foreach ($main_type_items as  $main_type_item_name) {
+
+
+                    foreach ($all_items as  $field => $field_name) {
+                        $sales_gatherings = SalesGathering::company()
+                                    ->where($main_type,$main_type_item_name)
+                                    ->whereBetween('date', [$request->start_date, $request->end_date])
+                                    ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,sales_value,'.$field.','.$main_type)
+                                    ->get();
+
+                        $field_total = collect($sales_gatherings)->sum('sales_value');
+                        $total_sales += $field_total ;
+                        $totals_sales_per_main_type[$main_type_item_name] =  $field_total;
+                        $main_type_items_per_month = [];
+                        $main_type_items_data = [];
+
+                        $total = collect($sales_gatherings)->sum($field);
+
+                        $report_data[$main_type_item_name][$field_name] =$total;
+
+
+                    }
+
+
+                $main_type_items_totals[$main_type_item_name] = array_sum($report_data[$main_type_item_name]??[]);
+            }
+
+            $items_totals = $this->finalTotal([$report_data]);
+            arsort($main_type_items_totals);
+
+
+            if(count($main_type_items_totals) > 50){
+                $report_view_data = collect($main_type_items_totals);
+                $top_20 = $report_view_data->take(50);
+                $report_view_data = $top_20->toArray();
+                $main_type_items_totals = $report_view_data;
+                foreach ($report_view_data as $name_of_main_item => $data) {
+                    $result[$name_of_main_item] =$report_data[$name_of_main_item];
+                    unset($report_data[$name_of_main_item]);
+                }
+                $result['Others '.count($report_data)] =  $this->finalTotal([$report_data]);
+
+                $main_type_items_totals['Others '.count($report_data)]  = array_sum(($result['Others '.count($report_data)]??[]));
+                $report_data = $result;
+            }
+
+            $last_date = SalesGathering::company()->latest('date')->first()->date;
+            $last_date = date('d-M-Y',strtotime($last_date));
+            $all_items = array_unique($all_items);
+
+            return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_report',compact('company','view_name', 'main_type','type','all_items','main_type_items','report_data','last_date','dates','items_totals','main_type_items_totals','totals_sales_per_main_type','items_totals'));
+
+        }
+    }
+}
+

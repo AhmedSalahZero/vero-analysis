@@ -1,0 +1,527 @@
+<?php
+
+use App\Http\Controllers\ExportTable;
+use App\Models\AllocationSetting;
+use App\Models\Company;
+use App\Models\CustomizedFieldsExportation;
+use App\Models\ExistingProductAllocationBase;
+use App\Models\ModifiedSeasonality;
+use App\Models\ModifiedTarget;
+use App\Models\NewProductAllocationBase;
+use App\Models\ProductSeasonality;
+use App\Models\SecondAllocationSetting;
+use App\Models\SecondExistingProductAllocationBase;
+use App\Models\SecondNewProductAllocationBase;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+const MAX_RANKING = 5 ;
+
+function flatten(array $array) {
+    $return = array();
+    array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+    return $return;
+}
+function countTotalForBranch(array $array):int {
+    $total = 0 ; 
+    foreach($array as $arr){
+        $total += count($arr) ;  
+    }
+
+    return $total ;
+}
+
+function countSumForAllRank(array $array , $i ):array 
+{
+    $total = [
+        'total'=> 0 ,
+        'values'=> 0 , 
+        'percentages'=>0 
+    ] ;
+    foreach($array as $arr){
+        if(isset($arr[$i])){
+        $total['total'] += count($arr[$i]) ;  
+        $total['values'] += array_sum(flatten($arr[$i]));
+        $total['percentages'] += 0     ;
+        }
+    }
+    
+    return $total  ; 
+}
+function camelize($input, $separator = '_')
+{
+    return str_replace($separator, '', ucwords($input, $separator));
+}
+
+if (! function_exists('lang')) {
+    function lang()
+    {
+        return  app()->getLocale();
+    }
+}
+
+if (! function_exists('company')) {
+    function company()
+    {
+        if (Auth::check()) {
+            $company =   Auth::user()->companies()->where('type','single')->first();
+ 
+            $company = $company ?? Auth::user()->companies()->where('type','group')->first()->subCompanies()->first();
+
+            return  $company;
+        }
+    }
+}
+if (! function_exists('company')) {
+    function setCompany($company_id)
+    {
+        if (Auth::check()) {
+            $company = Company::find($company_id)  ;
+            return  $company;
+        }
+    }
+}
+if (! function_exists('exportableFields')) {
+    function exportableFields($company_id,$model)
+    {
+        if (Auth::check()) {
+            $fields = CustomizedFieldsExportation::where('model_name',$model)->where('company_id', $company_id)->first() ;
+            return  $fields;
+        }
+    }
+}
+
+if (! function_exists('strip_strings')) {
+    function strip_strings(string $sentence)
+    {
+        $removeHtml =  strip_tags($sentence);
+
+        return str_replace(['&amp;', '&nbsp;', 'nbsp;'],  '', $removeHtml);
+    }
+}
+
+if (! function_exists('dateFormating')) {
+    function dateFormating($date,$formate="d-m-Y")
+    {
+        return date($formate,strtotime($date));
+    }
+}
+if (! function_exists('routeName')) {
+    function routeName($route)
+    {
+        $route_array = explode('.',$route);
+        $route = $route_array[0];
+        return $route;
+    }
+}
+function getOrderMaxForBranch(string $branchName  ,  array $data)
+{
+    
+    $arr_data = $data ;
+
+    uasort ($arr_data, function($a, $b){
+        return $a < $b ;
+    });  
+    $uniques = array_unique($arr_data) ; 
+    for($i = 0 ; $i< count($uniques) ; $i++){
+        $key = array_values($uniques)[$i] ;
+        $new["$key"] = $i+1 ;
+    } ; 
+
+    $value = $arr_data[$branchName] ;
+
+    return $new[strval($value)] ;
+    
+}
+// function $productName
+function getMaxNthFromArray()
+{
+    $args = func_get_args();
+    $max = 0;
+    foreach ($args as $arg) {
+        if ($arg > $max) {
+            $max = $arg;
+        }
+    }
+    return $max;
+}
+// caching
+// miscelinuous
+function getCompanyTagName(Company $company)
+{
+    return 'company_'.$company->id ; 
+}
+function getExportableFields($companyId = null):array 
+{
+        
+        $company  = Company::find($companyId ?: Request()->segment(2));
+        if($company){
+            return   (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+        }
+        return [];
+}
+function canViewCustomersDashboard(array $exportables)
+{
+    return in_array('Customer Name',$exportables) || in_array('Customer Code',$exportables);
+}
+// 1- customers dashboard
+function getNewCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'new_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}
+function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'repeating_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}
+ function getActiveCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'active_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}  
+ function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'stop_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}   
+function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'dead_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}   
+function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'stop_repeating_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}   
+function getStopCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'stop_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}   
+
+function getDeadCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
+    return 'dead_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}   
+
+function getTotalCustomersCacheNameForCompanyInYear(Company $companyId , string $year){
+    return 'total_customers_dashboard_for_company_'.$companyId->id .'_for_year_'.$year ;
+}
+
+// intervalYearsForCompany (max date and min date in database for sales gatering)
+
+
+function getIntervalYearsFormCompanyCacheNameForCompany(Company $companyId ){
+    return 'interval_years_for_company_'.$companyId->id  ;
+}
+function formatChartNameForDom($chartName){
+    return str_replace(["/" ,' ' ] , '-' , $chartName) ;
+}
+
+
+
+
+
+function sortReportForTotals(&$report_data){
+    (uasort($report_data,  function($a,$b) use(&$report_data){
+    if(isset($b['Total']) && isset($a['Total'])){
+   
+    
+        $a = array_sum($a['Total']);
+        $b = array_sum($b['Total']);
+
+        if ($a == $b) {
+            return 0;
+        }
+        return ($a > $b) ? -1 : 1;
+                                        }
+
+                                         if(!is_multi_array($a) &&  is_multi_array($b) )
+    {
+        return 1 ;
+    }
+
+    if( is_multi_array($a) &&  ! is_multi_array($b) )
+    {
+        return -1 ;
+    }
+    
+    if(isset($a['Total']) && !isset($b['Total']))
+    {
+        return -1 ; 
+    }
+
+      if(! isset($a['Total']) && isset($b['Total']))
+    {
+        return 1 ; 
+    }
+    
+   
+    
+        return -1;
+}
+
+)
+    );
+   
+
+
+}
+
+function sortSubItems(&$sales_channel_channels_data)
+{
+
+    (uasort($sales_channel_channels_data,  function($a,$b) {
+
+if(isset($a['Sales Values'])&&isset($b['Sales Values'])){
+    
+$a = array_sum($a['Sales Values']);
+
+$b = array_sum($b['Sales Values']);
+
+
+     if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
+    }
+    return ;
+}
+
+)
+    );
+}
+function sortTwoDimensionalArr(array &$arr)
+{
+    uasort($arr , function($a , $b){
+        if($a == $b)
+        {
+            return 0 ; 
+        }
+      return ($a > $b) ? -1 : 1;
+    });
+}
+
+function sortTwoDimensionalBaseOnKey(array &$arr , $key)
+{
+    uasort($arr , function($a , $b) use($key){
+        if($a[$key] == $b[$key])
+        {
+            return 0 ; 
+        }
+      return ($a[$key] > $b[$key]) ? -1 : 1;
+    });
+}
+function sortTwoDimensionalExcept(array &$arr  , array $exceptKeys)
+{
+    uksort($arr , function($key1 , $key2) use($exceptKeys , $arr){
+        if( ! in_array($key1 , $exceptKeys) && ! in_array($key2 , $exceptKeys)){
+            if($arr[$key1] == $arr[$key2]){
+                return 0; 
+            }
+            return $arr[$key1] > $arr[$key2] ? -1 : 1 ;
+        }
+        elseif(! in_array($key1 , $exceptKeys) && in_array($key2 , $exceptKeys) )
+        {
+            return -1 ;
+        }
+        elseif(in_array($key1 , $exceptKeys) && ! in_array($key2 , $exceptKeys) ){
+              return -1 ;
+        }
+        else{
+            return -1 ;
+        }
+    });
+}
+function getTypeFor($type,$companyId,$formatted=false){
+   if($formatted)
+   {
+      return  DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type,$type)->toArray(); ;
+      
+   }
+   else{
+       $data = DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type)->toArray();
+       $data = array_filter($data , function($item){
+       
+       return $item  ;
+       });
+       return $data ; 
+       
+       
+   }
+//    dd();
+    //   return  DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type)->toArray(); ;
+}
+function getNumberOfProductsItems($companyId)
+{
+    return ProductSeasonality::where('company_id',$companyId)->count() ;
+}
+function canShowNewItemsProducts($companyId)
+{
+    return  getNumberOfProductsItems($companyId) ; 
+}
+function getProductsItems($companyId)
+{
+    return ProductSeasonality::where('company_id',$companyId)->get();
+}
+function deleteProductItemsForForecast($companyId)
+{
+     ProductSeasonality::where('company_id',$companyId)->delete() ;
+}
+function deleteNewProductAllocationBaseForForecast($companyId)
+{
+    NewProductAllocationBase::where('company_id',$companyId)->delete();
+    SecondNewProductAllocationBase::where('company_id',$companyId)->delete();
+    AllocationSetting::where('company_id',$companyId)->delete();
+    SecondAllocationSetting::where('company_id',$companyId)->delete();
+    ExistingProductAllocationBase::where('company_id',$companyId)->delete();
+    SecondExistingProductAllocationBase::where('company_id',$companyId)->delete();
+    ModifiedSeasonality::where('company_id',$companyId)->delete();
+    ModifiedTarget::where('company_id',$companyId)->delete();
+    
+}
+
+function getLargestArrayDates(array $array )
+{
+    if (count($array) == count($array, COUNT_RECURSIVE)) 
+{
+    $dates = [];
+    foreach($array as $date=>$val)
+    {
+        $dates[] = Carbon::make($date)->format('d-M-Y');
+    }
+    return $dates ;
+}
+else
+{
+    $largestArray = getLargestArray($array);
+    return getLargestArrayDates($largestArray);
+    
+}
+}
+function getLargestArray($array)
+{
+    $largestArr = [];
+    foreach($array as $arr){
+        if(count($arr) > count($largestArr))
+        {
+            $largestArr = $arr ; 
+        }
+    
+ 
+    }
+    return $largestArr ;
+}
+function getDateBetween(array $dates)
+{
+    $smallest = null;
+    $largest = null;
+    if(count($dates))
+    {
+  
+        foreach($dates as $type=>$date){
+            if(is_array($date))
+            {
+                  foreach($date as $d=>$k)
+            {
+                $d = Carbon::make($d);
+                if(is_null($smallest))
+                {
+                    $smallest = $d ; 
+                }
+                else{
+                if(!$d->greaterThan($smallest) )
+                {
+                    $d = $smallest ;
+                }
+            }
+
+            if(is_null($largest))
+                {
+                    $largest = $d ; 
+                }
+                else{
+                if($d->greaterThan($largest) )
+                {
+                    $largest = $d  ;
+                }
+            }
+        }
+            }
+            else{
+                // dd($dates);
+                // dd(array_sum($dates));
+                $newDates = array_keys($dates) ;
+                $smallest = Carbon::make($newDates[0]) ?? null ;
+                $largest = Carbon::make($newDates[count($newDates) - 1 ]) ?? null ; 
+            }
+          
+    }
+
+
+
+$period = new DatePeriod(
+     new DateTime($smallest->format('Y-m-d')),
+     new DateInterval('P1M'),
+     new DateTime($largest->format('Y-m-d'))
+);
+
+$per = [];
+    foreach($period as $p)
+    {
+        $per[] = $p->format('d-M-Y');
+    }
+
+    return $per ; 
+
+}
+
+
+return [];
+
+}
+
+
+function generateIdForExcelRow( int $companyId)
+{
+    return uniqid('company_'.$companyId) . Str::random(9) .$companyId . uniqid() ;
+}
+
+function getTotalUploadCacheKey($company_id ,$jobId )
+{
+    return 'total_uploaded_for_company_'. $company_id  .'for_job_' .$jobId ; 
+}
+
+function getShowCompletedTestMessageCacheKey($companyId)
+{
+    return 'show_complete_test_phase_' . $companyId  ; 
+}
+
+
+
+
+function is_multi_array( $arr ) {
+    rsort( $arr );
+    return isset( $arr[0] ) && is_array( $arr[0] );
+}
+
+function maxOptionsForOneSelector():int
+{
+    return 2 ; 
+    return 12 ; 
+}
+
+function orderTotalsForRanking(array &$array)
+{
+     (uasort($array,  function($a,$b) {
+
+if(isset($a['total'])&&isset($b['total'])){
+    
+$a = ($a['total']);
+
+$b = ($b['total']);
+
+
+     if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
+    }
+    return ;
+}
+
+)
+    );
+
+    
+    // $data[$branchName][$rankNumber] ?? []
+;
+}
