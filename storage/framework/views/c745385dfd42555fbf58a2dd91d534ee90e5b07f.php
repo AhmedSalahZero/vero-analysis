@@ -430,24 +430,19 @@ License: You must have a valid license purchased only from themeforest(the above
 		<script>
 			reinitializeSelect2();
 			
-			// $(document).on('change' , 'select.select2-select' , function(){
-				// alert('we');
-				// alert($(this).select2('data').length);
-			// });
 		</script>
 		<script>
 			$(function(){
 				$(document).on('change','select.select2-select', function (e) {
 					let maxOptionsNumber = $(this).data('max-options') ;
 					let currentSelectedOptionsNumber = $(this).find('option:selected').length;
-					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +currentSelectedOptionsNumber + ' Selected ]');
+					let labelMaxSelection = currentSelectedOptionsNumber ;
 					if(maxOptionsNumber)
 					{
-						alert(maxOptionsNumber);
 
 						if(currentSelectedOptionsNumber > maxOptionsNumber )
 						{
-							$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +maxOptionsNumber + ' Selected ]');
+							labelMaxSelection = maxOptionsNumber ;
 
 							$(this).find('option:selected').each((index,value)=>{
 								if((index+1) > maxOptionsNumber )
@@ -458,6 +453,8 @@ License: You must have a valid license purchased only from themeforest(the above
 							});
 						}
 					}
+					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +labelMaxSelection + ' Selected ]');
+
 				
 					}	);
 			});
