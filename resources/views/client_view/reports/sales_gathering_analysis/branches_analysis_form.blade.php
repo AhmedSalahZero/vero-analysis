@@ -336,8 +336,10 @@ if(tryParseJSONObject($('#branches').val()[0])){
 
         // Sales Channales
         function getSalesChannales(branches,type_of_data) {
-            $.ajax({
-            type:'GET',
+            if(branches.length)
+            {
+                $.ajax({
+            type:'POST',
             data: {'main_data' : branches , 'main_field' : 'branch','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -371,12 +373,14 @@ if(tryParseJSONObject($('#branches').val()[0])){
                 $('#sales_channels').append(row);
                  reinitializeSelect2();
             });
+            }
+            
         }
 
         // Categories
         function getCategories(branches,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : branches, 'main_field' : 'branch','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -406,7 +410,7 @@ if(tryParseJSONObject($('#branches').val()[0])){
         // Sub Categories
         function getProducts(branches,categories,type_of_data,type) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :branches ,
                    'main_field' : 'branch',
                    'second_main_data' : categories,
@@ -462,7 +466,7 @@ if(tryParseJSONObject($('#branches').val()[0])){
         // Product Or Services
         function getProductItems(branches,categories,products,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :branches ,
                    'main_field' : 'branch',
                    'second_main_data' : categories,

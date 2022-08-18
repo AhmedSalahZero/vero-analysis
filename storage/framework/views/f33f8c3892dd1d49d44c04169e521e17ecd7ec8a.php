@@ -97,7 +97,7 @@
     <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/jquery.input.js')); ?>" type="text/javascript"></script>
     <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
     <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
-    <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')); ?>" type="text/javascript"></script>
+    
 
     <!--end::Page Scripts -->
 <?php $__env->stopSection(); ?>

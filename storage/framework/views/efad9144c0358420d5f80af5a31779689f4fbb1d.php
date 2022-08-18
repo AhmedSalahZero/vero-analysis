@@ -74,15 +74,23 @@
                         }   ?>
                     <?php endif; ?>
 
-
                     <?php if($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )): ?>
                         <div class="tab-pane <?php echo e($section_key == 0 ? 'active' : ''); ?>" id="kt_widget2_tab1_content_<?php echo e($mainSubSection->id); ?>">
                             <div class="kt-widget2">
                                 <div class="row">
+                                    
+
+                                    
                                     <?php $__currentLoopData = $mainSubSection->subSections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sub_section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
               
                                         <?php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); ?> 
+<?php if($name_of_section == 'Products'): ?>
+<?php
+    $name_of_section ='Products / Services';
+?>
+<?php endif; ?> 
+
                                         <?php if($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" ): ?>
                                             <?php if($name_of_section == "Products / Services"): ?>
                                                 <?php  $name_of_section = "Product Or Service Names" ?>
@@ -90,8 +98,11 @@
                                                 <?php  $name_of_section = "Product Items" ?>
                                             <?php endif; ?>
                                             
+
+                                            
                                             <?php if( ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
+
 
                                               str_contains($name_of_section,"es Analysis") 
                                             //   ||   
@@ -108,6 +119,15 @@
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) ): ?>
                                                
+
+
+<?php if($name_of_section == 'customers'): ?>
+
+
+<?php endif; ?> 
+<?php if($sub_section->name['en'] == 'Products Against Zones'): ?>
+<?php endif; ?> 
+
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">

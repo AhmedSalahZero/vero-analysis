@@ -151,7 +151,7 @@
                                             <div class="kt-widget12">
                                                 <div class="kt-widget12__chart">
                                                     <!-- HTML -->
-                                                    <h4> <?php echo e(__('Monthly Sales Values')); ?> </h4>
+                                                    <h4> <?php echo e(__('Sales Values')); ?> </h4>
                                                     <div id="chartdiv_<?php echo e($type); ?>" class="chartDiv"></div>
                                                 </div>
                                             </div>

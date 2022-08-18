@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 const MAX_RANKING = 5 ;
-
+const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis' ;
+const Customers_Against_Categories_Trend_Analysis = 'Customers Against Categories Trend Analysis';
+const Customers_Against_Products_ITEMS_Trend_Analysis = 'Customers Against Products Items Trend Analysis';
 function flatten(array $array) {
     $return = array();
     array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
@@ -497,6 +499,29 @@ function maxOptionsForOneSelector():int
 {
     return 2 ; 
     return 12 ; 
+}
+
+function isCustomerExceptionalCase($type , $name_of_selector_label)
+{
+    $conditionOne = ($type == 'category' && ($name_of_selector_label == 'Customers Against Categories' || $name_of_selector_label == 'Categories' ) );
+
+return $conditionOne ;    
+}
+
+function isCustomerExceptionalForProducts($type , $name_of_selector_label)
+{
+    
+    $conditionTwo = ($type == 'product_or_service' && ($name_of_selector_label == 'Customers Against Products' ||  $name_of_selector_label == 'Products'));
+
+return $conditionTwo ;    
+}
+
+function isCustomerExceptionalForProductsItems($type , $name_of_selector_label)
+{
+    
+    $conditionTwo = ($type == 'product_item' && ($name_of_selector_label == 'Customers Against Products Items' ||  $name_of_selector_label == 'Product Items'));
+
+return $conditionTwo ;    
 }
 
 function orderTotalsForRanking(array &$array)

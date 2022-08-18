@@ -108,7 +108,8 @@
 
                     <!--begin: Datatable -->
 
-                    <x-table :tableClass="'kt_table_with_no_pagination'">
+                    <x-table :tableClass="'kt_table_with_no_pagination_no_search'">
+                    {{-- <x-table :tableClass="'kt_table_with_no_pagination'"> --}}
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __('Sales Value / Month') }}</th>
@@ -131,7 +132,6 @@
                             <?php $chart_data = []; ?>
 
                             @foreach ($report_data as $label => $data)
-
                                 <tr>
                                     <th>{{ __($label) }}</th>
                                     <?php $num_of_decimals = $label == 'Month Sales %' ? 1 : 0; ?>
@@ -373,5 +373,13 @@
 
 
         }); // end am4core.ready()
+
+
+    </script>
+
+    <script>
+        $(function(){
+            // $('.kt_table_with_no_pagination').DataTable().columns.adjust();
+        })
     </script>
 @endsection

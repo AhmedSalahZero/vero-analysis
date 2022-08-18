@@ -26,6 +26,9 @@ License: You must have a valid license purchased only from themeforest(the above
 		<meta name="description" content="Latest updates and statistic charts">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+  		  
+
 		<!--begin::Fonts -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 		<script>
@@ -43,34 +46,66 @@ License: You must have a valid license purchased only from themeforest(the above
 				 let maxOptions = [0];
 				  if(numberOfMulteSelects == 1)
 				 {
-					 maxOptions[0] = 100 ;
+					 maxOptions[0] = 200 ;
 					 maxOptions[1] = 0 ;
 					 maxOptions[2] = 0 ;
 					 maxOptions[3] = 0 ;
 				 }
 				 if(numberOfMulteSelects == 2)
 				 {
-					 maxOptions[0] = 25 ;
-					 maxOptions[1] = 50 ;
+					 maxOptions[0] = 100 ;
+					 maxOptions[1] = 200 ;
 					 maxOptions[2] = 0 ;
 					 maxOptions[3] = 0 ;
 				 }
 
 				 if(numberOfMulteSelects == 3)
 				 {
-					 maxOptions[0] = 25 ;
-					 maxOptions[1] = 25 ;
-					 maxOptions[2] = 50 ;
+					 maxOptions[0] = 50 ;
+					 maxOptions[1] = 100 ;
+					 maxOptions[2] = 200 ;
 					 maxOptions[3] = 0 ;
 				 }
 
 				  if(numberOfMulteSelects == 4)
 				 {
-					 maxOptions[0] = 25 ;
-					 maxOptions[1] = 25 ;
-					 maxOptions[2] = 50 ;
-					 maxOptions[3] = 50 ;
+					 maxOptions[0] = 50 ;
+					 maxOptions[1] = 50 ;
+					 maxOptions[2] = 100 ;
+					 maxOptions[3] = 200 ;
 				 }
+
+
+				//    if(numberOfMulteSelects == 1)
+				//  {
+				// 	 maxOptions[0] = 100 ;
+				// 	 maxOptions[1] = 0 ;
+				// 	 maxOptions[2] = 0 ;
+				// 	 maxOptions[3] = 0 ;
+				//  }
+				//  if(numberOfMulteSelects == 2)
+				//  {
+				// 	 maxOptions[0] = 25 ;
+				// 	 maxOptions[1] = 50 ;
+				// 	 maxOptions[2] = 0 ;
+				// 	 maxOptions[3] = 0 ;
+				//  }
+
+				//  if(numberOfMulteSelects == 3)
+				//  {
+				// 	 maxOptions[0] = 25 ;
+				// 	 maxOptions[1] = 25 ;
+				// 	 maxOptions[2] = 50 ;
+				// 	 maxOptions[3] = 0 ;
+				//  }
+
+				//   if(numberOfMulteSelects == 4)
+				//  {
+				// 	 maxOptions[0] = 25 ;
+				// 	 maxOptions[1] = 25 ;
+				// 	 maxOptions[2] = 50 ;
+				// 	 maxOptions[3] = 50 ;
+				//  }
 
 
 
@@ -268,12 +303,20 @@ License: You must have a valid license purchased only from themeforest(the above
 			.text-center{text-align:center}
 			.please_wait{text-transform:capitalize;font-size:1.2rem;font-weight:bold;color:#085E99;}
 		</style>
+
+		<script>
+			function getToken()
+			{
+				return document.getElementsByTagName('body')[0].getAttribute('data-token');
+			}
+			
+		</script>
 	</head>
 
 	<!-- end::Head -->
 
 	<!-- begin::Body -->
-	<body style="background-image: url(<?php echo e(url('assets/media/demos/demo4/header.jpg')); ?>); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
+	<body data-token="<?php echo e(csrf_token()); ?>" style="background-image: url(<?php echo e(url('assets/media/demos/demo4/header.jpg')); ?>); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
 	<div class="text-center hide_class" id="loader_id" >
 		<img src="<?php echo e(asset('loading.gif')); ?>">
 		<p class="please_wait">Please Wait</p>
@@ -455,9 +498,9 @@ License: You must have a valid license purchased only from themeforest(the above
 								if((index+1) > maxOptionsNumber )
 								{
 									$(value).prop('selected',false);
-									$(this).selectpicker("refresh");
 								}
 							});
+							$(this).selectpicker("refresh");
 						}
 					}
 					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +labelMaxSelection + ' Selected ]');
@@ -487,9 +530,13 @@ License: You must have a valid license purchased only from themeforest(the above
 			$(function(){
 				$('.dtfc-fixed-left').on('click',function(e){
 					$('.kt_table_with_no_pagination').DataTable().columns.adjust();
-					// $('.kt_table_with_no_pagination').DataTable().fixedHeader.adjust();
 				})
 			})
+		</script>
+		<script>
+				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+						  jqXHR.setRequestHeader('X-CSRF-Token', getToken());
+					});
 		</script>
 	</body>
 

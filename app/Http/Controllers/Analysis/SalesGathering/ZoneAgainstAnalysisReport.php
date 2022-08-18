@@ -496,7 +496,7 @@ class ZoneAgainstAnalysisReport
     {
 
         if(false !== $found =array_search('all',$request->main_data)){
-
+// dd(get_defined_vars());
             $data = SalesGathering::company()
                 ->whereNotNull($request->field)
                 ->groupBy($request->field)

@@ -65,8 +65,6 @@ var KTDatatablesBasicPaginations = function() {
         });
         
         
-        // $('.kt_table_with_no_pagination').DataTable().fixedHeader.enable();
-
 
     };
 

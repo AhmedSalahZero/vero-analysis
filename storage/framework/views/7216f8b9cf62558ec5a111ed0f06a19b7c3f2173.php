@@ -44,12 +44,7 @@
 </style>
 <?php $__env->stopPush(); ?> 
 <?php $__env->startPush('js'); ?>
-<script  type="text/javascript" src=<?php echo e(asset('datatable_modify.js')); ?>>
-    
-</script>
-    
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<?php echo $__env->make('js_datatable', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -98,8 +93,20 @@
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes([]); ?>
                         <?php $__env->slot('table_header'); ?>
+                        
                             <tr class="table-active text-center">
+                                <?php if($view_name ==Customers_Against_Categories_Trend_Analysis 
+                                || $view_name == Customers_Against_Products_Trend_Analysis
+                                || $view_name == Customers_Against_Products_ITEMS_Trend_Analysis
+                                
+                                
+                                ): ?>
+                                <th class="text-center absorbing-column"><?php echo e(__('Customer Name')); ?></th>
+
+                                <?php else: ?>
                                 <th class="text-center absorbing-column"><?php echo e(__('Categories')); ?></th>
+
+                                <?php endif; ?> 
                                 <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <th><?php echo e(date('d-M-Y', strtotime($date))); ?></th>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

@@ -101,6 +101,7 @@ class RoutesDefinition
                     'discount_result'  => 'resultForSalesDiscount',
                     'sub_items' => [
                         'Zones' => 'zones',
+                        'Customers' => 'customers',
                         'SalesChannels' => 'salesChannels',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
@@ -123,6 +124,7 @@ class RoutesDefinition
                     'discount_result'  => 'resultForSalesDiscount',
                     'sub_items' => [
                         'Zones' => 'zones',
+                        'Customers' => 'customers',
                         'SalesChannels' => 'salesChannels',
                         'SalesPersons' => 'salesPersons',
                         'BusinessSectors' => 'businessSectors',
@@ -215,6 +217,21 @@ class RoutesDefinition
                 // 10 => Customers
                 'Customers' => [
                     'name' =>  'customers',
+                    /// added by me
+                    'class_path' => 'Analysis\SalesGathering\CategoriesAgainstAnalysisReport',
+                    'analysis_view' => 'CategoriesSalesAnalysisIndex',
+                    'analysis_result' => 'CategoriesSalesAnalysisResult',
+                    'against_view'  => 'index',
+                    'against_result'  => 'result',
+                    'discount_result'  => 'resultForSalesDiscount',
+                    'sub_items' => [
+                        'Categories' => 'categories',
+                       'Products' => 'products',
+                       'ProductsItems' => 'Items',
+
+                       
+                    ],
+                    /////
                     'has_discount' => true,
                     'has_break_down' => true,
                 ],

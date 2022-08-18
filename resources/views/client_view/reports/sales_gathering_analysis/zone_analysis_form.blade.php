@@ -286,10 +286,6 @@ if(tryParseJSONObject($(this).val()[0])){
                 getCategories(zones,'category');
                   categories = $('[name="categories[]"]').val();
                           type_of_data = "{{$type}}";
-                          console.log('categories');
-                          console.log(categories);
-
-
 
                 getProductItems(zones , [] , null ,type_of_data );
 
@@ -361,7 +357,7 @@ if(tryParseJSONObject($(this).val()[0])){
         // Sales Channales
         function getSalesChannales(zones,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : zones , 'main_field' : 'zone','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -393,7 +389,7 @@ if(tryParseJSONObject($(this).val()[0])){
         // Categories
         function getCategories(zones,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : zones, 'main_field' : 'zone','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -424,7 +420,7 @@ if(tryParseJSONObject($(this).val()[0])){
         // Sub Categories
         function getProducts(zones,categories,type_of_data,type) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :zones ,
                    'main_field' : 'zone',
                    'second_main_data' : categories,
@@ -485,7 +481,7 @@ if(tryParseJSONObject($(this).val()[0])){
         // Product Or Services
         function getProductItems(zones,categories,products,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :zones ,
                    'main_field' : 'zone',
                    'second_main_data' : categories,

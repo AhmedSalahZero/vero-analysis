@@ -43,7 +43,21 @@
                     //     ->get()
                     //     ->pluck('category')
                     //     ->toArray();
+                    // dd($type);
+                    if(isCustomerExceptionalCase($type , $name_of_selector_label) 
+                    || isCustomerExceptionalForProducts($type , $name_of_selector_label)
+                    || isCustomerExceptionalForProductsItems($type , $name_of_selector_label))
+                    // in this case we will get customers instead of categories
+                    $categoriesData = getTypeFor('customer_name',$company->id , false);
+                    // else if()
+                    // {
+                        // $categoriesData = getTypeFor('',$company->id , false);
+                    // }
+                    else
+                    {
                     $categoriesData = getTypeFor('category',$company->id , false);
+
+                    }
 
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
@@ -61,6 +75,9 @@
                         }
 
                     ?>
+
+                            
+
 
                     <input type="hidden" name="type" value="<?php echo e($type); ?>">
                     <input type="hidden" name="view_name" value="<?php echo e($view_name); ?>">
@@ -85,7 +102,22 @@
                         <?php endif; ?> 
                         <div class="form-group row">
                             <div class="col-md-<?php echo e($column); ?>">
+
+                            <?php if(isCustomerExceptionalCase($type , $name_of_selector_label) 
+                            ||
+                             isCustomerExceptionalForProducts($type , $name_of_selector_label )
+                            ||
+                             isCustomerExceptionalForProductsItems($type , $name_of_selector_label )
+                             
+                             ): ?>
+                                <label><?php echo e(__('Select Customers')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                                <?php else: ?> 
+
                                 <label><?php echo e(__('Select Categories')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                                <?php endif; ?> 
+
+
+                                
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select  name="categoriesData[]" required data-live-search="true" data-actions-box="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select"
@@ -116,6 +148,8 @@
                                 </div>
 
                             <?php endif; ?>
+
+                           
                             <?php if( $name_of_selector_label == 'Sales Discount'): ?>
 
                                 <div class="col-md-<?php echo e($column); ?>">
@@ -135,7 +169,61 @@
                                 </div>
 
                             <?php else: ?>
-                                <div class="col-md-<?php echo e($column); ?>">
+                            
+                            <?php if($name_of_selector_label == 'Customers Against Categories' ): ?>
+                            <?php
+                                $name_of_selector_label = "Categories";
+                            ?>
+                              <div class="col-md-<?php echo e($column); ?>">
+                                    <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?>  <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date" id="sales_channels">
+                                            <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required
+                                            class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" multiple>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <?php elseif($name_of_selector_label == 'Customers Against Products'): ?>
+
+                               <?php
+                                $name_of_selector_label = "Products";
+                            ?>
+                              <div class="col-md-<?php echo e($column); ?>">
+                                    <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?>  <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date" id="sales_channels">
+                                            <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required
+                                            class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" multiple>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <?php elseif($name_of_selector_label == 'Customers Against Products Items'): ?>
+
+                               <?php
+                                $name_of_selector_label = "Product Items";
+                            ?>
+                              <div class="col-md-<?php echo e($column); ?>">
+                                    <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?>  <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date" id="sales_channels">
+                                            <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required
+                                            class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" multiple>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            <?php else: ?>
+                            
+                            
+                            
+                            <div class="col-md-<?php echo e($column); ?>">
                                     <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?>  <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date" id="sales_channels">
@@ -146,6 +234,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?> 
                             <?php endif; ?>
                         </div>
                         <div class="form-group row">
@@ -185,6 +274,7 @@
 
                         </div>
                     </div>
+                    
                     <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
 <?php $component->withName('submitting'); ?>
@@ -210,6 +300,7 @@
             <!--end::Portlet-->
         </div>
     </div>
+    
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('js'); ?>
     <!--begin::Page Scripts(used by this page) -->
@@ -229,8 +320,7 @@
     </script>
     <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
     <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
-    <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')); ?>" type="text/javascript">
-    </script>
+    
 
     <!--end::Page Scripts -->
     <script>
@@ -267,7 +357,7 @@
                    clearTimeout(wto);
   wto = setTimeout(()=> {
 
-      
+    //    alert("<?php echo e($name_of_selector_label); ?>")
             if(tryParseJSONObject($(this).val()[0])){
                 categoriesData = JSON.parse($(this).val()[0]);
             }else{
@@ -277,7 +367,32 @@
             if ("<?php echo e($name_of_selector_label); ?>" == 'Products / Services' ||  "<?php echo e($name_of_selector_label); ?>" == 'Products Items') {
                 getProducts(categoriesData,'product_or_service',type_of_data);
             } else {
+               
+              
+              if("<?php echo e(isCustomerExceptionalCase($type , $name_of_selector_label)); ?>")
+                {
+                    // alert('if')
+                     getCategories(categoriesData,'category');
+                }
+                
+              else if("<?php echo e(isCustomerExceptionalForProducts($type , $name_of_selector_label)); ?>")
+                {
+                    // alert('else if')
+                     getProductsForCustomers(categoriesData,'product_or_service','product_or_service');
+                }
+
+                 else if("<?php echo e(isCustomerExceptionalForProductsItems($type , $name_of_selector_label)); ?>")
+                {
+                    // alert('else if')
+                     getProductItemsForCustomers(categoriesData,'product_item');
+                }
+                
+                else{
+                    // alert('else')
                 getSalesChannales(categoriesData,type_of_data);
+
+                }
+                // wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             }
 
   }, getNumberOfMillSeconds());
@@ -338,7 +453,7 @@
         // Sales Channales
         function getSalesChannales(categoriesData,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : categoriesData , 'main_field' : 'category','field' : type_of_data} ,
             url: '<?php echo e(route('get.zones.data',$company)); ?>',
             dataType:'json',
@@ -361,8 +476,8 @@
         // Categories
         function getCategories(categoriesData,type_of_data) {
             $.ajax({
-            type:'GET',
-            data: {'main_data' : categoriesData, 'main_field' : 'sales_channel','field' : type_of_data} ,
+            type:'POST',
+            data: {'main_data' : categoriesData, 'main_field' : 'customer_name','field' :type_of_data} ,
             url: '<?php echo e(route('get.zones.data',$company)); ?>',
             dataType:'json',
             accepts:'application/json'
@@ -373,7 +488,7 @@
                 // else{
                 //     var data_type = '';
                 // }
-                row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" '+data_type+'  required >\n' ;
+                row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" '+data_type+'  required >\n' ;
                 // if($('#data_type').val()  !== 'value'){
                 //     row += '<option value="">Select</option>\n' ;
                 // }
@@ -383,16 +498,17 @@
 
                 });
                 row +='</select>';
-                console.log(row);
-            $('#categories').html('');
-            $('#categories').append(row);
+                // console.log(row);
+            $('#sales_channels').html('');
+            $('#sales_channels').append(row);
             reinitializeSelect2();
             });
         }
         // Sub Categories
         function getProducts(categories,type_of_data,type) {
+            
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :categories ,
                    'main_field' : 'category',
                    'field' : type_of_data
@@ -435,17 +551,74 @@
 
                     });
                     row +='</select>';
-                    console.log(row);
+                    // console.log(row);
                     $('#products').html('');
                     $('#products').append(row);
                     reinitializeSelect2();
                 }
             });
         }
+
+
+
+        function getProductsForCustomers(categories,type_of_data,type) {
+            // alert('q');
+            $.ajax({
+            type:'POST',
+            data: {'main_data' :categories ,
+                   'main_field' : 'customer_name',
+                   'field' : type_of_data
+                } ,
+            url: '<?php echo e(route('get.zones.data',$company)); ?>',
+            dataType:'json',
+            accepts:'application/json'
+            }).done(function (data) {
+                // if($('#data_type').val()  == 'value'){
+                    var data_type = 'multiple';
+                // }
+                // else{
+                //     var data_type = '';
+                // }
+// alert(type);
+                if (type == 'product_or_service') {
+
+                    row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  '+data_type+'  required >\n' ;
+                    // if($('#data_type').val()  !== 'value'){
+                    //     row += '<option value="">Select</option>\n' ;
+                    // }
+
+                    $.each(data, function(key, val) {
+                        row += '<option value="'+val+'">'+ val +'</option>\n' ;
+
+                    });
+                    row +='</select>';
+                    // console.log(row);
+                    $('#sales_channels').html('');
+                    $('#sales_channels').append(row);
+                    reinitializeSelect2();
+                } else {
+                    row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select"  '+data_type+'  required  >\n' ;
+                    // if($('#data_type').val()  !== 'value'){
+                    //     row += '<option value="">Select</option>\n' ;
+                    // }
+
+                    $.each(data, function(key, val) {
+                        row += '<option value="'+val+'">'+ val +'</option>\n' ;
+
+                    });
+                    row +='</select>';
+                    // console.log(row);
+                    $('#products').html('');
+                    $('#products').append(row);
+                    reinitializeSelect2();
+                }
+            });
+        }
+
         // Product Or Services
         function getProductItems(categoriesData,products,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :categoriesData ,
                    'main_field' : 'category',
                    'third_main_data' : products,
@@ -466,12 +639,40 @@
 
                 });
                 row +='</select>';
-                console.log(row);
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();
             });
         }
+
+
+         function getProductItemsForCustomers(categoriesData,type_of_data) {
+            $.ajax({
+            type:'POST',
+            data: {'main_data' :categoriesData ,
+                   'main_field' : 'customer_name',
+                   'field' : type_of_data,
+                } ,
+            url: '<?php echo e(route('get.zones.data',$company)); ?>',
+            dataType:'json',
+            accepts:'application/json'
+            }).done(function (data) {
+                row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select select2 kt-bootstrap-select kt_bootstrap_select"  '+data_type+'  required multiple >\n' ;
+                // if($('#data_type').val()  !== 'value'){
+                //     row += '<option value="">Select</option>\n' ;
+                // }
+
+                $.each(data, function(key, val) {
+                    row += '<option value="'+val+'">'+ val +'</option>\n' ;
+
+                });
+                row +='</select>';
+            $('#sales_channels').html('');
+            $('#sales_channels').append(row);
+            reinitializeSelect2();
+            });
+        }
+
     </script>
     <script>
         $(function(){

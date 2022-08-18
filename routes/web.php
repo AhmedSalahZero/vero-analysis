@@ -77,7 +77,7 @@ Route::group(
         Route::prefix('{company}')->group(function () {
 
             //Ajax
-            Route::get('get/ZoneZonesData/', 'Analysis\SalesGathering\ZoneAgainstAnalysisReport@ZonesData')->name('get.zones.data');
+            Route::post('get/ZoneZonesData/', 'Analysis\SalesGathering\ZoneAgainstAnalysisReport@ZonesData')->name('get.zones.data');
             Route::get('get/viewData/', 'Analysis\SalesGathering\ZoneAgainstAnalysisReport@dataView')->name('get.view.data');
             Route::get('checkIfJobFinished', 'SalesGatheringTestController@activeJob')->name('active.job');
 

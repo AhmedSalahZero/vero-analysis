@@ -73,15 +73,23 @@
                         }   ?>
                     @endif
 
-
                     @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" ))
                         <div class="tab-pane {{$section_key == 0 ? 'active' : ''}}" id="kt_widget2_tab1_content_{{$mainSubSection->id}}">
                             <div class="kt-widget2">
                                 <div class="row">
+                                    
+
+                                    
                                     @foreach ($mainSubSection->subSections as $sub_section)
 
               
                                         @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); @endphp 
+@if($name_of_section == 'Products')
+@php
+    $name_of_section ='Products / Services';
+@endphp
+@endif 
+
                                         @if ($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" )
                                             @if ($name_of_section == "Products / Services")
                                                 @php  $name_of_section = "Product Or Service Names" @endphp
@@ -89,8 +97,11 @@
                                                 @php  $name_of_section = "Product Items" @endphp
                                             @endif
                                             {{-- @dd($name_of_section) --}}
+
+                                            {{-- @if($sub_section->name['en'] == '') --}}
                                             @if ( ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
+
 
                                               str_contains($name_of_section,"es Analysis") 
                                             //   ||   
@@ -106,7 +117,18 @@
                                             )
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) )
-                                               
+                                               {{-- @if($mainSubSection->name['en'] == 'Categories')
+@dd($mainSubSection->subSections)
+@endif  --}}
+
+
+@if($name_of_section == 'customers')
+{{-- @dump($sub_section) --}}
+
+@endif 
+@if($sub_section->name['en'] == 'Products Against Zones')
+@endif 
+
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">

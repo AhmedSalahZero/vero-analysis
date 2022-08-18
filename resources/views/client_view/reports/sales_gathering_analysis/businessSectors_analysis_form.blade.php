@@ -339,7 +339,7 @@
         // Sales Channales
         function getSalesChannales(businessSectors,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : businessSectors , 'main_field' : 'business_sector','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -372,7 +372,7 @@
         // Categories
         function getCategories(businessSectors,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : businessSectors, 'main_field' : 'business_sector','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -394,7 +394,6 @@
 
                 });
                 row +='</select>';
-                console.log(row);
             $('#categories').html('');
             $('#categories').append(row);
             reinitializeSelect2();
@@ -403,7 +402,7 @@
         // Sub Categories
         function getProducts(businessSectors,categories,type_of_data,type) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :businessSectors ,
                    'main_field' : 'business_sector',
                    'second_main_data' : categories,
@@ -458,7 +457,7 @@
         // Product Or Services
         function getProductItems(businessSectors,categories,products,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :businessSectors ,
                    'main_field' : 'business_sector',
                    'second_main_data' : categories,

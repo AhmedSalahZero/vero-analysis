@@ -110,7 +110,7 @@
                         :tableClass="'kt_table_with_no_pagination'">
                         @slot('table_header')
                             <tr class="table-active text-center"> 
-                                <th class="text-center absorbing-column">{{ __('Categories') }}</th>
+                                <th class="text-center absorbing-column">{{ __('Products') }}</th>
                                 @foreach ($dates as $date)
                                     <th>{{ date('d-M-Y', strtotime($date)) }}</th>
                                 @endforeach
@@ -137,6 +137,7 @@
                                     <tr class="group-color">
                                         <td class="white-text"  style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                                             <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
+                                            {{-- @dd($sales_channel_name) --}}
                                             <b>{{ __($sales_channel_name) }}</b>
                                         </td>
                                         {{-- Total --}}

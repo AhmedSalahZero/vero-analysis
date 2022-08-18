@@ -29,6 +29,12 @@ class ProductsAgainstAnalysisReport
             $type  = 'sales_channel';
             $view_name = 'Products Against Sales Channels Trend Analysis';
         }
+
+        elseif (request()->route()->named('products.customers.analysis')) {
+            $type  = 'customer_name';
+            $view_name = 'Products Against Customers Trend Analysis';
+        }
+        // dd('q');
         // elseif (request()->route()->named('products.categories.analysis')) {
         //     $type  = 'category';
         //     $view_name = 'Products Against Categories Trend Analysis';

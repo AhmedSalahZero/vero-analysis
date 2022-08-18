@@ -333,7 +333,7 @@
         // Sales Channales
         function getSalesChannales(salesChannels,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : salesChannels , 'main_field' : 'sales_channel','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -367,7 +367,7 @@
         // Categories
         function getCategories(salesChannels,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' : salesChannels, 'main_field' : 'sales_channel','field' : type_of_data} ,
             url: '{{ route('get.zones.data',$company) }}',
             dataType:'json',
@@ -401,7 +401,7 @@
         // Sub Categories
         function getProducts(salesChannels,categories,type_of_data,type) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :salesChannels ,
                    'main_field' : 'sales_channel',
                    'second_main_data' : categories,
@@ -458,7 +458,7 @@
         // Product Or Services
         function getProductItems(salesChannels,categories,products,type_of_data) {
             $.ajax({
-            type:'GET',
+            type:'POST',
             data: {'main_data' :salesChannels ,
                    'main_field' : 'sales_channel',
                    'second_main_data' : categories,

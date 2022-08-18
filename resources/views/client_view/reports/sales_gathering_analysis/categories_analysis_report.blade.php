@@ -93,8 +93,20 @@
                 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
                     <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
                         @slot('table_header')
+                        {{-- @dd(()) --}}
                             <tr class="table-active text-center">
+                                @if($view_name ==Customers_Against_Categories_Trend_Analysis 
+                                || $view_name == Customers_Against_Products_Trend_Analysis
+                                || $view_name == Customers_Against_Products_ITEMS_Trend_Analysis
+                                
+                                
+                                )
+                                <th class="text-center absorbing-column">{{ __('Customer Name') }}</th>
+
+                                @else
                                 <th class="text-center absorbing-column">{{ __('Categories') }}</th>
+
+                                @endif 
                                 @foreach ($dates as $date)
                                     <th>{{ date('d-M-Y', strtotime($date)) }}</th>
                                 @endforeach

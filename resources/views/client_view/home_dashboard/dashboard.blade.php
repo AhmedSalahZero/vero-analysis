@@ -360,7 +360,7 @@
                                     </div>
                                 </div>
 
-                                <x-table :fixedColumns=[] :tableClass="'kt_table_with_no_pagination'">
+                                <x-table :fixedColumns=[] :tableClass="'kt_table_with_no_pagination_no_search'">
 
                                      @slot('table_header')
                                         @php $tableHeader = $monthlyChartArr[array_key_first($monthlyChartArr)] ?? []  @endphp
@@ -377,6 +377,7 @@
                                 @php array_shift($monthlyChartArr) @endphp 
                                              @slot('table_body')
                                     @foreach ($monthlyChartArr as $title => $values)
+                                    {{-- @dd( count($values) + 2 ) --}}
                                     @if(isset($values) && is_null($values[0]))
                    
                                              <tr class="group-color text-lg-left  ">
