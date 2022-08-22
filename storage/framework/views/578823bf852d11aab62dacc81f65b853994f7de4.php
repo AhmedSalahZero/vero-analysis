@@ -32,7 +32,21 @@
 
 
                         
+
                         <?php $__currentLoopData = $client_sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php if(! ($section->id == 220) 
+                        
+                        ||
+                          (Auth()->check() && ! in_array(Auth()->user()->id , [12,13,14,1])) 
+                          
+                          
+                          ): ?>
+
+
+
+
+
+
                             <?php if($section->route != null && count($section->subSections) == 0): ?>
                                 <?php $route = isset($section->route) && $section->route !== null ? explode('.', $section->route) : null; ?>
 
@@ -319,6 +333,23 @@
                                     <?php endif; ?> 
                                 <?php endif; ?>
                             <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <?php endif; ?> 
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
@@ -409,38 +440,7 @@
 
 
     <!--begin: Language bar -->
-    <div class="kt-header__topbar-item kt-header__topbar-item--langs">
-        <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-            <span class="kt-header__topbar-icon">
-                <img class="" src="<?php echo e(url('assets/media/flags/020-flag.svg')); ?>" alt="" />
-            </span>
-        </div>
-        <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
-            <ul class="kt-nav kt-margin-t-10 kt-margin-b-10">
-                <li class="kt-nav__item kt-nav__item--active">
-                    <a href="#" class="kt-nav__link">
-                        <span class="kt-nav__link-icon"><img src="<?php echo e(url('assets/media/flags/020-flag.svg')); ?>"
-                                alt="" /></span>
-                        <span class="kt-nav__link-text">English</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link">
-                        <span class="kt-nav__link-icon"><img src="<?php echo e(url('assets/media/flags/016-spain.svg')); ?>"
-                                alt="" /></span>
-                        <span class="kt-nav__link-text">Spanish</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link">
-                        <span class="kt-nav__link-icon"><img src="<?php echo e(url('assets/media/flags/017-germany.svg')); ?>"
-                                alt="" /></span>
-                        <span class="kt-nav__link-text">German</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    
 
     <!--end: Language bar -->
 

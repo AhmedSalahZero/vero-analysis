@@ -34,7 +34,20 @@
                         {{-- <?php $client_sections = App\Models\Section::mainClientSideSections()
                             ->with('subSections')
                             ->get(); ?> --}}
+
                         @foreach ($client_sections as $section)
+                        @if(! ($section->id == 220) 
+                        
+                        ||
+                          (Auth()->check() && ! in_array(Auth()->user()->id , [12,13,14])) 
+                          
+                          )
+
+
+
+
+
+
                             @if ($section->route != null && count($section->subSections) == 0)
                                 <?php $route = isset($section->route) && $section->route !== null ? explode('.', $section->route) : null; ?>
 
@@ -358,6 +371,23 @@
                                     @endif 
                                 @endif
                             @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            @endif 
                         @endforeach
 
 
@@ -448,7 +478,7 @@
 
 
     <!--begin: Language bar -->
-    <div class="kt-header__topbar-item kt-header__topbar-item--langs">
+    {{-- <div class="kt-header__topbar-item kt-header__topbar-item--langs">
         <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
             <span class="kt-header__topbar-icon">
                 <img class="" src="{{ url('assets/media/flags/020-flag.svg') }}" alt="" />
@@ -479,7 +509,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> --}}
 
     <!--end: Language bar -->
 
