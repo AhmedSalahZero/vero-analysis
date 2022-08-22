@@ -182,6 +182,13 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $report_data = $result;
         }
 
+        // dd();
+        if($request->get('direction') == 'asc')
+        {
+            $report_data = \array_reverse($report_data , true );
+        $main_type_items_totals = \array_reverse($main_type_items_totals , true );
+        
+        }
         $last_date = SalesGathering::company()->latest('date')->first()->date ?? null;
         $last_date = date('d-M-Y',strtotime($last_date));
         $all_items = array_unique($all_items);

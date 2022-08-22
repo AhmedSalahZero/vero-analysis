@@ -75,7 +75,6 @@ License: You must have a valid license purchased only from themeforest(the above
 					 maxOptions[3] = 200 ;
 				 }
 
-
 				//    if(numberOfMulteSelects == 1)
 				//  {
 				// 	 maxOptions[0] = 100 ;
@@ -122,7 +121,7 @@ License: You must have a valid license purchased only from themeforest(the above
 						});
 						$(this).data('max-options',maxOption);
 						
-						$(this).closest('div[class*="col-md"]').find('.max-options-select').html('Maxium Selection [ ' + maxOption + ' ]' );
+						$(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']' );
 						//  $(this).selectpicker({
          		  		//    maxOptions:maxOption,
          		 		// 	});
@@ -519,7 +518,7 @@ License: You must have a valid license purchased only from themeforest(the above
 							$(this).selectpicker("refresh");
 						}
 					}
-					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[ ' +labelMaxSelection + ' Selected ]');
+					$(this).closest('div[class*="col-md"]').find('.max-options-span').html('[Selected:' +labelMaxSelection + ']');
 
 					}	);
 			});
@@ -528,9 +527,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
 		<script>
 			$(document).ajaxStart(function(){
-
-				$('select.select2-select').prop('disabled',true);
-				
+				$('select.select2-select').prop('disabled',true);				
 				$('#loader_id').removeClass('hide_class');
 			});
 			$(document).ajaxComplete(function(){
@@ -554,6 +551,13 @@ License: You must have a valid license purchased only from themeforest(the above
 						  jqXHR.setRequestHeader('X-CSRF-Token', getToken());
 					});
 		</script>
+
+@if(session()->has('fail'))
+		<script>
+toastr.error('{{ session()->get("fail") }}')
+		</script>
+
+		@endif 
 	</body>
 
 	<!-- end::Body -->

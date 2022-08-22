@@ -41,7 +41,7 @@
                             <div class="kt-portlet__body">
 
                                 <!--begin: Datatable -->
-
+{{-- @dd($new_products_totals) --}}
                                 <x-table
                                     :tableTitle="__('New Product '.$name.' Monthly Sales Target Year ') . date('Y',strtotime($sales_forecast->start_date))"
                                     :tableClass="'kt_table_with_no_pagination_no_scroll'">
@@ -105,13 +105,17 @@
                     </div>
                 </div>
             </div>
+                @if((hasProductsItems($company)))
+
             <div class="kt-portlet__body ">
                 <h2>{{ __('Existing Product '.$name.' Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($existing_products_sales_targets) }}
                 </h2>
                 <br>
                 <br>
 
-                <x-table :tableTitle="__('New Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination'">
+        
+
+                <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
                         <tr class="table-active text-center">
                             <th>{{ __('Product '.$name.' Name') }}</th>
@@ -126,6 +130,8 @@
                         $totals_per_month = [];
 
                         ?> 
+
+                        {{-- @dd() --}}
                         @foreach ($existing_products_targets as $item => $product_data)
                             <?php $total_existing_targets = 0; ?>
                             <tr>
@@ -154,9 +160,15 @@
                     @endslot
                 </x-table>
 
+
             </div>
         </div>
-        {{-- Total Company Sales Target --}}
+
+
+
+
+                @endif
+
 
         <div class="kt-portlet" id="company_target">
             {{-- Monthly Seasonality --}}
@@ -165,15 +177,14 @@
                     <div class="kt-portlet kt-portlet--mobile">
 
                         <div class="kt-portlet__body">
-
+{{-- @dd($totals_per_month) --}}
                             <!--begin: Datatable -->
-
                             <x-table :tableTitle="__('Total Company Sales Target')"
                                 :tableClass="'kt_table_with_no_pagination_no_scroll'">
                                 @slot('table_header')
                                     <tr class="table-active text-center">
                                         <th>{{ __('Dates') }}</th>
-                                        @foreach ($totals_per_month as $date => $value)
+                                        @foreach ($totals_per_month?:$monthly_dates as $date => $value)
                                             <th>{{ $date }}</th>
                                         @endforeach
                                         <th>{{ __('Total Values') }}</th>

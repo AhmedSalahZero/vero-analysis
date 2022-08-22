@@ -36,14 +36,18 @@
                             </div>
                         </div>
 
+                       
                         <div class="col-md-3">
-                            <label>{{__('Note')}} </label>
+                            <label>{{__('Select Top 50 Or Bottom 50')}} </label>
                             <div class="kt-input-icon">
-                                <div class="input-group ">
-                                     <input type="text" class="form-control" disabled value="{{__('The Report Will Show Max Top 50')}}"  >
-                                </div>
+                              <select name="direction" class="form-control">
+                                  <option value="desc">{{ __('Top 50') }}</option>
+                                  <option value="asc">{{ __('Bottom 50') }}</option>
+                              </select>
                             </div>
                         </div>
+
+                        
                         <div class="col-md-3">
                             <label>{{__('Data Type')}} </label>
                             <div class="kt-input-icon">

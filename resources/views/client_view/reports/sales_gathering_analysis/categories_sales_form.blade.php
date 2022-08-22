@@ -23,11 +23,15 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label>{{__('Select Categories ( Multi Selection )')}} </label>
+                            <label>{{__('Select Categories')}} 
+                            
+                            @include('max-option-span')
+                            
+                            </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" data-max-options="{{ maxOptionsForOneSelector() }}" name="categories[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>
-                                        <option value="{{json_encode($categories)}}">{{__('All Categories')}}</option>
+                                        {{-- <option value="{{json_encode($categories)}}">{{__('All Categories')}}</option> --}}
                                         @foreach ($categories as $row)
                                             <option value="{{$row}}"> {{__($row)}}</option>
                                         @endforeach

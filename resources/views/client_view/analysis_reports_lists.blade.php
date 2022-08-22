@@ -22,7 +22,8 @@
             <div class="kt-portlet__head-toolbar">
                 <ul class="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-brand" role="tablist">
                     <?php $section_key = 0;?>
-                    @foreach ($section->subSections as   $subSection)
+                    @foreach ($section->subSections->sortBy('order') as   $subSection)
+             
                         @if ($section != 'SalesBreakdownAnalysis')
 
                             <?php $name = $subSection->name['en'] ;
@@ -30,11 +31,12 @@
                                 $name = "Product Or Service Name";
                             }   ?>
                         @endif
-{{-- @dump($subSection->name) --}}
+                       
                         @if (($section->name['en'] == 'Sales Breakdown Analysis Report' && $subSection->name['en'] !== "Customers Nature" && $subSection->name['en'] !== "Service Providers" && $subSection->name['en'] !== 'Sales Discounts') ||
                         ($subSection->name['en'] == "Customers Nature" && (false !== $found =  array_search('Customer Name',$viewing_names))) ||
                             ($subSection->name['en'] == "Service Providers" && ( @count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) > 0 ) ||
-                            ($subSection->name['en'] == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0) ))
+                            ($subSection->name['en'] == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0) )) || 
+                            ($subSection->name['en'] == INVOICES && (count(array_intersect(['Document Type','Document Number'],$viewing_names)) > 0) )
                         ||(false !== $found = array_search(\Str::singular($name),       $viewing_names) || $subSection->name['en'] == "Average Prices" ))
 
                                 <li class="nav-item">
@@ -62,7 +64,8 @@
             <div class="tab-content">
                 <?php $section_key = 0;?>
                 @foreach ($section->subSections as $key=> $mainSubSection)
-                {{-- @dd($mainSubSection) --}}
+             
+                
                     @if ($section != 'SalesBreakdownAnalysis')
 
 
@@ -72,14 +75,18 @@
                             $name = "Product Or Service Name";
                         }   ?>
                     @endif
+                    @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )
+                    || $mainSubSection->name['en'] == 'Invoices'
+                    
+                    )
+                        
 
-                    @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" ))
+                     
                         <div class="tab-pane {{$section_key == 0 ? 'active' : ''}}" id="kt_widget2_tab1_content_{{$mainSubSection->id}}">
                             <div class="kt-widget2">
                                 <div class="row">
                                     
 
-                                    
                                     @foreach ($mainSubSection->subSections as $sub_section)
 
               

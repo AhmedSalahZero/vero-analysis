@@ -73,137 +73,140 @@
                 </div>
             </div>
         @endif
-        <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Sales Forecast') }}
-                    </h3>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
                 <?php $existing_products_sales_targets = $sales_forecast->sales_target - $total_sales_targets_values ;?>
-                <h2>{{__('Existing Product '.$name_of_product.' Target Year ' )  . date('Y',strtotime($sales_forecast->start_date)) .' : '. number_format($existing_products_sales_targets)}}</h2>
-                <br>
-                <br>
-
-                <div class="kt-portlet">
-                    <div class="kt-portlet__foot">
-                        <div class="kt-form__actions">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-
-                                        <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
-
-                                        <select class="form-control kt-select2" id="kt_select2_9" name="others_target[]" multiple="multiple">
-                                            @foreach ($selector_products as $product)
-                                                <option value="{{$product}}" {{(false !== $found = array_search($product,($modified_targets->others_target??[]))) ? 'selected' : ''}}>{{$product}}</option>
-                                            @endforeach
-                                        </select>
-
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label ></label>
-                                    <input type="submit" class="btn active-style" name="submit" value="{{__('Show')}}" >
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="kt-option bg-secondary">
-                                        <span class="kt-option__control">
-                                            <span
-                                                class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold"
-                                                checked>
-                                                <input class="rows" name="use_modified_targets" type="checkbox"
-                                                value="1" {{ (($modified_targets['use_modified_targets'])??(old('use_modified_targets'))) == 0 ?: 'checked' }}
-                                                    id="product_item_check_box">
-                                                <span></span>
-                                            </span>
-                                        </span>
-                                        <span class="kt-option__label d-flex">
-                                            <span class="kt-option__head mr-auto p-2">
-                                                <span class="kt-option__title">
-                                                    <b>
-                                                        {{ __('Click To Activate Modified Targets') }}
-                                                    </b>
-                                                </span>
-
-                                            </span>
-                                        </span>
-                                    </label>
-                                </div>
-
+                @if($existing_products_sales_targets > 0)
+                    <div class="kt-portlet">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title head-title text-primary">
+                                    {{ __('Sales Forecast') }}
+                                </h3>
                             </div>
                         </div>
-                    </div>
-                </div>
-                @if ($errors->has("percentages_total"))
-                    <h4 style="color: red"><i class="fa fa-hand-point-right">
-                    </i></i>{{$errors->first("percentages_total")}}</h4>
-                @endif
-                <x-table :tableTitle="__('Existing Product '.$name_of_product.' Table')" :tableClass="'kt_table_with_no_pagination'" >
-                    @slot('table_header')
-                        <tr class="table-active text-center">
-                            <th>{{ __('Product '.$name_of_product.' Name') }}</th>
-                            <th>{{ __('Pervious Year Sales Value') }}</th>
-                            <th>{{ __('Sales Target Value') }}</th>
-                            <th>{{ __('Sales Target %') }}</th>
-                            <th>{{ __('Modify Sales Target') }}</th>
-                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
-                                <th>{{ __('Modify Sales %') }}</th>
-                            @endif
-                        </tr>
-                    @endslot
-                    @slot('table_body')
-                    <?php $total = array_sum(array_column($product_item_breakdown_data,'Sales Value'));
-                          $total =  $sales_forecast->seasonality == "last_3_years" ? $total/3 : $total ;
-                        $total_existing_targets = 0;
-                    ?>
-                        @foreach ($product_item_breakdown_data as $key => $product_data )
-                            <tr>
-                                <th>{{$product_data['item'] ?? '-'}}</th>
-                                <?php $sales_values  = $sales_forecast->seasonality == "last_3_years" ? (($product_data['Sales Value']??0)/3 ):$product_data['Sales Value'] ; ?>
-                                <td class="text-center">{{number_format($sales_values)}}</td>
+                        <div class="kt-portlet__body">
+                            <h2>{{__('Existing Product '.$name_of_product.' Target Year ' )  . date('Y',strtotime($sales_forecast->start_date)) .' : '. number_format($existing_products_sales_targets)}}</h2>
+                            <br>
+                            <br>
 
-                                <?php
-                                    $target_percentage = ($total == 0) ? 0 : (($sales_values/$total)) ;
-                                    $existing_target_per_product = $target_percentage*$existing_products_sales_targets;
-                                    $total_existing_targets += $existing_target_per_product;
+                            <div class="kt-portlet">
+                                <div class="kt-portlet__foot">
+                                    <div class="kt-form__actions">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+
+                                                    <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
+
+                                                    <select class="form-control kt-select2" id="kt_select2_9" name="others_target[]" multiple="multiple">
+                                                        @foreach ($selector_products as $product)
+                                                            <option value="{{$product}}" {{(false !== $found = array_search($product,($modified_targets->others_target??[]))) ? 'selected' : ''}}>{{$product}}</option>
+                                                        @endforeach
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label ></label>
+                                                <input type="submit" class="btn active-style" name="submit" value="{{__('Show')}}" >
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="kt-option bg-secondary">
+                                                    <span class="kt-option__control">
+                                                        <span
+                                                            class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold"
+                                                            checked>
+                                                            <input class="rows" name="use_modified_targets" type="checkbox"
+                                                            value="1" {{ (($modified_targets['use_modified_targets'])??(old('use_modified_targets'))) == 0 ?: 'checked' }}
+                                                                id="product_item_check_box">
+                                                            <span></span>
+                                                        </span>
+                                                    </span>
+                                                    <span class="kt-option__label d-flex">
+                                                        <span class="kt-option__head mr-auto p-2">
+                                                            <span class="kt-option__title">
+                                                                <b>
+                                                                    {{ __('Click To Activate Modified Targets') }}
+                                                                </b>
+                                                            </span>
+
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if ($errors->has("percentages_total"))
+                                <h4 style="color: red"><i class="fa fa-hand-point-right">
+                                </i></i>{{$errors->first("percentages_total")}}</h4>
+                            @endif
+                            <x-table :tableTitle="__('Existing Product '.$name_of_product.' Table')" :tableClass="'kt_table_with_no_pagination'" >
+                                @slot('table_header')
+                                    <tr class="table-active text-center">
+                                        <th>{{ __('Product '.$name_of_product.' Name') }}</th>
+                                        <th>{{ __('Pervious Year Sales Value') }}</th>
+                                        <th>{{ __('Sales Target Value') }}</th>
+                                        <th>{{ __('Sales Target %') }}</th>
+                                        <th>{{ __('Modify Sales Target') }}</th>
+                                        @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
+                                            <th>{{ __('Modify Sales %') }}</th>
+                                        @endif
+                                    </tr>
+                                @endslot
+                                @slot('table_body')
+                                <?php $total = array_sum(array_column($product_item_breakdown_data,'Sales Value'));
+                                    $total =  $sales_forecast->seasonality == "last_3_years" ? $total/3 : $total ;
+                                    $total_existing_targets = 0;
                                 ?>
-                                <td class="text-center">{{ number_format ($existing_target_per_product)}}</td>
-                                <td class="text-center">{{ number_format ($target_percentage*100, 1). ' %'}}</td>
-                                <input type="hidden" name="sales_targets_percentages[{{$product_data['item']}}]" value="{{$target_percentage}}">
+                                    @foreach ($product_item_breakdown_data as $key => $product_data )
+                                        <tr>
+                                            <th>{{$product_data['item'] ?? '-'}}</th>
+                                            <?php $sales_values  = $sales_forecast->seasonality == "last_3_years" ? (($product_data['Sales Value']??0)/3 ):$product_data['Sales Value'] ; ?>
+                                            <td class="text-center">{{number_format($sales_values)}}</td>
+
+                                            <?php
+                                                $target_percentage = ($total == 0) ? 0 : (($sales_values/$total)) ;
+                                                $existing_target_per_product = $target_percentage*$existing_products_sales_targets;
+                                                $total_existing_targets += $existing_target_per_product;
+                                            ?>
+                                            <td class="text-center">{{ number_format ($existing_target_per_product)}}</td>
+                                            <td class="text-center">{{ number_format ($target_percentage*100, 1). ' %'}}</td>
+                                            <input type="hidden" name="sales_targets_percentages[{{$product_data['item']}}]" value="{{$target_percentage}}">
 
 
-                                <td class="text-center">
-                                    <input type="number" name="modify_sales_target[{{$product_data['item']}}][value]" placeholder="{{__('Value')}}" class="modify_sales_target form-control" value="{{@$modified_targets['products_modified_targets'][$product_data['item']]['value']}}">
-                                </td>
-                                @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
-                                    <td class="text-center">
-                                        <input type="number" name="modify_sales_target[{{$product_data['item']}}][percentage]" placeholder="{{__('%')}}" class="modify_sales_target_percentage form-control" value="{{($modified_targets['products_modified_targets'][$product_data['item']]['percentage'])?? (old('modify_sales_target')[$product_data['item']]['percentage']??0)}}">
-                                    </td>
-                                @endif
-                            </tr>
-                        @endforeach
-                        <tr class="table-active text-center">
-                            <th >{{__('Total')}}</th>
-                            <td>{{number_format($total)}}</td>
-                            <td>{{number_format($total_existing_targets)}}</td>
-                            <td>100 %</td>
-                            <td id="total_modify_sales_target">{{!isset($modified_targets['products_modified_targets'])  ? 0 :  number_format((array_sum(array_column($modified_targets['products_modified_targets'],'value') ?? [])))}}</td>
-                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
-                                <td id="total_modify_sales_target_percentage">{{!isset($modified_targets['products_modified_targets'])  ? 0 :  number_format((array_sum(array_column($modified_targets['products_modified_targets'],'percentage') ?? [])))}}</td>
-                            @endif
-                        </tr>
+                                            <td class="text-center">
+                                                <input type="number" name="modify_sales_target[{{$product_data['item']}}][value]" placeholder="{{__('Value')}}" class="modify_sales_target form-control" value="{{@$modified_targets['products_modified_targets'][$product_data['item']]['value']}}">
+                                            </td>
+                                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
+                                                <td class="text-center">
+                                                    <input type="number" name="modify_sales_target[{{$product_data['item']}}][percentage]" placeholder="{{__('%')}}" class="modify_sales_target_percentage form-control" value="{{($modified_targets['products_modified_targets'][$product_data['item']]['percentage'])?? (old('modify_sales_target')[$product_data['item']]['percentage']??0)}}">
+                                                </td>
+                                            @endif
+                                        </tr>
+                                    @endforeach
+                                    <tr class="table-active text-center">
+                                        <th >{{__('Total')}}</th>
+                                        <td>{{number_format($total)}}</td>
+                                        <td>{{number_format($total_existing_targets)}}</td>
+                                        <td>100 %</td>
+                                        <td id="total_modify_sales_target">{{!isset($modified_targets['products_modified_targets'])  ? 0 :  number_format((array_sum(array_column($modified_targets['products_modified_targets'],'value') ?? [])))}}</td>
+                                        @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
+                                            <td id="total_modify_sales_target_percentage">{{!isset($modified_targets['products_modified_targets'])  ? 0 :  number_format((array_sum(array_column($modified_targets['products_modified_targets'],'percentage') ?? [])))}}</td>
+                                        @endif
+                                    </tr>
 
-                    @endslot
-                </x-table>
+                                @endslot
+                            </x-table>
 
-            </div>
-        </div>
+                        </div>
+                    </div>
+
+        @endif 
 
 
         <x-submitting />

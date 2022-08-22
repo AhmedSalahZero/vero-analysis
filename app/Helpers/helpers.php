@@ -12,7 +12,9 @@ use App\Models\ProductSeasonality;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
+use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -20,6 +22,103 @@ const MAX_RANKING = 5 ;
 const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis' ;
 const Customers_Against_Categories_Trend_Analysis = 'Customers Against Categories Trend Analysis';
 const Customers_Against_Products_ITEMS_Trend_Analysis = 'Customers Against Products Items Trend Analysis';
+const INVOICES = 'Invoices';
+
+function spaceAfterCapitalLetters($string)
+{
+    return preg_replace('/(?<!\ )[A-Z]/', ' $0', $string); ;
+}
+function getYearsFromInterval($start , $end){
+    return [
+        'start_year'=>explode('-' , $start)[0],
+        'end_year'=>explode('-' , $end)[0],
+    ];
+}
+
+function array_unique_value(array $array , string $key)
+{
+ 
+    $uniqueItems = [];
+    // dd($array);
+    foreach($array as $arr)
+    {
+       foreach($arr as $ar)
+       {
+            $uniqueItems[$ar[$key]] = $ar ;
+       }
+    }
+    return $uniqueItems ;
+    
+    
+}
+
+function getPeriods($interval)
+{
+  
+    if($interval == 'monthly')
+    {
+       return  [
+            1=>[1] ,
+            2=>[2] ,
+            3=>[3] ,
+            4=>[4] ,
+            5=>[5] ,
+            6=>[6] ,
+            7=>[7] ,
+            8=>[8] ,
+            9=>[9] ,
+            10=>[10] ,
+            11=>[11] ,
+            12=>[12] ,
+        ];
+    }
+    if($interval == 'quarterly')
+    {
+        
+    return [
+        3=>[1,2,3] ,6=>[4,5,6] , 9=>[7,8,9]  ,12 => [10,11,12]
+    ];
+    }
+    if($interval == 'semi-annually')
+    {
+          return [
+        6=>[1,2,3,4,5,6] ,12=>[7,8,9 , 10,11,12] 
+               ];
+    }
+
+     if($interval == 'annually')
+    {
+          return [
+        12=>[1,2,3,4,5,6,7,8,9 , 10,11,12]];
+    }
+    
+}
+function getLongestArray($array)
+{
+    $result = [];
+    foreach($array as $arr)
+    {
+        if(count($arr) > count($result))
+        {
+            $result = $arr ;
+        }
+    }
+    
+    return $result;
+}
+function arrayCountAllLongest(array $array)
+{
+    $longestArray = getLongestArray($array);
+    
+    $counter = 0 ;
+
+    foreach($longestArray as $arr )
+    {
+        $counter += count($arr);
+    }
+
+    return $counter ;
+}
 function flatten(array $array) {
     $return = array();
     array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
@@ -326,11 +425,11 @@ function sortTwoDimensionalExcept(array &$arr  , array $exceptKeys)
 function getTypeFor($type,$companyId,$formatted=false){
    if($formatted)
    {
-      return  DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type,$type)->toArray(); ;
+      return  DB::table('sales_gathering')->where('company_id', $companyId)->orderBy($type)->distinct()->select($type)->get()->pluck($type,$type)->toArray(); ;
       
    }
    else{
-       $data = DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type)->toArray();
+       $data = DB::table('sales_gathering')->where('company_id', $companyId)->orderBy($type)->distinct()->select($type)->get()->pluck($type)->toArray();
        $data = array_filter($data , function($item){
        
        return $item  ;
@@ -497,7 +596,7 @@ function is_multi_array( $arr ) {
 
 function maxOptionsForOneSelector():int
 {
-    return 2 ; 
+    // return 2 ; 
     return 12 ; 
 }
 
@@ -549,4 +648,93 @@ $b = ($b['total']);
     
     // $data[$branchName][$rankNumber] ?? []
 ;
+}
+
+
+// function hasProductsItems($company)
+// {
+        // $fields = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+
+        // return (false !== $found = array_search('Product Item', $fields));
+// }
+function failAllocationMessage($allocation_type)
+{
+    return __('Please Add New').' ' . capitializeType($allocation_type);
+}
+function hasProductsItems($company)
+{
+    
+    $productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = '. $company->id .' and product_item is not null'));
+    return $productItems[0]->has_product_item ?? 0  ;
+}
+
+function count_array_values(array $array)
+{
+    $counter = 0 ; 
+    foreach($array as $arr)
+    {
+        $counter+= count($arr);
+    }
+    return $counter ; 
+}
+function countExistingTypeFor($type ,  $company)
+{
+    $productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = '. $company->id .' and '. $type .' is not null'));
+    return $productItems[0]->has_product_item ?? 0  ;
+}
+
+
+function capitializeType($type)
+{
+    return __(spaceAfterCapitalLetters(camelize($type))) ;
+}
+
+function getCustomerSalesAnalysisData(Request $request , Company $company)
+{
+       $dimension = $request->report_type;
+
+        $report_data =[];
+        $growth_rate_data =[];
+
+        $sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) :$request->sales_channels ;
+
+        foreach ($sales_channels as  $sales_channel) {
+
+            $sales_channels_data =collect(DB::select(DB::raw("
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,customer_name
+                FROM sales_gathering
+                WHERE ( company_id = '".$company->id."'AND customer_name = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                ORDER BY id "
+                )))->groupBy('gr_date')->map(function($item){
+                    return $item->sum('net_sales_value');
+                })->toArray();
+         
+            $interval_data_per_item = [];
+            $years = [];
+            if (count($sales_channels_data)>0) {
+
+                array_walk($sales_channels_data, function ($val, $date) use (&$years) {
+                    $years[] = date('Y', strtotime($date));
+                });
+                $years = array_unique($years);
+                $report_data[$sales_channel] = $sales_channels_data;
+                $interval_data_per_item[$sales_channel] = $sales_channels_data;
+                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+
+                $report_data[$sales_channel] = $interval_data['data_intervals'][$request->interval][$sales_channel] ?? [];
+
+
+
+            }
+        }
+
+        $final_report_data = [];
+        $sales_channels_names =[];
+        foreach ($sales_channels as  $sales_channel) {
+            $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel]??[]);
+            $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel]??[]);
+            $sales_channels_names[] = (str_replace( ' ','_', $sales_channel));
+        }
+
+            return $report_data ;
 }

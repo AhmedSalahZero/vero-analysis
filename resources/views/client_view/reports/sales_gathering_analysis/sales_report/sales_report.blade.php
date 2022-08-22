@@ -5,7 +5,6 @@
         table {
             white-space: nowrap;
         }
-
     </style>
 @endsection
 @section('sub-header')

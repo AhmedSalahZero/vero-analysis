@@ -51,6 +51,8 @@
 
     <!--Sales Values Table -->
 
+    {{-- @dd(get_defined_vars()) --}}
+
     <x-table :tableTitle="__('Sales Values Table')"   :tableClass="'kt_table_with_no_pagination'">
         @slot('table_header')
             <tr class="table-active text-center">

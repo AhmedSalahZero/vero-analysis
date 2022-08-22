@@ -4,7 +4,7 @@
         table {
             white-space: nowrap;
         }
-
+        
     </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
@@ -139,7 +139,6 @@
                             <?php $chart_data = []; ?>
 
                             <?php $__currentLoopData = $report_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $label => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
                                 <tr>
                                     <th><?php echo e(__($label)); ?></th>
                                     <?php $num_of_decimals = $label == 'Month Sales %' ? 1 : 0; ?>

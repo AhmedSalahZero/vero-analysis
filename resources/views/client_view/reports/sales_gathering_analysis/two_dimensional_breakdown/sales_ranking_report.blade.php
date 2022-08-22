@@ -118,7 +118,7 @@
                                                                 @foreach( $dataForRankings as $productName=>$val)
                                                             <tr>
 
-                                                                <td> {{ ++$produtNumber }} - {{ $productName }}</td>
+                                                                <td style="text-align: left !important"> {{ ++$produtNumber }} - {{ $productName }}</td>
                                                                 <td>{{number_format($val['total'] ?? 0)}}</td>
                                                             </tr>
                                                                 @endforeach 

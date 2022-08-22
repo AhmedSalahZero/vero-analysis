@@ -9,9 +9,9 @@ use App\Models\ModifiedTarget;
 use App\Models\ProductSeasonality;
 use App\Models\SalesForecast;
 use App\Models\SalesGathering;
+use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Traits\GeneralFunctions;
 
 class SeasonalityReport
 {
@@ -141,6 +141,7 @@ class SeasonalityReport
             $products = array_keys($product_item_breakdown_data);
 
             $mainData_data = [];
+            $others = [];
             if ($sales_forecast->seasonality == "last_3_years") {
                 $mainData_data =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%M') as gr_date ,id,(CASE WHEN net_sales_value < 0 THEN 0 ELSE net_sales_value END) as net_sales_value," . $type ."

@@ -71,6 +71,8 @@
 @endif
 
         <?php $item = ucwords(str_replace('_', ' ', $allocation_base)); ?>
+
+        @if(hasProductsItems($company))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
@@ -272,6 +274,7 @@
                 </x-table>
             </div>
         </div>
+        @endif
 
 
         <x-submitting />

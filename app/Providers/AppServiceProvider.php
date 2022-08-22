@@ -45,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Request $request)
     {
+        // $section = Section::where('id',260)->first();
+        // dd($section->subSections);
                 // Paginator::useBootstrap();
       
         View::share('langs',Language::all());

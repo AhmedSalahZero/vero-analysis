@@ -57,6 +57,97 @@ class SKUsAgainstAnalysisReport
         return view('client_view.reports.sales_gathering_analysis.skus_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
     }
 
+
+     public function CategoriesSalesAnalysisIndex(Company $company)
+    {
+        // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
+        $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
+        return view('client_view.reports.sales_gathering_analysis.product_items_sales_form', compact('company', 'selected_fields'));
+    }
+    
+     public function ProductsItemsSalesAnalysisResult(Request $request, Company $company , $array = false )
+    {
+        $dimension = $request->report_type;
+
+        $report_data =[];
+        $growth_rate_data =[];
+        $branches = is_array(json_decode(($request->branches[0]))) ? json_decode(($request->branches[0])) :$request->branches ;
+
+        foreach ($branches as  $branch) {
+
+            // $branches_data = SalesGathering::company()
+            //     ->where('branch', $branch)
+            //     ->whereBetween('date', [$request->start_date, $request->end_date])
+            //     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,branch')
+            //     ->get()->groupBy('gr_date')->map(function($item){
+            //         return $item->sum('net_sales_value');
+            //     })->toArray();
+                $branches_data =collect(DB::select(DB::raw("
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,product_item
+                FROM sales_gathering
+                WHERE ( company_id = '".$company->id."'AND product_item = '".$branch."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                ORDER BY id "
+                )))->groupBy('gr_date')->map(function($item){
+                    return $item->sum('net_sales_value');
+                })->toArray();
+
+            $interval_data_per_item = [];
+            $years = [];
+            if (count($branches_data)>0) {
+
+                // $dt = Carbon::parse($sales_gatherings[0]['date']);
+                // $month = $dt->endOfMonth()->format('d-m-Y');
+
+
+
+                // foreach ($sales_gatherings as $key => $row) {
+
+                //     $dt = Carbon::parse($row['date']);
+                //     $current_month = $dt->endOfMonth()->format('d-m-Y');
+                //     if($current_month == $month){
+                //         $branches_per_month[$current_month][] = $row['net_sales_value'];
+
+                //     }else{
+                //         $month = $current_month;
+                //         $branches_per_month[$current_month][] = $row['net_sales_value'];
+                //     }
+
+                //     $branches_data[$month] = array_sum($branches_per_month[$month]);
+                // }
+
+                array_walk($branches_data, function ($val, $date) use (&$years) {
+                    $years[] = date('Y', strtotime($date));
+                });
+                $years = array_unique($years);
+                $report_data[$branch] = $branches_data;
+                $interval_data_per_item[$branch] = $branches_data;
+                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+
+                $report_data[$branch] = $interval_data['data_intervals'][$request->interval][$branch] ?? [];
+                $growth_rate_data[$branch] = $this->growthRate($report_data[$branch]);
+            }
+        }
+
+        $total_branches = $this->finalTotal($report_data);
+        $total_branches_growth_rates =  $this->growthRate($total_branches);
+        $final_report_data = [];
+        $branches_names =[];
+        foreach ($branches as  $branch) {
+            $final_report_data[$branch]['Sales Values'] = ($report_data[$branch]??[]);
+            $final_report_data[$branch]['Growth Rate %'] = ($growth_rate_data[$branch]??[]);
+            $branches_names[] = (str_replace( ' ','_', $branch));
+        }
+
+
+        if($array)
+        {
+            return $report_data;
+        }
+
+        return view('client_view.reports.sales_gathering_analysis.products_items_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches'));
+
+    }
+
     public function  result(Request $request, Company $company)
     {
 

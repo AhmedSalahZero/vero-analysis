@@ -94,7 +94,11 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-success">
-                                    {{ number_format($sales_forecast['previous_1_year_sales'] ?? 0) }}
+                                    {{ $previous_year_sales =  number_format($sales_forecast['previous_1_year_sales'] ?? 0) }}
+
+                                    @php
+                                        $previous_year_sales = 0;
+                                    @endphp
                                 </span>
                                 <input type="hidden" name="previous_1_year_sales"
                                     value="{{ $sales_forecast['previous_1_year_sales'] ?? 0 }}">
@@ -294,12 +298,14 @@
                                     <div class="input-group date validated">
                                         <select name="target_base" class="form-control" id="target_base">
                                             <option value="" selected>{{ __('Select') }}</option>
+                                            @if(hasProductsItems($company))
                                             <option value="previous_year"
                                                 {{ @$sales_forecast_data['target_base'] !== 'previous_year' ?: 'selected' }}>
                                                 {{ __('Based On Pervious Year Sales') }}</option>
                                             <option value="previous_3_years"
                                                 {{ @$sales_forecast_data['target_base'] !== 'previous_3_years' ?: 'selected' }}>
                                                 {{ __('Based On Last 3 Years Sales') }}</option>
+                                                @endif 
                                             <option value="new_start"
                                                 {{ @$sales_forecast_data['target_base'] !== 'new_start' ?: 'selected' }}>
                                                 {{ __('New Start') }}</option>
@@ -447,12 +453,15 @@
 
 
                         <?php ?>
+                                                   @if(hasProductsItems($company))
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group  form-group-marginless">
                                     <label>{{ __('Seasonality') }} <span class="required">*</span></label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date validated">
+
                                             <select name="seasonality" class="form-control" id="seasonality">
                                                 <option value="" selected>{{ __('Select') }}</option>
                                                 <option value="previous_year"
@@ -461,12 +470,8 @@
                                                 <option value="last_3_years"
                                                     {{ @$sales_forecast_data['seasonality'] !== 'last_3_years' ?: 'selected' }}>
                                                     {{ __('Last 3 Years Seasonality') }}</option>
-                                                {{-- <option value="new_seasonality_monthly"
-                                                    {{ @$sales_forecast_data['seasonality'] !== 'new_seasonality_monthly' ?: 'selected' }}>
-                                                    {{ __('New Seasonality - Monthly') }}</option> --}}
-                                                {{-- <option value="new_seasonality_quarterly"
-                                                    {{ @$sales_forecast_data['seasonality'] !== 'new_seasonality_quarterly' ?: 'selected' }}>
-                                                    {{ __('New Seasonality - Quarterly') }}</option> --}}
+
+                                           
                                             </select>
                                             @if ($errors->has('seasonality'))
                                                 <div class="invalid-feedback">{{ $errors->first('seasonality') }}</div>
@@ -476,6 +481,10 @@
                                 </div>
                             </div>
                         </div>
+
+
+                                                @endif 
+
                     </div>
                 </div>
             </div>

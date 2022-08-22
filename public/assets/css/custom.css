@@ -28,7 +28,10 @@
 {
     width: 60%;
 }
-.secondary-row-color{
+.secondary-row-color ,
+.secondary-row-color th ,
+.secondary-row-color td 
+{
     background-color: antiquewhite;
     pointer-events: none;
 }

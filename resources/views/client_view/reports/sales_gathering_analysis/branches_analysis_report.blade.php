@@ -161,16 +161,14 @@ sortReportForTotals($report_data)
                                     </tr>
                            
 
-@php
-    sortSubItems($data)
-@endphp
+                                    @php
+                                        sortSubItems($data)
+                                    @endphp
                                     @foreach ($data as $channel_name => $channel_section)
 
 
 
           
-
-{{-- @dd($channel_section) --}}
                                         <tr class="row{{ $id }}  text-center" style="display: none">
                                             <td class="text-left"><b>{{ $channel_name  }}</b></td>
 

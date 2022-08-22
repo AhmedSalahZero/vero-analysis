@@ -128,9 +128,6 @@ class SalesBreakdownAgainstAnalysisReport
                 ORDER BY id "
             ))) ;
 
-    //          if($type == 'sales_channel'){
-    //       dd(\microtime(true) - $start);
-    //   }
 
         if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
             $data = $report_data->groupBy($type)->map(function($item,$year)
@@ -228,8 +225,13 @@ class SalesBreakdownAgainstAnalysisReport
             });
             $viewing_data =$report_data->toArray();
             $total_of_all_data = array_sum(array_column($viewing_data,'Sales Value'));
-
+            if($request->get('direction') == 'asc')
+            {
+                    $report_data  = $report_data->reverse();
+            }
             $top_50 = $report_data->take(50);
+
+            
             $others_count = count($report_data) - count($top_50) ;
             $report_view_data = $top_50->toArray();
             $others_total = $total_of_all_data - array_sum(array_column($report_view_data,'Sales Value'));

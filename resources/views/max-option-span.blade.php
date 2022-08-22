@@ -1,2 +1,2 @@
-<span class="max-options-select">maxium selection (0) </span>
-<span class="max-options-span"> (0 selected )</span>
+<span class="max-options-select">[Maxium:0] </span>
+<span class="max-options-span">[Selected:0]</span>

@@ -75,6 +75,8 @@
         @endphp
         @endif
         {{-- Existing Products  --}}
+
+        @if(hasProductsItems($company))
         <div class="kt-portlet">
             <div class="kt-portlet__body ">
                 <x-table :tableTitle="__($allocation_base.' Against Existing Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
@@ -90,9 +92,9 @@
                     @slot('table_body')
                     @php
 
-    sortTwoDimensionalExcept($existing_product_data , ['Total'] );
+                 sortTwoDimensionalExcept($existing_product_data , ['Total'] );
 
-@endphp
+                       @endphp
                         @foreach ($existing_product_data as $base_name => $value)
                             <?php
                                 $class_name = $base_name == 'Total' ? 'active-style' : '' ;
@@ -116,7 +118,8 @@
 
             </div>
         </div>
-        @if (count($products_seasonality)>0)
+        @endif 
+             @if (count($products_seasonality)>0)
             {{-- Total --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__body ">

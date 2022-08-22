@@ -402,7 +402,7 @@ class BusinessSectorsAgainstAnalysisReport
 
     }
 
-    public function BusinessSectorsSalesAnalysisResult(Request $request, Company $company)
+    public function BusinessSectorsSalesAnalysisResult(Request $request, Company $company , $array = false )
     {
         $dimension = $request->report_type;
 
@@ -447,6 +447,11 @@ class BusinessSectorsAgainstAnalysisReport
             $final_report_data[$businessSector]['Sales Values'] = $report_data[$businessSector];
             $final_report_data[$businessSector]['Growth Rate %'] = $growth_rate_data[$businessSector];
             $businessSectors_names[] = (str_replace( ' ','_', $businessSector));
+        }
+
+        if($array)
+        {
+            return $report_data ;
         }
 
         return view('client_view.reports.sales_gathering_analysis.businessSectors_sales_report',compact('company','businessSectors_names','total_businessSectors_growth_rates','final_report_data','total_businessSectors'));

@@ -37,7 +37,15 @@
                         <tr class="table-active text-center">
                             <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
                             <th>{{ __('Sales Target Value') }}</th>
-                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !== 'product_target')
+                            {{-- @dd($sales_forecast->target_base) --}}
+                            @if (
+                            
+                            $sales_forecast->target_base !== 'new_start' 
+                            ||
+                             $sales_forecast->new_start !== 'product_target'
+                            // by salah
+                            || true 
+                            )
                                 <th>{{ __('Sales Target %') }}</th>
                             @endif
                         </tr>
@@ -47,6 +55,7 @@
                     @php
                     sortTwoDimensionalArr($sales_targets_values);
                     @endphp
+                    {{-- @dd($sales_targets_values) --}}
                         @foreach ($sales_targets_values as $base_vame => $target)
                             <?php $percentages[$base_vame] = $total_new_items_targets == 0 ? 0 : ($target / $total_new_items_targets) * 100; ?>
                             <tr>
@@ -69,10 +78,13 @@
 
 
         <?php $item = ucwords(str_replace('_', ' ', $allocation_base)); ?>
+        {{-- @dd($existing_items_target) --}}
+                    <?php $existing_items_target = $sales_forecast->sales_target - ($total_new_items_targets ?? 0); ?>
+        @if(hasProductsItems($company))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    <?php $existing_items_target = $sales_forecast->sales_target - ($total_new_items_targets ?? 0); ?>
+                    {{-- @dd($existing_items_target) --}}
                     <h2>
                         {{ __('Existing Products Items Sales Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($existing_items_target) }}
                     </h2>
@@ -274,6 +286,9 @@
                 </x-table>
             </div>
         </div>
+        @endif 
+
+        {{-- @endif --}}
 
 
         <x-submitting />

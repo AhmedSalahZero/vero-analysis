@@ -23,7 +23,11 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label>{{__('Select Countries ( Multi Selection )')}} </label>
+                            <label>{{__('Select Countries')}} 
+                            
+                            @include('max-option-span')
+                            
+                            </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="countries[]" data-max-options="{{ maxOptionsForOneSelector() }}" data-live-search="true" data-actions-box="true" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>

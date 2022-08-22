@@ -9,6 +9,7 @@
         table {
             white-space: nowrap;
         }
+        
 
     </style>
 @endsection
@@ -395,12 +396,12 @@
                                                     class="">{{ __($title) }}</b></td>
                                             @foreach ($values as $val)
                                                 <td > {!! $val !!} </td>
-
+{{-- 
                                                 @if($loop->last)
                                                 <td>
                                                
                                                 </td>
-                                                @endif 
+                                                @endif  --}}
                                             @endforeach
                                             <td class="hidden"> </td>
                                         </tr>

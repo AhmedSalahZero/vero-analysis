@@ -21,7 +21,14 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label>{{__('Select Zones ( Multi Selection )')}} </label>
+                            <label>{{__('Select Zones')}} 
+                            
+                            
+                            @include('max-option-span')
+
+
+                            
+                            </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-max-options="{{ maxOptionsForOneSelector() }}" data-live-search="true" data-actions-box="true" name="zones[]"   class="form-control  select2-select form-select kt-bootstrap-select kt_bootstrap_select" required  multiple>

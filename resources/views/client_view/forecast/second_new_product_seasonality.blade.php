@@ -82,6 +82,9 @@
     @endif
         
         {{-- Existing Products  --}}
+
+        @if(hasProductsItems($company))
+
         <div class="kt-portlet">
             <div class="kt-portlet__body ">
                 <x-table :tableTitle="__($allocation_base.' Against Existing Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
@@ -123,6 +126,8 @@
 
             </div>
         </div>
+
+        @endif
         @if (count($products_seasonality)>0)
             {{-- Total --}}
             <div class="kt-portlet">

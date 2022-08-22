@@ -33,12 +33,25 @@ class AllocationsReport
     public function allocationSettings(Request $request, Company $company)
     {
 
-
+        
+// dd($request->all());
         $sales_forecast = SalesForecast::company()->first();
         $allocations_setting = AllocationSetting::company()->first();
         $sales_targets = [];
         // dd($request->isMethod('POST'));
         if ($request->isMethod('POST')) {
+        $allocation_type = $request->get('allocation_base');
+        if(!$allocation_type)
+        {
+            return redirect()->back();
+        }
+        
+        $countAllocationTypeForCompany = countExistingTypeFor($allocation_type , $company);
+     
+        if(!($countAllocationTypeForCompany) && ! $request->filled('add_new_items'))
+        {
+            return redirect()->back()->with('fail' , failAllocationMessage($allocation_type) );
+        }
             $request->validate([
                 'allocation_base' => 'required',
                 'breakdown' => 'required',
@@ -174,7 +187,7 @@ if($allocation_base_data)
                 [
                     'existing_products_target' => $request->existing_products_target,
                     'total_existing_target' => $request->total_existing_target,
-                    'allocation_base_percentages' => $request->modify_sales_target,
+                    'allocation_base_percentages' => $request->modify_sales_target??[],
                     'use_modified_targets' => ($request->use_modified_targets ?? 0),
                     'allocation_base' => $allocation_base
                 ]
@@ -474,7 +487,7 @@ if($allocation_base_data)
         $products_modified_targets = $modified_targets->products_modified_targets;
         // Others Index
         $input = preg_quote('Others', '~'); // don't forget to quote input string!
-        $others_name_index = preg_grep('~' . $input . '~', array_keys($modified_targets->sales_targets_percentages));
+        $others_name_index = preg_grep('~' . $input . '~', array_keys($modified_targets->sales_targets_percentages?: []));
         $others_name_index = Arr::first($others_name_index);
 
         // Check if the calculation on sales value OR net sales
@@ -549,7 +562,7 @@ if($allocation_base_data)
 
             foreach ($new_allocation_bases_names as $key => $base_name) {
                 $sales_target_per_new_base = ($sales_targets[$base_name] ?? 0);
-                foreach ($target_percentages as $product_name => $percentage) {
+                foreach ((array)$target_percentages as $product_name => $percentage) {
                     $product_items_percentages[$base_name][$product_name] =  $percentage * $sales_target_per_new_base;
                 }
             }
@@ -557,16 +570,18 @@ if($allocation_base_data)
 
 
         // The Summation of products items for each base
-
         $existing_product_data = [];
         foreach ($product_items_percentages as $base_name => $products_items) {
             $existing_product_per_allocation_base = [];
-            foreach ($products_items as $product_item_name => $product_value) {
-
+            if(count($products_items) > 1)
+            {
+                 foreach ($products_items as $product_item_name => $product_value) {
                 $name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;
                 $product_seasonality = $seasonality[$name];
                 $existing_product_per_allocation_base[$product_item_name] = $this->operationAmongArrayAndNumber($product_seasonality, $product_value, 'multiply');
+                }     
             }
+           
             $total = $this->finalTotal($existing_product_per_allocation_base);
             $total  = $this->sorting($total);
             $existing_product_data[$base_name] = $total;

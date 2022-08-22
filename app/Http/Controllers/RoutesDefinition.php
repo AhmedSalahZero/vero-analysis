@@ -121,6 +121,8 @@ class RoutesDefinition
                     'class_path' => 'Analysis\SalesGathering\SKUsAgainstAnalysisReport',
                     'against_view'  => 'index',
                     'against_result'  => 'result',
+                               'analysis_view' => 'CategoriesSalesAnalysisIndex',
+                    'analysis_result' => 'ProductsItemsSalesAnalysisResult',
                     'discount_result'  => 'resultForSalesDiscount',
                     'sub_items' => [
                         'Zones' => 'zones',
@@ -235,6 +237,31 @@ class RoutesDefinition
                     'has_discount' => true,
                     'has_break_down' => true,
                 ],
+
+                  'Invoices' => [
+                    'name' =>  'invoices',
+                    /// added by me
+                    'class_path' => 'Analysis\SalesGathering\InvoicesAgainstAnalysisReport',
+                    'analysis_view' => 'InvoicesSalesAnalysisIndex',
+                    'analysis_result' => 'InvoicesSalesAnalysisResult',
+                    'against_view'  => 'index',
+                    'against_result'  => 'result',
+                    'discount_result'  => 'resultForSalesDiscount',
+                    'sub_items' => [
+                        // 'Categories' => 'categories',
+                    //    'Products' => 'products',
+                    'SalesChannels' => 'salesChannels',
+                    'Zones' => 'zones',
+                     'BusinessSectors' => 'businessSectors',
+                     'Branches' => 'branches',
+                     'Customers' => 'customers',
+                       'ProductsItems' => 'Items',
+                    ],
+                    /////
+                    'has_discount' => true,
+                    'has_break_down' => true,
+                ],
+
                 // 11=> ServiceProvider
                 'ServiceProvider' => [
                     'name' =>  'serviceProvider',

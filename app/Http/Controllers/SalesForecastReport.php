@@ -152,7 +152,7 @@ class SalesForecastReport
                 'sales_target' => ($request['target_base'] == 'previous_year' || $request['target_base'] == 'previous_3_years')
                     || ($request['new_start'] == 'annual_target' && $request['new_start'] == 'annual_target') ? 'required|numeric|min:1' : '',
                 'new_start' => $request['target_base'] == 'new_start' ? 'required' : '',
-                'seasonality' =>   'required',
+                'seasonality' =>   'sometimes|required',
                 'number_of_products' => $request['add_new_products'] == 1 ? 'required|numeric|min:1' : '',
 
             ],
@@ -453,7 +453,7 @@ class SalesForecastReport
                     'company_id' => $company->id,
                     'use_modified_targets' => $request->use_modified_targets ?? 0,
                     'products_modified_targets' => $request->modify_sales_target,
-                    'sales_targets_percentages' => $request->sales_targets_percentages,
+                    'sales_targets_percentages' => $request->sales_targets_percentages ?: 0,
                     'others_target' => $request->others_target,
                 ]);
             } else {
@@ -461,7 +461,7 @@ class SalesForecastReport
                     'company_id' => $company->id,
                     'use_modified_targets' => $request->use_modified_targets ?? 0,
                     'products_modified_targets' => $request->modify_sales_target,
-                    'sales_targets_percentages' => $request->sales_targets_percentages,
+                    'sales_targets_percentages' => $request->sales_targets_percentages ?: 0,
                     'others_target' => $request->others_target,
                 ]);
                 $modified_targets = ModifiedTarget::company()->first();
@@ -723,15 +723,15 @@ class SalesForecastReport
 
             $total = $modified_targets->use_modified_targets == 1 ? array_sum($products_items_monthly_values) : array_sum(array_column($product_item_breakdown_data, 'Sales Value'));
             $totals_per_month = [];
-
+            // dd($monthly_dates);
             $existing_products_targets = [] ;
-
+// dd();
             foreach ($product_item_breakdown_data as $key => $product_data) {
                 $total_existing_targets = 0;
                 $target = $modified_targets->use_modified_targets == 1 ? $products_items_monthly_values[$product_data['item']] : $product_data['Sales Value'];
                 $target_percentage = $total == 0 ? 0 : $target / $total;
                 $existing_target_per_product = $target_percentage * $existing_products_sales_targets;
-                foreach ($monthly_dates as $date => $value) {
+                foreach ((array)$monthly_dates as $date => $value) {
                     $date = date('M-Y', strtotime($date));
                     $month = date('F', strtotime($date));
 
@@ -747,6 +747,8 @@ class SalesForecastReport
                     $total_existing_targets += $result_per_month;
                 }
             }
+
+          
             // dd(get_defined_vars());
             // total_company_sales_target
             // dd($result);
@@ -760,6 +762,10 @@ class SalesForecastReport
                 // dd($targets);
                 return $targets;
             }
+
+            // dd($totals_per_month);
+
+            $totals_per_month = $totals_per_month ?? [];
 
 
 
@@ -778,7 +784,8 @@ class SalesForecastReport
                 'has_product_item',
                 'products_items_monthly_percentage',
                 'existing_products_targets',
-                'existing_products_sales_targets'
+                'existing_products_sales_targets',
+                'totals_per_month'
             ));
         } elseif ($result == 'total_company_sales_target') {
             unset($existing_products_seasonalities['Totals']);
@@ -832,6 +839,7 @@ class SalesForecastReport
     }
     public function seasonalityFun($seasonality, $seasonality_data, $monthly_dates, $sales_target_value, $year)
     {
+        $new_products_seasonalities = [];
         $counter = 1;
         if ($seasonality == 'new_seasonality_quarterly') {
             $quarters_percentages = [];
@@ -839,7 +847,7 @@ class SalesForecastReport
                 $quarters_percentages[number_format(date('m', strtotime($date)))] = $value;
             }
             $num_of_quarter = 0;
-            foreach ($monthly_dates as $date => $value) {
+            foreach ((array)$monthly_dates as $date => $value) {
                 $month = date('m', strtotime($date));
                 if ($month <= 3) {
                     $num_of_quarter = 3;
@@ -858,7 +866,9 @@ class SalesForecastReport
             }
         } elseif ($seasonality == 'new_seasonality_monthly' || $seasonality == 'previous_year' || $seasonality == 'last_3_years') {
 
-            foreach ($monthly_dates as $date => $value) {
+            
+
+            foreach ((array)$monthly_dates as $date => $value) {
                 $current_seasonality = ($seasonality_data[$date] ?? 0);
                 if ($seasonality == 'previous_year') {
                     $month  = date('M', strtotime($date));

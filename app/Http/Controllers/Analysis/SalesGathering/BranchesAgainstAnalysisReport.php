@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BranchesAgainstAnalysisReport
@@ -239,7 +239,7 @@ class BranchesAgainstAnalysisReport
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 
     }
-    public function BranchesSalesAnalysisResult(Request $request, Company $company)
+    public function BranchesSalesAnalysisResult(Request $request, Company $company , $array = false )
     {
         $dimension = $request->report_type;
 
@@ -310,6 +310,12 @@ class BranchesAgainstAnalysisReport
             $final_report_data[$branch]['Sales Values'] = ($report_data[$branch]??[]);
             $final_report_data[$branch]['Growth Rate %'] = ($growth_rate_data[$branch]??[]);
             $branches_names[] = (str_replace( ' ','_', $branch));
+        }
+
+
+        if($array)
+        {
+            return $report_data;
         }
 
         return view('client_view.reports.sales_gathering_analysis.branches_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches'));

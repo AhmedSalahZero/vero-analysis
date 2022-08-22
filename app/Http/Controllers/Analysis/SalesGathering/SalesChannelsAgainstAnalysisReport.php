@@ -393,7 +393,7 @@ class SalesChannelsAgainstAnalysisReport
 
     }
 
-    public function SalesChannelsSalesAnalysisResult(Request $request, Company $company)
+    public function SalesChannelsSalesAnalysisResult(Request $request, Company $company , $array=false )
     {
         $dimension = $request->report_type;
 
@@ -412,45 +412,10 @@ class SalesChannelsAgainstAnalysisReport
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');
                 })->toArray();
-            // $sales_channels_data = SalesGathering::company()
-            //     ->where('sales_channel', $sales_channel)
-            //     ->whereBetween('date', [$request->start_date, $request->end_date])
-            //     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,sales_channel')
-            //     ->get()->groupBy('gr_date')->map(function($item){
-            //         return $item->sum('net_sales_value');
-            //     })->toArray();
-
+         
             $interval_data_per_item = [];
             $years = [];
             if (count($sales_channels_data)>0) {
-
-                // $dt = Carbon::parse($sales_gatherings[0]['date']);
-                // $month = $dt->endOfMonth()->format('d-m-Y');
-
-
-
-                // foreach ($sales_gatherings as $key => $row) {
-
-                //     $dt = Carbon::parse($row['date']);
-                //     $current_month = $dt->endOfMonth()->format('d-m-Y');
-                //     if($current_month == $month){
-                //         $sales_channels_per_month[$current_month][] = $row['net_sales_value'];
-
-                //     }else{
-                //         $month = $current_month;
-                //         $sales_channels_per_month[$current_month][] = $row['net_sales_value'];
-                //     }
-
-                //     $sales_channels_data[$month] = array_sum($sales_channels_per_month[$month]);
-                // }
-
-
-
-
-
-
-
-
 
                 array_walk($sales_channels_data, function ($val, $date) use (&$years) {
                     $years[] = date('Y', strtotime($date));
@@ -476,6 +441,12 @@ class SalesChannelsAgainstAnalysisReport
             $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel]??[]);
             $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel]??[]);
             $sales_channels_names[] = (str_replace( ' ','_', $sales_channel));
+        }
+
+        if($array)
+        {
+            
+            return $report_data ;
         }
 
         return view('client_view.reports.sales_gathering_analysis.salesChannels_sales_report',compact('company','sales_channels_names','total_sales_channels_growth_rates','final_report_data','total_sales_channels'));

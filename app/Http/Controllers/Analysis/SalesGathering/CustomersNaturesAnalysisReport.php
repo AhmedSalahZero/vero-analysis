@@ -500,11 +500,6 @@ class CustomersNaturesAnalysisReport
         ];
         $all_items = [];
 
-        // $all_data_query = SalesGathering::company()
-        //                     ->whereNotNull($type)
-        //                     ->whereDate('date', '<=', $request->date)
-        //                     ->selectRaw('DATE_FORMAT(date,"%Y") as year,id,net_sales_value,customer_name,date,'.$type);
-
 
 
         $sales_gathering = collect(DB::select(DB::raw("
@@ -709,6 +704,8 @@ class CustomersNaturesAnalysisReport
         $items_totals_counts = $this->finalTotal([$report_counts]);
         // $main_type_items_totals
 
+        
+
 
 
 
@@ -739,6 +736,8 @@ class CustomersNaturesAnalysisReport
             'Dead / Reactivated',
             'Stop / Repeating'
         ];
+
+        // dd(get_defined_vars());
         return view('client_view.reports.sales_gathering_analysis.customer_nature.two_dimensional_report', compact('company', 'view_name',
                                                                                                                     'type',
                                                                                                                     'all_items', 'main_type_items',

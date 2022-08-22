@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 class ZoneSalesAnalysisReport
 {
     use GeneralFunctions;
@@ -19,7 +19,7 @@ class ZoneSalesAnalysisReport
         $zones =  SalesGathering::company()->whereNotNull('zone')->where('zone','!=','')->groupBy('zone')->selectRaw('zone')->get()->pluck('zone')->toArray();
         return view('client_view.reports.sales_gathering_analysis.zone_sales_form', compact('company','zones'));
     }
-    public function ZoneSalesAnalysisResult(Request $request, Company $company)
+    public function ZoneSalesAnalysisResult(Request $request, Company $company , $array = false )
     {
         $dimension = $request->report_type;
 
@@ -73,6 +73,11 @@ class ZoneSalesAnalysisReport
             $final_report_data[$zone]['Sales Values'] = $report_data[$zone];
             $final_report_data[$zone]['Growth Rate %'] = $growth_rate_data[$zone];
             $zones_names[] = (str_replace( ' ','_', $zone));
+        }
+
+        if($array)
+        {
+            return $report_data ;
         }
 
         return view('client_view.reports.sales_gathering_analysis.zone_sales_report',compact('company','zones_names','total_zones_growth_rates','final_report_data','total_zones'));

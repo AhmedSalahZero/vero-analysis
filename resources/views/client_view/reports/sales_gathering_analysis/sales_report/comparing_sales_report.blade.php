@@ -5,6 +5,9 @@
         table {
             white-space: nowrap;
         }
+        .col-sm-6.text-left{
+            display: none ;
+        }
 
     </style>
 @endsection

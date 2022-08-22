@@ -15,6 +15,7 @@
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($type == 'sales_discount') {{  route('salesBreakdown.salesDiscounts.analysis.result',$company)}}@elseif ($type == 'comparing') {{route('comparing',$company)}} @else{{  route('salesBreakdown.analysis.result',$company)  }} @endif   enctype="multipart/form-data">
             @csrf
+            {{-- @dd($type) --}}
             <div class="kt-portlet">
                 <input type="hidden" name="type" value="{{$type}}">
                 <input type="hidden" name="view_name" value="{{$view_name}}">
@@ -39,6 +40,17 @@
                         </div>
 
                         <div class="col-md-3">
+                            <label>{{__('Select Top 50 Or Bottom 50')}} </label>
+                            <div class="kt-input-icon">
+                              <select name="direction" class="form-control">
+                                  <option value="desc">{{ __('Top 50') }}</option>
+                                  <option value="asc">{{ __('Bottom 50') }}</option>
+                              </select>
+                            </div>
+                        </div>
+
+
+                        {{-- <div class="col-md-3">
                             <label>{{__('Note')}} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group ">
@@ -46,6 +58,8 @@
                                 </div>
                             </div>
                         </div>
+
+                         --}}
                         <div class="col-md-3">
                             <label>{{__('Data Type')}} </label>
                             <div class="kt-input-icon">

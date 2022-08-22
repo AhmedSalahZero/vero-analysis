@@ -9,6 +9,7 @@
         table {
             white-space: nowrap;
         }
+        
 
     </style>
 <?php $__env->stopSection(); ?>
@@ -402,11 +403,6 @@
                                             <?php $__currentLoopData = $values; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <td > <?php echo $val; ?> </td>
 
-                                                <?php if($loop->last): ?>
-                                                <td>
-                                               
-                                                </td>
-                                                <?php endif; ?> 
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             <td class="hidden"> </td>
                                         </tr>

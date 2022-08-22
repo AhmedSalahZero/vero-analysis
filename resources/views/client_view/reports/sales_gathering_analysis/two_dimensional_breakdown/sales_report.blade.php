@@ -1,12 +1,46 @@
 @extends('layouts.dashboard')
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
     <style>
         table {
             white-space: nowrap;
         }
 
+        
+
     </style>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css"/>
+
+    <style>
+         table.dataTable thead tr > .dtfc-fixed-left, table.dataTable thead tr > .dtfc-fixed-right{
+        background-color:#086691;
+    }
+       .dtfc-fixed-left,  .dtfc-fixed-right{
+        background-color:#086691 !important;
+    }
+      .dtfc-fixed-left , .dtfc-fixed-right{
+        color:white !important;
+    }
+    .dataTables_wrapper .dataTable th, .dataTables_wrapper .dataTable td{
+        /* color:#595d6e ; */
+    }
+    table.dataTable tbody tr.group-color > .dtfc-fixed-left, table.dataTable tbody tr.group-color > .dtfc-fixed-right{
+        background-color:#086691 !important;
+    }
+    
+    
+  .dataTables_wrapper .dataTable th, .dataTables_wrapper .dataTable td{
+      color:#595d6e;
+  }
+    </style>
+<style>
+    table.dataTable thead tr > .dtfc-fixed-left, table.dataTable thead tr > .dtfc-fixed-right{
+        background-color:#086691;
+    }
+    thead *{
+        text-align:center !important;
+    }
+</style>
 @endsection
 @section('sub-header')
     {{ __($view_name) }}
@@ -69,10 +103,11 @@
             <?php $total_per_item = []; ?>
             <?php $final_total = array_sum($items_totals);
             $final_percentage = $final_total == 0 ? 0 : (($final_total ?? 0) / $final_total) * 100; ?>
+            {{-- @dd($main_type_items_totals) --}}
             @foreach ($main_type_items_totals as $main_type_item_name => $main_item_total)
                 <tr>
                     <th> {{ __($main_type_item_name) }} </th>
-
+{{-- @dd($all_items) --}}
                     @foreach ($all_items as $item)
                         <?php $value = $report_data[$main_type_item_name][$item] ?? 0;
                         $percentage_per_value = $main_item_total == 0 ? 0 : ($value / $main_item_total) * 100; ?>
@@ -173,8 +208,11 @@
 @endsection
 
 @section('js')
+
+    @include('js_datatable')
+
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    </sc>
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
 
 @endsection

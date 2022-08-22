@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-12">
 
-
+{{-- @dd(get_defined_vars()) --}}
 
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action="{{  $type == 'discounts' ?  route('discounts.Ranking.analysis.result',$company) : route('TwoDimensionalBreakdownRanking.result',$company)}}" enctype="multipart/form-data">
@@ -34,7 +34,7 @@
                                 </div>
                             </div>
                         </div> --}}
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label>{{__('End Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -59,7 +59,7 @@
                                 </div>
                             </div>
                         </div> --}}
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label>{{__('Data Type')}} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group ">
