@@ -55,6 +55,11 @@ class InvoicesAgainstAnalysisReport
             $type = 'product_item';
             $view_name = 'Invoices Against Products Items Analysis';
         }
+        if(Request()->route()->named('invoices.salesPersons.analysis'))
+        {
+             $type = 'sales_person';
+            $view_name = 'Invoices Against Sales Persons Analysis';
+        }
         // 
         // if (request()->route()->named('categories.zones.analysis')) {
         //     $type = 'zone';
@@ -157,7 +162,10 @@ class InvoicesAgainstAnalysisReport
             {
                  $reportSalesValues  =getCustomerSalesAnalysisData($request , $company);
             }
- 
+            if($type  == 'sales_person')
+            {
+                 $reportSalesValues  = getSalesPersonsSalesAnalysisData($request , $company );
+            }
         return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','type','secondTypesArray','sumForEachInterval','reportSalesValues'));
 
 

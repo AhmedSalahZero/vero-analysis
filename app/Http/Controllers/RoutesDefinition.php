@@ -250,6 +250,7 @@ class RoutesDefinition
                     'sub_items' => [
                         // 'Categories' => 'categories',
                     //    'Products' => 'products',
+                                     'SalesPersons' => 'salesPersons',
                     'SalesChannels' => 'salesChannels',
                     'Zones' => 'zones',
                      'BusinessSectors' => 'businessSectors',

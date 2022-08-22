@@ -689,7 +689,7 @@ function capitializeType($type)
     return __(spaceAfterCapitalLetters(camelize($type))) ;
 }
 
-function getCustomerSalesAnalysisData(Request $request , Company $company)
+function getCustomerSalesAnalysisData(Request $request , Company $company )
 {
        $dimension = $request->report_type;
 
@@ -704,6 +704,59 @@ function getCustomerSalesAnalysisData(Request $request , Company $company)
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,customer_name
                 FROM sales_gathering
                 WHERE ( company_id = '".$company->id."'AND customer_name = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                ORDER BY id "
+                )))->groupBy('gr_date')->map(function($item){
+                    return $item->sum('net_sales_value');
+                })->toArray();
+         
+            $interval_data_per_item = [];
+            $years = [];
+            if (count($sales_channels_data)>0) {
+
+                array_walk($sales_channels_data, function ($val, $date) use (&$years) {
+                    $years[] = date('Y', strtotime($date));
+                });
+                $years = array_unique($years);
+                $report_data[$sales_channel] = $sales_channels_data;
+                $interval_data_per_item[$sales_channel] = $sales_channels_data;
+                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+
+                $report_data[$sales_channel] = $interval_data['data_intervals'][$request->interval][$sales_channel] ?? [];
+
+
+
+            }
+        }
+
+        $final_report_data = [];
+        $sales_channels_names =[];
+        foreach ($sales_channels as  $sales_channel) {
+            $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel]??[]);
+            $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel]??[]);
+            $sales_channels_names[] = (str_replace( ' ','_', $sales_channel));
+        }
+
+            return $report_data ;
+}
+
+
+
+
+function getSalesPersonsSalesAnalysisData(Request $request , Company $company )
+{
+       $dimension = $request->report_type;
+
+        $report_data =[];
+        $growth_rate_data =[];
+
+        $sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) :$request->sales_channels ;
+
+        foreach ($sales_channels as  $sales_channel) {
+
+            $sales_channels_data =collect(DB::select(DB::raw("
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,sales_person
+                FROM sales_gathering
+                WHERE ( company_id = '".$company->id."'AND sales_person = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
                 ORDER BY id "
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');

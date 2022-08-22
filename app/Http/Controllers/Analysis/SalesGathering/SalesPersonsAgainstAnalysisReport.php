@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SalesPersonsAgainstAnalysisReport
@@ -259,8 +259,9 @@ class SalesPersonsAgainstAnalysisReport
     // }
 
 
-    // public function ProductsSalesAnalysisResult(Request $request, Company $company)
+    // public function ProductsSalesAnalysisResult(Request $request, Company $company , $array = false)
     // {
+    //     // uncommented by salah
     //     $dimension = $request->report_type;
 
     //     $report_data =[];
@@ -270,9 +271,9 @@ class SalesPersonsAgainstAnalysisReport
     //     foreach ($salesPersons as  $category) {
 
     //         $sales_gatherings = SalesGathering::company()
-    //                 ->where('category',$category)
+    //                 ->where('sales_person',$category)
     //                 ->whereBetween('date', [$request->start_date, $request->end_date])
-    //                 ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,category')
+    //                 ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,sales_person')
     //                 ->get()
     //                 ->toArray();
 
@@ -280,8 +281,6 @@ class SalesPersonsAgainstAnalysisReport
     //         $salesPersons_data = [];
 
 
-    //         $dt = Carbon::parse($sales_gatherings[0]['date']);
-    //         $month = $dt->endOfMonth()->format('d-m-Y');
 
 
 
@@ -313,6 +312,10 @@ class SalesPersonsAgainstAnalysisReport
     //         $final_report_data[$category]['Sales Values'] = $report_data[$category];
     //         $final_report_data[$category]['Growth Rate %'] = $growth_rate_data[$category];
     //         $salesPersons_names[] = (str_replace( ' ','_', $category));
+    //     }
+    //     if($array)
+    //     {
+    //         return $report_data;
     //     }
 
     //     return view('client_view.reports.sales_gathering_analysis.salesPersons_sales_report',compact('company','salesPersons_names','total_salesPersons_growth_rates','final_report_data','total_salesPersons'));
