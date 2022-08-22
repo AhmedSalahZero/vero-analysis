@@ -2,9 +2,15 @@
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+<style>
+    div.dropdown-menu.show{
+        max-width:400px !important;
+    }
+</style>
 @endsection
 @section('sub-header')
 {{ __($view_name) }}
+
 @endsection
 @section('content')
 <div class="row">
@@ -73,27 +79,50 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Sales Persons')
+{{-- @dd($name_of_selector_label) --}}
+                        @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Sales Persons' || $name_of_selector_label =='Products Items')
 
                                 <div class="col-md-{{$column}}">
-                        <label>{{ __('Select Categories ( Multi Selection )') }} </label>
+                        <label>{{ __('Select Categories') }}
+                         
+                         @include('max-option-span')
+
+                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group date" id="categories">
-                                <select name="categories[]" class="form-control kt-bootstrap-select kt_bootstrap_select" multiple>
+                                <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
 
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    @endif --}}
+                    @endif
+                    @if($name_of_selector_label == 'Products Items' )
+
+                     <div class="col-md-{{$column}}">
+                        <label>{{ __('Select Products') }}
+                         
+                         @include('max-option-span')
+
+                         </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date" id="products__">
+                                <select data-live-search="true" data-actions-box="true" name="products[]"  class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @endif 
 
 
                     @if ( $name_of_selector_label == 'Sales Discount')
 
                     <div class="col-md-{{$column}}">
-                        <label>{{ __('Select '.$name_of_selector_label) }} @include('max-option-span') </label>
+                        <label>{{ __('Select '.$name_of_selector_label) }} </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -155,6 +184,10 @@
 
                 </div>
             </div>
+            @if('salesPersons.Items.analysis' == Request()->route()->getName())
+            <input type="hidden" id="has_product_item">
+            @endif 
+            {{-- @dd(Request()->route()->getName()) --}}
             <x-submitting />
     </div>
 
@@ -225,7 +258,11 @@
                 salesPersonsData = $(this).val();
             }
             type_of_data = "{{$type}}";
-            getSalesChannales(salesPersonsData, type_of_data);
+            if(type_of_data == 'product_item' || type_of_data == 'product_or_service' )
+            {
+                type_of_data = 'category';
+            }
+            getCategories(salesPersonsData, type_of_data);
 
         }, getNumberOfMillSeconds());
 
@@ -244,15 +281,13 @@
             type_of_data = "{{$type}}";
 
             categories = $(this).val();
-
-            getProducts(salesPersonsData, categories, 'sales_person', type_of_data)
+            getProducts(salesPersonsData, categories , 'product_or_service' , type_of_data)
         }, getNumberOfMillSeconds());
 
 
 
     });
     $(document).on('change', '[name="products[]"]', function() {
-
         clearTimeout(wto);
         wto = setTimeout(() => {
 
@@ -261,11 +296,12 @@
             } else {
                 salesPersonsData = $('#salesPersonsData').val();
             }
+            // categories = $('[name="categories[]"]').val();
             categories = $('[name="categories[]"]').val();
             products = $(this).val();
 
             type_of_data = "{{$type}}";
-            getProductItems(salesPersonsData, products, type_of_data)
+            getProductItems(salesPersonsData ,categories, products)
 
         }, getNumberOfMillSeconds());
 
@@ -323,11 +359,12 @@
 
     // Categories
     function getCategories(salesPersonsData, type_of_data) {
+        // console.log(salesPersonsData, type_of_data);
         $.ajax({
             type: 'POST'
             , data: {
                 'main_data': salesPersonsData
-                , 'main_field': 'sales_channel'
+                , 'main_field': 'sales_person'
                 , 'field': type_of_data
             }
             , url: '{{ route('get.zones.data',$company) }}'
@@ -356,14 +393,20 @@
         });
     }
     // Sub Categories
-    function getProducts(categories, type_of_data, type) {
+    function getProducts(salesPersonsData , categories, type_of_data, type) {
+        // alert(categories)
+        console.log(type_of_data);
         $.ajax({
             type: 'POST'
             , data: {
-                'main_data': categories
-                , 'main_field': 'category'
-                , 'field': type_of_data
-            }
+                'main_data': salesPersonsData
+                , 'main_field': 'sales_person'
+                , 'second_main_data': categories
+                , 'sub_main_field': 'category'
+                // , 'third_main_data': products
+                // , 'third_main_field': 'product_or_service'
+                , 'field':type_of_data
+            , }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
@@ -373,24 +416,39 @@
             // }else{
             //     var data_type = '';
             // }
-            if (type == 'sales_person') {
-
+            // console.log(type);
+            if (type == 'sales_person' || type == 'product_or_service' 
+            // || type == 'product_item'
+            ) {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
-                // if($('#data_type').val()  !== 'value'){
-                //     row += '<option value="">Select</option>\n' ;
-                // }
 
                 $.each(data, function(key, val) {
                     row += '<option value*="' + val + '">' + val + '</option>\n';
 
                 });
+                appendTo = '';
+                if(type == 'product_item')
+                {
+                    appendTo ='#products__'
+                }
+                else{
+                    appendTo ='#sales_channels';
+                }
                 row += '</select>';
-                console.log(row);
-                $('#sales_channels').html('');
-                $('#sales_channels').append(row);
+                $(appendTo).html('');
+                $(appendTo).append(row);
                 reinitializeSelect2();
             } else {
+
+                    appendTo = '';
+                if(type == 'product_item')
+                {
+                    appendTo ='#products__'
+                }
+                else{
+                    appendTo ='#sales_channels';
+                }
 
                 row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -402,37 +460,49 @@
 
                 });
                 row += '</select>';
-                console.log(row);
-                $('#products').html('');
-                $('#products').append(row);
+                $(appendTo).html('');
+                $(appendTo).append(row);
                 reinitializeSelect2();
             }
         });
     }
     // Product Or Services
-    function getProductItems(salesPersonsData, products, type_of_data) {
+    function getProductItems(salesPersonsData,categories , products) {
+        // if(! document.getElementById('has_product_item'))
+        // {
+            // return ;
+        // }
+
+        
+
         $.ajax({
             type: 'POST'
-            , data: {
+            , data: 
+            {
                 'main_data': salesPersonsData
-                , 'main_field': 'category'
+                , 'main_field': 'sales_person'
+                , 'second_main_data': categories
+                , 'sub_main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'sales_person'
-                , 'field': type_of_data
+                , 'third_main_field': 'product_or_service'
+                , 'field': 'product_item'
             , }
+
+            // {
+            //     'main_data': salesPersonsData
+            //     , 'main_field': 'category'
+            //     , 'third_main_data': products
+            //     , 'third_main_field': 'sales_person'
+            //     , 'field': type_of_data
+            // , }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
-            // if($('#data_type').val()  == 'value'){
             var data_type = 'multiple';
-            // }else{
-            //     var data_type = '';
-            // }
+        
             row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
-            // if($('#data_type').val()  !== 'value'){
-            //     row += '<option value="">Select</option>\n' ;
-            // }
+          
 
             $.each(data, function(key, val) {
                 row += '<option value*="' + val + '">' + val + '</option>\n';

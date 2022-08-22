@@ -411,7 +411,7 @@ class CategoriesAgainstAnalysisReport
     }
 
 
-    public function InvoicesSalesAnalysisResult(Request $request, Company $company)
+    public function CategoriesSalesAnalysisResult(Request $request, Company $company)
     {
         $dimension = $request->report_type;
 

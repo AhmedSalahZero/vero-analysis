@@ -21,6 +21,27 @@
       .dtfc-fixed-left , .dtfc-fixed-right{
         color:white !important;
     }
+
+     .secondary-row-color .dtfc-fixed-left ,
+    .secondary-row-color .dtfc-fixed-right
+    {
+        background-color:antiquewhite !important;
+        color:#595d6e !important;
+    }
+
+      .secondary-row-color + tr .dtfc-fixed-left ,
+   .secondary-row-color + tr .dtfc-fixed-right ,
+    {
+        background-color:white !important;
+        color:#595d6e !important;
+    }
+
+    
+      .group-color > .dtfc-fixed-left,  .group-color > .dtfc-fixed-right{
+        background-color:#086691 !important;
+           color:white !important;
+         }
+
     .dataTables_wrapper .dataTable th, .dataTables_wrapper .dataTable td{
         /* color:#595d6e ; */
     }
@@ -41,6 +62,21 @@
         text-align:center !important;
     }
 </style>
+
+<style>
+    .odd:not(.table-active) .dtfc-fixed-left:first-of-type
+    ,
+    .odd:not(.table-active) .dtfc-fixed-right:last-of-type
+
+    {
+                background-color:white !important;
+        color:#595d6e !important;
+    }
+</style>
+
+@if(in_array('TwoDimensionalBreakdown' , Request()->segments()))
+
+@endif 
 @endsection
 @section('sub-header')
     {{ __($view_name) }}

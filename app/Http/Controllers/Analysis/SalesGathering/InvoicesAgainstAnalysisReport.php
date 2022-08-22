@@ -166,6 +166,7 @@ class InvoicesAgainstAnalysisReport
             {
                  $reportSalesValues  = getSalesPersonsSalesAnalysisData($request , $company );
             }
+          array_sort_multi_levels($sumForEachInterval);
         return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','type','secondTypesArray','sumForEachInterval','reportSalesValues'));
 
 

@@ -93,10 +93,6 @@
                                 @foreach ($d  as $month=>$value )
                                     <th>
                                        {{ $endOfMonth=\Carbon\Carbon::parse($year.'-'.$month)->endOfMonth()->format('d-M-Y') }}
-                                        {{-- {{ explode('-',date('d-M-Y', strtotime('1-'.$month . '-' .$year )))[1].
-                                        '-' . explode('-',date('d-M-Y', strtotime('1-'.$month . '-' .$year )))[2] --}}
-                                        
-                                         {{-- }} --}}
                                         
                                         </th>
                                 @endforeach
@@ -109,11 +105,18 @@
                         @slot('table_body')
 
                             <?php $idd =1 ;?>
+
                             @foreach ($sumForEachInterval as $zone_name => $data)
+                                            @php
+                                                $totalCountInvoiceNumber = 0 ;
+                                            @endphp
                                     <tr class="group-color">
                                         <td  colspan="{{ $colsSpans }}" class=" bg-white text-black"  style="cursor: pointer;" onclick="toggleRow('{{ $idd }}')">
                                             <i class="row_icon{{ $idd }} flaticon2-up text-black"></i>
-                                            <b>{{ __($zone_name) }}</b>
+                                            <b>
+                                                {{ __($zone_name) }}
+                                            
+                                            </b>
                                         </td>
                                            @foreach (getLongestArray($sumForEachInterval)  as $year => $d )
                                         @foreach ($d as $interval=>$q)
@@ -127,17 +130,23 @@
                                       <tr class="row{{ $idd }}  active-style text-center" style="display: none">
                                             <td class="text-left"><b>{{ __('Invoice Count')  }}</b></td>
 
-
+                                          
                                         @foreach (getLongestArray($sumForEachInterval)  as $year => $d )
                                         @foreach ($d as $interval=>$q)
                                                 <td class="text-center">
                                                     <span class="white-text"><b> 
-                                                        {{ number_format(($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0  )}}
+                                                        @php
+                                                           $countInvoiceNumber =  ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0
+                                                        @endphp
+                                                        {{ number_format( $countInvoiceNumber )}}
+
                                                         </b></span>
                                                 </td>
 
                                           @endforeach
                                         @endforeach
+
+                                       
 
                                         </tr>
 
@@ -156,8 +165,7 @@
                                                 <td class="text-center">
                                                     <span class="white-text"><b> 
                                                         {{ 
-        round(($sumForEachInterval[$zone_name][$year][$interval]['avg']) ?? 0)
-                                                        
+                                                          round(($sumForEachInterval[$zone_name][$year][$interval]['avg']) ?? 0)
                                                         }}
                                                         </b></span>
                                                 </td>
@@ -178,9 +186,11 @@
                                          <tr class="row{{ $idd }}  active-style text-center" style="display: none">
                                             <td class="text-left"><b>{{ __('Avg Invoice Value')  }}</b></td>
 
-
+                                       
                                         @foreach (getLongestArray($sumForEachInterval)  as $year => $d )
                                         @foreach ($d as $interval=>$q)
+
+                                        
                                                 <td class="text-center">
                                                     <span class="white-text"><b>
                                                         @php
@@ -188,7 +198,6 @@
                                                         $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
                                                         $salesValue = $reportSalesValues[$zone_name][$intervalFormatted] ?? 0 ;
                                                         $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
-                                                        
                                                         @endphp 
                                                         {{-- // ; --}}
                                                         {{ 
@@ -198,8 +207,7 @@
                                                 </td>
                                           @endforeach
                                         @endforeach
-
-
+                                    
                                         </tr>
 
                                         @endif

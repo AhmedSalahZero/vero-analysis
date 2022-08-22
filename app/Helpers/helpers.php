@@ -235,6 +235,38 @@ function getOrderMaxForBranch(string $branchName  ,  array $data)
     return $new[strval($value)] ;
     
 }
+function array_sort_multi_levels(&$array)
+{
+    uasort($array , function($a  , $b){
+        $sumA = 0; 
+        foreach($a as $year=>$data)
+        {
+            foreach($data as $quarter => $data)
+            {
+            $sumA += $data['invoice_number'];
+                
+            }
+        }
+
+                $sumB = 0; 
+        foreach($b as $year=>$data)
+        {
+              foreach($data as $quarter => $data){
+            $sumB += $data['invoice_number'];
+                  
+              }
+        }
+
+
+         if ($sumA == $sumB) {
+            return 0;
+        }
+        return ($sumA > $sumB) ? -1 : 1;
+        
+
+        
+    });
+}
 // function $productName
 function getMaxNthFromArray()
 {

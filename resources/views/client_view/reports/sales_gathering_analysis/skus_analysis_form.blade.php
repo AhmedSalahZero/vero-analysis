@@ -43,10 +43,17 @@
                             <label>{{ __('Data Type') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select name="data_type" id="data_type" class="form-control">
+                                    <select 
+                                    @if( ($name_of_selector_label == 'Sales Discount') )
+                                            disabled
+                                        @endif 
+                                
+                                    name="data_type" id="data_type" class="form-control" >
 
                                         <option selected value="value">{{ __('Value') }}</option>
+
                                         <option value="quantity">{{ __('Quantity') }}</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -54,7 +61,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select Products Items') }} </label>
+                            <label>{{ __('Select Products Items') }} @include('max-option-span') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="ItemsData[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="ItemsData" multiple>
@@ -86,7 +93,9 @@
                     @if ( $name_of_selector_label == 'Sales Discount')
 
                     <div class="col-md-{{$column}}">
-                        <label>{{ __('Select '.$name_of_selector_label) }} </label>
+                        <label>{{ __('Select '.$name_of_selector_label) }} 
+
+                        </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -102,7 +111,11 @@
 
                     @else
                     <div class="col-md-{{$column}}">
-                        <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection"></span></label>
+                        <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection"></span>
+                        
+                        @include('max-option-span')
+
+                        </label>
                         <div class="kt-input-icon">
                             <div class="input-group date" id="sales_channels">
                                 <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required class="form-control kt-bootstrap-select kt_bootstrap_select select2-select" multiple>

@@ -23,7 +23,11 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label><?php echo e(__('Select Categories ( Multi Selection )')); ?> </label>
+                            <label><?php echo e(__('Select Categories')); ?> 
+                            
+                            <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            
+                            </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" data-max-options="<?php echo e(maxOptionsForOneSelector()); ?>" name="categories[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>

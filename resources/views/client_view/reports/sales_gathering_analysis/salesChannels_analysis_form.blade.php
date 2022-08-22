@@ -119,7 +119,7 @@
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select '.$name_of_selector_label) }} @include('max-option-span') </label>
+                            <label>{{ __('Select '.$name_of_selector_label) }}  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -377,7 +377,7 @@
             // else{
             //     var data_type = '';
             // }
-            row = '<select data-live-search="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
+            row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
             // if($('#data_type').val()  !== 'value'){
             //     row += '<option value="">Select</option>\n' ;
             // }

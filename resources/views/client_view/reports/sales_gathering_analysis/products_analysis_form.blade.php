@@ -50,6 +50,12 @@
                         {
                             $column =  6 ;
                         }
+
+
+                        if( ($view_name =='Products Items Average Prices' && $type =='product_item') && $name_of_selector_label == 'Products Items' )
+                        {
+                            $column =  6 ;
+                        }
                     ?>
                 <input type="hidden" name="type" value="{{$type}}">
                 <input type="hidden" name="view_name" value="{{$view_name}}">
@@ -74,7 +80,7 @@
                     @endif
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select products') }} @include('max-option-span') </label>
+                            <label>{{ __('Select Products') }} @include('max-option-span') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="productsData[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="productsData" multiple>
@@ -106,7 +112,7 @@
                     @if ( $name_of_selector_label == 'Sales Discount')
 
                     <div class="col-md-{{$column}}">
-                        <label>{{ __('Select '.$name_of_selector_label) }} @include('max-option-span') </label>
+                        <label>{{ __('Select '.$name_of_selector_label) }} </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -133,8 +139,18 @@
                     </div>
                     @endif
                 </div>
+
+                    @if($view_name != 'Products Against Products Items Trend Analysis' && $name_of_selector_label != 'name_of_selector_label' && $type != 'product_item' )
+                    @php
+                      $cols = 3 ;
+                    @endphp
+                    @else
+                        @php
+                      $cols = 4 ;
+                    @endphp
+                    @endif 
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-{{ $cols }}">
                         <label>{{ __('Start Date') }}</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -142,7 +158,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-{{ $cols }}">
                         <label>{{ __('End Date') }}</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -150,7 +166,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-{{ $cols }}">
                         <label>{{ __('Select Interval') }} </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -165,6 +181,7 @@
                             </div>
                         </div>
                     </div>
+                    @if($view_name != 'Products Against Products Items Trend Analysis' && $name_of_selector_label != 'name_of_selector_label' && $type != 'product_item' )
                     <div class="col-md-3">
                         <label>{{ __('Data Type') }} </label>
                         <div class="kt-input-icon">
@@ -177,6 +194,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
             <x-submitting />

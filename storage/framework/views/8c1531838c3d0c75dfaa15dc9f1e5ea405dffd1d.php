@@ -3,7 +3,7 @@
     <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
     <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
-    <?php echo e(__('Sales Channel Sales Analysis')); ?>
+    <?php echo e(__('Products Items Sales Analysis')); ?>
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
@@ -24,7 +24,11 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label><?php echo e(__('Select Products Items ( Multi Selection )')); ?> </label>
+                            <label><?php echo e(__('Select Products Items')); ?> 
+                            
+                            <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            
+                            </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" data-max-options="<?php echo e(maxOptionsForOneSelector()); ?>" name="branches[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>

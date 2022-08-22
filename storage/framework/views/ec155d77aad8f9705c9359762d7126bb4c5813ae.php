@@ -50,6 +50,12 @@
                         {
                             $column =  6 ;
                         }
+
+
+                        if( ($view_name =='Products Items Average Prices' && $type =='product_item') && $name_of_selector_label == 'Products Items' )
+                        {
+                            $column =  6 ;
+                        }
                     ?>
                 <input type="hidden" name="type" value="<?php echo e($type); ?>">
                 <input type="hidden" name="view_name" value="<?php echo e($view_name); ?>">
@@ -74,7 +80,7 @@
                     <?php endif; ?>
                     <div class="form-group row">
                         <div class="col-md-<?php echo e($column); ?>">
-                            <label><?php echo e(__('Select products')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                            <label><?php echo e(__('Select Products')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="productsData[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="productsData" multiple>
@@ -93,7 +99,7 @@
                     <?php if( $name_of_selector_label == 'Sales Discount'): ?>
 
                     <div class="col-md-<?php echo e($column); ?>">
-                        <label><?php echo e(__('Select '.$name_of_selector_label)); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                        <label><?php echo e(__('Select '.$name_of_selector_label)); ?> </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -120,8 +126,18 @@
                     </div>
                     <?php endif; ?>
                 </div>
+
+                    <?php if($view_name != 'Products Against Products Items Trend Analysis' && $name_of_selector_label != 'name_of_selector_label' && $type != 'product_item' ): ?>
+                    <?php
+                      $cols = 3 ;
+                    ?>
+                    <?php else: ?>
+                        <?php
+                      $cols = 4 ;
+                    ?>
+                    <?php endif; ?> 
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-<?php echo e($cols); ?>">
                         <label><?php echo e(__('Start Date')); ?></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -129,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-<?php echo e($cols); ?>">
                         <label><?php echo e(__('End Date')); ?></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -137,7 +153,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-<?php echo e($cols); ?>">
                         <label><?php echo e(__('Select Interval')); ?> </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -152,6 +168,7 @@
                             </div>
                         </div>
                     </div>
+                    <?php if($view_name != 'Products Against Products Items Trend Analysis' && $name_of_selector_label != 'name_of_selector_label' && $type != 'product_item' ): ?>
                     <div class="col-md-3">
                         <label><?php echo e(__('Data Type')); ?> </label>
                         <div class="kt-input-icon">
@@ -164,6 +181,7 @@
                             </div>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>

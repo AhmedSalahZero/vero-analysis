@@ -16,7 +16,9 @@
             width: 100%;
         }
     </style>
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
+
+    @include('datatable_css')
 @endsection
 
 @section('content')
@@ -250,11 +252,13 @@
 @endsection
 
 @section('js')
+
+@include('js_datatable')
     <!-- Resources -->
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    {{-- <script src="https://cdn.amcharts.com/lib/4/core.js"></script> --}}
+    {{-- <script src="https://cdn.amcharts.com/lib/4/charts.js"></script> --}}
+    {{-- <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script> --}}
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
     <script>

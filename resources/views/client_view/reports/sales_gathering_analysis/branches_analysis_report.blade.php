@@ -21,12 +21,18 @@
     table.dataTable thead tr > .dtfc-fixed-left, table.dataTable thead tr > .dtfc-fixed-right{
         background-color:#086691 !important;
     }
-      .dtfc-fixed-left,  .dtfc-fixed-right{
+    .dtfc-fixed-left:not(.active-style),  .dtfc-fixed-right:not(.active-style){
+        background-color:white !important;
+        color:black;
+    } 
+      .group-color > .dtfc-fixed-left,  .group-color > .dtfc-fixed-right{
         background-color:#086691 !important;
-    }
+           color:white !important;
+         }
     .dtfc-fixed-left , .dtfc-fixed-right{
-        color:white !important;
+        /* color:white !important; */
     }
+    
     thead *{
         text-align:center !important;
     }

@@ -64,6 +64,13 @@
                             $column =  4 ;
                         }
 
+                        if($name_of_selector_label == 'Products / Services')
+                        {
+                            $column = 6 ; 
+                        }
+
+                        // dd();
+
                     ?>
 
                 
@@ -141,7 +148,7 @@
                     <?php if( $name_of_selector_label == 'Sales Discount'): ?>
 
                     <div class="col-md-<?php echo e($column); ?>">
-                        <label><?php echo e(__('Select '.$name_of_selector_label)); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                        <label><?php echo e(__('Select '.$name_of_selector_label)); ?> </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -432,8 +439,7 @@
                 , 'main_field': 'category'
                 , 'field': type_of_data
             }
-            , url: '<?php echo e(route('
-            get.zones.data ',$company)); ?>'
+            , url: '<?php echo e(route('get.zones.data',$company)); ?>'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -460,8 +466,7 @@
                 , 'main_field': 'customer_name'
                 , 'field': type_of_data
             }
-            , url: '<?php echo e(route('
-            get.zones.data ',$company)); ?>'
+            , url: '<?php echo e(route('get.zones.data',$company)); ?>'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -497,8 +502,7 @@
                 , 'main_field': 'category'
                 , 'field': type_of_data
             }
-            , url: '<?php echo e(route('
-            get.zones.data ',$company)); ?>'
+            , url: '<?php echo e(route('get.zones.data',$company)); ?>'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -555,8 +559,7 @@
                 , 'main_field': 'customer_name'
                 , 'field': type_of_data
             }
-            , url: '<?php echo e(route('
-            get.zones.data ',$company)); ?>'
+            , url: '<?php echo e(route('get.zones.data',$company)); ?>'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -613,8 +616,7 @@
                 , 'third_main_field': 'product_or_service'
                 , 'field': type_of_data
             , }
-            , url: '<?php echo e(route('
-            get.zones.data ',$company)); ?>'
+            , url: '<?php echo e(route('get.zones.data',$company)); ?>'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -643,8 +645,7 @@
                 , 'main_field': 'customer_name'
                 , 'field': type_of_data
             , }
-            , url: '<?php echo e(route('
-            get.zones.data ',$company)); ?>'
+            , url: '<?php echo e(route('get.zones.data',$company)); ?>'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {

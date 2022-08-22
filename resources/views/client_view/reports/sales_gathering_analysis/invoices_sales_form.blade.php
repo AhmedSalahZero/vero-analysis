@@ -25,8 +25,8 @@
 
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-4">
-                            <label>{{__('Select') .' '. __(spaceAfterCapitalLetters(camelize($type)) .' ' . __('Multi Selection')) }}  @include('max-option-span') </label>
+                        <div class="col-md-3">
+                            <label>{{__('Select') .' '. __(spaceAfterCapitalLetters(camelize($type)) ) }}  @include('max-option-span') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select  data-live-search="true" data-actions-box="true" data-max-options="{{ maxOptionsForOneSelector() }}" name="branches[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>
@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -46,7 +46,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label>{{__('End Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label>{{__('Select Interval')}} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -69,7 +69,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        {{-- <div class="col-md-2">
                             <label>{{__('Data Type')}} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -80,7 +80,7 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <x-submitting/>

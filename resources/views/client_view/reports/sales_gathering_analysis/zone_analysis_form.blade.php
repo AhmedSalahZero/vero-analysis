@@ -130,7 +130,7 @@
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select '.$name_of_selector_label) }} @include('max-option-span') </label>
+                            <label>{{ __('Select '.$name_of_selector_label) }}  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-actions-box="true" data-live-search="true" name="sales_discounts_fields[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" id="sales_discounts_fields" multiple>

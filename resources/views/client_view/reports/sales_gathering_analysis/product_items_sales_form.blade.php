@@ -4,7 +4,7 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('sub-header')
-    {{__('Sales Channel Sales Analysis')}}
+    {{__('Products Items Sales Analysis')}}
 @endsection
 @section('content')
 <div class="row">

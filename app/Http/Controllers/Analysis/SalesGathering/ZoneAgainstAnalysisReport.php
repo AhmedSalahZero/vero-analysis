@@ -515,6 +515,7 @@ class ZoneAgainstAnalysisReport
                 ->pluck($request->field)
                 ->toArray();
         }else{
+            // dd(Request()->all());
 
             $data = SalesGathering::company()
                 ->whereNotNull($request->main_field)

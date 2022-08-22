@@ -94,9 +94,6 @@
                                        <?php echo e($endOfMonth=\Carbon\Carbon::parse($year.'-'.$month)->endOfMonth()->format('d-M-Y')); ?>
 
                                         
-                                        
-                                         
-                                        
                                         </th>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     
@@ -108,11 +105,19 @@
                         <?php $__env->slot('table_body'); ?>
 
                             <?php $idd =1 ;?>
+
                             <?php $__currentLoopData = $sumForEachInterval; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $zone_name => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php
+                                                $totalCountInvoiceNumber = 0 ;
+                                            ?>
                                     <tr class="group-color">
                                         <td  colspan="<?php echo e($colsSpans); ?>" class=" bg-white text-black"  style="cursor: pointer;" onclick="toggleRow('<?php echo e($idd); ?>')">
                                             <i class="row_icon<?php echo e($idd); ?> flaticon2-up text-black"></i>
-                                            <b><?php echo e(__($zone_name)); ?></b>
+                                            <b>
+                                                <?php echo e(__($zone_name)); ?>
+
+                                            
+                                            </b>
                                         </td>
                                            <?php $__currentLoopData = getLongestArray($sumForEachInterval); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year => $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php $__currentLoopData = $d; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $interval=>$q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -126,18 +131,24 @@
                                       <tr class="row<?php echo e($idd); ?>  active-style text-center" style="display: none">
                                             <td class="text-left"><b><?php echo e(__('Invoice Count')); ?></b></td>
 
-
+                                          
                                         <?php $__currentLoopData = getLongestArray($sumForEachInterval); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year => $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php $__currentLoopData = $d; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $interval=>$q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <td class="text-center">
                                                     <span class="white-text"><b> 
-                                                        <?php echo e(number_format(($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0  )); ?>
+                                                        <?php
+                                                           $countInvoiceNumber =  ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0
+                                                        ?>
+                                                        <?php echo e(number_format( $countInvoiceNumber )); ?>
+
 
                                                         </b></span>
                                                 </td>
 
                                           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+                                       
 
                                         </tr>
 
@@ -176,9 +187,11 @@
                                          <tr class="row<?php echo e($idd); ?>  active-style text-center" style="display: none">
                                             <td class="text-left"><b><?php echo e(__('Avg Invoice Value')); ?></b></td>
 
-
+                                       
                                         <?php $__currentLoopData = getLongestArray($sumForEachInterval); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year => $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php $__currentLoopData = $d; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $interval=>$q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                                        
                                                 <td class="text-center">
                                                     <span class="white-text"><b>
                                                         <?php
@@ -186,7 +199,6 @@
                                                         $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
                                                         $salesValue = $reportSalesValues[$zone_name][$intervalFormatted] ?? 0 ;
                                                         $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
-                                                        
                                                         ?> 
                                                         
                                                         <?php echo e($avg_invoice_value); ?>
@@ -195,8 +207,7 @@
                                                 </td>
                                           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
+                                    
                                         </tr>
 
                                         <?php endif; ?>

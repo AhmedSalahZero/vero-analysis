@@ -25,8 +25,8 @@
 
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-4">
-                            <label><?php echo e(__('Select') .' '. __(spaceAfterCapitalLetters(camelize($type)) .' ' . __('Multi Selection'))); ?>  <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                        <div class="col-md-3">
+                            <label><?php echo e(__('Select') .' '. __(spaceAfterCapitalLetters(camelize($type)) )); ?>  <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select  data-live-search="true" data-actions-box="true" data-max-options="<?php echo e(maxOptionsForOneSelector()); ?>" name="branches[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>
@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label><?php echo e(__('Start Date')); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -46,7 +46,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label><?php echo e(__('End Date')); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label><?php echo e(__('Select Interval')); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -69,18 +69,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <label><?php echo e(__('Data Type')); ?> </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select name="interval" disabled class="form-control">
-
-                                        <option selected value="value"><?php echo e(__('Value')); ?></option>
-                                        <option value="quantity"><?php echo e(__('Quantity')); ?></option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
                 <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>

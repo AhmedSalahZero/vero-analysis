@@ -112,7 +112,7 @@
                         :tableClass="'kt_table_with_no_pagination'">
                         @slot('table_header')
                             <tr class="table-active text-center">
-                                <th class="text-center absorbing-column">{{ __('Categories') }}</th>
+                                <th class="text-center absorbing-column">{{ __('Product Item') }}</th>
                                 @foreach ($dates as $date)
                                     <th>{{ date('d-M-Y', strtotime($date)) }}</th>
                                 @endforeach
