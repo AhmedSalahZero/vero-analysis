@@ -36,6 +36,7 @@
                             ->get(); ?> --}}
 
                         @foreach ($client_sections as $section)
+                        {{-- mr mahmoud temporary condition --}}
                         @if(! ($section->id == 220) 
                         
                         ||

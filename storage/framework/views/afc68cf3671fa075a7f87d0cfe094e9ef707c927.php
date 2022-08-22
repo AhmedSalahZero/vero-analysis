@@ -4,7 +4,6 @@
         table {
             white-space: nowrap;
         }
-        
     </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>

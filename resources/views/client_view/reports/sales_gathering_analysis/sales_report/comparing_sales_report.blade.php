@@ -129,7 +129,7 @@
                     <div class="row">
 
 
-                        <div class="col-md-12">
+                        <div class="col-md-6">
 
                                 <x-table :tableTitle="'Monthly Seasonality Table'" :tableClass="'kt_table_with_no_pagination_no_search'">
                                     @slot('table_header')
@@ -159,7 +159,62 @@
                                     @endslot
                                 </x-table>
                             </div>
+
+
+                            <div class="col-md-6">
+
+                                <x-table :tableTitle="'Quarterly Seasonality Table'" :tableClass="'kt_table_with_no_pagination_no_search'">
+                                    @slot('table_header')
+                                        <tr class="table-active text-center">
+                                            <th>{{ __('Quarter') }}</th>
+                                            <th>{{ __('Quarter Sales %') }}</th>
+                                        </tr>
+                                    @endslot
+                                    @slot('table_body')
+                                        <?php $sum_totals = array_sum($total_full_data); ?>
+                                            <tr class="text-center">
+                                                <td>{{ __('Quarter One (Jan / Feb / Mar)') }}</td>
+                                                <td> {{ sumBasedOnQuarterNumber($total_full_data , ['January','February','March']  , $sum_totals) }} </td>
+                                            </tr>
+                                            <tr class="text-center">
+                                                <td>{{ __('Quarter Two (Apr / May / Jun)') }}</td>
+                                                <td> {{ sumBasedOnQuarterNumber($total_full_data , ['April','May','June'] , $sum_totals) }} </td>
+                                            </tr>
+                                            <tr class="text-center">
+                                                <td>{{ __('Quarter Three (Jul / Aug / Sep)') }}</td>
+                                                <td> {{ sumBasedOnQuarterNumber($total_full_data , ['July','August','September'] , $sum_totals) }} </td>
+                                            </tr>
+                                            <tr class="text-center">
+                                                <td>{{ __('Quarter Four (Oct / Nov / Dec)') }}</td>
+                                                <td>{{ sumBasedOnQuarterNumber($total_full_data , ['October','November','December'] , $sum_totals) }}</td>
+                                            </tr>
+
+                                            <tr class="table-active text-center odd">
+                                            <th>{{__('Total')}}</th>
+                                            <td>100%</td>
+                                        </tr>
+
+                                            
+                                       
+                                       
+                                    @endslot
+                                </x-table>
+                            </div>
+
+
+
                     </div>
+
+
+
+
+
+
+
+                    
+                 
+
+
 
 
                     <input type="hidden" id="monthly_data" data-total="{{ json_encode($chart_data??[]) }}">

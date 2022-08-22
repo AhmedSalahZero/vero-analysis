@@ -823,3 +823,17 @@ function getSalesPersonsSalesAnalysisData(Request $request , Company $company )
 
             return $report_data ;
 }
+
+function sumBasedOnQuarterNumber($array , array $quarters  , $total )
+{
+    $result = 0 ; 
+    foreach($array as $month=>$val)
+    {
+        if(in_array($month , $quarters ))
+        {
+            $result += $val ;
+        }
+    }
+    return $result ? number_format($result / $total  * 100  , 2) . ' % ': '-';
+     
+}

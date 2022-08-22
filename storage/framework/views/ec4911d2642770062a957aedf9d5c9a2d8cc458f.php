@@ -141,7 +141,7 @@
                     <div class="row">
 
 
-                        <div class="col-md-12">
+                        <div class="col-md-6">
 
                                 <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableTitle' => 'Monthly Seasonality Table','tableClass' => 'kt_table_with_no_pagination_no_search']); ?>
@@ -181,7 +181,72 @@
 <?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
 <?php endif; ?>
                             </div>
+
+
+                            <div class="col-md-6">
+
+                                <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableTitle' => 'Quarterly Seasonality Table','tableClass' => 'kt_table_with_no_pagination_no_search']); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                                    <?php $__env->slot('table_header'); ?>
+                                        <tr class="table-active text-center">
+                                            <th><?php echo e(__('Quarter')); ?></th>
+                                            <th><?php echo e(__('Quarter Sales %')); ?></th>
+                                        </tr>
+                                    <?php $__env->endSlot(); ?>
+                                    <?php $__env->slot('table_body'); ?>
+                                        <?php $sum_totals = array_sum($total_full_data); ?>
+                                            <tr class="text-center">
+                                                <td><?php echo e(__('Quarter One (Jan / Feb / Mar)')); ?></td>
+                                                <td> <?php echo e(sumBasedOnQuarterNumber($total_full_data , ['January','February','March']  , $sum_totals)); ?> </td>
+                                            </tr>
+                                            <tr class="text-center">
+                                                <td><?php echo e(__('Quarter Two (Apr / May / Jun)')); ?></td>
+                                                <td> <?php echo e(sumBasedOnQuarterNumber($total_full_data , ['April','May','June'] , $sum_totals)); ?> </td>
+                                            </tr>
+                                            <tr class="text-center">
+                                                <td><?php echo e(__('Quarter Three (Jul / Aug / Sep)')); ?></td>
+                                                <td> <?php echo e(sumBasedOnQuarterNumber($total_full_data , ['July','August','September'] , $sum_totals)); ?> </td>
+                                            </tr>
+                                            <tr class="text-center">
+                                                <td><?php echo e(__('Quarter Four (Oct / Nov / Dec)')); ?></td>
+                                                <td><?php echo e(sumBasedOnQuarterNumber($total_full_data , ['October','November','December'] , $sum_totals)); ?></td>
+                                            </tr>
+
+                                            <tr class="table-active text-center odd">
+                                            <th><?php echo e(__('Total')); ?></th>
+                                            <td>100%</td>
+                                        </tr>
+
+                                            
+                                       
+                                       
+                                    <?php $__env->endSlot(); ?>
+                                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+                            </div>
+
+
+
                     </div>
+
+
+
+
+
+
+
+                    
+                 
+
+
 
 
                     <input type="hidden" id="monthly_data" data-total="<?php echo e(json_encode($chart_data??[])); ?>">

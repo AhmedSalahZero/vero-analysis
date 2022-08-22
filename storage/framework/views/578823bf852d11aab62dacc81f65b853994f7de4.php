@@ -34,11 +34,11 @@
                         
 
                         <?php $__currentLoopData = $client_sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        
                         <?php if(! ($section->id == 220) 
                         
                         ||
-                          (Auth()->check() && ! in_array(Auth()->user()->id , [12,13,14,1])) 
-                          
+                          (Auth()->check() && ! in_array(Auth()->user()->id , [12,13,14])) 
                           
                           ): ?>
 
