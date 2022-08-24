@@ -392,12 +392,14 @@ class HomeController extends Controller
         $request['start_date'] =date('Y',strtotime($date)).'-01-01';
         $request['end_date'] =$date;
         
-        // $customers_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
         $customers_breakdown_data = [];
         $request['type'] = 'customer_nature';
         $request['date'] = $date;
 
         $customers_natures = (new CustomersNaturesAnalysisReport)->result($request,$company,'array');
+
+
+        // dd($customers_natures);;
 
         return view('client_view.home_dashboard.dashboard_customers',compact('company','customers_breakdown_data','customers_natures','date'));
     }
@@ -448,6 +450,8 @@ class HomeController extends Controller
         $end_date_0   = date('2021-12-31');
         $start_date_1 = date('2020-01-01');
         $end_date_1   = date('2020-12-31');
+        $start_date_2 = date('2019-01-01');
+        $end_date_2   = date('2019-12-31');
 
              $allTypes =  [
                 'zone'=>'brand',
@@ -460,6 +464,7 @@ class HomeController extends Controller
                 'service_provider_name'=>'warning',
                 'service_provider_type'=>'danger',
                 'service_provider_birth_year'=>'success',
+                'customer_name'=>'success'
                 ];
                 
          $exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
@@ -481,15 +486,20 @@ class HomeController extends Controller
             $firstKey = $keys[0] ?? 0;
             // dd();
             $secondKey = $keys[1] ?? 0;
+            $thirdKey = $keys[2] ?? 0;
          
              $request['types']=[
-                $firstKey,$secondKey
+                $firstKey,$secondKey ,$thirdKey 
             ];
             // dd($firstType, $secondType);
             $request['start_date_one'] = $start_date_0;
             $request['end_date_one'] = $end_date_0;
             $request['start_date_two'] = $start_date_1;
             $request['end_date_two'] = $end_date_1;
+
+             $request['start_date_three'] = $start_date_2;
+            $request['end_date_three'] = $end_date_2;
+            
         }elseif ($request->isMethod('POST')){
             
             
@@ -497,6 +507,8 @@ class HomeController extends Controller
             $end_date_0  = $request['end_date_one'];
             $start_date_1  = $request['start_date_two'];
             $end_date_1  = $request['end_date_two'];
+            $start_date_2  = $request['start_date_three'];
+            $end_date_2  = $request['end_date_three'];
         }
 
          foreach((array)$request->types as $t ){
@@ -505,15 +517,12 @@ class HomeController extends Controller
         }
         
         $customers_natures = [] ;
-        
-        // dd($permittedTypes);
-        
-        // dd($permittedTypes);
+        // dd($intervalComparing);
 
         return view('client_view.home_dashboard.dashboard_intervalComparing',compact('company'
         // ,'product_items','sales_channels'
         ,
-        'start_date_0','end_date_0','start_date_1','end_date_1','permittedTypes','selectedTypes' , 'intervalComparing'));
+        'start_date_0','end_date_0','start_date_1','end_date_1','start_date_2', 'end_date_2','permittedTypes','selectedTypes' , 'intervalComparing'));
     }
 
 }

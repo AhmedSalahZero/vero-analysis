@@ -892,3 +892,31 @@ function getAllColumnsTypesForCaching($companyId)
     return array_intersect($exportables , $cacheablesFields) ;
     
 }
+
+function getCustomerNature(string $customerName , array $allDataArray)
+{
+    unset($allDataArray['totals']);
+    if($customerName == 'TAQA Gas')
+    {
+    }
+    // dd();
+    foreach($allDataArray as $key=>$array)
+    {
+        // dump($array);
+        foreach($array as $type=>$arr)
+        {
+           foreach($arr as $ar)
+           {
+            //    if($customerName == 'TAQA Gas'  )
+            //    {
+                //  logger($ar->customer_name );
+            //    }
+               if($ar->customer_name === $customerName)
+               {
+                    return $type ;   
+               }
+           }
+        }
+    }
+    return '';
+}

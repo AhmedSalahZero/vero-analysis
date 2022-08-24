@@ -9,7 +9,7 @@
     <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
     <style>
         table {
-            white-space: nowrap;
+            /* white-space: nowrap; */
         }
 
     </style>
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-1"></div>
                 <div class="col-md-1">
                     <label> </label>
@@ -85,7 +85,6 @@
                 <div class="kt-portlet__body">
 
                     <!--begin: Datatable -->
-
                      <?php
             $others = array_slice($customers_natures['totals'] , 50 ,null,true ) ;
             $allFormattedWithOthers = array_merge(
@@ -100,7 +99,12 @@
             );
 
         ?>
-
+        
+        
+        <?php
+            $order = 1 ;
+        ?>
+         
          <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll']); ?>
 <?php $component->withName('table'); ?>
@@ -111,6 +115,7 @@
                             <tr class="table-active text-center">
                                 <th>#</th>
                                 <th><?php echo e(__('Customers')); ?></th>
+                                <th><?php echo e(__('Nature')); ?></th>
                                 <th><?php echo e(__('Sales Values')); ?></th>
                                 <th><?php echo e(__('Percentages %')); ?></th>
 
@@ -118,11 +123,15 @@
                         <?php $__env->endSlot(); ?>
                         <?php $__env->slot('table_body'); ?>
                             <?php $__currentLoopData = $allFormattedWithOthers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            
+         
                             
                             <tr>
                                 <th><?php echo e($key+1); ?></th>
                                 <th><?php echo e($item->customer_name); ?></th>
+                                <th>
+                                    <p style="max-width:15px"><?php echo e(getCustomerNature($item->customer_name , $customers_natures)); ?></p>
+                                    
+                                </th>
                                 <td class="text-center"><?php echo e(number_format($item->val)); ?></td>
                                 <td class="text-center"><?php echo e($item->percentage); ?> % </td>
                             </tr>
@@ -153,7 +162,6 @@
         </div>
     
        
-
         <input type="hidden" id="total" data-total="<?php echo e(json_encode(
             $allFormattedWithOthers 
         )); ?>">
@@ -219,7 +227,6 @@
                              $countVals = count($vals) ;
                             $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
                               ?>
-                            
                                 <tr>
                                     <th><?php echo e($staticName); ?></th>
                                     <td class="text-center"><?php echo e($countVals); ?></td>

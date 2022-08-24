@@ -9,7 +9,7 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     <style>
         table {
-            white-space: nowrap;
+            /* white-space: nowrap; */
         }
 
     </style>
@@ -36,15 +36,7 @@
                         </div>
                     </div>
                 </div>
-                {{-- <div class="col-md-5">
-                    <label>{{ __('End Date') }}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="date" name="end_date"  required value="{{ $end_date }}"
-                                max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
-                        </div>
-                    </div>
-                </div> --}}
+               
                 <div class="col-md-1"></div>
                 <div class="col-md-1">
                     <label> </label>
@@ -91,7 +83,6 @@
                 <div class="kt-portlet__body">
 
                     <!--begin: Datatable -->
-
                      @php
             $others = array_slice($customers_natures['totals'] , 50 ,null,true ) ;
             $allFormattedWithOthers = array_merge(
@@ -106,12 +97,18 @@
             );
 
         @endphp
-
+        {{-- @dd(get_defined_vars()) --}}
+        {{-- @dd(get_defined_vars()) --}}
+        @php
+            $order = 1 ;
+        @endphp
+         
          <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>#</th>
                                 <th>{{ __('Customers') }}</th>
+                                <th>{{ __('Nature') }}</th>
                                 <th>{{ __('Sales Values') }}</th>
                                 <th>{{ __('Percentages %') }}</th>
 
@@ -119,11 +116,15 @@
                         @endslot
                         @slot('table_body')
                             @foreach ($allFormattedWithOthers as $key => $item)
-                            
-                            
+         
+                            {{-- @dd($customers_natures) --}}
                             <tr>
                                 <th>{{$key+1}}</th>
                                 <th>{{$item->customer_name }}</th>
+                                <th>
+                                    <p style="max-width:15px">{{getCustomerNature($item->customer_name , $customers_natures) }}</p>
+                                    {{-- <span></span> --}}
+                                </th>
                                 <td class="text-center">{{number_format($item->val)}}</td>
                                 <td class="text-center">{{$item->percentage}} % </td>
                             </tr>
@@ -176,7 +177,6 @@
         </div>
     
        
-{{-- @dd(json_encode($allFormattedWithOthers)) --}}
         <input type="hidden" id="total" data-total="{{ json_encode(
             $allFormattedWithOthers 
         ) }}">
@@ -236,7 +236,6 @@
                              $countVals = count($vals) ;
                             $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
                               @endphp
-                            {{-- @dd(($vals->total_sales / $totalSales)*100) --}}
                                 <tr>
                                     <th>{{$staticName}}</th>
                                     <td class="text-center">{{$countVals}}</td>

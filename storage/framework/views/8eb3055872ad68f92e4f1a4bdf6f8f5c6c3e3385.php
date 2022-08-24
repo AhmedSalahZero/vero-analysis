@@ -111,6 +111,42 @@
                     </div>
                 </div>
             </div>
+
+
+
+            <div class="form-group row ">
+                <div class="col-md-3">
+                    <label><b><?php echo e(__('Third Inteval')); ?></b></label>
+                </div>
+                <div class="col-md-3">
+                    <label><?php echo e(__('Start Date Three')); ?></label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="date" name="start_date_three"  required value="<?php echo e($start_date_2); ?>"  class="form-control"  placeholder="Select date" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label><?php echo e(__('End Date Three')); ?></label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="date" name="end_date_three"  required  value="<?php echo e($end_date_2); ?>" max="<?php echo e(date('Y-m-d')); ?>"  class="form-control"  placeholder="Select date" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-3">
+                    <label><?php echo e(__('Data Type')); ?> </label>
+                    <div class="kt-input-icon">
+                        <div class="input-group ">
+                            <input type="text" class="form-control" disabled value="<?php echo e(__('Value')); ?>"  >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
 <?php $component->withName('submitting'); ?>
@@ -154,18 +190,16 @@
           </div>
 
         <?php $__currentLoopData = $intervals; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $intervalName => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="col-md-6" >
+            <div class="col-md-4" >
                 <div class="kt-portlet kt-portlet--mobile">
-
-
-                                    <?php echo $__env->make('interval_date' , ['k'=>$k %2 ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    <?php echo $__env->make('interval_date' , ['k'=>$k % 3 ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                     <div class="kt-portlet__body">
 
 
 
                         <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll']); ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_info']); ?>
 <?php $component->withName('table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
@@ -261,12 +295,12 @@
 
           
         <?php $__currentLoopData = $intervals; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $intervalName => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                 <div class="kt-portlet kt-portlet--mobile">
 
                     
 
-                                 <?php echo $__env->make('interval_date' , ['i'=>$i %2 ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                 <?php echo $__env->make('interval_date' , ['i'=>$i %3 ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 
                     <div class="kt-portlet__body">
@@ -296,10 +330,6 @@
 
 
     </div>
-
-    
-    
-    
 
 
 <?php $__env->stopSection(); ?>

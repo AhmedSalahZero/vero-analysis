@@ -34,7 +34,7 @@
                   </div>
                 <div class="col-md-9">
                     <div class="input-group date" >
-                                          
+                                          {{-- @dd($permittedTypes) --}}
                                         <select  data-live-search="true" data-max-options="2" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder"
                                             id="types" multiple>
                                             <option disabled value="0
@@ -111,6 +111,42 @@
                     </div>
                 </div>
             </div>
+
+
+
+            <div class="form-group row ">
+                <div class="col-md-3">
+                    <label><b>{{__('Third Inteval')}}</b></label>
+                </div>
+                <div class="col-md-3">
+                    <label>{{__('Start Date Three')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="date" name="start_date_three"  required value="{{$start_date_2}}"  class="form-control"  placeholder="Select date" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>{{__('End Date Three')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="date" name="end_date_three"  required  value="{{$end_date_2}}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-3">
+                    <label>{{__('Data Type')}} </label>
+                    <div class="kt-input-icon">
+                        <div class="input-group ">
+                            <input type="text" class="form-control" disabled value="{{__('Value')}}"  >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <x-submitting/>
         </form>
     </div>
@@ -153,17 +189,15 @@
           </div>
 
         @foreach ($intervals as $intervalName => $data  )
-            <div class="col-md-6" >
+            <div class="col-md-4" >
                 <div class="kt-portlet kt-portlet--mobile">
-{{-- {{ logger($k .' -- ' .($k % 2)) }} --}}
-
-                                    @include('interval_date' , ['k'=>$k %2 ])
+                                    @include('interval_date' , ['k'=>$k % 3 ])
 
                     <div class="kt-portlet__body">
 
 
 
-                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
+                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_info'">
                             @slot('table_header')
                                 <tr class="table-active text-center">
                                     <th>#</th>
@@ -252,12 +286,12 @@
               <h2>{{ (ucfirst(str_replace('_',' ' ,$theType))) . ' Sales Interval Comparing Analysis ' }}</h2>
           </div> --}}
         @foreach ($intervals as $intervalName => $data  )
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                 <div class="kt-portlet kt-portlet--mobile">
 
                     
 
-                                 @include('interval_date' , ['i'=>$i %2 ])
+                                 @include('interval_date' , ['i'=>$i %3 ])
 
 
                     <div class="kt-portlet__body">
@@ -288,89 +322,6 @@
 
     </div>
 
-    {{-- @php 
-    $result_for_interval_one = $sales_channels['result_for_interval_one'] ;
-    $result_for_interval_two = $sales_channels['result_for_interval_two'] ;
-    @endphp  --}}
-    {{-- Title --}}
-    {{-- <div class="row">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{__('Sales Channels Sales Interval Comparing Analysis')}}
-                        </h3>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-{{--     
-    <div class="row">
-        @php $intervals = ['First'=>'_one', 'Second' => '_two']; @endphp 
-        @foreach ($intervals as $interval_name => $name)
-
-            <div class="col-md-6">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                        @include('interval_date')
-
-                    <div class="kt-portlet__body">
-
-                        <div id="chartdiv{{$name}}" class="chartDiv"></div>
-                    </div>
-                </div>
-            </div>
-            @php  $report_name = 'result_for_interval'.$name @endphp 
-            <input type="hidden" id="data{{$name}}" data-total="{{ json_encode($$report_name) }}">
-        @endforeach
-    </div>
-    <div class="row">
-        @foreach ($intervals as $interval_name => $name)
-            @php  $report_name = 'result_for_interval'.$name @endphp 
-            <div class="col-md-6">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                        @include('interval_date')
-
-
-                    <div class="kt-portlet__body">
-
-
-                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
-                            @slot('table_header')
-                                <tr class="table-active text-center">
-                                    <th>#</th>
-                                    <th>{{ __('Sales Channel')}}</th>
-                                    <th>{{ __('Sales Values') }}</th>
-                                    <th>{{ __('Percentages %') }}</th>
-
-                                </tr>
-                            @endslot
-                            @slot('table_body')
-                                @php $total = array_sum(array_column($$report_name,'Sales Value')) @endphp  
-                                @foreach ($$report_name as $key => $item)
-                                <tr>
-                                    <th>{{$key+1}}</th>
-                                    <th>{{$item['item']?? '-'}}</th>
-                                    <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
-                                    <td class="text-center">{{$total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'}}</td>
-                                </tr>
-                                @endforeach
-                                <tr class="table-active text-center">
-                                    <th colspan="2">{{__('Total')}}</th>
-                                    <td class="hidden"></td>
-                                    <td>{{number_format($total)}}</td>
-                                    <td>100 %</td>
-                                </tr>
-                            @endslot
-                        </x-table>
-
-                        <!--end: Datatable -->
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div> --}}
 
 @endsection
 @section('js')

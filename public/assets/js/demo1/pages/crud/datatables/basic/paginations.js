@@ -151,6 +151,29 @@ var KTDatatablesBasicPaginations = function() {
     };
 
 
+     var initTableWithNoPaginationNoScrollNoInfo = function() {
+        var table = $('.kt_table_with_no_pagination_no_scroll_no_info');
+
+        // begin first table
+        table.DataTable({
+            // responsive: true,
+            paging:   false,
+            ordering: false,
+            searching : true,
+            info:false,
+			dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+			<'row'<'col-sm-12'tr>>
+			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+
+			buttons: [
+				'print',
+				'copyHtml5',
+				'excelHtml5',
+				'csvHtml5',
+				'pdfHtml5',
+			]
+        });
+    };
 
      var initTableWithNoPaginationNoScrollNoSearch = function() {
         var table = $('.kt_table_with_no_pagination_no_scroll_no_search');
@@ -186,6 +209,7 @@ var KTDatatablesBasicPaginations = function() {
             initTableWithNoPaginationNoSearch();
             initTableWithNoPaginationNoCollapse();
             initTableWithNoPaginationNoScrollNoSearch();
+            initTableWithNoPaginationNoScrollNoInfo();
         },
 
     };
