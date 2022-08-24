@@ -116,7 +116,7 @@ class ImportData implements
 
             $date =  $strtotimeValue->format('Y-m-d');
         }
-        return $date;
+        return $date ;
     }
 
     public function dataCustomizationImport($row )
@@ -135,7 +135,8 @@ class ImportData implements
                     if (str_contains($field_name, 'date')) {
                         $data[$field_name] = $this->dateFormatting($row_with_no_spaces[$row_name]);
                     } else {
-                        $data[$field_name] = $row_with_no_spaces[$row_name];
+                        $item = str_replace('\\','',$row_with_no_spaces[$row_name]);
+                        $data[$field_name] = trim(preg_replace('/\s+/', ' ', $item)) ;
                     }
                 } else {
                     $data[$field_name] = null;

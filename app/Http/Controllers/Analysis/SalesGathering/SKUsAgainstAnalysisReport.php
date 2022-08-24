@@ -170,7 +170,6 @@ class SKUsAgainstAnalysisReport
         }
         $type = $request->type;
         $view_name = $request->view_name;
-
         foreach ($mainData as  $main_row) {
                 $main_row = str_replace("'" , "''",$main_row);
 
@@ -188,11 +187,13 @@ class SKUsAgainstAnalysisReport
                     });
                 })->toArray();
 
-
             foreach (($request->sales_channels ?? []) as $sales_channel_key => $sales_channel) {
-
+                // dump($sales_channel);
+                // $sales_channel = stripslashes($sales_channel);
+                // dd($sales_channel);
                 $years = [];
-
+                // dump($mainData_data);
+// dd([$sales_channel]);
                 $data_per_main_item = $mainData_data[$sales_channel]??[];
                 if (count(($data_per_main_item))>0 ) {
 

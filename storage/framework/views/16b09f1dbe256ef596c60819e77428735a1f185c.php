@@ -109,7 +109,7 @@
             </div>
 
         <?php $__currentLoopData = $reports_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $report_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="col-6">
+            <div class="col-sm-12 col-lg-6">
                 <div class="kt-portlet">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">

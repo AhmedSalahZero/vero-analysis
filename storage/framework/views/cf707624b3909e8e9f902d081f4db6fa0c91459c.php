@@ -79,7 +79,7 @@
                                 <div class="row">
                                     <?php $__currentLoopData = $columnsWithViewingNames; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $fieldName => $displayName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
-                                            $status_disanbeled_fields = $fieldName == 'net_sales_value' || $fieldName == 'sales_value' || $fieldName == 'date' ||
+                                            $status_disanbeled_fields = $fieldName == 'net_sales_value' || $fieldName == 'sales_value'  ||
                                                             ($fieldName == 'sales_value'  && count(array_intersect($selected_fields, ['quantity_discount','cash_discount','special_discount','other_discounts'])) == 0 );
                                         ?>
                                         <div class="col-lg-6">

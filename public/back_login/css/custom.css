@@ -10,7 +10,8 @@
 }
 
 #loginBack {
-    position: absolute;
+    position: fixed;
+    bottom:0;
     top: 0px;
     background: url('../images/DigitalFuture.jpg');
     width: 100%;

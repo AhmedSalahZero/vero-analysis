@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 const MAX_RANKING = 5 ;
 const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis' ;
@@ -302,27 +303,64 @@ function canViewCustomersDashboard(array $exportables)
 function getNewCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'new_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }
+
+function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type ){
+    return 'new_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_' . $type ;
+}
+
 function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'repeating_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }
+
+function getRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type){
+    return 'repeating_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_'  . $type;
+}
+
  function getActiveCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'active_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }  
+
+ function getActiveCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type){
+    return 'active_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_'  . $type;
+}  
+
+
+
  function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'stop_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }   
+function getStopReactivatedCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type){
+    return 'stop_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_'  . $type;
+}
 function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'dead_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }   
+
+ function getDeadReactiveCacheNameForCompanyInYearForType(Company $companyId , string $year , $type){
+    return 'dead_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_'  . $type;
+}  
+// getStopRepeatingCacheNameForCompanyInYearForType
+// getDeadReactiveCacheNameForCompanyInYearForType
 function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
-    return 'stop_repeating_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+    return 'stop_repeating_reactivated_customers_for_company_'.$companyId->id .'for_year_'.$year ;
+}   
+function getStopRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type){
+    return 'stop_repeating_reactivated_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_'.$type ;
 }   
 function getStopCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'stop_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }   
 
+function getStopCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type ){
+    return 'stop_customers_for_company_'.$companyId->id .'_for_year_'.$year. 'for_type_'.$type ;
+}   
+
+
 function getDeadCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'dead_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
+}   
+function getDeadCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type ){
+    return 'dead_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_'.$type ;
 }   
 
 function getTotalCustomersCacheNameForCompanyInYear(Company $companyId , string $year){
@@ -836,4 +874,21 @@ function sumBasedOnQuarterNumber($array , array $quarters  , $total )
     }
     return $result ? number_format($result / $total  * 100  , 2) . ' % ': '-';
      
+}
+
+function indexIsExistIn(string $indexName , string $tableName)
+{
+     $indexesFound = (Schema::getConnection()->getDoctrineSchemaManager())->listTableIndexes($tableName);
+     
+     return array_key_exists($indexName, $indexesFound) ;
+}
+
+function getAllColumnsTypesForCaching($companyId)
+{
+    $exportables = array_keys(getExportableFields($companyId)) ;
+    $cacheablesFields = [
+        'country' , 'branch','sales_person','customer_name','business_sector','zone','sales_channel','category','product_or_service','product_item'
+    ] ;
+    return array_intersect($exportables , $cacheablesFields) ;
+    
 }

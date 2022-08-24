@@ -530,6 +530,10 @@ toastr.error('<?php echo e(session()->get("fail")); ?>')
 		</script>
 
 		<?php endif; ?> 
+
+		<script>
+			
+		</script>
 	</body>
 
 	<!-- end::Body -->

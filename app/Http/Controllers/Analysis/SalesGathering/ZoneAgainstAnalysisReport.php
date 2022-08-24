@@ -537,6 +537,7 @@ class ZoneAgainstAnalysisReport
 
 
         }
+        
             return $data;
     }
     public function dataView(Request $request, Company $company)

@@ -17,6 +17,7 @@ class SalesGathering extends Model
 
     protected $guarded = [];
 
+
     //  protected $connection= 'mysql2';
     // protected $table = 'sales_gathering';
     // protected $primaryKey  = 'user_id';

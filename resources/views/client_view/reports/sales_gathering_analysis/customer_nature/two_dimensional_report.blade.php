@@ -197,7 +197,7 @@
         @slot('table_body')
             <?php $total_per_item = []; ?>
             <?php
-                $dead_stop_totals = [ 'Stop' =>$items_totals_counts['Stop'], 'Dead' =>$items_totals_counts['Dead']];
+                $dead_stop_totals = [ 'Stop' =>$items_totals_counts['Stop'] ?? 0, 'Dead' =>$items_totals_counts['Dead'] ?? 0];
                 unset($items_totals_counts['Dead']);
                 unset($items_totals_counts['Stop']);
                 $final_total = array_sum($items_totals_counts);
@@ -207,7 +207,6 @@
             @foreach ($report_totals_counts as $main_type_item_name => $main_item_total)
                 <tr>
                     <th> {{ __($main_type_item_name) }} </th>
-
                     @foreach ($all_items as $item)
                         <?php $value = $report_counts[$main_type_item_name][$item] ?? 0;
                         $percentage_per_value = $main_item_total == 0 ? 0 : ($value / $main_item_total) * 100; ?>

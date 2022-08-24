@@ -60,15 +60,7 @@ class SalesGatheringTestJob implements ShouldQueue
             }
                 
             
-            
-            // foreach($cacheGroup as $data)
-            // {
-            //     logger(now()->toTimeString());
-            //     DB::table('sales_gathering')->insert($data);
-            //     $key = getTotalUploadCacheKey($this->company_id , $cachingCompany->job_id) ;
-            //     $oldTotalUploaded = cache::get($key) ?:0 ;
-            //     cache::put( $key , $oldTotalUploaded + 1 );
-            // }
+          
         });
         
     }

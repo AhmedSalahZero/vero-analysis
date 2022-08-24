@@ -43,8 +43,8 @@
                             <label><?php echo e(__('Select Top 50 Or Bottom 50')); ?> </label>
                             <div class="kt-input-icon">
                               <select name="direction" class="form-control">
-                                  <option value="desc">Top 50</option>
-                                  <option value="asc">Bottom 50</option>
+                                  <option value="desc"><?php echo e(__('Top 50')); ?></option>
+                                  <option value="asc"><?php echo e(__('Bottom 50')); ?></option>
                               </select>
                             </div>
                         </div>

@@ -79,7 +79,7 @@
                                 <div class="row">
                                     @foreach ($columnsWithViewingNames as $fieldName => $displayName)
                                         <?php
-                                            $status_disanbeled_fields = $fieldName == 'net_sales_value' || $fieldName == 'sales_value' || $fieldName == 'date' ||
+                                            $status_disanbeled_fields = $fieldName == 'net_sales_value' || $fieldName == 'sales_value'  ||
                                                             ($fieldName == 'sales_value'  && count(array_intersect($selected_fields, ['quantity_discount','cash_discount','special_discount','other_discounts'])) == 0 );
                                         ?>
                                         <div class="col-lg-6">

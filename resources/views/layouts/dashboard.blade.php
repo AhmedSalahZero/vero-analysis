@@ -546,6 +546,10 @@ toastr.error('{{ session()->get("fail") }}')
 		</script>
 
 		@endif 
+
+		<script>
+			
+		</script>
 	</body>
 
 	<!-- end::Body -->

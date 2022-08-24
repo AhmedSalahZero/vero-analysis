@@ -218,7 +218,6 @@
     });
     $(document).on('change', '#ItemsData', function() {
 
-
         clearTimeout(wto);
         wto = setTimeout(() => {
             if (tryParseJSONObject($(this).val()[0])) {
@@ -302,7 +301,7 @@
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
-
+        
             // if($('#data_type').val()  == 'value'){
             var data_type = 'multiple';
             // }else{
@@ -313,13 +312,18 @@
             //     row += '<option value="">Select</option>\n' ;
             // }
 
-
             $.each(data, function(key, val) {
+                // val = val.replaceAll('\n' , '\\n') ;
+                // console.log(val);
+                // console.log();
+        
+                console.log('----------');
+
                 row += '<option value*="' + val + '">' + val + '</option>\n';
 
             });
             row += '</select>';
-            console.log(row);
+            // console.log(row);
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();
