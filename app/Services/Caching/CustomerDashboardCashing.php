@@ -58,7 +58,19 @@ class CustomerDashboardCashing
             return $newCustomers ;
             
     }
-
+    function formatDataForType(array $dataOfArray , string  $typeToCache)
+    {
+          $formattedData=[];
+               
+               foreach($dataOfArray as $index=>$dataObj)
+               {
+                   $groupingKey  = $dataObj->{$typeToCache} ;
+                   
+                   isset($formattedData[$groupingKey]) ?  array_push($formattedData[$groupingKey] , $dataObj ) : $formattedData[$groupingKey] = [$dataObj] ;
+                //    isset($formattedData[$mainType][$typeToCache]) ?  array_push($formattedData[$mainType][$typeToCache] , $dataObj ) : $formattedData[$mainType][$typeToCache] = [$dataObj] ;
+               }
+               return $formattedData ;
+    }
     public function cacheNewCustomersForTypes()
      
     {
@@ -74,7 +86,9 @@ class CustomerDashboardCashing
                  sum(case when Year = ". $this->year  ." then net_sales_value else 0 end ) total_sales  from sales_gathering  ". $forceIndex . " 
                  
                   where company_id = ". $this->company->id ." group by customer_name , ". $typeToCache  ." having  min(Year) = ". $this->year   ." order by total_sales desc"
-                  )); 
+                  ));
+                  $newCustomers = $this->formatDataForType($newCustomers , $typeToCache);
+                  
                   Cache::forever($cacheKeyName, $newCustomers);
               }
               else
@@ -90,7 +104,7 @@ class CustomerDashboardCashing
                              $newCustomersForTypes[$typeToCache] =$newCustomers ;
                         }
         }
-           
+
             return $newCustomersForTypes ;
             
     }
@@ -154,7 +168,7 @@ class CustomerDashboardCashing
         "
             )
         );
-
+             $RepeatingCustomers = $this->formatDataForType($RepeatingCustomers , $typeToCache);
 
         Cache::forever($cacheKeyName, $RepeatingCustomers);
 
@@ -168,14 +182,12 @@ class CustomerDashboardCashing
                             array_push($newRepeatingForTypes[$typeToCache] , $RepeatingCustomers) ;
                         }
                         else{
-                             $newCustomersForTypes[$typeToCache] =$RepeatingCustomers ;
+                             $newRepeatingForTypes[$typeToCache] =$RepeatingCustomers ;
                         }
 
 
         
         }
-        
-
         return $newRepeatingForTypes ; 
     }
 
@@ -236,7 +248,7 @@ class CustomerDashboardCashing
                 "
                             )
         );
-
+          $ActiveCustomers = $this->formatDataForType($ActiveCustomers , $typeToCache);
 
         Cache::forever($cacheKeyName, $ActiveCustomers);
 
@@ -250,7 +262,7 @@ class CustomerDashboardCashing
                             array_push($newActiveForTypes[$typeToCache] , $ActiveCustomers) ;
                         }
                         else{
-                             $newCustomersForTypes[$typeToCache] =$ActiveCustomers ;
+                             $newActiveForTypes[$typeToCache] =$ActiveCustomers ;
                         }
 
 
@@ -317,7 +329,7 @@ class CustomerDashboardCashing
             )
         );
 
-
+         $StopReactivatedCustomers = $this->formatDataForType($StopReactivatedCustomers , $typeToCache);
         Cache::forever($cacheKeyName, $StopReactivatedCustomers);
 
         }
@@ -404,7 +416,7 @@ class CustomerDashboardCashing
                     "
             )
         );
-
+        $deadReactivatedCustomers = $this->formatDataForType($deadReactivatedCustomers , $typeToCache);
 
         Cache::forever($cacheKeyName, $deadReactivatedCustomers);
 
@@ -490,7 +502,7 @@ class CustomerDashboardCashing
             )
         );
 
-
+        $StopRepeatingCustomers = $this->formatDataForType($StopRepeatingCustomers , $typeToCache);
         Cache::forever($cacheKeyName, $StopRepeatingCustomers);
 
         }
@@ -556,7 +568,7 @@ class CustomerDashboardCashing
             $StopCustomers = DB::select(
             DB::raw("
             select (customer_name) , ". $typeToCache ." , count(*) as no_customers, sum(case when year = ".  ($this->year - 1)   ." then net_sales_value else 0 end) total_sales
-            from  sales_gathering force index (min__index)
+            from  sales_gathering ". $forceIndex ."
             where company_id = ". $this->company->id  ." 
             GROUP by customer_name , ". $typeToCache ." 
             having max(case when Year = " . $this->year .  " then 1 else 0 end ) = 0
@@ -565,7 +577,7 @@ class CustomerDashboardCashing
             ")
         );
 
-
+         $StopCustomers = $this->formatDataForType($StopCustomers , $typeToCache);
         Cache::forever($cacheKeyName, $StopCustomers);
 
         }
@@ -654,7 +666,7 @@ class CustomerDashboardCashing
                 "
             )
         );
-
+            $DeadCustomers = $this->formatDataForType($DeadCustomers , $typeToCache);
 
         Cache::forever($cacheKeyName, $DeadCustomers);
 
@@ -683,6 +695,8 @@ class CustomerDashboardCashing
 
     public function cacheTotalCustomers()
     {
+       
+        
          if(! Cache::has($this->totalCustomerCashingName)){
       $totals = DB::select(DB::raw(
             "
@@ -694,7 +708,9 @@ class CustomerDashboardCashing
                 group by customer_name 
                 order by val desc "
         ));
-        Cache::forever($this->totalCustomerCashingName, $totals);
+
+        
+          Cache::forever($this->totalCustomerCashingName, $totals);
         }
         else{
                   $totals = Cache::get($this->totalCustomerCashingName);
@@ -702,7 +718,52 @@ class CustomerDashboardCashing
         return $totals  ; 
     }
 
-    public function cacheAll($cacheType = []):array 
+
+      public function cacheTotalCustomersForType()
+    {
+        $totalForTypes = [];
+        
+        foreach($this->typesOfCaching as $typeToCache)
+        {
+             $cacheKeyName = getTotalCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache) ;
+
+            if(! Cache::has($cacheKeyName)){
+      $totals = DB::select(DB::raw(
+            "
+                select customer_name ,
+             sum(net_sales_value) as val , ". $typeToCache ."  , count(*) as no_customers,
+              FORMAT((sum(net_sales_value) / (select sum(net_sales_value)  from sales_gathering force index (min__index) where company_id
+               = ". $this->company->id ."  and  Year = ". $this->year ." ) * 100) , 1) as percentage
+                from sales_gathering force index (min__index) where company_id = ". $this->company->id  ." and Year = ". $this->year ." 
+                group by customer_name  , ". $typeToCache . "
+                order by val desc "
+        ));
+        $totals = $this->formatDataForType($totals , $typeToCache);
+        Cache::forever($cacheKeyName, $totals);
+        }
+        else{
+                  $totals = Cache::get($cacheKeyName);
+         }
+
+
+          if(\array_key_exists($typeToCache , $totalForTypes))
+                        {
+                            array_push($totalForTypes[$typeToCache] , $totals) ;
+                        }
+                        else{
+                             $newDeadForTypes[$typeToCache] =$totals ;
+                        }
+
+
+         
+        }
+     
+        return $newDeadForTypes  ; 
+    }
+
+
+ 
+    public function cacheAll():array 
     {
         return [
             'newCustomers'=>$this->cacheNewCustomers() ,
@@ -713,6 +774,7 @@ class CustomerDashboardCashing
             'deadReactivatedCustomers'=>$this->cacheDeadReactivatedCustomers(),
             'stopRepeatingCustomers'=>$this->cacheStopRepeatingCustomers(),
             'deadCustomers'=>$this->cacheDeadCustomers(),
+            'totals'=>$this->cacheTotalCustomers(),
             
             'newCustomersForType'=>$this->cacheNewCustomersForTypes(),
             'RepeatingForType'=>$this->cacheRepeatingCustomersForType(),
@@ -722,8 +784,7 @@ class CustomerDashboardCashing
             'deadReactivatedForType'=>$this->cacheDeadReactivatedCustomersForType(),
             'StopRepeatingForType'=>$this->cacheStopRepeatingCustomersForType(),
             'DeadForType'=>$this->cacheDeadCustomersForType(),
-            
-            'totals'=>$this->cacheTotalCustomers(),
+            'totalsForType'=>$this->cacheTotalCustomersForType(),
         ];
         
     }
@@ -733,10 +794,26 @@ class CustomerDashboardCashing
         Cache::forget($this->newCustomerCashingName);
         Cache::forget($this->repeatingCustomerCashingName);
         Cache::forget($this->activeCustomerCashingName);
+        Cache::forget($this->stopCustomerCashingName);
         Cache::forget($this->stopReactivatedCustomerCashingName);
         Cache::forget($this->deadReactivatedCustomerCashingName);
         Cache::forget($this->stopRepeatingCustomerCashingName);
         Cache::forget($this->deadCustomerCashingName);
+        Cache::forget($this->totalCustomerCashingName);
+        // logger('type of cache');
+        // logger($this->typesOfCaching);
+        foreach($this->typesOfCaching as $typeToCache)
+        {
+            Cache::forget(getNewCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getRepeatingCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getActiveCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getStopCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getStopReactivatedCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getDeadReactiveCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getStopRepeatingCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getDeadCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+            Cache::forget(getTotalCustomersCacheNameForCompanyInYearForType($this->company , $this->year , $typeToCache));
+        }
     }
 
 }

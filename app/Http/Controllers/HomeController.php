@@ -469,7 +469,6 @@ class HomeController extends Controller
                 
          $exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
             $db_names = array_keys($exportableFields);
-         
 
                 $permittedTypes = [];
                         foreach ($allTypes as  $type => $color) {

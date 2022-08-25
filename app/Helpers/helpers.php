@@ -303,11 +303,17 @@ function canViewCustomersDashboard(array $exportables)
 function getNewCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'new_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }
-
 function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type ){
     return 'new_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_' . $type ;
 }
 
+
+function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId , string $year , $type ){
+    return 'total_customers_for_company_'.$companyId->id .'_for_year_'.$year.'for_type_' . $type ;
+}
+
+
+// 
 function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId , string $year ){
     return 'repeating_customers_for_company_'.$companyId->id .'_for_year_'.$year ;
 }
@@ -896,10 +902,6 @@ function getAllColumnsTypesForCaching($companyId)
 function getCustomerNature(string $customerName , array $allDataArray)
 {
     unset($allDataArray['totals']);
-    if($customerName == 'TAQA Gas')
-    {
-    }
-    // dd();
     foreach($allDataArray as $key=>$array)
     {
         // dump($array);
@@ -913,10 +915,221 @@ function getCustomerNature(string $customerName , array $allDataArray)
             //    }
                if($ar->customer_name === $customerName)
                {
-                    return $type ;   
+                    return str_replace(' ' ,'' , $type) ;   
                }
            }
         }
     }
     return '';
 }
+
+function getSummaryCustomerDashboardForEachType($allFormattedWithOthers , $customerNature)
+{
+    $dataFormatted = [] ; 
+    foreach($allFormattedWithOthers as $customerObject)
+    {
+        $userType = getCustomerNature($customerObject->customer_name , $customerNature);
+        isset($dataFormatted[$userType]) ? $dataFormatted[$userType] = [
+           'count'=>$dataFormatted[$userType]['count'] + 1 ,
+            // 'count'=>dd($dataFormatted[$userType]) ,
+            'sales'=>$dataFormatted[$userType]['sales'] + $customerObject->val
+        ]
+         : $dataFormatted[$userType] = [
+            'count'=>1 ,
+            'sales'=>$customerObject->val
+        ];
+    }
+    $dataFormatted = array_filter($dataFormatted);
+    
+    // foreach($dataFormatted as $key=>$val)
+    // {
+    //     if(! $key )
+    //     {
+    //         unset($dataFormatted[$key]);
+    //     }
+    // }
+    // dd(array_sort_type($dataFormatted));
+    return array_sort_type($dataFormatted);
+    
+}
+function array_sort_type($array)
+{
+       (uasort($array,  function($firstElement,$secondElement) {
+if(isset($firstElement['sales'])&&isset($secondElement['sales'])){
+  
+$firstElement =$firstElement['sales'] ;
+
+$secondElement = $secondElement['sales'];
+     if ($firstElement == $secondElement) {
+        return 0;
+    }
+    return ($firstElement > $secondElement) ? -1 : 1;
+    }
+    return ;
+}
+
+)
+    );
+
+    return $array;
+}
+
+function sum_array_of_std_objects(array $array ,  string $key)
+{
+    
+    $totalSum =  0 ;
+    foreach($array as $arr){
+        foreach($arr as $ar)
+        {
+            $totalSum += $ar->{$key} ?? 0 ;
+        }
+    }
+    return $totalSum ; 
+    
+}
+function getIterableItems($array)
+{
+    $iterables = [];
+    foreach($array as $key=>$arrVal)
+    {
+        foreach($arrVal as $item=>$val )
+        {
+            if(!isset($iterables[$item]))
+            {
+                $iterables[$item] = getTotalForThisTypeExceptDead($array , $item , 'total_sales') ;
+            }
+        }
+    }
+    sortTwoDimensionalArr($iterables);
+    return $iterables;
+}
+
+function getTotalForSingleType($array , $key)
+{
+    $totals = 0 ;
+    foreach($array as $arr)
+    {
+        foreach($arr as $ar)
+        {   
+            $totals += $ar->{$key}  ; 
+        }
+    }
+    return $totals ; 
+    
+}
+function countTotalForSingleType($array )
+{
+    $totals = 0 ;
+    foreach($array as $arr)
+    {
+        foreach($arr as $ar)
+        {   
+            $totals +=1  ; 
+        }
+    }
+    return $totals ; 
+    
+}
+function calcTotalsForTotalsActiveItems(array $array , $key){
+  
+   $totals = 0 ;
+   foreach($array as $arr)
+   {
+       foreach($arr as $ar)
+       {
+           foreach($ar as $item)
+           {
+              $totals += $item->{$key} ?? 0; 
+               
+           }
+       }
+   }
+   return $totals;
+    
+}
+
+function countTotalsForTotalsActiveItems(array $array , $key){
+   $totals = 0 ;
+   foreach($array as $arr)
+   {
+       foreach($arr as $ar)
+       {
+           foreach($ar as $item)
+           {
+              $totals += 1; 
+           }
+       }
+   }
+   return $totals;
+    
+}
+
+function getTotalForThisTypeExceptDead(array $array ,$iterableSingleItem, $key)
+{
+    
+    $total = 0 ;
+    foreach($array as $index=>$arrayOfValues)
+    {
+        if(! in_array($index , ['Dead' , 'Stop']) )
+        {
+            $items =  $arrayOfValues[$iterableSingleItem] ?? [];
+        
+        foreach($items as $item)
+        {
+            $total+=$item->{$key};
+        }
+        }
+        
+    }
+    return $total ;
+}
+
+function getTotalForThisType(array $array ,$iterableSingleItem, $key)
+{
+    
+    $total = 0 ;
+    foreach($array as $arrayOfValues)
+    {
+        $items =  $arrayOfValues[$iterableSingleItem] ?? [];
+        foreach($items as $item)
+        {
+            $total+=$item->{$key};
+        }
+    }
+    return $total ;
+}
+
+function countTotalForThisType(array $array ,$iterableSingleItem)
+{
+    
+    $total = 0 ;
+    foreach($array as $arrayOfValues)
+    {
+        $items =  $arrayOfValues[$iterableSingleItem] ?? [];
+        foreach($items as $item)
+        {
+            $total+=1;
+        }
+    }
+    return $total ;
+}
+
+function sum_array_of_std_objectsForSubType(array $array , $key)
+{
+    $sum =  0  ; 
+    foreach($array as $arr)
+    {
+        $sum+= $arr->{$key};
+    }
+    return $sum ; 
+}
+
+function count_array_of_std_objects(array $array )
+{
+    $counter = 0 ;
+    foreach($array as $arr ){
+        $counter += 1 ;   
+    }
+    return $counter ; 
+}
+

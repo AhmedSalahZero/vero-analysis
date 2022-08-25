@@ -12,8 +12,17 @@ use Illuminate\Http\Request;
 class CustomersNaturesAnalysisReport
 {
     use GeneralFunctions;
-
-      public function twoDimensionalResult(Request $request, Company $company )
+    //     function formatDataForType(array $dataOfArray , string  $typeToCache)
+    // {
+    //       $formattedData=[];
+    //            foreach($dataOfArray as $mainType=>$dataObj)
+    //            {
+    //                isset($formattedData[$mainType]) ?  array_push($formattedData[$mainType] , $dataObj ) : $formattedData[$mainType] = [$dataObj] ;
+    //            }
+    //            return $formattedData ;
+    // }
+    
+      public function twoDimensionalResult(Request $request, Company $company , $result ='view' )
     {
         
           $report_data = [];
@@ -34,40 +43,44 @@ class CustomersNaturesAnalysisReport
         $customerDashboardCashing = new CustomerDashboardCashing($company , $year);
         
         $cashedResult = $customerDashboardCashing->cacheAll();
-        $newCustomers = $cashedResult['newCustomersForType'][$type];
         
-        $RepeatingCustomers = $cashedResult['RepeatingCustomers']; 
-        $activeCustomers = $cashedResult['activeCustomers']; 
-        $stopReactive = $cashedResult['stopReactive']; 
-        $deadReactivatedCustomers = $cashedResult['deadReactivatedCustomers']; 
-        $stopRepeatingCustomers = $cashedResult['stopRepeatingCustomers']; 
-        $stopCustomers = $cashedResult['stopCustomers']; 
-        $deadCustomers = $cashedResult['deadCustomers']; 
-        $totals = $cashedResult['totals']; 
-        $customers_natures = $statics = [
-                'totals'=>$totals,
-                'statictics'=>[
+        $newCustomers = $cashedResult['newCustomersForType'][$type];
+    
+        $RepeatingCustomers = $cashedResult['RepeatingForType'][$type];
+        $activeCustomers = $cashedResult['ActiveForType'][$type]; 
+        $stopReactive = $cashedResult['StopForType'][$type]; 
+        $deadReactivatedCustomers = $cashedResult['deadReactivatedForType'][$type]; 
+        $stopRepeatingCustomers = $cashedResult['StopRepeatingForType'][$type]; 
+        $stopCustomers = $cashedResult['StopForType'][$type]; 
+        $deadCustomers = $cashedResult['DeadForType'][$type]; 
+        $totalsCustomersPerType = $cashedResult['totalsForType'][$type];
+        // $totals = $cashedResult['totals']; 
+        $customersNaturesActive = $statics = 
+            [
                     'New'=>$newCustomers,
                     'Repeating'=>$RepeatingCustomers,
                     'Active'=>$activeCustomers,
                     'Stop / Reactivated'=>$stopReactive,
                     'Dead / Reactivated'=>$deadReactivatedCustomers,
                     'Stop / Repeating'=>$stopRepeatingCustomers,
-                ] ,
-                 'stops'=>[
-                    'Stop'=>$stopCustomers,
+                         
+                ];
+                
+                $customersNaturesDead = [ 'Stop'=>$stopCustomers,
                     'Dead'=>$deadCustomers,
-                ]
-            ] ;
-    
+                    ];
         $last_date = null;
 
         if ($result=='view') {
             $last_date = SalesGathering::company()->latest('date')->first()->date ??'';
             $last_date = date('d-M-Y', strtotime($last_date));
             $date = $requested_date ;
-            $reportDataFormatted = $this->formatCustomerAnalysisReport($customers_natures);
-            return view('client_view.reports.sales_gathering_analysis.customer_nature.sales_report', compact('reportDataFormatted','last_date', 'type', 'view_name', 'dates', 'company', 'date', 'statics','requested_date','newCustomers','customers_natures'));
+            // $reportDataFormatted = $this->formatCustomerAnalysisReport($customers_natures);
+            
+            return view('client_view.reports.sales_gathering_analysis.customer_nature.two_dimensional_report', compact
+            (
+                // 'reportDataFormatted',
+            'last_date', 'type', 'view_name', 'dates', 'company', 'date', 'statics','requested_date','newCustomers','customersNaturesActive','customersNaturesDead','totalsCustomersPerType'));
         }else{
             return array_merge($report_data , $statics
             

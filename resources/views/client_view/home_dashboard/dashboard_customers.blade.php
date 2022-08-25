@@ -9,9 +9,26 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     <style>
         table {
-            /* white-space: nowrap; */
+            white-space: nowrap;
+        }
+        #DataTables_Table_0 tr th:first-of-type{
+            width:10px !important;
+        }
+        #DataTables_Table_0 tr th:nth-of-type(3){
+            width:100px;
+        }
+        #DataTables_Table_0 tr th:nth-of-type(4){
+            width:10px !important;
+        }
+        
+        #DataTables_Table_0 tr th:nth-of-type(5){
+            width:10px !important;
         }
 
+        .kt-portlet__body.table-responsive
+        {
+            padding-bottom:0 !important ;
+        }
     </style>
 @endsection
 @section('content')
@@ -103,14 +120,14 @@
             $order = 1 ;
         @endphp
          
-         <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
+         <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_info'">
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>#</th>
                                 <th>{{ __('Customers') }}</th>
                                 <th>{{ __('Nature') }}</th>
                                 <th>{{ __('Sales Values') }}</th>
-                                <th>{{ __('Percentages %') }}</th>
+                                <th>{{ __('%') }}</th>
 
                             </tr>
                         @endslot
@@ -120,9 +137,9 @@
                             {{-- @dd($customers_natures) --}}
                             <tr>
                                 <th>{{$key+1}}</th>
-                                <th>{{$item->customer_name }}</th>
+                                <th style="white-space: normal !important">{{$item->customer_name }}</th>
                                 <th>
-                                    <p style="max-width:15px">{{getCustomerNature($item->customer_name , $customers_natures) }}</p>
+                                    <p style="max-width:125px">{{getCustomerNature($item->customer_name , $customers_natures) }}</p>
                                     {{-- <span></span> --}}
                                 </th>
                                 <td class="text-center">{{number_format($item->val)}}</td>
@@ -133,14 +150,41 @@
                             <tr class="table-active text-center">
                                 <th colspan="2">{{__('Total')}}</th>
                                 <td class="hidden"></td>
+                                <td >-</td>
                                 <td>{{number_format(array_sum(array_column($allFormattedWithOthers,'val')))}}</td>
                                 <td>100 %</td>
                             </tr>
                         @endslot
                     </x-table>
 
-        
+                    <h2 class="text-center">{{ __('Top 50 Customers Nature Breakdown') }}</h2>
 
+
+
+                    <div class="kt-portlet__body table-responsive">
+
+                    <table class="table text-center text-capitalize "
+                    style="background: #086691;
+color: #fff;
+font-weight: bold;"
+                    
+                    >
+                        <tr>
+                            <th>nature</th>
+                            <td>count</td>
+                            <td>sales</td>
+                        </tr>
+                        @foreach(getSummaryCustomerDashboardForEachType($allFormattedWithOthers , $customers_natures) as $arrKey=> $data )
+                        @if($arrKey)
+                        <tr>
+                            <th style="text-align:left !important;">{{ $arrKey }}</th>
+                            <td>{{ $data['count'] ?? 0 }}</td>
+                            <td>{{ isset($data['sales']) ? number_format($data['sales']) : 0 }}</td>
+                        </tr>
+                        @endif 
+                        @endforeach 
+                    </table>
+                    </div>
 
                     {{-- <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
                         @slot('table_header')

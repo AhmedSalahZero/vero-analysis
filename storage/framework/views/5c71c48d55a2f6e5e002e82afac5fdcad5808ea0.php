@@ -9,9 +9,26 @@
     <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
     <style>
         table {
-            /* white-space: nowrap; */
+            white-space: nowrap;
+        }
+        #DataTables_Table_0 tr th:first-of-type{
+            width:10px !important;
+        }
+        #DataTables_Table_0 tr th:nth-of-type(3){
+            width:100px;
+        }
+        #DataTables_Table_0 tr th:nth-of-type(4){
+            width:10px !important;
+        }
+        
+        #DataTables_Table_0 tr th:nth-of-type(5){
+            width:10px !important;
         }
 
+        .kt-portlet__body.table-responsive
+        {
+            padding-bottom:0 !important ;
+        }
     </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
@@ -106,7 +123,7 @@
         ?>
          
          <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll']); ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_info']); ?>
 <?php $component->withName('table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
@@ -117,7 +134,7 @@
                                 <th><?php echo e(__('Customers')); ?></th>
                                 <th><?php echo e(__('Nature')); ?></th>
                                 <th><?php echo e(__('Sales Values')); ?></th>
-                                <th><?php echo e(__('Percentages %')); ?></th>
+                                <th><?php echo e(__('%')); ?></th>
 
                             </tr>
                         <?php $__env->endSlot(); ?>
@@ -127,9 +144,9 @@
                             
                             <tr>
                                 <th><?php echo e($key+1); ?></th>
-                                <th><?php echo e($item->customer_name); ?></th>
+                                <th style="white-space: normal !important"><?php echo e($item->customer_name); ?></th>
                                 <th>
-                                    <p style="max-width:15px"><?php echo e(getCustomerNature($item->customer_name , $customers_natures)); ?></p>
+                                    <p style="max-width:125px"><?php echo e(getCustomerNature($item->customer_name , $customers_natures)); ?></p>
                                     
                                 </th>
                                 <td class="text-center"><?php echo e(number_format($item->val)); ?></td>
@@ -140,6 +157,7 @@
                             <tr class="table-active text-center">
                                 <th colspan="2"><?php echo e(__('Total')); ?></th>
                                 <td class="hidden"></td>
+                                <td >-</td>
                                 <td><?php echo e(number_format(array_sum(array_column($allFormattedWithOthers,'val')))); ?></td>
                                 <td>100 %</td>
                             </tr>
@@ -151,8 +169,34 @@
 <?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
 <?php endif; ?>
 
-        
+                    <h2 class="text-center"><?php echo e(__('Top 50 Customers Nature Breakdown')); ?></h2>
 
+
+
+                    <div class="kt-portlet__body table-responsive">
+
+                    <table class="table text-center text-capitalize "
+                    style="background: #086691;
+color: #fff;
+font-weight: bold;"
+                    
+                    >
+                        <tr>
+                            <th>nature</th>
+                            <td>count</td>
+                            <td>sales</td>
+                        </tr>
+                        <?php $__currentLoopData = getSummaryCustomerDashboardForEachType($allFormattedWithOthers , $customers_natures); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $arrKey=> $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php if($arrKey): ?>
+                        <tr>
+                            <th style="text-align:left !important;"><?php echo e($arrKey); ?></th>
+                            <td><?php echo e($data['count'] ?? 0); ?></td>
+                            <td><?php echo e(isset($data['sales']) ? number_format($data['sales']) : 0); ?></td>
+                        </tr>
+                        <?php endif; ?> 
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+                    </table>
+                    </div>
 
                     
 
