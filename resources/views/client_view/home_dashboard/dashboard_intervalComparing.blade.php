@@ -197,7 +197,7 @@
 
 
 
-                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_info'">
+                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_search'">
                             @slot('table_header')
                                 <tr class="table-active text-center">
                                     <th>#</th>
