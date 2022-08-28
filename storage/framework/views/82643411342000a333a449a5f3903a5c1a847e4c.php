@@ -122,7 +122,7 @@ $startTime = microtime(true);
                                 $totalForActiveRaw += $value ;
                         ?>
 
-                        <td class="text-center"> <?php echo e(number_format($value)); ?> ---------------- <?php echo e($totalPerType); ?></td>
+                        <td class="text-center"> <?php echo e(number_format($value)); ?></td>
                         <td class="text-center">
                             <span class="active-text-color "><b> <?php echo e(number_format($percentage_per_value, 1).' % '); ?></b></span>
                         </td>
@@ -347,7 +347,8 @@ $startTime = microtime(true);
                                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                                                 <tr class="table-active text-center">
                                                                     <td>
-                                                                            -
+                                                                        <?php echo e(__('Total')); ?>
+
                                                                     </td>
                                                                     <td>
 
@@ -448,7 +449,8 @@ $startTime = microtime(true);
                                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                                                 <tr class="table-active text-center">
                                                                     <td>
-                                                                            -
+                                                                            <?php echo e(__('Total')); ?>
+
                                                                     </td>
                                                                     <td>
 

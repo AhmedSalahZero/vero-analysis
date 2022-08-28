@@ -114,7 +114,7 @@ $startTime = microtime(true);
                                 $totalForActiveRaw += $value ;
                         @endphp
 
-                        <td class="text-center"> {{ number_format($value) }} ---------------- {{ $totalPerType }}</td>
+                        <td class="text-center"> {{ number_format($value) }}</td>
                         <td class="text-center">
                             <span class="active-text-color "><b> {{  number_format($percentage_per_value, 1).' % ' }}</b></span>
                         </td>
@@ -315,7 +315,7 @@ $startTime = microtime(true);
                                                                 @endforeach 
                                                                 <tr class="table-active text-center">
                                                                     <td>
-                                                                            -
+                                                                        {{ __('Total') }}
                                                                     </td>
                                                                     <td>
 
@@ -400,7 +400,7 @@ $startTime = microtime(true);
                                                                 @endforeach 
                                                                 <tr class="table-active text-center">
                                                                     <td>
-                                                                            -
+                                                                            {{ __('Total') }}
                                                                     </td>
                                                                     <td>
 

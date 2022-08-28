@@ -87,6 +87,7 @@ class CustomerDashboardCashing
                  
                   where company_id = ". $this->company->id ." group by customer_name , ". $typeToCache  ." having  min(Year) = ". $this->year   ." order by total_sales desc"
                   ));
+                  
                   $newCustomers = $this->formatDataForType($newCustomers , $typeToCache);
                   
                   Cache::forever($cacheKeyName, $newCustomers);

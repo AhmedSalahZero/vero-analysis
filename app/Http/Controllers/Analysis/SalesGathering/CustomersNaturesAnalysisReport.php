@@ -48,7 +48,7 @@ class CustomersNaturesAnalysisReport
     
         $RepeatingCustomers = $cashedResult['RepeatingForType'][$type];
         $activeCustomers = $cashedResult['ActiveForType'][$type]; 
-        $stopReactive = $cashedResult['StopForType'][$type]; 
+        $stopReactive = $cashedResult['StopReactivatedForType'][$type]; 
         $deadReactivatedCustomers = $cashedResult['deadReactivatedForType'][$type]; 
         $stopRepeatingCustomers = $cashedResult['StopRepeatingForType'][$type]; 
         $stopCustomers = $cashedResult['StopForType'][$type]; 
@@ -69,6 +69,8 @@ class CustomersNaturesAnalysisReport
                 $customersNaturesDead = [ 'Stop'=>$stopCustomers,
                     'Dead'=>$deadCustomers,
                     ];
+
+                //   testCalcs($customersNaturesActive);
         $last_date = null;
 
         if ($result=='view') {

@@ -1064,6 +1064,7 @@ function countTotalsForTotalsActiveItems(array $array , $key){
     
 }
 
+
 function getTotalForThisTypeExceptDead(array $array ,$iterableSingleItem, $key)
 {
     
@@ -1133,3 +1134,13 @@ function count_array_of_std_objects(array $array )
     return $counter ; 
 }
 
+// function testCalcs($customersNaturesActive)
+// {
+//     $total = 0 ;
+//     $data = $customersNaturesActive['New']['HR Learning & Development'];
+//     foreach($data as $d)
+//     {
+//         $total += $d->total_sales ;
+//     }
+//     dd($total);
+// }
