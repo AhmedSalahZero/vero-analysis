@@ -133,10 +133,10 @@
       </div>
       <div class="modal-body">
           @php
-              $businessSectors = getTypeFor('business_sector',$company->id,false);
+              $businessSectors = getTypeFor($type,$company->id,false);
           @endphp
           <input type="hidden" name="company_id" value="{{ $company->id }}">
-          <input type="hidden" name="type" value="business_sector">
+          <input type="hidden" name="type" value="{{ $type }}">
           <label class="text-left font-weight-bold  w-100 mb-3 text-black">{{ __('Please Select') }}  {{ ucwords(str_replace('_',' ',$type)) }}</label>
           <select id="business_sector_select" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
               @foreach($businessSectors as $businesSector)
@@ -156,7 +156,7 @@
 
 
                    <tr >
-                  <td   class="text-left">{{ __('Business Sector Name') }} </td>
+                  <td   class="text-left">{{ __(ucwords(str_replace('_',' ',$type))) . ' ' . __('Name') }} </td>
                   <td id="selected_type_name">{{ __('Value') }}</td>
               </tr>
 
@@ -166,7 +166,7 @@
                   <td id="total_sales_value">{{ __('Value') }}</td>
               </tr>
 
-              @foreach([  'customer_name'=>'Customers Count' , 'category'=>'Categories Count' , 'product_or_service'=> 'Products/Service Count' , 'product_item'=>'Products Item Count' ,'sales_person'=>'Salesperson Count' , 'invoice_count'=> 'Invoices Count','product_item_avg_count'=>'Avg Products Item Per Invoice' ,'avg_invoice_value'=>'Avg Invoice Values' ] as $id=>$item)
+              @foreach( getFieldsForTakeawayForType($type) as $id=>$item)
                @if(in_array($id , $exportableFieldsValues))
                <tr >
                   <td  class="text-left">{{ __($item) }} </td>
@@ -402,12 +402,14 @@
             }); // end am4core.ready()
         </script>
     @endforeach
+@foreach ($types as $type=>$brand)
+
 
     <script>
         
         $(function(){
 
-            $('#modal_for_business_sector').on('show.bs.modal', function(e){
+            $(document).on('show.bs.modal', '#modal_for_'+ "{{ $type }}",  function(e){
                 let company_id = $(this).find('input[type="hidden"][name="company_id"]').val();
                 let type = $(this).find('input[name="type"][type="hidden"]').val();
                  if(! $(this).data('target'))
@@ -430,7 +432,7 @@
                             "start_date":"{{ $start_date }}",
                             "end_date":"{{ $end_date }}",
                             "type":type ,
-                            "modal_id":'modal_for_business_sector'
+                            "modal_id":'modal_for_' + "{{ $type }}"
                         },
                         success: function (result) {
                             if(result.data){
@@ -458,10 +460,14 @@
 
         $(document).on('click' , '#recalc_modal' , function(e){
             e.preventDefault();
-            $('#modal_for_business_sector').trigger('show.bs.modal')
+            $('#modal_for_'+ "{{ $type }}").trigger('show.bs.modal')
         })
 
     </script>
+
+@endforeach  
+
+
 
   
 @endsection

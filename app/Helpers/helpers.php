@@ -1167,7 +1167,39 @@ function formatInvoiceForEachInterval(array $array , $selectedType)
     return $finalResult ;
     
 }
-
+function getFieldsForTakeawayForType(string $type)
+{
+    $commonFields = ['customer_name'=>__('Customers Count') , 'category'=>__('Categories Count') , 'product_or_service'=> __('Products/Service Count') , 'product_item'=>__('Products Item Count') ,'sales_person'=>__('Salesperson Count') , 'invoice_count'=> __('Invoices Count'),'product_item_avg_count'=>__('Avg Products Item Per Invoice') ,'avg_invoice_value'=>__('Avg Invoice Values')];
+    return [
+        'business_sector'=>array_merge($commonFields , []) ,
+        'category'=>array_merge($commonFields , [
+            'business_sector'=>__('Business Sectors Count') , 
+            'sales_channel'=>__('Sales Channel Count') ,
+            'zone'=>__('Zone Count') 
+        ]) ,
+        'sales_channel'=>array_merge($commonFields , [
+            'business_sector'=>__('Business Sectors Count') , 
+            'zone'=>__('Zone Count') 
+            ] ),
+            'branch'=>array_merge($commonFields , [
+                'sales_channel'=>__('Sales Channel Count') ,
+                 'business_sector'=>__('Business Sectors Count') ,
+            ]),
+            'zone'=>array_merge($commonFields , [
+                   'sales_channel'=>__('Sales Channel Count') ,
+            ]),
+            'product_or_service'=>array_merge($commonFields , [
+                  'sales_channel'=>__('Sales Channel Count') ,
+                 'business_sector'=>__('Business Sectors Count') ,
+                         'zone'=>__('Zone Count') 
+            ]),
+            
+            'product_item'=>array_merge($commonFields , [
+                'business_sector'=>__('Business Sectors Count') ,
+                 'zone'=>__('Zone Count') 
+            ])
+    ][$type] ?? $commonFields;
+}
 // function testCalcs($customersNaturesActive)
 // {
 //     $total = 0 ;

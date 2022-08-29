@@ -122,10 +122,10 @@
       </div>
       <div class="modal-body">
           <?php
-              $businessSectors = getTypeFor('business_sector',$company->id,false);
+              $businessSectors = getTypeFor($type,$company->id,false);
           ?>
           <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
-          <input type="hidden" name="type" value="business_sector">
+          <input type="hidden" name="type" value="<?php echo e($type); ?>">
           <label class="text-left font-weight-bold  w-100 mb-3 text-black"><?php echo e(__('Please Select')); ?>  <?php echo e(ucwords(str_replace('_',' ',$type))); ?></label>
           <select id="business_sector_select" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
               <?php $__currentLoopData = $businessSectors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $businesSector): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -145,7 +145,7 @@
 
 
                    <tr >
-                  <td   class="text-left"><?php echo e(__('Business Sector Name')); ?> </td>
+                  <td   class="text-left"><?php echo e(__(ucwords(str_replace('_',' ',$type))) . ' ' . __('Name')); ?> </td>
                   <td id="selected_type_name"><?php echo e(__('Value')); ?></td>
               </tr>
 
@@ -155,7 +155,7 @@
                   <td id="total_sales_value"><?php echo e(__('Value')); ?></td>
               </tr>
 
-              <?php $__currentLoopData = [  'customer_name'=>'Customers Count' , 'category'=>'Categories Count' , 'product_or_service'=> 'Products/Service Count' , 'product_item'=>'Products Item Count' ,'sales_person'=>'Salesperson Count' , 'invoice_count'=> 'Invoices Count','product_item_avg_count'=>'Avg Products Item Per Invoice' ,'avg_invoice_value'=>'Avg Invoice Values' ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id=>$item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <?php $__currentLoopData = getFieldsForTakeawayForType($type); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id=>$item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                <?php if(in_array($id , $exportableFieldsValues)): ?>
                <tr >
                   <td  class="text-left"><?php echo e(__($item)); ?> </td>
@@ -387,12 +387,14 @@
             }); // end am4core.ready()
         </script>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type=>$brand): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
 
     <script>
         
         $(function(){
 
-            $('#modal_for_business_sector').on('show.bs.modal', function(e){
+            $(document).on('show.bs.modal', '#modal_for_'+ "<?php echo e($type); ?>",  function(e){
                 let company_id = $(this).find('input[type="hidden"][name="company_id"]').val();
                 let type = $(this).find('input[name="type"][type="hidden"]').val();
                  if(! $(this).data('target'))
@@ -415,7 +417,7 @@
                             "start_date":"<?php echo e($start_date); ?>",
                             "end_date":"<?php echo e($end_date); ?>",
                             "type":type ,
-                            "modal_id":'modal_for_business_sector'
+                            "modal_id":'modal_for_' + "<?php echo e($type); ?>"
                         },
                         success: function (result) {
                             if(result.data){
@@ -443,10 +445,14 @@
 
         $(document).on('click' , '#recalc_modal' , function(e){
             e.preventDefault();
-            $('#modal_for_business_sector').trigger('show.bs.modal')
+            $('#modal_for_'+ "<?php echo e($type); ?>").trigger('show.bs.modal')
         })
 
     </script>
+
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>  
+
+
 
   
 <?php $__env->stopSection(); ?>

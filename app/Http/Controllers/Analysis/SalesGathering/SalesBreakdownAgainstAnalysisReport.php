@@ -544,11 +544,10 @@ class SalesBreakdownAgainstAnalysisReport
         $end_date = $request->get('end_date');
         $type = $request->get('type');
         $modal_id = $request->get('modal_id');
-
-        // dd($companyId , $selectedType , $start_date , $end_date  , $type );
-       
+        
         $db = DB::select(DB::raw('
-             SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person 
+             SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person ,
+              count(DISTINCT(business_sector)) as business_sector, count(DISTINCT(sales_channel)) as sales_channel, count(DISTINCT(zone)) as zone
                 FROM sales_gathering
                 force index (sales_channel_index)
                 WHERE ( company_id = '. $companyId  .' AND '. $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date. '"  )
@@ -569,7 +568,6 @@ class SalesBreakdownAgainstAnalysisReport
         return response()->json([
             'data'=>$db 
         ]);
-        
         
     }
 
