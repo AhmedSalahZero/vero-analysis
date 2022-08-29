@@ -1,6 +1,7 @@
 <?php
 
 use App\Http;
+use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
@@ -45,7 +46,10 @@ Route::group(
         'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth']
     ],
     function () {
+        
+        Route::post('get-net-sales-for-type/'  , [SalesBreakdownAgainstAnalysisReport::class , 'getNetSalesValueSum'])->name('get.net.sales.modal.for.type');
 
+        
         Route::post('remove-user' , [RemoveUsercontroller::class ,'__invoke'])->name('remove.user');
         Route::post('remove-company' , [RemoveCompanycontroller::class ,'__invoke'])->name('remove.company');
         Route::get('/client', function () {

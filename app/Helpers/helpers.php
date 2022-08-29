@@ -92,6 +92,8 @@ function getPeriods($interval)
           return [
         12=>[1,2,3,4,5,6,7,8,9 , 10,11,12]];
     }
+
+
     
 }
 function getLongestArray($array)
@@ -1132,6 +1134,38 @@ function count_array_of_std_objects(array $array )
         $counter += 1 ;   
     }
     return $counter ; 
+}
+
+function formatInvoiceForEachInterval(array $array , $selectedType)
+{
+    $finalResult = [];
+    $result = [
+        'product_item'=> 0 ,
+        'invoice_number'=> 0 
+    ] ;
+
+    $finalResult = [
+        'product_item_avg_count'=> 0 ,
+        'invoice_count'=>0,
+        'avg_invoice_value'=> 0   
+    ];
+    foreach($array['sumForEachInterval'][$selectedType] ?? [] as $year=>$data)
+    {
+              $result['product_item'] =  isset($result['product_item']) ? $result['product_item'] + $data[12]['product_item'] : $data[12]['product_item'] ;
+               $result['invoice_number'] =  isset($result['invoice_number']) ? $result['invoice_number'] + $data[12]['invoice_number'] : $data[12]['invoice_number'] ;
+          
+    } 
+    $resultForSales = 0 ;
+    foreach($array['reportSalesValues'][$selectedType] ?? [] as $data=>$saleValue)
+    {
+        $resultForSales += $saleValue ;
+    }
+
+    $finalResult['invoice_count'] = $result['invoice_number'] ?? 0 ;
+    $finalResult['product_item_avg_count'] = $result['invoice_number'] ? round($result['product_item'] / $result['invoice_number']) : 0 ;
+    $finalResult['avg_invoice_value'] = $result['invoice_number'] ? number_format($resultForSales / $result['invoice_number'],0) : 0 ;
+    return $finalResult ;
+    
 }
 
 // function testCalcs($customersNaturesActive)

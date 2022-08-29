@@ -99,7 +99,6 @@
 
 	
 				$(document).find('select.select2-select').each(function(index,value){
-					
 					let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0 ;
 					// alert(maxOption);
 						$(this).selectpicker({
