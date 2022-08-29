@@ -79,13 +79,14 @@
                 {{-- Daily --}}
                 <div class="col-md-6 col-lg-4 col-xl-4">
                     <!--begin::New Orders-->
+                    {{-- @dd(get_defined_vars()) --}}
                     <div class="kt-widget24">
                         <div class="kt-widget24__details">
                             <div class="kt-widget24__info">
                                 <h4 class="kt-widget24__title font-size">
                                     {{ __('Day Sales') }} <span 
                                     {{-- id="end-date-id" --}}
-                                    > :   
+                                    > :   {{ $end_date ?  \Carbon\Carbon::make($end_date)->format('d-M-Y') : '' }}
                                     {{-- asdasdasd --}}
 
                                         {{-- {{ $salesReport['last_date'] }} --}}
@@ -181,6 +182,8 @@
                             <div class="kt-widget24__info">
                                 <h4 class="kt-widget24__title font-size">
                                     {{ __('Year To Date Sales') }}
+                                     ({{ $yearOfEndDate =  \Carbon\Carbon::make($end_date)->startOfMonth()->subMonth(1)->format('Y') }})
+                                    
                                 </h4>
 
                             </div>
@@ -215,7 +218,10 @@
                                 <h4 class="kt-widget24__title font-size">
                                     {{ __('Previous 3 Months') }} : ( {{ \Carbon\Carbon::make($end_date)->startOfMonth()->subMonth(3)->format('M') 
                                     . ' - ' . \Carbon\Carbon::make($end_date)->startOfMonth()->subMonth(2)->format('M') . ' - ' .
-                                     \Carbon\Carbon::make($end_date)->startOfMonth()->subMonth(1)->format('M') }} )
+                                     \Carbon\Carbon::make($end_date)->startOfMonth()->subMonth(1)->format('M') }}  )
+
+                                    ({{ $yearOfEndDate }})
+                                    
                                 </h4>
                                 {{-- @endif  --}}
 
@@ -256,7 +262,7 @@
                                 <h4 class="kt-widget24__title font-size">
                                     {{ __('Previous Month') }} : ( {{ 
                                       \Carbon\Carbon::make($end_date)->startOfMonth()->subMonth(1)->format('M')
-                                      }} )
+                                      }} ) ({{ $yearOfEndDate ?? '' }})
                                 </h4>
                                 {{-- @endif  --}}
                             </div>
@@ -352,6 +358,8 @@
                                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                                             </span>
                                             <h3 class="kt-portlet__head-title">
+
+                                                {{__('Monthly And Accumulated Sales Table')}}
 
                                                 {{-- <span class="title-spacing"><b> {{ __('Last Updated Data Date : ') }}</b>
                                                     {{ $last_date ?? 'Last Date' }}</span> --}}

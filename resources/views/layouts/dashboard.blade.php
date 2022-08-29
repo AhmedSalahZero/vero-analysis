@@ -99,7 +99,6 @@
 
 	
 				$(document).find('select.select2-select').each(function(index,value){
-					
 					let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0 ;
 					// alert(maxOption);
 						$(this).selectpicker({
@@ -158,7 +157,6 @@
 		<link href="{{url('assets/vendors/custom/vendors/flaticon/flaticon.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{url('assets/vendors/custom/vendors/flaticon2/flaticon.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{url('assets/vendors/general/@fortawesome/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css" />
-
 		<!--end:: Global Optional Vendors -->
 
 		<!--begin::Global Theme Styles(used by all pages) -->
@@ -183,38 +181,25 @@
 			}
 			.dataTables_scrollBody::-webkit-scrollbar
 			{
-/* 				display: none;  */
 			}
  			.dataTables_scrollBody 
 			 {
-    		 /* scrollbar-width: none; */
 		 	}
 	
 
 
 
-/* {} */
 			 .dtfc-fixed-right{}
-			 /* .dataTable th{
-				 white-space: nowrap;
-    overflow: hidden;
-			 } */
- #to__left:hover{
-/* background-color:red */
- }
-#scroll-fixed{
-	display:none ; 
-}
- .kt-portlet.kt-portlet--tabs+#scroll-fixed{
-	 display:block ;
- }
- .hide_class{display:none}
-			/* .dataTables_scrollHeadInner {
-				padding-right:17px !important;
-			} */
-            /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
-            /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
-
+		
+				#to__left:hover{
+				}
+				#scroll-fixed{
+					display:none ; 
+				}
+				.kt-portlet.kt-portlet--tabs+#scroll-fixed{
+					display:block ;
+				}
+ 			.hide_class{display:none}
 			.remove-item-class
 			{
 				cursor: pointer;

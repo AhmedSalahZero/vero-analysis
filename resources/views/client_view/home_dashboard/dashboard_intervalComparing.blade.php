@@ -114,7 +114,7 @@
 
 
 
-            <div class="form-group row ">
+            {{-- <div class="form-group row ">
                 <div class="col-md-3">
                     <label><b>{{__('Third Inteval')}}</b></label>
                 </div>
@@ -145,7 +145,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <x-submitting/>
         </form>
@@ -189,15 +189,15 @@
           </div>
 
         @foreach ($intervals as $intervalName => $data  )
-            <div class="col-md-4" >
+            <div class="col-md-6" >
                 <div class="kt-portlet kt-portlet--mobile">
-                                    @include('interval_date' , ['k'=>$k % 3 ])
+                                    @include('interval_date' , ['k'=>$k % 2 ])
 
                     <div class="kt-portlet__body">
 
 
 
-                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_info'">
+                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_search'">
                             @slot('table_header')
                                 <tr class="table-active text-center">
                                     <th>#</th>
@@ -286,12 +286,12 @@
               <h2>{{ (ucfirst(str_replace('_',' ' ,$theType))) . ' Sales Interval Comparing Analysis ' }}</h2>
           </div> --}}
         @foreach ($intervals as $intervalName => $data  )
-                  <div class="col-md-4">
+                  <div class="col-md-6">
                 <div class="kt-portlet kt-portlet--mobile">
 
                     
 
-                                 @include('interval_date' , ['i'=>$i %3 ])
+                                 @include('interval_date' , ['i'=>$i %2 ])
 
 
                     <div class="kt-portlet__body">

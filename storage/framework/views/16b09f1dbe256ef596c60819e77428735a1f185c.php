@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('dash_nav'); ?>
 <?php echo $__env->make('client_view.home_dashboard.main_navs',['active'=>'breadkdown_dashboard'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
@@ -15,6 +16,15 @@
     </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
+
+<?php
+     $exportableFields  = (new \App\Http\Controllers\ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+     $exportableFieldsValues = array_keys($exportableFields);
+    $exportableFieldsValues[] = 'invoice_count';
+    $exportableFieldsValues[] = 'product_item_avg_count';
+    $exportableFieldsValues[] = 'avg_invoice_value';
+
+?>
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -71,23 +81,111 @@
                 <div class="kt-portlet__body  kt-portlet__body--fit">
                     <div class="row row-no-padding row-col-separator-xl">
                         <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                        
+                  
                             <div class="col-md-4">
                                 <!--begin::Total Profit-->
                                 <div class="kt-widget24 text-center">
                                     <div class="kt-widget24__details">
-                                        <div class="kt-widget24__info">
-                                            <h4 class="kt-widget24__title font-size">
-                                                <?php echo e(__('Top '. ucwords(str_replace('_',' ',$type)))); ?>
+                                        <div class="kt-widget24__info w-100">
+                                            <h4 class="kt-widget24__title font-size justify-content-between">
+                                               
+                                                <span><?php echo e(__('Top '. ucwords(str_replace('_',' ',$type)))); ?></span>
+                                                <p>
+                                                    <button type="button" class="btn text-white btn-small btn-<?php echo e($color); ?>" data-toggle="modal" data-target="#modal_for_<?php echo e($type); ?>">
+                                                        <?php echo e(__('Take Away')); ?>
+
+                                                    </button>
 
 
+
+
+                                                    
+                                                </p>
                                             </h4>
                                         </div>
                                     </div>
+
+
+                                                    <div class="modal fade bd-example-modal-xl"  id="modal_for_<?php echo e($type); ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-left"  id="exampleModalLabel " style="line-height: 2"><?php echo e(ucwords(str_replace('_',' ',$type)) . ' - ' . __('Take Aways')); ?> <br> 
+        <?php echo e(__('From:') . ' ' .  \Carbon\Carbon::make($start_date)->format('d-M-Y')  .' ' . __('To:') . ' ' . \Carbon\Carbon::make($end_date)->format('d-M-Y')); ?> 
+        
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <?php
+              $businessSectors = getTypeFor('business_sector',$company->id,false);
+          ?>
+          <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+          <input type="hidden" name="type" value="business_sector">
+          <label class="text-left font-weight-bold  w-100 mb-3 text-black"><?php echo e(__('Please Select')); ?>  <?php echo e(ucwords(str_replace('_',' ',$type))); ?></label>
+          <select id="business_sector_select" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
+              <?php $__currentLoopData = $businessSectors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $businesSector): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <option value="<?php echo e($businesSector); ?>"> <?php echo e(__($businesSector)); ?> </option>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+          </select>
+
+          <table class="table table-bordered mt-5 datatable" id="" style="table-layout: fixed">
+              <tr class="text-white" style="background-color:#086691">
+                  <th> <?php echo e(__('Item')); ?> </th>
+                  <th> <?php echo e(__('Value')); ?> </th>
+              </tr>
+
+
+
+
+
+
+                   <tr >
+                  <td   class="text-left"><?php echo e(__('Business Sector Name')); ?> </td>
+                  <td id="selected_type_name"><?php echo e(__('Value')); ?></td>
+              </tr>
+
+
+                 <tr >
+                  <td   class="text-left"><?php echo e(__('Sales Value')); ?> </td>
+                  <td id="total_sales_value"><?php echo e(__('Value')); ?></td>
+              </tr>
+
+              <?php $__currentLoopData = [  'customer_name'=>'Customers Count' , 'category'=>'Categories Count' , 'product_or_service'=> 'Products/Service Count' , 'product_item'=>'Products Item Count' ,'sales_person'=>'Salesperson Count' , 'invoice_count'=> 'Invoices Count','product_item_avg_count'=>'Avg Products Item Per Invoice' ,'avg_invoice_value'=>'Avg Invoice Values' ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id=>$item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+               <?php if(in_array($id , $exportableFieldsValues)): ?>
+               <tr >
+                  <td  class="text-left"><?php echo e(__($item)); ?> </td>
+                  <td id="<?php echo e($id); ?>">-</td>
+              </tr>
+              <?php endif; ?>
+
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+              
+          </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+        <button id="recalc_modal" type="button" class="btn btn-primary"><?php echo e(__('Run')); ?></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
                                     <div class="kt-widget24__details">
                                         <span class="kt-widget24__stats kt-font-<?php echo e($color); ?>">
                                             <?php echo e(__( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0))); ?>
 
                                     </div>
+
+                                    <input type="hidden" id="top_for_<?php echo e($type); ?>"  value="<?php echo e($top_data[$type]['item'] ?? ''); ?>">
+                                    <input type="hidden" id="value_for_<?php echo e($type); ?>"  value="<?php echo e(number_format(($top_data[$type]['Sales Value']??0))); ?>">
 
                                     <div class="progress progress--sm">
                                         <div class="progress-bar kt-bg-<?php echo e($color); ?>" role="progressbar" style="width: 100%;" aria-valuenow="50"
@@ -289,6 +387,68 @@
             }); // end am4core.ready()
         </script>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+    <script>
+        
+        $(function(){
+
+            $('#modal_for_business_sector').on('show.bs.modal', function(e){
+                let company_id = $(this).find('input[type="hidden"][name="company_id"]').val();
+                let type = $(this).find('input[name="type"][type="hidden"]').val();
+                 if(! $(this).data('target'))
+                 {
+                       let topTypeName = $('#top_for_'+type).val();
+                let topTypeSalesValue = $('#value_for_'+type).val();
+                $(this).find('#selected_type_name').html(topTypeName);
+                $(this).find('#total_sales_value').html(topTypeSalesValue);
+                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true).trigger('change');
+                }
+
+                let selectedType = $(this).find('select[name="selected_type"]').val();
+                $(this).data('target' , 1);
+                $.ajax({
+                        type: 'post',
+                        url: "<?php echo e(route('get.net.sales.modal.for.type')); ?>",
+                        data: {
+                            "company_id":company_id,
+                            "selectedType":selectedType,
+                            "start_date":"<?php echo e($start_date); ?>",
+                            "end_date":"<?php echo e($end_date); ?>",
+                            "type":type ,
+                            "modal_id":'modal_for_business_sector'
+                        },
+                        success: function (result) {
+                            if(result.data){
+                                let modal_id = result.data[0].modal_id ;
+
+                                for(index in result.data[0])
+                                {
+                                    // console.log(index);
+                                    // console.log(result.data[0]);
+                                    if(index != modal_id)
+                                    {
+                                        $('#'+ modal_id  ).find('#'+index).html(result.data[0][index]);
+                                    }
+                                }
+                            }
+                        }, error: function (reject) {
+                        }
+                    });
+
+
+            })
+            
+ 
+        });
+
+        $(document).on('click' , '#recalc_modal' , function(e){
+            e.preventDefault();
+            $('#modal_for_business_sector').trigger('show.bs.modal')
+        })
+
+    </script>
+
+  
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\VeroAnalysis\resources\views/client_view/home_dashboard/dashboard_breakdown.blade.php ENDPATH**/ ?>

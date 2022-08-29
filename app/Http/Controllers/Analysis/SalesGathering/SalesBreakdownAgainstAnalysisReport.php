@@ -535,4 +535,43 @@ class SalesBreakdownAgainstAnalysisReport
     }
 
 
+    public function getNetSalesValueSum(Request $request )
+    {
+        
+        $companyId = $request->get('company_id');
+        $selectedType = $request->get('selectedType') ; 
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        $type = $request->get('type');
+        $modal_id = $request->get('modal_id');
+
+        // dd($companyId , $selectedType , $start_date , $end_date  , $type );
+       
+        $db = DB::select(DB::raw('
+             SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person 
+                FROM sales_gathering
+                force index (sales_channel_index)
+                WHERE ( company_id = '. $companyId  .' AND '. $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date. '"  )
+                ORDER BY id '
+        ));
+
+        $request['branches'] = [$selectedType];
+        $request['type'] = $type ; 
+        $request['interval'] = 'annually';
+        
+
+        $invoiceResultArray = (new InvoicesAgainstAnalysisReport() )->InvoicesSalesAnalysisResult($request , Company::find($companyId) , true);
+        $invoiceResultsFormatted = formatInvoiceForEachInterval($invoiceResultArray , $selectedType);
+        foreach($invoiceResultsFormatted as $key=>$value)
+        {
+           $db[0]->{$key} = $value ;  
+        }
+        return response()->json([
+            'data'=>$db 
+        ]);
+        
+        
+    }
+
+
 }

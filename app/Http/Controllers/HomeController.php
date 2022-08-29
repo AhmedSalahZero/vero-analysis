@@ -450,8 +450,8 @@ class HomeController extends Controller
         $end_date_0   = date('2021-12-31');
         $start_date_1 = date('2020-01-01');
         $end_date_1   = date('2020-12-31');
-        $start_date_2 = date('2019-01-01');
-        $end_date_2   = date('2019-12-31');
+        // $start_date_2 = date('2019-01-01');
+        // $end_date_2   = date('2019-12-31');
 
              $allTypes =  [
                 'zone'=>'brand',
@@ -485,10 +485,11 @@ class HomeController extends Controller
             $firstKey = $keys[0] ?? 0;
             // dd();
             $secondKey = $keys[1] ?? 0;
-            $thirdKey = $keys[2] ?? 0;
+            // $thirdKey = $keys[2] ?? 0;
          
              $request['types']=[
-                $firstKey,$secondKey ,$thirdKey 
+                $firstKey,$secondKey 
+                // ,$thirdKey 
             ];
             // dd($firstType, $secondType);
             $request['start_date_one'] = $start_date_0;
@@ -496,8 +497,8 @@ class HomeController extends Controller
             $request['start_date_two'] = $start_date_1;
             $request['end_date_two'] = $end_date_1;
 
-             $request['start_date_three'] = $start_date_2;
-            $request['end_date_three'] = $end_date_2;
+            //  $request['start_date_three'] = $start_date_2;
+            // $request['end_date_three'] = $end_date_2;
             
         }elseif ($request->isMethod('POST')){
             
@@ -506,8 +507,8 @@ class HomeController extends Controller
             $end_date_0  = $request['end_date_one'];
             $start_date_1  = $request['start_date_two'];
             $end_date_1  = $request['end_date_two'];
-            $start_date_2  = $request['start_date_three'];
-            $end_date_2  = $request['end_date_three'];
+            // $start_date_2  = $request['start_date_three'];
+            // $end_date_2  = $request['end_date_three'];
         }
 
          foreach((array)$request->types as $t ){
@@ -521,7 +522,11 @@ class HomeController extends Controller
         return view('client_view.home_dashboard.dashboard_intervalComparing',compact('company'
         // ,'product_items','sales_channels'
         ,
-        'start_date_0','end_date_0','start_date_1','end_date_1','start_date_2', 'end_date_2','permittedTypes','selectedTypes' , 'intervalComparing'));
+        'start_date_0','end_date_0','start_date_1','end_date_1'
+        ,
+        // 'start_date_2', 'end_date_2',
+        
+        'permittedTypes','selectedTypes' , 'intervalComparing'));
     }
 
 }

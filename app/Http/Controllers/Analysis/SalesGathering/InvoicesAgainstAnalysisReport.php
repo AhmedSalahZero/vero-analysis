@@ -115,7 +115,7 @@ class InvoicesAgainstAnalysisReport
     }
 
 
-      public function InvoicesSalesAnalysisResult(Request $request, Company $company)
+      public function InvoicesSalesAnalysisResult(Request $request, Company $company , $array = false )
     {
        $report_data =[];
         $growth_rate_data =[];
@@ -167,6 +167,14 @@ class InvoicesAgainstAnalysisReport
                  $reportSalesValues  = getSalesPersonsSalesAnalysisData($request , $company );
             }
           array_sort_multi_levels($sumForEachInterval);
+          if($array)
+          {
+              return [
+                  'sumForEachInterval'=>$sumForEachInterval , 
+                  'reportSalesValues'=>$reportSalesValues
+              ] ;
+              
+          }
         return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','type','secondTypesArray','sumForEachInterval','reportSalesValues'));
 
 

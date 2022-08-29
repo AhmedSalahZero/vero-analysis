@@ -29,6 +29,15 @@
     </style>
 @endsection
 @section('content')
+
+@php
+     $exportableFields  = (new \App\Http\Controllers\ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+     $exportableFieldsValues = array_keys($exportableFields);
+    $exportableFieldsValues[] = 'invoice_count';
+    $exportableFieldsValues[] = 'product_item_avg_count';
+    $exportableFieldsValues[] = 'avg_invoice_value';
+
+@endphp
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -84,21 +93,109 @@
                 <div class="kt-portlet__body  kt-portlet__body--fit">
                     <div class="row row-no-padding row-col-separator-xl">
                         @foreach ($types as $type => $color)
+
+                        
+                  
                             <div class="col-md-4">
                                 <!--begin::Total Profit-->
                                 <div class="kt-widget24 text-center">
                                     <div class="kt-widget24__details">
-                                        <div class="kt-widget24__info">
-                                            <h4 class="kt-widget24__title font-size">
-                                                {{ __('Top '. ucwords(str_replace('_',' ',$type))) }}
+                                        <div class="kt-widget24__info w-100">
+                                            <h4 class="kt-widget24__title font-size justify-content-between">
+                                               
+                                                <span>{{ __('Top '. ucwords(str_replace('_',' ',$type))) }}</span>
+                                                <p>
+                                                    <button type="button" class="btn text-white btn-small btn-{{ $color }}" data-toggle="modal" data-target="#modal_for_{{ $type }}">
+                                                        {{ __('Take Away') }}
+                                                    </button>
 
+
+
+
+                                                    {{-- <button type="button" data-bs-toggle="modal" data-bs-target="#test_{{ $type }}" class="btn btn-{{ $color }} btn-sm text-white">{{ __('Tip') }}</button> --}}
+                                                </p>
                                             </h4>
                                         </div>
                                     </div>
+
+
+                                                    <div class="modal fade bd-example-modal-xl"  id="modal_for_{{ $type }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-left"  id="exampleModalLabel " style="line-height: 2">{{ ucwords(str_replace('_',' ',$type)) . ' - ' . __('Take Aways') }} <br> 
+        {{ __('From:') . ' ' .  \Carbon\Carbon::make($start_date)->format('d-M-Y')  .' ' . __('To:') . ' ' . \Carbon\Carbon::make($end_date)->format('d-M-Y')  }} 
+        
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          @php
+              $businessSectors = getTypeFor('business_sector',$company->id,false);
+          @endphp
+          <input type="hidden" name="company_id" value="{{ $company->id }}">
+          <input type="hidden" name="type" value="business_sector">
+          <label class="text-left font-weight-bold  w-100 mb-3 text-black">{{ __('Please Select') }}  {{ ucwords(str_replace('_',' ',$type)) }}</label>
+          <select id="business_sector_select" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
+              @foreach($businessSectors as $businesSector)
+              <option value="{{ $businesSector }}"> {{ __($businesSector) }} </option>
+              @endforeach 
+          </select>
+
+          <table class="table table-bordered mt-5 datatable" id="" style="table-layout: fixed">
+              <tr class="text-white" style="background-color:#086691">
+                  <th> {{ __('Item') }} </th>
+                  <th> {{ __('Value') }} </th>
+              </tr>
+
+
+
+
+
+
+                   <tr >
+                  <td   class="text-left">{{ __('Business Sector Name') }} </td>
+                  <td id="selected_type_name">{{ __('Value') }}</td>
+              </tr>
+
+
+                 <tr >
+                  <td   class="text-left">{{ __('Sales Value') }} </td>
+                  <td id="total_sales_value">{{ __('Value') }}</td>
+              </tr>
+
+              @foreach([  'customer_name'=>'Customers Count' , 'category'=>'Categories Count' , 'product_or_service'=> 'Products/Service Count' , 'product_item'=>'Products Item Count' ,'sales_person'=>'Salesperson Count' , 'invoice_count'=> 'Invoices Count','product_item_avg_count'=>'Avg Products Item Per Invoice' ,'avg_invoice_value'=>'Avg Invoice Values' ] as $id=>$item)
+               @if(in_array($id , $exportableFieldsValues))
+               <tr >
+                  <td  class="text-left">{{ __($item) }} </td>
+                  <td id="{{ $id }}">-</td>
+              </tr>
+              @endif
+
+              @endforeach 
+              
+          </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+        <button id="recalc_modal" type="button" class="btn btn-primary">{{ __('Run') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
                                     <div class="kt-widget24__details">
                                         <span class="kt-widget24__stats kt-font-{{$color}}">
                                             {{ __( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0)) }}
                                     </div>
+
+                                    <input type="hidden" id="top_for_{{ $type }}"  value="{{ $top_data[$type]['item'] ?? '' }}">
+                                    <input type="hidden" id="value_for_{{ $type }}"  value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
 
                                     <div class="progress progress--sm">
                                         <div class="progress-bar kt-bg-{{$color}}" role="progressbar" style="width: 100%;" aria-valuenow="50"
@@ -305,4 +402,66 @@
             }); // end am4core.ready()
         </script>
     @endforeach
+
+    <script>
+        
+        $(function(){
+
+            $('#modal_for_business_sector').on('show.bs.modal', function(e){
+                let company_id = $(this).find('input[type="hidden"][name="company_id"]').val();
+                let type = $(this).find('input[name="type"][type="hidden"]').val();
+                 if(! $(this).data('target'))
+                 {
+                       let topTypeName = $('#top_for_'+type).val();
+                let topTypeSalesValue = $('#value_for_'+type).val();
+                $(this).find('#selected_type_name').html(topTypeName);
+                $(this).find('#total_sales_value').html(topTypeSalesValue);
+                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true).trigger('change');
+                }
+
+                let selectedType = $(this).find('select[name="selected_type"]').val();
+                $(this).data('target' , 1);
+                $.ajax({
+                        type: 'post',
+                        url: "{{ route('get.net.sales.modal.for.type') }}",
+                        data: {
+                            "company_id":company_id,
+                            "selectedType":selectedType,
+                            "start_date":"{{ $start_date }}",
+                            "end_date":"{{ $end_date }}",
+                            "type":type ,
+                            "modal_id":'modal_for_business_sector'
+                        },
+                        success: function (result) {
+                            if(result.data){
+                                let modal_id = result.data[0].modal_id ;
+
+                                for(index in result.data[0])
+                                {
+                                    // console.log(index);
+                                    // console.log(result.data[0]);
+                                    if(index != modal_id)
+                                    {
+                                        $('#'+ modal_id  ).find('#'+index).html(result.data[0][index]);
+                                    }
+                                }
+                            }
+                        }, error: function (reject) {
+                        }
+                    });
+
+
+            })
+            
+ 
+        });
+
+        $(document).on('click' , '#recalc_modal' , function(e){
+            e.preventDefault();
+            $('#modal_for_business_sector').trigger('show.bs.modal')
+        })
+
+    </script>
+
+  
 @endsection
