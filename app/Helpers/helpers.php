@@ -15,6 +15,7 @@ use App\Models\SecondNewProductAllocationBase;
 use App\Traits\Intervals;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -767,7 +768,8 @@ function capitializeType($type)
     return __(spaceAfterCapitalLetters(camelize($type))) ;
 }
 
-function getCustomerSalesAnalysisData(Request $request , Company $company )
+
+function getTypeSalesAnalysisData(Request $request , Company $company , $type)
 {
        $dimension = $request->report_type;
 
@@ -779,9 +781,9 @@ function getCustomerSalesAnalysisData(Request $request , Company $company )
         foreach ($sales_channels as  $sales_channel) {
 
             $sales_channels_data =collect(DB::select(DB::raw("
-                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,customer_name
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,". $type ."
                 FROM sales_gathering
-                WHERE ( company_id = '".$company->id."'AND customer_name = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                WHERE ( company_id = '".$company->id."'AND ". $type ." = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
                 ORDER BY id "
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');
@@ -790,7 +792,6 @@ function getCustomerSalesAnalysisData(Request $request , Company $company )
             $interval_data_per_item = [];
             $years = [];
             if (count($sales_channels_data)>0) {
-
                 array_walk($sales_channels_data, function ($val, $date) use (&$years) {
                     $years[] = date('Y', strtotime($date));
                 });
@@ -800,9 +801,6 @@ function getCustomerSalesAnalysisData(Request $request , Company $company )
                 $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
 
                 $report_data[$sales_channel] = $interval_data['data_intervals'][$request->interval][$sales_channel] ?? [];
-
-
-
             }
         }
 
@@ -818,57 +816,108 @@ function getCustomerSalesAnalysisData(Request $request , Company $company )
 }
 
 
+// function getCustomerSalesAnalysisData(Request $request , Company $company )
+// {
+//        $dimension = $request->report_type;
 
+//         $report_data =[];
+//         $growth_rate_data =[];
 
-function getSalesPersonsSalesAnalysisData(Request $request , Company $company )
-{
-       $dimension = $request->report_type;
+//         $sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) :$request->sales_channels ;
 
-        $report_data =[];
-        $growth_rate_data =[];
+//         foreach ($sales_channels as  $sales_channel) {
 
-        $sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) :$request->sales_channels ;
-
-        foreach ($sales_channels as  $sales_channel) {
-
-            $sales_channels_data =collect(DB::select(DB::raw("
-                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,sales_person
-                FROM sales_gathering
-                WHERE ( company_id = '".$company->id."'AND sales_person = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
-                ORDER BY id "
-                )))->groupBy('gr_date')->map(function($item){
-                    return $item->sum('net_sales_value');
-                })->toArray();
+//             $sales_channels_data =collect(DB::select(DB::raw("
+//                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,customer_name
+//                 FROM sales_gathering
+//                 WHERE ( company_id = '".$company->id."'AND customer_name = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
+//                 ORDER BY id "
+//                 )))->groupBy('gr_date')->map(function($item){
+//                     return $item->sum('net_sales_value');
+//                 })->toArray();
          
-            $interval_data_per_item = [];
-            $years = [];
-            if (count($sales_channels_data)>0) {
+//             $interval_data_per_item = [];
+//             $years = [];
+//             if (count($sales_channels_data)>0) {
 
-                array_walk($sales_channels_data, function ($val, $date) use (&$years) {
-                    $years[] = date('Y', strtotime($date));
-                });
-                $years = array_unique($years);
-                $report_data[$sales_channel] = $sales_channels_data;
-                $interval_data_per_item[$sales_channel] = $sales_channels_data;
-                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+//                 array_walk($sales_channels_data, function ($val, $date) use (&$years) {
+//                     $years[] = date('Y', strtotime($date));
+//                 });
+//                 $years = array_unique($years);
+//                 $report_data[$sales_channel] = $sales_channels_data;
+//                 $interval_data_per_item[$sales_channel] = $sales_channels_data;
+//                 $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
 
-                $report_data[$sales_channel] = $interval_data['data_intervals'][$request->interval][$sales_channel] ?? [];
+//                 $report_data[$sales_channel] = $interval_data['data_intervals'][$request->interval][$sales_channel] ?? [];
 
 
 
-            }
-        }
+//             }
+//         }
 
-        $final_report_data = [];
-        $sales_channels_names =[];
-        foreach ($sales_channels as  $sales_channel) {
-            $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel]??[]);
-            $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel]??[]);
-            $sales_channels_names[] = (str_replace( ' ','_', $sales_channel));
-        }
+//         $final_report_data = [];
+//         $sales_channels_names =[];
+//         foreach ($sales_channels as  $sales_channel) {
+//             $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel]??[]);
+//             $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel]??[]);
+//             $sales_channels_names[] = (str_replace( ' ','_', $sales_channel));
+//         }
 
-            return $report_data ;
-}
+//             return $report_data ;
+// }
+
+
+
+
+// function getSalesPersonsSalesAnalysisData(Request $request , Company $company )
+// {
+//        $dimension = $request->report_type;
+
+//         $report_data =[];
+//         $growth_rate_data =[];
+
+//         $sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) :$request->sales_channels ;
+
+//         foreach ($sales_channels as  $sales_channel) {
+
+//             $sales_channels_data =collect(DB::select(DB::raw("
+//                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,sales_person
+//                 FROM sales_gathering
+//                 WHERE ( company_id = '".$company->id."'AND sales_person = '".$sales_channel."' AND date between '".$request->start_date."' and '".$request->end_date."')
+//                 ORDER BY id "
+//                 )))->groupBy('gr_date')->map(function($item){
+//                     return $item->sum('net_sales_value');
+//                 })->toArray();
+         
+//             $interval_data_per_item = [];
+//             $years = [];
+//             if (count($sales_channels_data)>0) {
+
+//                 array_walk($sales_channels_data, function ($val, $date) use (&$years) {
+//                     $years[] = date('Y', strtotime($date));
+//                 });
+//                 $years = array_unique($years);
+//                 $report_data[$sales_channel] = $sales_channels_data;
+//                 $interval_data_per_item[$sales_channel] = $sales_channels_data;
+//                 $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+
+//                 $report_data[$sales_channel] = $interval_data['data_intervals'][$request->interval][$sales_channel] ?? [];
+
+
+
+//             }
+//         }
+
+//         $final_report_data = [];
+//         $sales_channels_names =[];
+//         foreach ($sales_channels as  $sales_channel) {
+//             $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel]??[]);
+//             $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel]??[]);
+//             $sales_channels_names[] = (str_replace( ' ','_', $sales_channel));
+//         }
+
+//             return $report_data ;
+// }
 
 function sumBasedOnQuarterNumber($array , array $quarters  , $total )
 {
@@ -1169,10 +1218,10 @@ function formatInvoiceForEachInterval(array $array , $selectedType)
 }
 function getFieldsForTakeawayForType(string $type)
 {
-    $commonFields = ['customer_name'=>__('Customers Count') , 'category'=>__('Categories Count') , 'product_or_service'=> __('Products/Service Count') , 'product_item'=>__('Products Item Count') ,'sales_person'=>__('Salesperson Count') , 'invoice_count'=> __('Invoices Count'),'product_item_avg_count'=>__('Avg Products Item Per Invoice') ,'avg_invoice_value'=>__('Avg Invoice Values')];
+    $commonFields = ['customer_name'=>__('Customers Count')  , 'category'=>__('Categories Count') , 'product_or_service'=> __('Products/Service Count') , 'product_item'=>__('Products Item Count') ,'sales_person'=>__('Salesperson Count') ,'branch'=>__('Branch Count'), 'invoice_count'=> __('Invoices Count'),'product_item_avg_count'=>__('Avg Products Item Per Invoice') ,'avg_invoice_value'=>__('Avg Invoice Values')];
     return [
         'business_sector'=>array_merge($commonFields , []) ,
-        'category'=>array_merge($commonFields , [
+        'category'=>array_merge(Arr::except($commonFields,['category'] ) , [
             'business_sector'=>__('Business Sectors Count') , 
             'sales_channel'=>__('Sales Channel Count') ,
             'zone'=>__('Zone Count') 
@@ -1182,31 +1231,54 @@ function getFieldsForTakeawayForType(string $type)
             'zone'=>__('Zone Count') 
             ] ),
             'branch'=>array_merge($commonFields , [
-                'sales_channel'=>__('Sales Channel Count') ,
                  'business_sector'=>__('Business Sectors Count') ,
+                'sales_channel'=>__('Sales Channel Count') ,
+                
             ]),
             'zone'=>array_merge($commonFields , [
                    'sales_channel'=>__('Sales Channel Count') ,
             ]),
-            'product_or_service'=>array_merge($commonFields , [
-                  'sales_channel'=>__('Sales Channel Count') ,
+            'product_or_service'=>array_merge(Arr::except($commonFields , ['category' , 'product_or_service']) , [
                  'business_sector'=>__('Business Sectors Count') ,
-                         'zone'=>__('Zone Count') 
+                  'sales_channel'=>__('Sales Channel Count') ,
+                'zone'=>__('Zone Count') 
             ]),
             
-            'product_item'=>array_merge($commonFields , [
+            'product_item'=>array_merge(Arr::except($commonFields , ['category' , 'product_or_service','product_item']) , [
                 'business_sector'=>__('Business Sectors Count') ,
+                 'sales_channel'=>__('Sales Channel Count') ,
                  'zone'=>__('Zone Count') 
             ])
     ][$type] ?? $commonFields;
 }
-// function testCalcs($customersNaturesActive)
-// {
-//     $total = 0 ;
-//     $data = $customersNaturesActive['New']['HR Learning & Development'];
-//     foreach($data as $d)
-//     {
-//         $total += $d->total_sales ;
-//     }
-//     dd($total);
-// }
+function orderStdClassBy($stdObjArray  , $orderKey , $direction = 'desc' )
+{
+    (uasort($stdObjArray,  function($a,$b) {
+if(isset($a->total_sales_value)&&isset($b->total_sales_value)){
+    
+$a = $a->total_sales_value ; ;
+
+$b = $b->total_sales_value ;
+
+
+     if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
+    }
+    return ;
+}
+
+)
+    );
+    return $stdObjArray ;
+}
+
+function hasTopAndBottom($type)
+{
+    $allowedTypes = [
+        'zone','product_or_service','product_item','customer_name','business_sector','category','sales_channel','sales_person' ,'branch'
+    ] ;
+    
+    return in_array($type , $allowedTypes);
+}

@@ -48,6 +48,7 @@ Route::group(
     function () {
         
         Route::post('get-net-sales-for-type/'  , [SalesBreakdownAgainstAnalysisReport::class , 'getNetSalesValueSum'])->name('get.net.sales.modal.for.type');
+        Route::post('getTopAndBottomsForDashboard' , [SalesBreakdownAgainstAnalysisReport::class , 'topAndBottomsForDashboard'])->name('getTopAndBottomsForDashboard');
 
         
         Route::post('remove-user' , [RemoveUsercontroller::class ,'__invoke'])->name('remove.user');

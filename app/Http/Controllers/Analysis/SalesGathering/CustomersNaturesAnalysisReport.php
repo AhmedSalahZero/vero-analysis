@@ -178,6 +178,14 @@ class CustomersNaturesAnalysisReport
     
         $last_date = null;
 
+        // if($result == 'top_and_bottom_fifty')
+        // {
+        //     return [
+        //         'top_50'=>array_slice($customers_natures['totals'] , 0 , 50 , true),
+        //         'bottom_50'=>array_slice($customers_natures['totals'] , -50 , 50 , true),
+        //     ];
+        // }
+
         if ($result=='view') {
             $last_date = SalesGathering::company()->latest('date')->first()->date ??'';
             $last_date = date('d-M-Y', strtotime($last_date));

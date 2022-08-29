@@ -27,6 +27,46 @@
         }
         /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
     </style>
+
+    <style>
+        .swal-wide{
+    width:850px;
+}
+
+.custom_width_classs
+{
+    width:600px;
+}
+#datatable_modal_div{
+    top: 50%;
+left: 50%;
+transform: translate(-50% , -50%);
+    position: fixed;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height:80vh;
+    width:90%;
+    z-index: 9;
+    padding:2rem ;
+
+}
+.container__fixed{
+    position: fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    background-color:rgba(0 , 0 , 0 , 0.3);
+    display: none;
+    overflow: scroll;
+
+}
+.header___bg
+{
+    background-color:#086691 !important;
+    color:#fff !important; 
+}
+    </style>
 @endsection
 @section('content')
 
@@ -38,6 +78,7 @@
     $exportableFieldsValues[] = 'avg_invoice_value';
 
 @endphp
+
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -105,6 +146,7 @@
                                                
                                                 <span>{{ __('Top '. ucwords(str_replace('_',' ',$type))) }}</span>
                                                 <p>
+
                                                     <button type="button" class="btn text-white btn-small btn-{{ $color }}" data-toggle="modal" data-target="#modal_for_{{ $type }}">
                                                         {{ __('Take Away') }}
                                                     </button>
@@ -119,8 +161,8 @@
                                     </div>
 
 
-                                                    <div class="modal fade bd-example-modal-xl"  id="modal_for_{{ $type }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
+                                                    <div class="modal fade bd-example-modal-lg modal__class_top_bottom"  id="modal_for_{{ $type }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-left"  id="exampleModalLabel " style="line-height: 2">{{ ucwords(str_replace('_',' ',$type)) . ' - ' . __('Take Aways') }} <br> 
@@ -138,7 +180,7 @@
           <input type="hidden" name="company_id" value="{{ $company->id }}">
           <input type="hidden" name="type" value="{{ $type }}">
           <label class="text-left font-weight-bold  w-100 mb-3 text-black">{{ __('Please Select') }}  {{ ucwords(str_replace('_',' ',$type)) }}</label>
-          <select id="business_sector_select" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
+          <select id="business_sector_select_{{ $type }}" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
               @foreach($businessSectors as $businesSector)
               <option value="{{ $businesSector }}"> {{ __($businesSector) }} </option>
               @endforeach 
@@ -168,19 +210,72 @@
 
               @foreach( getFieldsForTakeawayForType($type) as $id=>$item)
                @if(in_array($id , $exportableFieldsValues))
+
+               
                <tr >
-                  <td  class="text-left">{{ __($item) }} </td>
+                  <td  class="text-left">{{ __($item) }} 
+                  @if(hasTopAndBottom($id))
+
+                  <div class="" style="float:right;">
+                                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm ml-5 mr-1 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="{{ $id }}">{{ __('Top 50') }}</button>
+                                           <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="{{ $id }}">{{ __('Bottom 50') }}</button>
+                  </div>
+                           @endif 
+                  {{-- @if($id == 'customer_name')
+                        <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm ml-5 mr-1 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="customer_name">{{ __('Top 50') }}</button>
+                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="customer_name">{{ __('Bottom 50') }}</button>
+                  @endif  --}}
+
+                  {{-- @if($id == 'product_item')
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_item"> {{ __('Top 50') }}</button>
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50') }}</button>
+                  @endif 
+
+                     @if($id == 'product_or_service')
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Top 50') }}</button>
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Bottom 50') }}</button>
+                  @endif 
+
+                   @if($id == 'zone')
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="zone"> {{ __('Top 50') }}</button>
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="zone"> {{ __('Bottom 50') }}</button>
+                  @endif 
+
+
+
+                  @if($id == 'business_sector')
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="business_sector"> {{ __('Top 50') }}</button>
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="business_sector"> {{ __('Bottom 50') }}</button>
+                  @endif  --}}
+
+                  
+                  </td>
                   <td id="{{ $id }}">-</td>
               </tr>
               @endif
 
+
+
+
               @endforeach 
               
           </table>
+          <div class="row ">
+              {{-- <div class="col-12 my-5 ">
+                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-5 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="customer_name">{{ __('Top 50 Customers') }}</button>
+                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="customer_name">{{ __('Bottom 50 Customers') }}</button>
+              </div> --}}
+              {{-- <div class="col-12 pb-2">
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_item"> {{ __('Top 50 Products Item') }}</button>
+                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50 Products Item') }}</button>
+              </div> --}}
+          </div>
+     
+          
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-        <button id="recalc_modal" type="button" class="btn btn-primary">{{ __('Run') }}</button>
+        {{-- <button id="recalc_modal" type="button" class="btn btn-primary">{{ __('Run') }}</button> --}}
       </div>
     </div>
   </div>
@@ -190,7 +285,7 @@
 
 
                                     <div class="kt-widget24__details">
-                                        <span class="kt-widget24__stats kt-font-{{$color}}">
+                                        <span class="kt-widget24__stats kt-font-{{$color}}" style="font-size:1.4rem">
                                             {{ __( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0)) }}
                                     </div>
 
@@ -356,7 +451,49 @@
                 </div>
             </div>
         @endforeach
+
+       <div class="container__fixed">
+            <div class="datatable_modal_div kt-portlet kt-portlet--mobile" id="datatable_modal_div">
+       </div>
+</div>
+
     </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+           
 @endsection
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
@@ -418,7 +555,7 @@
                 let topTypeSalesValue = $('#value_for_'+type).val();
                 $(this).find('#selected_type_name').html(topTypeName);
                 $(this).find('#total_sales_value').html(topTypeSalesValue);
-                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true).trigger('change');
+                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true);
                 }
 
                 let selectedType = $(this).find('select[name="selected_type"]').val();
@@ -458,16 +595,125 @@
  
         });
 
-        $(document).on('click' , '#recalc_modal' , function(e){
-            e.preventDefault();
-            $('#modal_for_'+ "{{ $type }}").trigger('show.bs.modal')
-        })
+        // $(document).on('click' , '#recalc_modal' , function(e){
+        //     e.preventDefault();
+        //     $('#modal_for_'+ "{{ $type }}").trigger('show.bs.modal')
+        // })
+
+
+        
 
     </script>
+
 
 @endforeach  
 
 
+@foreach ($types as $type=>$brand)
+
+    <script>
+
+          $(document).on('change' , '#business_sector_select_{{ $type }}' , function(e){
+            e.preventDefault();
+            $('#modal_for_'+ "{{ $type }}").trigger('show.bs.modal')
+        })
+    </script>
+
+    @endforeach 
+
+{{-- @dd(get_defined_vars()) --}}
+<script>
+    $(document).on('click','.ranged-button-ajax',function(e){
+        e.preventDefault();
+        let type = $(this).data('type');
+        let column = $(this).data('column');
+        let direction = $(this).data('direction');
+        $.ajax({
+            url:"{{ route('getTopAndBottomsForDashboard') }}",
+            data:{
+                "type":type,
+                "column":column,
+                "direction":direction,
+                'company_id':"{{ $company->id }}",
+                'date_from':"{{ $start_date }}",
+                'date_to':"{{ $end_date }}",
+                'modal_id':$(this).closest('.modal__class_top_bottom').attr('id'),
+                'selected_type':$(this).closest('.modal__class_top_bottom').find('select[name="selected_type"]').val() 
+            },
+            "type":"post",
+            success:function(result)
+            {
+                if(result.data.length)
+                {
+                    let table = "<table id='appended_table_for_view' class='appended_table_for_view datatable table-bordered table-hover table-checkable table'> <thead class='header___bg'><tr class='header___bg'><th class='header___bg'>#</th> <th class='header___bg'>{{ __('Customer Name') }}</th> <th class='header___bg text-center'>{{ __('Value') }}</th></tr></thead> <tbody>"
+                    let order = 1 ; 
+                    let sumOfFifty = 0 ; 
+                    for(index in result.data)
+                    {
+                        sumOfFifty +=  parseFloat(result.data[index].total_sales_value) ;
+                        // console.log(result.data);
+                        // console.log(index);
+                        table += `<tr> <td>${order}</td> <td>${result.data[index].customer_name}</td><td class="text-center">${number_format( result.data[index].total_sales_value , 0) }</td> </tr>`
+                        order += 1 ;
+                    }
+                    table+= ('<tr class="header___bg"><td class="header___bg">-</td> <td class="header___bg">{{ __("Total") }}</td> <td class="text-center header___bg">  '+ number_format(sumOfFifty) +'</td></tr>')
+                    table+='</tbody> </table>';
+                    console.log(table);
+                    $('#datatable_modal_div').empty().append(table);
+                     $('#appended_table_for_view').DataTable({
+                             paging:   false,
+                        ordering: false,
+                        info:false ,
+                        searching : false,
+                        dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+                        <'row'<'col-sm-12'tr>>
+                        <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+
+                        buttons: [
+                            'print',
+                            'copyHtml5',
+                            'excelHtml5',
+                            'csvHtml5',
+                            'pdfHtml5',
+                        ]
+                    
+                                });
+
+                                document.querySelectorAll('.close').forEach(function(modalItemCloser){
+                                       $(modalItemCloser).trigger('click');
+
+                                });
+                                $('.container__fixed').css('display','block');
+                                // setTimeout(function(){
+                                //    Swal.fire({
+                                //        html:table,
+                                //        customClass:{
+                                //            popup:"custom_width_classs",
+                                //            content:"custom_width_classs",
+                                //            container:"custom_width_classs",
+                                //        }
+                                //    })
+
+                                // } , 1000)
+
+                            }
+            }
+        });
+    })
+</script>
+<script>
+    $(document).on('click',function(e){
+        let targetElement = e.target ;
+        let x = $(targetElement).closest('.container__fixed').length;
+        if(! x ||  targetElement.className == 'container__fixed')
+        {
+            $('.container__fixed').css('display','none');
+        }   
+            console.log(targetElement);
+
+        // if()
+    })
+</script>
 
   
 @endsection

@@ -14,6 +14,46 @@
         }
         /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
     </style>
+
+    <style>
+        .swal-wide{
+    width:850px;
+}
+
+.custom_width_classs
+{
+    width:600px;
+}
+#datatable_modal_div{
+    top: 50%;
+left: 50%;
+transform: translate(-50% , -50%);
+    position: fixed;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height:80vh;
+    width:90%;
+    z-index: 9;
+    padding:2rem ;
+
+}
+.container__fixed{
+    position: fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    background-color:rgba(0 , 0 , 0 , 0.3);
+    display: none;
+    overflow: scroll;
+
+}
+.header___bg
+{
+    background-color:#086691 !important;
+    color:#fff !important; 
+}
+    </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 
@@ -25,6 +65,7 @@
     $exportableFieldsValues[] = 'avg_invoice_value';
 
 ?>
+
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -93,6 +134,7 @@
                                                
                                                 <span><?php echo e(__('Top '. ucwords(str_replace('_',' ',$type)))); ?></span>
                                                 <p>
+
                                                     <button type="button" class="btn text-white btn-small btn-<?php echo e($color); ?>" data-toggle="modal" data-target="#modal_for_<?php echo e($type); ?>">
                                                         <?php echo e(__('Take Away')); ?>
 
@@ -108,8 +150,8 @@
                                     </div>
 
 
-                                                    <div class="modal fade bd-example-modal-xl"  id="modal_for_<?php echo e($type); ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
+                                                    <div class="modal fade bd-example-modal-lg modal__class_top_bottom"  id="modal_for_<?php echo e($type); ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-left"  id="exampleModalLabel " style="line-height: 2"><?php echo e(ucwords(str_replace('_',' ',$type)) . ' - ' . __('Take Aways')); ?> <br> 
@@ -127,7 +169,7 @@
           <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
           <input type="hidden" name="type" value="<?php echo e($type); ?>">
           <label class="text-left font-weight-bold  w-100 mb-3 text-black"><?php echo e(__('Please Select')); ?>  <?php echo e(ucwords(str_replace('_',' ',$type))); ?></label>
-          <select id="business_sector_select" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
+          <select id="business_sector_select_<?php echo e($type); ?>" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
               <?php $__currentLoopData = $businessSectors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $businesSector): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
               <option value="<?php echo e($businesSector); ?>"> <?php echo e(__($businesSector)); ?> </option>
               <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
@@ -157,19 +199,43 @@
 
               <?php $__currentLoopData = getFieldsForTakeawayForType($type); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id=>$item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                <?php if(in_array($id , $exportableFieldsValues)): ?>
+
+               
                <tr >
-                  <td  class="text-left"><?php echo e(__($item)); ?> </td>
+                  <td  class="text-left"><?php echo e(__($item)); ?> 
+                  <?php if(hasTopAndBottom($id)): ?>
+
+                  <div class="" style="float:right;">
+                                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm ml-5 mr-1 ranged-button-ajax"  data-direction="top" data-type="<?php echo e($type); ?>" data-column="<?php echo e($id); ?>"><?php echo e(__('Top 50')); ?></button>
+                                           <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="<?php echo e($type); ?>" data-column="<?php echo e($id); ?>"><?php echo e(__('Bottom 50')); ?></button>
+                  </div>
+                           <?php endif; ?> 
+                  
+
+                  
+
+                  
+                  </td>
                   <td id="<?php echo e($id); ?>">-</td>
               </tr>
               <?php endif; ?>
 
+
+
+
               <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
               
           </table>
+          <div class="row ">
+              
+              
+          </div>
+     
+          
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-        <button id="recalc_modal" type="button" class="btn btn-primary"><?php echo e(__('Run')); ?></button>
+        
       </div>
     </div>
   </div>
@@ -179,7 +245,7 @@
 
 
                                     <div class="kt-widget24__details">
-                                        <span class="kt-widget24__stats kt-font-<?php echo e($color); ?>">
+                                        <span class="kt-widget24__stats kt-font-<?php echo e($color); ?>" style="font-size:1.4rem">
                                             <?php echo e(__( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0))); ?>
 
                                     </div>
@@ -341,7 +407,49 @@
                 </div>
             </div>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+       <div class="container__fixed">
+            <div class="datatable_modal_div kt-portlet kt-portlet--mobile" id="datatable_modal_div">
+       </div>
+</div>
+
     </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+           
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('js'); ?>
     <script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript"></script>
@@ -403,7 +511,7 @@
                 let topTypeSalesValue = $('#value_for_'+type).val();
                 $(this).find('#selected_type_name').html(topTypeName);
                 $(this).find('#total_sales_value').html(topTypeSalesValue);
-                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true).trigger('change');
+                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true);
                 }
 
                 let selectedType = $(this).find('select[name="selected_type"]').val();
@@ -443,16 +551,125 @@
  
         });
 
-        $(document).on('click' , '#recalc_modal' , function(e){
-            e.preventDefault();
-            $('#modal_for_'+ "<?php echo e($type); ?>").trigger('show.bs.modal')
-        })
+        // $(document).on('click' , '#recalc_modal' , function(e){
+        //     e.preventDefault();
+        //     $('#modal_for_'+ "<?php echo e($type); ?>").trigger('show.bs.modal')
+        // })
+
+
+        
 
     </script>
+
 
 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>  
 
 
+<?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type=>$brand): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+    <script>
+
+          $(document).on('change' , '#business_sector_select_<?php echo e($type); ?>' , function(e){
+            e.preventDefault();
+            $('#modal_for_'+ "<?php echo e($type); ?>").trigger('show.bs.modal')
+        })
+    </script>
+
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+
+
+<script>
+    $(document).on('click','.ranged-button-ajax',function(e){
+        e.preventDefault();
+        let type = $(this).data('type');
+        let column = $(this).data('column');
+        let direction = $(this).data('direction');
+        $.ajax({
+            url:"<?php echo e(route('getTopAndBottomsForDashboard')); ?>",
+            data:{
+                "type":type,
+                "column":column,
+                "direction":direction,
+                'company_id':"<?php echo e($company->id); ?>",
+                'date_from':"<?php echo e($start_date); ?>",
+                'date_to':"<?php echo e($end_date); ?>",
+                'modal_id':$(this).closest('.modal__class_top_bottom').attr('id'),
+                'selected_type':$(this).closest('.modal__class_top_bottom').find('select[name="selected_type"]').val() 
+            },
+            "type":"post",
+            success:function(result)
+            {
+                if(result.data.length)
+                {
+                    let table = "<table id='appended_table_for_view' class='appended_table_for_view datatable table-bordered table-hover table-checkable table'> <thead class='header___bg'><tr class='header___bg'><th class='header___bg'>#</th> <th class='header___bg'><?php echo e(__('Customer Name')); ?></th> <th class='header___bg text-center'><?php echo e(__('Value')); ?></th></tr></thead> <tbody>"
+                    let order = 1 ; 
+                    let sumOfFifty = 0 ; 
+                    for(index in result.data)
+                    {
+                        sumOfFifty +=  parseFloat(result.data[index].total_sales_value) ;
+                        // console.log(result.data);
+                        // console.log(index);
+                        table += `<tr> <td>${order}</td> <td>${result.data[index].customer_name}</td><td class="text-center">${number_format( result.data[index].total_sales_value , 0) }</td> </tr>`
+                        order += 1 ;
+                    }
+                    table+= ('<tr class="header___bg"><td class="header___bg">-</td> <td class="header___bg"><?php echo e(__("Total")); ?></td> <td class="text-center header___bg">  '+ number_format(sumOfFifty) +'</td></tr>')
+                    table+='</tbody> </table>';
+                    console.log(table);
+                    $('#datatable_modal_div').empty().append(table);
+                     $('#appended_table_for_view').DataTable({
+                             paging:   false,
+                        ordering: false,
+                        info:false ,
+                        searching : false,
+                        dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+                        <'row'<'col-sm-12'tr>>
+                        <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+
+                        buttons: [
+                            'print',
+                            'copyHtml5',
+                            'excelHtml5',
+                            'csvHtml5',
+                            'pdfHtml5',
+                        ]
+                    
+                                });
+
+                                document.querySelectorAll('.close').forEach(function(modalItemCloser){
+                                       $(modalItemCloser).trigger('click');
+
+                                });
+                                $('.container__fixed').css('display','block');
+                                // setTimeout(function(){
+                                //    Swal.fire({
+                                //        html:table,
+                                //        customClass:{
+                                //            popup:"custom_width_classs",
+                                //            content:"custom_width_classs",
+                                //            container:"custom_width_classs",
+                                //        }
+                                //    })
+
+                                // } , 1000)
+
+                            }
+            }
+        });
+    })
+</script>
+<script>
+    $(document).on('click',function(e){
+        let targetElement = e.target ;
+        let x = $(targetElement).closest('.container__fixed').length;
+        if(! x ||  targetElement.className == 'container__fixed')
+        {
+            $('.container__fixed').css('display','none');
+        }   
+            console.log(targetElement);
+
+        // if()
+    })
+</script>
 
   
 <?php $__env->stopSection(); ?>

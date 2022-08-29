@@ -30,7 +30,6 @@ class SalesGathering extends Model
     protected $table = 'sales_gathering';
     public function scopeCompany($query)
     {
-        
-        return $query->where('company_id', request()->company->id);
+        return $query->where('company_id', request()->company->id?? Request('company_id') );
     }
 }

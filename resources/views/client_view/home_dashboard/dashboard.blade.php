@@ -268,7 +268,7 @@
                             </div>
                         </div>
                         <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-warning">
+                            <span class="kt-widget24__stats kt-font-warning" >
                                 <span class="text-red"></span>
                                 {{ number_format($previous_month_sales) }}
                                 {{-- {{ $sales_value_data['previous_month'] !== '-' ? number_format($sales_value_data['previous_month']) : '-' }} --}}

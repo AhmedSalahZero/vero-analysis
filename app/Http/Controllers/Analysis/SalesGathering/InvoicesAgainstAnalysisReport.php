@@ -139,6 +139,8 @@ class InvoicesAgainstAnalysisReport
             $reportSalesValues = [];
             $request['sales_channels'] = $request->branches ;
             $request['businessSectors'] = $request->branches ;
+                $request['zones'] = $request->branches ;
+            
             if($type == 'sales_channel')
             {
                  $reportSalesValues  = (new SalesChannelsAgainstAnalysisReport())->SalesChannelsSalesAnalysisResult($request , $company , true);
@@ -158,14 +160,19 @@ class InvoicesAgainstAnalysisReport
                  $reportSalesValues  = (new BusinessSectorsAgainstAnalysisReport())->BusinessSectorsSalesAnalysisResult($request , $company , true);
             }
 
-            if($type == 'customer_name')
+            // if($type == 'customer_name')
+            // {
+            //      $reportSalesValues  =getCustomerSalesAnalysisData($request , $company);
+            // }
+            // if($type  == 'sales_person')
+            // {
+            //      $reportSalesValues  = getSalesPersonsSalesAnalysisData($request , $company );
+            // }
+            if(! $reportSalesValues)
             {
-                 $reportSalesValues  =getCustomerSalesAnalysisData($request , $company);
+                 $reportSalesValues  =getTypeSalesAnalysisData($request , $company , $type);
             }
-            if($type  == 'sales_person')
-            {
-                 $reportSalesValues  = getSalesPersonsSalesAnalysisData($request , $company );
-            }
+            
           array_sort_multi_levels($sumForEachInterval);
           if($array)
           {
