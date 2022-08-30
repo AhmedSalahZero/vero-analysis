@@ -598,6 +598,7 @@ class SalesBreakdownAgainstAnalysisReport
     
         return response()->json([
             'data'=>$queryResult ,
+            'modal_id'=>$modal_id
         ]);
     }
 

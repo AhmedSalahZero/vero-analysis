@@ -84,6 +84,7 @@
             </div>
         @endif
 
+                @if((hasProductsItems($company)))
 
         <div class="kt-portlet">
             <div class="kt-portlet__head">
@@ -105,7 +106,6 @@
                     </div>
                 </div>
             </div>
-                @if((hasProductsItems($company)))
 
             <div class="kt-portlet__body ">
                 <h2>{{ __('Existing Product '.$name.' Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($existing_products_sales_targets) }}

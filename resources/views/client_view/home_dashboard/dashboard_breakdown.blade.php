@@ -37,7 +37,10 @@
 {
     width:600px;
 }
-#datatable_modal_div{
+.close_custom_modal{
+    position: absolute;top: 5px;right: 47px;color: #c8c3c6;font-size: 1.5rem;
+}
+.datatable_modal_div{
     top: 50%;
 left: 50%;
 transform: translate(-50% , -50%);
@@ -47,7 +50,7 @@ transform: translate(-50% , -50%);
     max-height:80vh;
     width:90%;
     z-index: 9;
-    padding:2rem ;
+    padding:3rem 2rem ;
 
 }
 .container__fixed{
@@ -73,10 +76,12 @@ transform: translate(-50% , -50%);
 @php
      $exportableFields  = (new \App\Http\Controllers\ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
      $exportableFieldsValues = array_keys($exportableFields);
+    if(in_array('document_type' , $exportableFieldsValues) || in_array('document_number' , $exportableFieldsValues) )
+    {
     $exportableFieldsValues[] = 'invoice_count';
     $exportableFieldsValues[] = 'product_item_avg_count';
     $exportableFieldsValues[] = 'avg_invoice_value';
-
+    }
 @endphp
 
     <div class="kt-portlet">
@@ -209,9 +214,8 @@ transform: translate(-50% , -50%);
               </tr>
 
               @foreach( getFieldsForTakeawayForType($type) as $id=>$item)
+              {{-- @dd($exportableFieldsValues , $id) --}}
                @if(in_array($id , $exportableFieldsValues))
-
-               
                <tr >
                   <td  class="text-left">{{ __($item) }} 
                   @if(hasTopAndBottom($id))
@@ -452,9 +456,15 @@ transform: translate(-50% , -50%);
             </div>
         @endforeach
 
-       <div class="container__fixed">
-            <div class="datatable_modal_div kt-portlet kt-portlet--mobile" id="datatable_modal_div">
-       </div>
+       <div class="container__fixed custom_modal_parent">
+            <div class="datatable_modal_div kt-portlet kt-portlet--mobile" >
+                 <div class="" id="datatable_modal_div">
+                
+                </div>
+                 <a class="close_custom_modal" href="#"><i class="fas fa-times"></i></a>
+
+            </div>
+           
 </div>
 
     </div>
@@ -581,7 +591,7 @@ transform: translate(-50% , -50%);
                                     // console.log(result.data[0]);
                                     if(index != modal_id)
                                     {
-                                        $('#'+ modal_id  ).find('#'+index).html(result.data[0][index]);
+                                        $('#'+ modal_id  ).find('#'+index).html(result.data[0][index]).attr('data-value' , result.data[0][index]);
                                     }
                                 }
                             }
@@ -643,22 +653,30 @@ transform: translate(-50% , -50%);
             "type":"post",
             success:function(result)
             {
+                let total_sales_values = $('#'+result.modal_id).find('#total_sales_value').attr('data-value') ;
+                total_sales_values =  parseFloat(total_sales_values.replaceAll(/,/g, ''));
                 if(result.data.length)
                 {
-                    let table = "<table id='appended_table_for_view' class='appended_table_for_view datatable table-bordered table-hover table-checkable table'> <thead class='header___bg'><tr class='header___bg'><th class='header___bg'>#</th> <th class='header___bg'>{{ __('Customer Name') }}</th> <th class='header___bg text-center'>{{ __('Value') }}</th></tr></thead> <tbody>"
+                    let table = "<table id='appended_table_for_view' class='appended_table_for_view datatable table-bordered table-hover table-checkable table'> <thead class='header___bg'><tr class='header___bg'><th class='header___bg'>#</th> <th class='header___bg'>{{ __('Customer Name') }}</th> <th class='header___bg text-center'>{{ __('Value') }}</th> <th class='header___bg text-center'>{{ __('Percentage') }}</th>  </tr></thead> <tbody>"
                     let order = 1 ; 
                     let sumOfFifty = 0 ; 
+                    let salesValue = 0 ;
+                    let percentage = 0 ;
+                    let totalPercentage = 0 ;
                     for(index in result.data)
+
                     {
                         sumOfFifty +=  parseFloat(result.data[index].total_sales_value) ;
+                        salesValue = result.data[index].total_sales_value ;
+                        percentage = salesValue/total_sales_values*100 ;
+                        totalPercentage += percentage  
                         // console.log(result.data);
                         // console.log(index);
-                        table += `<tr> <td>${order}</td> <td>${result.data[index].customer_name}</td><td class="text-center">${number_format( result.data[index].total_sales_value , 0) }</td> </tr>`
+                        table += `<tr> <td>${order}</td> <td>${result.data[index].customer_name}</td><td class="text-center">${number_format( salesValue , 0) }</td> <td> ${number_format(percentage , 2) } % </td> </tr>`
                         order += 1 ;
                     }
-                    table+= ('<tr class="header___bg"><td class="header___bg">-</td> <td class="header___bg">{{ __("Total") }}</td> <td class="text-center header___bg">  '+ number_format(sumOfFifty) +'</td></tr>')
+                    table+= ('<tr class="header___bg"><td class="header___bg">-</td> <td class="header___bg">{{ __("Total") }}</td> <td class="text-center header___bg">  '+ number_format(sumOfFifty ) +'</td> <td class="header___bg">'+number_format(totalPercentage , 2)+' % </td> </tr>')
                     table+='</tbody> </table>';
-                    console.log(table);
                     $('#datatable_modal_div').empty().append(table);
                      $('#appended_table_for_view').DataTable({
                              paging:   false,
@@ -681,21 +699,8 @@ transform: translate(-50% , -50%);
 
                                 document.querySelectorAll('.close').forEach(function(modalItemCloser){
                                        $(modalItemCloser).trigger('click');
-
                                 });
                                 $('.container__fixed').css('display','block');
-                                // setTimeout(function(){
-                                //    Swal.fire({
-                                //        html:table,
-                                //        customClass:{
-                                //            popup:"custom_width_classs",
-                                //            content:"custom_width_classs",
-                                //            container:"custom_width_classs",
-                                //        }
-                                //    })
-
-                                // } , 1000)
-
                             }
             }
         });
@@ -705,15 +710,17 @@ transform: translate(-50% , -50%);
     $(document).on('click',function(e){
         let targetElement = e.target ;
         let x = $(targetElement).closest('.container__fixed').length;
-        if(! x ||  targetElement.className == 'container__fixed')
+        if(! x ||  targetElement.className.includes('container__fixed'))
         {
             $('.container__fixed').css('display','none');
         }   
-            console.log(targetElement);
-
-        // if()
     })
 </script>
 
-  
+<script>
+    $(document).on('click','.close_custom_modal',function(e){
+        e.preventDefault();
+        $('.custom_modal_parent').fadeOut(300);
+    })
+</script>
 @endsection
