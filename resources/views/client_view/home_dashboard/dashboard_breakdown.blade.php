@@ -76,7 +76,7 @@ transform: translate(-50% , -50%);
 @php
      $exportableFields  = (new \App\Http\Controllers\ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
      $exportableFieldsValues = array_keys($exportableFields);
-    if(in_array('document_type' , $exportableFieldsValues) || in_array('document_number' , $exportableFieldsValues) )
+    if(in_array('document_type' , $exportableFieldsValues) && in_array('document_number' , $exportableFieldsValues) )
     {
     $exportableFieldsValues[] = 'invoice_count';
     $exportableFieldsValues[] = 'product_item_avg_count';

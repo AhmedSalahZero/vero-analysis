@@ -68,6 +68,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @if(hasProductsItems($company))
                                     <div class="col-md-6">
                                         <div class="form-group  form-group-marginless">
                                             <label>{{ __('Select Sales Breakdown %') }} <span
@@ -96,6 +97,8 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @endif
+                                    
                                     <div class="col-md-6"
                                         style="display: {{ @$allocations_setting['new_start'] == 'previous_year' || @$allocations_setting['new_start'] == 'previous_3_years'? 'block': 'none' }}"
                                         id="new_start_field">

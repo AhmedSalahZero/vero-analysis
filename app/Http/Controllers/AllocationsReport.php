@@ -54,7 +54,7 @@ class AllocationsReport
         }
             $request->validate([
                 'allocation_base' => 'required',
-                'breakdown' => 'required',
+                'breakdown' => 'sometimes|required',
                 'number_of_items' => $request->add_new_items  == 1 ? 'required' : '',
 
             ]);

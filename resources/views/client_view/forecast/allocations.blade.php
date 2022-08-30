@@ -59,6 +59,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                     @if(hasProductsItems($company))
                                     <div class="col-md-6">
                                         <div class="form-group  form-group-marginless">
                                             <label>{{ __('Select Sales Breakdown %') }} <span
@@ -73,12 +74,7 @@
                                                         <option value="last_3_years"
                                                             {{ @$allocations_setting['breakdown'] !== 'last_3_years' ?: 'selected' }}>
                                                             {{ __('Last 3 Years Average Breakdown') }}</option>
-                                                        {{-- <option value="new_breakdown_annually"
-                                                            {{ @$allocations_setting['breakdown'] !== 'new_breakdown_annually' ?: 'selected' }}>
-                                                            {{ __('New Breakdown - Annually') }}</option> --}}
-                                                        {{-- <option value="new_breakdown_quarterly"
-                                                            {{ @$allocations_setting['breakdown'] !== 'new_breakdown_quarterly' ?: 'selected' }}>
-                                                            {{ __('New Breakdown - Quarterly') }}</option> --}}
+                                            
                                                     </select>
                                                     @if ($errors->has('breakdown'))
                                                         <div class="invalid-feedback">{{ $errors->first('breakdown') }}</div>
@@ -87,6 +83,8 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @endif
+                                    
                                     <div class="col-md-6"
                                         style="display: {{ @$allocations_setting['new_start'] == 'previous_year' || @$allocations_setting['new_start'] == 'previous_3_years'? 'block': 'none' }}"
                                         id="new_start_field">
