@@ -39,9 +39,6 @@ class SalesForecastReport
             // dd();
             $start_date = now()->startOfYear()->format('Y-m-d'); 
             $end_date = now()->endOfYear()->format('Y-m-d');
-             
-            // $start_date = date('2022-01-01');
-            // $end_date   = date('2022-12-31');
 
             if ($request->isMethod('GET')) {
                 $request['start_date'] = $start_date;
@@ -123,19 +120,24 @@ class SalesForecastReport
         );
     }
 
-    public function save(Company $company, Request $request)
+    public function save(Company $company, Request $request , $noReturn = false )
     {
 
-        $sales_forecast = SalesForecast::company()->first();
-    //    if(! $request->has('add_new_products')){
-        //    getProductsItems($company->id)->each(function($pItem){
-        //        $pItem->delete();
-        //    });
-           deleteProductItemsForForecast($company->id);
-           deleteNewProductAllocationBaseForForecast($company->id);
-           
-    //    }
+        if(isset($request['summary_report']))
+        {
+            return (new SummaryController())->goToSummaryReport($request , $company);
+        }
         
+        // dd();
+        
+// dd($request->all());
+        $sales_forecast = SalesForecast::company()->first();
+
+        // if(forecastHasBeenChanged($sales_forecast  , $request->all()))
+        // {
+        //        deleteProductItemsForForecast($company->id);
+        //        deleteNewProductAllocationBaseForForecast($company->id);    
+        // }
         if ($sales_forecast !== null && $request['start_date'] !== $sales_forecast->start_date) {
             
             $sales_forecast->delete();
@@ -193,8 +195,11 @@ class SalesForecastReport
         }
 
         $sales_forecast->save();
-        
+         if($noReturn){
+            return ;
+        }
         toastr()->success('Saved Successfully');
+       
         if ($request['add_new_products'] == 0) {
             return redirect()->route('products.sales.targets', $company);
         } else {
@@ -424,10 +429,8 @@ class SalesForecastReport
     }
 
 
-    public function productsSalesTargets(Company $company, Request $request)
+    public function productsSalesTargets(Company $company, Request $request , $noReturn = false )
     {
-        // dd($request->all());
-        // dd($request->get('add_new_products'));
         
         $sales_forecast = SalesForecast::company()->first();
         $products = Product::company()->with('category')->get();
@@ -527,6 +530,12 @@ class SalesForecastReport
                 ->toArray();
 
 
+                if($noReturn)
+                {
+                    return ;
+                }
+
+
             return view('client_view.forecast.products_sales_targets', compact(
                 'company',
                 'product_item_breakdown_data',
@@ -551,6 +560,10 @@ class SalesForecastReport
                 ->groupBy($type)
                 ->pluck($type)
                 ->toArray();
+  if($noReturn)
+                {
+                    return ;
+                }
 
             return view('client_view.forecast.products_sales_targets', compact(
                 'company',
@@ -565,11 +578,15 @@ class SalesForecastReport
         }
     }
 
-    public function productsAllocations(Company $company, Request $request, $result = 'view')
+    public function productsAllocations(Company $company, Request $request, $result = 'view' , $noReturn = false )
     {
         $has_product_item = $this->fields($company);
         $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
         if ($request->isMethod('POST') && $result == 'view') {
+            if($noReturn)
+            {
+                return ; 
+            }
             return redirect()->route('allocations', $company);
         }
         $sales_forecast = SalesForecast::company()->first();
@@ -760,6 +777,12 @@ class SalesForecastReport
                 arsort($total_company_sales_target);
                 $targets = array_merge($existing_products_targets,$new_products_seasonalities);
                 // dd($targets);
+
+                  if($noReturn)
+            {
+                return ; 
+            }
+            
                 return $targets;
             }
 
@@ -768,7 +791,10 @@ class SalesForecastReport
             $totals_per_month = $totals_per_month ?? [];
 
 
-
+  if($noReturn)
+            {
+                return ; 
+            }
             return view('client_view.forecast.products_allocations', compact(
                 'company',
                 'monthly_dates',

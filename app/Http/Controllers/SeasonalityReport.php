@@ -103,7 +103,6 @@ class SeasonalityReport
         }else{ 
             $products_items_monthly_percentage = $modified_seasonality->original_seasonality;
         }
-        // dd($products_items_monthly_percentage);
         return view('client_view.forecast.modify_seasonality', compact(
                     'company',
                 'monthly_dates',

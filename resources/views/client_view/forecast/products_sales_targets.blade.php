@@ -16,6 +16,7 @@
 @endsection
 @section('content')
     <form action="{{ route('products.sales.targets', $company) }}" method="POST">
+
         @csrf
         <?php $total_sales_targets_values = 0; $total_sales_targets_percentages = 0;
         $name_of_product = ($has_product_item === true) ? 'Item' :'' ;?>

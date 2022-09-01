@@ -53,7 +53,7 @@
                             <input type="hidden" name="allocation_base" value="{{ $allocation_base }}">
                             <?php $key = 0; ?>
                             <?php $key_for_new_items = 0; ?>
-
+{{-- @dd($allocation_bases_items) --}}
                             @foreach ($allocation_bases_items as $item => $type)
                                 <tr class="text-center">
                                     @if ($type == 'new')
@@ -295,11 +295,9 @@
                  totalValues+= (isNaN(parseFloat($(field).val())) ? 0 : parseFloat($(field).val()) );
             });
             $(`#total_sales_target_value_item${index + 1 }` ).html(number_format(totalValues));
-            updatePercentageFields(index , $(this));
+            updatePercentageFields(index , $(this));            
+        });
 
-
-            
-        })
         function updatePercentageFields(index ,field)
         {
             let columnIndex = field.data('column');

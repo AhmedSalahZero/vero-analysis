@@ -52,6 +52,7 @@
                                 @endphp
                             @foreach ($allocation_data_total as $base_name => $value)
                             <?php $class_name = $base_name == 'Total' ? 'active-style' : '' ; ?>
+                            {{-- @dd(get_defined_vars()) --}}
                                 <tr>
                                     <td class="{{$class_name}}">{{ $base_name }}</td>
                                     @foreach ($allocation_data_total['Total'] as $date => $total)
@@ -83,7 +84,7 @@
                     @slot('table_header')
                         <tr class="table-active text-center">
                             <th>{{ __($allocation_base .' / Months') }}</th>
-                            @foreach ($existing_product_data['Total'] as $date => $value)
+                            @foreach ($existing_product_data['Total'] ?? [] as $date => $value)
                                 <th>{{ date('M-Y',strtotime('01-'.$date.'-'.$year)) }}</th>
                             @endforeach
                             <th> {{ __('Total Year') }} </th>
@@ -102,7 +103,7 @@
                             ?>
                             <tr>
                                 <td class="{{$class_name}}">{{ $base_name }}</td>
-                                @foreach ($existing_product_data['Total'] as $date => $total)
+                                @foreach ($existing_product_data['Total'] ?? [] as $date => $total)
                                     <?php
                                         $full_date = date('M-Y',strtotime('01-'.$date.'-'.$year));
                                         $total_products_items[$base_name][$full_date] = ($value[$date] ?? 0) + ($total_products_items[$base_name][$full_date]??0);
@@ -124,7 +125,7 @@
             <div class="kt-portlet">
                 <div class="kt-portlet__body ">
                     <?php
-                        $total = $total_products_items['Total'];
+                        $total = $total_products_items['Total'] ?? [];
                         unset($total_products_items['Total']);
                         arsort($total_products_items);
                         $total_products_items['Total'] = $total;

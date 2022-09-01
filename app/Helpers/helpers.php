@@ -1282,3 +1282,35 @@ function hasTopAndBottom($type)
     
     return in_array($type , $allowedTypes);
 }
+
+function forecastHasBeenChanged($sales_forecast , array $newData )
+{
+// dd($sales_forecast , $newData);
+
+    if(is_null($sales_forecast))
+    {
+        return true ; 
+    }
+
+    
+    
+    foreach(['previous_1_year_sales','previous_year','previous_year_gr','average_last_3_years','target_base','sales_target','new_start','growth_rate','add_new_products','number_of_products','sales_target','seasonality','start_date'] as $index=>$field)
+    {
+        if(@$newData[$field] != $sales_forecast->{$field})
+        {
+            return true ; 
+        }
+    }
+    return false ; 
+}
+
+function getCacheKeyForFirstAllocationReport($companyId)
+{
+    return 'first_allocation_report_for_company_'. $companyId ; 
+}
+
+
+function getCacheKeyForSecondAllocationReport($companyId)
+{
+    return 'second_allocation_report_for_company_'. $companyId ; 
+}

@@ -311,6 +311,7 @@ Route::group(
                 Route::any('/CollectionReport', 'CollectionController@collectionReport')->name('collection.report');
                 //  Summary
                 Route::any('/SummaryReport', 'SummaryController@forecastReport')->name('forecast.report');
+                Route::any('/goToSummaryReport', 'SummaryController@goToSummaryReport')->name('go.to.summary.report');
                 Route::any('/BreakdownSummaryReport', 'SummaryController@breakdownForecastReport')->name('breakdown.forecast.report');
                 Route::any('/CollectionSummaryReport', 'SummaryController@collectionForecastReport')->name('collection.forecast.report');
 

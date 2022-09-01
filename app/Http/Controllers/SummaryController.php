@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
 use App\Models\AllocationSetting;
+use App\Models\CollectionSetting;
 use App\Models\Company;
+use App\Models\ExistingProductAllocationBase;
+use App\Models\ModifiedTarget;
+use App\Models\NewProductAllocationBase;
 use App\Models\SalesForecast;
 use App\Models\SecondAllocationSetting;
+use App\Models\SecondExistingProductAllocationBase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SummaryController extends Controller
 {
@@ -194,5 +200,98 @@ class SummaryController extends Controller
             'collection',
             'collection_settings'
         ));
+    }
+
+    public function goToSummaryReport(Request $request , Company $company)
+    {
+
+        $request['company_id'] = $company->id ;
+
+        // 1 - first page 
+        
+      
+            unset($request['summary_report']);
+        
+          (new SalesForecastReport())->save($company , $request , true );
+        
+
+           // second page request
+          $modified_targets = ModifiedTarget::company()->first();
+          $request['use_modified_targets'] = $modified_targets->use_modified_targets ;
+          $request['sales_targets_percentages'] = $modified_targets->sales_targets_percentages;
+          $request['modify_sales_target'] = $modified_targets->products_modified_targets;
+          $request['others_target'] =  $modified_targets->others_target ;
+            (new SalesForecastReport)->productsSalesTargets($company , $request , true);
+
+          //third page request
+            (new SalesForecastReport())->productsAllocations($company , $request,'view',true);
+            
+          // fourth page request 
+            $allocationSetting = AllocationSetting::company()->first();
+            
+          $request['allocation_base'] = $allocationSetting->allocation_base;
+          $request['breakdown'] = $allocationSetting->breakdown;
+          $request['add_new_items'] = $allocationSetting->add_new_items;
+          $request['number_of_items'] =$allocationSetting->number_of_items;
+           (new AllocationsReport())->allocationSettings($request , $company);
+           
+           // fourth page 
+            // $allocations_base_row = NewProductAllocationBase::company()->first();
+            $cachedAllocation = Cache::get(getCacheKeyForFirstAllocationReport($company->id)) ?? [];
+           $request['allocation_base_data'] = $cachedAllocation['allocation_base_data'] ?? [];
+           $request['new_allocation_base_items'] = $cachedAllocation['new_allocation_base_items'] ?? [];
+        (new AllocationsReport())->NewProductsAllocationBase($request , $company);
+        
+        //FIFTH PAGE REQUEST
+        $existingAllocationBase = ExistingProductAllocationBase::company()->first();
+        $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
+        $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
+        $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
+        $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
+        
+         (new AllocationsReport())->existingProductsAllocationBase($request , $company);
+        // end of first allocation 
+
+        // start of second allocation 
+
+
+           //  page request 
+            $allocationSetting = AllocationSetting::company()->first();
+            
+          $request['allocation_base'] = $allocationSetting->allocation_base;
+          $request['breakdown'] = $allocationSetting->breakdown;
+          $request['add_new_items'] = $allocationSetting->add_new_items;
+          $request['number_of_items'] =$allocationSetting->number_of_items;
+           (new AllocationsReport())->allocationSettings($request , $company);
+           //  page 
+            // $allocations_base_row = NewProductAllocationBase::company()->first();
+            $cachedAllocation = Cache::get(getCacheKeyForSecondAllocationReport($company->id)) ?? [];
+           $request['allocation_base_data'] = $cachedAllocation['allocation_base_data'] ?? [];
+           $request['new_allocation_base_items'] = $cachedAllocation['new_allocation_base_items'] ?? [];
+           
+         (new SecondAllocationsReport())->NewProductsAllocationBase($request , $company);
+        // PAGE REQUEST
+        $existingAllocationBase = SecondExistingProductAllocationBase::company()->first();
+        $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
+        $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
+        $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
+        $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
+
+        // dd($request['existing_products_target'] , $request['total_existing_target']  , $request['modify_sales_target'] , $request['use_modified_targets']);
+          (new SecondAllocationsReport())->existingProductsAllocationBase($request , $company);
+
+
+
+
+          // 
+          $collectionSetting = CollectionSetting::company()->first();
+          $request['collection_base'] = $collectionSetting->collection_base ;
+          $request['general_collection']  = $collectionSetting->general_collection ;
+          $request['first_allocation_collection']= $collectionSetting->first_allocation_collection ;
+          $request['second_allocation_collection'] = $collectionSetting->second_allocation_collection;
+          
+          (new CollectionController())->collectionSettings($request , $company);
+          return redirect()->route('forecast.report' , [$company->id]);
+        
     }
 }

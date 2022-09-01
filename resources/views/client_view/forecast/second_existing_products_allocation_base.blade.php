@@ -17,7 +17,6 @@
 @section('content')
     <form action="{{ route('second.existing.products.allocations', $company) }}" method="POST">
         @csrf
-{{-- @dd($new_allocation_bases_names) --}}
 @if(canShowNewItemsProducts($company->id))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
