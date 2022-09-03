@@ -544,11 +544,10 @@ class SalesBreakdownAgainstAnalysisReport
         $end_date = $request->get('end_date');
         $type = $request->get('type');
         $modal_id = $request->get('modal_id');
-
-        // dd($companyId , $selectedType , $start_date , $end_date  , $type );
-       
+        
         $db = DB::select(DB::raw('
-             SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person 
+             SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person ,
+              count(DISTINCT(business_sector)) as business_sector, count(DISTINCT(sales_channel)) as sales_channel, count(DISTINCT(zone)) as zone, count(DISTINCT(branch)) as branch
                 FROM sales_gathering
                 force index (sales_channel_index)
                 WHERE ( company_id = '. $companyId  .' AND '. $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date. '"  )
@@ -570,7 +569,37 @@ class SalesBreakdownAgainstAnalysisReport
             'data'=>$db 
         ]);
         
-        
+    }
+    
+
+    public function topAndBottomsForDashboard(Request $request)
+    {
+        $companyId = $request->get('company_id');
+        $company = Company::find($companyId);
+        $type = $request->get('type');
+        $direction = $request->get('direction');
+        $column = $request->get('column');
+        $start_date = $request->get('date_from');
+        $end_date = $request->get('date_to');
+        $modal_id = $request->get('modal_id');
+        $selectedType = $request->get('selected_type');
+        $request['date'] = $end_date ;
+
+    
+
+        $queryResult = DB::select(DB::raw('
+             SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , sum(net_sales_value)  as total_sales_value ,  '. $column .' as customer_name
+                FROM sales_gathering
+                force index (sales_channel_index)
+                WHERE ( company_id = '. $companyId  .' AND '. $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date. '"  )
+                 group by '. $column .'
+                 ORDER BY total_sales_value ' . ($direction == 'top' ? 'DESC limit 50' : 'ASC limit 50')
+        ));
+    
+        return response()->json([
+            'data'=>$queryResult ,
+            'modal_id'=>$modal_id
+        ]);
     }
 
 

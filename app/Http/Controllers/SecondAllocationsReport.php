@@ -20,6 +20,7 @@ use App\Models\SecondNewProductAllocationBase;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class SecondAllocationsReport
@@ -27,7 +28,7 @@ class SecondAllocationsReport
     use GeneralFunctions;
     public function fields($company)
     {
-        $fields = CustomizedFieldsExportation::company()->first()->fields;
+        $fields = CustomizedFieldsExportation::company()->first()->fields ?? [];
 
         return (false !== $found = array_search('product_item', $fields));
     }
@@ -47,7 +48,7 @@ class SecondAllocationsReport
         
             $request->validate([
                 'allocation_base' => 'required',
-                'breakdown' => 'required',
+                'breakdown' => 'sometimes|required',
                 'number_of_items' => $request->add_new_items  == 1 ? 'required' : '',
 
             ]);
@@ -88,8 +89,9 @@ class SecondAllocationsReport
         $allocations_setting = SecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  =getNumberOfProductsItems($company->id) ;
-        
-        if ($request->isMethod('POST') || ! $hasNewProductsItems) {
+     if ( ($request->isMethod('POST') 
+            || (! $allocations_setting->add_new_items) )){   
+    //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){   
 
             foreach ((array )$request->allocation_base_data as $product => $data) {
                 $total = array_sum($this->finalTotal($data));
@@ -104,6 +106,8 @@ class SecondAllocationsReport
             ]);
 
             $allocation_base_data = $request->allocation_base_data;
+            Cache::forever(getCacheKeyForSecondAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
+
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
@@ -145,7 +149,6 @@ class SecondAllocationsReport
                 $allocation_bases_items['new_item_' . $item] = 'new';
             }
         }
-        // dd('new');
         return view('client_view.forecast.second_new_products_allocation_base', compact(
             'company',
             'sales_forecast',
@@ -162,16 +165,13 @@ class SecondAllocationsReport
         $allocations_setting = SecondAllocationSetting::company()->first();
 
         $allocation_base = $allocations_setting->allocation_base;
-
         // Saving Existing Percentages
         if ($request->isMethod('POST')) {
             $use_modified_targets = ($request->use_modified_targets ?? 0);
             $validation['percentages_total'] = $use_modified_targets == 1 && (array_sum($request->modify_sales_target) != 100) ? 'required' : '';
-
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Modified Sales Percentages Must be 100%'
             ]);
-            // @dd($request);
             SecondExistingProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
 
@@ -252,7 +252,6 @@ class SecondAllocationsReport
             ];
             return array_push($breakdown_base_data, $new_value);
         });
-
         return view('client_view.forecast.second_existing_products_allocation_base', compact(
             'company',
             'sales_forecast',
@@ -325,7 +324,6 @@ class SecondAllocationsReport
         $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
 
         $new_products_allocations = SecondNewProductAllocationBase::company()->first();
-        
         $products_seasonality = ProductSeasonality::company()->get();
         $sales_forecast = SalesForecast::company()->first();
         $allocations_setting = SecondAllocationSetting::company()->first();
@@ -397,7 +395,6 @@ class SecondAllocationsReport
         // Existing
 
         $existing_product_data = $this->existingProducts($request, $company, $type);
-
         $year = date('Y', strtotime($sales_forecast->start_date));
         if ($result == 'view') {
             return view('client_view.forecast.second_new_product_seasonality', compact(
@@ -410,7 +407,6 @@ class SecondAllocationsReport
             ));
         } else {
             $total_sales_targets = [];
-            // dd($allocation_data_total);
             foreach ($allocation_data_total as $base => $base_data) {
                 foreach ($base_data as $date => $value) {
                     $month = date('F', strtotime(('01-' . $date)));
@@ -418,7 +414,6 @@ class SecondAllocationsReport
                     $total_sales_targets[$base][$full_date] = ($existing_product_data[$base][$month] ?? 0) + $value;
                 }
             }
-            // dd($allocation_data_total);
             unset($total_sales_targets['Total']);
 
              if(!$total_sales_targets)
@@ -433,6 +428,8 @@ class SecondAllocationsReport
 
     public function existingProducts($request, $company, $type)
     {
+            $start_date = null ;
+        $end_date = null ;
         $modified_seasonality = ModifiedSeasonality::company()->first();
         $allocation_setting = SecondAllocationSetting::company()->first();
         $sales_forecast = SalesForecast::company()->first();
@@ -442,7 +439,6 @@ class SecondAllocationsReport
         $products_items = array_keys($original_seasonality);
         $allocation_base = $allocation_setting->allocation_base;
         $request['type'] = $allocation_base;
-
         if ($allocation_setting->breakdown == "last_3_years") {
 
             $start_date  = ($sales_forecast->previous_year - 2) . '-01-01';
@@ -468,9 +464,6 @@ class SecondAllocationsReport
         }else {
             $sales_targets = $existing_sales_targets;
         }
-
-
-
         $modified_seasonality = ModifiedSeasonality::company()->first();
         $seasonality = $modified_seasonality->use_modified_seasonality == 1 ? $modified_seasonality->modified_seasonality       : $modified_seasonality->original_seasonality;
 
@@ -481,7 +474,6 @@ class SecondAllocationsReport
         // Others Index
         
         $input = preg_quote('Others', '~'); // don't forget to quote input string!
-        // dd($modified_targets->sales_targets_percentages);
         
         $others_name_index = preg_grep('~' . $input . '~', array_keys($modified_targets->sales_targets_percentages ?: []));
         $others_name_index = Arr::first($others_name_index);
@@ -527,7 +519,7 @@ class SecondAllocationsReport
             $others_percentage = ($total == 0 ) ? 0 :  ( array_sum($others->toArray()) /$total ) ;
 
 
-            if(($use_modified_targets == 1 && $products_modified_targets[$others_name_index]['percentage'] !== null && $products_modified_targets[$others_name_index]['percentage'] !== 0) || ($use_modified_targets == 0)){
+            if(isset( $products_modified_targets[$others_name_index]) && ($use_modified_targets == 1 && $products_modified_targets[$others_name_index]['percentage'] !== null && $products_modified_targets[$others_name_index]['percentage'] !== 0) || ($use_modified_targets == 0)){
                 $product_items_top["Others " .count($others)] = $others_percentage *$sales_target;
 
             }else{
@@ -560,7 +552,6 @@ class SecondAllocationsReport
         if (isset($new_allocation_bases_names) && count($new_allocation_bases_names) > 0) {
 
             $target_percentages = $modified_targets->sales_targets_percentages;
-            // dd($new_allocation_bases_names);
 
             foreach ($new_allocation_bases_names as $key => $base_name) {
                 $sales_target_per_new_base = ($sales_targets[$base_name] ?? 0);
@@ -580,7 +571,7 @@ class SecondAllocationsReport
             {
                  foreach ($products_items as $product_item_name => $product_value) {
                 $name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;
-                $product_seasonality = $seasonality[$name];
+                $product_seasonality = $seasonality[$name] ?? [];
                 $existing_product_per_allocation_base[$product_item_name] = $this->operationAmongArrayAndNumber($product_seasonality, $product_value, 'multiply');
                 }     
             }

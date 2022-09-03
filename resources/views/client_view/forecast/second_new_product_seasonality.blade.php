@@ -80,9 +80,9 @@
         @endphp
 
     @endif
+{{-- @dd() --}}
         
         {{-- Existing Products  --}}
-
         @if(hasProductsItems($company))
 
         <div class="kt-portlet">
@@ -99,18 +99,18 @@
                     @endslot
                     @slot('table_body')
                  @php
-
                           sortTwoDimensionalExcept($existing_product_data , ['Total'] );
 
                     @endphp
                         @foreach ($existing_product_data as $base_name => $value)
                             <?php
                                 $class_name = $base_name == 'Total' ? 'active-style' : '' ;
-
                             ?>
+
                             <tr>
                                 <td class="{{$class_name}}">{{ $base_name }}</td>
-                                @foreach ($existing_product_data['Total'] as $date => $total)
+
+                                @foreach ($existing_product_data['Total']??[] as $date => $total)
                                     <?php
                                         $full_date = date('M-Y',strtotime('01-'.$date.'-'.$year));
                                         $total_products_items[$base_name][$full_date] = ($value[$date] ?? 0) + ($total_products_items[$base_name][$full_date]??0);
@@ -133,7 +133,7 @@
             <div class="kt-portlet">
                 <div class="kt-portlet__body ">
                     <?php
-                        $total = $total_products_items['Total'];
+                        $total = $total_products_items['Total']??[];
                         unset($total_products_items['Total']);
                         arsort($total_products_items);
                         $total_products_items['Total'] = $total;
@@ -142,7 +142,7 @@
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __($allocation_base .' / Months') }}</th>
-                                @foreach ($total_products_items['Total'] as $date => $value)
+                                @foreach ($total_products_items['Total']  ?? [] as $date => $value)
                                     <th>{{ $date }}</th>
                                 @endforeach
                                 <th> {{ __('Total Year') }} </th>
@@ -150,16 +150,17 @@
                         @endslot
                         @slot('table_body')
      @php
+        sortTwoDimensionalExcept($total_products_items , ['Total'] );
 
-    sortTwoDimensionalExcept($total_products_items , ['Total'] );
 
 @endphp
+
                             @foreach ($total_products_items as $base_name => $value)
+
                             <?php $class_name = $base_name == 'Total' ? 'active-style' : '' ; ?>
                                 <tr>
                                     <td class="{{$class_name}}">{{ $base_name }}</td>
-                                    @foreach ($total_products_items['Total'] as $date => $total)
-                                    {{-- @dd($value) --}}
+                                    @foreach ($total_products_items['Total']??[] as $date => $total)
                                         <?php $total_value = ($existing_product_data_with_dates[$base_name][$date]??0) + ($value[$date]??0) ?>
                                         <td class="text-center {{$class_name}}"> {{ number_format($total_value ?? 0) }} </td>
                                     @endforeach

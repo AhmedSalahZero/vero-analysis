@@ -10,6 +10,9 @@
         table {
             white-space: nowrap;
         }
+        .hideit{
+            display: none;
+        }
 
     </style>
 @endsection
@@ -418,7 +421,7 @@
                                             checked>
                                             <input class="rows" name="add_new_products" type="checkbox" value="1"
                                                 {{ @$sales_forecast_data['add_new_products'] == 0 ?: 'checked' }}
-                                                id="product_item_check_box">
+                                                id="product_item_check_box" data-old-checked="{{ @$sales_forecast_data['add_new_products']?:0 }}"> 
                                             <span></span>
                                         </span>
                                     </span>
@@ -436,7 +439,7 @@
                             </div>
                             <div class="col-md-6"
                                 style="display:{{ @$sales_forecast_data['add_new_products'] == 1 ? 'block' : 'none' }}"
-                                id="number_of_products_field">
+                                id="number_of_products_field" data-old-value="{{ @$sales_forecast_data['number_of_products'] ?: 0  }}">
                                 <label>{{ __('How Many Products') }} <span class="required">*</span></label>
                                 <div class="kt-input-icon">
                                     <div class="input-group validated">
@@ -580,7 +583,7 @@
                 </div>
             </div>
         </div> --}}
-        <x-next__button > </x-next__button>
+        <x-next__button :report="true" :companyId="$company->id"> </x-next__button>
 
     </form>
 @endsection
@@ -707,5 +710,37 @@
             });
             $(total_field_name).val(total.toFixed(decimals));
         }
+    </script>
+
+
+    <script>
+        $(document).on('change' , '#product_item_check_box , #number_of_products', function(e){
+            let oldIsChedked = $('#product_item_check_box').attr('data-old-checked');
+            let newIsChecked = $('#product_item_check_box').is(':checked') ? 1 : 0 ;
+
+            let oldNewProductsItems = parseFloat($('#number_of_products_field').attr('data-old-value'));
+            let newProductsItems = parseFloat($('#number_of_products').val());
+// alert(oldIsChedked);
+// alert(newIsChecked);
+// alert(oldIsChedked != newIsChecked);
+// alert(oldNewProductsItems != newProductsItems);
+            if(oldIsChedked != newIsChecked  || oldNewProductsItems != newProductsItems) {
+                // alert('hide')
+                $('#subkit_summary_report_id').addClass('hideit');
+            }
+            else{
+                // alert('show')
+                $('#subkit_summary_report_id').removeClass('hideit');
+            }
+
+        })
+    </script>
+
+    <script>
+        // $('#subkit_summary_report_id').on('click',function(e){
+        //     e.preventDefault();
+        //     $('form').attr('action'  , "{{ route('go.to.summary.report' , $company->id) }}");
+        //     $('form').submit();
+        // });
     </script>
 @endsection

@@ -18,7 +18,8 @@
         @csrf
         <?php $total_sales_targets_values = 0;
         $total_sales_targets_percentages = 0; ?>
-        @if ($sales_forecast['add_new_products'] == 1)
+        @if ( 1)
+        {{-- @if ($sales_forecast['add_new_products'] == 1) --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -39,9 +40,9 @@
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
-                                @foreach ($product_seasonality as $product)
+                                @foreach ($product_seasonality as $index=>$product)
                                     <th style="width: 8%">{{ $product->name }}</th>
-                                    <th>{{ __('Sales Target [ ') . number_format($product->sales_target_value ?? 0) . ' ]' }}
+                                    <th class="sales_target_total" data-index="{{ $index }}" data-value="{{ $product->sales_target_value ?? 0 }}" >{{ __('Sales Target [ ') . number_format($product->sales_target_value ?? 0) . ' ]' }}
                                     </th>
                                 @endforeach
 
@@ -73,7 +74,7 @@
                                     @else
                                         <td>{{ $item }}</td>
                                     @endif
-                                    @foreach ($product_seasonality as $product)
+                                    @foreach ($product_seasonality as $index2=>$product)
                                         <?php
                                         if($allocations_base_row === null){
                                                 $value = (old('allocation_base_data')[$product->name][$item][$type] ?? '' );
@@ -88,15 +89,15 @@
                                         <?php $product_name = str_replace(' ', '_', strtolower($product->name)); ?>
                                         {{-- <input type="hidden" name="allocation_base_data[{{$product->name}}][{{$item}}}][item_name]"> --}}
                                         <td class="text-center" style="background-color:lightgrey;">
-                                            <input type="number" step="any"
+                                            <input data-index="{{ $index2 }}" data-column="{{ $key_for_new_items }}" type="number" step="any"
                                                 name="allocation_base_data[{{ $product->name }}][{{ $item }}][{{ $type }}]"
                                                 value="{{ $value ?? '' }}" placeholder="{{ __('Insert %') }}"
-                                                class="sales_target_percentage_{{ $product_name }} form-control">
+                                                class="sales_target_percentage_{{ $product_name }} form-control sales_target_percentage_class">
                                         </td>
                                         <td class="text-center">
                                             {{-- name="sales_target_value[]"  value="{{@$product_seasonality[$key]->sales_target_value}}" --}}
-                                            <input type="number" step="any" placeholder="{{ __('Insert Value') }}"
-                                                class="sales_target_value_{{ $product_name }} form-control">
+                                            <input type="number" step="any" data-index="{{ $index2  }}" data-column="{{ $key_for_new_items }}" placeholder="{{ __('Insert Value') }}"
+                                                class="sales_target_value_{{ $product_name }} form-control sales_values_class">
                                         </td>
                                         <?php $key++; ?>
                                     @endforeach
@@ -112,7 +113,7 @@
                                         id="total_sales_target_percentage_{{ $product_name }}">
                                         {{ !isset($modified_targets['products_modified_targets'])? 0: number_format(array_sum(array_column($modified_targets['products_modified_targets'], 'percentage') ?? [])) }}
                                     </td>
-                                    <td class="text-center active-style" id="total_sales_target_value_{{ $product_name }}">
+                                    <td data-index="{{ $index }}" class="text-center active-style total_sales_values_id total_sales_values_class " id="total_sales_target_value_{{ $product_name }}">
                                         {{ !isset($modified_targets['products_modified_targets'])? 0: number_format(array_sum(array_column($modified_targets['products_modified_targets'], 'value') ?? [])) }}
                                     </td>
                                 @endforeach
@@ -284,4 +285,36 @@
             }
         });
     </script>
+      <script>
+        $(document).on('keyup','.sales_values_class',function(e){
+            let index = $(this).data('index');
+             let totalValues = 0 ;
+             $('.sales_values_class[data-index="'+ index +'"]').each(function(index , field){
+                 totalValues+= (isNaN(parseFloat($(field).val())) ? 0 : parseFloat($(field).val()) );
+            });
+            $(`#total_sales_target_value_item${index + 1 }` ).html(number_format(totalValues));
+            updatePercentageFields(index , $(this));            
+        });
+        
+        function updatePercentageFields(index ,field)
+        {
+            let columnIndex = field.data('column');
+            let totalSalesTarget = parseFloat($('.sales_target_total[data-index="'+ index +'"]').attr('data-value'));
+            let value = parseFloat(field.val());
+            let percentage = parseFloat((value/totalSalesTarget * 100).toFixed(2)) ;
+            $('.sales_target_percentage_class[data-index="'+ index +'"][data-column="'+ columnIndex +'"]' ).val(percentage);
+            updateTotalPercentage(index);
+        }
+        function updateTotalPercentage(index)
+        {
+            let totalPercentage = 0 ;
+            $('.sales_target_percentage_item'+(index+1)).each(function(i , field){
+                value = $(field).val() ;
+                totalPercentage += (isNaN(value) || value == '' ? 0 : parseFloat(value));
+            })
+            $('#total_sales_target_percentage_item'+ (index + 1)).html(totalPercentage  + ' %');
+
+        }
+    </script>
+    
 @endsection

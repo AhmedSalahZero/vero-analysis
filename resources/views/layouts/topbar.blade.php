@@ -261,7 +261,7 @@
                                     <li class="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel"
                                         {{-- {{Request::routeIs(@$route[0].'.*') ||  Request::routeIs(@$route[0]) ?  'kt-menu__item--open kt-menu__item--here ' : ''}}" --}} data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a
                                             href="javascript:;" class="kt-menu__link kt-menu__toggle"><span
-                                                class="kt-menu__link-text">{{ $section->name[$lang] }}</span><i
+                                                class="kt-menu__link-text">{{ $section->name[$lang] }} </span><i
                                                 class="kt-menu__ver-arrow la la-angle-right"></i></a>
                                         <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
                                             <ul class="kt-menu__subnav">

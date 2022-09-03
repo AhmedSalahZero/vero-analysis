@@ -19,7 +19,6 @@ class CollectionController extends Controller
     {
         $first_allocation_setting_base = AllocationSetting::company()->first()->allocation_base ?? null;
         $second_allocation_setting_base = SecondAllocationSetting::company()->first()->allocation_base ?? null;
-
         // Saving Data
         if ($request->isMethod('POST')) {
             $total = [];
@@ -65,7 +64,6 @@ class CollectionController extends Controller
         $collection_settings= CollectionSetting::company()->first() ;
         $first_allocation_base_items = ExistingProductAllocationBase::company()->first()->existing_products_target ?? [];
         $second_allocation_base_items = SecondExistingProductAllocationBase::company()->first()->existing_products_target ?? [];
-
         $sales_forecast = SalesForecast::company()->first();
         return view('client_view.forecast.collection_settings', compact(
             'company',

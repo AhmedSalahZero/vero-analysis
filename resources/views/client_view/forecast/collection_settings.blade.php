@@ -195,6 +195,7 @@
                 </div>
             </div>
         </div>
+                        {{-- @dd($first_allocation_base_items , $second_allocation_base_items) --}}
 
         {{-- First Allocation Base Items Collection --}}
         <div class="kt-portlet" id="first_allocation_setting_base_view"
@@ -338,6 +339,7 @@
                 </div>
             </div>
         </div>
+                        {{-- @dd($second_allocation_base_items) --}}
 
         {{-- First Allocation Base Items Collection --}}
         <div class="kt-portlet" id="second_allocation_setting_base_view"
