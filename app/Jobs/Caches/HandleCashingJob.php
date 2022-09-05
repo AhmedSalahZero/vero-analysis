@@ -14,6 +14,9 @@ use Illuminate\Queue\SerializesModels;
 class HandleCashingJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels ;
+
+      public $timeout = 500000*60;
+    public $failOnTimeout = true;
     
     private Company $company ; 
     

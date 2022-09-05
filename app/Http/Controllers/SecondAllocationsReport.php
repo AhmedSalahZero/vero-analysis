@@ -84,7 +84,6 @@ class SecondAllocationsReport
 
     public function NewProductsAllocationBase(Request $request, Company $company)
     {
-
         $sales_forecast = SalesForecast::company()->first();
         $allocations_setting = SecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
@@ -118,7 +117,6 @@ class SecondAllocationsReport
                     }
                 }
             }
-
 
             SecondNewProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
@@ -165,6 +163,8 @@ class SecondAllocationsReport
         $allocations_setting = SecondAllocationSetting::company()->first();
 
         $allocation_base = $allocations_setting->allocation_base;
+
+        
         // Saving Existing Percentages
         if ($request->isMethod('POST')) {
             $use_modified_targets = ($request->use_modified_targets ?? 0);
@@ -186,8 +186,9 @@ class SecondAllocationsReport
 
             return redirect()->route('second.new.product.seasonality', $company);
         }
-        $existing_allocations_base = SecondExistingProductAllocationBase::company()->first();
         $allocations_base_row = SecondNewProductAllocationBase::company()->first();
+        $existing_allocations_base = SecondExistingProductAllocationBase::company()->first();
+
         $sales_forecast = SalesForecast::company()->first();
         $product_seasonality = ProductSeasonality::company()->get();
 
@@ -325,6 +326,7 @@ class SecondAllocationsReport
 
         $new_products_allocations = SecondNewProductAllocationBase::company()->first();
         $products_seasonality = ProductSeasonality::company()->get();
+    
         $sales_forecast = SalesForecast::company()->first();
         $allocations_setting = SecondAllocationSetting::company()->first();
         $allocation_base_data = isset($new_products_allocations->allocation_base_data) ? collect($new_products_allocations->allocation_base_data)->map(function ($data, $item) {
@@ -334,6 +336,7 @@ class SecondAllocationsReport
         })->toArray() : [];
 
         $allocation_data_per_allocation_base = [];
+   
         foreach ($allocation_base_data as $product_name => $base_items) {
             $row = $products_seasonality->where('name', $product_name)->first();
             
@@ -344,6 +347,7 @@ class SecondAllocationsReport
             $seasonality_data = $row->seasonality_data;
             
             foreach ($base_items as $base => $percentage) {
+         
                 $percentage = $percentage ?? 0;
                 $allocation_data_per_allocation_base[$base][$product_name]['target'] = $sales_target_value * ($percentage / 100);
                 $allocation_data_per_allocation_base[$base][$product_name]['seasonality'] = $seasonality;
@@ -367,7 +371,6 @@ class SecondAllocationsReport
         if (count($products_seasonality) > 0) {
             foreach ($allocation_data_per_allocation_base as $base_item => $products_data) {
                 foreach ($products_data as $product_name => $product_data) {
-
                     $sales_target_value = $product_data['target'];
                     $seasonality = $product_data['seasonality'];
                     $seasonality_data = $product_data['seasonality_data'];
@@ -382,13 +385,21 @@ class SecondAllocationsReport
                         $sales_target_value,
                         $year
                     );
+            
+                   
                 }
             }
 
-
             foreach ($allocation_data as $base => $data) {
-                $allocation_data_total[$base] = $this->finalTotal($data);
+                foreach($data as $item=>$arr) // this foreach add by me 
+                {
+                    $allocation_data_total[$base][$item] = $this->finalTotal($data);
+                }
+   
+                
+             
             }
+         
             arsort($allocation_data_total);
             $allocation_data_total['Total'] = $this->finalTotal($allocation_data);
         }
@@ -406,14 +417,38 @@ class SecondAllocationsReport
                 'year'
             ));
         } else {
+
+            /* by salah */
             $total_sales_targets = [];
             foreach ($allocation_data_total as $base => $base_data) {
-                foreach ($base_data as $date => $value) {
-                    $month = date('F', strtotime(('01-' . $date)));
-                    $full_date = date('d-m-Y', strtotime(('01-' . $date)));
-                    $total_sales_targets[$base][$full_date] = ($existing_product_data[$base][$month] ?? 0) + $value;
+                foreach ($base_data as $item => $values) {
+                    if(\is_array($values))
+                    {
+                         foreach($values as $date=>$value)
+                            {
+                                    $month = date('F', strtotime(('01-' . $date)));
+                        
+                            $full_date = date('d-m-Y', strtotime(('01-' . $date)));
+                            // $total_sales_targets[$base][][$full_date] = ($existing_product_data[$base][$month] ?? 0) + (is_array($value) ? array_sum($value) : $value); // by salah
+                            $total_sales_targets[$base][$item][$full_date] = ($existing_product_data[$base][$month] ?? 0) + $value;
+                                
+                            }
+                    }
+                   
                 }
             }
+            /* end by salah */
+
+
+            //  foreach ($allocation_data_total as $base => $base_data) {
+            //     foreach ($base_data as $date => $value) {
+            
+            //         $month = date('F', strtotime(('01-' . $date)));
+            //         $full_date = date('d-m-Y', strtotime(('01-' . $date)));
+            //         $total_sales_targets[$base][$full_date] = ($existing_product_data[$base][$month] ?? 0) + $value;
+            //     }
+            // }
+            
             unset($total_sales_targets['Total']);
 
              if(!$total_sales_targets)
@@ -567,7 +602,8 @@ class SecondAllocationsReport
         $existing_product_data = [];
         foreach ($product_items_percentages as $base_name => $products_items) {
             $existing_product_per_allocation_base = [];
-            if(count($products_items) > 1)
+            
+            if(count($products_items) > 0)
             {
                  foreach ($products_items as $product_item_name => $product_value) {
                 $name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;

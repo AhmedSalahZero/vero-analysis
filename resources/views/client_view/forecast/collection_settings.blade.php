@@ -25,7 +25,6 @@
                     </h3>
                 </div>
             </div>
-
             <div class="kt-portlet__body">
                 <div class="row">
                     <div class="col-md-12">
@@ -76,8 +75,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- General Collection Policy --}}
         <div class="kt-portlet" id="general_collection_policy_view"
             style="display:{{ @$collection_settings['collection_base'] == 'general_collection_policy' ? 'block' : 'none' }}">
             <div class="kt-portlet__head">
@@ -195,9 +192,7 @@
                 </div>
             </div>
         </div>
-                        {{-- @dd($first_allocation_base_items , $second_allocation_base_items) --}}
-
-        {{-- First Allocation Base Items Collection --}}
+    
         <div class="kt-portlet" id="first_allocation_setting_base_view"
             style="display:{{ @$collection_settings['collection_base'] == $first_allocation_setting_base ? 'block' : 'none' }}">
             <div class="kt-portlet__head">
@@ -339,8 +334,6 @@
                 </div>
             </div>
         </div>
-                        {{-- @dd($second_allocation_base_items) --}}
-
         {{-- First Allocation Base Items Collection --}}
         <div class="kt-portlet" id="second_allocation_setting_base_view"
             style="display:{{ @$collection_settings['collection_base'] == $second_allocation_setting_base ? 'block' : 'none' }}">

@@ -24,7 +24,7 @@
             <div class="col-10">
                 <div class="alert alert-danger" role="alert">
                     <div class="alert-icon"><i class="flaticon-warning"></i></div>
-                    <div class="alert-text">{{ __(' Please .. refill the fields according to the new dates  ') }}</div>
+                    <div class="alert-text">{{ __(' Please .. refill the fields according to the new dates') }}</div>
                 </div>
             </div>
         </div>

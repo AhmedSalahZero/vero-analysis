@@ -147,9 +147,7 @@
                             @endslot
                             @slot('table_body')
                                 <?php $total = []; ?>
-                                {{-- @dd($collection) --}}
                                 @foreach ($collection as $base_name => $base_collection)
-                                    {{-- @dd() --}}
                                     <tr>
                                         <td> <b> {{ $base_name }} </b></td>
                                         @php
@@ -160,12 +158,10 @@
                                             $numericDate = \Carbon\Carbon::make($date)->format('d-m-Y');
                                             $totalForThisRow += $base_collection[$numericDate]??0 ; 
                                         @endphp
-                                        {{-- @dd() --}}
                                             <?php $total[$numericDate] = ($base_collection[$numericDate] ?? 0) + ($total[$numericDate] ?? 0); ?>
                                             <td class="text-center"> {{ number_format($base_collection[$numericDate] ?? 0) }}
                                             </td>
                                         @endforeach
-                                        {{-- @dd($base_collectionww) --}}
                                         <td class="text-center active-style">{{ number_format($totalForThisRow) }} </td>
                                         {{-- <td class="text-center active-style">{{ number_format(array_sum($base_collection)) }} </td> --}}
                                     </tr>

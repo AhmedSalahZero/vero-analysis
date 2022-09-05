@@ -55,7 +55,7 @@
                             <div class="col-md-6">
                                 <label>{{ __('Import File') }} <span class="required">*</span></label>
                                 <div class="kt-input-icon">
-                                    <input type="file" name="excel_file" class="form-control"
+                                    <input required type="file" name="excel_file" class="form-control"
                                         placeholder="{{ __('Import File') }}">
                                     <x-tool-tip title="{{ __('Kash Vero') }}" />
                                 </div>

@@ -34,7 +34,7 @@
                         <tr class="table-active text-center">
                             <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
                             <th>{{ __('Sales Target Value') }}</th>
-                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !== 'product_target')
+                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !== 'product_target' || true /*by salah*/ )
                                 <th>{{ __('Sales Target %') }}</th>
                             @endif
                         </tr>
@@ -70,6 +70,8 @@
 @endif
 
         <?php $item = ucwords(str_replace('_', ' ', $allocation_base)); ?>
+
+        {{-- @if(hasAtLeastOneOfType($company , $allocation_base)) --}}
 
         @if(hasProductsItems($company))
         <div class="kt-portlet">

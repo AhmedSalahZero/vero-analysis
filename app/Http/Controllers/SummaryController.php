@@ -228,27 +228,34 @@ class SummaryController extends Controller
             
           // fourth page request 
             $allocationSetting = AllocationSetting::company()->first();
-            
-          $request['allocation_base'] = $allocationSetting->allocation_base;
-          $request['breakdown'] = $allocationSetting->breakdown;
-          $request['add_new_items'] = $allocationSetting->add_new_items;
-          $request['number_of_items'] =$allocationSetting->number_of_items;
-           (new AllocationsReport())->allocationSettings($request , $company);
-           
+            if($allocationSetting){
+                $request['allocation_base'] = $allocationSetting->allocation_base;
+                $request['breakdown'] = $allocationSetting->breakdown;
+                $request['add_new_items'] = $allocationSetting->add_new_items;
+                $request['number_of_items'] =$allocationSetting->number_of_items;
+                (new AllocationsReport())->allocationSettings($request , $company);
+                
+                        
+            }
+          
            // fourth page 
             // $allocations_base_row = NewProductAllocationBase::company()->first();
             $cachedAllocation = Cache::get(getCacheKeyForFirstAllocationReport($company->id)) ?? [];
            $request['allocation_base_data'] = $cachedAllocation['allocation_base_data'] ?? [];
            $request['new_allocation_base_items'] = $cachedAllocation['new_allocation_base_items'] ?? [];
-        (new AllocationsReport())->NewProductsAllocationBase($request , $company);
+          (new AllocationsReport())->NewProductsAllocationBase($request , $company);
         
         //FIFTH PAGE REQUEST
         $existingAllocationBase = ExistingProductAllocationBase::company()->first();
-        $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
-        $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
-        $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
-        $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
-        
+        if($existingAllocationBase)
+        {
+              $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
+                $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
+                $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
+                $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
+                    
+        }
+      
          (new AllocationsReport())->existingProductsAllocationBase($request , $company);
         // end of first allocation 
 
@@ -265,20 +272,28 @@ class SummaryController extends Controller
            (new AllocationsReport())->allocationSettings($request , $company);
            //  page 
             // $allocations_base_row = NewProductAllocationBase::company()->first();
-            $cachedAllocation = Cache::get(getCacheKeyForSecondAllocationReport($company->id)) ?? [];
+                   $existingAllocationBase = SecondExistingProductAllocationBase::company()->first();
+           
+        // PAGE REQUEST
+ 
+        if($existingAllocationBase)
+        {
+             $cachedAllocation = Cache::get(getCacheKeyForSecondAllocationReport($company->id)) ?? [];
            $request['allocation_base_data'] = $cachedAllocation['allocation_base_data'] ?? [];
            $request['new_allocation_base_items'] = $cachedAllocation['new_allocation_base_items'] ?? [];
            
          (new SecondAllocationsReport())->NewProductsAllocationBase($request , $company);
-        // PAGE REQUEST
-        $existingAllocationBase = SecondExistingProductAllocationBase::company()->first();
-        $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
-        $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
-        $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
-        $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
+         
+            $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
+            $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
+            $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
+            $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
+            (new SecondAllocationsReport())->existingProductsAllocationBase($request , $company);
+            
+        }
+        
 
         // dd($request['existing_products_target'] , $request['total_existing_target']  , $request['modify_sales_target'] , $request['use_modified_targets']);
-          (new SecondAllocationsReport())->existingProductsAllocationBase($request , $company);
 
 
 

@@ -22,7 +22,7 @@ class SalesGatheringTestJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels ;
     
 
-    public $timeout = 50000*60;
+    public $timeout = 500000*60;
     public $failOnTimeout = true;
     
 

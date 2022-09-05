@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 use App\Models\Company;
 use App\Models\SalesGathering;
 use App\Services\Caching\CustomerDashboardCashing;
+use App\Services\Caching\CustomerNatureCashing;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class CustomersNaturesAnalysisReport
         $year = Carbon::make($request->date)->format('Y');
         
         
-        $customerDashboardCashing = new CustomerDashboardCashing($company , $year);
+        $customerDashboardCashing = new CustomerNatureCashing($company , $year);
         
         $cashedResult = $customerDashboardCashing->cacheAll();
         

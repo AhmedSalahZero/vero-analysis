@@ -24,6 +24,7 @@
     </style>
 @endsection
 @section('content')
+{{-- @dd(get_defined_vars()) --}}
     <form action="{{ route('new.product.seasonality', $company) }}" method="POST">
         @csrf
 

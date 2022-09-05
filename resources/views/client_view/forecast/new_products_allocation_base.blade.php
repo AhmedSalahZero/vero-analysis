@@ -41,11 +41,15 @@
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
-                                @foreach ($product_seasonality as $index=> $product)
+                                @forelse ($product_seasonality as $index=> $product)
                                     <th style="width: 8%">{{ $product->name }}</th>
                                     <th class="sales_target_total" data-index="{{ $index }}" data-value="{{ $product->sales_target_value ?? 0 }}">{{ __('Sales Target [ ') . number_format($product->sales_target_value ?? 0) . ' ]' }}
                                     </th>
-                                @endforeach
+@empty
+{{-- <th class="sales_target_total" data-index="{{ 0 }}" data-value="{{ 0 }}">{{ __('Percentage') .  ' %' }}
+                                    </th> --}}
+
+                                @endforelse
 
                             </tr>
                         @endslot
@@ -53,6 +57,7 @@
                             <input type="hidden" name="allocation_base" value="{{ $allocation_base }}">
                             <?php $key = 0; ?>
                             <?php $key_for_new_items = 0; ?>
+
 {{-- @dd($allocation_bases_items) --}}
                             @foreach ($allocation_bases_items as $item => $type)
                                 <tr class="text-center">
@@ -96,10 +101,19 @@
                                                 class="sales_target_percentage_{{ $product_name }} form-control sales_target_percentage_class">
                                         </td>
                                         <td class="text-center">
-                                            <input data-index="{{ $index2  }}" data-column="{{ $key_for_new_items }}" type="number" step="any" placeholder="{{ __('Insert Value') }}"
+                                            <input type="hidden" name="totalsss" value="{{ $product_seasonality->sum('sales_target_value') ?? 0 }}">
+                                            <input 
+                                            {{-- @if($type == 'new')
+                                            name="allocation_base_data_existing[{{ $product->name }}][{{ $item }}][existing_custom]"
+                                            @endif --}}
+                                             data-index="{{ $index2  }}" data-column="{{ $key_for_new_items }}" type="number" step="any" placeholder="{{ __('Insert Value') }}"
                                                 class="sales_target_value_{{ $product_name }} form-control sales_values_class">
                                         </td>
                                         <?php $key++; ?>
+
+
+
+                                
                                     @endforeach
 
                                 </tr>

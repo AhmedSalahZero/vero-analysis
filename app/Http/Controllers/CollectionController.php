@@ -6,6 +6,7 @@ use App\Models\AllocationSetting;
 use App\Models\CollectionSetting;
 use App\Models\Company;
 use App\Models\ExistingProductAllocationBase;
+use App\Models\NewProductAllocationBase;
 use App\Models\SalesForecast;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
@@ -60,10 +61,12 @@ class CollectionController extends Controller
             return redirect()->route('collection.report', $company);
 
         }
-
         $collection_settings= CollectionSetting::company()->first() ;
-        $first_allocation_base_items = ExistingProductAllocationBase::company()->first()->existing_products_target ?? [];
-        $second_allocation_base_items = SecondExistingProductAllocationBase::company()->first()->existing_products_target ?? [];
+    //   dd();
+    // dd(formatExistingFormNewAllocation(NewProductAllocationBase::company()->first()));
+    // dd((NewProductAllocationBase::company()->first()));
+        $first_allocation_base_items = ExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(NewProductAllocationBase::company()->first());
+        $second_allocation_base_items = SecondExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(SecondExistingProductAllocationBase::company()->first());
         $sales_forecast = SalesForecast::company()->first();
         return view('client_view.forecast.collection_settings', compact(
             'company',
@@ -79,6 +82,8 @@ class CollectionController extends Controller
 
     public function collectionReport(Request $request, Company $company,$result ='view')
     {
+            // dd(get_defined_vars());
+        // 
         $collection_settings= CollectionSetting::company()->first() ;
         $first_allocation_setting_base = AllocationSetting::company()->first()->allocation_base?? null;
         $second_allocation_setting_base = SecondAllocationSetting::company()->first()->allocation_base?? null;
@@ -177,23 +182,5 @@ class CollectionController extends Controller
         }
         return $this->finalTotal($collection);
 
-
-
-        //   $collection = [];
-        // foreach ($targets as $date => $target) {
-        //     $main_date = date('d-m-Y',strtotime('01-'.$date));
-
-        //     foreach ($collection_data as $key => $data) {
-
-        //         $rate = ($data['rate']??0) / 100 ;
-        //         $custom_months = round((($data['due_days']??0)/30))  ;
-
-        //         $custom_date =date("d-m-Y",strtotime(date("Y-m-d", strtotime($date)) . " +$custom_months  month"));
-        //         $collection[$main_date][$custom_date] = ($target * $rate) + ($collection[$main_date][$custom_date]??0) ;
-        //     }
-
-        // }
-        
-        // return $this->finalTotal($collection);
     }
 }

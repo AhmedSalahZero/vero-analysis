@@ -59,6 +59,7 @@ class CashingService
                 for($year = $years['start_year'] ; $year <= $years['end_year'] ; $year++)
                 {
                         (new CustomerDashboardCashing($this->company , $year))->deleteAll();
+                        (new CustomerNatureCashing($this->company , $year))->deleteAll();
                 }
             }
     }
@@ -73,14 +74,20 @@ class CashingService
          $years = $this->getIntervalYearsFormCompany(); 
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
+            
             if($startYear && $endYear){
                 for($year = $startYear ; $year <= $endYear ; $year++)
                 {
                     // 1- customer dashboard 
+                  
                     if(canViewCustomersDashboard($exportables)){
                         $customerDashboardCashing = new CustomerDashboardCashing($this->company , $year); 
                         $customerDashboardCashing->deleteAll();
                         $customerDashboardCashing->cacheAll();   
+
+                        $customerNatureCashing = new CustomerNatureCashing($this->company , $year); 
+                        $customerNatureCashing->deleteAll();
+                        $customerNatureCashing->cacheAll();   
                     }
                 }
             }

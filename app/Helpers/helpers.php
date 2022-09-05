@@ -551,12 +551,26 @@ function deleteNewProductAllocationBaseForForecast($companyId)
 
 function getLargestArrayDates(array $array )
 {
+  
     if (count($array) == count($array, COUNT_RECURSIVE)) 
 {
     $dates = [];
     foreach($array as $date=>$val)
     {
-        $dates[] = Carbon::make($date)->format('d-M-Y');
+        if($date)
+        {
+            try{
+            $dates[] = 
+                Carbon::make($date)->format('d-M-Y');
+            }
+            catch(\Exception $e)
+            {
+                return $dates ;
+            }
+        }
+        else{
+            return $dates;
+        }
     }
     return $dates ;
 }
@@ -746,7 +760,11 @@ function hasProductsItems($company)
     $productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = '. $company->id .' and product_item is not null'));
     return $productItems[0]->has_product_item ?? 0  ;
 }
-
+function hasAtLeastOneOfType($company , $type)
+{
+       $productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = '. $company->id .' and '. $type .' is not null'));
+    return $productItems[0]->has_product_item ?? 0  ;
+}
 function count_array_values(array $array)
 {
     $counter = 0 ; 
@@ -1313,4 +1331,26 @@ function getCacheKeyForFirstAllocationReport($companyId)
 function getCacheKeyForSecondAllocationReport($companyId)
 {
     return 'second_allocation_report_for_company_'. $companyId ; 
+}
+function formatExistingFormNewAllocation($newAllocation)
+{
+if($newAllocation)
+{
+    $allocationsNames = $newAllocation->new_allocation_bases_names ;
+    $data = $newAllocation->allocation_base_data;
+    if(!$data)
+    {
+        return [];
+    }
+    $sums = [] ;
+    foreach($data as $productItem => $newData)
+    {
+        foreach($newData as  $branchName => $values)
+        {
+            $sums[$branchName] = ($sums[$branchName] ?? 0) + ($values['actual_value'] ?? 0); 
+        }
+    }
+    return $sums ;
+}
+return [];
 }

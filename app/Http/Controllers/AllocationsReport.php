@@ -108,28 +108,35 @@ class AllocationsReport
              )) {
             foreach ((array)$request->allocation_base_data as $product => $data) {
                 $total = array_sum($this->finalTotal($data));
+                // dd($request->allocation_base_data);
+                // dd($total);
+                // existing_custom
                 if ($total != 100) {
 
                     $validation['percentages_total'] = 'required';
                 }
             }
-            $validation['new_allocation_base_items.*'] = 'required';
+            $validation['new_allocation_base_items.*'] = 'sometimes|required';
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Percentages Must be 100%'
             ]);
+            // dd('tood');
             $allocation_base_data = $request->allocation_base_data;
+            // dd($allocation_base_data);
             Cache::forever(getCacheKeyForFirstAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
                         $index = substr($base, strpos($base, "new_item_") + 9);
                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
-                        $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
+                        // dd($name_of_new_allocation_base);
+                        $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]);
                         unset($allocation_base_data[$product_item_name][$base]);
                     }
                 }
             }
-
+   
+            // dd($allocation_base_data ,$request->new_allocation_base_items );
             NewProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
                 [
@@ -181,7 +188,8 @@ class AllocationsReport
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Modified Sales Percentages Must be 100%'
             ]);
-            ExistingProductAllocationBase::updateOrCreate(
+            // dd($request->all());
+             ExistingProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
 
                 [
@@ -192,9 +200,9 @@ class AllocationsReport
                     'allocation_base' => $allocation_base
                 ]
             );
-
             return redirect()->route('new.product.seasonality', $company);
         }
+        // dd('d');
         $existing_allocations_base = ExistingProductAllocationBase::company()->first();
         $allocations_base_row = NewProductAllocationBase::company()->first();
         $sales_forecast = SalesForecast::company()->first();
@@ -407,6 +415,7 @@ class AllocationsReport
 
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
+        // dd($result , get_defined_vars());
         if ($result == 'view') {
             return view('client_view.forecast.new_product_seasonality', compact(
                 'new_products_allocations',
@@ -466,9 +475,10 @@ class AllocationsReport
 
 
         $existing_product_allocation_base =  ExistingProductAllocationBase::company()->first();
+        // dd($existing_product_allocation_base);
         $existing_sales_targets  = $existing_product_allocation_base->existing_products_target ?? [];
-
         $sales_targets = [];
+  
         if ($existing_product_allocation_base->use_modified_targets == 1) {
             // $existing_products_items_sales_targets_total = array_sum($existing_sales_targets);
             $modified_allocation_base_percentages = $existing_product_allocation_base->allocation_base_percentages;
@@ -479,7 +489,6 @@ class AllocationsReport
         } else {
             $sales_targets = $existing_sales_targets;
         }
-
         $modified_seasonality = ModifiedSeasonality::company()->first();
         $seasonality = $modified_seasonality->use_modified_seasonality == 1 ? $modified_seasonality->modified_seasonality       : $modified_seasonality->original_seasonality;
 
@@ -567,12 +576,12 @@ class AllocationsReport
             }
         }
 
-
         // The Summation of products items for each base
         $existing_product_data = [];
         foreach ($product_items_percentages as $base_name => $products_items) {
+          
             $existing_product_per_allocation_base = [];
-            if(count($products_items) > 1)
+            if(count($products_items) > 0)
             {
                  foreach ($products_items as $product_item_name => $product_value) {
                 $name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;
@@ -581,13 +590,11 @@ class AllocationsReport
                 $existing_product_per_allocation_base[$product_item_name] = $this->operationAmongArrayAndNumber($product_seasonality, $product_value, 'multiply');
                 }     
             }
-           
             $total = $this->finalTotal($existing_product_per_allocation_base);
             $total  = $this->sorting($total);
             $existing_product_data[$base_name] = $total;
         }
         $existing_product_data['Total'] = $this->finalTotal($existing_product_data);
-
         return $existing_product_data;
     }
 }

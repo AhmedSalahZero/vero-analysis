@@ -74,13 +74,13 @@
                 </x-table>
             </div>
         </div>
+       
         @endif
-
-
         <?php $item = ucwords(str_replace('_', ' ', $allocation_base)); ?>
-        {{-- @dd($existing_items_target) --}}
                     <?php $existing_items_target = $sales_forecast->sales_target - ($total_new_items_targets ?? 0); ?>
+        {{-- @if(hasAtLeastOneOfType($company , $allocation_base)) --}}
         @if(hasProductsItems($company))
+
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
