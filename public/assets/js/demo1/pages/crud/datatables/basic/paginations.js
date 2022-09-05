@@ -18,7 +18,7 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
 				'csvHtml5',
 				'pdfHtml5',
 			]
@@ -57,7 +57,7 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
 				'csvHtml5',
 				'pdfHtml5',
                 
@@ -98,7 +98,7 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
 				'csvHtml5',
 				'pdfHtml5',
 			]
@@ -121,7 +121,7 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
 				'csvHtml5',
 				'pdfHtml5',
 			]
@@ -143,7 +143,8 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
+				// 'excelHtml5',
 				'csvHtml5',
 				'pdfHtml5',
 			]
@@ -168,7 +169,8 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
+				// 'excelHtml5',
 				'csvHtml5',
 				'pdfHtml5',
 			]
@@ -191,7 +193,7 @@ var KTDatatablesBasicPaginations = function() {
 			buttons: [
 				'print',
 				'copyHtml5',
-				'excelHtml5',
+				getExportKey(),
 				'csvHtml5',
 				'pdfHtml5',
 			]
@@ -219,3 +221,16 @@ var KTDatatablesBasicPaginations = function() {
 jQuery(document).ready(function() {
     KTDatatablesBasicPaginations.init();
 });
+function getExportKey()
+{
+    return {
+                 "extend":"excel",
+                 title: '',
+                 filename: 'Vero Analysis Report',
+        customize: function (xlsx) {
+
+            exportToExcel(xlsx)
+
+                }
+             };
+}

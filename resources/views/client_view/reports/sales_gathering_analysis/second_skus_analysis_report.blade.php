@@ -78,102 +78,80 @@
         <div class="kt-portlet__body">
             <div class="tab-content  kt-margin-t-20">
 
-                <!--Begin:: Tab  EGP FX Rate Table -->
-                    <?php
-                    array_push($Items_names, 'Total');
-                    array_push($Items_names, 'Sales_Channel_Sales_Percentages');
-                    ?>
-             
                 <!--End:: Tab  EGP FX Rate Table -->
-
                 <!--Begin:: Tab USD FX Rate Table -->
                 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
                     <x-table :tableTitle="__($view_name.' Report')"
                         :tableClass="'kt_table_with_no_pagination'">
                         @slot('table_header')
-                        {{-- @dd($dates) --}}
+                        {{-- @dd($report_data , $secondReportData['report_data']) --}}
                             <tr class="table-active text-center">
                                 <th class="text-center absorbing-column">{{ __('Product Item') }}</th>
-                                @foreach ($dates as $date)
-                                    <th>{{ date('d-M-Y', strtotime($date)) }}</th>
-                                @endforeach
-                                <th>{{ __('Total') }}</th>
+                                {{-- @foreach ($dates as $date) --}}
+                                <th>{{ $firstReportData['first_report_date']  }}</th>
+                                <th>{{ $secondReportData['full_date']  }}</th>
+                                    {{-- <th>{{ date('d-M-Y', strtotime()) }}</th> --}}
+                                {{-- @endforeach --}}
+                                <th>{{ __('Growth Rate %') }}</th>
                             </tr>
                         @endslot
                         @slot('table_body')
-@php
-    sortReportForTotals($report_data)
-@endphp
-                            <?php $id =1 ;?>
-                            @foreach ($report_data as $sales_channel_name => $sales_channel_channels_data)
-
-                                <?php $chart_data = [];?>
-
-                                @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
-                                <?php
-                                    // $row_name = str_replace(' ', '_', $sales_channel_name);
-                                    // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
-                                    ?>
-
+                            @php
+                                $id = 0 ;
+                            @endphp
+                            @foreach ($mainItems as $mainItemName)
                                     <tr class="group-color">
 
                                         <td class="white-text"  style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                                             <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
-                                            <b>{{ __($sales_channel_name) }}</b>
+                                            <b>{{ __($mainItemName) }}</b>
                                         </td>
-                                        {{-- Total --}}
-                                        <?php $total_per_sales_channel = $sales_channel_channels_data['Total'] ?? [];
-                                        unset($sales_channel_channels_data['Total']); ?>
-                                        {{-- Growth Rate % --}}
-                                        <?php $growth_rate_per_sales_channel = $sales_channel_channels_data['Growth Rate %'] ?? [];
-                                        unset($sales_channel_channels_data['Growth Rate %']); ?>
-
-                                        @foreach ($dates as $date)
-                                            <td class="text-center white-text">{{ number_format($total_per_sales_channel[$date] ?? 0) . '  [ GR '.number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' % ]'}}
+                                            <td class="text-center white-text">
+                                                @php
+                                                    $firstTotal = isset($report_data[$mainItemName]) ? sum_all_array_values($report_data[$mainItemName]) : 0  ;
+                                                @endphp
+                                                {{  number_format($firstTotal)  }}
                                             </td>
-                                        @endforeach
-                                        <td class="text-center white-text">{{number_format(array_sum($total_per_sales_channel??[]),0)}}</td>
+
+                                            <td class="text-center white-text">
+                                                @php
+                                                    $secondTotal = isset($secondReportData['report_data'][$mainItemName]) ? sum_all_array_values($secondReportData['report_data'][$mainItemName]) : 0 ;
+                                                @endphp
+                                                {{ number_format($secondTotal) }}
+                                            </td>
+                                            
+                                        <td class="text-center white-text">{{$firstTotal ? number_format(    ($secondTotal - $firstTotal) / $firstTotal *100    , 2 ) . ' %' : __('NA')  }}  </td>
                                     </tr>
-                                    {{-- <tr class="row{{ $id }}  secondary-row-color text-center" style="display: none">
-                                        <td></td>
-                                        <td class="text-center"><b>{{__($sales_channel_name.' - Growth Rate %')}}</b></td>
-                                        @foreach ($dates as $date)
-
-                                            <td class="text-center">
-                                                {{ number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' %'}}</td>
-                                        @endforeach
-                                    </tr> --}}
-
-
-
-
-@php
-    sortSubItems($sales_channel_channels_data)
-@endphp
-
-                                    @foreach ($sales_channel_channels_data as $channel_name => $channel_section)
+                                    @foreach ($secondItemsName as $secondItemName  )
 
                                         <tr class="row{{ $id }}  text-center" style="display: none">
                                             {{-- <td></td> --}}
-                                            <td class="text-left"><b>{{ $channel_name  }}</b></td>
+                                            <td class="text-left"><b>{{ $secondItemName  }}</b></td>
 
-                                            @foreach ($dates as $date)
+                                       
                                                 <td class="text-center">
-                                                    {{ number_format(($channel_section['Sales Values'][$date] ?? 0),0)   }}
-                                                    <span class="active-text-color"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
+                                                   @php
+                                                       $firstReportTotalForItem = $report_data[$mainItemName][$secondItemName] ?? 0 ;
+                                                       $secondReportTotalForItem = $secondReportData['report_data'][$mainItemName][$secondItemName] ?? 0 ;
+                                                   @endphp
+                                                    <span class="active-text-color"><b> {{ number_format($firstReportTotalForItem) }} </b></span>
                                                 </td>
-                                            @endforeach
-                                            <td>{{number_format(array_sum($channel_section['Sales Values']??[]),0)}}</td>
+
+                                                <td class="text-center">
+                                                    <span class="active-text-color"><b> {{ number_format($secondReportTotalForItem) }} </b></span>
+                                                </td>
+
+
+                                            <td>{{ $firstReportTotalForItem ? number_format(    ($secondReportTotalForItem - $firstReportTotalForItem) / $firstReportTotalForItem *100   , 2 ) . ' %' : __('NA') }}  </td>
                                         </tr>
 
                                     @endforeach
 
 
-                                @elseif ($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %')
+                                {{-- @elseif ($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %')
                                     <tr class="active-style text-center">
                                         <td class="active-style text-center" ><b>{{ __($sales_channel_name) }}</b></td>
-                                        {{-- <td class="hidden"></td> --}}
-                                        <?php $decimals = $sales_channel_name == 'Growth Rate %' ? 2 : 0; ?>
+                                        @php $decimals = $sales_channel_name == 'Growth Rate %' ? 2 : 0; @endphp 
                                         @foreach ($dates as $date)
 
                                             <td class="text-center active-style">
@@ -181,7 +159,7 @@
                                         @endforeach
                                         <td class="text-center active-style">{{$sales_channel_name == 'Growth Rate %' ? "-" : number_format(array_sum($sales_channel_channels_data  ?? []),0)}}</td>
                                     </tr>
-                                @endif
+                                @endif --}}
                                 <?php $id++;?>
                             @endforeach
 
@@ -189,54 +167,7 @@
                         @endslot
                     </x-table>
 
-                    {{-- <x-table :tableTitle="__('Sales Channel Sales Percentage (%) Against Total Sales')"
-                        :tableClass="'kt_table_with_no_pagination'">
-                        @slot('table_header')
-                            <tr class="table-active">
-                                <th>{{ __('Sales Channel') }}</th>
-
-
-                                @foreach ($total_sales_channels as $date => $total)
-                                    <th>{{ date('d-M-Y', strtotime($date)) }}</th>
-                                @endforeach
-                            </tr>
-                        @endslot
-                        @slot('table_body')
-                            <?php $chart_data = []; ?>
-                            @foreach ($final_report_data as $sales_channel_name => $sales_channel_data)
-                                <tr class="group-color text-lg-left  ">
-                                    <td colspan="{{ count($total_sales_channels) + 1 }}"><b
-                                            class="white-text">{{ __($sales_channel_name) }}</b></td>
-                                    @foreach ($total_sales_channels as $date => $total)
-                                        <td class="hidden"> </td>
-                                    @endforeach
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Percent %') }}</th>
-                                    @foreach ($total_sales_channels as $date => $total)
-                                        <?php
-                                        $percentage = $total == 0 ? 0 : number_format(($sales_channel_data['Sales Values'][$date] ?? 0) / ($total ?? 0), 2);
-                                        $chart_data[$date][$sales_channel_name] = [$sales_channel_name . ' %' => $percentage];
-                                        ?>
-
-                                        <td class="text-center">
-                                            {{ $percentage . ' %' }}
-                                        </td>
-                                    @endforeach
-                                </tr>
-
-                            @endforeach
-                            <?php
-                            $return = [];
-                            array_walk($chart_data, function ($values, $date) use (&$return) {
-                                $return[] = array_merge(['date' => date('d-M-Y', strtotime($date))], array_merge(...array_values($values)));
-                            });
-                            ?>
-                            <input type="hidden" id="Sales_Channel_Sales_Percentages_data" data-total="{{ json_encode($return) }}">
-
-
-                        @endslot
-                    </x-table> --}}
+                 
                 </div>
                 <!--End:: Tab USD FX Rate Table -->
             </div>

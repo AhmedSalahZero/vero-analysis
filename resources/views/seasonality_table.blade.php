@@ -40,6 +40,8 @@ $TheMainSectionTitle = @explode('Sales', Request()->segments()[count(Request()->
                                     @foreach ($total_branches as $date => $total)
                                         <td class="hidden"> </td>
                                     @endforeach
+                                        <td class="hidden"> </td>
+
                                 </tr>
                                 <tr>
                                     <th>{{ __('Seasonality %') }}</th>
@@ -47,11 +49,6 @@ $TheMainSectionTitle = @explode('Sales', Request()->segments()[count(Request()->
                                          <?php   $totals = 0 ;  ?>
                                     @foreach ($total_branches as $date => $total)
                                         <td class="text-center">
-                                            {{-- @if(!isset($zoone_data['Sales Values'][$date]))
-                                            @dd($date , $zoone_data['Sales Values'] )
-                                            @endif  --}}
-                                            {{-- @dd($zoone_data['Sales Values'][$date]) --}}
-                                            
                                             
                                             <?php $totals = $totals + ($totalss = number_format(isset($zoone_data['Sales Values'][$date])  && $totalSum  ? (($zoone_data['Sales Values'][$date] / $totalSum)*100      ) : 0,2) )  ?>
                                             
@@ -104,6 +101,7 @@ $TheMainSectionTitle = @explode('Sales', Request()->segments()[count(Request()->
                                 @foreach ($totalArrys as $date => $total)
                                     <td class="text-center active-style">{{ isset($total['total']) && $total['total'] ? number_format($total['value']/ $total['total'] * 100 , 2) : 0 }} %</td>
                                 @endforeach
+                                <td class="text-center active-style">100 %</td>
                             </tr>
 
                           

@@ -95,6 +95,7 @@
                                                 class="sales_target_percentage_{{ $product_name }} form-control sales_target_percentage_class">
                                         </td>
                                         <td class="text-center">
+                                            <input type="hidden" name="totalsss" value="{{ $product_seasonality->sum('sales_target_value') ?? 0 }}">
                                             {{-- name="sales_target_value[]"  value="{{@$product_seasonality[$key]->sales_target_value}}" --}}
                                             <input type="number" step="any" data-index="{{ $index2  }}" data-column="{{ $key_for_new_items }}" placeholder="{{ __('Insert Value') }}"
                                                 class="sales_target_value_{{ $product_name }} form-control sales_values_class">

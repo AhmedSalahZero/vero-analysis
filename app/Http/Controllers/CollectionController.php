@@ -62,9 +62,7 @@ class CollectionController extends Controller
 
         }
         $collection_settings= CollectionSetting::company()->first() ;
-    //   dd();
-    // dd(formatExistingFormNewAllocation(NewProductAllocationBase::company()->first()));
-    // dd((NewProductAllocationBase::company()->first()));
+  
         $first_allocation_base_items = ExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(NewProductAllocationBase::company()->first());
         $second_allocation_base_items = SecondExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(SecondExistingProductAllocationBase::company()->first());
         $sales_forecast = SalesForecast::company()->first();

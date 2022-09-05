@@ -557,8 +557,108 @@ toastr.error('{{ session()->get("fail") }}')
 		@endif 
 
 		<script>
-			
+		  
+function exportToExcel(xlsx){
+	
+  
+
+        numberOfRows = 0 ;
+		 eachInRow = 0 ;
+
+		let companyName = "{{ isset($company) && isset($company->name['en']) ? $company->name['en'] : '' }}";
+		if(companyName)
+		{
+			eachInRow += 1 ; 
+		}
+		let reportName = $('.kt-subheader__title').html().trim() || $('.kt-portlet__head-title').html().trim();
+
+		if(reportName)
+		{
+			companyName += (' (' +  reportName + ' )'); 
+		}
+		let start_date = "{{ isset($start_date) ? $start_date : '' }}";
+		let end_date = "{{ isset($end_date) ? $end_date : '' }}";
+		let date = "{{ isset($date) ? $date : '' }}";
+		if((start_date && end_date) || date)
+		{
+			eachInRow+=1 ;
+		}
+
+        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+        var downrows = eachInRow;
+        var clRow = $('row', sheet);
+ 
+        clRow.each(function () {
+            var attr = $(this).attr('r');
+            var ind = parseInt(attr);
+            ind = ind + downrows;
+            $(this).attr("r",ind);
+        });
+ 
+
+        $('row c ', sheet).each(function () {
+            var attr = $(this).attr('r');
+            var pre = attr.substring(0, 1);
+            var ind = parseInt(attr.substring(1, attr.length));
+            ind = ind + downrows;
+            $(this).attr("r", pre + ind);
+        });
+ 
+        function Addrow(index,data ) {
+            msg='<row  r="'+index+'">'
+            for(i=0;i<data.length;i++){
+                var key=data[i].k;
+                var value=data[i].v;
+                msg += '<c   t="inlineStr" r="' + key + index + '" s="2">';
+                msg += '<is>';
+                msg +=  '<t >'+value+'</t>';
+                msg+=  '</is>';
+                msg+='</c>';
+            }
+            msg += '</row>';
+            return msg;
+        }
+        // let visiables = [];
+        let headers = [];
+        currentColumn = 'A'
+        currentColumnHeaders = 'A'
+        rows = ' ';
+      
+		
+		// let calculatedLoanAmount = 'calculated here' ;
+		// let reportNameWithValues  = calculatedLoanAmount ? [reportName.slice(0, -1), ' = ' + calculatedLoanAmount, reportName.slice(-1)].join('') : reportName;
+         rows += Addrow(1, [
+			 { k:'A', v:companyName }
+		 ]);
+
+		 if(start_date && end_date)
+		 {
+			    rows += Addrow(2, [
+			 {k:'A' , v:'Start Date : ' + start_date},
+			 {k:'B' , v:'End Date : ' + start_date},
+		 			]);
+
+		 }
+		 if(date && !start_date)
+		 {
+			   rows += Addrow(2, [
+			 {k:'A' , v:'Date : ' + date},
+		 			]);
+		 }
+
+      
+     
+         sheet.childNodes[0].childNodes[1].innerHTML = rows + sheet.childNodes[0].childNodes[1].innerHTML;
+
+}
+	 
+
 		</script>
+
+<script>
+	
+	// alert()
+	</script>		
 	</body>
 
 	<!-- end::Body -->

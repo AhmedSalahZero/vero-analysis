@@ -282,7 +282,7 @@ class BusinessSectorsAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
-
+ $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         if ($result =='view') {
             return view('client_view.reports.sales_gathering_analysis.businessSectors_analysis_report',compact('company','name_of_report_item','view_name','businessSectors_names','dates','report_data',));
         }else {
@@ -396,7 +396,7 @@ class BusinessSectorsAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
-
+ $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $type_name = 'Business Sectors';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 

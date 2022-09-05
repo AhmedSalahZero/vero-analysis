@@ -148,7 +148,7 @@ class SKUsAgainstAnalysisReport
 
     }
 
-    public function  result(Request $request, Company $company)
+    public function  result(Request $request, Company $company , $secondReport = true)
     {
 
         $report_data = [];
@@ -157,6 +157,7 @@ class SKUsAgainstAnalysisReport
         $Items_names = [];
         $mainData = is_array(json_decode(($request->ItemsData[0]))) ? json_decode(($request->ItemsData[0])) : $request->ItemsData;
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
+        // $request->report_type  
         if (isset($mainData[0]) && $mainData[0] == 'all') {
             $mainData =  SalesGathering::company()
                         ->where('product_item','!=','')
@@ -172,9 +173,6 @@ class SKUsAgainstAnalysisReport
         $view_name = $request->view_name;
         foreach ($mainData as  $main_row) {
                 $main_row = str_replace("'" , "''",$main_row);
-
-
-
             $mainData_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,product_item," . $type ."
                 FROM sales_gathering
@@ -188,12 +186,7 @@ class SKUsAgainstAnalysisReport
                 })->toArray();
 
             foreach (($request->sales_channels ?? []) as $sales_channel_key => $sales_channel) {
-                // dump($sales_channel);
-                // $sales_channel = stripslashes($sales_channel);
-                // dd($sales_channel);
                 $years = [];
-                // dump($mainData_data);
-// dd([$sales_channel]);
                 $data_per_main_item = $mainData_data[$sales_channel]??[];
                 if (count(($data_per_main_item))>0 ) {
 
@@ -219,15 +212,40 @@ class SKUsAgainstAnalysisReport
             $Items_names[] = (str_replace(' ', '_', $main_row));
         }
 
-        // dd($Items_names);
-        // Total Zones & Growth Rate
-
 
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
+        $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
 
-
+        if($request->report_type =='comparing' && $secondReport == true )
+        {
+            // dd($report_data);
+            $firstReportData['first_report']  =   $dates ;
+            $firstReportData['first_report_date']  =   Carbon::make($request->start_date)->format('d M Y') . ' ' . __('To') . ' ' . Carbon::make($request->end_date)->format('d M Y') ;
+            $firstReportData['report_data'] =  $report_data ;  
+            $request['start_date'] = $request->start_date_second;
+            $request['end_date'] = $request->end_date_second;
+             $secondReportDataResult =(new SKUsAgainstAnalysisReport())->result($request , $company , false);
+             $secondReportData = $secondReportDataResult['report_data'] ?? [];
+             $secondReportData['full_date'] = $secondReportDataResult['full_date'] ?? [];
+            //  $secondReportDates = $secondReportDataResult['dates'] ?? [];
+             $report_data = getTotalsOfTotal($report_data);
+             $secondReportData['report_data'] = getTotalsOfTotal($secondReportDataResult['report_data']);
+             $secondItemsName = getLopeItemsFromEachReport($report_data , $secondReportData['report_data']);
+             $mainItems= getMainItemsNameFromEachInterval($report_data , $secondReportData['report_data']);
+            //  dd($secondItemsName,$mainItems);
+             $type = __('Products Items');
+            return view('client_view.reports.sales_gathering_analysis.second_skus_analysis_report', compact('company', 'view_name','firstReportData', 'Items_names', 'dates', 'report_data','secondReportData','secondItemsName','mainItems','type'));
+        }
+        if($request->report_type =='comparing')
+        {
+             return [
+                 'report_data'=>$report_data ,
+                 'dates'=>$dates ,
+                 'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
+             ];
+        }
         return view('client_view.reports.sales_gathering_analysis.skus_analysis_report', compact('company', 'view_name', 'Items_names', 'dates', 'report_data',));
     }
     public function resultForSalesDiscount(Request $request, Company $company)
@@ -344,7 +362,7 @@ class SKUsAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
-
+ $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $type_name = 'Products Items';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 

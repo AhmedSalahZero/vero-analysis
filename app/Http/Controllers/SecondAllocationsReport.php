@@ -112,7 +112,9 @@ class SecondAllocationsReport
                     if (strstr($base, 'new_item') !== false) {
                         $index = substr($base, strpos($base, "new_item_") + 9);
                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
-                        $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
+                        array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]); // by salah
+                        // $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
+                        
                         unset($allocation_base_data[$product_item_name][$base]);
                     }
                 }

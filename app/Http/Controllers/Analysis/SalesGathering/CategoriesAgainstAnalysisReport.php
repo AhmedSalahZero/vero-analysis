@@ -291,7 +291,7 @@ class CategoriesAgainstAnalysisReport
 
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
-        $dates = array_keys($report_data['Total']);
+        $dates = array_keys($report_data['Total']); $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         if ($result=='view') {
 // dd($report_data);
             

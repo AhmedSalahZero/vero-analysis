@@ -212,7 +212,7 @@ trait Intervals
 
             $counter = 0;
             foreach ($years as $year) {
-                foreach ($intervals[$requested_interval] as $interval_name => $month) {
+                foreach ($intervals[$requested_interval] ?? $intervals['annually'] as $interval_name => $month) {
                     $new_month = $month . '-' . $year;
                     $dt = Carbon::parse($new_month);
                     $new_month = $dt->endOfMonth()->format('d-m-Y');

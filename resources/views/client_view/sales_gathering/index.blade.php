@@ -34,6 +34,7 @@
     Sales Section
 @endsection
 @section('content')
+{{-- @dd() --}}
 <div class="row">
     <div class="col-lg-12">
         @if (session('warning'))

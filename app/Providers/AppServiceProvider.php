@@ -39,12 +39,25 @@ class AppServiceProvider extends ServiceProvider
         if($currentCompany){
           View::share('exportables', (new ExportTable)->customizedTableField($currentCompany, 'SalesGathering', 'selected_fields'));
         }
-        
-        //  foreach(Company::all() as $company){
-        //        $cachingService = new CashingService($company);
-        //           $cachingService->refreshCashing();
-        // }
+        View::composer('*' , function($view){
             
+            $requestData = Request()->all() ; 
+            if(isset($requestData['start_date']) && isset($requestData['end_date']))
+            {
+                $view->with([
+                'start_date'=>$requestData['start_date'] , 
+                'end_date'=>$requestData['end_date'] , 
+            ]);    
+            }
+            elseif(isset($requestData['date']))
+            {
+                $view->with([
+                    'date'=>$requestData['date']
+                ]);
+            }
+            
+        });
+    
         View::composer('*', function($view){
             if (Auth::check()) {
                 

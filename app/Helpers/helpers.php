@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Analysis\SalesGathering\SKUsAgainstAnalysisReport;
 use App\Http\Controllers\ExportTable;
 use App\Models\AllocationSetting;
 use App\Models\Company;
@@ -1353,4 +1354,111 @@ if($newAllocation)
     return $sums ;
 }
 return [];
+}
+
+function formatDateVariable($dates , $start_date , $end_date)
+{
+    if(!$dates)
+    {
+        return [];
+    }
+    if(!$start_date || !$end_date)
+    {
+        return $dates ; 
+    }
+    $start_date = Carbon::make($start_date);    
+    $end_date = Carbon::make($end_date);    
+    $filteredDates = [];
+    foreach($dates as $date )
+    {
+        $dateWithoutFormatting = $date ;
+        $date = Carbon::make($date);
+        if($date>=$start_date && $date<= $end_date )
+        {
+            $filteredDates[] = $dateWithoutFormatting ; 
+        }
+    }
+    return count($filteredDates) ? $filteredDates : $dates ; 
+    
+    
+}
+function getTotalsOfTotal($reportArray)
+{
+    $totalForEachItem = [] ; 
+    foreach($reportArray  as $itemName => $data )
+    {
+        foreach($data as $reportKey => $valueArr)
+        {
+           
+            if($reportKey != 'Growth Rate %' && $reportKey != 'Total' && $itemName != 'Total' && $itemName != 'Growth Rate %')
+            {
+                 $totalForEachItem[$itemName][$reportKey] = 0 ;
+               
+                if(isset($reportArray[$itemName][$reportKey]['Sales Values']))
+                {
+                    $totalForEachItem[$itemName][$reportKey] += array_sum($reportArray[$itemName][$reportKey]['Sales Values']) ;
+                }
+            }
+        }
+    }
+    return $totalForEachItem ;
+}
+
+function getLopeItemsFromEachReport($firstReport , $secondReport)
+{
+    $data = [];
+    foreach($firstReport as $key=>$arrayOfValues)
+    {
+        foreach($arrayOfValues as $itemName=>$value)
+        {
+            $data[$itemName] = $itemName ;
+        }
+    }
+     foreach($secondReport as $key=>$arrayOfValues)
+    {
+        foreach($arrayOfValues as $itemName=>$value)
+        {
+            $data[$itemName] = $itemName ;
+        }
+    }
+    
+    return $data ;
+}
+
+function getMainItemsNameFromEachInterval($firstReport  , $secondReport)
+{
+   array_sort_products($secondReport);
+
+    $firstReportProductsItems = array_keys($firstReport);
+    $secondReportProductsItems = array_keys($secondReport);
+    return array_unique(array_merge($secondReportProductsItems , $firstReportProductsItems  )) ;
+}
+function array_sort_products(&$secondReport)
+{
+   uasort($secondReport , function($a , $b){
+    //   foreach( )
+    $a = array_sum($a) ;
+    $b = array_sum($b);
+    
+     if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
+    
+   });
+}
+function sum_all_array_values($array)
+{
+    $total = 0 ;
+    foreach($array as $key=>$value)
+    {
+        $total+= $value ;
+    }
+   
+    return $total ;
+}
+
+function preventUserFromForeCast()
+{
+    return [12,13,14 , 15 , 16 ] ; 
 }

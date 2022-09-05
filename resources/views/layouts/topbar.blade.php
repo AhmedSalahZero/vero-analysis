@@ -40,7 +40,7 @@
                         @if(! ($section->id == 220) 
                         
                         ||
-                          (Auth()->check() && ! in_array(Auth()->user()->id , [12,13,14])) 
+                          (Auth()->check() && ! in_array(Auth()->user()->id , preventUserFromForeCast() )) 
                           
                           )
 
