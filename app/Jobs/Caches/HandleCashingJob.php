@@ -24,7 +24,6 @@ class HandleCashingJob implements ShouldQueue
     {
         $this->company = $company ;
     }
-
    
     public function handle()
     {

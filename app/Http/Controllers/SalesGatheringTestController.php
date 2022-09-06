@@ -135,7 +135,7 @@ $salesGatherings = $this->paginate($salesGatherings);
 
         // $cashingService = new CashingService($company);
         
-        // $cashingService->refreshCashing();
+
         
         return redirect()->back();
     
