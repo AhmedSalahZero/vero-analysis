@@ -8,6 +8,7 @@ use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -75,7 +76,7 @@ class ZoneAgainstAnalysisReport
         return view('client_view.reports.sales_gathering_analysis.zone_sales_form', compact('company','zones'));
     }
 
-    public function result(Request $request, Company $company, $result = 'view')
+    public function result(Request $request, Company $company, $result = 'view' , $secondReport = true )
     {
         $report_data = [];
         $report_data_quantity = [];
@@ -267,6 +268,23 @@ class ZoneAgainstAnalysisReport
         $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        $Items_names = $zones_names ;
+         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'zone' );
+
+        if($report_view instanceof View)
+        {
+            return $report_view ; 
+        }
+
+        if($request->report_type =='comparing')
+        {
+             return [
+                 'report_data'=>$report_data ,
+                 'dates'=>$dates ,
+                 'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
+             ];
+        }
+        
 
         if ($result == 'view') {
             return view('client_view.reports.sales_gathering_analysis.zone_analysis_report', compact('company','name_of_report_item', 'view_name', 'zones_names', 'dates', 'report_data',));

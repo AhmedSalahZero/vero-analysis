@@ -10,6 +10,10 @@
         table {
             white-space: nowrap;
         }
+        .small_table_class{
+            width:50%;
+            margin:auto;
+        }
 
     </style>
 @endsection
@@ -37,7 +41,7 @@
                         <h4 class="text-success"><i class="fa fa-hand-point-right">
                             </i></i>{{ __('Total Percentages Must Be Equal To 100 %') }}</h4>
                     @endif
-                    <x-table :tableTitle="__('New Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+                    <x-table :tableTitle="__('New Product Items Table')" :tableClass="(! ($sales_forecast->add_new_products || $sales_forecast->add_new_products > 0)) ? 'small_table_class' : '' . 'kt_table_with_no_pagination ' ">
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
@@ -45,20 +49,19 @@
                                     <th style="width: 8%">{{ $product->name }}</th>
                                     <th class="sales_target_total" data-index="{{ $index }}" data-value="{{ $product->sales_target_value ?? 0 }}">{{ __('Sales Target [ ') . number_format($product->sales_target_value ?? 0) . ' ]' }}
                                     </th>
-@empty
-{{-- <th class="sales_target_total" data-index="{{ 0 }}" data-value="{{ 0 }}">{{ __('Percentage') .  ' %' }}
-                                    </th> --}}
+                                     @empty
 
-                                @endforelse
+
+                                 @endforelse
 
                             </tr>
                         @endslot
+                        
                         @slot('table_body')
                             <input type="hidden" name="allocation_base" value="{{ $allocation_base }}">
                             <?php $key = 0; ?>
                             <?php $key_for_new_items = 0; ?>
 
-{{-- @dd($allocation_bases_items) --}}
                             @foreach ($allocation_bases_items as $item => $type)
                                 <tr class="text-center">
                                     @if ($type == 'new')

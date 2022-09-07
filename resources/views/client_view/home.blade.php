@@ -10,41 +10,7 @@
     <div class="row">
 
         <!--begin:: Widgets/Activity-->
-        {{-- @foreach ($companies as $company)
-            <div class="col-md-4 col-lg-4 col-xl-4 order-lg-1 order-xl-1 ">
-                <?php
-                $compant_data = $company->type == 'single' ?
-                                    ['icon'=>'building','type'=>'Branch','route'=>'branch.index'] :
-                                    ['icon'=>'city','type'=>'Company','route'=>'company.group'] ;?>
-                <a href="{{route($compant_data['route'],$company)}}">
-                    <div
-                        class="kt-portlet kt-portlet--fit kt-portlet--head-lg kt-portlet--head-overlay kt-portlet--skin-solid kt-portlet--height-fluid">
-                        <div
-                            class="kt-portlet__head kt-portlet__head--noborder kt-portlet__space-x d-flex justify-content-center">
-                            <div class="kt-portlet__head-label company-name">
-                                <h3 class="kt-portlet__head-title  " style="color: #000000">
-                                    <i class="fas fa-{{ $compant_data['icon'] }}"></i>
-                                    {{ $company->name[$lang].' ffffff'}}
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="kt-portlet__body kt-portlet__body--fit ">
-                            <div class="kt-widget17" style="align-items: center;">
-                                <div class="kt-widget17__visual kt-widget17__visual--chart kt-portlet-fit--top kt-portlet-fit--sides company-section"
-                                    style=" background-image: url('{{$company->getFirstMediaUrl()}}') ;    background-position: center;
-                                    background-size: cover; ">
-                                    <div class="kt-widget17__chart d-flex justify-content-center">
-                                        <span class="kt-widget17__desc">
-                                              {{ $compant_data['type'] }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        @endforeach --}}
+     
 
     </div>
 
@@ -65,6 +31,7 @@
                                     <div class="kt-widget5__item">
                                         <div class="kt-widget5__content">
                                             <div class="kt-widget5__pic">
+                                                {{-- @dd($company->getFirstMediaUrl()) --}}
                                                 <img class="kt-widget7__img" src="{{$company->getFirstMediaUrl()}}" alt="">
                                             </div>
                                             <div class="kt-widget5__section">

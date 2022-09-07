@@ -17,11 +17,17 @@
         {{-- Body Of The Table --}}
         @slot('table_body')
             @foreach ($companies as $item)
-
+            {{-- @dd($item) --}}
                 <tr class="text-center">
                     <td>
                         <img class="index-img" width="100" height="100" src="{{ $item->getFirstMediaUrl() }}" alt="image">
+                        @if($item->getFirstMediaUrl() )
+<br>
 
+                          <a href="{{ route('remove.company.image' , [App()->getLocale()   , $item->id]) }}" class="btn btn-secondary btn-outline-hover-danger btn-icon remove-item-class " title="Delete" s><i
+                                    class="fa fa-trash"></i>
+                                </a>
+@endif 
                     </td>
                     <td>{{ $item->name[lang()] }}</td>
 
@@ -30,6 +36,8 @@
                         <span style="overflow: visible; position: relative; width: 110px;">
                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('companySection.edit', [$item]) }}"><i
                                    class="fa fa-pen-alt"></i></a>
+
+                                  
 
                                    <a  class="btn btn-secondary btn-outline-hover-danger btn-icon remove-item-class remove-user-class" data-id="{{ $item->id }}" title="Delete" ><i
                                     class="fa fa-trash-alt"></i>

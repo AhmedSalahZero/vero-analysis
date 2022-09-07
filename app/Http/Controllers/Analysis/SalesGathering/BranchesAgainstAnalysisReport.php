@@ -8,6 +8,7 @@ use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -57,7 +58,7 @@ class BranchesAgainstAnalysisReport
         $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
         return view('client_view.reports.sales_gathering_analysis.branches_sales_form', compact('company', 'selected_fields'));
     }
-    public function result(Request $request, Company $company)
+    public function result(Request $request, Company $company , $secondReport=true)
     {
 
         $report_data =[];
@@ -124,6 +125,26 @@ class BranchesAgainstAnalysisReport
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
          $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+
+
+         
+ 
+ $Items_names = $branches_names ;
+         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'branch' );
+
+        if($report_view instanceof View)
+        {
+            return $report_view ; 
+        }
+
+        if($request->report_type =='comparing')
+        {
+             return [
+                 'report_data'=>$report_data ,
+                 'dates'=>$dates ,
+                 'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
+             ];
+        }
 
 
         return view('client_view.reports.sales_gathering_analysis.branches_analysis_report',compact('company','view_name','branches_names','dates','report_data',));

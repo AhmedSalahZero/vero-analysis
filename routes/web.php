@@ -357,3 +357,11 @@ Route::group(
 Route::delete('deleteMultiRowsFromCaching/{company}'  , [DeleteMultiRowsFromCaching::class , '__invoke'])->name('deleteMultiRowsFromCaching');
 Route::get('deleteAllRowsFromCaching/{company}'  , [DeleteAllRowsFromCaching::class , '__invoke'])->name('deleteAllCaches');
 Route::post('get-uploading-percentage/{companyId}' , [getUploadPercentage::class , '__invoke']);
+Route::get('{lang}/remove-company-image/{company}' ,function($lang , Company $company){
+    if($company->getFirstMedia('default'))
+    {
+        $company->getFirstMedia('default')->delete() ; 
+    }
+    return redirect()->back()->with('success' , __('Company Image Has Been Deleted Successfully'));
+    
+} )->name('remove.company.image');

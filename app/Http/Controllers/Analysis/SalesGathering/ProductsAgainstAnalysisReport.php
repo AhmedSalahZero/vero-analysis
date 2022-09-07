@@ -8,6 +8,7 @@ use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -65,7 +66,7 @@ class ProductsAgainstAnalysisReport
         // dd($view_name);
         return view('client_view.reports.sales_gathering_analysis.products_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
     }
-    public function result(Request $request, Company $company,$result="view")
+    public function result(Request $request, Company $company,$result="view" , $secondReport = true )
     {
 
         $report_data = [];
@@ -310,7 +311,28 @@ class ProductsAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
- $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+             $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+
+
+ 
+ $Items_names = $products_names ;
+         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'product_or_service' );
+
+        if($report_view instanceof View)
+        {
+            return $report_view ; 
+        }
+
+        if($request->report_type =='comparing')
+        {
+             return [
+                 'report_data'=>$report_data ,
+                 'dates'=>$dates ,
+                 'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
+             ];
+        }
+
+        
         if ($result =='view') {
             return view('client_view.reports.sales_gathering_analysis.products_analysis_report', compact('company','name_of_report_item', 'view_name', 'products_names', 'dates', 'report_data',));
         }else {
@@ -425,6 +447,7 @@ class ProductsAgainstAnalysisReport
 
         $dates = array_keys($report_data['Total']);
  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+
         $type_name = 'Products / Services';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 

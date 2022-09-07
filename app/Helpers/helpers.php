@@ -1,6 +1,13 @@
 <?php
 
+use App\Http\Controllers\Analysis\SalesGathering\BranchesAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\BusinessSectorsAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\CategoriesAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\ProductsAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\SalesChannelsAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\SalesPersonsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\SKUsAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
 use App\Http\Controllers\ExportTable;
 use App\Models\AllocationSetting;
 use App\Models\Company;
@@ -299,6 +306,11 @@ function getExportableFields($companyId = null):array
         }
         return [];
 }
+function getExportableFieldsKeysAsValues($companyId)
+{
+    return array_keys(getExportableFields($companyId)) ?? [];
+}
+
 function canViewCustomersDashboard(array $exportables)
 {
     return in_array('Customer Name',$exportables) || in_array('Customer Code',$exportables);
@@ -445,7 +457,6 @@ function sortSubItems(&$sales_channel_channels_data)
 if(isset($a['Sales Values'])&&isset($b['Sales Values'])){
     
 $a = array_sum($a['Sales Values']);
-
 $b = array_sum($b['Sales Values']);
 
 
@@ -461,6 +472,16 @@ $b = array_sum($b['Sales Values']);
     );
 }
 function sortTwoDimensionalArr(array &$arr)
+{
+    uasort($arr , function($a , $b){
+        if($a == $b)
+        {
+            return 0 ; 
+        }
+      return ($a > $b) ? -1 : 1;
+    });
+}
+function sortOneDimensionalArr(array &$arr)
 {
     uasort($arr , function($a , $b){
         if($a == $b)
@@ -1382,11 +1403,22 @@ function formatDateVariable($dates , $start_date , $end_date)
     
     
 }
+// function array_sort_sales(&$array)
+// {
+//     uasort($array , function($a , $b){
+//        sortSubItems($ar);
+//     });
+// }
+
 function getTotalsOfTotal($reportArray)
 {
+    // dd($reportArray);
     $totalForEachItem = [] ; 
     foreach($reportArray  as $itemName => $data )
     {
+    
+        // sortSubItems($data);
+        // dd($data);
         foreach($data as $reportKey => $valueArr)
         {
            
@@ -1401,28 +1433,52 @@ function getTotalsOfTotal($reportArray)
             }
         }
     }
-    return $totalForEachItem ;
+    
+    $newArray= [];
+
+    foreach($totalForEachItem as $key=>$arr)
+    {
+        
+    
+        uasort($arr , function($a , $b){
+              $a = ($a) ;
+    $b = ($b);
+    
+     if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
+        });
+
+     $newArray[$key] = $arr ;
+      
+    }
+    return $newArray ;
+    // return $totalForEachItem ;
 }
 
 function getLopeItemsFromEachReport($firstReport , $secondReport)
 {
-    $data = [];
+    $first = [];
+    $second = [];
+    foreach($secondReport as $key=>$arrayOfValues)
+    {
+        foreach($arrayOfValues as $itemName=>$value)
+        {
+            $second[$itemName] = $itemName ;
+        }
+    }
     foreach($firstReport as $key=>$arrayOfValues)
     {
+          sortOneDimensionalArr($arrayOfValues);
         foreach($arrayOfValues as $itemName=>$value)
         {
-            $data[$itemName] = $itemName ;
+            $first[$itemName] = $itemName ;
         }
     }
-     foreach($secondReport as $key=>$arrayOfValues)
-    {
-        foreach($arrayOfValues as $itemName=>$value)
-        {
-            $data[$itemName] = $itemName ;
-        }
-    }
+    return array_unique(array_merge($second , $first));
     
-    return $data ;
+    // return $data ;
 }
 
 function getMainItemsNameFromEachInterval($firstReport  , $secondReport)
@@ -1461,4 +1517,97 @@ function sum_all_array_values($array)
 function preventUserFromForeCast()
 {
     return [12,13,14 , 15 , 16 ] ; 
+}
+
+function getCanReloadUploadPageCachingForCompany($companyId)
+{
+    return 'can_reload_caching_page_for_company_' . $companyId ;
+}
+
+function getComparingReportForAnalysis($request ,$report_data ,$secondReport ,$company  , $dates , $view_name , $Items_names , $modelType )
+{
+     if($request->report_type =='comparing' && $secondReport == true )
+        {
+            $firstReportData['first_report']  =   $dates ;
+            $firstReportData['first_report_date']  =   Carbon::make($request->start_date)->format('d M Y') . ' ' . __('To') . ' ' . Carbon::make($request->end_date)->format('d M Y') ;
+            $firstReportData['report_data'] =  $report_data ;  
+            $request['start_date'] = $request->start_date_second;
+            $request['end_date'] = $request->end_date_second;
+            if($modelType == 'product_item')
+            {
+             $secondReportDataResult =(new SKUsAgainstAnalysisReport())->result($request , $company , false);
+             $type = __('Products Items');   
+            }
+            elseif($modelType == 'zone')
+            {
+                $secondReportDataResult = (new ZoneAgainstAnalysisReport())->result($request , $company , 'view' , false);
+                 $type = __('Zones');   
+
+            }
+            elseif($modelType == 'sales_channel')
+            {
+                $secondReportDataResult = (new SalesChannelsAgainstAnalysisReport())->result($request , $company , 'view' , false);
+                 $type = __('Sales Channel');   
+            }
+
+            elseif($modelType == 'category')
+            {
+                $secondReportDataResult = (new CategoriesAgainstAnalysisReport())->result($request , $company , 'view' , false);
+                 $type = __('Categories');   
+            }
+
+              elseif($modelType == 'product_or_service')
+            {
+                $secondReportDataResult = (new ProductsAgainstAnalysisReport())->result($request , $company , 'view' , false);
+                 $type = __('Products Or Services');   
+            }
+
+            elseif($modelType == 'branch')
+            {
+                $secondReportDataResult = (new BranchesAgainstAnalysisReport())->result($request , $company  , false);
+                 $type = __('Branch');   
+            }
+
+                elseif($modelType == 'business_sector')
+            {
+                $secondReportDataResult = (new BusinessSectorsAgainstAnalysisReport())->result($request , $company  ,'view', false);
+                 $type = __('Business Sector');   
+            }
+            elseif($modelType == 'sales_person')
+            {
+                        $secondReportDataResult = (new SalesPersonsAgainstAnalysisReport())->result($request , $company  , false);
+                 $type = __('Business Sector');   
+            }
+            else{
+            dd('not supported type');
+            }
+            
+             $secondReportData = $secondReportDataResult['report_data'] ?? [];
+             $secondReportData['full_date'] = $secondReportDataResult['full_date'] ?? [];
+             $report_data = getTotalsOfTotal($report_data);
+             $secondReportData['report_data'] = getTotalsOfTotal($secondReportDataResult['report_data']);
+             $secondItemsName = getLopeItemsFromEachReport($report_data , $secondReportData['report_data']);
+             $secondReportData['report_data']  = addFirstReportKeysToSendReport($secondItemsName ,  $secondReportData['report_data']  );
+             $mainItems= getMainItemsNameFromEachInterval($report_data , $secondReportData['report_data']);
+             
+            return view('client_view.reports.sales_gathering_analysis.second_comparing_analysis', compact('company', 'view_name','firstReportData', 'Items_names', 'dates', 'report_data','secondReportData','secondItemsName','mainItems','type'));
+        }
+        
+}
+function addFirstReportKeysToSendReport($keys , $secondReport ){
+    if(! count($secondReport) )
+    {
+        return $secondReport ; 
+    }
+    foreach($secondReport as $key=>$array){
+        foreach($keys as $newKey)
+        {
+            ! isset($array[$newKey]) ? $secondReport[$key][$newKey] = 0 :'';
+        }
+    }
+    return $secondReport ;
+}
+function sortResultData($arr)
+{
+    
 }

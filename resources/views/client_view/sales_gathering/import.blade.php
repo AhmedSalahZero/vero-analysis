@@ -283,7 +283,6 @@
 
 
     @if ($active_job_for_saving )
-        
         <script>
             $(document).ready(function(){
                 setInterval(function(){
@@ -301,6 +300,7 @@
                                 {
                                     $('#saving_data').html("{{ __('Parsing Data .. Please Wait') }}");
                                 }
+                                console.log('reload ? ' + data.reloadPage);
                                 if(data.reloadPage)
                                 {
                                     window.location.reload();

@@ -8,6 +8,7 @@ use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -53,7 +54,7 @@ class SalesPersonsAgainstAnalysisReport
         $name_of_selector_label = str_replace(['Sales Persons Against ', ' Trend Analysis'], '', $view_name);
         return view('client_view.reports.sales_gathering_analysis.salesPersons_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
     }
-    public function result(Request $request, Company $company)
+    public function result(Request $request, Company $company , $secondReport = true)
     {
 
         $report_data = [];
@@ -118,6 +119,24 @@ class SalesPersonsAgainstAnalysisReport
         $dates = array_keys($report_data['Total']);
         
         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+
+         $Items_names = $salesPersons_names ;
+         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'sales_person' );
+
+        if($report_view instanceof View)
+        {
+            return $report_view ; 
+        }
+
+        if($request->report_type =='comparing')
+        {
+             return [
+                 'report_data'=>$report_data ,
+                 'dates'=>$dates ,
+                 'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
+             ];
+        }
+
 
 
         return view('client_view.reports.sales_gathering_analysis.salesPersons_analysis_report', compact('company', 'view_name', 'salesPersons_names', 'dates', 'report_data',));
@@ -229,7 +248,10 @@ class SalesPersonsAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
- $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+       
+
+ 
         $type_name = 'Sales Persons';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 

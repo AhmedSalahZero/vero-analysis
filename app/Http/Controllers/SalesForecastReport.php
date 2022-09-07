@@ -36,7 +36,6 @@ class SalesForecastReport
         $has_product_item = $this->fields($company);
 
         if ($sales_forecast === null) {
-            // dd();
             $start_date = now()->startOfYear()->format('Y-m-d'); 
             $end_date = now()->endOfYear()->format('Y-m-d');
 

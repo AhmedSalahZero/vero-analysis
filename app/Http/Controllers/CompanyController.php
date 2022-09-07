@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Traits\ImageSave;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 
 class CompanyController extends Controller

@@ -10,7 +10,10 @@
         table {
             white-space: nowrap;
         }
-
+.small_table_class{
+            width:50%;
+            margin:auto;
+        }
     </style>
 @endsection
 @section('content')
@@ -36,7 +39,7 @@
                         <h4 class="text-success"><i class="fa fa-hand-point-right">
                             </i></i>{{ __('Total Percentages Must Be Equal To 100 %') }}</h4>
                     @endif
-                    <x-table :tableTitle="__('New Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+                    <x-table :tableTitle="__('New Product Items Table')" :tableClass=" (! ($sales_forecast->add_new_products || $sales_forecast->add_new_products > 0)) ? 'small_table_class' : '' . 'kt_table_with_no_pagination'">
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>

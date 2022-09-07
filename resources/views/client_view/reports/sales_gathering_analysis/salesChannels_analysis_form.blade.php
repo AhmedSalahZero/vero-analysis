@@ -67,6 +67,9 @@
                                 </div>
                             </div>
                         </div>
+
+                        @include('comparing_type_selector')
+                        
                         @else
                         <input type="hidden" name="data_type" value="value" id="data_type" {{$data_type_selector}}>
                         @endif

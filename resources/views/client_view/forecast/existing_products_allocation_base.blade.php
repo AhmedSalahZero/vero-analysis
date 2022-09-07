@@ -10,6 +10,7 @@
     <style>
         table {
             white-space: nowrap;
+            font-size:12px !important;
         }
 
     </style>

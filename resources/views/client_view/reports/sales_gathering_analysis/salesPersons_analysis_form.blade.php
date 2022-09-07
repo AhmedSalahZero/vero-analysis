@@ -64,6 +64,11 @@
                                 </div>
                             </div>
                         </div>
+
+                        @include('comparing_type_selector')
+                          
+                          
+
                     </div>
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">

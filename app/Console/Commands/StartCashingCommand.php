@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\Caches\HandleCashingJob;
+use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
+use App\Jobs\Caches\HandleCustomerNatureCashingJob;
+use App\Jobs\Caches\RemoveIntervalYearCashingJob;
 use App\Models\Company;
 use Illuminate\Console\Command;
 
@@ -36,9 +38,9 @@ class StartCashingCommand extends Command
     {
         
           foreach(Company::all() as $company){
-             dispatch((new HandleCashingJob($company)))
-            //  ->onQueue('default')
-             ;
+             dispatch((new RemoveIntervalYearCashingJob($company)));
+             dispatch((new HandleCustomerDashboardCashingJob($company)));
+             dispatch((new HandleCustomerNatureCashingJob($company)));
         }
     }
 }

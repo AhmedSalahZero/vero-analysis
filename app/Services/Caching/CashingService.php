@@ -45,6 +45,7 @@ class CashingService
                 for($year = $startYear ; $year <= $endYear ; $year++)
                 {
                         (new CustomerDashboardCashing($this->company , $year))->cacheAll();
+                        (new CustomerNatureCashing($this->company , $year))->cacheAll();
                 }
             }
     }
@@ -63,15 +64,20 @@ class CashingService
                 }
             }
     }
+
+    public function removeIntervalYearsCaching()
+    {
+        Cache::forget(getIntervalYearsFormCompanyCacheNameForCompany($this->company));
+    }
     
-    public function refreshCashing()
+    public function refreshCustomerDashboardCashing()
     {
         // remove then reAdd 
           // add the following code in class for generic items
-        Cache::forget(getIntervalYearsFormCompanyCacheNameForCompany($this->company));
-            
+        
+        $years = $this->getIntervalYearsFormCompany(); 
         $exportables = getExportableFields($this->company->id);
-         $years = $this->getIntervalYearsFormCompany(); 
+         
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
             
@@ -85,6 +91,32 @@ class CashingService
                         $customerDashboardCashing->deleteAll();
                         $customerDashboardCashing->cacheAll();   
 
+                      
+                    }
+                }
+            }
+        
+    }
+
+
+    public function refreshCustomerNatureCashing()
+    {
+        // remove then reAdd 
+          // add the following code in class for generic items
+        
+        $years = $this->getIntervalYearsFormCompany(); 
+        $exportables = getExportableFields($this->company->id);
+         
+            $startYear = $years['start_year'] ; 
+            $endYear = $years['end_year'] ; 
+            
+            if($startYear && $endYear){
+                for($year = $startYear ; $year <= $endYear ; $year++)
+                {
+                    // 1- customer dashboard 
+                  
+                    if(canViewCustomersDashboard($exportables)){
+                    
                         $customerNatureCashing = new CustomerNatureCashing($this->company , $year); 
                         $customerNatureCashing->deleteAll();
                         $customerNatureCashing->cacheAll();   
@@ -93,6 +125,7 @@ class CashingService
             }
         
     }
+    
 
 
 

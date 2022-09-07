@@ -32,6 +32,9 @@
                             <?php $allocations_setting = isset($allocations_setting) ? $allocations_setting : old(); ?>
                             <div class="kt-portlet__body">
                                 <!--begin: Datatable -->
+                                                    {{-- @dd() --}}
+
+                                                    
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>{{ __('Select Allocation Base') }} <span
@@ -40,18 +43,28 @@
                                             <div class="input-group date validated">
                                                 <select name="allocation_base" class="form-control" id="allocation_base">
                                                     <option value="" disabled selected>{{ __('Select') }}</option>
+                                                    @if(in_array('branch',getExportableFieldsKeysAsValues($company->id)))
                                                     <option value="branch"
                                                         {{ @$allocations_setting['allocation_base'] !== 'branch' ?: 'selected' }}>
                                                         {{ __('Branches') }}</option>
+                                                        @endif
+                                                    @if(in_array('business_sector',getExportableFieldsKeysAsValues($company->id)))
                                                     <option value="business_sector"
                                                         {{ @$allocations_setting['allocation_base'] !== 'business_sector' ?: 'selected' }}>
                                                         {{ __('Business Sectors') }}</option>
+                                                        @endif 
+                                                    @if(in_array('sales_channel',getExportableFieldsKeysAsValues($company->id)))
                                                     <option value="sales_channel"
                                                         {{ @$allocations_setting['allocation_base'] !== 'sales_channel' ?: 'selected' }}>
                                                         {{ __('Sales Channels') }}</option>
+                                                        @endif 
+                                                    @if(in_array('zone',getExportableFieldsKeysAsValues($company->id)))
+
                                                     <option value="zone"
                                                         {{ @$allocations_setting['allocation_base'] !== 'zone' ?: 'selected' }}>
                                                         {{ __('Zones') }}</option>
+
+                                                        @endif
                                                 </select>
                                                 @if ($errors->has('allocation_base'))
                                                     <div class="invalid-feedback">{{ $errors->first('allocation_base') }}</div>

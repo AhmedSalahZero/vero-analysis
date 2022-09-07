@@ -19,7 +19,7 @@
         {{-- Body Of The Table --}}
         @slot('table_body')
         @foreach ($users as $item)
-
+{{-- @dd($item->getFirstMediaUrl()) --}}
                 <tr class="text-center">
                     <td><img class="index-img" width="100" height="100"  src="{{ $item->getFirstMediaUrl() !== '' ? $item->getFirstMediaUrl() :  url('images/user.png') }}" alt="image"></td>
                     <td>{{ $item->name }}</td>

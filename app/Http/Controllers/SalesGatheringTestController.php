@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ImportData;
-use App\Jobs\Caches\HandleCashingJob;
+use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
+use App\Jobs\Caches\HandleCustomerNatureCashingJob;
+use App\Jobs\Caches\RemoveIntervalYearCashingJob;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\Jobs\RemoveCachingCompaniesData;
 use App\Jobs\SalesGatheringTestJob;
@@ -126,8 +128,10 @@ $salesGatherings = $this->paginate($salesGatherings);
         Cache::forget(getShowCompletedTestMessageCacheKey($company->id  )   );
         
         SalesGatheringTestJob::withChain([
-            new HandleCashingJob($company) , 
+            new RemoveIntervalYearCashingJob($company) , 
+            new HandleCustomerDashboardCashingJob($company) , 
             new NotifyUserOfCompletedImport(request()->user(), $active_job->id,$company->id),
+            new HandleCustomerNatureCashingJob($company) , 
             new RemoveCachingCompaniesData($company->id)
         ])->dispatch($company->id);
         

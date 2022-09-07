@@ -77,7 +77,6 @@
         </div>
         <div class="kt-portlet__body">
             <div class="tab-content  kt-margin-t-20">
-
                 <!--End:: Tab  EGP FX Rate Table -->
                 <!--Begin:: Tab USD FX Rate Table -->
                 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
@@ -122,7 +121,9 @@
                                             
                                         <td class="text-center white-text">{{$firstTotal ? number_format(    ($secondTotal - $firstTotal) / $firstTotal *100    , 2 ) . ' %' : __('NA')  }}  </td>
                                     </tr>
-                                    @foreach ($secondItemsName as $secondItemName  )
+                                        @foreach ($secondReportData['report_data'][$mainItemName] as $secondItemName=>$vall   )
+
+                                        {{-- @foreach ($secondItemsName as $secondItemName  ) --}}
 
                                         <tr class="row{{ $id }}  text-center" style="display: none">
                                             {{-- <td></td> --}}
@@ -132,7 +133,7 @@
                                                 <td class="text-center">
                                                    @php
                                                        $firstReportTotalForItem = $report_data[$mainItemName][$secondItemName] ?? 0 ;
-                                                       $secondReportTotalForItem = $secondReportData['report_data'][$mainItemName][$secondItemName] ?? 0 ;
+                                                       $secondReportTotalForItem = $vall ;
                                                    @endphp
                                                     <span class="active-text-color"><b> {{ number_format($firstReportTotalForItem) }} </b></span>
                                                 </td>

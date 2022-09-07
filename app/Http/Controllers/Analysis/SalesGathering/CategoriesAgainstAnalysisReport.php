@@ -8,6 +8,7 @@ use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -77,7 +78,7 @@ class CategoriesAgainstAnalysisReport
         $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
         return view('client_view.reports.sales_gathering_analysis.categories_sales_form', compact('company', 'selected_fields'));
     }
-    public function result(Request $request, Company $company,$result='view')
+    public function result(Request $request, Company $company,$result='view' , $secondReport = true )
     {
         // dd('q');
 
@@ -104,12 +105,7 @@ class CategoriesAgainstAnalysisReport
                 {
                     $mainField = 'customer_name';
                 }
-// dd($type);
-           
                 
-                // dd(get_defined_vars());
-                // $mainField = 'category';
-                // dd();
                 $zones_data =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,category," . $type ."
                     FROM sales_gathering
@@ -292,8 +288,25 @@ class CategoriesAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']); $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+
+        $Items_names = $categories_names ;
+         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'category' );
+
+        if($report_view instanceof View)
+        {
+            return $report_view ; 
+        }
+
+        if($request->report_type =='comparing')
+        {
+             return [
+                 'report_data'=>$report_data ,
+                 'dates'=>$dates ,
+                 'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
+             ];
+        }
+        
         if ($result=='view') {
-// dd($report_data);
             
             return view('client_view.reports.sales_gathering_analysis.categories_analysis_report',compact('company','name_of_report_item','view_name','categories_names','dates','report_data'));
         }else {

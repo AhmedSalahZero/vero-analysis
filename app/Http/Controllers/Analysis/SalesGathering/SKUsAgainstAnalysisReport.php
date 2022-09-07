@@ -9,6 +9,7 @@ use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -217,27 +218,13 @@ class SKUsAgainstAnalysisReport
         $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'product_item' );
 
-        if($request->report_type =='comparing' && $secondReport == true )
+        if($report_view instanceof View)
         {
-            // dd($report_data);
-            $firstReportData['first_report']  =   $dates ;
-            $firstReportData['first_report_date']  =   Carbon::make($request->start_date)->format('d M Y') . ' ' . __('To') . ' ' . Carbon::make($request->end_date)->format('d M Y') ;
-            $firstReportData['report_data'] =  $report_data ;  
-            $request['start_date'] = $request->start_date_second;
-            $request['end_date'] = $request->end_date_second;
-             $secondReportDataResult =(new SKUsAgainstAnalysisReport())->result($request , $company , false);
-             $secondReportData = $secondReportDataResult['report_data'] ?? [];
-             $secondReportData['full_date'] = $secondReportDataResult['full_date'] ?? [];
-            //  $secondReportDates = $secondReportDataResult['dates'] ?? [];
-             $report_data = getTotalsOfTotal($report_data);
-             $secondReportData['report_data'] = getTotalsOfTotal($secondReportDataResult['report_data']);
-             $secondItemsName = getLopeItemsFromEachReport($report_data , $secondReportData['report_data']);
-             $mainItems= getMainItemsNameFromEachInterval($report_data , $secondReportData['report_data']);
-            //  dd($secondItemsName,$mainItems);
-             $type = __('Products Items');
-            return view('client_view.reports.sales_gathering_analysis.second_skus_analysis_report', compact('company', 'view_name','firstReportData', 'Items_names', 'dates', 'report_data','secondReportData','secondItemsName','mainItems','type'));
+            return $report_view ; 
         }
+        
         if($request->report_type =='comparing')
         {
              return [

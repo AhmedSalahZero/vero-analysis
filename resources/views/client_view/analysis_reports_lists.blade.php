@@ -42,7 +42,6 @@
                                 <li class="nav-item">
 
                                     <a class="nav-link {{$section_key == 0 ? 'active' : ''}}" data-toggle="tab" href="#kt_widget2_tab1_content_{{$subSection->id}}" role="tab">
-
                                         <i
                                         class="kt-menu__ver-arrow {{ $subSection->icon }}"></i><span class="kt-menu__link-text">
                                             {{-- @dump($subSection->name[lang()]) --}}
@@ -91,11 +90,11 @@
 
               
                                         @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); @endphp 
-@if($name_of_section == 'Products')
-@php
-    $name_of_section ='Products / Services';
-@endphp
-@endif 
+                                                @if($name_of_section == 'Products')
+                                                @php
+                                                    $name_of_section ='Products / Services';
+                                                @endphp
+                                                @endif 
 
                                         @if ($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" )
                                             @if ($name_of_section == "Products / Services")
@@ -124,17 +123,14 @@
                                             )
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) )
-                                               {{-- @if($mainSubSection->name['en'] == 'Categories')
-@dd($mainSubSection->subSections)
-@endif  --}}
+                           
 
 
-@if($name_of_section == 'customers')
-{{-- @dump($sub_section) --}}
+                                                @if($name_of_section == 'customers')
 
-@endif 
-@if($sub_section->name['en'] == 'Products Against Zones')
-@endif 
+                                                @endif 
+                                                @if($sub_section->name['en'] == 'Products Against Zones')
+                                                @endif 
 
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
@@ -189,7 +185,6 @@
                                                 ($mainSubSection->name['en'] == "Customers Nature" && false !== $found =  array_search('Customer Name',$viewing_names)) ||
                                                 ($mainSubSection->name['en'] == "Service Providers"  && (count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) >0))  )
                                                     @if ($mainSubSection->name['en'] == 'One Dimension')
-                                                    {{-- {{ logger($name_of_section) }} --}}
                                                         @php $name_of_section = str_replace( " Sales Breakdown Analysis",'',  $sub_section->name['en']     );@endphp
                                                     @elseif ($mainSubSection->name['en'] == 'Sales Discounts')
 
@@ -209,7 +204,6 @@
 
 
                                                     @elseif ($mainSubSection->name['en'] == 'Two Dimension')
-                                                    {{-- @dump( substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Versus ")+7  )) --}}
                                                         @php
                                                             $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Versus ")+7  );
                                                             
@@ -220,7 +214,6 @@
                                                  $name_of_section = "Product Items" ;
 
                                                          }
-                                                        //  dd($name_of_section);
                                             if($name_of_section === 'Products Items Ranking'){
                                                  $name_of_section = "Product Items"; 
 
@@ -229,7 +222,6 @@
                                                   
 
                                                             if($name_of_section === 'Product Items Ranking'){
-                                                //  $name_of_section = "Product Items"; 
 
                                             }
 
@@ -258,34 +250,28 @@
                                                     @if ((!isset($name_of_first_section) &&  false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) ||
                                                         ( isset($name_of_first_section) && (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) && (false !== $found =  array_search(\Str::singular($name_of_first_section),$viewing_names)) ) || ($sub_section->name['en'] =="Discounts Breakdown Analysis") ||
                                                         ($sub_section->name['en'] == "Customers Natures Analysis") || (  ($sub_section->name['en'] == "Discounts Sales Interval Comparing Analysis") && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0)) 
-                                                        ||  $sub_section->name['en'] == 'Products Items Versus Branches'
+                                                        ||  $sub_section->name['en'] == 'Products Items Versus Branches' && isset($exportables['product_item']) && isset($exportables['branch'])
                                                         // ||  $sub_section->name['en'] == 'Business Sectors Versus Customers Natures Analysis'
                                                         || ($mainSubSection->name['en'] == "Service Providers") 
-                                                        || ($name_of_section == "Product Items Ranking" && isset($exportables['product_item'])) 
+                                                        || ($name_of_section == "Product Items Ranking" && isset($exportables['product_item'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
                                                         || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) ))  
 
                                                    
-                                                        // || ($mainSubSection->name['en'] == "Branch Versus Products Items Ranking") 
-                                                        // || ($mainSubSection->name['en'] == "Products / Services") 
-                                                        // || ($mainSubSection->name['en'] == "Two Dimension")  &&
                                                         )
 
-                                                        {{-- @if($sub_section->name['en'] == 'Business Sectors Versus Customers Natures Analysis') --}}
-                                                        {{-- @endif  --}}
                                                         <div class="col-md-4">
                                                             <div class="kt-widget2__item kt-widget2__item--primary">
                                                                 <div class="kt-widget2__checkbox">
                                                                 </div>
                                                                 @php 
                                                                     $route = isset($sub_section->route) && $sub_section->route !== null ? explode('.', $sub_section->route) : null;
-                                                                    // if($sub_section->name['en'] == 'Business Sectors Versus Customers Natures Analysis')
-                                                                    // dd($route);
                                                                 @endphp 
 
 
                                                                 <div class="kt-widget2__info">
                                                                     <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
-                                                                        {{$sub_section->name[lang()]}} 
+                                                                      
+                                                                        {{$sub_section->name[lang()]}}  
                                                                     </a>
 
                                                                 </div>

@@ -41,22 +41,22 @@
                                             <div class="input-group date validated">
                                                 <select name="allocation_base" class="form-control" id="allocation_base">
                                                     <option value="" disabled selected>{{ __('Select') }}</option>
-                                                    @if ($first_allocations_setting->allocation_base !=='branch' )
+                                                    @if ($first_allocations_setting->allocation_base !=='branch' && in_array('branch',getExportableFieldsKeysAsValues($company->id)) )
                                                         <option value="branch"
                                                             {{ @$allocations_setting['allocation_base'] !== 'branch' ?: 'selected' }}>
                                                             {{ __('Branches') }}</option>
                                                     @endif
-                                                    @if ($first_allocations_setting->allocation_base !=='business_sector' )
+                                                    @if ($first_allocations_setting->allocation_base !=='business_sector' && in_array('business_sector',getExportableFieldsKeysAsValues($company->id)))
                                                         <option value="business_sector"
                                                             {{ @$allocations_setting['allocation_base'] !== 'business_sector' ?: 'selected' }}>
                                                             {{ __('Business Sectors') }}</option>
                                                     @endif
-                                                    @if ($first_allocations_setting->allocation_base !=='sales_channel' )
+                                                    @if ($first_allocations_setting->allocation_base !=='sales_channel' && in_array('sales_channel',getExportableFieldsKeysAsValues($company->id)) )
                                                         <option value="sales_channel"
                                                             {{ @$allocations_setting['allocation_base'] !== 'sales_channel' ?: 'selected' }}>
                                                             {{ __('Sales Channels') }}</option>
                                                     @endif
-                                                    @if ($first_allocations_setting->allocation_base !== 'zone' )
+                                                    @if ($first_allocations_setting->allocation_base !== 'zone'  && in_array('zone',getExportableFieldsKeysAsValues($company->id)) )
                                                         <option value="zone"
                                                             {{ @$allocations_setting['allocation_base'] !== 'zone' ?: 'selected' }}>
                                                             {{ __('Zones') }}</option>

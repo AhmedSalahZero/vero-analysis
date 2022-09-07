@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class HandleCashingJob implements ShouldQueue
+class HandleCustomerDashboardCashingJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels ;
 
@@ -28,7 +28,7 @@ class HandleCashingJob implements ShouldQueue
     public function handle()
     {
                 $cachingService = new CashingService($this->company);
-                  $cachingService->refreshCashing();
+                  $cachingService->refreshCustomerDashboardCashing();
     }
 
 
