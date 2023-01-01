@@ -37,18 +37,10 @@
 
                         @foreach ($client_sections as $section)
                         {{-- mr mahmoud temporary condition --}}
-                        @if(! ($section->id == 220) 
-                        
-                        ||
-                          (Auth()->check() && ! in_array(Auth()->user()->id , preventUserFromForeCast() )) 
-                          
-                          )
+                        {{--  --}}
 
-
-
-
-
-
+                        @if(! ($section->id == 220) ||(Auth()->check() && ! in_array(Auth()->user()->id , preventUserFromForeCast() )))
+                           @if($section->id != 269 ||  Auth()->check() && Auth()->user()->canViewIncomeStatement())
                             @if ($section->route != null && count($section->subSections) == 0)
                                 <?php $route = isset($section->route) && $section->route !== null ? explode('.', $section->route) : null; ?>
 
@@ -58,7 +50,7 @@
                                     {{-- class="kt-menu__item    kt-menu__item--rel kt-menu__item--open kt-menu__item--here"  > --}}
                                     <a href="{{ @$section->route == 'home' ? route(@$section->route) : route(@$section->route, $company) }}"
                                         class="kt-menu__link  text-center">
-                                        <span class="kt-menu__link-text ">{{ __($section->name[$lang]) }}</span><i
+                                        <span class="kt-menu__link-text ">{{ __($section->name[$lang]) }}  </span><i
                                             class="kt-menu__ver-arrow {{ $section->icon }}"></i></a>
                                 </li>
                             @elseif (count($section->subSections) > 0)
@@ -263,7 +255,7 @@
                                             href="javascript:;" class="kt-menu__link kt-menu__toggle"><span
                                                 class="kt-menu__link-text">{{ $section->name[$lang] }} </span><i
                                                 class="kt-menu__ver-arrow la la-angle-right"></i></a>
-                                        <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
+                                        <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left ">
                                             <ul class="kt-menu__subnav">
                                                 @foreach ($section->subSections as $subSection)
 
@@ -372,6 +364,8 @@
                                     @endif 
                                 @endif
                             @endif
+
+                           @endif
 
 
 

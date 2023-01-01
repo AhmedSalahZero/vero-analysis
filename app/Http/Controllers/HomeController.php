@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\CustomersNaturesAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\DiscountsAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\IncomeStatementBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\Company;
+use App\Models\IncomeStatement;
 use App\Models\SalesGathering;
 use App\Models\Section;
 use App\Services\Caching\CashingService;
@@ -15,6 +17,7 @@ use App\Traits\GeneralFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
@@ -65,15 +68,6 @@ class HomeController extends Controller
             $start_date = $request['start_date'] ;
             $end_date = $request['end_date'] ;
         }
-        // dd($start_date ,$end_date );
-        
-        // $first = microtime(true);
-        // $salesReport = (new salesReport)->result($request,$company,'array');
-        
-        // $sale_values = ($salesReport['report_data']['Sales Values']??[]);
-
-
-
         $end_date_month = date('m-Y',strtotime($end_date));
         $formated_end_date =  date('d-m-Y',strtotime($end_date));
         $previous_month = $this->dateCalc(date('01-m-Y',strtotime($end_date)),-1);
@@ -81,31 +75,6 @@ class HomeController extends Controller
         $previous_month = date('m-Y',strtotime($previous_month));
         $currentMonth = explode('-',$end_date_month)[0];
         $currentYear = explode('-',$end_date_month)[1];
-        // $daily_sales = SalesGathering::company()->whereDate('date',$end_date)->sum('net_sales_value');
-        
-        // $sales_value_data = [
-        //     'daily_sales' => $daily_sales??0,
-        //     'current_month' => '-',
-        //     'previous_month' => '-' ,
-        //     'year_to_date' => array_sum($sale_values),
-        //     'previous_three_months' =>array_sum(array_slice($sale_values,   -4,3, true)??[])
-        // ];
-        
-        // array_walk($sale_values,function($value,$date) use(&$sales_value_data,$previous_month,$formated_previous_month,$formated_end_date,$end_date_month){
-        //     $current_date = date('m-Y',strtotime($date));
-        //     if ($end_date_month == $current_date) {
-        //         $sales_value_data['current_month']= $value;
-        //     }
-        //     if ($previous_month == $current_date) {
-        //         $sales_value_data['previous_month'] = $value;
-        //     }
-        // });
-        
-
-
-        /* Salah */
-        
-        // why we uses end date [need to be the current day regarding $end_date]
         $daySales = DB::select(DB::raw(
             "
             select sum(net_sales_value) as day_sales from sales_gathering where date = '". $end_date ."' and company_id = 
@@ -168,13 +137,104 @@ class HomeController extends Controller
 
         return view('client_view.home_dashboard.dashboard',
         compact('company',
-
-        // 'salesReport',
         'start_date','end_date','daySales','currentMonthSales','previous_month_sales','perviousThreeMonthsSales'
         ,'percentage','salesToDate','monthlyChartArr','monthlyChartCumulative','formattedDataForChart'
-        // ,'reportDataa'
         ));
     }
+
+     public function incomeStatementDashboard(Request $request,Company $company)
+    {
+        $start_date = date('2021-01-01');
+        $end_date   = date('2021-12-31');
+
+        if ($request->isMethod('GET')) {
+            $request['start_date'] =$start_date;
+            $request['end_date'] =$end_date;
+        }elseif ($request->isMethod('POST')){
+            $start_date = $request['start_date'] ;
+            $end_date = $request['end_date'] ;
+        }
+        $end_date_month = date('m-Y',strtotime($end_date));
+        $formated_end_date =  date('d-m-Y',strtotime($end_date));
+        $previous_month = $this->dateCalc(date('01-m-Y',strtotime($end_date)),-1);
+        $formated_previous_month =  date('d-m-Y',strtotime($previous_month));
+        $previous_month = date('m-Y',strtotime($previous_month));
+        $currentMonth = explode('-',$end_date_month)[0];
+        $currentYear = explode('-',$end_date_month)[1];
+        // $daySales = DB::select(DB::raw(
+        //     "
+        //     select sum(net_sales_value) as day_sales from sales_gathering where date = '". $end_date ."' and company_id = 
+        //     " . $company->id  
+        // ));
+    //  $incomeStatement = IncomeStatement::find($request->get('income_statement_id')) ?: IncomeStatement::where('company_id',$company->id)->latest()->first();
+    //  if(!$incomeStatement){
+    //          return redirect()->back()->with('fail',__('Please Create Income Statement First'));
+         
+    //  }
+        // $incomeStatement = IncomeStatement::find(5);
+
+        $incomeStatementSubItems = $incomeStatement->subItems ;
+
+        $currentMonthSales = DB::select(DB::raw(
+            
+            "
+            select sum(net_sales_value) as current_month_sales from sales_gathering where Year = ". $currentYear ." and Month=" . $currentMonth ." and company_id = 
+            " . $company->id 
+        ));
+// dd($currentMonthSales);
+        $currentMonthSales = $currentMonthSales[0]->current_month_sales?:0;
+        $previousMonth = Carbon::make($end_date)->startOfMonth()->subMonths(1)->month ;
+        
+        $previousMonthYear = Carbon::make($end_date)->startOfMonth()->subMonths(1)->year ;
+        $previous2Month = Carbon::make($end_date)->startOfMonth()->subMonths(2)->month ;
+        $previous2MonthYear = Carbon::make($end_date)->startOfMonth()->subMonths(2)->year ;
+                $previous3Month = Carbon::make($end_date)->startOfMonth()->subMonths(3)->month ;
+        $previous3MonthYear = Carbon::make($end_date)->startOfMonth()->subMonths(3)->year ;
+
+        
+         $perviousMonthSales = DB::select(DB::raw(
+            
+            "
+            select sum(net_sales_value) as previous_month_sales from sales_gathering where Year = ". $previousMonthYear ." and Month=" . $previousMonth ." and company_id = 
+            " . $company->id  
+        ));
+        $salesToDate = DB::select(DB::raw(
+            "select sum(net_sales_value) total_sales_to_date from sales_gathering where date >= '". $start_date ."' and date <= '". $end_date ."' and company_id = " . $company->id  
+        ));
+
+        $perviousThreeMonthsSales = DB::select(DB::raw(
+            "select sum(net_sales_value ) previous_three_months_sales from sales_gathering 
+            where (
+            (Year  =  ". $previousMonthYear  ." and Month=  ". $previousMonth ." ) 
+            OR 
+            (Year  = ". $previous2MonthYear  ." and Month= ". $previous2Month .") 
+            OR 
+            (Year  = ".  $previous3MonthYear  ." and Month= ".($previous3Month).") 
+            )
+                and company_id = " . $company->id
+        ));
+
+        $perviousThreeMonthsSales = $perviousThreeMonthsSales[0]->previous_three_months_sales ?:0 ;
+
+        $salesToDate = $salesToDate[0]->total_sales_to_date ?:0 ;
+        
+        $previous_month_sales = $perviousMonthSales[0]->previous_month_sales ; 
+
+        $percentage = $previous_month_sales ? ((($currentMonthSales - $previous_month_sales)/ $previous_month_sales) *100)   : 0 ; 
+        $first = microtime(true);
+        $monthlyChart = $this->formatMonthlyChars($company , $start_date, $end_date); 
+        $monthlyChartArr =  $monthlyChart['formattedData'];
+        $monthlyChartCumulative =  $monthlyChart['cumulative'];
+        $formattedDataForChart =  $monthlyChart['formattedDataForChart'];
+
+        return view('client_view.home_dashboard.income_statement_revenue_dashboard',
+        compact('company',
+        'start_date','end_date','currentMonthSales','previous_month_sales','perviousThreeMonthsSales'
+        ,'percentage','salesToDate','monthlyChartArr','monthlyChartCumulative','formattedDataForChart'
+        ));
+    }
+
+
     public function formatMonthlyChars($company , $start_date , $end_date){
         $months = DB::select(DB::RAW(
         "select sum(net_sales_value) 'Sales Values' , month , count(*) as dd, year  , concat(date_format(LAST_DAY(concat(year , '-' ,month ,'-',1)) , '%d') , '-', MONTHNAME(concat(year , '-' ,month ,'-',1)) , '-', year  ) as date  
@@ -264,27 +324,7 @@ class HomeController extends Controller
                 $reports_data =[];
                 $top_data =[];
                 
-                /*
-                tops
-                 */
-
-        //         $topes = [];
-        //         $fullReport = [];
-        //         foreach($types as $type=>$color ){
-        //             if(array_search($type , $db_names) !== false ){
-        //                 $request['type'] = $type ; 
-        //                  $breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
-        //                  $fullReport[$type] = $breakdown_data ; 
-        //                  $topes[$type] = $breakdown_data[0] ?? [] ;   
-                         
-        //             }
-        //             else{
-        //             unset($types[$type]);
-        //             }
-        //         }
-                
-        // return view('client_view.home_dashboard.dashboard_breakdown',compact('company','reports_data','types','top_data','start_date','end_date','fullReport','topes'));
-                // $first = \microtime(true);
+       
         foreach ($types as  $type => $color) {
             if (false !== $found = array_search($type,$db_names)) {
                 $request['type'] = $type;
@@ -311,6 +351,83 @@ class HomeController extends Controller
         // ,'fullReport','topes'
         ));
     }
+
+
+      public function dashboardBreakdownIncomeStatementAnalysis(Request $request,Company $company , $incomeStatementID = null)
+    {
+        // dd($incomeStatementID);
+        $start_date = date('2022-01-01');
+        $end_date   = date('2022-12-31');
+
+        if ($request->isMethod('GET')) {
+            $request['start_date'] =$start_date;
+            $request['end_date'] =$end_date;
+        }elseif ($request->isMethod('POST')){
+            $start_date = $request['start_date'] ;
+            $end_date = $request['end_date'] ;
+        }
+
+        $exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+        $db_names = array_keys($exportableFields);
+
+        $types =  [
+                'zone'=>'brand',
+                'sales_channel'=>'warning',
+                'branch'=>'danger',
+                'category'=>'success',
+                'product_or_service'=>'brand',
+                'product_item'=>'warning',
+                'business_sector'=>'brand',
+                'service_provider_name'=>'warning',
+                'service_provider_type'=>'danger',
+                'service_provider_birth_year'=>'success',
+                ];
+                $reports_data =[];
+                $top_data =[];
+                
+             $incomeStatement = IncomeStatement::find($request->get('income_statement_id') ?: $incomeStatementID) ?: IncomeStatement::where('company_id',$company->id)->latest()->first();
+             if( $incomeStatement){
+                $breakdown_data = (new IncomeStatementBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,$incomeStatement,'array');
+
+             }
+             else{
+$incomeStatement = optional();
+$breakdown_data   = [];
+
+             }
+        // foreach ($types as  $type => $color) {
+        //     if (false !== $found = array_search($type,$db_names)) {
+        //         $request['type'] = $type;
+                
+        //         $breakdown_data = (new IncomeStatementBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
+                
+        //         if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
+        //             $first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key)   {
+        //                 return [$data['Sales Value']];
+        //             })->toArray();
+        //             $first_item = ($first_item??[]);
+        //             $top_data[$type] = array_shift($first_item);
+
+        //         }else{
+        //             $top_data[$type] = $breakdown_data[0] ?? '-';
+        //         }
+        //         $reports_data[$type] = $breakdown_data;
+        //     }else{
+        //         unset($types[$type]);
+        //     }
+        // }
+        // $breakdown_data = formatDataForBreakDown($breakdown_data);
+        // dd($breakdown_data);
+        // dd();
+        // $types = array_keys();
+        $types = array_unique(array_keys($breakdown_data));
+        // $incomeStatement = $request->get('incomeStatement')
+        $reports_data = $breakdown_data ;
+        return view('client_view.home_dashboard.dashboard_breakdown_incomestatement',compact('company','incomeStatement','reports_data','types','top_data','start_date','end_date'
+        // ,'fullReport','topes'
+        ));
+    }
+    
 
 
     // public function dashboardBreakdownAnalysis(Request $request,Company $company)

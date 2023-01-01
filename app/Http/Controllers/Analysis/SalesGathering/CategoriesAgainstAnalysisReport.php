@@ -80,8 +80,6 @@ class CategoriesAgainstAnalysisReport
     }
     public function result(Request $request, Company $company,$result='view' , $secondReport = true )
     {
-        // dd('q');
-
         $report_data =[];
         $report_data_quantity =[];
         $growth_rate_data =[];
@@ -96,7 +94,6 @@ class CategoriesAgainstAnalysisReport
 
             if ($result == 'view') {
                 $mainField = 'category';
-                // // dd(get_defined_vars());
                 if(($type == 'category' && $view_name ==Customers_Against_Categories_Trend_Analysis) 
                 || ($type == 'product_or_service' && $view_name == Customers_Against_Products_Trend_Analysis)
                 || ($type == 'product_item' && $view_name == Customers_Against_Products_ITEMS_Trend_Analysis)
@@ -113,14 +110,10 @@ class CategoriesAgainstAnalysisReport
                     ORDER BY id "
                     )))->groupBy($type)->map(function($item)use($data_type){
                         return $item->groupBy('gr_date')->map(function($sub_item)use($data_type){
-
+                        
                             return $sub_item->sum($data_type);
                         });
                     })->toArray();
-                    // dd($zones_data);
-
-                    
-                    // dd($zones_data);
             }else{
                 $zones_data = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
@@ -135,7 +128,6 @@ class CategoriesAgainstAnalysisReport
                             return $sub_item->sum($data_type);
                         });
                     })->toArray();
-                    
 
                      $zones_data_quantity = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
@@ -152,12 +144,9 @@ class CategoriesAgainstAnalysisReport
                     })->toArray();
 
                 }
-                // dd($request->sales_channels);
-                // dd(($request->sales_channels??[]));
             foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
 
                 $years = [];
-// dd($zones_data);
                 $data_per_main_item = $zones_data[$sales_channel]??[];
                 if (count(($data_per_main_item))>0 ) {
                     // Data & Growth Rate Per Sales Channel
@@ -165,11 +154,9 @@ class CategoriesAgainstAnalysisReport
                         $years[] = date('Y', strtotime($date));
                     });
                     $years = array_unique($years);
-
                     $report_data[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
                     $interval_data = Intervals::intervals($report_data[$zone][$sales_channel], $years, $request->interval);
                     $report_data[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
-                    // dd( $this->finalTotal([($report_data[$zone]['Total']  ?? []) ,($report_data[$zone][$sales_channel][$name_of_report_item]??[]) ]));
                     $report_data[$zone]['Total']  = $this->finalTotal([($report_data[$zone]['Total']  ?? []) ,($report_data[$zone][$sales_channel][$name_of_report_item]??[]) ]);
                     $report_data[$zone][$sales_channel]['Growth Rate %'] = $this->growthRate(($report_data[$zone][$sales_channel][$name_of_report_item] ?? []));
 
@@ -214,7 +201,6 @@ class CategoriesAgainstAnalysisReport
                     foreach($items as $itemKey=> $values){
                         if($itemKey == 'Avg. Prices'){
                             foreach($values as $datee => $dateVal){
-                                // dd( $report_data[$reportType][$dateName][$itemKey][$datee] );
                             $report_data[$reportType][$dateName][$itemKey][$datee] =  
                             $report_data_quantity[$reportType][$dateName][$itemKey][$datee] ?
                             $report_data[$reportType][$dateName][$itemKey][$datee] / $report_data_quantity[$reportType][$dateName][$itemKey][$datee]
@@ -233,18 +219,10 @@ class CategoriesAgainstAnalysisReport
 
                         elseif($itemKey == 'Growth Rate %'){
                             foreach($values as $datee => $dateVal){
-                                // dd($report_data[$reportType]);
                                 $report_data[$reportType][$dateName]['Avg. Prices'][$datee];
                                 $keys = array_flip(array_keys($report_data[$reportType][$dateName]['Avg. Prices']));
-                                // dd($report_data[$reportType][$dateName]['Avg. Prices']);
                                 $values = array_values($report_data[$reportType][$dateName]['Avg. Prices']);
-                                //  dump();
                                 $previousValue = isset($values[$keys[$datee]-1]) ? $values[$keys[$datee]-1] : 0 ;
-                            // dump($reportType);
-                            // dump($dateName);
-                            // dump($itemKey);
-                            // dd($report_data);
-                            
                                 $report_data[$reportType][$dateName][$itemKey][$datee] =  $previousValue ? (($report_data[$reportType][$dateName]['Avg. Prices'][$datee] - $previousValue  )/ $previousValue)*100 : 0;
                           
                             }
@@ -274,29 +252,24 @@ class CategoriesAgainstAnalysisReport
             $categories_names[] = (str_replace( ' ','_', $zone));
 
         }
-
           foreach($report_data as $r=>$d){
             unset($report_data[$r]['Totals']);
         }
 
         
-
-// dd($final_report_total);
         // Total Zones & Growth Rate
 
 
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
-        $dates = array_keys($report_data['Total']); $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
-
+        $dates = array_keys($report_data['Total']);
+         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $Items_names = $categories_names ;
          $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'category' );
-
         if($report_view instanceof View)
         {
             return $report_view ; 
         }
-
         if($request->report_type =='comparing')
         {
              return [

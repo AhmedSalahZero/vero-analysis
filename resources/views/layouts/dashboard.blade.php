@@ -162,9 +162,44 @@
 		<!--begin::Global Theme Styles(used by all pages) -->
 		<link href="{{url('assets/css/demo4/style.bundle.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{url('assets/css/custom.css')}}" rel="stylesheet" type="text/css" />
+			<link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
 
 		<!--end::Global Theme Styles -->
         <style>
+
+			.sharing-sign{
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				margin: auto;
+			}
+			.active-sharing{
+				background: #00ff28;
+			}
+			.inactive-sharing{
+				background: #f00;
+			}
+				.icon-lg{
+				font-size:1.75rem !important ;
+			}
+			.min-height-170px{
+				min-height:170px;
+			}
+			.cursor-pointer{
+				cursor: pointer ;
+			}
+			.first-subrow-last-td , .second-subrow-last-td{
+				text-align: right;
+			}
+
+
+			.w-full{
+				width:100%;
+			}
+			.btn.dropdown-toggle{
+				height:100%;
+			} 
+
 			#DataTables_Table_1_info,
 			.dataTables_empty,
 			#DataTables_Table_1_paginate,
@@ -179,6 +214,51 @@
 				background-color:#086691 !important;
 
 			}
+			 .dtfc-fixed-right{}
+		
+				#to__left:hover{
+				}
+				#scroll-fixed{
+					display:none ; 
+				}
+				.kt-portlet.kt-portlet--tabs+#scroll-fixed{
+					display:block ;
+				}
+ 			.hide_class{display:none}
+			.remove-item-class
+			{
+				cursor: pointer;
+			}
+			.w-48{
+				width:48%;
+			}
+			.view-table-th{
+				text-align:center !important;
+				color:#fff !important; 
+			}
+			.plus-class{
+				margin-right: 5px;
+font-size: 20px;
+vertical-align: middle;
+color: #0849A5;
+			}
+		
+			.header-tr{
+				background-color:#074FA4 !important ;
+				/* cursor: pointer !important; */
+				transition:1s;
+			}
+			td.editable{
+				cursor: pointer;
+			}
+			.header-tr:hover{
+				background-color:#087383 !important;
+			}
+
+
+
+
+
 			.dataTables_scrollBody::-webkit-scrollbar
 			{
 			}
@@ -287,7 +367,9 @@
 	<!-- end::Head -->
 
 	<!-- begin::Body -->
-	<body data-token="{{ csrf_token() }}" style="background-image: url({{url('assets/media/demos/demo4/header.jpg')}}); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
+	<body data-lang="{{app()->getLocale()}}" data-base-url="{{\Illuminate\Support\Facades\URL::to('/')}}" data-current-company-id="{{ $company->id ?? 0  }}"
+	
+	data-token="{{ csrf_token() }}" style="background-image: url({{url('assets/media/demos/demo4/header.jpg')}}); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
 	<div class="text-center hide_class" id="loader_id" >
 		<img src="{{ asset('loading.gif') }}">
 		<p class="please_wait">Please Wait</p>
@@ -446,6 +528,25 @@
         <script src="{{url('assets/vendors/general/bootstrap-switch/dist/js/bootstrap-switch.js')}}" type="text/javascript"></script>
 
 <script>
+	function get_total_of_object(object,date)
+	{
+		let total = 0 ;
+		for(obj of object ){
+			if(obj.pivot && obj.pivot.payload)
+			{
+				var valueFormatted = JSON.parse(obj.pivot.payload)[date] ;
+				if(valueFormatted ){
+					valueFormatted = valueFormatted.replace(/,/g, "");
+					total = total + parseFloat(valueFormatted);
+				}
+				
+				
+			}
+		}
+	
+		return total ; 
+	}
+
 	function number_format (number, decimals, dec_point, thousands_sep) {
     // Strip all characters but numerical ones.
     number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
@@ -487,6 +588,9 @@
         @toastr_js
         @toastr_render
         @yield('js')
+		
+			<script src="{{url('datatable/datatable.js')}}" type="text/javascript"></script>
+		
 		@stack('js')
 
 		<script>
@@ -523,8 +627,10 @@
 		</script>
 
 		<script>
+			
+
 			$(document).ajaxStart(function(){
-				$('select.select2-select').prop('disabled',true);				
+				// $('select.select2-select').prop('disabled',true);				
 				$('#loader_id').removeClass('hide_class');
 			});
 			$(document).ajaxComplete(function(){
@@ -540,12 +646,17 @@
 			$(function(){
 				$('.dtfc-fixed-left').on('click',function(e){
 					$('.kt_table_with_no_pagination').DataTable().columns.adjust();
-				})
+				});
+
+				
 			})
 		</script>
 		<script>
 				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 						  jqXHR.setRequestHeader('X-CSRF-Token', getToken());
+
+						
+
 					});
 		</script>
 
@@ -655,9 +766,53 @@ function exportToExcel(xlsx){
 
 		</script>
 
+
+		@if(isset($company) && $company->id)
+		<script>
+			
+			$(document).on('change','.trigger-update-select-js',function(){
+				  clearTimeout(wto);
+        wto = setTimeout(() => {
+
+			
+				let startDate = $('input[name="start_date"]').val();
+				let endDate = $('input[name="end_date"]').val();
+				let mainType = $('input[name="main_type"]').val();
+				let subType = $('input[name="type"]').val();
+				let appendTo = $('#append-to').val();
+
+
+				$.ajax({
+					url:"{{ route('get.type.based.on.dates',$company->id) }}",
+					data:{
+						 startDate ,
+						 endDate,
+						 mainType,
+						 subType,
+						 appendTo
+					},
+					type:"post",
+					success:function(response){
+						if(response.status){
+							var options = '';
+							for(index in response.data){
+								options+= ` <option value="${index}">${response.data[index]}</option>  `
+							}
+							$(response.appendTo).empty().append(options).selectpicker("refresh");
+
+						}
+					}
+				});
+
+
+        }, getNumberOfMillSeconds());
+
+			});
+		</script>
+		@endif
+
 <script>
 	
-	// alert()
 	</script>		
 	</body>
 

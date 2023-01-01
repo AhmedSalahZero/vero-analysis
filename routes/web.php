@@ -5,7 +5,10 @@ use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisRe
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
+use App\Http\Controllers\FilterMainTypeBasedOnDatesController;
 use App\Http\Controllers\getUploadPercentage;
+use App\Http\Controllers\Helpers\EditTableCellsController;
+use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
 use App\Http\Controllers\RoutesDefinition;
@@ -80,6 +83,34 @@ Route::group(
 
 
         Route::prefix('{company}')->group(function () {
+            Route::post('get-type-based-on-dates',[FilterMainTypeBasedOnDatesController::class,'__invoke'])->name('get.type.based.on.dates');
+
+                //Income Statement
+            Route::get('income-statement',[IncomeStatementController::class , 'view'])->name('admin.view.income.statement');
+     
+            Route::get('income-statement/create',[IncomeStatementController::class , 'create'])->name('admin.create.income.statement');
+            Route::get('income-statement-report/{incomeStatement}/edit',[IncomeStatementController::class , 'editItems']);
+            // Route::get('income-statement/{incomeStatement}/edit',[IncomeStatementController::class , 'edit'])->name('admin.edit.income.statement');
+            Route::post('income-statement/{incomeStatement}/update',[IncomeStatementController::class , 'update'])->name('admin.update.income.statement');
+            Route::post('income-statement/store',[IncomeStatementController::class , 'store'])->name('admin.store.income.statement');
+            Route::get('export-income-statement' , 'IncomeStatementController@export')->name('admin.export.income.statement');
+            Route::get('get-income-statement','IncomeStatementController@paginate')->name('admin.get.income.statement');
+
+
+            //Income Statement Report
+            // Route::get('income-statement-report',[IncomeStatementReportController::class , 'view'])->name('admin.view.income.statement.report');
+     
+            Route::get('income-statement/{incomeStatement}/report',[IncomeStatementController::class , 'createReport'])->name('admin.create.income.statement.report');
+            // Route::get('income-statement-report/{incomeStatementReport}/edit',[IncomeStatementReportController::class , 'edit'])->name('admin.edit.income.statement.report');
+            Route::post('income-statement-report/update',[IncomeStatementController::class , 'updateReport'])->name('admin.update.income.statement.report');
+            Route::post('income-statement-report/delete',[IncomeStatementController::class , 'deleteReport'])->name('admin.destroy.income.statement.report');
+            Route::post('income-statement/storeReport',[IncomeStatementController::class , 'storeReport'])->name('admin.store.income.statement.report');
+            Route::get('export-income-statement-report' , 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
+            Route::post('get-income-statement-report/{incomeStatement}','IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
+
+
+   Route::post('edit-table-cell',[EditTableCellsController::class,'__invoke'])->name('admin.edit.table.cell');
+            
 
             //Ajax
             Route::post('get/ZoneZonesData/', 'Analysis\SalesGathering\ZoneAgainstAnalysisReport@ZonesData')->name('get.zones.data');
@@ -96,8 +127,10 @@ Route::group(
             Route::prefix('/dashboard')->group(function () {
                 
                 Route::any('/', 'HomeController@dashboard')->name('dashboard');
+                Route::any('/income-statement-revenue-dashboard', 'HomeController@incomeStatementDashboard')->name('income.statement.dashboard');
                 Route::get('/HomePage', 'HomeController@welcomePage')->name('viewHomePage');
                 Route::any('/breakdown', 'HomeController@dashboardBreakdownAnalysis')->name('dashboard.breakdown');
+                Route::any('/income-statement-breakdown-dashboard/{incomeStatement?}', 'HomeController@dashboardBreakdownIncomeStatementAnalysis')->name('dashboard.breakdown.incomeStatement');
                 Route::any('/customers', 'HomeController@dashboardCustomers')->name('dashboard.customers');
                 Route::any('/salesPerson', 'HomeController@dashboardSalesPerson')->name('dashboard.salesPerson');
                 Route::any('/salesDiscount', 'HomeController@dashboardSalesDiscount')->name('dashboard.salesDiscount');

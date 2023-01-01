@@ -33,6 +33,15 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->belongsToMany(Company::class, 'companies_users');
     }
-}
+    public function canViewIncomeStatement()
+    {
+        return in_array($this->email , [
+            'mahmoud.youssef@squadbcc.com',
+            'samer.tawfik@squadbcc.com',
+            'admin@admin.com'
+        ]);
+    }
 
+
+}
 

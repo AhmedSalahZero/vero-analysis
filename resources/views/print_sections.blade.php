@@ -33,14 +33,14 @@
                                                                 </li>
                                                             @endif
                                                         @else
-
-
+                                                        @if($subSection->id  != 270 || (Auth()->user()->canViewIncomeStatement()))
                                                             <li class="kt-menu__item " aria-haspopup="true">
                                                                 <a href="{{ @$subSection->route == 'home' ? route(@$subSection->route) : route(@$subSection->route, $company) }}"
                                                                     class="kt-menu__link "><i
                                                                         class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                                        class="kt-menu__link-text">{{ __($subSection->name[$lang]) }}</span></a>
+                                                                        class="kt-menu__link-text">{{ __($subSection->name[$lang] )  }}</span></a>
                                                             </li>
+                                                            @endif
 
                                                         @endif
                                                     @else

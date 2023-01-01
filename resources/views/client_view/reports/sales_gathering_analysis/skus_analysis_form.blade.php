@@ -62,11 +62,52 @@
                          @include('comparing_type_selector')
                          
                     </div>
+
+                       <div class="form-group row">
+                    <div class="col-md-4">
+                        <label>{{ __('Start Date') }}</label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <input type="date" name="start_date" required class="form-control trigger-update-select-js" placeholder="Select date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label>{{ __('End Date') }}</label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <input type="date" name="end_date" required value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label>{{ __('Select Interval') }} </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select name="interval" required class="form-control">
+                                    <option value="" selected>{{ __('Select') }}</option>
+                                    {{-- <option value="daily">{{ __('Daily') }}</option> --}}
+                                    <option value="monthly">{{ __('Monthly') }}</option>
+                                    <option value="quarterly">{{ __('Quarterly') }}</option>
+                                    <option value="semi-annually">{{ __('Semi-Annually') }}</option>
+                                    <option value="annually">{{ __('Annually') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+<input type="hidden" name="main_type" value="product_item">
+<input type="hidden" id="append-to" value="ItemsData">
+
+
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select Products Items') }} @include('max-option-span') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
+
                                     <select data-live-search="true" data-actions-box="true" name="ItemsData[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="ItemsData" multiple>
                                         {{-- <option value="all">{{ __('All Products Items') }}</option> --}}
                                         @foreach ($ItemsData as $category)
@@ -129,39 +170,7 @@
                     </div>
                     @endif
                 </div>
-                <div class="form-group row">
-                    <div class="col-md-4">
-                        <label>{{ __('Start Date') }}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="date" name="start_date" required class="form-control" placeholder="Select date" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>{{ __('End Date') }}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="date" name="end_date" required value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>{{ __('Select Interval') }} </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select name="interval" required class="form-control">
-                                    <option value="" selected>{{ __('Select') }}</option>
-                                    {{-- <option value="daily">{{ __('Daily') }}</option> --}}
-                                    <option value="monthly">{{ __('Monthly') }}</option>
-                                    <option value="quarterly">{{ __('Quarterly') }}</option>
-                                    <option value="semi-annually">{{ __('Semi-Annually') }}</option>
-                                    <option value="annually">{{ __('Annually') }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+             
             </div>
             <x-submitting />
     </div>
@@ -297,7 +306,9 @@
             type: 'POST'
             , data: {
                 'main_data': ItemsData
-                , 'main_field': 'product_item'
+                , 'main_field': 'product_item',
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
                 , 'field': type_of_data
             }
             , url: '{{ route('get.zones.data',$company) }}'
@@ -340,7 +351,9 @@
             , data: {
                 'main_data': ItemsData
                 , 'main_field': 'sales_channel'
-                , 'field': type_of_data
+                , 'field': type_of_data,
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
@@ -375,7 +388,9 @@
             , data: {
                 'main_data': categories
                 , 'main_field': 'category'
-                , 'field': type_of_data
+                , 'field': type_of_data,
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
@@ -429,7 +444,9 @@
                 , 'main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_item'
-                , 'field': type_of_data
+                , 'field': type_of_data,
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             , }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'

@@ -21,6 +21,10 @@
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action={{  $name_of_selector_label == 'Sales Discount' ? route('salesPersons.salesDiscount.analysis.result', $company) : route('salesPersons.analysis.result', $company) }} enctype="multipart/form-data">
             @csrf
+            
+        
+
+
             <div class="kt-portlet">
                 <?php 
                     
@@ -70,6 +74,44 @@
                           
 
                     </div>
+
+                       <div class="form-group row">
+                    <div class="col-md-4">
+                        <label>{{ __('Start Date') }}</label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <input type="date" required name="start_date" class="form-control trigger-update-select-js" placeholder="Select date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label>{{ __('End Date') }}</label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <input type="date" required name="end_date " value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label>{{ __('Select Interval') }} </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select name="interval" required class="form-control">
+                                    <option value="" selected>{{ __('Select') }}</option>
+                                    {{-- <option value="daily">{{ __('Daily') }}</option> --}}
+                                    <option value="monthly">{{ __('Monthly') }}</option>
+                                    <option value="quarterly">{{ __('Quarterly') }}</option>
+                                    <option value="semi-annually">{{ __('Semi-Annually') }}</option>
+                                    <option value="annually">{{ __('Annually') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+    <input type="hidden" name="main_type" value="sales_person">
+<input type="hidden" id="append-to" value="salesPersonsData">
+
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select Sales Persons') }} @include('max-option-span') </label>
@@ -84,7 +126,7 @@
                                 </div>
                             </div>
                         </div>
-{{-- @dd($name_of_selector_label) --}}
+
                         @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Sales Persons' || $name_of_selector_label =='Products Items')
 
                                 <div class="col-md-{{$column}}">
@@ -154,40 +196,7 @@
                     </div>
                     @endif
                 </div>
-                <div class="form-group row">
-                    <div class="col-md-4">
-                        <label>{{ __('Start Date') }}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="date" required name="start_date" class="form-control" placeholder="Select date" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>{{ __('End Date') }}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="date" required name="end_date" value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>{{ __('Select Interval') }} </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select name="interval" required class="form-control">
-                                    <option value="" selected>{{ __('Select') }}</option>
-                                    {{-- <option value="daily">{{ __('Daily') }}</option> --}}
-                                    <option value="monthly">{{ __('Monthly') }}</option>
-                                    <option value="quarterly">{{ __('Quarterly') }}</option>
-                                    <option value="semi-annually">{{ __('Semi-Annually') }}</option>
-                                    <option value="annually">{{ __('Annually') }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+             
             </div>
             @if('salesPersons.Items.analysis' == Request()->route()->getName())
             <input type="hidden" id="has_product_item">
@@ -332,7 +341,9 @@
             , data: {
                 'main_data': salesPersonsData
                 , 'main_field': 'sales_person'
-                , 'field': type_of_data
+                , 'field': type_of_data,
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
@@ -370,7 +381,9 @@
             , data: {
                 'main_data': salesPersonsData
                 , 'main_field': 'sales_person'
-                , 'field': type_of_data
+                , 'field': type_of_data,
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
@@ -410,7 +423,9 @@
                 , 'sub_main_field': 'category'
                 // , 'third_main_data': products
                 // , 'third_main_field': 'product_or_service'
-                , 'field':type_of_data
+                , 'field':type_of_data,
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             , }
             , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
@@ -490,7 +505,9 @@
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_or_service'
-                , 'field': 'product_item'
+                , 'field': 'product_item',
+                'start_date':$('input[name="start_date"]').val(),
+                'end_date':$('input[name="end_date"]').val()
             , }
 
             // {

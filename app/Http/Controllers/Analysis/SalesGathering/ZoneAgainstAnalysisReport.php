@@ -9,6 +9,7 @@ use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -67,6 +68,7 @@ class ZoneAgainstAnalysisReport
     }
     public function ZoneSalesAnalysisIndex(Company $company)
     {
+        
         // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
         // $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
  $zones =  getTypeFor('zone',$company->id);
@@ -516,13 +518,22 @@ class ZoneAgainstAnalysisReport
     // Ajax
     public function ZonesData(Request $request, Company $company)
     {
-
+        
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        
         if(false !== $found =array_search('all',$request->main_data)){
-// dd(get_defined_vars());
             $data = SalesGathering::company()
                 ->whereNotNull($request->field)
+                 ->when($start_date,function(Builder $builder) use ($start_date){
+                        $builder->where('date','>=' , $start_date);
+                    })
+                    ->when( $end_date,function(Builder $builder) use ($end_date){
+                        $builder->where('date','<=' , $end_date);
+                    })
                 ->groupBy($request->field)
                 ->selectRaw($request->field)
+                
                 ->where(function ($query) use ($request) {
                     if (($request->second_main_data) !== null ) {
                         $query->whereNotNull($request->sub_main_field)
@@ -540,6 +551,13 @@ class ZoneAgainstAnalysisReport
             // dd(Request()->all());
 
             $data = SalesGathering::company()
+               ->when($start_date,function(Builder $builder) use ($start_date){
+                        $builder->where('date','>=' , $start_date);
+                    })
+                    ->when( $end_date,function(Builder $builder) use ($end_date){
+                        $builder->where('date','<=' , $end_date);
+                    })
+                    
                 ->whereNotNull($request->main_field)
                 ->whereIn($request->main_field, ($request->main_data ?? []))
                 ->whereNotNull($request->field ?:'product_item')

@@ -88,7 +88,6 @@ class SalesBreakdownAgainstAnalysisReport
         $report_count_data = [];
 
           $type = $request->type ;
-// dump($type);
 
             $dates = [
             'start_date' => date('d-M-Y',strtotime($request->start_date)),
@@ -96,29 +95,9 @@ class SalesBreakdownAgainstAnalysisReport
         ];
         
 
-        // abo salah مر من هنا
-          
-        // if($result == 'array'){
-            
-        //     $query = DB::select(DB::raw("
-        //         select ". $type ." item , sum(net_sales_value) 'Sales Value'   from sales_gathering where company_id = ". 
-                
-        //         $company->id . " AND date between '".$request->start_date."' and '".$request->end_date."'". 
-        //          " group by ". $type ." order by net_sales_value desc
-        //      " ));
-             
-        //     return json_decode(json_encode($query) , true) ;
-            
-        // }
-      
-      
-    //   if($type == 'sales_channel'){
-    //       $start = \microtime(true);
-    //   }
-        $view_name = $request->view_name ;
-        // dd($type);
-        // dump($type);
-        
+    
+              $view_name = $request->view_name ;
+  
               $report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type ."
                 FROM sales_gathering
@@ -127,7 +106,6 @@ class SalesBreakdownAgainstAnalysisReport
                 
                 ORDER BY id "
             ))) ;
-
 
         if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
             $data = $report_data->groupBy($type)->map(function($item,$year)
@@ -261,7 +239,7 @@ class SalesBreakdownAgainstAnalysisReport
             
             
             
-            
+            // dd($report_data);
             
             
             return view('client_view.reports.sales_gathering_analysis.breakdown.sales_report',compact('last_date','report_count_data','type','view_name','dates','company','report_view_data'));
@@ -277,10 +255,7 @@ class SalesBreakdownAgainstAnalysisReport
 
 
             
-                // dd($report_view_data);
-                // dd(\microtime(true) - $first);
-                // dump('q');
-                // dd($report_view_data);
+             
                 return $report_view_data;
             }
         }
@@ -544,7 +519,6 @@ class SalesBreakdownAgainstAnalysisReport
         $end_date = $request->get('end_date');
         $type = $request->get('type');
         $modal_id = $request->get('modal_id');
-        
         $db = DB::select(DB::raw('
              SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person ,
               count(DISTINCT(business_sector)) as business_sector, count(DISTINCT(sales_channel)) as sales_channel, count(DISTINCT(zone)) as zone, count(DISTINCT(branch)) as branch
@@ -584,7 +558,6 @@ class SalesBreakdownAgainstAnalysisReport
         $modal_id = $request->get('modal_id');
         $selectedType = $request->get('selected_type');
         $request['date'] = $end_date ;
-
     
 
         $queryResult = DB::select(DB::raw('

@@ -138,6 +138,7 @@ transform: translate(-50% , -50%);
                 </div>
                 <div class="kt-portlet__body  kt-portlet__body--fit">
                     <div class="row row-no-padding row-col-separator-xl">
+                     
                         @foreach ($types as $type => $color)
 
                         
@@ -186,6 +187,7 @@ transform: translate(-50% , -50%);
           <input type="hidden" name="type" value="{{ $type }}">
           <label class="text-left font-weight-bold  w-100 mb-3 text-black">{{ __('Please Select') }}  {{ ucwords(str_replace('_',' ',$type)) }}</label>
           <select id="business_sector_select_{{ $type }}" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" >
+              {{-- {{ logger($businessSectors) }} --}}
               @foreach($businessSectors as $businesSector)
               <option value="{{ $businesSector }}"> {{ __($businesSector) }} </option>
               @endforeach 
@@ -214,7 +216,6 @@ transform: translate(-50% , -50%);
               </tr>
 
               @foreach( getFieldsForTakeawayForType($type) as $id=>$item)
-              {{-- @dd($exportableFieldsValues , $id) --}}
                @if(in_array($id , $exportableFieldsValues))
                <tr >
                   <td  class="text-left">{{ __($item) }} 
@@ -292,7 +293,9 @@ transform: translate(-50% , -50%);
                                         <span class="kt-widget24__stats kt-font-{{$color}}" style="font-size:1.4rem">
                                             {{ __( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0)) }}
                                     </div>
-
+                                    {{-- {{ logger($top_data[$type]['item'] ?? '') }} --}}
+                                    {{-- {{ logger($top_data[$type]['item'] ?? '') }} --}}
+                                    {{-- logger() --}}
                                     <input type="hidden" id="top_for_{{ $type }}"  value="{{ $top_data[$type]['item'] ?? '' }}">
                                     <input type="hidden" id="value_for_{{ $type }}"  value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
 
@@ -525,6 +528,7 @@ transform: translate(-50% , -50%);
 
                 // Add data
                 chart.data = $('#total_'+"{{$type}}").data('total');
+                console.log(chart.data);
                 // Add and configure Series
                 var pieSeries = chart.series.push(new am4charts.PieSeries());
                 pieSeries.dataFields.value = "Sales Value";
@@ -563,9 +567,21 @@ transform: translate(-50% , -50%);
                  {
                        let topTypeName = $('#top_for_'+type).val();
                 let topTypeSalesValue = $('#value_for_'+type).val();
+         
+                // alert(topTypeName);
                 $(this).find('#selected_type_name').html(topTypeName);
+
                 $(this).find('#total_sales_value').html(topTypeSalesValue);
-                    $(this).find(`option[value="${topTypeName}"]`).prop('selected',true);
+                // console.log(topTypeName);
+                // console.log($(this).find('option'));
+                // option = $(this).find('option').filter(function(index,option){
+                //     console.log(option.value);
+                //     console.log(topTypeName);
+                //     return option.value == topTypeName ; 
+                // })
+                // option.prop('selected',true);
+                // console.log( $(this).find('option[value="'+ topTypeName +'"]'));
+                    $(this).find('option[value="'+ topTypeName +'"]').prop('selected',true);
                 }
 
                 let selectedType = $(this).find('select[name="selected_type"]').val();
@@ -631,7 +647,6 @@ transform: translate(-50% , -50%);
 
     @endforeach 
 
-{{-- @dd(get_defined_vars()) --}}
 <script>
     $(document).on('click','.ranged-button-ajax',function(e){
         e.preventDefault();

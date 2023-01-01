@@ -23,13 +23,11 @@ trait Intervals
 
         $data_totals = [];
 
-
         if (@count($data) > 0) {
             $years_intervals_months = self::intervalsDates($years_intervals_months, $years ,$requested_interval);
 
             foreach ($data as $key => $values) {
                 $intervalType = is_array($type_of_interval) ? $type_of_interval[$key] : 'intervals_summation';
-
 
                 // 1 - Beginning Balance Interval
                 if ($intervalType == 'beginning_balance_interval') {
@@ -172,6 +170,7 @@ trait Intervals
     {
         $total_per_interval = 0;
         $dates = array_unique(array_merge($monthes, array_keys($values)));
+
         array_multisort(array_map('strtotime', $dates), SORT_ASC, $dates);
 
         array_walk($dates, function ($date, $index) use ($monthes, $values, $interval, &$data_intervals, &$total_per_interval, $key, $levels) {
@@ -186,11 +185,7 @@ trait Intervals
                 $total_per_interval += $values[$date] ?? 0;
             }
         });
-        // if($levels == 'multi'){
-        //     foreach ($data_intervals[$interval] as $key => $value) {
-        //         array_multisort(array_map('strtotime', array_keys($data_intervals[$interval][$key])), SORT_ASC, $data_intervals[$interval][$key]);
-        //     }
-        // }
+    
         return $data_intervals[$interval];
     }
     // To Calculate The intervals Dates

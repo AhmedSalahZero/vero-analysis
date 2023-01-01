@@ -13,6 +13,7 @@ use App\Models\AllocationSetting;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
+use App\Models\IncomeStatement;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
@@ -20,8 +21,11 @@ use App\Models\ProductSeasonality;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
+use App\Models\User;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -523,14 +527,28 @@ function sortTwoDimensionalExcept(array &$arr  , array $exceptKeys)
         }
     });
 }
-function getTypeFor($type,$companyId,$formatted=false){
+function getTypeFor($type,$companyId,$formatted=false , $date = false , $start_date = null , $end_date = null ){
    if($formatted)
    {
-      return  DB::table('sales_gathering')->where('company_id', $companyId)->orderBy($type)->distinct()->select($type)->get()->pluck($type,$type)->toArray(); ;
-      
+      return  DB::table('sales_gathering')->where('company_id', $companyId)
+      ->when($date && $start_date,function(Builder $builder) use ($start_date){
+          $builder->where('date','>=' , $start_date);
+      })
+      ->when($date && $end_date,function(Builder $builder) use ($end_date){
+          $builder->where('date','<=' , $end_date);
+      })
+      ->orderBy($type)->distinct()->select($type)->get()->pluck($type,$type)->toArray(); ;
    }
    else{
-       $data = DB::table('sales_gathering')->where('company_id', $companyId)->orderBy($type)->distinct()->select($type)->get()->pluck($type)->toArray();
+       $data = DB::table('sales_gathering')->where('company_id', $companyId)
+       ->when($date && $start_date,function(Builder $builder) use ($start_date){
+          $builder->where('date','>=' , $start_date);
+      })
+      ->when($date && $end_date,function(Builder $builder) use ($end_date){
+          $builder->where('date','<=' , $end_date);
+      })
+       ->orderBy($type)->distinct()->select($type)->get()->pluck($type)->toArray();
+      
        $data = array_filter($data , function($item){
        
        return $item  ;
@@ -1377,8 +1395,9 @@ if($newAllocation)
 return [];
 }
 
-function formatDateVariable($dates , $start_date , $end_date)
+function formatDateVariable($dates , $start_date , $end_date )
 {
+   
     if(!$dates)
     {
         return [];
@@ -1387,6 +1406,7 @@ function formatDateVariable($dates , $start_date , $end_date)
     {
         return $dates ; 
     }
+     
     $start_date = Carbon::make($start_date);    
     $end_date = Carbon::make($end_date);    
     $filteredDates = [];
@@ -1394,7 +1414,10 @@ function formatDateVariable($dates , $start_date , $end_date)
     {
         $dateWithoutFormatting = $date ;
         $date = Carbon::make($date);
-        if($date>=$start_date && $date<= $end_date )
+        if($date>=$start_date 
+        // && $date<= $end_date
+        
+         )
         {
             $filteredDates[] = $dateWithoutFormatting ; 
         }
@@ -1403,12 +1426,6 @@ function formatDateVariable($dates , $start_date , $end_date)
     
     
 }
-// function array_sort_sales(&$array)
-// {
-//     uasort($array , function($a , $b){
-//        sortSubItems($ar);
-//     });
-// }
 
 function getTotalsOfTotal($reportArray)
 {
@@ -1610,4 +1627,189 @@ function addFirstReportKeysToSendReport($keys , $secondReport ){
 function sortResultData($arr)
 {
     
+}
+
+
+ function getCurrentCompany()
+{
+    $companyIdentifier = Request()->segment(2);
+    return Company::find($companyIdentifier) ;
+}
+function getCurrentCompanyId():int 
+{
+    return Request()->segment(2) ?? 31;
+}
+function getCurrentDateForFormDate($fieldName)
+{
+    return old($fieldName) ?: date('m-d-Y') ;
+}
+function getCompanyId()
+{
+    //  admin.get.revenue-business-line
+    return Request()->segment(2);
+}
+
+function getExportFormat()
+{
+    return
+     [  
+    [
+        'title'=>__('Excel'),
+        'value'=>'Xlsx'
+    ],
+    [
+        'title'=>__('PDF'),
+        'value'=>'Dompdf'
+    ]
+    
+    ];
+
+}
+function getDefaultOrderBy():array  
+{
+    return [
+    'column'=>'created_at',
+    'direction'=>'desc'
+    ];
+}
+function getModelNamespace()
+{
+    return '\App\Models\\' ;
+}
+
+function generateDatesBetweenTwoDates(Carbon $start_date, Carbon $end_date ,$method = 'addMonth' , $format = 'Y-m-d' , $indexedArray = true , $indexFormat="Y-m-d")
+{
+    $dates = [];
+    
+    for($date = $start_date->copy(); $date->lte($end_date); $date->{$method}()) {
+        if($indexedArray ){
+            $dates[] = $date->format($format);   
+        }
+        else{
+            $dates[$date->format($indexFormat)] = $date->format($format);   
+        }
+    }
+
+    return $dates;
+}
+function formatDateFromString(string $date):string
+{
+    if ($date) {
+        return \Carbon\Carbon::make($date)->format(defaultUserDateFormat());
+    }
+
+    return __('N/A');
+}
+function defaultUserDateFormat()
+{
+    return 'd-M-Y';
+    // return 'Y F d';
+}
+function formatReportDataForDashBoard($data , $start_date , $end_date)
+{
+    $dates = generateDatesBetweenTwoDates(Carbon::make($start_date) , Carbon::make($end_date) , 'addMonth');
+    
+    $newData = [];
+    // dd($dates);
+
+      foreach($data as $index => $mainItem)
+    {
+    foreach($dates as $date)
+       {
+        $mainItemName = $mainItem->name ;
+                $newData[$mainItemName]['data'][$date] =getTotalInPivotDate($mainItem->subItems->pluck('pivot') , $date); 
+             
+    }
+                $newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->subItems->pluck('pivot'),$dates);
+                $newData[$mainItemName]['name'] = $mainItemName;
+    }
+
+    return $newData ; 
+    // dd($newData);
+}
+function getSubItemsFormatted($data ,$dates):array 
+{
+    $subItems = [];
+    // dd($data);
+    foreach($data as $pivot)
+    {
+        $subItemName = $pivot->sub_item_name;
+        $payload = $pivot->payload ? (array)json_decode($pivot->payload) : null;
+            if($payload)
+            {
+                $subItems[$subItemName] = array_sum_conditional($payload , $dates) ;
+            }
+            else{
+                $subItems[$subItemName] = 0;
+            }
+    }
+    return $subItems; 
+}
+function array_sum_conditional($data , $dates)
+{
+    $total = 0 ;
+    foreach($data as $date=>$value)
+    {
+        if(in_array($date , $dates))
+        {
+            $total += $value ;  
+        }
+    }
+    return $total  ;
+}
+function getTotalInPivotDate($pivot , $date)
+{
+    $total = 0 ;
+    foreach($pivot as $data)
+    {
+        $payload = $data->payload ? (array)json_decode($data->payload) : null;
+        if($payload && isset($payload[$date]) && $payload[$date])
+        {
+            $total += $payload[$date];
+        }
+    }
+    return $total ;
+}
+// function formatDataForBreakDown($array)
+// {
+//     $data = [];
+//     dd($array);
+//     foreach($array as $key => $values){
+//         foreach($values as $date => $value){
+//             $data[] = [
+//                 'gr_date'=>$date,
+//                 'net_sales_value'=>$value ,
+//                 'zone'=>$key 
+//             ];
+//         }
+//     }
+//     return $data ;
+// }
+function get_total_for_group_by_key(array $data , string $key)
+{
+    $total = 0 ;
+    foreach($data as $obj)
+    {
+        if($obj['name'] == $key)
+        {
+            $total += array_sum($obj['data']);
+        }
+    }
+    return $total;
+}
+function format_for_chart($array )
+{
+    $formattedData  = [];
+    foreach($array as $key=>$data)
+    {
+        $formattedData[] = [
+            'item'=>$key,
+            'Sales Value'=>$data
+        ];
+    }
+    return $formattedData ;
+}
+function getIncomeStatementForCompany(int $companyId):Collection
+{
+    return IncomeStatement::where('company_id',$companyId)->get();
 }

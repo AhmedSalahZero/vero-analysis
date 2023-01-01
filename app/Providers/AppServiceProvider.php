@@ -11,6 +11,7 @@ use App\Models\Section;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,11 +34,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Request $request)
     {
+        // dd(DB::connection('production__connection')->table('users')->get());
+        
         View::share('langs',Language::all());
         View::share('lang',app()->getLocale());
         $currentCompany = Company::find(Request()->segment(2)) ;
         if($currentCompany){
           View::share('exportables', (new ExportTable)->customizedTableField($currentCompany, 'SalesGathering', 'selected_fields'));
+          View::share('company',$currentCompany);
         }
         View::composer('*' , function($view){
             
