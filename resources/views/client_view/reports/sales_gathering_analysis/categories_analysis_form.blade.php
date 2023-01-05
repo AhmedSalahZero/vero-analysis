@@ -15,7 +15,7 @@
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($name_of_selector_label=='Sales Discount' ) {{ route('categories.salesDiscount.analysis.result', $company)}} @elseif ($type=='averagePrices' ) {{ route('averagePrices.result', $company) }} @else {{route('categories.analysis.result', $company) }} @endif enctype="multipart/form-data">
             @csrf
-            <div class="kt-portlet" style="overflow:hidden">
+            <div class="kt-portlet" style="overflow-x:hidden">
                 @if ($type == 'averagePrices')
                 <input type="hidden" name="type_of_report" value="categories_products_avg">
                 <?php
@@ -34,15 +34,12 @@
                     //     ->pluck('category')
                     //     ->toArray();
                     // dd($type);
+                    
                     if(isCustomerExceptionalCase($type , $name_of_selector_label) 
                     || isCustomerExceptionalForProducts($type , $name_of_selector_label)
                     || isCustomerExceptionalForProductsItems($type , $name_of_selector_label))
                     // in this case we will get customers instead of categories
                     $categoriesData = getTypeFor('customer_name',$company->id , false);
-                    // else if()
-                    // {
-                        // $categoriesData = getTypeFor('',$company->id , false);
-                    // }
                     else
                     {
                     $categoriesData = getTypeFor('category',$company->id , false);
@@ -153,10 +150,23 @@
                             <label>{{ __('Select Categories') }} @include('max-option-span') </label>
                             @endif
 
-<input type="hidden" name="main_type" value="category">
+
+@if((isCustomerExceptionalCase($type , $name_of_selector_label)
+                            ||
+                            isCustomerExceptionalForProducts($type , $name_of_selector_label )
+                            ||
+                            isCustomerExceptionalForProductsItems($type , $name_of_selector_label )
+
+                            ))
+
+<input type="hidden" name="main_type" value="customer_name">
 <input type="hidden" id="append-to" value="categoriesData">
 
+@else 
 
+<input type="hidden" name="main_type" value="category">
+<input type="hidden" id="append-to" value="categoriesData">
+@endif 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="categoriesData[]" required data-live-search="true" data-actions-box="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" id="categoriesData" multiple>

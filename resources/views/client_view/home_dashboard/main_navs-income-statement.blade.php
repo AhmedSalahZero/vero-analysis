@@ -38,12 +38,10 @@
                 
                 
                 "><span class="kt-menu__link-text 
-                
-                
                   @if($active == 'interval_dashboard')
                    active-text
                     @endif 
-                    ">{{__("Interval Comparing Dashboard")}}</span></a>
+                    ">{{__("Income Statement Comparing")}}</span></a>
         </li>
 
     </ul>

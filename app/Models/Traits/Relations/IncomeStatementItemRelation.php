@@ -23,14 +23,20 @@ trait IncomeStatementItemRelation
             'income_statement_id'
         );
     }
-    public function subItems(): BelongsToMany
+    public function subItems($incomeStatementId = null): BelongsToMany
     {
         return $this->belongsToMany(
             IncomeStatement::class,
             'income_statement_main_item_sub_items',
             'income_statement_item_id',
             'income_statement_id'
-        )->withPivot(['sub_item_name', 'payload', 'is_depreciation_or_amortization'])
+        )
+        // pass 0 for all sub items
+        ->when($incomeStatementId , function($q) use ($incomeStatementId){
+            $q->where('income_statements.id',$incomeStatementId);
+        })
+        ->withPivot(['sub_item_name', 'payload', 'is_depreciation_or_amortization'])
+        
             // ->wherePivot('sub_item_name', '!=', null)
         ;
     }

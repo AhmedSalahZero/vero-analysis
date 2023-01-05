@@ -92,7 +92,6 @@ class IntervalsComparingReport
         
          
 
-                        // dd();
         $dates = [
             'start_date_one' => date('d-M-Y',strtotime($start_date_one)),
             'end_date_one' => date('d-M-Y',strtotime($end_date_one)),
@@ -155,7 +154,6 @@ class IntervalsComparingReport
             // ,'count_result_for_interval_three'
             ));
         }else{
-            // dd('q');
             
             return ['result_for_interval_one' => $result_for_interval_one,
                     'result_for_interval_two' => $result_for_interval_two,

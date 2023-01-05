@@ -73,7 +73,6 @@ class AllocationsReport
                     'number_of_items' => $request->add_new_items  == 1 ? $request->number_of_items : 0,
                 ]);
             }
-// dd(Request()->all());
             // existing_products_allocation_base
 
             // if($request)
@@ -99,7 +98,6 @@ class AllocationsReport
         $allocations_setting = AllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  = getNumberOfProductsItems($company->id) ;
-        // dd($allocations_setting->number_of_items);
             if (($request->isMethod('POST') 
             || (! $allocations_setting->add_new_items)
             // || (! $hasNewProductsItems 
@@ -108,8 +106,7 @@ class AllocationsReport
              )) {
             foreach ((array)$request->allocation_base_data as $product => $data) {
                 $total = array_sum($this->finalTotal($data));
-                // dd($request->allocation_base_data);
-                // dd($total);
+      
                 // existing_custom
                 if ($total != 100) {
 
@@ -120,23 +117,20 @@ class AllocationsReport
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Percentages Must be 100%'
             ]);
-            // dd('tood');
             $allocation_base_data = $request->allocation_base_data;
-            // dd($allocation_base_data);
+
             Cache::forever(getCacheKeyForFirstAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
                         $index = substr($base, strpos($base, "new_item_") + 9);
                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
-                        // dd($name_of_new_allocation_base);
                         $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]);
                         unset($allocation_base_data[$product_item_name][$base]);
                     }
                 }
             }
    
-            // dd($allocation_base_data ,$request->new_allocation_base_items );
             NewProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
                 [
@@ -188,7 +182,6 @@ class AllocationsReport
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Modified Sales Percentages Must be 100%'
             ]);
-            // dd($request->all());
              ExistingProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
 
@@ -202,7 +195,6 @@ class AllocationsReport
             );
             return redirect()->route('new.product.seasonality', $company);
         }
-        // dd('d');
         $existing_allocations_base = ExistingProductAllocationBase::company()->first();
         $allocations_base_row = NewProductAllocationBase::company()->first();
         $sales_forecast = SalesForecast::company()->first();
@@ -339,7 +331,6 @@ class AllocationsReport
 
     public function NewProductsSeasonality(Request $request, Company $company, $result = 'view')
     {
-        // dd('e');
         if ($request->isMethod('POST')) {
             return redirect()->route('second.allocations', $company);
         }
@@ -388,7 +379,6 @@ class AllocationsReport
         if (count($products_seasonality) > 0) {
             foreach ($allocation_data_per_allocation_base as $base_item => $products_data) {
                 foreach ($products_data as $product_name => $product_data) {
-// dd($products_data);
                     $sales_target_value = $product_data['target'];
                     $seasonality = $product_data['seasonality'];
                     $seasonality_data = $product_data['seasonality_data'];
@@ -415,7 +405,6 @@ class AllocationsReport
 
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
-        // dd($result , get_defined_vars());
         if ($result == 'view') {
             return view('client_view.forecast.new_product_seasonality', compact(
                 'new_products_allocations',

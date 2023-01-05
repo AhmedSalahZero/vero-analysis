@@ -79,9 +79,7 @@
     <script>
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
      const sales_rate_maps = JSON.parse(sales_rates_maps) ;
-     function getKeyByValue(object, value) {
-  return Object.keys(object).find(key => object[key] === value);
-}
+  
 
     </script>
 
@@ -120,6 +118,11 @@
                 {{ $interval }}
             </th>
             @endforeach 
+            <div hidden type="hidden" id="cols-counter" data-value="0"> </div>
+            <script>
+                countHeadersInPage('.main-table-class th','#cols-counter');
+            </script>
+            
         </tr>
 
     </x-slot>
@@ -149,9 +152,28 @@
   
  
     // Add event listener for opening and closing details
-     $(document).on('dblclick',function(){
-                formatDatesForInterval();
-            })
+
+
+            $(document).on('click','.filter-btn-class',function(e){
+            e.preventDefault();
+            const interval = $('select[name="interval_view"]').val();
+            // alert(interval);
+            $(document).trigger('click');
+			formatDatesForInterval(interval);
+
+			// let datatableInstance = $(this).data('datatable-id');
+			// $('#'+datatableInstance ).DataTable().ajax.reload(null,false);
+		});
+
+        	$(document).on('click',function(e){
+			// close opened custom modal [for filter and export btn]
+			let target = e.target ;
+			if(! $(target).closest('.close-when-clickaway').length && !  $(target).closest('.do-not-close-when-click-away').length)
+			{
+				$('.close-when-clickaway').addClass('d-none');
+			}
+		});
+
             
     $(document).on('click', '.trigger-child-row-1', function (e) {
     const parentId = $(e.target.closest('tr')).data('model-id');
@@ -206,7 +228,7 @@
                                 return elements ;
                             }
                             else if(row.isSubItem){
-                                return `<a data-is-subitem="1" class="d-block mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.income_statement_id}" data-target="#edit-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}">{{ __('Edit') }}</a> <a class="d-block text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}">{{ __('Delete') }}</a>`
+                                return `<a data-is-subitem="1" class="d-block mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.income_statement_id}" data-target="#edit-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</a> <a class="d-block text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Delete') }}</a>`
                             }
                             return '';
                         } ,
@@ -349,7 +371,7 @@
                             `
                             
                             
-                    <div class="modal fade" id="edit-sub-modal${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal fade" id="edit-sub-modal${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-lg">
       <div class="modal-header">
@@ -359,7 +381,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="edit-sub-item-form${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+        <form id="edit-sub-item-form${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
             
             <input type="hidden" name="income_statement_item_id"  value="${data.pivot.income_statement_item_id}">
             <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
@@ -378,7 +400,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-        <button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.income_statement_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}">{{ __('Edit') }}</button>
+        <button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.income_statement_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</button>
       </div>
     </div>
   </div>
@@ -391,7 +413,7 @@
                             `
                             
                             
-                    <div class="modal fade" id="delete-sub-modal${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal fade" id="delete-sub-modal${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-lg">
       <div class="modal-header">
@@ -401,7 +423,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="delete-sub-item-form${data.pivot.income_statement_item_id+data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+        <form id="delete-sub-item-form${data.pivot.income_statement_item_id+data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
             
             <input type="hidden" name="income_statement_item_id"  value="${data.pivot.income_statement_item_id}">
             <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
@@ -413,7 +435,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-        <button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.income_statement_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-')}" >{{ __('Delete') }}</button>
+        <button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.income_statement_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" >{{ __('Delete') }}</button>
       </div>
     </div>
   </div>
@@ -915,7 +937,7 @@ function updateEarningBeforeTaxes(date)
     let earningBeforeTaxesIdRow = $('.main-with-no-child[data-model-id="'+ earningBeforeTaxesId +'"]');
     let earningBeforeInterstTaxesValueAtDate = $('.main-with-no-child[data-model-id="'+ earningBeforeInterstTaxesId +'"]').find('td.date-'+date).next('input').val();
     let financialIncomeOrExpensesValueAtDate = $('.is-main-with-sub-items[data-model-id="'+ financialIncomeOrExpensesId +'"]').find('td.date-'+date).next('input').val();
-    earningBeforeTaxesAtDate = earningBeforeInterstTaxesValueAtDate-financialIncomeOrExpensesValueAtDate ;
+    earningBeforeTaxesAtDate = parseFloat(earningBeforeInterstTaxesValueAtDate)+ parseFloat(financialIncomeOrExpensesValueAtDate) ;
     earningBeforeTaxesIdRow.find('td.date-'+date).html(number_format(earningBeforeTaxesAtDate));
     earningBeforeTaxesIdRow.find('td.date-'+date).next('input').val(earningBeforeTaxesAtDate).trigger('change');
     updateNetProfit(date);
@@ -1128,19 +1150,199 @@ function updatePercentageOfSalesFor(rowId , date,mainRowIsSub = true){
     $('.main-with-no-child.is-sales-rate[data-model-id="'+rateMainRowId+'"]').find('input[data-date="'+ date +'"]').val(salesPercentage);
     $('.main-with-no-child.is-sales-rate[data-model-id="'+rateMainRowId+'"]').find('td.date-'+date).html(number_format(salesPercentage,2) +' %');
 
-}
+}                      
+                   
+                       function formatDatesForInterval(intervalName){
+                           const table = $('.main-table-class').DataTable();
+                                const noCols = $('#cols-counter').data('value') ;
+                                // console.log();
+                                // console.log($('#cols-counter').val());
+                                // let noCols = parseInt() ;
+                                // alert(noCols);
+                                for(index=0 ; index< noCols ; index++){
+                                    
+                                    var column = table.column(index);
+                                    
+                                    column.visible(true);
+                                
+                                }
+                                
+                           const firstDateColumn = $('td.editable-date').eq(0);
+                           salesGrowthRateId = $('#sales-growth-rate-id').val();
+                           salesRevenueId = $('#sales-revenue-id').val();
+                           var visiableHeaderDates = [];
+                           
+                           const allYears = getYearsFromDates(dates) ;
+
+                           const firstDateColumnIndex = $(firstDateColumn).index() ;
+
+                           let firstDateString = $(firstDateColumn).attr("class").split(/\s+/).filter(function(classItem)
+                           {
+                                return classItem.startsWith('date-');
+                            })[0] ;
+                           var firstDate = firstDateString.split('date-')[1];
+                           var year = firstDate.split('-')[0];
+                           var month = firstDate.split('-')[1];
+                           var day = firstDate.split('-')[2];
+                           let hideColumnsFromMonthMapping = {
+                               quarterly:{
+                                   12:["11","10"],
+                                   11:["10"],
+                                   10:[],
+                                   "09":["08","07"],
+                                   "08":["07"],
+                                   "07":[],
+                                   "06":["05","04"],
+                                   "05":["04"],
+                                   "04":[],
+                                   "03":["02","01"],
+                                   "02":["01"],
+                                   "01":[]
+                               },
+                               "semi-annually":{
+                                   12:["11","10","09","08","07"],
+                                   11:["10","09","08","07"],
+                                   10:["09","08","07"],
+                                   "09":["08","07"],
+                                   "08":["07"],
+                                   "07":[],
+                                   "06":["05","04","03","02","01"],
+                                   "05":["04","03","02","01"],
+                                   "04":["03","02","01"],
+                                   "03":["02","01"],
+                                   "02":["01"],
+                                   "01":[],
+                               },
+                               "annually":{
+                                   12:["11","10","09","08","07","06","05","04","03","02","01"],
+                                   11:["10","09","08","07","06","05","04","03","02","01"],
+                                   10:["09","08","07","06","05","04","03","02","01"],
+                                   "09":["08","07","06","05","04","03","02","01"],
+                                   "08":["07","06","05","04","03","02","01"],
+                                   "07":["06","05","04","03","02","01"],
+                                   "06":["05","04","03","02","01"],
+                                   "05":["04","03","02","01"],
+                                   "04":["03","02","01"],
+                                   "03":["02","01"],
+                                   "02":["01"],
+                                   "01":[],
+                               }
+                           };
+
+                        //     const intervalMaps = {
+                        //        quarterly:{
+                        //            "01":"03",
+                        //            "02":"03",
+                        //            "03":"03" ,  
+                        //            "04":"06",
+                        //            "05":"06",
+                        //            "06":"06" ,
+                        //            "07":"09",
+                        //            "08":"09",
+                        //            "09":"09",
+                        //            "10":"12",
+                        //            "11":"12",
+                        //            "12":"12" 
+                        //        }
+                        //    }
+
+                        //    let visiableTdDates = [];
+                           
+                     
+                           let totalOfVisisableDates = [];
+                                let hiddenColumnsAtInterval = hideColumnsFromMonthMapping[intervalName] ;
+                                let monthsKeys = orderObjectKeys(hiddenColumnsAtInterval)
+                               for(loopMonth of monthsKeys){
+
+                               let loopMonths = hideColumnsFromMonthMapping[intervalName][loopMonth];
+                                var currentYear = date.split('-')[0];
+                                var currentMonth = date.split('-')[1];
+                                var currentDay = date.split('-')[2];
+                                allYears.sort().reverse();
+                           
+                                // hide columns 
+                                for(loopYear of allYears ){
 
 
-                       function formatDatesForInterval(){
-                        //    const table = $('.main-table-class').DataTable();
-                        //    const firstDateColumnIndex = $('td.editable-date:first-of-type')[0];
-                        //    let firstDate = $(firstDateColumnIndex).attr("class").split(/\s+/).filter(function(classItem)
-                        //    {
-                        //         return classItem.startsWith('date-');
-                        //     })[0] ;
-                        //     console.log(firstDate);
-                        //    const columnsToHide = table.column(6);
-                        //    columnsToHide.visible(!columnsToHide.visible());
+                                    for(removeMonth of loopMonths){
+                                        currentColumn = $('th.date-'+ loopYear+'-'+removeMonth +'-'+currentDay) ;
+                                                
+                                       if($('td.date-'+loopYear+'-'+loopMonth+'-'+currentDay).length){
+                                                    if(!visiableHeaderDates.includes(loopYear+'-'+loopMonth+'-'+currentDay)){
+                                                        visiableHeaderDates.push(loopYear+'-'+loopMonth+'-'+currentDay);                            
+                                                    }
+                                                for(rowId = 1 ; rowId <= $('tbody tr').length ; rowId ++ ){
+                                                    currentRow = $('tbody tr:nth-of-type('+ rowId +')') ;
+                                                    // rowId = currentRow.find('.is-name-cell').html();
+                                                var searchRowValue = -1  ;
+                                                if(totalOfVisisableDates[rowId] && totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay] && totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay]['value'] ){
+                                                    searchRowValue = totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay]['value'] ;
+                                                }
+                                                if(searchRowValue >= 0)
+                                                {
+                                                     totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay]['value'] +=   parseFloat($('tbody tr:nth-of-type('+ rowId +') td.editable-date.date-'+loopYear+'-'+removeMonth+'-'+currentDay).next('input').val());
+                                                
+                                                }
+                                                else{
+
+                                                    if(totalOfVisisableDates[rowId] && totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay] && totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay]){
+                                                        
+                                                        totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay] = {
+                                                            value:parseFloat($('tbody tr:nth-of-type('+ rowId +')  td.editable-date.date-'+loopYear+'-'+loopMonth+'-'+currentDay).next('input').val()) + parseFloat($('tbody tr:nth-of-type('+ rowId +')  td.editable-date.date-'+loopYear+'-'+removeMonth+'-'+currentDay).next('input').val())
+                                                        }  
+
+                                                    }
+                                                    else{
+
+                                                        if(!totalOfVisisableDates[rowId]){
+                                                            totalOfVisisableDates[rowId] = {
+                                                            [loopYear+'-'+loopMonth+'-'+currentDay] : {
+                                                                value:parseFloat($('tbody tr:nth-of-type('+ rowId +') td.editable-date.date-'+loopYear+'-'+loopMonth+'-'+currentDay).next('input').val()) + parseFloat($('tbody tr:nth-of-type('+ rowId +')  td.editable-date.date-'+loopYear+'-'+removeMonth+'-'+currentDay).next('input').val())
+                                                            } 
+                                                        }
+
+                                                        }
+                                                        else{
+                                                            totalOfVisisableDates[rowId][[loopYear+'-'+loopMonth+'-'+currentDay]] = {
+                                                                value:parseFloat($('tbody tr:nth-of-type('+ rowId +') td.editable-date.date-'+loopYear+'-'+loopMonth+'-'+currentDay).next('input').val()) + parseFloat($('tbody tr:nth-of-type('+ rowId +')  td.editable-date.date-'+loopYear+'-'+removeMonth+'-'+currentDay).next('input').val())
+                                                        }
+                                                        }
+
+                                                        
+
+                                                    }
+
+                                                }
+                                                if(currentRow.hasClass('is-sales-rate') ){
+
+                                                    // do nothing
+                                                 }
+                                                else{
+                                                    $('tbody tr:nth-of-type('+ rowId +')').find('td.editable-date.date-'+loopYear+'-'+loopMonth+'-'+currentDay).html(number_format(totalOfVisisableDates[rowId][loopYear+'-'+loopMonth+'-'+currentDay]['value']));
+                                                }
+                                                }
+                           
+
+                                                    columnsToHide = table.column(currentColumn);
+                                                   columnsToHide.visible(!columnsToHide.visible());  
+
+                                            
+
+                                            
+                                       }
+
+                                       
+                                                
+                                   
+                                    }
+                                    
+                                }
+                           }
+                                  updateSalesGrowthRate(visiableHeaderDates.sort());
+                                  updatePercentageRows(visiableHeaderDates);
+
+
+                       
 
                        };
 
@@ -1148,6 +1350,77 @@ function updatePercentageOfSalesFor(rowId , date,mainRowIsSub = true){
         </script>
 
         <script>
+            function updatePercentageRows(visiableHeaderDates   ){
+                var percentage = 0 ;
+                const salesRevenueId = $('#sales-revenue-id').val();
+                $('tr.is-sales-rate').each(function(index,isSalesRow){
+
+                       for(visiableHeaderDate of visiableHeaderDates){
+
+
+                           
+                    var currentRowId = $(isSalesRow).data('model-id');
+                      var parentId = getKeyByValue(sales_rate_maps,currentRowId);
+
+                    let parentRowValAtDate = parseFloat(number_unformat($('tbody tr[data-model-id="'+ parentId +'"]').find('td.date-'+ visiableHeaderDate ).html()));
+                    let salesRevenueAtDate = parseFloat(number_unformat($('tbody tr[data-model-id="'+ salesRevenueId +'"]').find('td.date-'+ visiableHeaderDate ).html()));
+                    if(salesRevenueAtDate){
+                        percentage = parentRowValAtDate  / salesRevenueAtDate * 100 
+                    }
+                    
+                    var number_formatted = number_format(percentage, 2 ) + ' %' ;
+                    $('tbody tr[data-model-id="'+ currentRowId +'"]').find('td.editable-date.date-'+visiableHeaderDate).html(number_formatted);
+
+                }
+                            
+                            
+
+                })
+                                       
+
+                                                    
+
+            }
+            function updateSalesGrowthRate(visiableHeaderDates){
+                const salesRevenueId = $('#sales-revenue-id').val();
+                const salesGrowthRateId = $('#sales-growth-rate-id').val();
+                for(visiableHeaderDate of visiableHeaderDates){
+                    previousDate = getPreviousElementInArray(visiableHeaderDates,visiableHeaderDate );
+                    if(previousDate){
+                        
+                        var currentSalesRevenueValue = number_unformat($('tbody tr[data-model-id="'+ salesRevenueId +'"] td.editable-date.date-'+visiableHeaderDate).html());
+                        var previousSalesRevenueValue = number_unformat($('tbody tr[data-model-id="'+ salesRevenueId +'"] td.editable-date.date-'+previousDate).html());
+                        if(previousSalesRevenueValue){
+                        $('tbody tr[data-model-id="'+ salesGrowthRateId +'"] td.editable-date.date-'+visiableHeaderDate).html(number_format((currentSalesRevenueValue -previousSalesRevenueValue) / previousSalesRevenueValue *100  , 2) + ' %');
+                        }
+                        else{
+                        $('tbody tr[data-model-id="'+ salesGrowthRateId +'"] td.editable-date.date-'+visiableHeaderDate).html(number_format(  0  , 2 ) + ' %');
+
+                        }
+
+                
+                    }
+                    else{
+                        $('tbody tr[data-model-id="'+ salesGrowthRateId +'"] td.editable-date.date-'+visiableHeaderDate).html(number_format(0 , 2) + ' %');
+                    }
+                }
+
+
+            }
+                 function getYearsFromDates(dates){
+                            years = [];
+                            for(date of dates){
+                                years.push(date.split('-')[0]);
+                            }
+                            return uniqueArray(years);
+                        }
+
+             function uniqueArray(a){
+     return a.filter(function(item, pos) {
+    return a.indexOf(item) == pos;
+});
+
+}
            
         </script>
 

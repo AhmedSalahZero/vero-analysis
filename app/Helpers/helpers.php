@@ -53,7 +53,6 @@ function array_unique_value(array $array , string $key)
 {
  
     $uniqueItems = [];
-    // dd($array);
     foreach($array as $arr)
     {
        foreach($arr as $ar)
@@ -530,6 +529,11 @@ function sortTwoDimensionalExcept(array &$arr  , array $exceptKeys)
 function getTypeFor($type,$companyId,$formatted=false , $date = false , $start_date = null , $end_date = null ){
    if($formatted)
    {
+       // 2022-03-22 
+       // start 01-01-2021
+       // end 01-01-2022 
+
+       
       return  DB::table('sales_gathering')->where('company_id', $companyId)
       ->when($date && $start_date,function(Builder $builder) use ($start_date){
           $builder->where('date','>=' , $start_date);
@@ -557,7 +561,6 @@ function getTypeFor($type,$companyId,$formatted=false , $date = false , $start_d
        
        
    }
-//    dd();
     //   return  DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type)->toArray(); ;
 }
 function getNumberOfProductsItems($companyId)
@@ -671,8 +674,6 @@ function getDateBetween(array $dates)
         }
             }
             else{
-                // dd($dates);
-                // dd(array_sum($dates));
                 $newDates = array_keys($dates) ;
                 $smallest = Carbon::make($newDates[0]) ?? null ;
                 $largest = Carbon::make($newDates[count($newDates) - 1 ]) ?? null ; 
@@ -1013,7 +1014,6 @@ function getCustomerNature(string $customerName , array $allDataArray)
     unset($allDataArray['totals']);
     foreach($allDataArray as $key=>$array)
     {
-        // dump($array);
         foreach($array as $type=>$arr)
         {
            foreach($arr as $ar)
@@ -1040,7 +1040,6 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers , $custo
         $userType = getCustomerNature($customerObject->customer_name , $customerNature);
         isset($dataFormatted[$userType]) ? $dataFormatted[$userType] = [
            'count'=>$dataFormatted[$userType]['count'] + 1 ,
-            // 'count'=>dd($dataFormatted[$userType]) ,
             'sales'=>$dataFormatted[$userType]['sales'] + $customerObject->val
         ]
          : $dataFormatted[$userType] = [
@@ -1057,7 +1056,6 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers , $custo
     //         unset($dataFormatted[$key]);
     //     }
     // }
-    // dd(array_sort_type($dataFormatted));
     return array_sort_type($dataFormatted);
     
 }
@@ -1343,7 +1341,6 @@ function hasTopAndBottom($type)
 
 function forecastHasBeenChanged($sales_forecast , array $newData )
 {
-// dd($sales_forecast , $newData);
 
     if(is_null($sales_forecast))
     {
@@ -1406,16 +1403,23 @@ function formatDateVariable($dates , $start_date , $end_date )
     {
         return $dates ; 
     }
-     
-    $start_date = Carbon::make($start_date);    
+    $start_date = Carbon::make($start_date);
+        
     $end_date = Carbon::make($end_date);    
+    // we will ignore day of end date
+    $dayOfEndDate = $end_date->day ;
+    $monthOfEndDate = $end_date->month ;
+    $yearOfEndDate = $end_date->year ;
+    // get last day in month and year
+    $end_date = Carbon::create($yearOfEndDate, $monthOfEndDate)->lastOfMonth()->format('Y-m-d');
+    $end_date = Carbon::make($end_date);
     $filteredDates = [];
     foreach($dates as $date )
     {
         $dateWithoutFormatting = $date ;
         $date = Carbon::make($date);
         if($date>=$start_date 
-        // && $date<= $end_date
+        && $date<= $end_date
         
          )
         {
@@ -1429,13 +1433,11 @@ function formatDateVariable($dates , $start_date , $end_date )
 
 function getTotalsOfTotal($reportArray)
 {
-    // dd($reportArray);
     $totalForEachItem = [] ; 
     foreach($reportArray  as $itemName => $data )
     {
     
         // sortSubItems($data);
-        // dd($data);
         foreach($data as $reportKey => $valueArr)
         {
            
@@ -1639,9 +1641,9 @@ function getCurrentCompanyId():int
 {
     return Request()->segment(2) ?? 31;
 }
-function getCurrentDateForFormDate($fieldName)
+function getCurrentDateForFormDate($fieldName , $format = 'm/d/Y')
 {
-    return old($fieldName) ?: date('m-d-Y') ;
+    return old($fieldName) ?: date($format) ;
 }
 function getCompanyId()
 {
@@ -1710,27 +1712,27 @@ function formatReportDataForDashBoard($data , $start_date , $end_date)
     $dates = generateDatesBetweenTwoDates(Carbon::make($start_date) , Carbon::make($end_date) , 'addMonth');
     
     $newData = [];
-    // dd($dates);
 
       foreach($data as $index => $mainItem)
     {
     foreach($dates as $date)
        {
+           
         $mainItemName = $mainItem->name ;
-                $newData[$mainItemName]['data'][$date] =getTotalInPivotDate($mainItem->subItems->pluck('pivot') , $date); 
-             
-    }
-                $newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->subItems->pluck('pivot'),$dates);
-                $newData[$mainItemName]['name'] = $mainItemName;
+        $newData[$mainItemName]['data'][$date] =getTotalInPivotDate($mainItem->subItems($mainItem->pivot->income_statement_id)->get()->pluck('pivot') , $date); 
+        }
+        if(isset($mainItemName)){
+                $newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->subItems($mainItem->pivot->income_statement_id)->get()->pluck('pivot'),$dates);
+            $newData[$mainItemName]['name'] = $mainItemName;
+
+        }
     }
 
     return $newData ; 
-    // dd($newData);
 }
 function getSubItemsFormatted($data ,$dates):array 
 {
     $subItems = [];
-    // dd($data);
     foreach($data as $pivot)
     {
         $subItemName = $pivot->sub_item_name;
@@ -1747,9 +1749,11 @@ function getSubItemsFormatted($data ,$dates):array
 }
 function array_sum_conditional($data , $dates)
 {
+    
     $total = 0 ;
     foreach($data as $date=>$value)
     {
+        
         if(in_array($date , $dates))
         {
             $total += $value ;  
@@ -1757,23 +1761,32 @@ function array_sum_conditional($data , $dates)
     }
     return $total  ;
 }
-function getTotalInPivotDate($pivot , $date)
+function getTotalInPivotDate($pivot , $date):array
 {
-    $total = 0 ;
+    
+    $totalWithDepreciation = 0 ;
+    $totalDepreciation = 0 ;
     foreach($pivot as $data)
     {
+        
         $payload = $data->payload ? (array)json_decode($data->payload) : null;
         if($payload && isset($payload[$date]) && $payload[$date])
         {
-            $total += $payload[$date];
+            $totalWithDepreciation += $payload[$date];
+            if($data->is_depreciation_or_amortization){
+                $totalDepreciation += $payload[$date];
+            }
         }
+      
     }
-    return $total ;
+    return [
+        'total_with_depreciation'=>$totalWithDepreciation ,
+        'total_depreciation'=>$totalDepreciation
+    ] ;
 }
 // function formatDataForBreakDown($array)
 // {
 //     $data = [];
-//     dd($array);
 //     foreach($array as $key => $values){
 //         foreach($values as $date => $value){
 //             $data[] = [
@@ -1785,17 +1798,24 @@ function getTotalInPivotDate($pivot , $date)
 //     }
 //     return $data ;
 // }
-function get_total_for_group_by_key(array $data , string $key)
+function get_total_for_group_by_key(array $data , string $key):array 
 {
-    $total = 0 ;
+    $totalWithDepreciation = 0 ;
+    $totalDepreciation = 0 ;
     foreach($data as $obj)
     {
+        
         if($obj['name'] == $key)
         {
-            $total += array_sum($obj['data']);
+                    $totalWithDepreciation += array_sum(array_column($obj['data'] , 'total_with_depreciation'));
+                    $totalDepreciation += array_sum(array_column($obj['data'] , 'total_depreciation'));
         }
     }
-    return $total;
+    
+    return [
+        'total_with_depreciation'=>$totalWithDepreciation ,
+        'total_depreciation'=>$totalDepreciation
+    ];
 }
 function format_for_chart($array )
 {

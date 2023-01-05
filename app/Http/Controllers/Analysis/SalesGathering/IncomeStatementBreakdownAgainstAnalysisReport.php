@@ -89,7 +89,6 @@ class IncomeStatementBreakdownAgainstAnalysisReport
         $report_count_data = [];
 
           $type = $request->type ;
-// dump($type);
 
             $dates = [
             'start_date' => date('d-M-Y',strtotime($request->start_date)),
@@ -98,18 +97,13 @@ class IncomeStatementBreakdownAgainstAnalysisReport
         
 
     
-              $view_name = $request->view_name ;
-  
-        //  ;
-        
-    //  dd();
-    $report_data = formatReportDataForDashBoard($incomeStatement->subItems,$dates['start_date'] , $dates['end_date']);
-    // dd($report_data);
-    $report_view_data = $report_data ;
-    return $report_view_data ;
-    $report_count_data = [];
-    // return view('client_view.reports.sales_gathering_analysis.breakdown.sales_report_income_statement',compact('report_count_data','type','view_name','dates','company','report_view_data'));
-    
+            //   $view_name = $request->view_name ;
+            $report_data = formatReportDataForDashBoard($incomeStatement->subItems->sortBy('id'),$dates['start_date'] , $dates['end_date']);
+            // dd($report_data);
+            
+            $report_view_data = $report_data ;
+            return $report_view_data ;
+            
 
     }
 

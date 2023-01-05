@@ -51,7 +51,13 @@ class ZoneAgainstAnalysisReport
         } elseif (request()->route()->named('zone.products.averagePrices')) {
             $type  = 'averagePrices';
             $view_name = 'Zones Products / Services Average Prices';
-        } elseif (request()->route()->named('zone.Items.averagePrices')) {
+        }
+        elseif (request()->route()->named('branch.products.averagePrices')) {
+            $type  = 'averagePrices';
+            $view_name = 'Branches Products / Services Average Prices';
+        }
+        
+         elseif (request()->route()->named('zone.Items.averagePrices')) {
             $type  = 'averagePricesProductItems';
             $view_name = 'Zones Products Items Average Prices';
         }
@@ -522,7 +528,7 @@ class ZoneAgainstAnalysisReport
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         
-        if(false !== $found =array_search('all',$request->main_data)){
+        if(false !== $found =array_search('all',(array)$request->main_data)){
             $data = SalesGathering::company()
                 ->whereNotNull($request->field)
                  ->when($start_date,function(Builder $builder) use ($start_date){

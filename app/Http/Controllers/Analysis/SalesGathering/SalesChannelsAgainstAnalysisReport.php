@@ -129,12 +129,10 @@ class SalesChannelsAgainstAnalysisReport
                      ->get() 
                     ->groupBy($type)->map(function($item)use($data_type){
                         return $item->groupBy('gr_date')->map(function($sub_item)use($data_type,$item){
-                            // dump($sub_item);
                             return 
                             $sub_item->sum('net_sales_value'); 
                         });
                     })->toArray();
-                    // dd($salesChannels_data);
            
 
                            $qq = DB::table('sales_gathering')

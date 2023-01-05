@@ -142,7 +142,6 @@ class CollectionController extends Controller
 
     public function collectionCalculation($targets,$collection_data)
     {
-            // dump();
 
         $collection = [];
         foreach ($targets as $date => $target) {
@@ -163,16 +162,7 @@ class CollectionController extends Controller
                 $main_date = $date ;
                           
                 $fullDate = '01-'.$month.'-'.$year ;
-                
-                // if($collection_data['a']['rate'] == $collection_data['b']['rate'] && $collection_data['b']['rate'] == 25)
-                // {
-                //     if($fullDate == '01-01-2022')
-                //     {
-
-                //          dump($daysNumber);
-                             
-                //     }
-                // }
+              
                 $collection[$fullDate] = ($target * $rate) + ($collection[$fullDate]??0) ;
                 
             }

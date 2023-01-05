@@ -98,9 +98,11 @@ class IncomeStatementController extends Controller
         $incomeStatementId = $request->get('income_statement_id');
         $incomeStatementItemId = $request->get('income_statement_item_id');
         $incomeStatement = IncomeStatement::find($incomeStatementId );
-        $incomeStatementItem = $incomeStatement->mainItems()->where('income_Statement_items.id',$incomeStatementItemId)->first();
+        $incomeStatementItem = $incomeStatement->mainItems()->wherePivot('income_statement_item_id',$incomeStatementItemId)->first();
         // dd($request->get('sub_item_name'));
-        $incomeStatementItem->subItems()->wherePivot('sub_item_name',$request->get('sub_item_name'))->updateExistingPivot( $incomeStatementId , [
+        $incomeStatementItem->subItems()->wherePivot('sub_item_name',$request->get('sub_item_name'))
+        ->wherePivot('income_statement_id',$incomeStatementId)
+        ->updateExistingPivot( $incomeStatementId , [
             'sub_item_name'=>$request->get('new_sub_item_name'),
             'income_statement_item_id'=>$request->get('sub_of_id'),
             'is_depreciation_or_amortization'=>$request->get('is_depreciation_or_amortization')
@@ -117,9 +119,9 @@ class IncomeStatementController extends Controller
          $incomeStatementId = $request->get('income_statement_id');
         $incomeStatementItemId = $request->get('income_statement_item_id');
         $incomeStatement = IncomeStatement::find($incomeStatementId );
-        $incomeStatementItem = $incomeStatement->mainItems()->where('income_Statement_items.id',$incomeStatementItemId)->first();
+        $incomeStatementItem = $incomeStatement->mainItems()->wherePivot('income_statement_item_id',$incomeStatementItemId)->first();
         // dd($request->get('sub_item_name'));
-        $incomeStatementItem->subItems()->wherePivot('sub_item_name',$request->get('sub_item_name'))->detach( $incomeStatementId);
+        $incomeStatementItem->subItems($incomeStatementId)->wherePivot('sub_item_name',$request->get('sub_item_name'))->detach( $incomeStatementId);
           return response()->json([
             'status'=>true ,
             'message'=>__('Item Has Been Deleted Successfully')

@@ -155,7 +155,6 @@ class IncomeStatementRepository implements IBaseRepository
             });
         });
 
-        // dd();
         // $dataWithRelations = $dataWithRelations->sortBy('id')->values();
         // dd($dataWithRelations);
         return [

@@ -132,7 +132,6 @@ class CustomersNaturesAnalysisReport
   
     public function result(Request $request, Company $company,$result='view')
     {
-        // dd('res');
         $report_data = [];
         $type = $request->type;
         $view_name = $request->view_name;
@@ -773,7 +772,6 @@ class CustomersNaturesAnalysisReport
     //         });
 
 
-    //             // dd($customers_years);
     //         $report_data = [
     //             'New' => [],
     //             'Repeating' => [],
@@ -1093,12 +1091,10 @@ class CustomersNaturesAnalysisReport
 
     //     }
 
-    //     dd($report_sales_values);
 
     //     // sales_values
     //     $items_totals_sales_values = $this->finalTotal([$report_sales_values]);
     //     // $main_type_items_totals
-    //     dd($items_totals_sales_values);
 
     //         arsort($report_totals_sales_values);
 

@@ -21,17 +21,7 @@ $TheMainSectionTitle = @explode('Sales', Request()->segments()[count(Request()->
                         @slot('table_body')
      
                             @foreach ($final_report_data as $zone_name => $zoone_data)
-                            {{-- @dd($zoone_data , $final_report_data) --}}
-                            {{-- @dd($zoone_data , $total_branches) --}}
-                              {{-- @if(!isset($zoone_data['Sales Values'][$date])) --}}
-                              {{-- @dd($total_branches) --}}
-                              {{-- @dd($total_branches , $zoone_data['Sales Values']   ,     ) --}}
-                              {{-- @else --}}
-                              {{-- @dump($total_branches) --}}
-                              {{-- @dump($loop->iteration   ,   count($final_report_data) , $date , $zoone_data['Sales Values']  ) --}}
-
-                              {{-- @endif  --}}
-{{-- @dd($total_branches)                               --}}
+                         
                               
                                 <tr class="group-color text-lg-left  ">
                                     <td colspan="{{ count($total_branches) + 2 }}"><b

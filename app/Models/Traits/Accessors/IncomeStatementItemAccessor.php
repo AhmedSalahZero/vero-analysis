@@ -26,7 +26,7 @@ trait IncomeStatementItemAccessor
         return $this->creator->name ?? __('N/A');
     }
     public function getSubItems(int $incomeStatementId):Collection{
-        return $this->subItems()->wherePivot('income_statement_id',$incomeStatementId)->get();
+        return $this->subItems($incomeStatementId)->wherePivot('income_statement_id',$incomeStatementId)->get();
     }
  
 }

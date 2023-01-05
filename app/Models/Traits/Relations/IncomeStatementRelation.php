@@ -26,12 +26,14 @@ trait IncomeStatementRelation
     }
     public function subItems(): BelongsToMany
     {
+        // income_statement_id = 10 
+        // income_statement_item_id = 11 ;
+        
         return $this->belongsToMany(
             IncomeStatementItem::class,
             'income_statement_main_item_sub_items',
             'income_statement_id',
             'income_statement_item_id'
         )->withPivot(['sub_item_name', 'payload', 'is_depreciation_or_amortization']);
-        // ->wherePivot('sub_item_name', '!=', null);
     }
 }

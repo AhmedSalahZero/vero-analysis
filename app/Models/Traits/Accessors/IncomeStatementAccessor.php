@@ -36,6 +36,7 @@ trait IncomeStatementAccessor
             $method = 'addMonth';
             $endDate = Carbon::make($this->start_from)->addMonths($this->duration - 1);
         }
+
         return \generateDatesBetweenTwoDates($startDate, $endDate, $method, 'M\'Y', false, 'Y-m-d');
     }
     public function hasMainRowPayload(int $incomeStatementItemId): bool

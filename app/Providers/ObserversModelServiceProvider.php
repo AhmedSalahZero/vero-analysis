@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 use App\Models\CustomersInvoice;
+use App\Models\IncomeStatement;
 use App\Observers\CustomersInvoiceObserver;
+use App\Observers\IncomeStatementObserver;
 use Illuminate\Support\ServiceProvider;
 
 class ObserversModelServiceProvider extends ServiceProvider
@@ -25,5 +27,6 @@ class ObserversModelServiceProvider extends ServiceProvider
     public function boot()
     {
         CustomersInvoice::observe(CustomersInvoiceObserver::class);
+        IncomeStatement::observe(IncomeStatementObserver::class);
     }
 }

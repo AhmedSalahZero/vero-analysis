@@ -42,15 +42,6 @@ trait IncomeStatementMutator
         $incomeStatement = IncomeStatement::find($request->input('income_statement_id'));
         $incomeStatementItemId = $request->input('income_statement_item_id');
 
-        // if($incomeStatement && !$incomeStatement->hasMainRowPayload($incomeStatementItemId))
-        // {
-        //         $incomeStatement->subItems()->attach( $incomeStatementItemId , [
-        //         'company_id'=>\getCurrentCompanyId(),
-        //         'creator_id'=>Auth::id(),
-        //         'is_depreciation_or_amortization'=>null,
-        //         'created_at'=>now()
-        //     ]);
-        // }
 
         foreach ((array)$request->sub_items as $index => $options) {
             if ($options['name']  && !$incomeStatement->subItems()->wherePivot('income_statement_item_id', $incomeStatementItemId)->wherePivot('sub_item_name', $options['name'])->exists()) {

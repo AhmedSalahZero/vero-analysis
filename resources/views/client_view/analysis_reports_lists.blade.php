@@ -44,7 +44,6 @@
                                     <a class="nav-link {{$section_key == 0 ? 'active' : ''}}" data-toggle="tab" href="#kt_widget2_tab1_content_{{$subSection->id}}" role="tab">
                                         <i
                                         class="kt-menu__ver-arrow {{ $subSection->icon }}"></i><span class="kt-menu__link-text">
-                                            {{-- @dump($subSection->name[lang()]) --}}
                                             {{$subSection->name[lang()]}}
                                             </span>
 
@@ -165,7 +164,6 @@
                                                         @endphp 
                                                         <div class="kt-widget2__info">
                                                             <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
-                                                                {{-- @dump($sub_section->name[lang()]) --}}
                                                                 {{$sub_section->name[lang()]}}
                                                             </a>
 
@@ -180,7 +178,6 @@
 
 
 
-                                        {{-- @dump('qqq  ') --}}
                                                 @if ($mainSubSection->name['en'] !== "Customers Nature" ||
                                                 ($mainSubSection->name['en'] == "Customers Nature" && false !== $found =  array_search('Customer Name',$viewing_names)) ||
                                                 ($mainSubSection->name['en'] == "Service Providers"  && (count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) >0))  )
@@ -246,7 +243,6 @@
                                                         @php $name_of_section = "Product Items Ranking"; @endphp 
                                                     @endif
 
-                                                    {{-- @dump($mainSubSection->name['en']) --}}
                                                     @if ((!isset($name_of_first_section) &&  false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) ||
                                                         ( isset($name_of_first_section) && (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) && (false !== $found =  array_search(\Str::singular($name_of_first_section),$viewing_names)) ) || ($sub_section->name['en'] =="Discounts Breakdown Analysis") ||
                                                         ($sub_section->name['en'] == "Customers Natures Analysis") || (  ($sub_section->name['en'] == "Discounts Sales Interval Comparing Analysis") && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0)) 
@@ -305,5 +301,4 @@
 @section('js')
 <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
-
 @endsection

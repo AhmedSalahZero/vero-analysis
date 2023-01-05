@@ -7,6 +7,7 @@ use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
 use App\Http\Controllers\FilterMainTypeBasedOnDatesController;
 use App\Http\Controllers\getUploadPercentage;
+use App\Http\Controllers\Helpers\DeleteSingleRecordController;
 use App\Http\Controllers\Helpers\EditTableCellsController;
 use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\RemoveCompanycontroller;
@@ -169,10 +170,8 @@ Route::group(
             ############  (TRUNCATE) ############
             Route::get('Truncate/{model}','DeletingClass@truncate')->name('truncate');
             Route::delete('DeleteMultipleRows/{model}','DeletingClass@multipleRowsDeleting')->name('multipleRowsDelete');
-
-
-
-
+            Route::delete('delete-model',[DeleteSingleRecordController::class , '__invoke'])->name('delete.model');
+            
 
 
             ############ Inventory Links ############
@@ -219,7 +218,9 @@ Route::group(
                             Route::post('/'.$nameOfMainItem.'AgainstSalesDiscountAnalysis/Result',  $info['class_path'].'@'.$info['discount_result'])->name( $info['name'].'.salesDiscount.analysis.result');
                             // Average Prices Links
                             if (isset($info['avg_items'])) {
+                             
                                 foreach ($info['avg_items'] as $viewName => $avg_item) {
+                                    
                                     Route::get('/'. $nameOfMainItem.$viewName.'AveragePricesView',$info['class_path'].'@'.$info['against_view'])->name( $info['name'].'.'.$avg_item.'.averagePrices');
                                 }
                             }

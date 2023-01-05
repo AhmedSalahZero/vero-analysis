@@ -158,6 +158,10 @@ class RoutesDefinition
                         'BusinessSectors' => 'businessSectors',
                         'SalesDiscount' => 'salesDiscount',
                     ],
+                      'avg_items' => [
+                        'Products' => 'products',
+                        'ProductsItems' => 'Items',
+                    ],
                     'has_discount' => true,
                     'has_break_down' => true,
                 ],

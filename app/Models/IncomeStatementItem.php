@@ -10,6 +10,7 @@ class  IncomeStatementItem extends Model
 {
     use  IncomeStatementItemRelation, IncomeStatementItemAccessor;
     const PERCENTAGE_OF_SALES = '[ % Of Sales ]';
+    // must start from 1  not zero
     const SALES_REVENUE_ID = 1;
     const SALES_GROWTH_RATE_ID = 2;
     const COST_OF_GOODS_ID = 3;

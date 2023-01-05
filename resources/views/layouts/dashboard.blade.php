@@ -18,7 +18,8 @@
   		  {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
 		<!--begin::Fonts -->
-		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script src="{{ asset('custom/webfont.js') }}"></script>
+		{{-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script> --}}
 		<script>
 
 			var wto ;
@@ -165,6 +166,59 @@
 			<link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
 
 		<!--end::Global Theme Styles -->
+
+			<style>
+			.icon-lg{
+				font-size:1.75rem !important ;
+			}
+			.min-height-170px{
+				min-height:170px;
+			}
+			.cursor-pointer{
+				cursor: pointer ;
+			}
+			.first-subrow-last-td , .second-subrow-last-td{
+				text-align: right;
+			}
+		
+
+			.subtable-2-class{}
+			.subtable-1-class{}
+			.custom-export{
+z-index: 5;
+border-radius: 6px;
+background-color: #fff;
+position: relative;
+right: 163px;
+position: fixed !important;
+top: 276px;
+box-shadow: 0px 0px 50px 0px rgba(82, 63, 105, 0.1);
+padding-left:1.25rem;
+padding-right:1.25rem;
+width:300px;
+padding-bottom:20px;
+
+
+			}
+			@media(max-width:767px){
+				.custom-export{
+					z-index: 5;
+background-color: #fff;
+right: 30px;
+position: fixed !important;
+top: 215px;
+box-shadow: 0px 0px 50px 0px rgba(82, 63, 105, 0.1);
+width: 300px;
+width:200px;
+				}
+			}
+			@media (min-width: 768px){
+				.custom-export{
+					width:325px;
+				}
+			}
+		</style>
+
         <style>
 
 			.sharing-sign{
@@ -356,6 +410,14 @@ color: #0849A5;
 		</style>
 
 		<script>
+			function countHeadersInPage(selector,appendSelector)
+			{
+				
+				let elements = document.querySelectorAll(selector);
+				// console.log(appendSelector);
+				// console.log(document.querySelector(appendSelector));
+				document.querySelector(appendSelector).setAttribute('data-value', elements.length);
+			}
 			function getToken()
 			{
 				return document.getElementsByTagName('body')[0].getAttribute('data-token');
@@ -479,8 +541,8 @@ color: #0849A5;
 
 		<!-- end:: Page -->
 
-
-  			  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+				<script src="/custom/sweetalert.js" ></script>
+  			  {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
 
 		<!-- begin::Global Config(global config for global JS sciprts) -->
@@ -521,13 +583,48 @@ color: #0849A5;
         <!--begin:: Global Optional Vendors -->
         <script src="{{url('assets/vendors/general/jquery-form/dist/jquery.form.min.js')}}" type="text/javascript"></script>
         <script src="{{url('assets/vendors/general/block-ui/jquery.blockUI.js')}}" type="text/javascript"></script>
-        <script src="{{url('assets/vendors/general/owl.carousel/dist/owl.carousel.js')}}" type="text/javascript"></script>
+        {{-- <script src="{{url('assets/vendors/general/owl.carousel/dist/owl.carousel.js')}}" type="text/javascript"></script> --}}
         <script src="{{url('assets/vendors/general/bootstrap-datetime-picker/js/bootstrap-datetimepicker.min.js')}}" type="text/javascript"></script>
         <script src="{{url('assets/vendors/general/bootstrap-timepicker/js/bootstrap-timepicker.min.js')}}" type="text/javascript"></script>
         <script src="{{url('assets/vendors/general/bootstrap-daterangepicker/daterangepicker.js')}}" type="text/javascript"></script>
         <script src="{{url('assets/vendors/general/bootstrap-switch/dist/js/bootstrap-switch.js')}}" type="text/javascript"></script>
 
 <script>
+   function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
+}
+
+	function number_unformat(formattedNumber){
+		return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
+	}
+	function orderObjectKeys(myObj)
+	{
+		var keys= [];
+		for (k in myObj) {
+  if (myObj.hasOwnProperty(k)) {
+    keys.push(k);
+  }
+}
+keys.sort().reverse();
+
+return keys ; 
+	}
+
+	function getPreviousElementInArray(arr , key)
+	{
+		let previous = null ;
+		arr.forEach((x,i) => {
+		let prev = i > 0 ? arr[i - 1] : null;
+		let next = i < arr.length ? arr[i + 1] : null;
+		if(x == key){
+			previous = prev ; 
+			return ;
+		}
+		});
+
+		return previous;
+
+	}
 	function get_total_of_object(object,date)
 	{
 		let total = 0 ;
@@ -583,7 +680,7 @@ color: #0849A5;
 		<!--begin::Global Theme Bundle(used by all pages) -->
 		<script src="{{url('assets/js/demo4/scripts.bundle.js')}}" type="text/javascript"></script>
 		<!--begin::Page Scripts(used by this page) -->
-		<script src="{{url('assets/js/demo4/pages/dashboard.js')}}" type="text/javascript"></script>
+		{{-- <script src="{{url('assets/js/demo4/pages/dashboard.js')}}" type="text/javascript"></script> --}}
         {{-- @jquery --}}
         @toastr_js
         @toastr_render
@@ -767,9 +864,54 @@ function exportToExcel(xlsx){
 		</script>
 
 
+		
+		
+
+
+
 		@if(isset($company) && $company->id)
 		<script>
-			
+			$(document).on('click','.delete-record-btn',function(e){
+			e.preventDefault();
+			let modelName = $(this).data('model-name');
+			let recordId = $(this).data('record-id');
+			let tableId = $(this).data('table-id')
+
+								Swal.fire({
+					title: "{{ __('Are you sure?') }}",
+					text: "{{ __('You will not be able to revert this!') }}",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#d33',
+					cancelButtonColor: 'rgb(0, 36, 71)',
+					confirmButtonText: '{{ __("Yes,Delete It") }}',
+					preConfirm:function( ){
+						return {
+							'modelName':modelName ,
+							'recordId':recordId,
+							'tableId':tableId
+						}
+						;
+					}
+					}).then((result) => {
+					
+					if (result.isConfirmed) {
+						$.ajax({
+							url:"{{ route('delete.model',['company'=>$company->id]) }}",
+							data:{
+								"recordId":result.value.recordId,
+								'modelName':result.value.modelName ,
+								'tableId':result.value.tableId 
+							},
+							type:"delete",
+							success:function(response){
+								$('#'+response.tableId).DataTable().ajax.reload(null , false);
+							}
+						});	
+					}
+					})
+		});
+
 			$(document).on('change','.trigger-update-select-js',function(){
 				  clearTimeout(wto);
         wto = setTimeout(() => {
@@ -808,6 +950,7 @@ function exportToExcel(xlsx){
         }, getNumberOfMillSeconds());
 
 			});
+
 		</script>
 		@endif
 

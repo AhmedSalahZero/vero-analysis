@@ -171,9 +171,7 @@ class HomeController extends Controller
     //          return redirect()->back()->with('fail',__('Please Create Income Statement First'));
          
     //  }
-        // $incomeStatement = IncomeStatement::find(5);
 
-        $incomeStatementSubItems = $incomeStatement->subItems ;
 
         $currentMonthSales = DB::select(DB::raw(
             
@@ -386,6 +384,7 @@ class HomeController extends Controller
                 $top_data =[];
                 
              $incomeStatement = IncomeStatement::find($request->get('income_statement_id') ?: $incomeStatementID) ?: IncomeStatement::where('company_id',$company->id)->latest()->first();
+             
              if( $incomeStatement){
                 $breakdown_data = (new IncomeStatementBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,$incomeStatement,'array');
 

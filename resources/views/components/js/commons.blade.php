@@ -26,6 +26,7 @@ l
         return $('body').data('base-url')+'/'+ $('body').data('lang') +'/'+ $('body').data('current-company-id') ;
     }
 </script>
+{{-- 
 <script>
 
     $(document).on('change','select[id*="customer_id"]',function(event){
@@ -33,7 +34,6 @@ l
                        {
                              updateField(getBaseUrlToCompanyId() +'/helpers/updateBasedOnGlobalController?parentModelId='+$(this).val()
                             +'&parentModelName=Customer&selectedItem='+ $('#current_business_sector_id').data('value')
-                            // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                             +'&append_id=.business-sector-class[data-filter-type="'+ $(this).data('filter-type') + '"]' 
                             + '&isFullQuerySelector=1&add_new_item='+ $(this).data('add-new') +'&select_all='+ $(this).data('all') +'&childRelationName=businessSector&model_id=id&model_value=name')
                        }
@@ -45,7 +45,6 @@ l
                     {
                          updateField(getBaseUrlToCompanyId() +'/helpers/updateCitiesBasedOnCountry?country_id='+$(this).val()
                         +'&selectedItem='+ $('#current_state_id').data('state-id')
-                        // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                         +'&append_id=state_id'
                         + '&model_id=id&model_value=name_'+ $('body').data('lang'))
                         
@@ -57,8 +56,6 @@ l
                  $(document).on('change','select:visible[class*="revenue_business_line_class"]',function(event){
                     if($(this).val() && $(this).val() != 'Add New')
                     {
-                        // console.log($(this).closest('.repeater-class').repeaterVal());
-                       // if in repeater so the name attribute has numeric [0] 
 
                        let repeaterFieldIndex = $(this).attr('name').match(/\d+/) ;
                        if(repeaterFieldIndex)
@@ -74,7 +71,6 @@ l
                        {
                             updateField(getBaseUrlToCompanyId() +'/helpers/updateBasedOnGlobalController?parentModelId='+$(this).val()
                             +'&parentModelName=RevenueBusinessLine&selectedItem='+ $('#current_service_category_id').data('value')
-                            // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                             +'&append_id=.service_category_class[data-filter-type="'+ $(this).data('filter-type') + '"]' + prefix   
                             + '&isFullQuerySelector=1&add_new_item='+ $(this).data('add-new') +'&select_all='+ $(this).data('all') +'&childRelationName=serviceCategories&model_id=id&model_value=name')
                             
@@ -99,11 +95,10 @@ l
 
                          updateField(getBaseUrlToCompanyId() +'/helpers/updateBasedOnGlobalController?parentModelId='+$(this).val()
                         +'&parentModelName=ServiceCategory&selectedItem='+ $('#current_service_item_id').data('value')
-                        // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                         +'&append_id=.service_item_class[data-filter-type="'+ $(this).data('filter-type') + '"]' + prefix   
                         + '&isFullQuerySelector=1&add_new_item='+ $(this).data('add-new') + '&select_all='+ $(this).data('all') +'&childRelationName=serviceItems&model_id=id&model_value=name')
                     }
                 })
                 $('select[class*="revenue_business_line_class"]').trigger('change') ;
                 
-</script>
+</script> --}}

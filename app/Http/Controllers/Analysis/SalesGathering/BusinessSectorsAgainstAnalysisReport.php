@@ -231,12 +231,8 @@ class BusinessSectorsAgainstAnalysisReport
                                 $keys = array_flip(array_keys($report_data[$reportType][$dateName]['Avg. Prices']));
                                 // dd($report_data[$reportType][$dateName]['Avg. Prices']);
                                 $values = array_values($report_data[$reportType][$dateName]['Avg. Prices']);
-                                //  dump();
                                 $previousValue = isset($values[$keys[$datee]-1]) ? $values[$keys[$datee]-1] : 0 ;
-                            // dump($reportType);
-                            // dump($dateName);
-                            // dump($itemKey);
-                            // dd($report_data);
+                          
                             
                                 $report_data[$reportType][$dateName][$itemKey][$datee] =  $previousValue ? (($report_data[$reportType][$dateName]['Avg. Prices'][$datee] - $previousValue  )/ $previousValue)*100 : 0;
                           

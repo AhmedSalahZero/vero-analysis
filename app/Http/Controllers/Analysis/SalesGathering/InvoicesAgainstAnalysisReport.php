@@ -383,8 +383,6 @@ class InvoicesAgainstAnalysisReport
             {
             foreach($data as $intervalNumber=>$dataToArray)
             {
-                // dd(());
-                // dd($intervalNumber);
                 $ProductsItemNumber = count_array_values($dataToArray);
                 // $ProductsItemNumber = count(array_count_value_for_key($dataToArray  , 'product_items')); 
                 $InvoiceNumber = count(array_unique_value($dataToArray  , 'invoice_number')); 

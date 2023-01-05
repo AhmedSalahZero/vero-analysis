@@ -88,7 +88,7 @@
                             @foreach ($report_data as $zone_name => $zone_channels_data)
                                 <?php $chart_data = [];?>
                                 @if ($zone_name != 'Total' && $zone_name != 'Growth Rate %')
-                                {{-- @dump($zone_name) --}}
+                             
                                 <?php
                                     // $row_name = str_replace(' ', '_', $zone_name);
                                     // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);

@@ -53,7 +53,6 @@ class  IncomeStatement extends Model implements IBaseModel , IHaveAllRelations ,
     
     public static function getViewVars():array 
     {
-        // dd($companyId);
         $currentCompanyId =  getCurrentCompanyId();
         
         return [
@@ -83,7 +82,6 @@ class  IncomeStatement extends Model implements IBaseModel , IHaveAllRelations ,
     }
     public static function getReportViewVars(array $options = []):array 
     {
-        // dd($companyId);
         $currentCompanyId =  getCurrentCompanyId();
         
         return [
