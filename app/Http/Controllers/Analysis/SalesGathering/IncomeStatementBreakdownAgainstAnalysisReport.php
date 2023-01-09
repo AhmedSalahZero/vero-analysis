@@ -98,10 +98,13 @@ class IncomeStatementBreakdownAgainstAnalysisReport
 
     
             //   $view_name = $request->view_name ;
-            $report_data = formatReportDataForDashBoard($incomeStatement->subItems->sortBy('id'),$dates['start_date'] , $dates['end_date']);
+            $report_data = formatReportDataForDashBoard($incomeStatement->start_from ,$incomeStatement->subItems->sortBy('id'),$dates['start_date'] , $dates['end_date']);
+           
             // dd($report_data);
             
             $report_view_data = $report_data ;
+            // dd($report_data);
+            
             return $report_view_data ;
             
 

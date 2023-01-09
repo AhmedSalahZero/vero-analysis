@@ -595,6 +595,7 @@ color: #0849A5;
 }
 
 	function number_unformat(formattedNumber){
+		console.log(formattedNumber);
 		return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
 	}
 	function orderObjectKeys(myObj)
@@ -956,7 +957,9 @@ function exportToExcel(xlsx){
 
 <script>
 	
-	</script>		
+	</script>
+
+				
 	</body>
 
 	<!-- end::Body -->

@@ -20,6 +20,8 @@ l
 <script src="{{ url('assets/vendors/general/select2/dist/js/select2.full.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
 <script src="{{asset('assets/form-repeater.js')}}" type="text/javascript"></script>
+{{-- <script  type="text/javascript" src={{ asset('datatable_modify.js') }}></script> --}}
+
 <script>
     function getBaseUrlToCompanyId()
     {

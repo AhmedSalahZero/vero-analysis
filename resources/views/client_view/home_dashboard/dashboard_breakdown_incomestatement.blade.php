@@ -97,8 +97,10 @@ transform: translate(-50% , -50%);
                         <label>{{ __('Start Date') }}</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input type="date" name="start_date" required value="{{ $start_date }}"
-                                    max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
+                                <input type="date"  name="start_date" required value="{{ $start_date }}"
+                                    max="{{ date('Y-m-d') }}"
+                                    
+                                     class="form-control" placeholder="Select date" />
                             </div>
                         </div>
                     </div>
@@ -195,6 +197,7 @@ transform: translate(-50% , -50%);
                                   
                                     <input type="hidden" id="top_for_{{ $type }}"  value="{{ $top_data[$type]['item'] ?? '' }}">
                                     <input type="hidden" id="value_for_{{ $type }}"  value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
+                                    
 
                                     <div class="progress progress--sm">
                                         <div class="progress-bar kt-bg-{{$color}}" role="progressbar" style="width: 100%;" aria-valuenow="50"
@@ -568,6 +571,8 @@ transform: translate(-50% , -50%);
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+  
+
     @foreach ($types as $type )
         <script>
             am4core.ready(function() {
@@ -707,4 +712,6 @@ transform: translate(-50% , -50%);
         $('.custom_modal_parent').fadeOut(300);
     })
 </script>
+
+
 @endsection

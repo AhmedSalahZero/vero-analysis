@@ -1,8 +1,10 @@
-  <?
-
+  <?php 
+  namespace App ;
   
      public function cacheDeadCustomersForType()
     {
+        Cache::get();
+
         $newDeadForTypes = [];
         foreach($this->typesOfCaching as $typeToCache)
         {
@@ -43,11 +45,7 @@
                         else{
                              $newCustomersForTypes[$typeToCache] =$DeadCustomers ;
                         }
-
-
         
         }
-        
-
         return $newDeadForTypes ; 
     }
