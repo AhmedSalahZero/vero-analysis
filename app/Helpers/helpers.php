@@ -1763,7 +1763,7 @@ function yearAndMonthInArray(string $date , array $dates)
         }
         //  ;
     }
-    return true ;
+    return false  ;
 }
 function array_sum_conditional($data , $dates,$incomeStatementStartDate)
 {
@@ -1772,8 +1772,6 @@ function array_sum_conditional($data , $dates,$incomeStatementStartDate)
     $total = 0 ;
         foreach($data as $date=>$value)
     {
- 
-
         if(yearAndMonthInArray($date , $dates))
         {
             $total += $value ;  
@@ -1809,8 +1807,6 @@ function getTotalInPivotDate(string $incomeStatementStartDate , $pivot , $date):
         }
 
     }
-    // logger($totalWithDepreciation);
-    // dump($totalWithDepreciation);
     return [
         'total_with_depreciation'=>$totalWithDepreciation ,
         'total_depreciation'=>$totalDepreciation
@@ -1864,4 +1860,8 @@ function format_for_chart($array )
 function getIncomeStatementForCompany(int $companyId):Collection
 {
     return IncomeStatement::where('company_id',$companyId)->get();
+}
+function isProduction()
+{
+    return env('APP_ENV') == 'production';
 }

@@ -467,7 +467,6 @@ transform: translate(-50% , -50%);
                                                 @slot('table_body')
 
 
-{{-- {{ dd($reports_data[$type]['sub_items']) }} --}}
                                                      @php
                                                             $totalForAll =  array_sum($reports_data[$type]['sub_items']) ; 
                                                         @endphp

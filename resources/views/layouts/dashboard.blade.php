@@ -286,6 +286,10 @@ width:200px;
 			.w-48{
 				width:48%;
 			}
+			html body table tbody .bg-red2 , html body table tbody.bg-red2 * {
+				background-color:red !important;
+				color:red !important; 
+			}
 			.view-table-th{
 				text-align:center !important;
 				color:#fff !important; 
@@ -410,6 +414,9 @@ color: #0849A5;
 		</style>
 
 		<script>
+			function array_sum(array){
+				return array.reduce((partialSum,item)=>partialSum+item ,0)
+			}
 			function countHeadersInPage(selector,appendSelector)
 			{
 				
@@ -779,6 +786,8 @@ function exportToExcel(xlsx){
 		{
 			eachInRow += 1 ; 
 		}
+
+
 		let reportName = $('.kt-subheader__title').html().trim() || $('.kt-portlet__head-title').html().trim();
 
 		if(reportName)
@@ -833,9 +842,6 @@ function exportToExcel(xlsx){
         currentColumnHeaders = 'A'
         rows = ' ';
       
-		
-		// let calculatedLoanAmount = 'calculated here' ;
-		// let reportNameWithValues  = calculatedLoanAmount ? [reportName.slice(0, -1), ' = ' + calculatedLoanAmount, reportName.slice(-1)].join('') : reportName;
          rows += Addrow(1, [
 			 { k:'A', v:companyName }
 		 ]);

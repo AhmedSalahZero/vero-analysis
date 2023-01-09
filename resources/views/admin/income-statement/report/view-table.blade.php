@@ -39,7 +39,9 @@
         justify-content:flex-end ;
         margin-bottom:1rem;
     }
-    		.is-sales-rate, .is-sales-rate td{
+    		.is-sales-rate, .is-sales-rate td,
+            .is-sales-growth-rate , .is-sales-growth-rate td
+            {
 				background-color: #046187 !important;
 				color: white !important;
 			}
@@ -121,6 +123,10 @@
                 {{ $interval }}
             </th>
             @endforeach 
+            <th class="view-table-th header-th">
+                {{ __('Total') }}
+            </th>
+
             <div hidden type="hidden" id="cols-counter" data-value="0"> </div>
             <script>
                 countHeadersInPage('.main-table-class th','#cols-counter');
@@ -274,8 +280,25 @@
                         data:'order',
                         className:'sub-numeric-bg text-nowrap editable editable-date date-'+data[i]
                     
-                        })
+                        });
+
+
+                        
+                        
                     }
+
+                    columns.push(
+                            {
+                        render: function(d, b, row,setting) {
+             
+                        return 0
+                        
+                        } ,
+                        data:'order',
+                        className:'sub-numeric-bg text-nowrap total-row'
+                    
+                        })
+
                     
                      
 		// begin first table
@@ -344,6 +367,10 @@
 
                 ]
                 , createdRow: function(row, data, dataIndex, cells,x) {
+
+                        let salesGrowthRateId = $('#sales-growth-rate-id').val(); 
+
+                        var totalOfRowArray = [] ;
 
                     var incomeStatementId= data.isSubItem ? data.pivot.income_statement_id  : $('#model-id').val() ;
                     var incomeStatementItemId = data.isSubItem ? data.pivot.income_statement_item_id  : data.id ;
@@ -458,12 +485,19 @@
                             return classItem.startsWith('date-');
                         })[0];
                         filterDate = filterDate.split('date-')[1];
+                        totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))) ;
+                   
+
                         var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                         $(dateDt).after(hiddenInput);
                         $(hiddenInput).trigger('change');
                     });
+ 
 
                     $(cells).filter('.editable.editable-text').each(function(index,textDt){
+
+                                
+
                            var hiddenInput = `<input type="hidden" class="text-input-hidden"  name="incomeStatementItemName[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]" value="${$(textDt).html()}" > `;
                         $(textDt).after(hiddenInput);
                       })
@@ -476,14 +510,19 @@
                             $(row).addClass('main-with-no-child').attr('data-model-id',data.id);
                          
                                     $(cells).filter('.editable.editable-date').each(function(index,dateDt){
+                                        
                         var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem){
                             return classItem.startsWith('date-');
                         })[0];
                         filterDate = filterDate.split('date-')[1];
-
+                    
                         var hiddenInput = `<input type="hidden" name="valueMainRowWithoutSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                         $(dateDt).after(hiddenInput);
                     });
+
+                    
+                        // console.log('after');
+                        // console.log(totalOfRowArray);
                             let dependOn = JSON.parse(data.depends_on) ;
                             if(dependOn.length)
                             {
@@ -495,7 +534,21 @@
 
 
                            if(data.is_sales_rate){
-                                $(row).addClass('is-sales-rate');
+                                $(row).addClass('is-sales-rate ');
+                            }
+                         
+                             if(data.is_sales_rate || data.id == salesGrowthRateId){
+                                 if(data.id == salesGrowthRateId){
+                                    $(row).addClass('is-sales-growth-rate')
+                                 }
+                                $(row).addClass('is-rate');
+
+                                // $(row).find('td.total-row').html('-')
+                            }
+                            else{
+
+                                // $(row).find('td.total-row').html(number_format(array_sum(totalOfRowArray)))
+
                             }
 
                         }
@@ -512,6 +565,8 @@
                              
 
                         filterDate = filterDate.split('date-')[1];
+                        totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))) ;
+
                         var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                         $(dateDt).after(hiddenInput);
                     });
@@ -594,6 +649,19 @@
                     
                     ;
                     $(cells).filter(".editable").attr('contenteditable',true);
+
+
+
+                     if(data.is_sales_rate || data.id == salesGrowthRateId){
+                                $(row).find('td.total-row').html('-')
+                            }
+                            else{
+
+                                $(row).find('td.total-row').html(number_format(array_sum(totalOfRowArray)))
+
+                            }
+
+             
                     
 
                 },
@@ -620,7 +688,6 @@
                                 for(date of dates){
                                     $(mainRowWithSubItems).next('tr').find('input[data-date="' + date +'"]').trigger('change');   
                                 }
-                                
                         }
                         let options = '';
                         $('.is-main-with-sub-items').each(function(index,row){
@@ -1026,6 +1093,8 @@ function updateParentMainRowTotal(parentModelId,date)
     })
     parentElement.find('td.date-'+date).parent().find('input[data-date="'+date+'"]').val(total);
     parentElement.find('td.date-'+date).html(number_format(total));
+    updateTotalForRow(parentElement);
+
 }
 function updateGrossProfit(date)
 {
@@ -1038,6 +1107,25 @@ function updateGrossProfit(date)
     grossProfitAtDate = salesRevenueValueAtDate-costOfGoodsValueAtDate ;
     grossProfitRow.find('td.date-'+date).html(number_format(grossProfitAtDate));
     grossProfitRow.find('input[data-date="'+ date +'"]').val(grossProfitAtDate).trigger('change');
+    updateTotalForRow(grossProfitRow);
+    
+}
+function updateTotalForRow(row){
+    var total = 0;
+    console.log('all length');
+    console.log(row.find('input.editable-date').length);
+    row.find('input[data-date]').each(function(index,input){
+        console.log('val = ')
+        console.log($(input).val())
+        total += parseFloat($(input).val());
+    });
+    // alert
+    console.log('insert into ');
+    console.log($(row).find('td.total-row'));
+    $(row).find('td.total-row').html(number_format(total));
+
+
+    // $('.is-main-with-sub-items[data-model-id="'+ salesReveueId +'"]').each(()=>{})
 }
 
 $(document).on('click','.save-form',function(e){
