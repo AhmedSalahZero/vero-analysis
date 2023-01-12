@@ -60,8 +60,8 @@ transform: translate(-50% , -50%);
 @section('content')
 
 @php
-    $total_of_main_with_rows_with_depreciation = [0,0,0,0,0,0,0,0];
-    $total_of_main_with_rows_depreciation = [0,0,0,0,0,0,0,0];
+    // $total_of_main_with_rows_with_depreciation = [0,0,0,0,0,0,0,0];
+    // $total_of_main_with_rows_depreciation = [0,0,0,0,0,0,0,0];
     $earningBeforeTaxes = 0 ;
     $totalOfDepreactionAndAmortization = 0;
     
@@ -138,15 +138,16 @@ transform: translate(-50% , -50%);
                 </div>
                 <div class="kt-portlet__body  kt-portlet__body--fit">
                     <div class="row row-no-padding row-col-separator-xl">
-                     
-                        @foreach ($types as $index=>$type )
+                    
+                        @foreach ($types as $singleType=>$type )
                         @php
                             $color = 'primary';
+                            $currentIndex = array_search($singleType,array_keys($types)) ;
                         @endphp
                         
-                  
+                  {{-- @dd() --}}
                             <div 
-                            @if($index == 0 || $index == 1 || $index == 2 )
+                            @if($currentIndex == 0 || $currentIndex == 1 ||$currentIndex == 2 )
                             class="col-md-4"
                             @else 
                             class="col-md-3"
@@ -174,23 +175,23 @@ transform: translate(-50% , -50%);
                                            
                                             @endphp
                                             {{ number_format($total_of_each_group_with_depreciation) }} 
-                                        
-                                            @if($index == 0)
+                                           
+                                            @if($singleType == __('Sales Revenue'))
                                              @php
                                                  $total_of_sales_revenue =  $total_of_each_group_with_depreciation ; 
                                              @endphp
                                             @endif 
-                                                @if($index != 0)
+                                                @if($singleType != __('Sales Revenue'))
                                                 <span style="color:black !important;">
                                                     [ {{ $total_of_sales_revenue ? number_format($total_of_each_group_with_depreciation / $total_of_sales_revenue  *100 , 2  ) . ' %' : 0 }} ]
                                                 </span>
-
                                             @endif 
                                             @php
-                                                $total_of_main_with_rows_with_depreciation[$index] = $total_of_each_group_with_depreciation ;
-                                                $total_of_main_with_rows_depreciation[$index] = $total_of_each_group_depreciation ;
+                                                $total_of_main_with_rows_with_depreciation[$singleType] = $total_of_each_group_with_depreciation ;
+                                                $total_of_main_with_rows_depreciation[$singleType] = $total_of_each_group_depreciation ;
                                             @endphp
                                              
+                                                
 
                                             
                                     </div>
@@ -277,18 +278,32 @@ transform: translate(-50% , -50%);
 
                                     @if($idOfItem == 5)
                                                 @php
-                                               
-                                                    $totalOfSub = $total_of_main_with_rows_with_depreciation[0] - $total_of_main_with_rows_with_depreciation[1] ;
+                                                    $salesRevenue = $total_of_main_with_rows_with_depreciation[('Sales Revenue')] ?? 0 ;
+                                                    
+                                                    $costOfGoods = $total_of_main_with_rows_with_depreciation['Cost Of Goods / Service Sold'] ??0;
+
+                                                    $totalOfSub =  $salesRevenue- $costOfGoods   ;
 
                                                 @endphp
                                              
                                                 @endif 
                                                  @if($idOfItem == 13)
                                                  @php
+                                                 $salesRevenueWithDepreciation = $total_of_main_with_rows_with_depreciation[('Sales Revenue')] ??0 ;
+                                                 $costOfGoodsWithDepreciation = $total_of_main_with_rows_with_depreciation[('Cost Of Goods / Service Sold')]?? 0; 
+                                                //  $grossProfitWithDepreciation = $total_of_main_with_rows_with_depreciation[('Gross Profit')] ?? 0 ;
+                                                 $marketingExpensesWithDepreciation = $total_of_main_with_rows_with_depreciation[('Marketing Expenses')] ?? 0 ;
+                                                 $salesExpensesWithExpensesWithDepreciation = $total_of_main_with_rows_with_depreciation[('Sales Expenses')] ?? 0 ;
+                                                 $generalEXpensesWithDepreciation = $total_of_main_with_rows_with_depreciation['General Expenses'] ?? 0;
+                                                 $costOfGoodsRowDepreciation = $total_of_main_with_rows_depreciation['Cost Of Goods / Service Sold'] ?? 0 ;
+                                                 $grossProfitRowDepreciation = $total_of_main_with_rows_depreciation['Gross Profit'] ?? 0;
+                                                 $marketingExpensesDepreciation = $total_of_main_with_rows_depreciation['Marketing Expenses'] ?? 0;
+                                                 $salesExpensesDepreciation = $total_of_main_with_rows_depreciation['Sales Expenses'] ?? 0;
+                                                 $generalExpensesDepreciation = $total_of_main_with_rows_depreciation['General Expenses'] ?? 0;
+                                                    $totalOfDepreactionAndAmortization  = $salesRevenueWithDepreciation - $costOfGoodsWithDepreciation  - $marketingExpensesWithDepreciation - $salesExpensesWithExpensesWithDepreciation - $generalEXpensesWithDepreciation ;
+                                                    $totalDepreciation =  $costOfGoodsRowDepreciation  + $marketingExpensesDepreciation + $salesExpensesDepreciation + $generalExpensesDepreciation ;
 
-                                                     $totalOfDepreactionAndAmortization  = $total_of_main_with_rows_with_depreciation[0] - $total_of_main_with_rows_with_depreciation[1] - $total_of_main_with_rows_with_depreciation[2] - $total_of_main_with_rows_with_depreciation[3] - $total_of_main_with_rows_with_depreciation[4];
-                                                     $totalDepreciation =  $total_of_main_with_rows_depreciation[1] + $total_of_main_with_rows_depreciation[2] + $total_of_main_with_rows_depreciation[3] + $total_of_main_with_rows_depreciation[4] ;
-                                                     $totalOfSub = $totalOfDepreactionAndAmortization + $totalDepreciation
+                                                    $totalOfSub = $totalOfDepreactionAndAmortization + $totalDepreciation
 
 
                                                  @endphp
@@ -299,8 +314,6 @@ transform: translate(-50% , -50%);
                                                  @php
 
                                                      $totalOfSub = $totalOfDepreactionAndAmortization ;
-                                                     
-                                                                //    + $total_of_main_with_rows_depreciation[0] + $total_of_main_with_rows_depreciation[1] + $total_of_main_with_rows_depreciation[2] + $total_of_main_with_rows_depreciation[3] + $total_of_main_with_rows_depreciation[4];
                                                                    $earningBeforeIntresetAndTaxes = $totalOfSub ;
 
 
@@ -309,7 +322,8 @@ transform: translate(-50% , -50%);
 
                                                        @if($idOfItem == 19)
                                                  @php
-                                                     $totalOfSub = $earningBeforeIntresetAndTaxes  + $total_of_main_with_rows_with_depreciation[5];
+                                                 $generalExpensesWithDepreciation = $total_of_main_with_rows_with_depreciation['Finance Income/(Expenses)'] ?? 0  ;
+                                                     $totalOfSub = $earningBeforeIntresetAndTaxes  + $generalExpensesWithDepreciation;
                                                      $earningBeforeTaxes =$totalOfSub ; 
                                                  @endphp
                                                 @endif 
@@ -317,30 +331,19 @@ transform: translate(-50% , -50%);
                                                 
                                                        @if($idOfItem == 23)
                                                  @php
-                                                     $totalOfSub = $earningBeforeTaxes  - $total_of_main_with_rows_with_depreciation[6];
+                                                      $corportatTaxes = $total_of_main_with_rows_with_depreciation['Corporate Taxes'] ?? 0 ;
+                                                     $totalOfSub = $earningBeforeTaxes  - $corportatTaxes ;
                                                      
 
                                                  @endphp
                                                 @endif 
 
-
-
-                                                
-{{-- 
-                                              
-
-                                                  @if($idOfItem == 19)
-                                                {{ number_format($totalOfSub) }} [{{ number_format($totalOfSub / $total_of_main_with_rows_with_depreciation[0] * 100 , 2 ) . ' %' }}]
-                                                @endif 
-
-                                                @if($idOfItem == 23)
-                                                {{ number_format($totalOfSub ) }} [{{ number_format($totalOfSub / $total_of_main_with_rows_with_depreciation[0] * 100 , 2 ) . ' %' }}]
-                                                @endif  --}}
-
                                     <div class="kt-widget24__details">
                                         <span class="kt-widget24__stats kt-font-{{$totalOfSub >= 0 ? 'success' : 'danger'}}" style="font-size:1.75rem">
-                                                
-   {{ number_format($totalOfSub) }} [{{ $total_of_main_with_rows_with_depreciation[0] ? number_format($totalOfSub / $total_of_main_with_rows_with_depreciation[0] * 100 , 2 ) . ' %'  : 0 }}]
+                                                @php
+                                                  $totalWithDpreciationSalesRevenue = $total_of_main_with_rows_with_depreciation['Sales Revenue'] ?? 0 ;
+                                                @endphp 
+   {{ number_format($totalOfSub) }} [{{ $totalWithDpreciationSalesRevenue ? number_format($totalOfSub / $totalWithDpreciationSalesRevenue * 100 , 2 ) . ' %'  : 0 }}]
 
 
 
@@ -384,7 +387,7 @@ transform: translate(-50% , -50%);
             </div>
 
 
-        @foreach ($types as $index=>$type)
+        @foreach ($types as $singleType=>$type)
             <div class="col-sm-12 col-lg-6">
                 <div class="kt-portlet">
                     <div class="kt-portlet__head">
@@ -459,7 +462,7 @@ transform: translate(-50% , -50%);
                                                         <th>{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
                                                         <th>{{ __('Value') }}</th>
                                                         <th>{{ __('Perc.% / Total') }}</th>
-                                                             @if($index != 0)
+                                                             @if($singleType != __('Sales Revenue'))
                                                         <th>{{ __('Perc.% / Rev') }}</th>
                                                         @endif                                                     
                                                     </tr>
@@ -479,7 +482,7 @@ transform: translate(-50% , -50%);
                                                             {{-- {{ dd($item) }} --}}
                                                             <td class="text-center">{{number_format($item)}}</td>
                                                             <td class="text-center">{{$totalForAll ? number_format($item / $totalForAll * 100,2)  . ' %' : 0}}</td>
-                                                            @if($index != 0)
+                                                            @if($singleType != __('Sales Revenue'))
                                                             <td class="text-center">{{
                                                                 $total_of_sales_revenue ? number_format($item / $total_of_sales_revenue  * 100 , 2) . ' %' : 0
                                                                 }}</td>
@@ -494,7 +497,7 @@ transform: translate(-50% , -50%);
                                                      
                                                         <td>{{number_format($totalForAll)}}</td>
                                                         <td>100 %</td>
-                                                                @if($index != 0)
+                                                                @if($singleType != __('Sales Revenue'))
                                                         <td>100 %</td>
                                                       @endif
                                                     </tr>

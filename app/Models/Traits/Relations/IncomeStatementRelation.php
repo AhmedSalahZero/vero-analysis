@@ -36,4 +36,22 @@ trait IncomeStatementRelation
             'income_statement_item_id'
         )->withPivot(['sub_item_name', 'payload', 'is_depreciation_or_amortization']);
     }
+
+    public function mainRows($incomeStatementItemId=null): BelongsToMany
+    {
+        // income_statement_id = 10 
+        // income_statement_item_id = 11 ;
+        
+        return $this->belongsToMany(
+            IncomeStatementItem::class,
+            'income_statement_main_item_calculations',
+            'income_statement_id',
+            'income_statement_item_id'
+        )
+         ->when($incomeStatementItemId , function($q) use ($incomeStatementItemId){
+            $q->where('income_statement_items.id',$incomeStatementItemId);
+        })
+        ->withPivot(['payload','company_id','creator_id']);
+    }
+
 }

@@ -106,7 +106,7 @@ Route::group(
             Route::post('income-statement-report/update',[IncomeStatementController::class , 'updateReport'])->name('admin.update.income.statement.report');
             Route::post('income-statement-report/delete',[IncomeStatementController::class , 'deleteReport'])->name('admin.destroy.income.statement.report');
             Route::post('income-statement/storeReport',[IncomeStatementController::class , 'storeReport'])->name('admin.store.income.statement.report');
-            Route::get('export-income-statement-report' , 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
+            Route::post('export-income-statement-report' , 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
             Route::post('get-income-statement-report/{incomeStatement}','IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
 
 
@@ -136,6 +136,7 @@ Route::group(
                 Route::any('/salesPerson', 'HomeController@dashboardSalesPerson')->name('dashboard.salesPerson');
                 Route::any('/salesDiscount', 'HomeController@dashboardSalesDiscount')->name('dashboard.salesDiscount');
                 Route::any('/intervalComparing', 'HomeController@dashboardIntervalComparing')->name('dashboard.intervalComparing');
+                Route::any('/incomeStatementIntervalComparing', 'HomeController@dashboardIncomeStatementIntervalComparing')->name('dashboard.intervalComparing.incomeStatement');
             });
 
 

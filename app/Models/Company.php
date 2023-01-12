@@ -41,4 +41,10 @@ class Company extends Model implements HasMedia
     {
         return $this->hasOne(CustomizedFieldsExportation::class)->where('model_name',$modelName);
     }
+
+    public function getName():string 
+    {
+        return $this->name[App()->getLocale()];
+         
+    }
 }

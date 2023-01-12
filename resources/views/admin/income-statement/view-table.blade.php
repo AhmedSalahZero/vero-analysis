@@ -211,9 +211,11 @@
 
                     {
                         render: function(d, b, row) {
-                            return row['duration_type']
+                            return (row['duration_type']).capitalize()
                         } ,
-                        data:'order'
+                        data:'order',
+                        className:'text-center',
+
                     },
                     {
                         data: 'start_from' , searchable: false
@@ -345,7 +347,14 @@ function getSearchInputSelector(tableId)
         </script>
     </x-slot>
 @push('js')
-    
+    <script>
+        Object.defineProperty(String.prototype, 'capitalize', {
+  value: function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  },
+  enumerable: false
+});
+    </script>
 <script>
         $(function(){
                     $(document).on('click','.submit-modal-class:not(.copy-btn)',function(e){

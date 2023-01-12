@@ -38,6 +38,8 @@ trait IncomeStatementMutator
     }
     public function storeReport(Request $request)
     {
+        // dd();
+        
         // dd($request->all());
         $incomeStatement = IncomeStatement::find($request->input('income_statement_id'));
         $incomeStatementItemId = $request->input('income_statement_item_id');
@@ -67,27 +69,52 @@ trait IncomeStatementMutator
                 }
             }
         }
-        foreach ((array)$request->get('valueMainRowWithoutSubItems') as $incomeStatementId => $incomeStatementItems) {
-            $incomeStatement = IncomeStatement::find($incomeStatementId)->load('subItems');
+        // foreach ((array)$request->get('valueMainRowWithoutSubItems') as $incomeStatementId => $incomeStatementItems) {
+        //     $incomeStatement = IncomeStatement::find($incomeStatementId)->load('subItems');
 
-            foreach ($incomeStatementItems as $incomeStatementItemId => $payload) {
-                $incomeStatement->subItems()->wherePivot('sub_item_name', null)->where('income_statement_items.id', $incomeStatementItemId)->updateExistingPivot($incomeStatementItemId, [
-                    'payload' => json_encode($payload)
-                ]);
-            }
-        }
+        //     foreach ($incomeStatementItems as $incomeStatementItemId => $payload) {
+        //         $incomeStatement->subItems()->wherePivot('sub_item_name', null)->where('income_statement_items.id', $incomeStatementItemId)->updateExistingPivot($incomeStatementItemId, [
+        //             'payload' => json_encode($payload)
+        //         ]);
+        //     }
+        // }
         foreach ((array)$request->get('incomeStatementItemName') as $incomeStatementId => $incomeStatementItems) {
 
                   foreach ($values as $sub_item_origin_name => $payload) {
             $incomeStatement = IncomeStatement::find($incomeStatementId)->load('subItems');
 
             foreach ($incomeStatementItems as $incomeStatementItemId => $names) {
-                // dd();
                 $incomeStatement->subItems()->wherePivot('sub_item_name', array_keys($names)[0])->where('income_statement_items.id', $incomeStatementItemId)->updateExistingPivot($incomeStatementItemId, [
                     'sub_item_name'=>array_values($names)[0]
                 ]);
             }
                   }
+        }
+        // store autocaulated values
+        foreach((array)$request->valueMainRowThatHasSubItems as $incomeStatementId=>$incomeStatementItems){
+                        $incomeStatement = IncomeStatement::find($incomeStatementId)->load('mainRows');
+                        foreach($incomeStatementItems as $incomeStatementItemId=>$payload){
+                             $incomeStatement->mainRows($incomeStatementItemId)->detach($incomeStatementItemId);
+                              $incomeStatement->mainRows($incomeStatementItemId)->attach($incomeStatementItemId,[
+                                        'payload' => json_encode($payload),
+                                            'company_id' => \getCurrentCompanyId(),
+                                            'creator_id' => Auth::id(),
+                                ] , false );
+
+                        }   
+        }
+
+         foreach((array)$request->valueMainRowWithoutSubItems as $incomeStatementId=>$incomeStatementItems){
+                        $incomeStatement = IncomeStatement::find($incomeStatementId)->load('mainRows');
+                        foreach($incomeStatementItems as $incomeStatementItemId=>$payload){
+                             $incomeStatement->mainRows($incomeStatementItemId)->detach($incomeStatementItemId);
+                              $incomeStatement->mainRows($incomeStatementItemId)->attach($incomeStatementItemId,[
+                                        'payload' => json_encode($payload),
+                                            'company_id' => \getCurrentCompanyId(),
+                                            'creator_id' => Auth::id(),
+                                ] , false );
+
+                        }   
         }
         
         //     

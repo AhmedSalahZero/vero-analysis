@@ -263,18 +263,4 @@ class IncomeStatementRepository implements IBaseRepository
 
     }
 
-    public function export(Request $request): Collection
-    {
-        return $this->commonScope(
-            $request->replace(
-                array_merge($request->all(), [
-                    'format' => $request->get('format'),
-                ])
-            )
-        )
-            ->select(['income_statements.id', 'income_statements.created_at as join_at'])
-            ->get()->each(function ($incomeStatement) {
-                // $incomeStatement->name = $incomeStatement->getName();
-            });
-    }
 }

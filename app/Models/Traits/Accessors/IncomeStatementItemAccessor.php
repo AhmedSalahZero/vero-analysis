@@ -28,5 +28,16 @@ trait IncomeStatementItemAccessor
     public function getSubItems(int $incomeStatementId):Collection{
         return $this->subItems($incomeStatementId)->wherePivot('income_statement_id',$incomeStatementId)->get();
     }
+      public function getSubItemsPivot(int $incomeStatementId):Collection{
+        return $this->getSubItems($incomeStatementId)->pluck('pivot');
+    }
+
+
+    public function getMainRowsPivot(int $incomeStatementId):Collection{
+        return $this->mainRowsPivot($incomeStatementId)->wherePivot('income_statement_id',$incomeStatementId)->get()->pluck('pivot');
+    }
+  
+
+
  
 }

@@ -33,7 +33,7 @@
                     @endif 
 
         
-        " aria-haspopup="true"><a href="{{ route('dashboard.intervalComparing', $company) }}"
+        " aria-haspopup="true"><a href="{{ route('dashboard.intervalComparing.incomeStatement', $company) }}"
                 class="kt-menu__link 
                 
                 

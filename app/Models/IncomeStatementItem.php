@@ -4,7 +4,10 @@ namespace App\Models;
 
 use App\Models\Traits\Accessors\IncomeStatementItemAccessor;
 use App\Models\Traits\Relations\IncomeStatementItemRelation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Collection;
 
 class  IncomeStatementItem extends Model
 {
@@ -40,6 +43,24 @@ class  IncomeStatementItem extends Model
         'id'
     ];
 
+    public static function rateFieldsIds():array 
+    {
+        return [
+            self::SALES_GROWTH_RATE_ID,
+            self::COST_OF_GOODS_PERCENTAGE_OF_SALES_ID,
+            self::GROSS_PROFIT_PERCENTAGE_OF_SALES_ID,
+            self::MARKET_EXPENSES_PERCENTAGE_OF_SALES_ID,
+            self::SALES_AND_DISTRIBUTION_EXPENSES_PERCENTAGE_OF_SALES_ID,
+            self::GENERAL_EXPENSES_PERCENTAGE_OF_SALES_ID,
+            self::EARNING_BEFORE_INTEREST_TAXES_DEPRECIATION_AMORTIZATION_PERCENTAGE_OF_SALES_ID,
+            self::EARNING_BEFORE_INTEREST_TAXES_PERCENTAGE_OF_SALES_ID,
+            self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
+            self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
+            self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
+            self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+        ];
+    }
+
     public static function salesRateMap(): array
     {
         return [
@@ -54,7 +75,6 @@ class  IncomeStatementItem extends Model
             self::EARNING_BEFORE_TAXES_ID => self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
             self::CORPORATE_TAXES_ID => self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
             self::NEXT_PROFIT_ID => self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
-
         ];
     }
     // for database usage 
@@ -255,5 +275,56 @@ class  IncomeStatementItem extends Model
                 , 'is_sales_rate' => true
             ],
         ];
+    }
+
+    public static function formattedViewForDashboard(): array
+    {
+        return IncomeStatementItem::where('for_interval_comparing', 1)->pluck('name', 'id')->toArray();
+    }
+
+    public static function compareBetweenTowItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType): array
+    {
+
+        $firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType);
+        $secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
+        $firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
+        $secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
+        // dd($firstIntervalDate);
+        if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
+            return [
+                'second-interval#' . $secondIntervalDate => sum_each_key($secondItems),
+                'first-interval#' . $firstIntervalDate => sum_each_key($firstItems),
+            ];
+        } else {
+            return [
+                'first-interval#' . $firstIntervalDate => sum_each_key($firstItems),
+                'second-interval#' . $secondIntervalDate => sum_each_key($secondItems)
+            ];
+        }
+    }
+    public static function getItemsForInterval(Collection $items, array $dates, $intervalName): array
+    {
+        // $items must be a collection 
+        // dd($dates);
+
+        $firstDate = Carbon::make($dates[\array_key_first($dates)]);
+        $lastDate = Carbon::make($dates[\array_key_last($dates)]);
+
+        $filteredItems = [];
+
+        foreach ($items as $item) {
+            $payload = json_decode($item->payload);
+            foreach ($payload as $payloadDate => $payloadItem) {
+                $payloadDateFormatted = Carbon::make($payloadDate);
+                if ($intervalName == 'annually' && yearInArray($payloadDate, $dates)) {
+                    $filteredItems[$item->sub_item_name][$payloadDate] = $payloadItem;
+                } elseif (
+                    dateIsBetweenTwoDates($payloadDateFormatted, $firstDate, $lastDate)
+                ) {
+                    $filteredItems[$item->sub_item_name][$payloadDate] = $payloadItem;
+                }
+            }
+        }
+        return $filteredItems;
     }
 }

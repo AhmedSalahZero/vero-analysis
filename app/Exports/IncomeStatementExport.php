@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\IncomeStatement;
 use App\Models\QuickPricingCalculator;
 use App\Models\RevenueBusinessLine;
 use Illuminate\Contracts\Support\Responsable;
@@ -29,23 +30,24 @@ class IncomeStatementExport implements
 
 {
     use Exportable , RegistersEventListeners;
-    private Collection $quickPricingCalculators;
+    private Collection $exportData;
+    private IncomeStatement $incomeStatement;
 
     /**
      * @param Collection $products
      */
    
-    public function __construct(Collection $quickPricingCalculators , Request $request)
+    public function __construct(Collection $incomeStatementReport , Request $request , IncomeStatement $incomeStatement)
     {
         $this->writerType = $request->get('format') ;
-        $this->fileName = QuickPricingCalculator::getFileName(). '.'.getFileExtension($request->get('format'));
-        $this->quickPricingCalculators = $quickPricingCalculators;
+        $this->fileName = $incomeStatement->name. '.Xlsx';
+        $this->exportData = $incomeStatementReport;
+        $this->incomeStatement =$incomeStatement;
     }
 
     public function collection()
     {
-
-        return $this->quickPricingCalculators ;
+        return $this->exportData;
     }
 
     public function toResponse($request)
@@ -55,10 +57,14 @@ class IncomeStatementExport implements
 
     public function headings():array
     {
-        return [
-            [
+        $dates =$this->exportData->toArray()[array_key_first($this->exportData->toArray())];
+        //  dd(getCurrentCompany());
+         
+         $header = [
+              [
                 getCurrentCompany()->getName(),
-                QuickPricingCalculator::exportViewName(),
+                $this->incomeStatement->name,
+                __('IncomeStatement Report'),
                 getExportDateTime(),
                 getExportUserName()
                 
@@ -68,41 +74,42 @@ class IncomeStatementExport implements
                 '',
                 ''
                 
-            ],[
-            __('Id') ,
-            __('Revenue Business Line Name'),
-            __('Service Category Name'),
-            __('Service Item Name'),
-            __('Delivery Days'),
-            __('Total Recommend Price Without Vat'),
-            __('Total Recommend Price With Vat'),
-            __('Total Net Profit After Taxes'),
             ]
-        ];
+
+         ];
+
+         $headerItems  = [];
+         foreach($dates as $date=>$value)
+         {
+             $headerItems[] = $date ;
+         }
+         $header[] = $headerItems;
+         return $header ; 
     }
 
     public function map($row): array
     {
+        // dd($row);
+        return $row ;
 
-
-       return [
-           $row->getId(),
-           $row->getRevenueBusinessLineName(),
-           $row->getServiceCategoryName(),
-           $row->getServiceItemName(),
-           $row->getDeliveryDays(),
-           $row->getTotalRecommendPriceWithoutVatFormatted(),
-           $row->getTotalRecommendPriceWithVatFormatted(),
-           $row->getTotalNetProfitAfterTaxesFormatted(),
+    //    return [
+    //        $row->getId(),
+    //        $row->getRevenueBusinessLineName(),
+    //        $row->getServiceCategoryName(),
+    //        $row->getServiceItemName(),
+    //        $row->getDeliveryDays(),
+    //        $row->getTotalRecommendPriceWithoutVatFormatted(),
+    //        $row->getTotalRecommendPriceWithVatFormatted(),
+    //        $row->getTotalNetProfitAfterTaxesFormatted(),
            
-       ];
+    //    ];
     }
 
     public function registerEvents(): array
     {
         return [
             AfterSheet::class=>function(AfterSheet $afterSheet){
-            $afterSheet->sheet->getStyle('A1:Z2')->applyFromArray([
+            $afterSheet->sheet->getStyle('A1:Z3')->applyFromArray([
                 'font'=>[
                     'bold'=>true
                 ]
@@ -114,6 +121,7 @@ class IncomeStatementExport implements
 
     public function title(): string
     {
-        return RevenueBusinessLine::getFileName();
+        return $this->incomeStatement->name;
     }
+
 }

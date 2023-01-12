@@ -101,7 +101,6 @@
 	
 				$(document).find('select.select2-select').each(function(index,value){
 					let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0 ;
-					// alert(maxOption);
 						$(this).selectpicker({
 							  maxOptions: maxOption ,
 							//   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
@@ -115,6 +114,23 @@
          		 		// 	});
 
 				})
+
+					$(document).find('select.select2-select.select-all').each(function(index,value){
+					let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0 ;
+						$(this).selectpicker({
+							  maxOptions: maxOption ,
+							//   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
+							  buttons: ['selectMax', 'disableAll']
+						});
+						$(this).data('max-options',maxOption);
+						
+						$(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']' );
+						//  $(this).selectpicker({
+         		  		//    maxOptions:maxOption,
+         		 		// 	});
+
+				})
+
 				
 			}
 			
@@ -602,7 +618,6 @@ color: #0849A5;
 }
 
 	function number_unformat(formattedNumber){
-		console.log(formattedNumber);
 		return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
 	}
 	function orderObjectKeys(myObj)

@@ -1,6 +1,8 @@
 @php
     $tableId = 'kt_table_1';
 @endphp
+
+
 <style>
     /* table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before, table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before,
     .dataTables_wrapper table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td:first-child::before
@@ -30,7 +32,12 @@
     color: white !important;
 
  }
- .header-tr{
+ th.dtfc-fixed-left{
+         background-color: #074FA4 !important;
+    color: white !important;
+ }
+ .header-tr,
+ {
      background-color:#046187 !important;
  }
     .dt-buttons.btn-group{
@@ -215,7 +222,7 @@
         window['dates'] = data;
         const columns = [];
         columns.push( {
-                        data: 'order' , searchable: false
+                        data: 'id' , searchable: false
                         , orderable: false,
                         className:'trigger-child-row-1 cursor-pointer sub-text-bg' ,
                         render:function(d,b,row){
@@ -237,12 +244,15 @@
                                 return elements ;
                             }
                             else if(row.isSubItem){
-                                return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.income_statement_id}" data-target="#edit-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Delete') }}</a>`
+                                return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.income_statement_id}" data-target="#edit-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
+                                <i class="fas fa-trash-alt"></i>
+                                
+                                </a>`
                             }
                             return '';
                         } ,
-                        data:'order'
-                         ,className:'cursor-pointer sub-text-bg',
+                        data:'id'
+                         ,className:'cursor-pointer sub-text-bg d-flex justify-content-between',
                     });
                     columns.push({
                         render: function(d, b, row) {
@@ -253,7 +263,7 @@
                             return row['name']
                             
                         } ,
-                        data:'order',
+                        data:'id',
                         className:'sub-text-bg text-nowrap editable editable-text is-name-cell'  
                     });
                     for(let i = 0 ; i<data.length ; i++){
@@ -277,7 +287,7 @@
                         return 0
                         
                         } ,
-                        data:'order',
+                        data:'id',
                         className:'sub-numeric-bg text-nowrap editable editable-date date-'+data[i]
                     
                         });
@@ -294,7 +304,7 @@
                         return 0
                         
                         } ,
-                        data:'order',
+                        data:'id',
                         className:'sub-numeric-bg text-nowrap total-row'
                     
                         })
@@ -320,7 +330,10 @@
                 , "processing": false ,
                 "scrollX":true
                 , "ordering": false,
-                'paging':false
+                'paging':false,
+                "fixedColumns":{
+                     left: 3
+                }
                 , "serverSide": true,
                 "responsive":false
                 , "pageLength": 25
@@ -361,7 +374,14 @@
                         "text":  '<svg style="margin-right:10px;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect id="bound" x="0" y="0" width="24" height="24"/><path d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z" id="Path-103" fill="#000000" fill-rule="nonzero" opacity="0.3"/><rect id="Rectangle" fill="#000000" opacity="0.3" transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) " x="11" y="2" width="2" height="12" rx="1"/><path d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z" id="Path-104" fill="#000000" fill-rule="nonzero" transform="translate(12.000000, 2.500000) scale(1, -1) translate(-12.000000, -2.500000) "/></g></svg>' + '{{ __("Export") }}',
                         'className':'btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius ml-2 do-not-close-when-click-away',
                         "action":function(){
-                            $('#export_form-for-'+tableId.replace('#','')).toggleClass('d-none');
+                            let form = $('form#store-report-form-id'); 
+                            let oldFormAction = form.attr('action');
+                            let exportFormAction= "{{ route('admin.export.income.statement.report',$company->id) }}";
+                            form.attr('action',exportFormAction);
+                            form.submit();
+                            form.attr('action',oldFormAction);
+
+                            // $('#export_form-for-'+tableId.replace('#','')).toggleClass('d-none');
                         }
                     },
 
@@ -492,6 +512,10 @@
                         $(dateDt).after(hiddenInput);
                         $(hiddenInput).trigger('change');
                     });
+
+                     $(row).append(
+                        `<input type="hidden" class="input-hidden-for-total" name="subTotals[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  data-parent-model-id="${incomeStatementItemId}" value="0" >`
+                    );
  
 
                     $(cells).filter('.editable.editable-text').each(function(index,textDt){
@@ -520,9 +544,11 @@
                         $(dateDt).after(hiddenInput);
                     });
 
+                    $(row).append(`
+                        <input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]" value="0">
+                    `);
+
                     
-                        // console.log('after');
-                        // console.log(totalOfRowArray);
                             let dependOn = JSON.parse(data.depends_on) ;
                             if(dependOn.length)
                             {
@@ -542,12 +568,9 @@
                                     $(row).addClass('is-sales-growth-rate')
                                  }
                                 $(row).addClass('is-rate');
-
-                                // $(row).find('td.total-row').html('-')
                             }
                             else{
 
-                                // $(row).find('td.total-row').html(number_format(array_sum(totalOfRowArray)))
 
                             }
 
@@ -570,6 +593,9 @@
                         var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                         $(dateDt).after(hiddenInput);
                     });
+                    $(row).append(
+                        `<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]"  data-parent-model-id="${incomeStatementItemId}" value="0" >`
+                    );
 
                                $(cells).each(function(index,cell){
                             $(cell).removeClass('editable').removeClass('editable-text').attr('contenteditable',false)
@@ -656,9 +682,9 @@
                                 $(row).find('td.total-row').html('-')
                             }
                             else{
-
-                                $(row).find('td.total-row').html(number_format(array_sum(totalOfRowArray)))
-
+                                var totals = array_sum(totalOfRowArray) ;
+                                $(row).find('td.total-row').html(number_format(totals));
+                                $(row).find('.input-hidden-for-total').val(totals)
                             }
 
              
@@ -1017,6 +1043,7 @@ function updateNetProfit(date){
     netprofitAtDate = earningBeforeTaxesValueAtDate-corporateTaxesValueAtDate ;
     netProfitRow.find('td.date-'+date).html(number_format(netprofitAtDate));
     netProfitRow.find('td.date-'+date).parent().find('input[data-date="'+date+'"]').val(netprofitAtDate).trigger('change');
+    updateTotalForRow(netProfitRow);
 }
 function updateEarningBeforeTaxes(date)
 {
@@ -1029,6 +1056,7 @@ function updateEarningBeforeTaxes(date)
     earningBeforeTaxesAtDate = parseFloat(earningBeforeInterstTaxesValueAtDate)+ parseFloat(financialIncomeOrExpensesValueAtDate) ;
     earningBeforeTaxesIdRow.find('td.date-'+date).html(number_format(earningBeforeTaxesAtDate));
     earningBeforeTaxesIdRow.find('td.date-'+date).parent().find('input[data-date="'+date+'"]').val(earningBeforeTaxesAtDate).trigger('change');
+     updateTotalForRow(earningBeforeTaxesIdRow);
     updateNetProfit(date);
 }
 function updateEarningBeforeIntersetTaxesDepreciationAmortization(date)
@@ -1074,6 +1102,8 @@ function updateEarningBeforeIntersetTaxesDepreciationAmortization(date)
     let earningBeforeInterstTaxesDepreciationAmortizationAtDate =earningBeforeInterestTaxesAtDate + totalDepreciationsAtDate;
     earningBeforeInterestTaxesDepreciationAmortizationRow.find('td.date-'+date).html(number_format(earningBeforeInterstTaxesDepreciationAmortizationAtDate));
     earningBeforeInterestTaxesDepreciationAmortizationRow.find('input[data-date="'+ date +'"]').val(earningBeforeInterstTaxesDepreciationAmortizationAtDate).trigger('change');
+    updateTotalForRow(earningBeforeInterestTaxesDepreciationAmortizationRow);
+
     updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBeforeInterestTaxesAtDate, date)
 
 }
@@ -1082,6 +1112,8 @@ function updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBefor
     let earningBeforeInterestTaxesRow = $('.main-with-no-child[data-model-id="'+ EarningBeforeInterestTaxesId +'"]');
         earningBeforeInterestTaxesRow.find('td.date-'+date).html(number_format(earningBeforeInterestTaxesWithoutDepreciationAtDate));
        earningBeforeInterestTaxesRow.find('input[data-date="'+ date +'"]').val(earningBeforeInterestTaxesWithoutDepreciationAtDate).trigger('change');
+    updateTotalForRow(earningBeforeInterestTaxesRow);
+
 }
 function updateParentMainRowTotal(parentModelId,date)
 {
@@ -1112,16 +1144,11 @@ function updateGrossProfit(date)
 }
 function updateTotalForRow(row){
     var total = 0;
-    console.log('all length');
-    console.log(row.find('input.editable-date').length);
     row.find('input[data-date]').each(function(index,input){
-        console.log('val = ')
-        console.log($(input).val())
         total += parseFloat($(input).val());
     });
     // alert
-    console.log('insert into ');
-    console.log($(row).find('td.total-row'));
+     $(row).find('.input-hidden-for-total').val(total)
     $(row).find('td.total-row').html(number_format(total));
 
 
@@ -1248,19 +1275,39 @@ function updatePercentageOfSalesFor(rowId , date,mainRowIsSub = true){
     let rateMainRowId = sales_rate_maps[rowId];
     let mainRowValue = 0;
     let salesRevenueValue =0;
+    mainRow ='';
     if(mainRowIsSub){
-       mainRowValue  = parseFloat($('.main-with-no-child[data-model-id="'+ rowId +'"]').find('input[data-date="'+ date +'"]').val());
+        mainRow = $('.main-with-no-child[data-model-id="'+ rowId +'"]') ;
+       mainRowValue  = parseFloat(mainRow.find('input[data-date="'+ date +'"]').val());
      salesRevenueValue =parseFloat($('.is-main-with-sub-items[data-model-id="'+ salesRevenueId +'"]').find('input[data-date="'+ date + '"]').val());
      
     }
     else{
-            mainRowValue = parseFloat($('.is-main-with-sub-items[data-model-id="'+ rowId +'"]').find('input[data-date="'+ date +'"]').val());
+            mainRow = $('.is-main-with-sub-items[data-model-id="'+ rowId +'"]')
+            mainRowValue = parseFloat(mainRow.find('input[data-date="'+ date +'"]').val());
          salesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="'+ salesRevenueId +'"]').find('input[data-date="'+ date + '"]').val());
     
     }
     let salesPercentage = salesRevenueValue ? mainRowValue /salesRevenueValue * 100 : 0 ; 
     $('.main-with-no-child.is-sales-rate[data-model-id="'+rateMainRowId+'"]').find('input[data-date="'+ date +'"]').val(salesPercentage);
     $('.main-with-no-child.is-sales-rate[data-model-id="'+rateMainRowId+'"]').find('td.date-'+date).html(number_format(salesPercentage,2) +' %');
+    //
+    // console.log(mainRow);
+          totalPercentage = mainRow.find('.total-row').html() ;
+          
+          if(totalPercentage)
+          {
+               totalPercentage =  parseFloat(number_unformat(totalPercentage));
+                 totalSalesRevenue = parseFloat(number_unformat($('.is-main-with-sub-items[data-model-id="'+ salesRevenueId +'"]').find('.total-row').html()));
+                if(totalPercentage &&totalSalesRevenue )
+                {
+                         $('.main-with-no-child[data-model-id="'+rateMainRowId+'"]').find('.input-hidden-for-total').val(totalPercentage / totalSalesRevenue *100)
+                    $('.main-with-no-child[data-model-id="'+rateMainRowId+'"]').find('.total-row').html(number_format(totalPercentage / totalSalesRevenue *100 ,2 ) + ' %' );
+
+                }
+                
+          }
+         
 
 }                      
                    

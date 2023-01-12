@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Analysis\SalesGathering\CustomersNaturesAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\DiscountsAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\IncomeStatementBreakdownAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingForIncomeStatementReport;
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\Company;
 use App\Models\IncomeStatement;
+use App\Models\IncomeStatementItem;
 use App\Models\SalesGathering;
 use App\Models\Section;
 use App\Services\Caching\CashingService;
@@ -353,7 +355,6 @@ class HomeController extends Controller
 
       public function dashboardBreakdownIncomeStatementAnalysis(Request $request,Company $company , $incomeStatementID = null)
     {
-        // dd($incomeStatementID);
         $start_date = date('2022-01-01');
         $end_date   = date('2022-12-31');
 
@@ -394,32 +395,9 @@ $incomeStatement = optional();
 $breakdown_data   = [];
 
              }
-        // foreach ($types as  $type => $color) {
-        //     if (false !== $found = array_search($type,$db_names)) {
-        //         $request['type'] = $type;
-                
-        //         $breakdown_data = (new IncomeStatementBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
-                
-        //         if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
-        //             $first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key)   {
-        //                 return [$data['Sales Value']];
-        //             })->toArray();
-        //             $first_item = ($first_item??[]);
-        //             $top_data[$type] = array_shift($first_item);
 
-        //         }else{
-        //             $top_data[$type] = $breakdown_data[0] ?? '-';
-        //         }
-        //         $reports_data[$type] = $breakdown_data;
-        //     }else{
-        //         unset($types[$type]);
-        //     }
-        // }
-        // $breakdown_data = formatDataForBreakDown($breakdown_data);
-        // dd($breakdown_data);
-        // dd();
-        // $types = array_keys();
         $types = array_unique(array_keys($breakdown_data));
+        $types = \array_fill_keys_with_values($types);
         // $incomeStatement = $request->get('incomeStatement')
         $reports_data = $breakdown_data ;
         return view('client_view.home_dashboard.dashboard_breakdown_incomestatement',compact('company','incomeStatement','reports_data','types','top_data','start_date','end_date'
@@ -514,9 +492,6 @@ $breakdown_data   = [];
 
         $customers_natures = (new CustomersNaturesAnalysisReport)->result($request,$company,'array');
 
-
-        // dd($customers_natures);;
-
         return view('client_view.home_dashboard.dashboard_customers',compact('company','customers_breakdown_data','customers_natures','date'));
     }
     public function dashboardSalesPerson(Request $request,Company $company)
@@ -599,8 +574,99 @@ $breakdown_data   = [];
         if ($request->isMethod('GET')) {
             $keys = array_keys($permittedTypes);
             $firstKey = $keys[0] ?? 0;
-            // dd();
             $secondKey = $keys[1] ?? 0;
+            // $thirdKey = $keys[2] ?? 0;
+         
+             $request['types']=[
+                $firstKey,$secondKey 
+                // ,$thirdKey 
+            ];
+            $request['start_date_one'] = $start_date_0;
+            $request['end_date_one'] = $end_date_0;
+            $request['start_date_two'] = $start_date_1;
+            $request['end_date_two'] = $end_date_1;
+
+            //  $request['start_date_three'] = $start_date_2;
+            // $request['end_date_three'] = $end_date_2;
+            
+        }elseif ($request->isMethod('POST')){
+            
+            
+            $start_date_0  = $request['start_date_one'];
+            $end_date_0  = $request['end_date_one'];
+            $start_date_1  = $request['start_date_two'];
+            $end_date_1  = $request['end_date_two'];
+            // $start_date_2  = $request['start_date_three'];
+            // $end_date_2  = $request['end_date_three'];
+        }
+
+         foreach((array)$request->types as $t ){
+             $request['type'] = $t;
+        $intervalComparing[$t] = (new IntervalsComparingReport)->result($request, $company,'array');   
+        }
+        
+        $customers_natures = [] ;
+
+        return view('client_view.home_dashboard.dashboard_intervalComparing',compact('company'
+        // ,'product_items','sales_channels'
+        ,
+        'start_date_0','end_date_0','start_date_1','end_date_1'
+        ,
+        // 'start_date_2', 'end_date_2',
+        
+        'permittedTypes','selectedTypes' , 'intervalComparing'));
+    }
+
+
+    public function dashboardIncomeStatementIntervalComparing(Request $request,Company $company)
+    {
+// dd($request->all());
+
+        
+        $start_date_0 = date('2021-01-01');
+        $end_date_0   = date('2021-12-31');
+        $start_date_1 = date('2020-01-01');
+        $end_date_1   = date('2020-12-31');
+        $incomeStatements  = IncomeStatement::where('company_id',$company->id)->get();
+        if( ! (count($incomeStatements) >= 1)){
+            return redirect()->back()->with('fail',__('You Must Have At Least One Income Statements'));
+
+        }
+        $firstIncomeStatement =$incomeStatements[0];
+        $secondIncomeStatement = $incomeStatements[1] ?? optional(null);
+        //  dd($firstIncomeStatement , $secondIncomeStatement);
+         
+        $allTypes = IncomeStatementItem::formattedViewForDashboard();
+            //  $allTypes =  [
+            //     'Sales Revenue'=>'brand',
+            //     'Cost Of Goods / Service Sold'=>'warning',
+            //     'Gross Profit'=>'danger',
+            //     'Marketing Expenses'=>'success',
+            //     'Sales  Expenses'=>'brand',
+            //     'General Expenses'=>'warning',
+            //     'Earning Before Interest Taxes Depreciation Amortization - EBITDA'=>'brand',
+            //     'Earning Before Interest Taxes - EBIT'=>'warning',
+            //     'Finance Income/(Expenses)'=>'danger',
+            //     'Earning Before Taxes - EBT'=>'success',
+            //     'Corporate Taxes'=>'success',
+            //     'Net Profit'=>'success',
+            //     ];
+                
+         $exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+            $db_names = array_keys($exportableFields);
+
+                $permittedTypes = [];
+                        foreach ($allTypes as  $id => $name) {
+                                 $permittedTypes[$id] = ($name) ; 
+                        }
+                        $selectedTypes = (array)$request->types ;
+        $intervalComparing = [];
+       
+
+        if ($request->isMethod('GET')) {
+            $keys = array_keys($permittedTypes);
+            $firstKey = $keys[1] ?? 0;
+            $secondKey = $keys[2] ?? 0;
             // $thirdKey = $keys[2] ?? 0;
          
              $request['types']=[
@@ -627,22 +693,55 @@ $breakdown_data   = [];
             // $end_date_2  = $request['end_date_three'];
         }
 
-         foreach((array)$request->types as $t ){
-             $request['type'] = $t;
-        $intervalComparing[$t] = (new IntervalsComparingReport)->result($request, $company,'array');   
+        if(Carbon::make($end_date_0)->lessThan(Carbon::make($start_date_0))  ){
+            $start_date_wap = $start_date_0 ;
+            $start_date_0 = $end_date_0 ;
+            $end_date_0 = $start_date_wap ;
+        }
+        if(Carbon::make($end_date_1)->lessThan(Carbon::make($start_date_1)) ){
+            $start_date_wap = $start_date_1 ;
+            $start_date_1 = $end_date_1 ;
+            $end_date_1 = $start_date_wap ;
+        }
+        $intervalDates  = [
+            'first_start_date'=>$start_date_0,
+            'first_end_date'=>$end_date_0,
+            'second_start_date'=>$end_date_1,
+            'second_end_date'=>$end_date_1
+        ];
+        
+         foreach((array)$request->types as $typeId ){
+             $request['mainItemId'] = $typeId;
+             $intervalComparing[IncomeStatementItem::where('id',$typeId)->first()->name ] = (new IntervalsComparingForIncomeStatementReport)->result($request, $company,'array' , $intervalDates);   
         }
         
-        $customers_natures = [] ;
-        // dd($intervalComparing);
+          $firstIncomeStatementId = $request->get('income_statement_first_interval');
+        $secondIncomeStatementId = $request->get('income_statement_second_interval');
+        if($firstIncomeStatementId){
+            $firstIncomeStatement =     IncomeStatement::find($firstIncomeStatementId) ; 
+        }
+        if($secondIncomeStatementId){
+            $secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId);    
+        }
 
-        return view('client_view.home_dashboard.dashboard_intervalComparing',compact('company'
+// dd($intervalComparing);
+
+        $intervals = getIntervals($intervalComparing);
+        // dd($intervals);
+        return view('client_view.home_dashboard.dashboard_intervalComparing_income_statements',compact('company'
         // ,'product_items','sales_channels'
         ,
         'start_date_0','end_date_0','start_date_1','end_date_1'
         ,
+        'incomeStatements',
+        'firstIncomeStatement',
+        'secondIncomeStatement',
+        'intervals',
+        'intervalDates',
         // 'start_date_2', 'end_date_2',
         
         'permittedTypes','selectedTypes' , 'intervalComparing'));
     }
+
 
 }

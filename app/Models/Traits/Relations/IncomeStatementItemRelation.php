@@ -40,4 +40,19 @@ trait IncomeStatementItemRelation
             // ->wherePivot('sub_item_name', '!=', null)
         ;
     }
+     public function mainRowsPivot($incomeStatementId=null): BelongsToMany
+    {
+        
+        return $this->belongsToMany(
+            IncomeStatement::class,
+            'income_statement_main_item_calculations',
+            'income_statement_item_id',
+            'income_statement_id'
+        )
+         ->when($incomeStatementId , function($q) use ($incomeStatementId){
+            $q->where('income_statements.id',$incomeStatementId);
+        })
+        ->withPivot(['payload','company_id','creator_id']);
+    }
+
 }
