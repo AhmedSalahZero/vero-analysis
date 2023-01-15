@@ -31,7 +31,6 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 	public function getRouteKeyName()
 	{
-
 		return 'income_statements.id';
 	}
 	public static function exportViewName(): string
