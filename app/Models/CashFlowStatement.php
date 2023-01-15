@@ -6,16 +6,17 @@ use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
 use App\Interfaces\Models\IShareable;
-use App\Models\Traits\Accessors\IncomeStatementAccessor;
-use App\Models\Traits\Mutators\IncomeStatementMutator;
-use App\Models\Traits\Relations\IncomeStatementRelation;
+use App\Models\Traits\Accessors\CashFlowStatementAccessor;
+use App\Models\Traits\Mutators\CashFlowStatementMutator;
+use App\Models\Traits\Relations\CashFlowStatementRelation;
 use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\Globals\StateCountryScope;
 use App\Models\Traits\Scopes\withAllRelationsScope;
 use Illuminate\Database\Eloquent\Model;
 
-class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable
+class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable
 {
-	use  IncomeStatementAccessor, IncomeStatementMutator, IncomeStatementRelation, CompanyScope, withAllRelationsScope;
+	use  CashFlowStatementAccessor, CashFlowStatementMutator, CashFlowStatementRelation, CompanyScope, withAllRelationsScope;
 
 	protected $guarded = [
 		'id'
@@ -24,23 +25,21 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 	{
 
 		return [
-			'pageTitle' => IncomeStatement::getPageTitle(),
+			'pageTitle' => CashFlowStatement::getPageTitle(),
 
 		];
 	}
-
 	public function getRouteKeyName()
 	{
-
-		return 'income_statements.id';
+		return 'cash_flow_statements.id';
 	}
 	public static function exportViewName(): string
 	{
-		return __('Income Statement');
+		return __('Cash Flow Statement');
 	}
 	public static function getFileName(): string
 	{
-		return __('Income Statement');
+		return __('Cash Flow Statement');
 	}
 
 	protected static function booted()
@@ -50,7 +49,7 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 	public static function getCrudViewName(): string
 	{
-		return 'admin.income-statement.create';
+		return 'admin.cash-flow-statement.create';
 	}
 
 	public static function getViewVars(): array
@@ -58,37 +57,36 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 		$currentCompanyId =  getCurrentCompanyId();
 
 		return [
-			'getDataRoute' => route('admin.get.income.statement', ['company' => $currentCompanyId]),
-			'modelName' => 'IncomeStatement',
-			'exportRoute' => route('admin.export.income.statement', $currentCompanyId),
-			'createRoute' => route('admin.create.income.statement', $currentCompanyId),
-			'storeRoute' => route('admin.store.income.statement', $currentCompanyId),
+			'getDataRoute' => route('admin.get.cash.flow.statement', ['company' => $currentCompanyId]),
+			'modelName' => 'CashFlowStatement',
+			'exportRoute' => route('admin.export.cash.flow.statement', $currentCompanyId),
+			'createRoute' => route('admin.create.cash.flow.statement', $currentCompanyId),
+			'storeRoute' => route('admin.store.cash.flow.statement', $currentCompanyId),
 			'hasChildRows' => false,
-			'pageTitle' => IncomeStatement::getPageTitle(),
-			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
+			'pageTitle' => CashFlowStatement::getPageTitle(),
+			'redirectAfterSubmitRoute' => route('admin.view.cash.flow.statement', $currentCompanyId),
 			'type' => 'create',
 			'company' => Company::find($currentCompanyId),
-			'redirectAfterSubmitRoute' => route('admin.view.income.statement', ['company' => getCurrentCompanyId()]),
+			'redirectAfterSubmitRoute' => route('admin.view.cash.flow.statement', ['company' => getCurrentCompanyId()]),
 			'durationTypes' => getDurationIntervalTypesForSelect()
 		];
 	}
 	public static function getReportViewVars(array $options = []): array
 	{
-
 		$currentCompanyId =  getCurrentCompanyId();
 
 		return [
-			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['income_statement_id']]),
-			'modelName' => 'IncomeStatementReport',
-			'exportRoute' => route('admin.export.income.statement.report', $currentCompanyId),
-			'createRoute' => route('admin.create.income.statement.report', [
+			'getDataRoute' => route('admin.get.cash.flow.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['cash_flow_statement_id']]),
+			'modelName' => 'CashFlowStatementReport',
+			'exportRoute' => route('admin.export.cash.flow.statement.report', $currentCompanyId),
+			'createRoute' => route('admin.create.cash.flow.statement.report', [
 				'company' => $currentCompanyId,
-				'incomeStatement' => $options['income_statement_id']
+				'incomeStatement' => $options['cash_flow_statement_id']
 			]),
-			'storeRoute' => route('admin.store.income.statement.report', $currentCompanyId),
+			'storeRoute' => route('admin.store.cash.flow.statement.report', $currentCompanyId),
 			'hasChildRows' => false,
-			'pageTitle' => __('Income Statement Report'),
-			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
+			'pageTitle' => __('Cash Flow Statement Report'),
+			'redirectAfterSubmitRoute' => route('admin.view.cash.flow.statement', $currentCompanyId),
 			'type' => 'create',
 			'incomeStatement' => $options['incomeStatement'],
 			'interval' => [
@@ -111,7 +109,7 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 	}
 	public static function getPageTitle(): string
 	{
-		return __('Income Statement');
+		return __('Cash Flow Statement');
 	}
 
 	public function getAllRelationsNames(): array

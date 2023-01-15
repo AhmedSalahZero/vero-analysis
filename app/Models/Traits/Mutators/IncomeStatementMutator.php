@@ -117,15 +117,6 @@ trait IncomeStatementMutator
                         }   
         }
         
-        //     
-        // foreach($request->names as $name){
-        //     $incomeStatement->subItems()->attach($request->input('income_statement_item_id') , [
-        //         'company_id'=>\getCurrentCompanyId(),
-        //         'creator_id'=>Auth::id(),
-        //         'sub_item_name'=>$name ,
-        //         'created_at'=>now()
-        //     ])    ;
-        // }
-
+       
     }
 }

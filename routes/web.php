@@ -2,7 +2,9 @@
 
 use App\Http;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
+use App\Http\Controllers\BalanceSheetController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
 use App\Http\Controllers\FilterMainTypeBasedOnDatesController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\RoutesDefinition;
 use App\Http\Livewire\AdjustedCollectionDatesForm;
 use App\Models\Branch;
 use App\Models\CachingCompany;
+use App\Models\CashFlowStatement;
 use App\Models\Company;
 use App\Models\Section;
 use App\Models\User;
@@ -86,28 +89,52 @@ Route::group(
         Route::prefix('{company}')->group(function () {
             Route::post('get-type-based-on-dates',[FilterMainTypeBasedOnDatesController::class,'__invoke'])->name('get.type.based.on.dates');
 
-                //Income Statement
             Route::get('income-statement',[IncomeStatementController::class , 'view'])->name('admin.view.income.statement');
-     
             Route::get('income-statement/create',[IncomeStatementController::class , 'create'])->name('admin.create.income.statement');
             Route::get('income-statement-report/{incomeStatement}/edit',[IncomeStatementController::class , 'editItems']);
-            // Route::get('income-statement/{incomeStatement}/edit',[IncomeStatementController::class , 'edit'])->name('admin.edit.income.statement');
             Route::post('income-statement/{incomeStatement}/update',[IncomeStatementController::class , 'update'])->name('admin.update.income.statement');
             Route::post('income-statement/store',[IncomeStatementController::class , 'store'])->name('admin.store.income.statement');
             Route::get('export-income-statement' , 'IncomeStatementController@export')->name('admin.export.income.statement');
             Route::get('get-income-statement','IncomeStatementController@paginate')->name('admin.get.income.statement');
-
-
-            //Income Statement Report
-            // Route::get('income-statement-report',[IncomeStatementReportController::class , 'view'])->name('admin.view.income.statement.report');
-     
             Route::get('income-statement/{incomeStatement}/report',[IncomeStatementController::class , 'createReport'])->name('admin.create.income.statement.report');
-            // Route::get('income-statement-report/{incomeStatementReport}/edit',[IncomeStatementReportController::class , 'edit'])->name('admin.edit.income.statement.report');
             Route::post('income-statement-report/update',[IncomeStatementController::class , 'updateReport'])->name('admin.update.income.statement.report');
             Route::post('income-statement-report/delete',[IncomeStatementController::class , 'deleteReport'])->name('admin.destroy.income.statement.report');
             Route::post('income-statement/storeReport',[IncomeStatementController::class , 'storeReport'])->name('admin.store.income.statement.report');
             Route::post('export-income-statement-report' , 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
             Route::post('get-income-statement-report/{incomeStatement}','IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
+
+
+             Route::get('balance-sheet',[BalanceSheetController::class , 'view'])->name('admin.view.balance.sheet');
+            Route::get('balance-sheet/create',[BalanceSheetController::class , 'create'])->name('admin.create.balance.sheet');
+            Route::get('balance-sheet-report/{balanceSheet}/edit',[BalanceSheetController::class , 'editItems']);
+            Route::post('balance-sheet/{balanceSheet}/update',[BalanceSheetController::class , 'update'])->name('admin.update.balance.sheet');
+            Route::post('balance-sheet/store',[BalanceSheetController::class , 'store'])->name('admin.store.balance.sheet');
+            Route::get('export-balance-sheet' , 'BalanceSheetController@export')->name('admin.export.balance.sheet');
+            Route::get('get-balance-sheet','BalanceSheetController@paginate')->name('admin.get.balance.sheet');
+            Route::get('balance-sheet/{balanceSheet}/report',[BalanceSheetController::class , 'createReport'])->name('admin.create.balance.sheet.report');
+            Route::post('balance-sheet-report/update',[BalanceSheetController::class , 'updateReport'])->name('admin.update.balance.sheet.report');
+            Route::post('balance-sheet-report/delete',[BalanceSheetController::class , 'deleteReport'])->name('admin.destroy.balance.sheet.report');
+            Route::post('balance-sheet/storeReport',[BalanceSheetController::class , 'storeReport'])->name('admin.store.balance.sheet.report');
+            Route::post('export-balance-sheet-report' , 'BalanceSheetController@exportReport')->name('admin.export.balance.sheet.report');
+            Route::post('get-balance-sheet-report/{balanceSheet}','BalanceSheetController@paginateReport')->name('admin.get.balance.sheet.report');
+
+
+
+
+                 Route::get('cash-flow-statement',[CashFlowStatementController::class , 'view'])->name('admin.view.cash.flow.statement');
+            Route::get('cash-flow-statement/create',[CashFlowStatementController::class , 'create'])->name('admin.create.cash.flow.statement');
+            Route::get('cash-flow-statement-report/{balanceSheet}/edit',[CashFlowStatementController::class , 'editItems']);
+            Route::post('cash-flow-statement/{balanceSheet}/update',[CashFlowStatementController::class , 'update'])->name('admin.update.cash.flow.statement');
+            Route::post('cash-flow-statement/store',[CashFlowStatementController::class , 'store'])->name('admin.store.cash.flow.statement');
+            Route::get('export-cash-flow-statement' , 'CashFlowStatementController@export')->name('admin.export.cash.flow.statement');
+            Route::get('get-cash-flow-statement','CashFlowStatementController@paginate')->name('admin.get.cash.flow.statement');
+            Route::get('cash-flow-statement/{balanceSheet}/report',[CashFlowStatementController::class , 'createReport'])->name('admin.create.cash.flow.statement.report');
+            Route::post('cash-flow-statement-report/update',[CashFlowStatementController::class , 'updateReport'])->name('admin.update.cash.flow.statement.report');
+            Route::post('cash-flow-statement-report/delete',[CashFlowStatementController::class , 'deleteReport'])->name('admin.destroy.cash.flow.statement.report');
+            Route::post('cash-flow-statement/storeReport',[CashFlowStatementController::class , 'storeReport'])->name('admin.store.cash.flow.statement.report');
+            Route::post('export-cash-flow-statement-report' , 'CashFlowStatementController@exportReport')->name('admin.export.cash.flow.statement.report');
+            Route::post('get-cash-flow-statement-report/{balanceSheet}','CashFlowStatementController@paginateReport')->name('admin.get.cash.flow.statement.report');
+
 
 
    Route::post('edit-table-cell',[EditTableCellsController::class,'__invoke'])->name('admin.edit.table.cell');

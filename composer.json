@@ -33,7 +33,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
-        "barryvdh/laravel-ide-helper": "2.8.2",
+        "barryvdh/laravel-ide-helper": "^2.12",
         "beyondcode/laravel-query-detector": "^1.6",
         "bnhashem/debug-query": "^1.0",
         "facade/ignition": "^2.0",

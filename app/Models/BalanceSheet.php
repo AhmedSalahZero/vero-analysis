@@ -6,16 +6,16 @@ use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
 use App\Interfaces\Models\IShareable;
-use App\Models\Traits\Accessors\IncomeStatementAccessor;
-use App\Models\Traits\Mutators\IncomeStatementMutator;
-use App\Models\Traits\Relations\IncomeStatementRelation;
+use App\Models\Traits\Accessors\BalanceSheetAccessor;
+use App\Models\Traits\Mutators\BalanceSheetMutator;
+use App\Models\Traits\Relations\BalanceSheetRelation;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Models\Traits\Scopes\withAllRelationsScope;
 use Illuminate\Database\Eloquent\Model;
 
-class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable
+class  BalanceSheet extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable
 {
-	use  IncomeStatementAccessor, IncomeStatementMutator, IncomeStatementRelation, CompanyScope, withAllRelationsScope;
+	use  BalanceSheetAccessor, BalanceSheetMutator, BalanceSheetRelation, CompanyScope, withAllRelationsScope;
 
 	protected $guarded = [
 		'id'
@@ -24,23 +24,21 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 	{
 
 		return [
-			'pageTitle' => IncomeStatement::getPageTitle(),
+			'pageTitle' => BalanceSheet::getPageTitle(),
 
 		];
 	}
-
 	public function getRouteKeyName()
 	{
-
-		return 'income_statements.id';
+		return 'balance_sheets.id';
 	}
 	public static function exportViewName(): string
 	{
-		return __('Income Statement');
+		return __('Balance Sheet');
 	}
 	public static function getFileName(): string
 	{
-		return __('Income Statement');
+		return __('Balance Sheet');
 	}
 
 	protected static function booted()
@@ -50,7 +48,7 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 	public static function getCrudViewName(): string
 	{
-		return 'admin.income-statement.create';
+		return 'admin.balance-sheet.create';
 	}
 
 	public static function getViewVars(): array
@@ -58,39 +56,38 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 		$currentCompanyId =  getCurrentCompanyId();
 
 		return [
-			'getDataRoute' => route('admin.get.income.statement', ['company' => $currentCompanyId]),
-			'modelName' => 'IncomeStatement',
-			'exportRoute' => route('admin.export.income.statement', $currentCompanyId),
-			'createRoute' => route('admin.create.income.statement', $currentCompanyId),
-			'storeRoute' => route('admin.store.income.statement', $currentCompanyId),
+			'getDataRoute' => route('admin.get.balance.sheet', ['company' => $currentCompanyId]),
+			'modelName' => 'BalanceSheet',
+			'exportRoute' => route('admin.export.balance.sheet', $currentCompanyId),
+			'createRoute' => route('admin.create.balance.sheet', $currentCompanyId),
+			'storeRoute' => route('admin.store.balance.sheet', $currentCompanyId),
 			'hasChildRows' => false,
-			'pageTitle' => IncomeStatement::getPageTitle(),
-			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
+			'pageTitle' => BalanceSheet::getPageTitle(),
+			'redirectAfterSubmitRoute' => route('admin.view.balance.sheet', $currentCompanyId),
 			'type' => 'create',
 			'company' => Company::find($currentCompanyId),
-			'redirectAfterSubmitRoute' => route('admin.view.income.statement', ['company' => getCurrentCompanyId()]),
+			'redirectAfterSubmitRoute' => route('admin.view.balance.sheet', ['company' => getCurrentCompanyId()]),
 			'durationTypes' => getDurationIntervalTypesForSelect()
 		];
 	}
 	public static function getReportViewVars(array $options = []): array
 	{
-
 		$currentCompanyId =  getCurrentCompanyId();
 
 		return [
-			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['income_statement_id']]),
-			'modelName' => 'IncomeStatementReport',
-			'exportRoute' => route('admin.export.income.statement.report', $currentCompanyId),
-			'createRoute' => route('admin.create.income.statement.report', [
+			'getDataRoute' => route('admin.get.balance.sheet.report', ['company' => $currentCompanyId, 'balanceSheet' => $options['balance_sheet_id']]),
+			'modelName' => 'BalanceSheetReport',
+			'exportRoute' => route('admin.export.balance.sheet.report', $currentCompanyId),
+			'createRoute' => route('admin.create.balance.sheet.report', [
 				'company' => $currentCompanyId,
-				'incomeStatement' => $options['income_statement_id']
+				'balanceSheet' => $options['balance_sheet_id']
 			]),
-			'storeRoute' => route('admin.store.income.statement.report', $currentCompanyId),
+			'storeRoute' => route('admin.store.balance.sheet.report', $currentCompanyId),
 			'hasChildRows' => false,
-			'pageTitle' => __('Income Statement Report'),
-			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
+			'pageTitle' => __('Balance Sheet Report'),
+			'redirectAfterSubmitRoute' => route('admin.view.balance.sheet', $currentCompanyId),
 			'type' => 'create',
-			'incomeStatement' => $options['incomeStatement'],
+			'balanceSheet' => $options['balanceSheet'],
 			'interval' => [
 				[
 					'value' => 'monthly',
@@ -111,7 +108,7 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 	}
 	public static function getPageTitle(): string
 	{
-		return __('Income Statement');
+		return __('Balance Sheet');
 	}
 
 	public function getAllRelationsNames(): array

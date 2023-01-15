@@ -10,6 +10,7 @@ class IncomeStatementObserver
         $incomeStatementItems = $incomeStatement->mainItems;
         foreach($incomeStatementItems as $incomeStatementItem){
             $incomeStatementItem->subItems($incomeStatement->id)->wherePivot('income_statement_id',$incomeStatement->id)->detach();
+            $incomeStatement->mainRows($incomeStatementItem->id)->detach();
             $incomeStatement->mainItems()->wherePivot('income_statement_item_id',$incomeStatementItem->id)->detach();
         }
 

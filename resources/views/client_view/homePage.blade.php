@@ -87,6 +87,30 @@
                                         </div>
                                     </div>
                                     @endif 
+
+                                     @if(Auth()->user()->canViewIncomeStatement())
+                                    <br>
+                                    <div class="kt-list-timeline__items">
+                                        <div class="kt-list-timeline__item">
+                                            <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
+                                            <span class="kt-list-timeline__text"> <h4> {{ __("Balance Sheet") }} </h4>  </span>
+                                            {{-- <span class="kt-list-timeline__text"> <h4> {{ __("Inventory Data  ") }} <span class="kt-badge kt-badge--warning kt-badge--inline">Coming Soon</span></h4>  </span> --}}
+                                            <span class="kt-list-timeline__time disable"> <a href="{{ route('admin.view.balance.sheet',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
+                                        </div>
+                                    </div>
+
+                                          <br>
+                                    <div class="kt-list-timeline__items">
+                                        <div class="kt-list-timeline__item">
+                                            <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
+                                            <span class="kt-list-timeline__text"> <h4> {{ __("Cash Flow Statement") }} </h4>  </span>
+                                            {{-- <span class="kt-list-timeline__text"> <h4> {{ __("Inventory Data  ") }} <span class="kt-badge kt-badge--warning kt-badge--inline">Coming Soon</span></h4>  </span> --}}
+                                            <span class="kt-list-timeline__time disable"> <a href="{{ route('admin.view.cash.flow.statement',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
+                                        </div>
+                                    </div>
+
+                                    @endif 
+
                                 </div>
                             </div>
                         </div>
