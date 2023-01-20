@@ -84,8 +84,8 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="main_type" value="branches">
-<input type="hidden" id="append-to" value="branches">
+                        <input type="hidden" name="main_type" value="branch">
+						<input type="hidden" id="append-to" value="branches">
 
                         <div class="col-md-4">
                             <label>{{ __('Select Interval') }} </label>
@@ -349,7 +349,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
                 }
-                , url: '{{ route('get.zones.data',$company) }}'
+                , url: "{{ route('get.zones.data',$company) }}"
                 , dataType: 'json'
                 , accepts: 'application/json'
                 // ,complete:function(){
@@ -396,7 +396,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -434,7 +434,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -458,7 +458,6 @@
 
                 });
                 row += '</select>';
-                console.log(row);
                 $('#sales_channels').html('');
                 $('#sales_channels').append(row);
                 reinitializeSelect2();
@@ -495,7 +494,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -509,8 +508,6 @@
             // if($('#data_type').val()  !== 'value'){
             //     row += '<option value="">Select</option>\n' ;
             // }
-
-
             $.each(data, function(key, val) {
                 row += '<option value*="' + val + '">' + val + '</option>\n';
 

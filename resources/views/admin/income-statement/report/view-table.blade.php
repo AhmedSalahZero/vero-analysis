@@ -80,7 +80,9 @@ $tableId = 'kt_table_1';
 
 </style>
 @csrf
+
 <input type="hidden" id="editable-by-btn" value="1">
+<input type="hidden" id="sub-item-type" value="{{ $reportType }}">
 <div class="table-custom-container position-relative  ">
     <input type="hidden" value="{{ $incomeStatement->id }}" id="model-id">
     <input type="hidden" id="income-statement-duration-type" value="{{ $incomeStatement->duration_type ?? '' }}">
@@ -122,6 +124,8 @@ $tableId = 'kt_table_1';
 
 
         <x-slot name="headerTr">
+            <input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
+
             <tr class="header-tr " data-model-name="{{ $modelName }}">
                 <th class="view-table-th header-th trigger-child-row-1">
                     {{ __('Expand') }}
@@ -252,7 +256,7 @@ $tableId = 'kt_table_1';
                                             }
                                             return elements;
                                         } else if (row.isSubItem) {
-                                            return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.income_statement_id}" data-target="#edit-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.income_statement_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
+                                            return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
                                 <i class="fas fa-trash-alt"></i>
                                 
                                 </a>`
@@ -329,6 +333,7 @@ $tableId = 'kt_table_1';
                                             , "dataSrc": "data", // they key in the jsom response from the server where we will get our data
                                             "data": function(d) {
                                                 d.search_input = $(getSearchInputSelector(tableId)).val();
+                                                d.sub_item_type = $('#sub-item-type').val()
                                             }
 
                                         }
@@ -394,8 +399,8 @@ $tableId = 'kt_table_1';
 
                                             var totalOfRowArray = [];
 
-                                            var incomeStatementId = data.isSubItem ? data.pivot.income_statement_id : $('#model-id').val();
-                                            var incomeStatementItemId = data.isSubItem ? data.pivot.income_statement_item_id : data.id;
+                                            var incomeStatementId = data.isSubItem ? data.pivot.financial_statement_able_id : $('#model-id').val();
+                                            var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
                                             var subItemName = data.isSubItem ? data.pivot.sub_item_name : '';
                                             $(cells).filter(".editable").attr('contenteditable', true)
                                                 .attr('data-income-statement-id', incomeStatementId)
@@ -422,7 +427,7 @@ $tableId = 'kt_table_1';
                                                     `
                             
                             
-                    <div class="modal fade" id="edit-sub-modal${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal fade" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-lg">
       <div class="modal-header">
@@ -432,17 +437,18 @@ $tableId = 'kt_table_1';
         </button>
       </div>
       <div class="modal-body">
-        <form id="edit-sub-item-form${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+        <form id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
             
-            <input type="hidden" name="income_statement_item_id"  value="${data.pivot.income_statement_item_id}">
-            <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
+            <input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
+            <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
             <input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
             <label>{{ __('name') }}</label>
             <input name="new_sub_item_name"  class="form-control   only-greater-than-zero-allowed mb-2" type="text" value="${data.pivot.sub_item_name}">
             ${Depreciation}
            <div class="mt-2">
             <label>{{ __('Sub Of') }}</label>
-            <select name="sub_of_id" class="form-control main-row-select" data-selected-main-row="${data.pivot.income_statement_item_id}">
+            <select name="sub_of_id" class="form-control main-row-select" data-selected-main-row="${data.pivot.financial_statement_able_item_id}">
                 
             </select>
             </div>
@@ -451,7 +457,7 @@ $tableId = 'kt_table_1';
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-        <button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.income_statement_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</button>
+        <button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</button>
       </div>
     </div>
   </div>
@@ -464,7 +470,7 @@ $tableId = 'kt_table_1';
                                                     `
                             
                             
-                    <div class="modal fade" id="delete-sub-modal${data.pivot.income_statement_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal fade" id="delete-sub-modal${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-lg">
       <div class="modal-header">
@@ -474,10 +480,11 @@ $tableId = 'kt_table_1';
         </button>
       </div>
       <div class="modal-body">
-        <form id="delete-sub-item-form${data.pivot.income_statement_item_id+data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+        <form id="delete-sub-item-form${data.pivot.financial_statement_able_item_id+data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
             
-            <input type="hidden" name="income_statement_item_id"  value="${data.pivot.income_statement_item_id}">
-            <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
+            <input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
+            <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
             <input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
             <p>{{ __('Are You Sure To Delete ') }} ${data.pivot.sub_item_name}  ? </p>
          
@@ -486,7 +493,7 @@ $tableId = 'kt_table_1';
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-        <button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.income_statement_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" >{{ __('Delete') }}</button>
+        <button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" >{{ __('Delete') }}</button>
       </div>
     </div>
   </div>
@@ -523,7 +530,7 @@ $tableId = 'kt_table_1';
 
 
 
-                                                    var hiddenInput = `<input type="hidden" class="text-input-hidden"  name="incomeStatementItemName[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]" value="${$(textDt).html()}" > `;
+                                                    var hiddenInput = `<input type="hidden" class="text-input-hidden"  name="financialStatementAbleItemName[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]" value="${$(textDt).html()}" > `;
                                                     $(textDt).after(hiddenInput);
                                                 })
 
@@ -625,7 +632,6 @@ $tableId = 'kt_table_1';
             </div>`;
 
                                                     }
-
                                                     $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (data.id)).attr('data-model-id', data.id).attr('data-model-name', '{{ $modelName }}')
                                                         .append(`
                     <div class="modal fade" id="add-sub-modal${data.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
@@ -639,10 +645,10 @@ $tableId = 'kt_table_1';
       </div>
       <div class="modal-body">
         <form id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
-            
+			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
             <label class="label ">{{ __('How Many Items ?') }}</label>
-            <input type="hidden" name="income_statement_item_id"  value="${data.id}">
-            <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
+            <input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
+            <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 
             <input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" type="number" value="1">
           
@@ -1451,16 +1457,6 @@ $tableId = 'kt_table_1';
                                                     var val = 0;
 
                                                     if (!totalOfVisisableDates[rowId]) {
-                                                        console.log(rowId);
-                                                        console.log(loopYear);
-
-                                                        console.log(loopMonth);
-                                                        console.log(currentDay);
-                                                        console.log(
-                                                            $('tbody tr:nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + loopMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + loopMonth + '-' + currentDay + '"]').val()) + parseFloat($('tbody tr:nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + removeMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + removeMonth + '-' + currentDay + '"]').val());
-
-                                                        console.log('---')
-
 
 
                                                         var val1 = parseFloat($('tbody tr:nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + loopMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + loopMonth + '-' + currentDay + '"]').val());

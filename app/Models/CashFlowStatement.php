@@ -5,17 +5,21 @@ namespace App\Models;
 use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
+use App\Interfaces\Models\Interfaces\IFinancialStatementAble;
 use App\Interfaces\Models\IShareable;
 use App\Models\Traits\Accessors\CashFlowStatementAccessor;
 use App\Models\Traits\Mutators\CashFlowStatementMutator;
 use App\Models\Traits\Relations\CashFlowStatementRelation;
 use App\Models\Traits\Scopes\CompanyScope;
-use App\Models\Traits\Scopes\Globals\StateCountryScope;
+use App\Models\Traits\Scopes\FinancialStatementAbleScope;
 use App\Models\Traits\Scopes\withAllRelationsScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable
+class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable, IFinancialStatementAble
 {
+	protected $table = 'financial_statement_ables';
+
 	use  CashFlowStatementAccessor, CashFlowStatementMutator, CashFlowStatementRelation, CompanyScope, withAllRelationsScope;
 
 	protected $guarded = [
@@ -23,15 +27,13 @@ class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations,
 	];
 	public static function getShareableEditViewVars($model): array
 	{
-
 		return [
 			'pageTitle' => CashFlowStatement::getPageTitle(),
-
 		];
 	}
 	public function getRouteKeyName()
 	{
-		return 'cash_flow_statements.id';
+		return 'financial_statement_ables.id';
 	}
 	public static function exportViewName(): string
 	{
@@ -41,12 +43,12 @@ class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations,
 	{
 		return __('Cash Flow Statement');
 	}
-
 	protected static function booted()
 	{
-		// static::addGlobalScope(new StateCountryScope);
+		static::addGlobalScope(function (Builder $builder) {
+			$builder->where('type', 'CashFlowStatement');
+		});
 	}
-
 	public static function getCrudViewName(): string
 	{
 		return 'admin.cash-flow-statement.create';
@@ -76,35 +78,20 @@ class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations,
 		$currentCompanyId =  getCurrentCompanyId();
 
 		return [
-			'getDataRoute' => route('admin.get.cash.flow.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['cash_flow_statement_id']]),
+			'getDataRoute' => route('admin.get.cash.flow.statement.report', ['company' => $currentCompanyId, 'cashFlowStatement' => $options['financial_statement_able_id']]),
 			'modelName' => 'CashFlowStatementReport',
 			'exportRoute' => route('admin.export.cash.flow.statement.report', $currentCompanyId),
 			'createRoute' => route('admin.create.cash.flow.statement.report', [
 				'company' => $currentCompanyId,
-				'incomeStatement' => $options['cash_flow_statement_id']
+				'cashFlowStatement' => $options['financial_statement_able_id']
 			]),
 			'storeRoute' => route('admin.store.cash.flow.statement.report', $currentCompanyId),
 			'hasChildRows' => false,
 			'pageTitle' => __('Cash Flow Statement Report'),
 			'redirectAfterSubmitRoute' => route('admin.view.cash.flow.statement', $currentCompanyId),
 			'type' => 'create',
-			'incomeStatement' => $options['incomeStatement'],
-			'interval' => [
-				[
-					'value' => 'monthly',
-					'title' => __('Monthly')
-				], [
-					'value' => 'quarterly',
-					'title' => __('Quarterly')
-				], [
-					'value' => 'semi-annually',
-					'title' => __('Semi-annually')
-				],
-				[
-					'value' => 'annually',
-					'title' => __('Annually')
-				],
-			]
+			'cashFlowStatement' => $options['cashFlowStatement'],
+			'interval' =>  getIntervalForSelect($options['cashFlowStatement']->getDurationType())
 		];
 	}
 	public static function getPageTitle(): string

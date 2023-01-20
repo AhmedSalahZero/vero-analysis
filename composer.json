@@ -21,6 +21,7 @@
         "laravel/ui": "^3.4",
         "livewire/livewire": "^2.4",
         "maatwebsite/excel": "^3.1",
+        "magentron/laravel-blade-lint": "^1.0",
         "mcamara/laravel-localization": "^1.6",
         "mk-j/php_xlsxwriter": "^0.38.0",
         "nuovo/spreadsheet-reader": "^0.5.11",

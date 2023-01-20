@@ -72,8 +72,8 @@ class IncomeStatementRepository implements IBaseRepository
 
 	public function update(IBaseModel $incomeStatement, Request $request): void
 	{
-		$incomeStatement
-			->updateProfitability($request);
+		// $incomeStatement
+		// 	->updateProfitability($request);
 	}
 
 	public function paginate(Request $request): array
@@ -101,18 +101,18 @@ class IncomeStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $incomeStatement);
-
+		$subItemType = $request->get('sub_item_type');
 		$allFilterDataCounter = $filterData->count();
 
 		$dataWithRelations = collect([]);
 
-		$datePerPage = $filterData->get()->each(function (IncomeStatementItem $incomeStatementItem, $index) use ($dataWithRelations, $incomeStatement) {
+		$datePerPage = $filterData->get()->each(function (IncomeStatementItem $incomeStatementItem, $index) use ($dataWithRelations, $incomeStatement, $subItemType) {
 			$incomeStatementItem->creator_name = $incomeStatementItem->getCreatorName();
 			$incomeStatementItem->created_at_formatted = formatDateFromString($incomeStatementItem->created_at);
 			$incomeStatementItem->updated_at_formatted = formatDateFromString($incomeStatementItem->updated_at);
 			$incomeStatementItem->order = $index + 1;
 			$dataWithRelations->add($incomeStatementItem);
-			$incomeStatementItem->getSubItems($incomeStatement->id)->each(function ($subItem) use ($dataWithRelations, $incomeStatementItem) {
+			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($dataWithRelations, $incomeStatementItem) {
 				$subItem->isSubItem = true; // isSubRow
 				if ($incomeStatementItem->has_depreciation_or_amortization) {
 					$subItem->pivot->can_be_depreciation = true;
@@ -139,17 +139,31 @@ class IncomeStatementRepository implements IBaseRepository
 					});
 				});
 		})
-			->orderBy('income_statements.' . getDefaultOrderBy()['column'], getDefaultOrderBy()['direction']);
+			->orderBy('financial_statement_ables.' . getDefaultOrderBy()['column'], getDefaultOrderBy()['direction']);
 	}
 
 	public function commonScopeForReport(Request $request, IncomeStatement $incomeStatement): builder
 	{
+		$subItemType = $request->get('sub_item_type');
 
-		return IncomeStatementItem::with(['subItems' => function ($builder) use ($incomeStatement) {
-			$builder->where('income_statement_id', $incomeStatement->id);
-		}])->whereHas('incomeStatements', function (Builder $builder) use ($incomeStatement) {
-			$builder->where('income_statements.id', $incomeStatement->id);
-		})
-			->orderBy('income_statement_items.id', 'asc');
+		return IncomeStatementItem::with(['subItems' => function ($builder) use ($incomeStatement, $subItemType) {
+			$builder
+				->wherePivot('financial_statement_able_id', $incomeStatement->id)
+				->wherePivot('sub_item_type', $subItemType);
+		}])
+			// ->whereHas('financialStatementAbles', function (Builder $builder) use ($incomeStatement) {
+			// 	$builder->where('financial_statement_ables.id', $incomeStatement->id);
+			// })
+			// ->whereHas('financialStatementAbles', function (Builder $builder) use ($incomeStatement) {
+			// 	$builder->where('financial_statement_ables.id', $incomeStatement->id);
+			// })
+			->orderBy('financial_statement_able_items.id', 'asc');
+
+		// return IncomeStatementItem::with(['subItems' => function ($builder) use ($incomeStatement) {
+		// 	$builder->where('financial_statement_able_id', $incomeStatement->id);
+		// }])->whereHas('financialStatementAbles', function (Builder $builder) use ($incomeStatement) {
+		// 	$builder->where('financial_statement_ables.id', $incomeStatement->id);
+		// })
+		// 	->orderBy('financial_statement_able_items.id', 'asc');
 	}
 }

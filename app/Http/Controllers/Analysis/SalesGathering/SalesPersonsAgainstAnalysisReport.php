@@ -61,13 +61,21 @@ class SalesPersonsAgainstAnalysisReport
         $growth_rate_data = [];
         $final_report_total = [];
         $salesPersons_names = [];
-
         $mainData = is_array(json_decode(($request->salesPersonsData[0]))) ? json_decode(($request->salesPersonsData[0])) : $request->salesPersonsData;
         $type = $request->type;
         $view_name = $request->view_name;
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
+		// dd(get_defined_vars());
         foreach ($mainData as  $main_row) {
-
+			// $initialData = collect(DB::select(DB::raw("
+			// SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,sales_person," . $type ."
+			// FROM sales_gathering
+			// WHERE ( company_id = '".$company->id."'AND sales_person = '".$main_row."' AND date between '".$request->start_date."' and '".$request->end_date."')
+			// ORDER BY id "
+			// 		))) ;
+			// 		if(count($initialData)){
+			// 			dd($initialData);
+			// 		}
             $mainData_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,sales_person," . $type ."
                 FROM sales_gathering
@@ -79,7 +87,7 @@ class SalesPersonsAgainstAnalysisReport
                         return $sub_item->sum($data_type);
                     });
                 })->toArray();
-
+// dd('not found');
             foreach (($request->sales_channels ?? []) as $sales_channel_key => $sales_channel) {
 
 
@@ -109,6 +117,7 @@ class SalesPersonsAgainstAnalysisReport
 
             $salesPersons_names[] = (str_replace(' ', '_', $main_row));
         }
+		// dd('not found');
 
         // dd($salesPersons_names);
         // Total Zones & Growth Rate

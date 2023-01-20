@@ -88,7 +88,7 @@
                         <label>{{ __('End Date') }}</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input type="date" required name="end_date " value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                <input type="date" required name="end_date" value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
                             </div>
                         </div>
                     </div>
@@ -110,7 +110,7 @@
 
                 </div>
     <input type="hidden" name="main_type" value="sales_person">
-<input type="hidden" id="append-to" value="salesPersonsData">
+			<input type="hidden" id="append-to" value="salesPersonsData">
 
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
@@ -118,7 +118,6 @@
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="salesPersonsData[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="salesPersonsData" multiple>
-                                        {{-- <option value="{{ json_encode($salesPersonsData) }}">{{ __('All Sales Persons') }}</option> --}}
                                         @foreach ($salesPersonsData as $category)
                                         <option value="{{ $category }}"> {{ __($category) }}</option>
                                         @endforeach
@@ -345,7 +344,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -385,16 +384,22 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
+			let mainName = 'categories[]';
+			
+			if(! $('#categories').length){
+				mainName = 'sales_channels[]';
+			}
+			
             // if($('#data_type').val()  == 'value'){
             var data_type = 'multiple';
             // }else{
             //     var data_type = '';
             // }
-            row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
+            row = '<select data-live-search="true" data-actions-box="true" name="'+ mainName +'" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
             // if($('#data_type').val()  !== 'value'){
             //     row += '<option value="">Select</option>\n' ;
             // }
@@ -404,15 +409,20 @@
 
             });
             row += '</select>';
-            console.log(row);
-            $('#categories').html('');
-            $('#categories').append(row);
+			if($('#categories').length){
+				$('#categories').html('');
+            $('#categories').append(row);				
+			}
+			else{
+				$('#sales_channels').html('');
+			$('#sales_channels').append(row);
+			}
+			
             reinitializeSelect2();
         });
     }
     // Sub Categories
     function getProducts(salesPersonsData , categories, type_of_data, type) {
-        // alert(categories)
         console.log(type_of_data);
         $.ajax({
             type: 'POST'
@@ -427,7 +437,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -440,7 +450,6 @@
             if (type == 'sales_person' || type == 'product_or_service' 
             // || type == 'product_item'
             ) {
-
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
 
                 $.each(data, function(key, val) {
@@ -517,12 +526,12 @@
             //     , 'third_main_field': 'sales_person'
             //     , 'field': type_of_data
             // , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
             var data_type = 'multiple';
-        
+
             row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
           
 

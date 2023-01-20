@@ -14,7 +14,7 @@
         @endif
         <div class="clearfix"></div>
         <div class="float-right" >
-            <a href="{{route('free.user.subscription')}}" class="btn "  style="margin: 19px;color: #fff;background-color: #1a5798;border-color: #007bff;">{{__("Free Trail")}}</a>
+            {{-- <a href="{{route('free.user.subscription')}}" class="btn "  style="margin: 19px;color: #fff;background-color: #1a5798;border-color: #007bff;">{{__("Free Trail")}}</a> --}}
         </div>
         <div class="intro-banner-search-form margin-top-49" style="background-color:none">
             <form class="login100-form validate-form flex-sb flex-w" method="POST"
@@ -57,5 +57,3 @@
     </div>
 </div>
 @endsection
-
-

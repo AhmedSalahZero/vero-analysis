@@ -10,6 +10,8 @@ use App\Http\Controllers\Analysis\SalesGathering\SKUsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
 use App\Http\Controllers\ExportTable;
 use App\Models\AllocationSetting;
+use App\Models\BalanceSheet;
+use App\Models\CashFlowStatement;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
@@ -24,6 +26,7 @@ use App\Models\SecondNewProductAllocationBase;
 use App\Models\User;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -32,12 +35,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use PhpParser\Node\Expr\Instanceof_;
 
 const MAX_RANKING = 5;
 const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis';
 const Customers_Against_Categories_Trend_Analysis = 'Customers Against Categories Trend Analysis';
 const Customers_Against_Products_ITEMS_Trend_Analysis = 'Customers Against Products Items Trend Analysis';
 const INVOICES = 'Invoices';
+const ACTUAL = 'actual';
 
 function spaceAfterCapitalLetters($string)
 {
@@ -365,9 +370,44 @@ function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, 
 {
 	return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year;
 }
+
+function getHavingConditionForDeadReactivated($year)
+{
+	return " having max(case when Year = " . $year . " then 1 else 0 end ) = 1
+	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 0 
+	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0 
+	and 
+	( max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 1 or 
+	
+	(max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0
+	and max(case when Year = " . ($year - 4) . " then 1 else 0 end ) = 1)
+	
+	)
+	
+	
+	order by total_sales desc ; ";
+}
+
+function getHavingConditionForDeadRepeating($year)
+{
+	return " having max(case when Year = " . $year . " then 1 else 0 end ) = 1
+	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 1
+	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0 
+	and max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0  
+	and max(case when Year = " . ($year - 4) . " then 1 else 0 end ) = 1
+	order by total_sales desc ; ";
+}
+function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+{
+	return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year;
+}
 function getStopRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
 	return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+}
+function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+{
+	return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
 }
 function getStopCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
 {
@@ -805,7 +845,7 @@ function getTypeSalesAnalysisData(Request $request, Company $company, $type)
 	$sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) : $request->sales_channels;
 
 	foreach ($sales_channels as  $sales_channel) {
-
+		$sales_channel = str_replace("'", "\'", $sales_channel);
 		$sales_channels_data = collect(DB::select(DB::raw(
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ," . $type . "
@@ -1537,7 +1577,7 @@ function defaultUserDateFormat()
 	return 'd-M-Y';
 	// return 'Y F d';
 }
-function formatReportDataForDashBoard(string $incomeStatementDurationType, string $incomeStatementStartDate, $data, $start_date, $end_date)
+function formatReportDataForDashBoard(string $incomeStatementDurationType, string $incomeStatementStartDate, $data, $start_date, $end_date, string $subItemType)
 {
 
 	$dates = generateDatesBetweenTwoDates(Carbon::make($start_date), Carbon::make($end_date), 'addMonth');
@@ -1547,10 +1587,17 @@ function formatReportDataForDashBoard(string $incomeStatementDurationType, strin
 	foreach ($data as $index => $mainItem) {
 		foreach ($dates as $date) {
 			$mainItemName = $mainItem->name;
-			$newData[$mainItemName]['data'][$date] = getTotalInPivotDate($incomeStatementDurationType, $incomeStatementStartDate, $mainItem->subItems($mainItem->pivot->income_statement_id)->get()->pluck('pivot'), $date, $dates);
+			$newData[$mainItemName]['data'][$date] = getTotalInPivotDate($incomeStatementDurationType, $incomeStatementStartDate, $mainItem->withSubItemsFor(
+				$mainItem->pivot->financial_statement_able_id,
+				$mainItem->pivot->sub_item_type
+			)->get()->pluck('pivot'), $date, $dates);
 		}
 		if (isset($mainItemName)) {
-			$newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->subItems($mainItem->pivot->income_statement_id)->get()->pluck('pivot'), $dates, $incomeStatementStartDate, $incomeStatementDurationType);
+			// withSubItemsFor($mainItem->pivot->financial_statement_able_id,$subItemType)
+			$newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->withSubItemsFor(
+				$mainItem->pivot->financial_statement_able_id,
+				$mainItem->pivot->sub_item_type
+			)->get()->pluck('pivot'), $dates, $incomeStatementStartDate, $incomeStatementDurationType);
 			$newData[$mainItemName]['name'] = $mainItemName;
 		}
 	}
@@ -1861,6 +1908,28 @@ function removeAdditionalMonthsOfInterval(array $dates, string $quarterName, arr
 	}
 	return $newDates;
 }
+function getArrayValuesFromIndex(array $array, int $index)
+{
+	$newArray = [];
+	foreach ($array as $currentItemIndex => $item) {
+		if ($currentItemIndex >= $index) {
+			$newArray[$currentItemIndex] = $item;
+		}
+	}
+	return $newArray;
+}
+function getIntervalForSelect(string $intervalName)
+{
+	$index = 0;
+	$intervalsFormattedForSelect = getDurationIntervalTypesForSelect();
+	foreach ($intervalsFormattedForSelect as $intervalArray) {
+		if ($intervalArray['value'] != $intervalName) {
+			$index++;
+		}
+		break;
+	}
+	return getArrayValuesFromIndex($intervalsFormattedForSelect, $index);
+}
 function getDurationIntervalTypesForSelect(): array
 {
 	return [
@@ -1881,5 +1950,32 @@ function getDurationIntervalTypesForSelect(): array
 			'title' => __('Annually')
 		],
 	];
+}
+function generateNameForFinancialStatementRelations(string $financialStatementName, $relationObject)
+{
+	if ($relationObject instanceof IncomeStatement) {
+		return $financialStatementName . ' Income Statement';
+	}
+	if ($relationObject instanceof CashFlowStatement) {
+		return $financialStatementName . ' Cash Flow Statement';
+	}
+	if ($relationObject instanceof BalanceSheet) {
+		return $financialStatementName . ' Balance Sheet';
+	}
+	throw new \Exception('Can Not Generate Name For ' . $financialStatementName . ' Only Allowed [ Income Statement , Cash Flow And Balance Sheet ] Objects');
+}
+function getLastSegmentFromString(string $string, string $separator = '\\')
+{
+	$explodedString = explode($separator, $string);
+	$countExplodedStringSegments = count($explodedString);
+	if (!$countExplodedStringSegments) {
+		throw new Exception('Invalid String Or Separator');
+	}
+	return $explodedString[$countExplodedStringSegments - 1];
+}
+function getReportNameFromRouteName(string $routeName): string
+{
+	$explodedRouteName = explode('.', $routeName);
+	return $explodedRouteName[count($explodedRouteName) - 2];
 }
 // rateFieldsIds

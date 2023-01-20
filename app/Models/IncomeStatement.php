@@ -5,33 +5,41 @@ namespace App\Models;
 use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
+use App\Interfaces\Models\Interfaces\IFinancialStatementAble;
 use App\Interfaces\Models\IShareable;
 use App\Models\Traits\Accessors\IncomeStatementAccessor;
 use App\Models\Traits\Mutators\IncomeStatementMutator;
 use App\Models\Traits\Relations\IncomeStatementRelation;
 use App\Models\Traits\Scopes\CompanyScope;
-use App\Models\Traits\Scopes\withAllRelationsScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable
+class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable, IFinancialStatementAble
 {
-	use  IncomeStatementAccessor, IncomeStatementMutator, IncomeStatementRelation, CompanyScope, withAllRelationsScope;
+	use  IncomeStatementAccessor, IncomeStatementMutator, IncomeStatementRelation, CompanyScope;
+
 
 	protected $guarded = [
 		'id'
 	];
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'financial_statement_ables';
+
 	public static function getShareableEditViewVars($model): array
 	{
 
 		return [
 			'pageTitle' => IncomeStatement::getPageTitle(),
-
 		];
 	}
 
 	public function getRouteKeyName()
 	{
-		return 'income_statements.id';
+		return 'financial_statement_ables.id';
 	}
 	public static function exportViewName(): string
 	{
@@ -44,6 +52,9 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 	protected static function booted()
 	{
+		static::addGlobalScope(function (Builder $builder) {
+			$builder->where('type', 'IncomeStatement');
+		});
 		// static::addGlobalScope(new StateCountryScope);
 	}
 
@@ -75,14 +86,15 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 	{
 
 		$currentCompanyId =  getCurrentCompanyId();
+		$reportType = $options['reportType'];
 
 		return [
-			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['income_statement_id']]),
+			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['financial_statement_able_id']]),
 			'modelName' => 'IncomeStatementReport',
 			'exportRoute' => route('admin.export.income.statement.report', $currentCompanyId),
-			'createRoute' => route('admin.create.income.statement.report', [
+			'createRoute' => route('admin.create.income.statement.' . $reportType . '.report', [
 				'company' => $currentCompanyId,
-				'incomeStatement' => $options['income_statement_id']
+				'incomeStatement' => $options['financial_statement_able_id']
 			]),
 			'storeRoute' => route('admin.store.income.statement.report', $currentCompanyId),
 			'hasChildRows' => false,
@@ -90,22 +102,8 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
 			'type' => 'create',
 			'incomeStatement' => $options['incomeStatement'],
-			'interval' => [
-				[
-					'value' => 'monthly',
-					'title' => __('Monthly')
-				], [
-					'value' => 'quarterly',
-					'title' => __('Quarterly')
-				], [
-					'value' => 'semi-annually',
-					'title' => __('Semi-annually')
-				],
-				[
-					'value' => 'annually',
-					'title' => __('Annually')
-				],
-			]
+			'interval' => getIntervalForSelect($options['incomeStatement']->getDurationType()),
+			'reportType' => $options['reportType']
 		];
 	}
 	public static function getPageTitle(): string
