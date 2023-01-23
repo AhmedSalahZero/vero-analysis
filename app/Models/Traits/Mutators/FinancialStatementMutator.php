@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 trait FinancialStatementMutator
 {
 
-	public function storeMainSection(Request $request): static
+	public function storeMainSection(Request $request)
 	{
 		return FinancialStatement::create($request->except(['_token']));
 	}
