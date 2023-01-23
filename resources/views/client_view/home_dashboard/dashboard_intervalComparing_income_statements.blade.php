@@ -121,8 +121,6 @@
                                                 @foreach($incomeStatements as $incomeSatatement)
                                                 <option value="{{ $incomeSatatement->id }}" @if($firstIncomeStatement->id == $incomeSatatement->id )  selected @endif > {{ $incomeSatatement->name  }}</option>
                                                 @endforeach 
-												
-												
                                         </select>
 
                 </div>

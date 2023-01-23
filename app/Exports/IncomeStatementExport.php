@@ -2,7 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\IncomeStatement;
+use App\Models\QuickPricingCalculator;
+use App\Models\RevenueBusinessLine;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -18,105 +19,101 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Excel;
 
 class IncomeStatementExport implements
-	FromCollection,
-	Responsable,
-	WithHeadings,
-	WithMapping,
-	ShouldAutoSize,
-	WithEvents,
-	WithTitle
+    FromCollection ,
+    Responsable ,
+    WithHeadings ,
+    WithMapping ,
+    ShouldAutoSize ,
+    WithEvents ,
+    WithTitle
 
 {
-	use Exportable, RegistersEventListeners;
-	private Collection $exportData;
-	private IncomeStatement $incomeStatement;
+    use Exportable , RegistersEventListeners;
+    private Collection $quickPricingCalculators;
 
-	/**
-	 * @param Collection $products
-	 */
+    /**
+     * @param Collection $products
+     */
+   
+    public function __construct(Collection $quickPricingCalculators , Request $request)
+    {
+        $this->writerType = $request->get('format') ;
+        $this->fileName = QuickPricingCalculator::getFileName(). '.'.getFileExtension($request->get('format'));
+        $this->quickPricingCalculators = $quickPricingCalculators;
+    }
 
-	public function __construct(Collection $incomeStatementReport, Request $request, IncomeStatement $incomeStatement)
-	{
-		$this->writerType = $request->get('format');
-		$this->fileName = $incomeStatement->name . '.Xlsx';
-		$this->exportData = $incomeStatementReport;
-		$this->incomeStatement = $incomeStatement;
-	}
+    public function collection()
+    {
 
-	public function collection()
-	{
-		return $this->exportData;
-	}
+        return $this->quickPricingCalculators ;
+    }
 
-	public function toResponse($request)
-	{
-	}
+    public function toResponse($request)
+    {
 
-	public function headings(): array
-	{
-		$dates = $this->exportData->toArray()[array_key_first($this->exportData->toArray())];
-		//  dd(getCurrentCompany());
+    }
 
-		$header = [
-			[
-				getCurrentCompany()->getName(),
-				$this->incomeStatement->name,
-				__('IncomeStatement Report'),
-				getExportDateTime(),
-				getExportUserName()
+    public function headings():array
+    {
+        return [
+            [
+                getCurrentCompany()->getName(),
+                QuickPricingCalculator::exportViewName(),
+                getExportDateTime(),
+                getExportUserName()
+                
+            ],[
+                '',
+                '',
+                '',
+                ''
+                
+            ],[
+            __('Id') ,
+            __('Revenue Business Line Name'),
+            __('Service Category Name'),
+            __('Service Item Name'),
+            __('Delivery Days'),
+            __('Total Recommend Price Without Vat'),
+            __('Total Recommend Price With Vat'),
+            __('Total Net Profit After Taxes'),
+            ]
+        ];
+    }
 
-			], [
-				'',
-				'',
-				'',
-				''
-
-			]
-
-		];
-
-		$headerItems  = [];
-		foreach ($dates as $date => $value) {
-			$headerItems[] = $date;
-		}
-		$header[] = $headerItems;
-		return $header;
-	}
-
-	public function map($row): array
-	{
-		// dd($row);
-		return $row;
-
-		//    return [
-		//        $row->getId(),
-		//        $row->getRevenueBusinessLineName(),
-		//        $row->getServiceCategoryName(),
-		//        $row->getServiceItemName(),
-		//        $row->getDeliveryDays(),
-		//        $row->getTotalRecommendPriceWithoutVatFormatted(),
-		//        $row->getTotalRecommendPriceWithVatFormatted(),
-		//        $row->getTotalNetProfitAfterTaxesFormatted(),
-
-		//    ];
-	}
-
-	public function registerEvents(): array
-	{
-		return [
-			AfterSheet::class => function (AfterSheet $afterSheet) {
-				$afterSheet->sheet->getStyle('A1:Z3')->applyFromArray([
-					'font' => [
-						'bold' => true
-					]
-				]);
-			}
-		];
-	}
+    public function map($row): array
+    {
 
 
-	public function title(): string
-	{
-		return $this->incomeStatement->name;
-	}
+       return [
+           $row->getId(),
+           $row->getRevenueBusinessLineName(),
+           $row->getServiceCategoryName(),
+           $row->getServiceItemName(),
+           $row->getDeliveryDays(),
+           $row->getTotalRecommendPriceWithoutVatFormatted(),
+           $row->getTotalRecommendPriceWithVatFormatted(),
+           $row->getTotalNetProfitAfterTaxesFormatted(),
+           
+       ];
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class=>function(AfterSheet $afterSheet){
+            $afterSheet->sheet->getStyle('A1:Z2')->applyFromArray([
+                'font'=>[
+                    'bold'=>true
+                ]
+            ]);
+            }
+        ];
+    }
+
+
+    public function title(): string
+    {
+        return RevenueBusinessLine::getFileName();
+    }
 }

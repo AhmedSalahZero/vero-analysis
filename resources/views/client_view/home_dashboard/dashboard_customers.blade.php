@@ -1,6 +1,5 @@
 @extends('layouts.dashboard')
 @section('dash_nav')
-
 @include('client_view.home_dashboard.main_navs',['active'=>'customer_dashboard'])
 
 @endsection
@@ -88,6 +87,9 @@
 
             <div class="kt-portlet__body">
 
+                <!--begin: Datatable -->
+
+                <!-- HTML -->
                 <div id="chartdiv" class="chartDiv"></div>
 
                 <!--end: Datatable -->
@@ -306,8 +308,8 @@
                     <tr class="table-active text-center">
 
                         <th class="text-center">{{ __('Customer Name') }}</th>
-                        <th class="text-center">{{ __('Sales') }}</th>
-                        <th class="text-center">{{ __('Percentage') }}</th>
+                        <th>{{ __('Sales') }}</th>
+                        <th>{{ __('Percentage') }}</th>
                     </tr>
                     @endslot
                     @slot('table_body')
@@ -409,8 +411,8 @@ $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
 
                         <th class="text-center">{{ __('Customer Name') }}</th>
 
-                        <th class="text-center">{{ __('Sales') }}</th>
-                        <th class="text-center">{{ __('Percentage') }}</th>
+                        <th>{{ __('Sales') }}</th>
+                        <th>{{ __('Percentage') }}</th>
 
 
                     </tr>

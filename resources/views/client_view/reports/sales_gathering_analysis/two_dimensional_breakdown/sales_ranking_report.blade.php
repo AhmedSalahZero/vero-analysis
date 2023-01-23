@@ -7,6 +7,7 @@
     }
 	.table-active th.dtfc-fixed-left{
         background-color:#086691 !important;  
+		
 	}
  
     table.dataTable tbody tr.group-color > .dtfc-fixed-left, table.dataTable tbody tr.group-color > .dtfc-fixed-right{

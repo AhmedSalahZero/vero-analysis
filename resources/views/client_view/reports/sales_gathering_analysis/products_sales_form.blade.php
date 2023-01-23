@@ -159,7 +159,7 @@
                 , 'main_field': 'category'
                 , 'field': type_of_data
             }
-            , url: "{{ route('get.zones.data', $company) }}"
+            , url: '{{ route('get.zones.data', $company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {

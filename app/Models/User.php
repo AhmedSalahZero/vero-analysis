@@ -42,11 +42,6 @@ class User extends Authenticatable implements HasMedia
         ]);
     }
 
-    public function getName():string
-    {
-        return $this->name ;
-    }
-
 
 }
 

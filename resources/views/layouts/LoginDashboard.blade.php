@@ -24,7 +24,9 @@
 
 
         <div class="container">
-           
+            {{-- @if (request()->route()->named('login'))
+                <a href="{{route('free.user.subscription')}}" class="btn btn-danger" style="margin: 19px">{{__("Free Trail")}}</a>
+            @endif --}}
             <div id="headerLogin">
                 <img src="{{ asset('back_login/images/logo-white.png') }}" width="300">
                 <h1>VERO ANALYSIS </h1>

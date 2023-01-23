@@ -221,35 +221,35 @@
                                                 class="kt-menu__ver-arrow la la-angle-right"></i></a>
                                                 {{-- @dd($exportables) --}}
 
- 
+
                                         <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
 
                                             <ul class="kt-menu__subnav">
                                                 @foreach ($section->subSections as $subSection)
-                                           
-                                                
+
+
                                                 @if(($subSection->name['en'] == 'Sales Person Dashboard' && in_array('Sales Person',$exportables)) )
-                                                 @include('print_sections')                                                
+                                                 @include('print_sections')
                                               @continue
-                                             
-                                                @endif 
+
+                                                @endif
                                                 @if( ($subSection->name['en'] == 'Customers Dashboard' &&  in_array('Customer Name',$exportables) ))
                                                      @include('print_sections')
                                                 @continue
-                                          
+
                                                 @endif
                                                 @if($subSection->name['en'] != 'Customers Dashboard' && $subSection->name['en'] != 'Sales Person Dashboard' )
 
-                                                    
-                                            
+
+
                                                   @include('print_sections')
-                                                  @endif 
+                                                  @endif
                                                 @endforeach
 
                                             </ul>
                                         </div>
                                     </li>
-                                    @else 
+                                    @else
                                     <li class="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel"
                                         {{-- {{Request::routeIs(@$route[0].'.*') ||  Request::routeIs(@$route[0]) ?  'kt-menu__item--open kt-menu__item--here ' : ''}}" --}} data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a
                                             href="javascript:;" class="kt-menu__link kt-menu__toggle"><span
@@ -294,6 +294,37 @@
                                                                             class="kt-menu__link-text">{{ __($subSection->name[$lang]) }}</span></a>
                                                                 </li>
                                                             @endif
+                                                        @elseif ($subSection->id == 275 || $subSection->id == 276 || $subSection->id == 277 || $subSection->id == 278 || $subSection->id == 279)
+                                                            <?php
+                                                                $show_route = 0 ;
+                                                                $modified_seasonality =  App\Models\ModifiedSeasonality::where('company_id', $company->id)->first();
+                                                                if (($subSection->id == 275 || $subSection->id == 279) && isset($modified_seasonality)  ) {
+                                                                    $show_route = 1 ;
+                                                                }
+                                                                elseif ($subSection->id == 276 && isset($modified_seasonality) &&
+                                                                (( App\Models\ExistingProductAllocationBase::where('company_id', $company->id)->first()) !== null) ) {
+                                                                    $show_route = 1 ;
+                                                                }elseif (($subSection->id == 277) && isset($modified_seasonality) &&
+                                                                ((App\Models\SecondExistingProductAllocationBase::where('company_id', $company->id)->first()) !== null) ) {
+                                                                    $show_route = 1 ;
+                                                                }elseif (($subSection->id == 278  ) && isset($modified_seasonality) &&
+                                                                ((App\Models\CollectionSetting::where('company_id', $company->id)->first()) !== null) ) {
+                                                                    $show_route = 1 ;
+                                                                }else {
+                                                                    $show_route = 0;
+                                                                }
+                                                            ?>
+
+
+                                                            @if ($show_route == 1)
+                                                                <li class="kt-menu__item " aria-haspopup="true">
+                                                                    <a href="{{ @$subSection->route == 'home' ? route(@$subSection->route) : route(@$subSection->route, $company) }}"
+                                                                        class="kt-menu__link "><i
+                                                                            class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                                            class="kt-menu__link-text">{{ __($subSection->name[$lang]) }}</span></a>
+                                                                </li>
+                                                            @endif
+                                                
                                                         @else
 
 
@@ -361,7 +392,7 @@
                                         </div>
                                     </li>
 
-                                    @endif 
+                                    @endif
                                 @endif
                             @endif
 
@@ -382,7 +413,7 @@
 
 
 
-                            @endif 
+                            @endif
                         @endforeach
 
 

@@ -332,7 +332,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: "{{ route('get.zones.data',$company) }}"
+            , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -372,7 +372,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: "{{ route('get.zones.data',$company) }}"
+            , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -414,7 +414,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             }
-            , url: "{{ route('get.zones.data',$company) }}"
+            , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -476,7 +476,7 @@
                 'start_date':$('input[name="start_date"]').val(),
                 'end_date':$('input[name="end_date"]').val()
             , }
-            , url: "{{ route('get.zones.data',$company) }}"
+            , url: '{{ route('get.zones.data',$company) }}'
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
