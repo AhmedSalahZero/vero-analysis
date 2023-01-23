@@ -31,7 +31,6 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 	public static function getShareableEditViewVars($model): array
 	{
-
 		return [
 			'pageTitle' => IncomeStatement::getPageTitle(),
 		];

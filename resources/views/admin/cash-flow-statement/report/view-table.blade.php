@@ -252,7 +252,7 @@ $tableId = 'kt_table_1';
                                                 // elements += `<a data-is-subitem="0" data-cash-flow-statement-item-id="${row.id}" data-cash-flow-statement-id="${modelId}" class="d-block  text-danger" href="#" data-toggle="modal" data-target="#delete-all-sub-modal${row.id}" >{{ __('Delete') }}</a> `
                                             }
                                             return elements;
-                                        } else if (row.isSubItem) {
+                                        } else if (row.isSubItem && (row.pivot.created_from == row.pivot.sub_item_type)) {
                                             return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-cash-flow-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
                                 <i class="fas fa-trash-alt"></i>
                                 

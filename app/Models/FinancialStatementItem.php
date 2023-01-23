@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\Accessors\FinancialStatementItemAccessor;
 use App\Models\Traits\Relations\FinancialStatementItemRelation;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -44,6 +45,8 @@ class  FinancialStatementItem extends Model
 
 	public static function rateFieldsIds(): array
 	{
+		$inc = IncomeStatement::first();
+
 		return [
 			self::SALES_GROWTH_RATE_ID,
 			self::COST_OF_GOODS_PERCENTAGE_OF_SALES_ID,

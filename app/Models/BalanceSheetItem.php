@@ -16,7 +16,7 @@ class  BalanceSheetItem extends Model implements IFinancialStatementAbleItem
 	protected $table = 'financial_statement_able_items';
 
 	// Intangible Assets Gross Amount
-	use  BalanceSheetItemRelation, BalanceSheetItemAccessor, FinancialStatementAbleItemScope;
+	use  BalanceSheetItemRelation, BalanceSheetItemAccessor;
 	const PERCENTAGE_OF_SALES = '[ % Of Sales ]';
 	// must start from 1  not zero
 	// Fixed Assets Gross Amount

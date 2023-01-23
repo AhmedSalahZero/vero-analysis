@@ -140,7 +140,6 @@ $tableId = 'kt_table_1';
                 </th>
                 <input type="hidden" name="dates[]" value="{{ json_encode(array_keys($incomeStatement->getIntervalFormatted())) }}" id="dates">
                 @foreach($incomeStatement->getIntervalFormatted() as $defaultDateFormate=>$interval)
-                {{-- {{ dd() }} --}}
                 <th data-date="{{ $defaultDateFormate }}" data-month-year="{{explode('-',$defaultDateFormate)[0].'-'.explode('-',$defaultDateFormate)[1]}}" class="view-table-th header-th" data-is-collection-relation="0" data-collection-item-id="0" data-db-column-name="name" data-relation-name="ServiceCategory" data-is-relation="1" class="header-th" data-is-json="0">
                     {{ $interval }}
                 </th>
@@ -255,7 +254,8 @@ $tableId = 'kt_table_1';
                                                 // elements += `<a data-is-subitem="0" data-income-statement-item-id="${row.id}" data-income-statement-id="${modelId}" class="d-block  text-danger" href="#" data-toggle="modal" data-target="#delete-all-sub-modal${row.id}" >{{ __('Delete') }}</a> `
                                             }
                                             return elements;
-                                        } else if (row.isSubItem) {
+                                        } else if (row.isSubItem && (row.pivot.created_from == row.pivot.sub_item_type)) {
+                                            // console.log(row.pivot.);
                                             return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
                                 <i class="fas fa-trash-alt"></i>
                                 
@@ -731,7 +731,15 @@ $tableId = 'kt_table_1';
                                             // handle data for intervals 
                                         }
                                         , initComplete: function(settings, json) {
-
+                                            var reportType = $('#sub-item-type').val();
+                                            if (reportType == 'adjusted') {
+                                                const table = $('.main-table-class').DataTable();
+                                                table.column(1).visible(false);
+                                                $('.kt-portlet__foot').css('display', 'none');
+                                                $('[contenteditable]').each(function(index, td) {
+                                                    $(td).attr('contenteditable', false);
+                                                })
+                                            }
                                         }
 
 
@@ -963,7 +971,11 @@ $tableId = 'kt_table_1';
                                     let salesGrowthRateId = $('#sales-growth-rate-id').val();
                                     let currentTotalSalesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('input[data-date="' + currentDate + '"]').val());
                                     let previousTotalSalesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('input[data-date="' + previousDate + '"]').val());
-                                    let salesRevenueGrowthRate = currentTotalSalesRevenueValue ? ((currentTotalSalesRevenueValue - previousTotalSalesRevenueValue) / previousTotalSalesRevenueValue) * 100 : 0;
+                                    var salesRevenueGrowthRate = 0;
+                                    if (previousTotalSalesRevenueValue) {
+                                        salesRevenueGrowthRate = currentTotalSalesRevenueValue ? ((currentTotalSalesRevenueValue - previousTotalSalesRevenueValue) / previousTotalSalesRevenueValue) * 100 : 0;
+                                    }
+
                                     $('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"]').find('input[data-date="' + currentDate + '"]').val(salesRevenueGrowthRate).trigger('change');
                                     $('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"]').find('td.date-' + currentDate).html(number_format(salesRevenueGrowthRate, 2) + ' %');
                                 }
@@ -1616,5 +1628,3 @@ $tableId = 'kt_table_1';
     </x-tables.basic-view>
 
 </div>
-{{-- <button>Save</button> --}}
-{{-- </form> --}}

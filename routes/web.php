@@ -108,6 +108,8 @@ Route::middleware([])->group(function () {
 
 				Route::get('income-statement/{incomeStatement}/adjusted-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.adjusted.report');
 
+				Route::get('income-statement/{incomeStatement}/modified-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.modified.report');
+
 				Route::post('income-statement-report/update', [IncomeStatementController::class, 'updateReport'])->name('admin.update.income.statement.report');
 				Route::post('income-statement-report/delete', [IncomeStatementController::class, 'deleteReport'])->name('admin.destroy.income.statement.report');
 				Route::post('income-statement/storeReport', [IncomeStatementController::class, 'storeReport'])->name('admin.store.income.statement.report');

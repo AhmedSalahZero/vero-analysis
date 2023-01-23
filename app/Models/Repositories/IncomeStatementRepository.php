@@ -62,7 +62,7 @@ class IncomeStatementRepository implements IBaseRepository
 
 	public function storeReport(Request $request): IBaseModel
 	{
-		$incomeStatement = App(IncomeStatement::class);
+		$incomeStatement = new IncomeStatement();
 
 		$incomeStatement
 			->storeReport($request);

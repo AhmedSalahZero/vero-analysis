@@ -2,7 +2,7 @@
 
 namespace App\Interfaces\Models\Interfaces;
 
-use App\Models\FinancialStatement;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 interface IFinancialStatementAble
@@ -11,6 +11,7 @@ interface IFinancialStatementAble
 	public function mainRows(): BelongsToMany;
 	public function subItems(): BelongsToMany;
 	public function mainItems(): BelongsToMany;
-	public function FinancialStatement(): FinancialStatement;
+	public function FinancialStatement(): BelongsTo;
 	public function withSubItemsFor(int $financialStatementAbleItemId, string $subItemType = '', string $subItemName = ''): BelongsToMany;
+	public function canViewActualReport(): bool;
 }

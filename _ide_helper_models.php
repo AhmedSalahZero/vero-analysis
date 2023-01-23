@@ -75,18 +75,21 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property string $duration
+ * @property string|null $type
  * @property string $duration_type
  * @property string $start_from
  * @property int $company_id
  * @property int|null $creator_id
+ * @property int|null $financial_statement_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Company|null $company
+ * @property-read \App\Models\FinancialStatement|null $FinancialStatement
+ * @property-read \App\Models\Company $company
  * @property-read \App\Models\User|null $creator
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheetItem[] $mainItems
  * @property-read int|null $main_items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheetItem[] $mainRows
+ * @property-read int|null $main_rows_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheetItem[] $subItems
  * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet newModelQuery()
@@ -98,13 +101,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereDuration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereDurationType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereFinancialStatementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereStartFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet withAllRelations(?int $companyId = null)
  */
-	class BalanceSheet extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable {}
+	class BalanceSheet extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable, \App\Interfaces\Models\Interfaces\IFinancialStatementAble {}
 }
 
 namespace App\Models{
@@ -115,21 +120,25 @@ namespace App\Models{
  * @property string $name
  * @property int $has_sub_items
  * @property int $has_depreciation_or_amortization
+ * @property string $financial_statement_able_type
  * @property int $is_main_for_all_calculations
  * @property int $is_sales_rate
  * @property int $for_interval_comparing
  * @property mixed|null $depends_on auto-calculated
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheet[] $balanceSheets
- * @property-read int|null $balance_sheets_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheet[] $financialStatementAbles
+ * @property-read int|null $financial_statement_ables_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheet[] $mainRowsPivot
+ * @property-read int|null $main_rows_pivot_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheet[] $subItems
+ * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereDependsOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereForIntervalComparing($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasDepreciationOrAmortization($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasSubItems($value)
@@ -139,7 +148,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereUpdatedAt($value)
  */
-	class BalanceSheetItem extends \Eloquent {}
+	class BalanceSheetItem extends \Eloquent implements \App\Interfaces\Models\Interfaces\IFinancialStatementAbleItem {}
 }
 
 namespace App\Models{
@@ -168,18 +177,21 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property string $duration
+ * @property string|null $type
  * @property string $duration_type
  * @property string $start_from
  * @property int $company_id
  * @property int|null $creator_id
+ * @property int|null $financial_statement_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Company|null $company
+ * @property-read \App\Models\FinancialStatement|null $FinancialStatement
+ * @property-read \App\Models\Company $company
  * @property-read \App\Models\User|null $creator
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatementItem[] $mainItems
  * @property-read int|null $main_items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatementItem[] $mainRows
+ * @property-read int|null $main_rows_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatementItem[] $subItems
  * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement newModelQuery()
@@ -191,13 +203,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereDuration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereDurationType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereFinancialStatementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereStartFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement withAllRelations(?int $companyId = null)
  */
-	class CashFlowStatement extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable {}
+	class CashFlowStatement extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable, \App\Interfaces\Models\Interfaces\IFinancialStatementAble {}
 }
 
 namespace App\Models{
@@ -208,21 +222,25 @@ namespace App\Models{
  * @property string $name
  * @property int $has_sub_items
  * @property int $has_depreciation_or_amortization
+ * @property string $financial_statement_able_type
  * @property int $is_main_for_all_calculations
  * @property int $is_sales_rate
  * @property int $for_interval_comparing
  * @property mixed|null $depends_on auto-calculated
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatement[] $cashFlowStatements
- * @property-read int|null $cash_flow_statements_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatement[] $financialStatementAbles
+ * @property-read int|null $financial_statement_ables_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatement[] $mainRowsPivot
+ * @property-read int|null $main_rows_pivot_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatement[] $subItems
+ * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereDependsOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereForIntervalComparing($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasDepreciationOrAmortization($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasSubItems($value)
@@ -232,7 +250,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereUpdatedAt($value)
  */
-	class CashFlowStatementItem extends \Eloquent {}
+	class CashFlowStatementItem extends \Eloquent implements \App\Interfaces\Models\Interfaces\IFinancialStatementAbleItem {}
 }
 
 namespace App\Models{
@@ -412,6 +430,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $name
+ * @property string $type
  * @property string $duration
  * @property string $duration_type
  * @property string $start_from
@@ -419,10 +438,15 @@ namespace App\Models{
  * @property int|null $creator_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\BalanceSheet|null $balanceSheet
+ * @property-read \App\Models\CashFlowStatement|null $cashFlowStatement
  * @property-read \App\Models\Company $company
  * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\IncomeStatement|null $incomeStatement
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatementItem[] $mainItems
  * @property-read int|null $main_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatementItem[] $mainRows
+ * @property-read int|null $main_rows_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
  * @property-read int|null $sharing_links_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatementItem[] $subItems
@@ -439,6 +463,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatement whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatement whereStartFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatement withAllRelations(?int $companyId = null)
  */
@@ -461,8 +486,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatement[] $financialStatements
  * @property-read int|null $financial_statements_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatement[] $mainRowsPivot
+ * @property-read int|null $main_rows_pivot_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatement[] $subItems
+ * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem query()
@@ -487,18 +514,21 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property string $duration
+ * @property string|null $type
  * @property string $duration_type
  * @property string $start_from
  * @property int $company_id
  * @property int|null $creator_id
+ * @property int|null $financial_statement_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\FinancialStatement|null $FinancialStatement
  * @property-read \App\Models\Company $company
  * @property-read \App\Models\User|null $creator
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatementItem[] $mainItems
  * @property-read int|null $main_items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatementItem[] $mainRows
+ * @property-read int|null $main_rows_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatementItem[] $subItems
  * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement newModelQuery()
@@ -510,13 +540,14 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereDuration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereDurationType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereFinancialStatementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereStartFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement withAllRelations(?int $companyId = null)
  */
-	class IncomeStatement extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable {}
+	class IncomeStatement extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable, \App\Interfaces\Models\Interfaces\IFinancialStatementAble {}
 }
 
 namespace App\Models{
@@ -527,21 +558,25 @@ namespace App\Models{
  * @property string $name
  * @property int $has_sub_items
  * @property int $has_depreciation_or_amortization
+ * @property string $financial_statement_able_type
  * @property int $is_main_for_all_calculations
  * @property int $is_sales_rate
  * @property int $for_interval_comparing
  * @property mixed|null $depends_on auto-calculated
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatement[] $incomeStatements
- * @property-read int|null $income_statements_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SharingLink[] $sharingLinks
- * @property-read int|null $sharing_links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatement[] $financialStatementAbles
+ * @property-read int|null $financial_statement_ables_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatement[] $mainRowsPivot
+ * @property-read int|null $main_rows_pivot_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatement[] $subItems
+ * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereDependsOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereForIntervalComparing($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasDepreciationOrAmortization($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasSubItems($value)
@@ -551,7 +586,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereUpdatedAt($value)
  */
-	class IncomeStatementItem extends \Eloquent {}
+	class IncomeStatementItem extends \Eloquent implements \App\Interfaces\Models\Interfaces\IFinancialStatementAbleItem {}
 }
 
 namespace App\Models{
