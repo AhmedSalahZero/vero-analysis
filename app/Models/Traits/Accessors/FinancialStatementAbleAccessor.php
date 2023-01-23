@@ -52,4 +52,8 @@ trait FinancialStatementAbleAccessor
 	{
 		return $this->depends_on;
 	}
+	public function canViewActualReport(): bool
+	{
+		return $this->subItems()->wherePivot('sub_item_type', 'forecast')->count();
+	}
 }

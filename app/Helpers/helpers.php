@@ -1978,4 +1978,16 @@ function getReportNameFromRouteName(string $routeName): string
 	$explodedRouteName = explode('.', $routeName);
 	return $explodedRouteName[count($explodedRouteName) - 2];
 }
+function getAllFinancialAbleTypes(): array
+{
+	return ['forecast', 'actual', 'adjusted', 'modified'];
+}
+function combineNoneZeroValues(array $first, array $second): array
+{
+	$combined = [];
+	foreach ($first as $date => $firstArrayValue) {
+		$combined[$date] = isset($second[$date]) && $second[$date] != 0 ? $second[$date] : $first[$date];
+	}
+	return $combined;
+}
 // rateFieldsIds

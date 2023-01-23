@@ -15,7 +15,7 @@ class  CashFlowStatementItem extends Model implements IFinancialStatementAbleIte
 {
 	protected $table = 'financial_statement_able_items';
 
-	use  CashFlowStatementItemRelation, CashFlowStatementItemAccessor, FinancialStatementAbleItemScope;
+	use  CashFlowStatementItemRelation, CashFlowStatementItemAccessor;
 	const PERCENTAGE_OF_SALES = '[ % Of Sales ]';
 	// must start from 1  not zero
 	//  Net Profit 

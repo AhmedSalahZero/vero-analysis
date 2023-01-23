@@ -4,13 +4,14 @@ namespace App\Models\Traits\Relations;
 
 use App\Models\FinancialStatement;
 use App\Models\Traits\Relations\Commons\CommonRelations;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait FinancialStatementAbleRelation
 {
 	use CommonRelations;
 
-	public function FinancialStatement(): FinancialStatement
+	public function FinancialStatement(): BelongsTo
 	{
 		return $this->belongsTo(FinancialStatement::class, 'financial_statement_id', 'id');
 	}
@@ -41,7 +42,7 @@ trait FinancialStatementAbleRelation
 		)
 			// ->wherePivot('financial_statement_able_item_id', $financialStatementAbleItemId)
 			// ->wherePivot('sub_item_type', $subItemType)
-			->withPivot(['sub_item_name', 'sub_item_type', 'payload', 'is_depreciation_or_amortization']);
+			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization']);
 	}
 	public function withSubItemsFor(int $financialStatementAbleItemId, string $subItemType = '', string $subItemName = ''): BelongsToMany
 	{
@@ -61,10 +62,12 @@ trait FinancialStatementAbleRelation
 			'financial_statement_able_id',
 			'financial_statement_able_item_id'
 		)
-			->withPivot(['payload', 'company_id', 'creator_id']);
+			->withPivot(['payload', 'sub_item_type', 'company_id', 'creator_id']);
 	}
-	public function withMainRowsFor(int $financialStatementAbleItemId)
+	public function withMainRowsFor(int $financialStatementAbleItemId, string $subItemType = '')
 	{
-		return $this->mainRows()->wherePivot('financial_statement_able_item_id', $financialStatementAbleItemId);
+		$operator = $subItemType ? '=' : '!=';
+		return $this->mainRows()->wherePivot('financial_statement_able_item_id', $financialStatementAbleItemId)
+			->wherePivot('sub_item_type', $operator, $subItemType);
 	}
 }

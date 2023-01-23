@@ -4,6 +4,8 @@ namespace App\Models\Traits\Mutators;
 
 use App\Models\FinancialStatement;
 use App\Models\FinancialStatementItem;
+use App\Models\IncomeStatement;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,6 @@ trait FinancialStatementMutator
 
 	public function storeMainSection(Request $request): static
 	{
-		dd($request->all());
 		return FinancialStatement::create($request->except(['_token']));
 	}
 	public function storeMainItems(Request $request)
@@ -29,22 +30,21 @@ trait FinancialStatementMutator
 	}
 	public function storeReport(Request $request)
 	{
-		$financialStatement = FinancialStatement::find($request->input('financial_statement_id'));
-		$financialStatementItemId = $request->input('financial_statement_item_id');
+		// $financialStatement = FinancialStatement::find($request->input('financial_statement_id'));
+		// $financialStatementItemId = $request->input('financial_statement_item_id');
 
-		foreach ((array)$request->sub_items as $index => $options) {
-			if ($options['name']  && !$financialStatement->withSubItemsFor($financialStatementItemId, $options['sub_item_type'], $options['name'])
-				// ->wherePivot('financial_statement_item_id', $financialStatementItemId)
-				->exists()) {
-				$financialStatement->withSubItemsFor($financialStatementItemId, $options['name'])->attach($financialStatementItemId, [
-					'company_id' => \getCurrentCompanyId(),
-					'creator_id' => Auth::id(),
-					'sub_item_name' => $options['name'],
-					'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
-					'created_at' => now()
-				]);
-			}
-		}
+		// foreach ((array)$request->sub_items as $index => $options) {
+		// 	if ($options['name']  && !$financialStatement->withSubItemsFor($financialStatementItemId, $options['sub_item_type'], $options['name'])
+		// 		->exists()) {
+		// 		$financialStatement->withSubItemsFor($financialStatementItemId, $options['name'])->attach($financialStatementItemId, [
+		// 			'company_id' => \getCurrentCompanyId(),
+		// 			'creator_id' => Auth::id(),
+		// 			'sub_item_name' => $options['name'],
+		// 			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
+		// 			'created_at' => now()
+		// 		]);
+		// 	}
+		// }
 		foreach ((array)$request->get('value') as $financialStatementId => $financialStatementItems) {
 			$financialStatement = FinancialStatement::find($financialStatementId)->load('subItems');
 

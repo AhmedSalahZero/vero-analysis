@@ -257,20 +257,38 @@ $tableId = 'kt_table_1';
 
 
                                                 render: function(d, b, row) {
-                                                    return `
-													
-						<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.financial_statement_able_id}/forecast-report"  data-id="${row.financial_statement_able_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Forecast Income Statement Report') }}">
+                                                    var actual = `
+																				<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/actual-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Actual Income Statement Report') }}">
                           <i class="la la-money icon-lg"></i>
                         </a>
-						
-                        <a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.financial_statement_able_id}/actual-report"  data-id="${row.financial_statement_able_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Actual Income Statement Report') }}">
+						`;
+
+                                                    var adjusted = `
+																				<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/adjusted-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('View Adjusted Income Statement Report') }}">
                           <i class="la la-money icon-lg"></i>
                         </a>
+						`;
 
-                          
+                                                    var modified = `
+																				<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/modified-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Modified Income Statement Report') }}">
+                          <i class="la la-money icon-lg"></i>
+                        </a>
+						`;
+
+                                                    if (row.type == 'actual') {
+                                                        return actual;
+                                                    }
+                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/forecast-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Forecast Income Statement Report') }}">
+<i class="la la-money icon-lg"></i>
+</a>`
+
+                                                    if (row.can_view_income_statement_actual_report) {
+                                                        return forecast + actual + adjusted + modified;
+                                                    } else {
+                                                        return forecast;
+                                                    }
 
 
-                        `
 
 
                                                     // <a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.financial_statement_able_id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">

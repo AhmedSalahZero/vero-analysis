@@ -3,8 +3,6 @@
 namespace App\Exports;
 
 use App\Models\IncomeStatement;
-use App\Models\QuickPricingCalculator;
-use App\Models\RevenueBusinessLine;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -20,108 +18,105 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Excel;
 
 class IncomeStatementExport implements
-    FromCollection ,
-    Responsable ,
-    WithHeadings ,
-    WithMapping ,
-    ShouldAutoSize ,
-    WithEvents ,
-    WithTitle
+	FromCollection,
+	Responsable,
+	WithHeadings,
+	WithMapping,
+	ShouldAutoSize,
+	WithEvents,
+	WithTitle
 
 {
-    use Exportable , RegistersEventListeners;
-    private Collection $exportData;
-    private IncomeStatement $incomeStatement;
+	use Exportable, RegistersEventListeners;
+	private Collection $exportData;
+	private IncomeStatement $incomeStatement;
 
-    /**
-     * @param Collection $products
-     */
-   
-    public function __construct(Collection $incomeStatementReport , Request $request , IncomeStatement $incomeStatement)
-    {
-        $this->writerType = $request->get('format') ;
-        $this->fileName = $incomeStatement->name. '.Xlsx';
-        $this->exportData = $incomeStatementReport;
-        $this->incomeStatement =$incomeStatement;
-    }
+	/**
+	 * @param Collection $products
+	 */
 
-    public function collection()
-    {
-        return $this->exportData;
-    }
+	public function __construct(Collection $incomeStatementReport, Request $request, IncomeStatement $incomeStatement)
+	{
+		$this->writerType = $request->get('format');
+		$this->fileName = $incomeStatement->name . '.Xlsx';
+		$this->exportData = $incomeStatementReport;
+		$this->incomeStatement = $incomeStatement;
+	}
 
-    public function toResponse($request)
-    {
+	public function collection()
+	{
+		return $this->exportData;
+	}
 
-    }
+	public function toResponse($request)
+	{
+	}
 
-    public function headings():array
-    {
-        $dates =$this->exportData->toArray()[array_key_first($this->exportData->toArray())];
-        //  dd(getCurrentCompany());
-         
-         $header = [
-              [
-                getCurrentCompany()->getName(),
-                $this->incomeStatement->name,
-                __('IncomeStatement Report'),
-                getExportDateTime(),
-                getExportUserName()
-                
-            ],[
-                '',
-                '',
-                '',
-                ''
-                
-            ]
+	public function headings(): array
+	{
+		$dates = $this->exportData->toArray()[array_key_first($this->exportData->toArray())];
+		//  dd(getCurrentCompany());
 
-         ];
+		$header = [
+			[
+				getCurrentCompany()->getName(),
+				$this->incomeStatement->name,
+				__('IncomeStatement Report'),
+				getExportDateTime(),
+				getExportUserName()
 
-         $headerItems  = [];
-         foreach($dates as $date=>$value)
-         {
-             $headerItems[] = $date ;
-         }
-         $header[] = $headerItems;
-         return $header ; 
-    }
+			], [
+				'',
+				'',
+				'',
+				''
 
-    public function map($row): array
-    {
-        // dd($row);
-        return $row ;
+			]
 
-    //    return [
-    //        $row->getId(),
-    //        $row->getRevenueBusinessLineName(),
-    //        $row->getServiceCategoryName(),
-    //        $row->getServiceItemName(),
-    //        $row->getDeliveryDays(),
-    //        $row->getTotalRecommendPriceWithoutVatFormatted(),
-    //        $row->getTotalRecommendPriceWithVatFormatted(),
-    //        $row->getTotalNetProfitAfterTaxesFormatted(),
-           
-    //    ];
-    }
+		];
 
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class=>function(AfterSheet $afterSheet){
-            $afterSheet->sheet->getStyle('A1:Z3')->applyFromArray([
-                'font'=>[
-                    'bold'=>true
-                ]
-            ]);
-            }
-        ];
-    }
+		$headerItems  = [];
+		foreach ($dates as $date => $value) {
+			$headerItems[] = $date;
+		}
+		$header[] = $headerItems;
+		return $header;
+	}
+
+	public function map($row): array
+	{
+		// dd($row);
+		return $row;
+
+		//    return [
+		//        $row->getId(),
+		//        $row->getRevenueBusinessLineName(),
+		//        $row->getServiceCategoryName(),
+		//        $row->getServiceItemName(),
+		//        $row->getDeliveryDays(),
+		//        $row->getTotalRecommendPriceWithoutVatFormatted(),
+		//        $row->getTotalRecommendPriceWithVatFormatted(),
+		//        $row->getTotalNetProfitAfterTaxesFormatted(),
+
+		//    ];
+	}
+
+	public function registerEvents(): array
+	{
+		return [
+			AfterSheet::class => function (AfterSheet $afterSheet) {
+				$afterSheet->sheet->getStyle('A1:Z3')->applyFromArray([
+					'font' => [
+						'bold' => true
+					]
+				]);
+			}
+		];
+	}
 
 
-    public function title(): string
-    {
-        return $this->incomeStatement->name;
-    }
-
+	public function title(): string
+	{
+		return $this->incomeStatement->name;
+	}
 }

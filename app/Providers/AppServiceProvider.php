@@ -28,9 +28,10 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		if ($this->app->environment() !== 'production') {
+		if ($this->app->isLocal()) {
 			$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 		}
+		// 
 	}
 
 	/**
@@ -40,7 +41,6 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function boot(Request $request)
 	{
-
 		// if(!isProduction()){
 
 		//     View::composer('*',function($view){
