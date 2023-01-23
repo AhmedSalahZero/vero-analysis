@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 trait FinancialStatementAbleMutator
 {
 
-	public function storeMainSection(Request $request): static
+	public function storeMainSection(Request $request)
 	{
 		return (new static)::create(array_merge($request->except(['_token']), ['type' => getLastSegmentFromString(get_class(new static))]));
 	}
