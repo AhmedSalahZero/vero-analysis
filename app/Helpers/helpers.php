@@ -10,6 +10,8 @@ use App\Http\Controllers\Analysis\SalesGathering\SKUsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
 use App\Http\Controllers\ExportTable;
 use App\Models\AllocationSetting;
+use App\Models\BalanceSheet;
+use App\Models\CashFlowStatement;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
@@ -1781,12 +1783,6 @@ function getSubItemsNames($items)
 	}
 	return $subItems;
 }
-
-// function getLastKeyOfArray(array $items)
-// {
-// 	// $lastKeyOfArray = array_key_last($items);
-// 	// return $items[];
-// }
 function getMonthOfDate(string $date)
 {
 	return explode('-', $date)[1];
