@@ -1972,3 +1972,15 @@ function getAccountsToSentExceptionsFor(): array
 		'ahmedconan17@yahoo.com'
 	];
 }
+function getProductsItemsQuantity($companyId)
+{
+    return QuantityProductSeasonality::where('company_id', $companyId)->get();
+}
+function getNumberOfProductsItemsQuantity($companyId)
+{
+    return QuantityProductSeasonality::where('company_id', $companyId)->count();
+}
+function canShowNewItemsProductsQuantity($companyId)
+{
+    return  getNumberOfProductsItemsQuantity($companyId);
+}
