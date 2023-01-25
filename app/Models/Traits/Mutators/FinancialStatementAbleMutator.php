@@ -4,6 +4,7 @@ namespace App\Models\Traits\Mutators;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Iterator;
 
 trait FinancialStatementAbleMutator
 {
@@ -129,7 +130,7 @@ trait FinancialStatementAbleMutator
 		$subItemType = $request->get('sub_item_type');
 		foreach ((array)$request->sub_items as $index => $options) {
 			if ($options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
-				$insertSubItems = $subItemType == 'forecast' ? getAllFinancialAbleTypes() : [$subItemType];
+				$insertSubItems = $this->getInsertToSubItemFields($subItemType);
 				foreach ($insertSubItems as $subType) {
 					$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, [
 						'company_id' => \getCurrentCompanyId(),
@@ -138,6 +139,8 @@ trait FinancialStatementAbleMutator
 						'sub_item_name' => $options['name'],
 						'created_from' => $subItemType,
 						'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
+						'is_quantity' => $options['is_quantity'] ?? false,
+						'can_be_quantity' => $options['can_be_quantity'] ?? false,
 						'created_at' => now()
 					]);
 				}
@@ -196,5 +199,15 @@ trait FinancialStatementAbleMutator
 				$financialStatementAble->updateTotalRowsWithoutSubItemsForAdjusted($financialStatementAbleItemId, $subItemType);
 			}
 		}
+	}
+	public function getInsertToSubItemFields(string $subItemType): array
+	{
+		if ($subItemType == 'forecast') {
+			return getAllFinancialAbleTypes();
+		}
+		if ($subItemType == 'actual') {
+			return getAllFinancialAbleTypes(['forecast']);
+		}
+		return [$subItemType];
 	}
 }
