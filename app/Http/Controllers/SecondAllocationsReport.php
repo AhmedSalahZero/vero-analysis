@@ -45,7 +45,7 @@ class SecondAllocationsReport
         {
             return redirect()->back()->with('fail' , failAllocationMessage($allocation_type) );
         }
-        
+
             $request->validate([
                 'allocation_base' => 'required',
                 'breakdown' => 'sometimes|required',
@@ -88,9 +88,9 @@ class SecondAllocationsReport
         $allocations_setting = SecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  =getNumberOfProductsItems($company->id) ;
-     if ( ($request->isMethod('POST') 
-            || (! $allocations_setting->add_new_items) )){   
-    //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){   
+     if ( ($request->isMethod('POST')
+            || (! $allocations_setting->add_new_items) )){
+    //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
 
             foreach ((array )$request->allocation_base_data as $product => $data) {
                 $total = array_sum($this->finalTotal($data));
@@ -106,20 +106,29 @@ class SecondAllocationsReport
 
             $allocation_base_data = $request->allocation_base_data;
             Cache::forever(getCacheKeyForSecondAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
+// dd($request->totalsss);
+//             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
+//                 foreach ($item_data as $base => $value) {
+//                     if (strstr($base, 'new_item') !== false) {
+//                         $index = substr($base, strpos($base, "new_item_") + 9);
+//                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
+//                         array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]); // by salah
+//                         // $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
 
+//                         unset($allocation_base_data[$product_item_name][$base]);
+//                     }
+//                 }
+//             }
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
                         $index = substr($base, strpos($base, "new_item_") + 9);
                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
-                        array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]); // by salah
-                        // $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
-                        
+                        $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]);
                         unset($allocation_base_data[$product_item_name][$base]);
                     }
                 }
             }
-
             SecondNewProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
                 [
@@ -166,7 +175,7 @@ class SecondAllocationsReport
 
         $allocation_base = $allocations_setting->allocation_base;
 
-        
+
         // Saving Existing Percentages
         if ($request->isMethod('POST')) {
             $use_modified_targets = ($request->use_modified_targets ?? 0);
@@ -328,7 +337,7 @@ class SecondAllocationsReport
 
         $new_products_allocations = SecondNewProductAllocationBase::company()->first();
         $products_seasonality = ProductSeasonality::company()->get();
-    
+
         $sales_forecast = SalesForecast::company()->first();
         $allocations_setting = SecondAllocationSetting::company()->first();
         $allocation_base_data = isset($new_products_allocations->allocation_base_data) ? collect($new_products_allocations->allocation_base_data)->map(function ($data, $item) {
@@ -338,18 +347,18 @@ class SecondAllocationsReport
         })->toArray() : [];
 
         $allocation_data_per_allocation_base = [];
-   
+
         foreach ($allocation_base_data as $product_name => $base_items) {
             $row = $products_seasonality->where('name', $product_name)->first();
-            
+
             $sales_target_value = $row->sales_target_value;
-            
+
             $seasonality = $row->seasonality;
-            
+
             $seasonality_data = $row->seasonality_data;
-            
+
             foreach ($base_items as $base => $percentage) {
-         
+
                 $percentage = $percentage ?? 0;
                 $allocation_data_per_allocation_base[$base][$product_name]['target'] = $sales_target_value * ($percentage / 100);
                 $allocation_data_per_allocation_base[$base][$product_name]['seasonality'] = $seasonality;
@@ -387,21 +396,21 @@ class SecondAllocationsReport
                         $sales_target_value,
                         $year
                     );
-            
-                   
+
+
                 }
             }
 
             foreach ($allocation_data as $base => $data) {
-                foreach($data as $item=>$arr) // this foreach add by me 
+                foreach($data as $item=>$arr) // this foreach add by me
                 {
                     $allocation_data_total[$base][$item] = $this->finalTotal($data);
                 }
-   
-                
-             
+
+
+
             }
-         
+
             arsort($allocation_data_total);
             $allocation_data_total['Total'] = $this->finalTotal($allocation_data);
         }
@@ -429,14 +438,14 @@ class SecondAllocationsReport
                          foreach($values as $date=>$value)
                             {
                                     $month = date('F', strtotime(('01-' . $date)));
-                        
+
                             $full_date = date('d-m-Y', strtotime(('01-' . $date)));
                             // $total_sales_targets[$base][][$full_date] = ($existing_product_data[$base][$month] ?? 0) + (is_array($value) ? array_sum($value) : $value); // by salah
                             $total_sales_targets[$base][$item][$full_date] = ($existing_product_data[$base][$month] ?? 0) + $value;
-                                
+
                             }
                     }
-                   
+
                 }
             }
             /* end by salah */
@@ -444,20 +453,20 @@ class SecondAllocationsReport
 
             //  foreach ($allocation_data_total as $base => $base_data) {
             //     foreach ($base_data as $date => $value) {
-            
+
             //         $month = date('F', strtotime(('01-' . $date)));
             //         $full_date = date('d-m-Y', strtotime(('01-' . $date)));
             //         $total_sales_targets[$base][$full_date] = ($existing_product_data[$base][$month] ?? 0) + $value;
             //     }
             // }
-            
+
             unset($total_sales_targets['Total']);
 
              if(!$total_sales_targets)
             {
                 unset($existing_product_data['Total']);
                 return $existing_product_data ;
-                
+
             }
             return $total_sales_targets;
         }
@@ -509,9 +518,9 @@ class SecondAllocationsReport
         $use_modified_targets = $modified_targets->use_modified_targets;
         $products_modified_targets = $modified_targets->products_modified_targets;
         // Others Index
-        
+
         $input = preg_quote('Others', '~'); // don't forget to quote input string!
-        
+
         $others_name_index = preg_grep('~' . $input . '~', array_keys($modified_targets->sales_targets_percentages ?: []));
         $others_name_index = Arr::first($others_name_index);
 
@@ -583,7 +592,7 @@ class SecondAllocationsReport
 
 
         $allocation = SecondNewProductAllocationBase::company()->first() ;
-        
+
         $new_allocation_bases_names = $allocation ? $allocation->new_allocation_bases_names :[] ;
 
         if (isset($new_allocation_bases_names) && count($new_allocation_bases_names) > 0) {
@@ -604,14 +613,14 @@ class SecondAllocationsReport
         $existing_product_data = [];
         foreach ($product_items_percentages as $base_name => $products_items) {
             $existing_product_per_allocation_base = [];
-            
+
             if(count($products_items) > 0)
             {
                  foreach ($products_items as $product_item_name => $product_value) {
                 $name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;
                 $product_seasonality = $seasonality[$name] ?? [];
                 $existing_product_per_allocation_base[$product_item_name] = $this->operationAmongArrayAndNumber($product_seasonality, $product_value, 'multiply');
-                }     
+                }
             }
             $total = $this->finalTotal($existing_product_per_allocation_base);
             $total  = $this->sorting($total);

@@ -31,7 +31,7 @@ class QuantityCategory extends Model
      */
     public function products()
     {
-        return $this->hasMany(QuantityProduct::class);
+        return $this->hasMany(QuantityProduct::class,'category_id','id');
     }
     public static function boot() {
         parent::boot();

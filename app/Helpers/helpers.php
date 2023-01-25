@@ -1254,6 +1254,16 @@ function getCacheKeyForSecondAllocationReport($companyId)
 {
     return 'second_allocation_report_for_company_' . $companyId;
 }
+function getCacheKeyForQuantityFirstAllocationReport($companyId)
+{
+    return 'quantity_first_allocation_report_for_company_' . $companyId;
+}
+
+
+function getCacheKeyForQuantitySecondAllocationReport($companyId)
+{
+    return 'quantity_second_allocation_report_for_company_' . $companyId;
+}
 function formatExistingFormNewAllocation($newAllocation)
 {
     if ($newAllocation) {
