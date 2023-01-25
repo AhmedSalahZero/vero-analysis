@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AllocationSetting;
-use App\Models\CollectionSetting;
+use App\Models\QuantityAllocationSetting;
+use App\Models\QuantityCollectionSetting;
 use App\Models\Company;
-use App\Models\ExistingProductAllocationBase;
-use App\Models\NewProductAllocationBase;
-use App\Models\SalesForecast;
-use App\Models\SecondAllocationSetting;
-use App\Models\SecondExistingProductAllocationBase;
+use App\Models\QuantityExistingProductAllocationBase;
+use App\Models\QuantityNewProductAllocationBase;
+use App\Models\QuantitySalesForecast;
+use App\Models\QuantitySecondAllocationSetting;
+use App\Models\QuantitySecondExistingProductAllocationBase;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,8 +18,8 @@ class QuantityCollectionController extends Controller
     use GeneralFunctions;
     public function collectionSettings(Request $request, Company $company)
     {
-        $first_allocation_setting_base = AllocationSetting::company()->first()->allocation_base ?? null;
-        $second_allocation_setting_base = SecondAllocationSetting::company()->first()->allocation_base ?? null;
+        $first_allocation_setting_base = QuantityAllocationSetting::company()->first()->allocation_base ?? null;
+        $second_allocation_setting_base = QuantitySecondAllocationSetting::company()->first()->allocation_base ?? null;
         // Saving Data
         if ($request->isMethod('POST')) {
             $total = [];
@@ -49,7 +49,7 @@ class QuantityCollectionController extends Controller
                 'total_rate.*.required' => 'Total Percentages Must be 100%',
 
             ]);
-            CollectionSetting::updateOrCreate(
+            QuantityCollectionSetting::updateOrCreate(
                 ['company_id' => $company->id],
                 [
                     'collection_base' => $request->collection_base,
@@ -58,15 +58,15 @@ class QuantityCollectionController extends Controller
                     'second_allocation_collection' => $request->collection_base == $second_allocation_setting_base ? $request->second_allocation_collection : null,
                 ]
             );
-            return redirect()->route('collection.report', $company);
+            return redirect()->route('collection.quantity.report', $company);
 
         }
-        $collection_settings= CollectionSetting::company()->first() ;
+        $collection_settings= QuantityCollectionSetting::company()->first() ;
 
-        $first_allocation_base_items = ExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(NewProductAllocationBase::company()->first());
-        $second_allocation_base_items = SecondExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(SecondExistingProductAllocationBase::company()->first());
-        $sales_forecast = SalesForecast::company()->first();
-        return view('client_view.forecast.collection_settings', compact(
+        $first_allocation_base_items = QuantityExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(QuantityNewProductAllocationBase::company()->first());
+        $second_allocation_base_items = QuantitySecondExistingProductAllocationBase::company()->first()->existing_products_target ?? formatExistingFormNewAllocation(QuantitySecondExistingProductAllocationBase::company()->first());
+        $sales_forecast = QuantitySalesForecast::company()->first();
+        return view('client_view.quantity_forecast.collection_settings', compact(
             'company',
             'sales_forecast',
             'collection_settings',
@@ -82,13 +82,13 @@ class QuantityCollectionController extends Controller
     {
             // dd(get_defined_vars());
         //
-        $collection_settings= CollectionSetting::company()->first() ;
-        $first_allocation_setting_base = AllocationSetting::company()->first()->allocation_base?? null;
-        $second_allocation_setting_base = SecondAllocationSetting::company()->first()->allocation_base?? null;
+        $collection_settings= QuantityCollectionSetting::company()->first() ;
+        $first_allocation_setting_base = QuantityAllocationSetting::company()->first()->allocation_base?? null;
+        $second_allocation_setting_base = QuantitySecondAllocationSetting::company()->first()->allocation_base?? null;
 
         $collection = [];
         if ($collection_settings->collection_base == 'general_collection_policy') {
-            $total_company_sales_target = (new SalesForecastReport)->productsAllocations($company,$request,'total_company_sales_target');
+            $total_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company,$request,'total_company_sales_target');
             $collection_data = $collection_settings->general_collection;
 
             $collection = $this->collectionCalculation($total_company_sales_target,$collection_data);
@@ -96,7 +96,7 @@ class QuantityCollectionController extends Controller
 
         } elseif ($collection_settings->collection_base == $first_allocation_setting_base) {
 
-            $total_company_sales_target = (new AllocationsReport)->NewProductsSeasonality($request,$company,'total_company_sales_target');
+            $total_company_sales_target = (new QuantityAllocationsReport)->NewProductsSeasonality($request,$company,'total_company_sales_target');
             // dd($total_company_sales_target);
             $collection_data = $collection_settings->first_allocation_collection;
 
@@ -106,14 +106,14 @@ class QuantityCollectionController extends Controller
 
         } elseif ($collection_settings->collection_base == $second_allocation_setting_base) {
 
-            $total_company_sales_target = (new SecondAllocationsReport)->NewProductsSeasonality($request,$company,'total_company_sales_target');
+            $total_company_sales_target = (new QuantitySecondAllocationsReport)->NewProductsSeasonality($request,$company,'total_company_sales_target');
             $collection_data = $collection_settings->second_allocation_collection;
             foreach ($total_company_sales_target as $base => $base_targets) {
                 $collection[$base] = $this->collectionCalculation($base_targets,($collection_data[$base]??[]));
             }
         }
         // Months For Only First Year
-        $sales_forecast = SalesForecast::company()->first();
+        $sales_forecast = QuantitySalesForecast::company()->first();
         $monthly_dates = [];
         $counter = 1;
         for ($month = 0; $month < 12; $month++) {
@@ -124,7 +124,7 @@ class QuantityCollectionController extends Controller
         // dd($result);
         $forecast_year = date('Y',strtotime($sales_forecast->start_date));
         if ($result == 'view') {
-            return view('client_view.forecast.collection_report',compact('company',
+            return view('client_view.quantity_forecast.collection_report',compact('company',
             'forecast_year',
             'monthly_dates',
             'collection',

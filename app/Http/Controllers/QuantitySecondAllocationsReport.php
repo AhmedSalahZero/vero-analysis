@@ -8,8 +8,8 @@ use App\Http\Controllers\QuantitySalesForecastReport;
 use App\Models\QuantityAllocationSetting;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
-use App\Models\ModifiedSeasonality;
-use App\Models\ModifiedTarget;
+use App\Models\QuantityModifiedSeasonality;
+use App\Models\QuantityModifiedTarget;
 use App\Models\Product;
 use App\Models\QuantityProductSeasonality;
 use App\Models\QuantitySalesForecast;
@@ -88,6 +88,7 @@ class QuantitySecondAllocationsReport
         $allocations_setting = QuantitySecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  =getNumberOfProductsItemsQuantity($company->id) ;
+        // dd($hasNewProductsItems);
      if ( ($request->isMethod('POST')
             || (! $allocations_setting->add_new_items) )){
             //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
@@ -105,22 +106,33 @@ class QuantitySecondAllocationsReport
             ]);
 
             $allocation_base_data = $request->allocation_base_data;
-            Cache::forever(getCacheKeyForSecondAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
+            Cache::forever(getCacheKeyForQuantitySecondAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
+
+            // foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
+            //     foreach ($item_data as $base => $value) {
+            //         if (strstr($base, 'new_item') !== false) {
+            //             $index = substr($base, strpos($base, "new_item_") + 9);
+            //             $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
+            //             array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totals]); // by salah
+            //             // $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
+
+            //             unset($allocation_base_data[$product_item_name][$base]);
+            //         }
+            //     }
+            // }
 
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
                         $index = substr($base, strpos($base, "new_item_") + 9);
                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
-                        array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]); // by salah
-                        // $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
-
+                        $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totals]);
                         unset($allocation_base_data[$product_item_name][$base]);
                     }
                 }
             }
 
-            QuantitySecondNewProductAllocationBase::updateOrCreate(
+            $allocations_base_row = QuantitySecondNewProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
                 [
                     'allocation_base' => $allocation_base,
@@ -128,8 +140,8 @@ class QuantitySecondAllocationsReport
                     'new_allocation_bases_names' => $request->new_allocation_base_items,
                 ]
             );
-
-
+            $allocations_base_row->save();
+            // dd($name_of_new_allocation_base);
             $allocations_base_row = QuantitySecondNewProductAllocationBase::company()->first();
             return redirect()->route('second.existing.products.allocations.quantity', $company);
         }
@@ -467,7 +479,7 @@ class QuantitySecondAllocationsReport
     {
             $start_date = null ;
         $end_date = null ;
-        $modified_seasonality = ModifiedSeasonality::company()->first();
+        $modified_seasonality = QuantityModifiedSeasonality::company()->first();
         $allocation_setting = QuantitySecondAllocationSetting::company()->first();
         $sales_forecast = QuantitySalesForecast::company()->first();
         // Top 50 + Chosen Others => Product_items
@@ -501,10 +513,10 @@ class QuantitySecondAllocationsReport
         }else {
             $sales_targets = $existing_sales_targets;
         }
-        $modified_seasonality = ModifiedSeasonality::company()->first();
+        $modified_seasonality = QuantityModifiedSeasonality::company()->first();
         $seasonality = $modified_seasonality->use_modified_seasonality == 1 ? $modified_seasonality->modified_seasonality       : $modified_seasonality->original_seasonality;
 
-        $modified_targets = ModifiedTarget::company()->first();
+        $modified_targets = QuantityModifiedTarget::company()->first();
 
         $use_modified_targets = $modified_targets->use_modified_targets;
         $products_modified_targets = $modified_targets->products_modified_targets;

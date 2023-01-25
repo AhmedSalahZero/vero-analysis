@@ -118,7 +118,7 @@ class QuantityAllocationsReport
             ]);
             $allocation_base_data = $request->allocation_base_data;
 
-            Cache::forever(getCacheKeyForFirstAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
+            Cache::forever(getCacheKeyForQuantityFirstAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
