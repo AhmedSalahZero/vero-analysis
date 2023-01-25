@@ -71,7 +71,7 @@
                             <label>{{ __('Type') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group">
-                                    <label style="font-size:18px;margin-right:25px;" for="forecast">{{ __('Forecast') }}</label>
+                                    <label style="font-size:18px;margin-right:25px;" for="forecast">{{ __('Forecast & Actual') }}</label>
                                     <input style="width:20px;height:16px;margin-right:20px;position:initial !important" id="forecast" value="forecast" class="form-check-input" type="checkbox" name="type">
 
                                     <label style="font-size:18px;margin-right:25px;" for="actual">{{ __('Actual') }}</label>

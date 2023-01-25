@@ -3,7 +3,7 @@
 <x-styles.commons></x-styles.commons>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{$pageTitle }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{$pageTitle .'[ '. ucfirst($reportType) .' ]' }}</x-main-form-title>
 @endsection
 @section('content')
 <div class="row">

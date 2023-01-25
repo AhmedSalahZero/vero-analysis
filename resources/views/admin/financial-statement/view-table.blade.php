@@ -59,12 +59,12 @@ $tableId = 'kt_table_1';
 
 
 
-                <th class="view-table-th header-th" data-db-column-name="name" data-is-relation="1" data-relation-name="creator" class="header-th" data-is-json="0">
+                {{-- <th class="view-table-th header-th" data-db-column-name="name" data-is-relation="1" data-relation-name="creator" class="header-th" data-is-json="0">
                     {{ __('Creator Name') }}
                 </th>
                 <th class="view-table-th header-th" data-db-column-name="created_at" data-is-relation="0" class="header-th" data-is-json="0">
                     {{ __('Created At') }}
-                </th>
+                </th> --}}
                 <th class="view-table-th" class="header-th">
                     {{ __('Income Statement') }}
                 </th>
@@ -72,7 +72,7 @@ $tableId = 'kt_table_1';
                     {{ __('Balance Sheet') }}
                 </th>
                 <th class="view-table-th" class="header-th">
-                    {{ __('CashFlowStatement') }}
+                    {{ __('Cash Flow Statement') }}
                 </th>
                 <th class="view-table-th" class="header-th">
                     {{ __('Actions') }}
@@ -238,52 +238,49 @@ $tableId = 'kt_table_1';
                                                 , orderable: false
                                                 , className: 'text-center'
                                             }
+                                            // , {
+                                            //     data: 'creator_name'
+                                            //     , searchable: false
+                                            //     , orderable: false
+                                            //     , className: "text-center"
+                                            // }
+                                            // , {
+                                            //     data: 'created_at_formatted'
+                                            //     , searchable: false
+                                            //     , orderable: false
+                                            //     , className: 'text-nowrap text-center'
+                                            // }
                                             , {
-                                                data: 'creator_name'
-                                                , searchable: false
-                                                , orderable: false
-                                                , className: "text-center"
-                                            }
-                                            , {
-                                                data: 'created_at_formatted'
-                                                , searchable: false
-                                                , orderable: false
-                                                , className: 'text-nowrap text-center'
-                                            }, {
                                                 data: 'id'
                                                 , searchable: false
                                                 , orderable: false
-                                                , className: "text-center",
+                                                , className: "text-left",
 
 
                                                 render: function(d, b, row) {
                                                     var actual = `
-																				<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/actual-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Actual Income Statement Report') }}">
-                          <i class="la la-money icon-lg"></i>
+			<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/actual-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Actual Income Statement Report') }}">
+				
+				{{ __('Actual') }}
+				
                         </a>
 						`;
 
                                                     var adjusted = `
-																				<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/adjusted-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('View Adjusted Income Statement Report') }}">
-                          <i class="la la-money icon-lg"></i>
-                        </a>
+					<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/adjusted-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff !important;margin-right:10px;" title="{{ __('View Adjusted Income Statement Report') }}">{{ __('Adjusted') }}</a>
 						`;
 
                                                     var modified = `
-																				<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/modified-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Modified Income Statement Report') }}">
-                          <i class="la la-money icon-lg"></i>
-                        </a>
+							<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/modified-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Modified Income Statement Report') }}">{{ __('Modified') }}</a>
 						`;
 
                                                     if (row.type == 'actual') {
                                                         return actual;
                                                     }
-                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/forecast-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Forecast Income Statement Report') }}">
-<i class="la la-money icon-lg"></i>
-</a>`
+                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/forecast-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Income Statement Report') }}">{{ __('Forecast') }}</a>`
 
                                                     if (row.can_view_income_statement_actual_report) {
-                                                        return forecast + actual + adjusted + modified;
+                                                        return forecast + actual + ' <br> <br>' + adjusted + modified;
                                                     } else {
                                                         return forecast;
                                                     }
@@ -302,7 +299,7 @@ $tableId = 'kt_table_1';
                                                 data: 'id'
                                                 , searchable: false
                                                 , orderable: false
-                                                , className: "text-center",
+                                                , className: "text-left",
 
 
                                                 render: function(d, b, row) {
@@ -328,7 +325,7 @@ $tableId = 'kt_table_1';
                                                 data: 'id'
                                                 , searchable: false
                                                 , orderable: false
-                                                , className: "text-center",
+                                                , className: "text-left",
 
 
                                                 render: function(d, b, row) {
@@ -368,9 +365,7 @@ $tableId = 'kt_table_1';
 
                           
 
-                        <a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">
-                          <i class="la la-trash icon-lg"></i>
-                        </a>
+                     
 
                         `
 
