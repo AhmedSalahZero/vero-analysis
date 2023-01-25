@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
-use App\Http\Controllers\SalesForecastReport;
-use App\Models\AllocationSetting;
+use App\Http\Controllers\QuantitySalesForecastReport;
+use App\Models\QuantityAllocationSetting;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\Product;
-use App\Models\ProductSeasonality;
-use App\Models\SalesForecast;
+use App\Models\QuantityProductSeasonality;
+use App\Models\QuantitySalesForecast;
 use App\Models\SalesGathering;
-use App\Models\SecondAllocationSetting;
-use App\Models\SecondExistingProductAllocationBase;
-use App\Models\SecondNewProductAllocationBase;
+use App\Models\QuantitySecondAllocationSetting;
+use App\Models\QuantitySecondExistingProductAllocationBase;
+use App\Models\QuantitySecondNewProductAllocationBase;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -34,9 +34,9 @@ class QuantitySecondAllocationsReport
     }
     public function allocationSettings(Request $request, Company $company)
     {
-        $sales_forecast = SalesForecast::company()->first();
-        $allocations_setting = SecondAllocationSetting::company()->first();
-        $first_allocations_setting = AllocationSetting::company()->first();
+        $sales_forecast = QuantitySalesForecast::company()->first();
+        $allocations_setting = QuantitySecondAllocationSetting::company()->first();
+        $first_allocations_setting = QuantityAllocationSetting::company()->first();
         $sales_targets = [];
         if ($request->isMethod('POST')) {
               $allocation_type = $request->get('allocation_base');
@@ -53,7 +53,7 @@ class QuantitySecondAllocationsReport
 
             ]);
             if ($allocations_setting === null) {
-                SecondAllocationSetting::create([
+                QuantitySecondAllocationSetting::create([
                     'allocation_base' => $request->allocation_base,
                     'company_id' => $company->id,
                     'breakdown' => $request->breakdown,
@@ -69,10 +69,10 @@ class QuantitySecondAllocationsReport
                     'number_of_items' => $request->add_new_items  == 1 ? $request->number_of_items : 0,
                 ]);
             }
-            return redirect()->route('second.new.product.allocation.base', $company);
+            return redirect()->route('second.new.product.allocation.base.quantity', $company);
         } else {
 
-            return view('client_view.forecast.second_allocations', compact(
+            return view('client_view.quantity_forecast.second_allocations', compact(
                 'company',
                 'sales_forecast',
                 'sales_targets',
@@ -84,13 +84,13 @@ class QuantitySecondAllocationsReport
 
     public function NewProductsAllocationBase(Request $request, Company $company)
     {
-        $sales_forecast = SalesForecast::company()->first();
-        $allocations_setting = SecondAllocationSetting::company()->first();
+        $sales_forecast = QuantitySalesForecast::company()->first();
+        $allocations_setting = QuantitySecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
-        $hasNewProductsItems  =getNumberOfProductsItems($company->id) ;
+        $hasNewProductsItems  =getNumberOfProductsItemsQuantity($company->id) ;
      if ( ($request->isMethod('POST')
             || (! $allocations_setting->add_new_items) )){
-    //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
+            //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
 
             foreach ((array )$request->allocation_base_data as $product => $data) {
                 $total = array_sum($this->finalTotal($data));
@@ -120,7 +120,7 @@ class QuantitySecondAllocationsReport
                 }
             }
 
-            SecondNewProductAllocationBase::updateOrCreate(
+            QuantitySecondNewProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
                 [
                     'allocation_base' => $allocation_base,
@@ -130,12 +130,12 @@ class QuantitySecondAllocationsReport
             );
 
 
-            $allocations_base_row = SecondNewProductAllocationBase::company()->first();
-            return redirect()->route('second.existing.products.allocations', $company);
+            $allocations_base_row = QuantitySecondNewProductAllocationBase::company()->first();
+            return redirect()->route('second.existing.products.allocations.quantity', $company);
         }
-        $allocations_base_row = SecondNewProductAllocationBase::company()->first();
+        $allocations_base_row = QuantitySecondNewProductAllocationBase::company()->first();
 
-        $product_seasonality = ProductSeasonality::company()->get();
+        $product_seasonality = QuantityProductSeasonality::company()->get();
         $allocation_bases_items =   SalesGathering::company()
             ->whereNotNull($allocation_base)
             ->where($allocation_base, '!=', '')
@@ -149,7 +149,7 @@ class QuantitySecondAllocationsReport
                 $allocation_bases_items['new_item_' . $item] = 'new';
             }
         }
-        return view('client_view.forecast.second_new_products_allocation_base', compact(
+        return view('client_view.quantity_forecast.second_new_products_allocation_base', compact(
             'company',
             'sales_forecast',
             'allocation_bases_items',
@@ -162,7 +162,7 @@ class QuantitySecondAllocationsReport
 
     public function existingProductsAllocationBase(Request $request, Company $company)
     {
-        $allocations_setting = SecondAllocationSetting::company()->first();
+        $allocations_setting = QuantitySecondAllocationSetting::company()->first();
 
         $allocation_base = $allocations_setting->allocation_base;
 
@@ -174,7 +174,7 @@ class QuantitySecondAllocationsReport
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Modified Sales Percentages Must be 100%'
             ]);
-            SecondExistingProductAllocationBase::updateOrCreate(
+            QuantitySecondExistingProductAllocationBase::updateOrCreate(
                 ['company_id' => $company->id],
 
                 [
@@ -186,13 +186,13 @@ class QuantitySecondAllocationsReport
                 ]
             );
 
-            return redirect()->route('second.new.product.seasonality', $company);
+            return redirect()->route('second.new.product.seasonality.quantity', $company);
         }
-        $allocations_base_row = SecondNewProductAllocationBase::company()->first();
-        $existing_allocations_base = SecondExistingProductAllocationBase::company()->first();
+        $allocations_base_row = QuantitySecondNewProductAllocationBase::company()->first();
+        $existing_allocations_base = QuantitySecondExistingProductAllocationBase::company()->first();
 
-        $sales_forecast = SalesForecast::company()->first();
-        $product_seasonality = ProductSeasonality::company()->get();
+        $sales_forecast = QuantitySalesForecast::company()->first();
+        $product_seasonality = QuantityProductSeasonality::company()->get();
 
         $base_name = str_replace('_', ' ', ucwords($allocation_base));
 
@@ -229,7 +229,7 @@ class QuantitySecondAllocationsReport
         }
         $breakdown_base_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
         if ($allocations_setting->breakdown == 'new_breakdown_quarterly') {
-            $total_monthly_targets  = (new SalesForecastReport)->productsAllocations($company, $request, 'array');
+            $total_monthly_targets  = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'array');
 
             $count = 1;
             $sales_targets = [];
@@ -255,7 +255,7 @@ class QuantitySecondAllocationsReport
             ];
             return array_push($breakdown_base_data, $new_value);
         });
-        return view('client_view.forecast.second_existing_products_allocation_base', compact(
+        return view('client_view.quantity_forecast.second_existing_products_allocation_base', compact(
             'company',
             'sales_forecast',
             'existing_allocations_base',
@@ -273,7 +273,7 @@ class QuantitySecondAllocationsReport
 
     public function allocations(Request $request, Company $company)
     {
-        $sales_forecast = SalesForecast::company()->first();
+        $sales_forecast = QuantitySalesForecast::company()->first();
         $allocation_base = '';
         $breakdown_base_data = [];
         $last_3_years_breakdown_base_data = [];
@@ -290,7 +290,7 @@ class QuantitySecondAllocationsReport
             }
             $breakdown_base_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
             if ($request->breakdown == 'new_breakdown_quarterly') {
-                $total_monthly_targets  = (new SalesForecastReport)->productsAllocations($company, $request, 'array');
+                $total_monthly_targets  = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'array');
                 $count = 1;
                 $sales_targets = [];
                 $total_quarter = 0;
@@ -308,7 +308,7 @@ class QuantitySecondAllocationsReport
             }
         } else {
         }
-        return view('client_view.forecast.second_allocations', compact(
+        return view('client_view.quantity_forecast.second_allocations', compact(
             'company',
             'sales_forecast',
             'breakdown_base_data',
@@ -321,16 +321,16 @@ class QuantitySecondAllocationsReport
     public function NewProductsSeasonality(Request $request, Company $company, $result = 'view')
     {
         if ($request->isMethod('POST')) {
-            return redirect()->route('collection.settings', $company);
+            return redirect()->route('collection.settings.quantity', $company);
         }
         $has_product_item = $this->fields($company);
         $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
 
-        $new_products_allocations = SecondNewProductAllocationBase::company()->first();
-        $products_seasonality = ProductSeasonality::company()->get();
+        $new_products_allocations = QuantitySecondNewProductAllocationBase::company()->first();
+        $products_seasonality = QuantityProductSeasonality::company()->get();
 
-        $sales_forecast = SalesForecast::company()->first();
-        $allocations_setting = SecondAllocationSetting::company()->first();
+        $sales_forecast = QuantitySalesForecast::company()->first();
+        $allocations_setting = QuantitySecondAllocationSetting::company()->first();
         $allocation_base_data = isset($new_products_allocations->allocation_base_data) ? collect($new_products_allocations->allocation_base_data)->map(function ($data, $item) {
             return collect($data)->map(function ($sub_data, $sub_item) use ($item) {
                 return Arr::first($sub_data);
@@ -380,7 +380,7 @@ class QuantitySecondAllocationsReport
 
                     $forecast_seasonality_data = $this->sorting($seasonality_data);
 
-                    $allocation_data[$base_item][$product_name] = (new SalesForecastReport)->seasonalityFun(
+                    $allocation_data[$base_item][$product_name] = (new QuantitySalesForecastReport)->seasonalityFun(
                         $seasonality,
                         $forecast_seasonality_data,
                         $monthly_dates,
@@ -410,7 +410,7 @@ class QuantitySecondAllocationsReport
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
         if ($result == 'view') {
-            return view('client_view.forecast.second_new_product_seasonality', compact(
+            return view('client_view.quantity_forecast.second_new_product_seasonality', compact(
                 'new_products_allocations',
                 'allocation_data_total',
                 'products_seasonality',
@@ -468,8 +468,8 @@ class QuantitySecondAllocationsReport
             $start_date = null ;
         $end_date = null ;
         $modified_seasonality = ModifiedSeasonality::company()->first();
-        $allocation_setting = SecondAllocationSetting::company()->first();
-        $sales_forecast = SalesForecast::company()->first();
+        $allocation_setting = QuantitySecondAllocationSetting::company()->first();
+        $sales_forecast = QuantitySalesForecast::company()->first();
         // Top 50 + Chosen Others => Product_items
         $original_seasonality = $modified_seasonality->original_seasonality;
         unset($original_seasonality['Others']);
@@ -487,7 +487,7 @@ class QuantitySecondAllocationsReport
 
 
 
-        $existing_product_allocation_base =  SecondExistingProductAllocationBase::company()->first();
+        $existing_product_allocation_base =  QuantitySecondExistingProductAllocationBase::company()->first();
         $existing_sales_targets  = $existing_product_allocation_base->existing_products_target??[] ;
 
         $sales_targets=[];
@@ -582,7 +582,7 @@ class QuantitySecondAllocationsReport
 
 
 
-        $allocation = SecondNewProductAllocationBase::company()->first() ;
+        $allocation = QuantitySecondNewProductAllocationBase::company()->first() ;
 
         $new_allocation_bases_names = $allocation ? $allocation->new_allocation_bases_names :[] ;
 

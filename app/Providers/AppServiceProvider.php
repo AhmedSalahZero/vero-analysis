@@ -36,20 +36,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Request $request)
     {
-     
-        if(!isProduction()){
 
-            View::composer('*',function($view){
-            $view->with('client_sections',[]);
-            $view->with('exportables',[]);
-            $view->with('super_admin_sections',[]);
-            $view->with('lang','en');
-            $view->with('company',Company::find(Request()->segment(2)));
-        });
+        // if(!isProduction()){
 
-        }
+        //     View::composer('*',function($view){
+        //     $view->with('client_sections',[]);
+        //     $view->with('exportables',[]);
+        //     $view->with('super_admin_sections',[]);
+        //     $view->with('lang','en');
+        //     $view->with('company',Company::find(Request()->segment(2)));
+        // });
 
-        else{
+        // }
+
+        // else{
 
               $Language = new stdClass() ;
         $Language->id =2;
@@ -117,7 +117,7 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-        }
+        // }
 
 
 

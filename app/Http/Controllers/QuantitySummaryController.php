@@ -22,7 +22,7 @@ class QuantitySummaryController extends Controller
         // Forecast
         $sales_forecast = SalesForecast::company()->first();
         // Company Sales Target
-        $detailed_company_sales_target = (new SalesForecastReport)->productsAllocations($company, $request, 'detailed_company_sales_target');
+        $detailed_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'detailed_company_sales_target');
 
 
         // Calculation of Total Company Sales Target In Quarters
@@ -118,7 +118,7 @@ class QuantitySummaryController extends Controller
         // Second Allocation Setting
         $second_allocation_setting_base = SecondAllocationSetting::company()->first();
         // Company Sales Target
-        $company_sales_targets = (new SalesForecastReport)->productsAllocations($company, $request, 'total_sales_target');
+        $company_sales_targets = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'total_sales_target');
         // dd($company_sales_targets);
         // dd($company_sales_targets);
         $reports_data['product_sales_target'] = $this->breakdownData($company_sales_targets);
@@ -127,7 +127,7 @@ class QuantitySummaryController extends Controller
         // First Allocation sales targets
         $first_allocation_total_sales_targets = [];
         if (isset($first_allocation_setting_base)) {
-            $first_allocation_total_sales_targets = (new AllocationsReport)->NewProductsSeasonality($request, $company, 'array');
+            $first_allocation_total_sales_targets = (new QuantityAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
             $base = $first_allocation_setting_base->allocation_base;
             arsort($first_allocation_total_sales_targets);
             // dd($first_allocation_total_sales_targets);
@@ -142,7 +142,7 @@ class QuantitySummaryController extends Controller
         // Second Allocation sales targets
         $second_allocation_total_sales_targets = [];
         if (isset($second_allocation_setting_base)) {
-            $second_allocation_total_sales_targets = (new SecondAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
+            $second_allocation_total_sales_targets = (new QuantitySecondAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
             // dd($second_allocation_total_sales_targets);
             $base = $second_allocation_setting_base->allocation_base;
             arsort($second_allocation_total_sales_targets);
@@ -187,7 +187,7 @@ class QuantitySummaryController extends Controller
 
     public function collectionForecastReport(Request $request, Company $company)
     {
-        $collection_data = (new CollectionController)->collectionReport($request,$company,'array');
+        $collection_data = (new QuantityCollectionController)->collectionReport($request,$company,'array');
         $forecast_year = $collection_data['forecast_year'];
         $monthly_dates =$collection_data['monthly_dates'] ;
         $collection = $collection_data['collection'] ;
@@ -212,7 +212,7 @@ class QuantitySummaryController extends Controller
 
             unset($request['summary_report']);
 
-          (new SalesForecastReport())->save($company , $request , true );
+          (new QuantitySalesForecastReport())->save($company , $request , true );
 
 
            // second page request
@@ -221,10 +221,10 @@ class QuantitySummaryController extends Controller
           $request['sales_targets_percentages'] = $modified_targets->sales_targets_percentages;
           $request['modify_sales_target'] = $modified_targets->products_modified_targets;
           $request['others_target'] =  $modified_targets->others_target ;
-            (new SalesForecastReport)->productsSalesTargets($company , $request , true);
+            (new QuantitySalesForecastReport)->productsSalesTargets($company , $request , true);
 
           //third page request
-            (new SalesForecastReport())->productsAllocations($company , $request,'view',true);
+            (new QuantitySalesForecastReport())->productsAllocations($company , $request,'view',true);
 
           // fourth page request
             $allocationSetting = AllocationSetting::company()->first();
@@ -233,7 +233,7 @@ class QuantitySummaryController extends Controller
                 $request['breakdown'] = $allocationSetting->breakdown;
                 $request['add_new_items'] = $allocationSetting->add_new_items;
                 $request['number_of_items'] =$allocationSetting->number_of_items;
-                (new AllocationsReport())->allocationSettings($request , $company);
+                (new QuantityAllocationsReport())->allocationSettings($request , $company);
 
 
             }
@@ -243,7 +243,7 @@ class QuantitySummaryController extends Controller
             $cachedAllocation = Cache::get(getCacheKeyForFirstAllocationReport($company->id)) ?? [];
            $request['allocation_base_data'] = $cachedAllocation['allocation_base_data'] ?? [];
            $request['new_allocation_base_items'] = $cachedAllocation['new_allocation_base_items'] ?? [];
-          (new AllocationsReport())->NewProductsAllocationBase($request , $company);
+          (new QuantityAllocationsReport())->NewProductsAllocationBase($request , $company);
 
         //FIFTH PAGE REQUEST
         $existingAllocationBase = ExistingProductAllocationBase::company()->first();
@@ -256,7 +256,7 @@ class QuantitySummaryController extends Controller
 
         }
 
-         (new AllocationsReport())->existingProductsAllocationBase($request , $company);
+         (new QuantityAllocationsReport())->existingProductsAllocationBase($request , $company);
         // end of first allocation
 
         // start of second allocation
@@ -269,7 +269,7 @@ class QuantitySummaryController extends Controller
           $request['breakdown'] = $allocationSetting->breakdown;
           $request['add_new_items'] = $allocationSetting->add_new_items;
           $request['number_of_items'] =$allocationSetting->number_of_items;
-           (new AllocationsReport())->allocationSettings($request , $company);
+           (new QuantityAllocationsReport())->allocationSettings($request , $company);
            //  page
             // $allocations_base_row = NewProductAllocationBase::company()->first();
                    $existingAllocationBase = SecondExistingProductAllocationBase::company()->first();
@@ -282,13 +282,13 @@ class QuantitySummaryController extends Controller
            $request['allocation_base_data'] = $cachedAllocation['allocation_base_data'] ?? [];
            $request['new_allocation_base_items'] = $cachedAllocation['new_allocation_base_items'] ?? [];
 
-         (new SecondAllocationsReport())->NewProductsAllocationBase($request , $company);
+         (new QuantitySecondAllocationsReport())->NewProductsAllocationBase($request , $company);
 
             $request['existing_products_target']  = $existingAllocationBase['existing_products_target'];
             $request['total_existing_target']  = $existingAllocationBase['total_existing_target'];
             $request['modify_sales_target']  =  $existingAllocationBase['allocation_base_percentages'];
             $request['use_modified_targets']  = $existingAllocationBase['use_modified_targets'];
-            (new SecondAllocationsReport())->existingProductsAllocationBase($request , $company);
+            (new QuantitySecondAllocationsReport())->existingProductsAllocationBase($request , $company);
 
         }
 
@@ -305,7 +305,7 @@ class QuantitySummaryController extends Controller
           $request['first_allocation_collection']= $collectionSetting->first_allocation_collection ;
           $request['second_allocation_collection'] = $collectionSetting->second_allocation_collection;
 
-          (new CollectionController())->collectionSettings($request , $company);
+          (new QuantityCollectionController())->collectionSettings($request , $company);
           return redirect()->route('forecast.report' , [$company->id]);
 
     }

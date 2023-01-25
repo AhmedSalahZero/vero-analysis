@@ -14,7 +14,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('collection.settings', $company) }}" method="POST">
+    <form action="{{ route('collection.settings.quantity', $company) }}" method="POST">
         @csrf
         <?php $collection_settings = isset($collection_settings) ? $collection_settings : old(); ?>
         <div class="kt-portlet">
@@ -192,7 +192,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="kt-portlet" id="first_allocation_setting_base_view"
             style="display:{{ @$collection_settings['collection_base'] == $first_allocation_setting_base ? 'block' : 'none' }}">
             <div class="kt-portlet__head">

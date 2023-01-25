@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Models\Company;
-use App\Models\ModifiedSeasonality;
-use App\Models\ModifiedTarget;
-use App\Models\ProductSeasonality;
-use App\Models\SalesForecast;
+use App\Models\QuantityModifiedSeasonality;
+use App\Models\QuantityModifiedTarget;
+use App\Models\QuantityProductSeasonality;
+use App\Models\QuantitySalesForecast;
 use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -20,9 +20,10 @@ class QuantitySeasonalityReport
     {
 
 
-        $sales_forecast = SalesForecast::company()->first();
-        $products_seasonality = ProductSeasonality::company()->get();
-        $has_product_item = (new SalesForecastReport)->fields($company);
+        $sales_forecast = QuantitySalesForecast::company()->first();
+        $products_seasonality = QuantityProductSeasonality::company()->get();
+        $has_product_item = (new QuantitySalesForecastReport)->fields($company);
+
         $type = ($has_product_item===true) ?'product_item' : 'product_or_service';
 
         $monthly_dates = [];
@@ -65,10 +66,10 @@ class QuantitySeasonalityReport
             $request['start_date']  = $sales_forecast->previous_year . '-01-01';
             $request['end_date']    = $sales_forecast->previous_year . '-12-31';
         }
-        $modified_targets = ModifiedTarget::company()->first();
+        $modified_targets = QuantityModifiedTarget::company()->first();
 
         $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers', $products_data);
-        $product_item_breakdown_data = (new SalesForecastReport)->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
+        $product_item_breakdown_data = (new QuantitySalesForecastReport)->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
 
         $products_items = array_column($product_item_breakdown_data, 'item');
         $last_key = (array_key_last($products_items));
@@ -79,15 +80,16 @@ class QuantitySeasonalityReport
         }
         $product_item_breakdown_data_items = array_combine(array_column($product_item_breakdown_data, 'item'), array_column($product_item_breakdown_data, 'Sales Value'));
 
-        $modified_seasonality = ModifiedSeasonality::company()->first();
+        $modified_seasonality = QuantityModifiedSeasonality::company()->first();
+
         $products_items_monthly_percentage = [];
 
 
-        if ($modified_seasonality === null || (count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? []) )-1)   )) {
-
+        // dd($product_item_breakdown_data_items);
+        if ($modified_seasonality === null || (count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? []) ))   )) {
             $products_items_monthly_percentage =  $this->productsItemsData($request, $company, $sales_forecast, $product_item_breakdown_data_items,$type);
             if ($modified_seasonality === null) {
-                ModifiedSeasonality::create([
+                QuantityModifiedSeasonality::create([
                     'company_id' => $company->id,
                     'original_seasonality' => $products_items_monthly_percentage,
                     'use_modified_seasonality' => 0
@@ -96,6 +98,7 @@ class QuantitySeasonalityReport
                 $modified_seasonality->update([
                     'original_seasonality' => $products_items_monthly_percentage,
                 ]);
+                $modified_seasonality->save();
             }
         } elseif (isset($modified_seasonality) && $modified_seasonality->modified_seasonality !== null ) {
 
@@ -103,7 +106,7 @@ class QuantitySeasonalityReport
         }else{
             $products_items_monthly_percentage = $modified_seasonality->original_seasonality;
         }
-        return view('client_view.forecast.modify_seasonality', compact(
+        return view('client_view.quantity_forecast.modify_seasonality', compact(
                     'company',
                 'monthly_dates',
                 'sales_forecast',
@@ -123,13 +126,15 @@ class QuantitySeasonalityReport
             $modified_seasonality_per_product[$name] = $this->operationAmongArrayAndNumber($seasonality,100);
         }
 
-        $modified_seasonality = ModifiedSeasonality::company()->first();
+        $modified_seasonality = QuantityModifiedSeasonality::company()->first();
+
         $modified_seasonality->update([
             'modified_seasonality' => $modified_seasonality_per_product,
             'use_modified_seasonality' => $request->use_modified_seasonality??0,
         ]);
+        $modified_seasonality->save();
         toastr('Seasonality Updated','success');
-        return redirect()->route('products.allocations',$company);
+        return redirect()->route('products.allocations.quantity',$company);
     }
 
     public function productsItemsData($request,$company,$sales_forecast,$product_item_breakdown_data,$type)

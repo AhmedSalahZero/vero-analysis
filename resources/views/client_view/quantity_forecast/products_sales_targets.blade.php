@@ -2,7 +2,8 @@
 
 @section('css')
     <link href="{{ url('assets/vendors/general/select2/dist/css/select2.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    @include('datatable_css')
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -15,7 +16,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('products.sales.targets', $company) }}" method="POST">
+    <form action="{{ route('products.sales.targets.quantity', $company) }}" method="POST">
 
         @csrf
         <?php $total_sales_targets_values = 0; $total_sales_targets_percentages = 0;
@@ -207,7 +208,7 @@
                         </div>
                     </div>
 
-        @endif 
+        @endif
 
 
         <x-submitting />
@@ -219,7 +220,8 @@
     <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    @include('js_datatable')
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">

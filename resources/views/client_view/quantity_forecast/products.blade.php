@@ -14,7 +14,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('products.create', $company) }}" method="POST">
+    <form action="{{ route('products.quantity.create', $company) }}" method="POST">
         @csrf
         <div class="kt-portlet">
             <div class="kt-portlet__head">

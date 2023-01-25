@@ -14,7 +14,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('categories.create', $company) }}" method="POST">
+    <form action="{{ route('categories.quantity.create', $company) }}" method="POST">
         @csrf
         <div class="kt-portlet">
             <div class="kt-portlet__head">
@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-        </div> 
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="kt-portlet kt-portlet--mobile">

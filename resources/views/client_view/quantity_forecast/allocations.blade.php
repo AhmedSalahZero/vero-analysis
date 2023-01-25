@@ -14,7 +14,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('allocations', $company) }}" method="POST">
+    <form action="{{ route('allocations.quantity', $company) }}" method="POST">
         @csrf
 
         <div class="kt-portlet">
@@ -34,7 +34,7 @@
                                 <!--begin: Datatable -->
                                                     {{-- @dd() --}}
 
-                                                    
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>{{ __('Select Allocation Base') }} <span
@@ -52,12 +52,12 @@
                                                     <option value="business_sector"
                                                         {{ @$allocations_setting['allocation_base'] !== 'business_sector' ?: 'selected' }}>
                                                         {{ __('Business Sectors') }}</option>
-                                                        @endif 
+                                                        @endif
                                                     @if(in_array('sales_channel',getExportableFieldsKeysAsValues($company->id)))
                                                     <option value="sales_channel"
                                                         {{ @$allocations_setting['allocation_base'] !== 'sales_channel' ?: 'selected' }}>
                                                         {{ __('Sales Channels') }}</option>
-                                                        @endif 
+                                                        @endif
                                                     @if(in_array('zone',getExportableFieldsKeysAsValues($company->id)))
 
                                                     <option value="zone"
@@ -87,7 +87,7 @@
                                                         <option value="last_3_years"
                                                             {{ @$allocations_setting['breakdown'] !== 'last_3_years' ?: 'selected' }}>
                                                             {{ __('Last 3 Years Average Breakdown') }}</option>
-                                            
+
                                                     </select>
                                                     @if ($errors->has('breakdown'))
                                                         <div class="invalid-feedback">{{ $errors->first('breakdown') }}</div>
@@ -97,7 +97,7 @@
                                         </div>
                                     </div>
                                     @endif
-                                    
+
                                     <div class="col-md-6"
                                         style="display: {{ @$allocations_setting['new_start'] == 'previous_year' || @$allocations_setting['new_start'] == 'previous_3_years'? 'block': 'none' }}"
                                         id="new_start_field">

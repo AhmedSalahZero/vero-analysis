@@ -24,7 +24,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('save.modify.seasonality', $company) }}" method="POST">
+    <form action="{{ route('save.modify.seasonality.quantity', $company) }}" method="POST">
         @csrf
 
 
@@ -41,7 +41,7 @@
                     <div class="kt-portlet__head-wrapper">
                         <div class="kt-portlet__head-actions">
                             &nbsp;
-                            <a href="{{ route('modify.seasonality', $company) }}" class="btn  active-style btn-icon-sm ">
+                            <a href="{{ route('modify.seasonality.quantity', $company) }}" class="btn  active-style btn-icon-sm ">
                                 <i class="fas fa-file-import"></i>
                                 {{__("Modify Seasonality")}}
                             </a>

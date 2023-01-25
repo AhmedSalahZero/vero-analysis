@@ -2,7 +2,8 @@
 
 @section('css')
     <link href="{{ url('assets/vendors/general/select2/dist/css/select2.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    @include('datatable_css')
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -16,7 +17,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('existing.products.allocations', $company) }}" method="POST">
+    <form action="{{ route('existing.products.allocations.quantity', $company) }}" method="POST">
         @csrf
 
 {{-- @dd(get_defined_vars()) --}}
@@ -40,12 +41,12 @@
                             <th>{{ __('Sales Target Value') }}</th>
                             {{-- @dd($sales_forecast->target_base) --}}
                             @if (
-                            
-                            $sales_forecast->target_base !== 'new_start' 
+
+                            $sales_forecast->target_base !== 'new_start'
                             ||
                              $sales_forecast->new_start !== 'product_target'
                             // by salah
-                            || true 
+                            || true
                             )
                                 <th>{{ __('Sales Target %') }}</th>
                             @endif
@@ -75,7 +76,7 @@
                 </x-table>
             </div>
         </div>
-       
+
         @endif
         <?php $item = ucwords(str_replace('_', ' ', $allocation_base)); ?>
                     <?php $existing_items_target = $sales_forecast->sales_target - ($total_new_items_targets ?? 0); ?>
@@ -287,7 +288,7 @@
                 </x-table>
             </div>
         </div>
-        @endif 
+        @endif
 
         {{-- @endif --}}
 
@@ -301,7 +302,8 @@
     <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    @include('js_datatable')
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">

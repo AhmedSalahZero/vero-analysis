@@ -96,11 +96,12 @@ class SeasonalityReport
                 $modified_seasonality->update([
                     'original_seasonality' => $products_items_monthly_percentage,
                 ]);
+                $modified_seasonality->save();
             }
         } elseif (isset($modified_seasonality) && $modified_seasonality->modified_seasonality !== null ) {
 
             $products_items_monthly_percentage = $modified_seasonality->modified_seasonality;
-        }else{ 
+        }else{
             $products_items_monthly_percentage = $modified_seasonality->original_seasonality;
         }
         return view('client_view.forecast.modify_seasonality', compact(
@@ -128,6 +129,7 @@ class SeasonalityReport
             'modified_seasonality' => $modified_seasonality_per_product,
             'use_modified_seasonality' => $request->use_modified_seasonality??0,
         ]);
+        $modified_seasonality->save();
         toastr('Seasonality Updated','success');
         return redirect()->route('products.allocations',$company);
     }

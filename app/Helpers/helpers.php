@@ -18,6 +18,7 @@ use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
 use App\Models\ProductSeasonality;
+use App\Models\QuantityProductSeasonality;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
@@ -53,17 +54,17 @@ function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $comp
 function getHavingConditionForDeadReactivated($year)
 {
 	return " having max(case when Year = " . $year . " then 1 else 0 end ) = 1
-	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 0 
-	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0 
-	and 
-	( max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 1 or 
-	
+	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 0
+	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0
+	and
+	( max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 1 or
+
 	(max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0
 	and max(case when Year = " . ($year - 4) . " then 1 else 0 end ) = 1)
-	
+
 	)
-	
-	
+
+
 	order by total_sales desc ; ";
 }
 
@@ -71,8 +72,8 @@ function getHavingConditionForDeadRepeating($year)
 {
 	return " having max(case when Year = " . $year . " then 1 else 0 end ) = 1
 	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 1
-	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0 
-	and max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0  
+	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0
+	and max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0
 	and max(case when Year = " . ($year - 4) . " then 1 else 0 end ) = 1
 	order by total_sales desc ; ";
 }
@@ -356,7 +357,7 @@ function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, s
 }
 
 
-// 
+//
 function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
 {
     return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year;
@@ -561,9 +562,9 @@ function sortTwoDimensionalExcept(array &$arr, array $exceptKeys)
 function getTypeFor($type, $companyId, $formatted = false, $date = false, $start_date = null, $end_date = null)
 {
     if ($formatted) {
-        // 2022-03-22 
+        // 2022-03-22
         // start 01-01-2021
-        // end 01-01-2022 
+        // end 01-01-2022
 
 
         return  DB::table('sales_gathering')->where('company_id', $companyId)
@@ -596,13 +597,27 @@ function getNumberOfProductsItems($companyId)
 {
     return ProductSeasonality::where('company_id', $companyId)->count();
 }
+
+function getNumberOfProductsItemsQuantity($companyId)
+{
+    return QuantityProductSeasonality::where('company_id', $companyId)->count();
+}
+function canShowNewItemsProductsQuantity($companyId)
+{
+    return  getNumberOfProductsItemsQuantity($companyId);
+}
 function canShowNewItemsProducts($companyId)
 {
     return  getNumberOfProductsItems($companyId);
 }
+
 function getProductsItems($companyId)
 {
     return ProductSeasonality::where('company_id', $companyId)->get();
+}
+function getProductsItemsQuantity($companyId)
+{
+    return QuantityProductSeasonality::where('company_id', $companyId)->get();
 }
 function deleteProductItemsForForecast($companyId)
 {
@@ -733,7 +748,7 @@ function is_multi_array($arr)
 
 function maxOptionsForOneSelector(): int
 {
-    // return 2 ; 
+    // return 2 ;
     return 12;
 }
 
@@ -1082,8 +1097,8 @@ function array_fill_keys_with_values(array $arr){
     foreach($arr as $a){
         $newArray[$a]=$a;
     }
-    return $newArray ; 
-    
+    return $newArray ;
+
 }
 function countTotalForThisType(array $array, $iterableSingleItem)
 {
@@ -1653,7 +1668,7 @@ function getTotalInPivotDate(string $incomeStatementDurationType, string $income
 //             $data[] = [
 //                 'gr_date'=>$date,
 //                 'net_sales_value'=>$value ,
-//                 'zone'=>$key 
+//                 'zone'=>$key
 //             ];
 //         }
 //     }

@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Analysis\SalesGathering\ProductsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\salesReport;
-use App\Models\Category;
+use App\Models\QuantityCategory;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
-use App\Models\ModifiedSeasonality;
-use App\Models\ModifiedTarget;
+use App\Models\QuantityModifiedSeasonality;
+use App\Models\QuantityModifiedTarget;
 use App\Models\NewProductAllocationBase;
-use App\Models\Product;
-use App\Models\ProductSeasonality;
+use App\Models\QuantityProduct;
+use App\Models\QuantityProductSeasonality;
 use App\Models\QuantitySalesForecast;
 use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
@@ -125,7 +125,7 @@ class QuantitySalesForecastReport
 
         if(isset($request['summary_report']))
         {
-            return (new SummaryController())->goToSummaryReport($request , $company);
+            return (new QuantitySummaryController())->goToSummaryReport($request , $company);
         }
 
         // dd();
@@ -201,24 +201,26 @@ class QuantitySalesForecastReport
         toastr()->success('Saved Successfully');
 
         if ($request['add_new_products'] == 0) {
-            return redirect()->route('products.sales.targets', $company);
+            return redirect()->route('products.sales.targets.quantity', $company);
         } else {
-            return redirect()->route('categories.create', $company);
+            return redirect()->route('categories.quantity.create', $company);
         }
     }
     public function createCategories(Company $company, Request $request)
     {
         $sales_forecast = QuantitySalesForecast::company()->first();
-        $categories = Category::company()->where('type', 'new')->with('products')->get();
+        $categories = QuantityCategory::company()->where('type', 'new')->with('products')->get();
+
+
         $has_product_item = $this->fields($company);
         // Saving
         if ($request->isMethod('POST')) {
             // if there are existing saved Cats dont sve it again
-            if (Category::company()->where('type', 'existing')->count() == 0) {
+            if (QuantityCategory::company()->where('type', 'existing')->count() == 0) {
                 $sale_gathering_categories = SalesGathering::company()->whereNotNull('category')->where('category', '!=', '')->groupBy('category')->get()->pluck('category')->toArray();
 
                 foreach ($sale_gathering_categories as $key => $cat) {
-                    Category::create([
+                    QuantityCategory::create([
                         'name' => $cat,
                         'company_id' => $company->id,
                         'type' => 'existing',
@@ -241,7 +243,7 @@ class QuantitySalesForecastReport
                             $categories[$key]->delete();
                         } elseif (!isset($categories[$key]) && $cat !== null) {
 
-                            Category::create([
+                            QuantityCategory::create([
                                 'name' => $cat,
                                 'company_id' => $company->id,
                                 'type' => 'new',
@@ -252,7 +254,7 @@ class QuantitySalesForecastReport
 
                     foreach ($request['category_name'] as $key => $cat) {
                         if ($cat !== null) {
-                            Category::create([
+                            QuantityCategory::create([
                                 'name' => $cat,
                                 'company_id' => $company->id,
                                 'type' => 'new',
@@ -263,9 +265,9 @@ class QuantitySalesForecastReport
             }
 
             if ($has_product_item == true) {
-                return redirect()->route('products.create', $company);
+                return redirect()->route('products.quantity.create', $company);
             } else {
-                return redirect()->route('products.seasonality', $company);
+                return redirect()->route('products.quantity.seasonality', $company);
             }
         }
         // View
@@ -276,14 +278,15 @@ class QuantitySalesForecastReport
     public function createProducts(Company $company, Request $request)
     {
         $sales_forecast = QuantitySalesForecast::company()->first();
-        $categories = Category::company()->get();
-        $products = Product::company()->where('type', 'new')->with('category')->get();
-        // dd(Product::company()->where('type', 'existing')->count() == 0);
+        $categories = QuantityCategory::company()->get();
+        $products = QuantityProduct::company()->where('type', 'new')->with('category')->get();
+        // dd(QuantityProduct::company()->where('type', 'existing')->count() == 0);
         // Saving
+
         if ($request->isMethod('POST')) {
             // if there are existing saved Cats dont sve it again
             // if (1) {
-            if (Product::company()->where('type', 'existing')->count() == 0) {
+            if (QuantityProduct::company()->where('type', 'existing')->count() == 0) {
                 $sales_gathering_products = SalesGathering::company()
                     ->whereNotNull('category')
                     ->where('category', '!=', '')
@@ -294,9 +297,9 @@ class QuantitySalesForecastReport
                     ->pluck('category', 'product_or_service')->toArray();
 
                 foreach ($sales_gathering_products as $product => $cat) {
-                    $category = Category::company()->where('name', $cat)->first();
+                    $category = QuantityCategory::company()->where('name', $cat)->first();
 
-                    Product::create([
+                    QuantityProduct::create([
                         'name' => $product,
                         'company_id' => $company->id,
                         'category_id' => $category->id,
@@ -310,7 +313,7 @@ class QuantitySalesForecastReport
                 }
                 foreach ($request['product_name'] as $key => $product_name) {
                     if ($product_name !== null && isset($request['category'][$key]) && $request['category'][$key] !== null) {
-                        Product::create([
+                        QuantityProduct::create([
                             'name' => $product_name,
                             'company_id' => $company->id,
                             'category_id' => $request['category'][$key],
@@ -319,7 +322,7 @@ class QuantitySalesForecastReport
                     }
                 }
             }
-            return redirect()->route('products.seasonality', $company);
+            return redirect()->route('products.seasonality.quantity', $company);
         } else {
 
             return view('client_view.quantity_forecast.products', compact('company', 'sales_forecast', 'categories', 'products'));
@@ -328,7 +331,7 @@ class QuantitySalesForecastReport
 
     public function productsSeasonality(Company $company, Request $request)
     {
-        $product_seasonality = ProductSeasonality::company()->get();
+        $product_seasonality = QuantityProductSeasonality::company()->get();
         $sales_forecast = QuantitySalesForecast::company()->first();
         if ($request->isMethod('POST')) {
             // Validations
@@ -369,7 +372,7 @@ class QuantitySalesForecastReport
                                 $request['new_seasonality_quarterly'][$key],
                         ]);
                     } else {
-                        ProductSeasonality::create([
+                        QuantityProductSeasonality::create([
                             'name' => $name,
                             'company_id' => $company->id,
                             'category_id' => $request['categories'][$key],
@@ -386,7 +389,7 @@ class QuantitySalesForecastReport
             } else {
                 foreach ($request->product_items_name as $key => $name) {
 
-                    ProductSeasonality::create([
+                    QuantityProductSeasonality::create([
                         'name' => $name,
                         'company_id' => $company->id,
                         'category_id' => $request['categories'][$key],
@@ -400,12 +403,12 @@ class QuantitySalesForecastReport
                     ]);
                 }
             }
-            return redirect()->route('products.sales.targets', $company);
+            return redirect()->route('products.sales.targets.quantity', $company);
         } else {
 
 
 
-            $products = Product::company()->with('category')->get();
+            $products = QuantityProduct::company()->with('category')->get();
 
 
 
@@ -433,9 +436,9 @@ class QuantitySalesForecastReport
     {
 
         $sales_forecast = QuantitySalesForecast::company()->first();
-        $products = Product::company()->with('category')->get();
-        $product_seasonality = ProductSeasonality::company()->get();
-        $modified_targets = ModifiedTarget::company()->first();
+        $products = QuantityProduct::company()->with('category')->get();
+        $product_seasonality = QuantityProductSeasonality::company()->get();
+        $modified_targets = QuantityModifiedTarget::company()->first();
         $has_product_item = $this->fields($company);
         $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
         $request['type'] = $type;
@@ -460,19 +463,19 @@ class QuantitySalesForecastReport
                     'others_target' => $request->others_target,
                 ]);
             } else {
-                ModifiedTarget::create([
+                QuantityModifiedTarget::create([
                     'company_id' => $company->id,
                     'use_modified_targets' => $request->use_modified_targets ?? 0,
                     'products_modified_targets' => $request->modify_sales_target,
                     'sales_targets_percentages' => $request->sales_targets_percentages ?: 0,
                     'others_target' => $request->others_target,
                 ]);
-                $modified_targets = ModifiedTarget::company()->first();
+                $modified_targets = QuantityModifiedTarget::company()->first();
             }
         }
 
         if ($request->isMethod('POST')  && $request->submit === null) {
-            return redirect()->route('products.allocations', $company);
+            return redirect()->route('products.allocations.quantity', $company);
         }
         $products = salesGathering::company()
             ->whereNotNull($type)
@@ -587,10 +590,10 @@ class QuantitySalesForecastReport
             {
                 return ;
             }
-            return redirect()->route('allocations', $company);
+            return redirect()->route('allocations.quantity', $company);
         }
         $sales_forecast = QuantitySalesForecast::company()->first();
-        $products_seasonality = ProductSeasonality::company()->get();
+        $products_seasonality = QuantityProductSeasonality::company()->get();
         $year = date('Y', strtotime($sales_forecast->start_date));
         // dd($sales_forecast,$products_seasonality);
 
@@ -608,7 +611,7 @@ class QuantitySalesForecastReport
 
         $new_products_seasonalities = [];
 
-        $hasProductsNotDeleted = \getNumberOfProductsItems($company->id);
+        $hasProductsNotDeleted = \getNumberOfProductsItemsQuantity($company->id);
 
         foreach ($products_seasonality as $key => $product_seasonality) {
             $sales_target_value = $product_seasonality->sales_target_value;
@@ -665,7 +668,7 @@ class QuantitySalesForecastReport
         // dd($new_products_totals);
 
         if (($result == 'view') || ($result == 'total_sales_target')) {
-            $modified_targets = ModifiedTarget::company()->first();
+            $modified_targets = QuantityModifiedTarget::company()->first();
 
 
             $products = salesGathering::company()
@@ -710,7 +713,7 @@ class QuantitySalesForecastReport
             }
             $product_item_breakdown_data_items = array_combine(array_column($product_item_breakdown_data, 'item'), array_column($product_item_breakdown_data, 'Sales Value'));
 
-            $modified_seasonality = ModifiedSeasonality::company()->first();
+            $modified_seasonality = QuantityModifiedSeasonality::company()->first();
 
 
 
@@ -719,7 +722,7 @@ class QuantitySalesForecastReport
             if ($modified_seasonality === null || count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? [])) - 1)) {
                 $products_items_monthly_percentage =  (new SeasonalityReport)->productsItemsData($request, $company, $sales_forecast, $product_item_breakdown_data_items, $type);
                 if ($modified_seasonality === null) {
-                    ModifiedSeasonality::create([
+                    QuantityModifiedSeasonality::create([
                         'company_id' => $company->id,
                         'original_seasonality' => $products_items_monthly_percentage,
                         'use_modified_seasonality' => 0

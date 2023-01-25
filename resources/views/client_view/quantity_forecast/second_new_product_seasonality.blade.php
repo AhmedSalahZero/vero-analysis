@@ -24,7 +24,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('second.new.product.seasonality', $company) }}" method="POST">
+    <form action="{{ route('second.new.product.seasonality.quantity', $company) }}" method="POST">
         @csrf
         @if($new_products_allocations)
         <?php $total_products_items = [];
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            
+
 
 
 
@@ -81,7 +81,7 @@
 
     @endif
 {{-- @dd() --}}
-        
+
         {{-- Existing Products  --}}
         @if(hasProductsItems($company))
 

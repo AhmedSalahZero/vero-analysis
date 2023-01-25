@@ -1,7 +1,8 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
+    @include('datatable_css')
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -25,7 +26,7 @@
 @endsection
 @section('content')
 {{-- @dd(get_defined_vars()) --}}
-    <form action="{{ route('new.product.seasonality', $company) }}" method="POST">
+    <form action="{{ route('new.product.seasonality.quantity', $company) }}" method="POST">
         @csrf
 
         @if($new_products_allocations)
@@ -120,7 +121,7 @@
 
             </div>
         </div>
-        @endif 
+        @endif
              @if (count($products_seasonality)>0)
             {{-- Total --}}
             <div class="kt-portlet">
@@ -176,7 +177,7 @@
                         </div>
                         <div class="col-lg-6 kt-align-right">
                             <button type="submit" class="btn active-style">{{ __('Second Allocation') }}</button>
-                            <a href="{{ route('collection.settings',$company) }}" class="btn btn-secondary active-style">{{__('Skip And Apply Collection')}}</a>
+                            <a href="{{ route('collection.settings.quantity',$company) }}" class="btn btn-secondary active-style">{{__('Skip And Apply Collection')}}</a>
                         </div>
                     </div>
                 </div>
@@ -189,7 +190,8 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    @include('js_datatable')
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">

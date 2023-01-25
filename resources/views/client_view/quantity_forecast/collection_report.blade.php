@@ -156,7 +156,7 @@
                                         @foreach ($dates as $date )
                                         @php
                                             $numericDate = \Carbon\Carbon::make($date)->format('d-m-Y');
-                                            $totalForThisRow += $base_collection[$numericDate]??0 ; 
+                                            $totalForThisRow += $base_collection[$numericDate]??0 ;
                                         @endphp
                                             <?php $total[$numericDate] = ($base_collection[$numericDate] ?? 0) + ($total[$numericDate] ?? 0); ?>
                                             <td class="text-center"> {{ number_format($base_collection[$numericDate] ?? 0) }}
@@ -192,14 +192,14 @@
 
 
 
-                                
+
 
 
                                  <tr class="table-active text-center">
                                     <th>{{ __( 'Accumulation / Months') }}</th>
                                     {{-- <th>{{ __($collection_base . ' / Months') }}</th> --}}
                                     @foreach ($dates as $date )
-                                    
+
                                         <th>{{ $date }}</th>
                                         {{-- <th>{{ date('M-Y', strtotime($date)) }}</th> --}}
                                     @endforeach
@@ -209,11 +209,11 @@
 
                                 @foreach ($collection as $base_name => $base_collection)
                                 @php
-                                $currentAccumlation = 0 ;     
+                                $currentAccumlation = 0 ;
                                 @endphp
-                                
-                                      
-                                
+
+
+
                                     <tr>
                                         <td> <b> {{ $base_name }} </b></td>
                                         @foreach ($dates as $date )
@@ -231,7 +231,7 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                                
+
 
                             @endslot
                         </x-table>
@@ -253,7 +253,7 @@
                                 <button type="reset" class="btn btn-secondary">Cancel</button> --}}
                         </div>
                         <div class="col-lg-6 kt-align-right">
-                            <a href="{{ route('forecast.report', $company) }}" class="btn active-style">{{ __('Sales Forecast Dashboard') }}</a>
+                            <a href="{{ route('forecast.quantity.report', $company) }}" class="btn active-style">{{ __('Sales Forecast Dashboard') }}</a>
                         </div>
                     </div>
                 </div>

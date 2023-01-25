@@ -14,7 +14,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('second.allocations', $company) }}" method="POST">
+    <form action="{{ route('second.allocations.quantity', $company) }}" method="POST">
         @csrf
 
         <div class="kt-portlet">
@@ -98,7 +98,7 @@
                                         </div>
                                     </div>
                                     @endif
-                                    
+
                                     <div class="col-md-6"
                                         style="display: {{ @$allocations_setting['new_start'] == 'previous_year' || @$allocations_setting['new_start'] == 'previous_3_years'? 'block': 'none' }}"
                                         id="new_start_field">

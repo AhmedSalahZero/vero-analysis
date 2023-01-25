@@ -11,7 +11,7 @@ class QuantitySalesForecast extends Model
      *
      * @var string
      */
-    protected $table = 'sales_forecast';
+    protected $table = 'quantity_sales_forecast';
     /**
      * The attributes that aren't mass assignable.
      *

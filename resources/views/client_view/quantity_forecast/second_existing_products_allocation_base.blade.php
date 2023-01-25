@@ -17,7 +17,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('second.existing.products.allocations', $company) }}" method="POST">
+    <form action="{{ route('second.existing.products.allocations.quantity', $company) }}" method="POST">
         @csrf
 @if(canShowNewItemsProducts($company->id))
         <div class="kt-portlet">
@@ -67,7 +67,7 @@
         @else
         @php
         $total_new_items_targets  = 0;
-            
+
         @endphp
 @endif
 

@@ -24,7 +24,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('products.allocations', $company) }}" method="POST">
+    <form action="{{ route('products.allocations.quantity', $company) }}" method="POST">
         @csrf
         <div class="kt-portlet" id="copied_company_target">
 
@@ -98,7 +98,7 @@
                     <div class="kt-portlet__head-wrapper">
                         <div class="kt-portlet__head-actions">
                             &nbsp;
-                            <a href="{{ route('modify.seasonality', $company) }}" class="btn  active-style btn-icon-sm ">
+                            <a href="{{ route('modify.seasonality.quantity', $company) }}" class="btn  active-style btn-icon-sm ">
                                 <i class="fas fa-file-import"></i>
                                 {{__("Modify Seasonality")}}
                             </a>
@@ -113,7 +113,7 @@
                 <br>
                 <br>
 
-        
+
 
                 <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
@@ -126,10 +126,10 @@
                         </tr>
                     @endslot
                     @slot('table_body')
-                        <?php 
+                        <?php
                         $totals_per_month = [];
 
-                        ?> 
+                        ?>
 
                         {{-- @dd() --}}
                         @foreach ($existing_products_targets as $item => $product_data)
@@ -138,7 +138,7 @@
                                 <td> <b> {{ $item ?? '-' }}</b></td>
 
                                 @foreach ($product_data as $date => $value)
-                            
+
                                     <?php
                                         $totals_per_month[$date] = $value + ($totals_per_month[$date] ?? 0);
                                         $total_existing_targets += $value;
@@ -261,7 +261,7 @@
                         </div>
                         <div class="col-lg-6 kt-align-right">
                             <button type="submit" class="btn active-style">{{ __('Allocation') }}</button>
-                            <a href="{{ route('collection.settings',$company) }}" class="btn btn-secondary active-style">{{__('Skip And Apply Collection')}}</a>
+                            <a href="{{ route('collection.settings.quantity',$company) }}" class="btn btn-secondary active-style">{{__('Skip And Apply Collection')}}</a>
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+   @include('datatable_css')
 
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
@@ -15,7 +15,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('products.seasonality', $company) }}" method="POST">
+    <form action="{{ route('products.seasonality.quantity', $company) }}" method="POST">
         @csrf
         <div class="kt-portlet">
             <div class="kt-portlet__head">
@@ -65,7 +65,7 @@
                                                     <option value=""  >{{ __('Select') }}</option>
                                                     @foreach ($products as $product)
                                                     @if($product->category)
-                                                        <option value="{{$product->id}}" 
+                                                        <option value="{{$product->id}}"
                                                         data-name="{{$product->category->name}}" data-id="{{$product->category->id}}"
                                                          {{( $product_id != $product->id ) ?'': "selected" }} >{{ $product->name }}</option>
                                                     @endif
@@ -268,7 +268,8 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    @include('js_datatable')
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript"></script>
     <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript"></script>

@@ -1,7 +1,8 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
+    @include('datatable_css')
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -18,7 +19,7 @@
     </style>
 @endsection
 @section('content')
-    <form action="{{ route('new.product.allocation.base', $company) }}" method="POST">
+    <form action="{{ route('new.product.allocation.base.quantity', $company) }}" method="POST">
         @csrf
         <?php $total_sales_targets_values = 0;
         $total_sales_targets_percentages = 0; ?>
@@ -56,7 +57,7 @@
 
                             </tr>
                         @endslot
-                        
+
                         @slot('table_body')
                             <input type="hidden" name="allocation_base" value="{{ $allocation_base }}">
                             <?php $key = 0; ?>
@@ -106,7 +107,7 @@
                                         <td class="text-center">
                                             {{-- salah --}}
                                             <input type="hidden" name="totalsss" value="{{ $product_seasonality->sum('sales_target_value') ?? 0 }}">
-                                            <input 
+                                            <input
                                             {{-- @if($type == 'new')
                                             name="allocation_base_data_existing[{{ $product->name }}][{{ $item }}][existing_custom]"
                                             @endif --}}
@@ -117,7 +118,7 @@
 
 
 
-                                
+
                                     @endforeach
 
                                 </tr>
@@ -148,7 +149,8 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    @include('js_datatable')
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
@@ -313,7 +315,7 @@
                  totalValues+= (isNaN(parseFloat($(field).val())) ? 0 : parseFloat($(field).val()) );
             });
             $(`#total_sales_target_value_item${index + 1 }` ).html(number_format(totalValues));
-            updatePercentageFields(index , $(this));            
+            updatePercentageFields(index , $(this));
         });
 
         function updatePercentageFields(index ,field)
