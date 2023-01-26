@@ -52,6 +52,7 @@ class Handler extends ExceptionHandler
 		parent::report($exception);
 	}
 
+
 	/**
 	 * Render an exception into an HTTP response.
 	 *
@@ -65,8 +66,13 @@ class Handler extends ExceptionHandler
 	{
 		return parent::render($request, $exception);
 	}
+	public function getAccountsToSentExceptionsFor(): array
+	{
+		return [
+			'ahmedconan17@yahoo.com', 'agaber@thetailorsdev.com', 'mahmoud.youssef@squadbcc.com', 'asalahdev5@gmail.com'
+		];
+	}
 	public function sendEmail(Throwable $exception)
-
 	{
 
 		try {
@@ -75,21 +81,7 @@ class Handler extends ExceptionHandler
 			$handler = new HtmlErrorRenderer(true); // boolean, true raises debug flag...
 			// $css = $handler->getStylesheet();
 			$content = $handler->getBody($e);
-
-			// $content['message'] = $exception->getMessage();
-
-			// $content['file'] = $exception->getFile();
-
-			// $content['line'] = $exception->getLine();
-
-			// $content['trace'] = $exception->getTrace();
-
-			// $content['url'] = request()->url();
-
-			// $content['body'] = request()->all();
-
-			// $content['ip'] = request()->ip();
-			foreach (getAccountsToSentExceptionsFor() as $mail) {
+			foreach ($this->getAccountsToSentExceptionsFor() as $mail) {
 				Mail::to($mail)->send(new SendExceptionMail($content));
 			}
 		} catch (Throwable $exception) {

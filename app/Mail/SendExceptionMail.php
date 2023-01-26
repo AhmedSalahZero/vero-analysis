@@ -31,7 +31,7 @@ class SendExceptionMail extends Mailable
 	 */
 	public function build()
 	{
-		return $this->subject('New Exception! ( ' . env('APP_NAME') . ' )')->from(env('EMAIL_FROM'))->view('mails.exception-mail', [
+		return $this->subject('New Exception! ( ' . env('APP_NAME') . ' )')->from(env('EMAIL_FROM'), env('APP_NAME'))->view('mails.exception-mail', [
 			'content' => $this->content
 		]);
 	}
