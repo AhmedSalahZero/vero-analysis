@@ -126,6 +126,10 @@ class SalesForecastReport
         {
             return (new SummaryController())->goToSummaryReport($request , $company);
         }
+
+        // dd();
+
+// dd($request->all());
         $sales_forecast = SalesForecast::company()->first();
 
         // if(forecastHasBeenChanged($sales_forecast  , $request->all()))

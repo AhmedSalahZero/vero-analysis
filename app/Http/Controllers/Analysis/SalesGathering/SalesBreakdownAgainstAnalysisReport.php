@@ -16,7 +16,7 @@ class SalesBreakdownAgainstAnalysisReport
     use GeneralFunctions;
     public function salesBreakdownAnalysisIndex(Company $company)
     {
-        
+
 
         if (request()->route()->named('salesBreakdown.zone.analysis')) {
             $type = 'zone';
@@ -93,17 +93,17 @@ class SalesBreakdownAgainstAnalysisReport
             'start_date' => date('d-M-Y',strtotime($request->start_date)),
             'end_date' => date('d-M-Y',strtotime($request->end_date))
         ];
-        
 
-    
+
+
               $view_name = $request->view_name ;
-  
+
               $report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type ."
                 FROM sales_gathering
                 force index (sales_channel_index)
                 WHERE ( company_id = '".$company->id."'AND ".$type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date."')
-                
+
                 ORDER BY id "
             ))) ;
 
@@ -209,7 +209,7 @@ class SalesBreakdownAgainstAnalysisReport
             }
             $top_50 = $report_data->take(50);
 
-            
+
             $others_count = count($report_data) - count($top_50) ;
             $report_view_data = $top_50->toArray();
             $others_total = $total_of_all_data - array_sum(array_column($report_view_data,'Sales Value'));
@@ -231,31 +231,31 @@ class SalesBreakdownAgainstAnalysisReport
                 toastr()->error('No Data Found');
                 return redirect()->back();
             }
-            
+
             $last_date = null;
             // Last Date
             $last_date = DB::table('sales_gathering')->where('company_id',$company->id)->latest('date')->first()->date;
             $last_date = date('d-M-Y',strtotime($last_date));
-            
-            
-            
+
+
+
             // dd($report_data);
-            
-            
+
+
             return view('client_view.reports.sales_gathering_analysis.breakdown.sales_report',compact('last_date','report_count_data','type','view_name','dates','company','report_view_data'));
         }elseif ($result == "withOthers") {
             return $report_data;
         }
         else{
-                        
+
             if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
                 return   ['report_count_data' =>$report_count_data,
                           'report_view_data' =>$report_view_data];
             }else {
 
 
-            
-             
+
+
                 return $report_view_data;
             }
         }
@@ -266,19 +266,19 @@ class SalesBreakdownAgainstAnalysisReport
     //  public function salesBreakdownAnalysisResult(Request $request, Company $company,$result='view',$calculated_report_data = null)
     // {
     //     $dimension = $request->report_type;
-        
+
     //     $report_data =[];
     //     $report_view_data = [];
     //     $growth_rate_data =[];
     //     $report_count_data = [];
-        
+
     //     $dates = [
     //         'start_date' => date('d-M-Y',strtotime($request->start_date)),
     //         'end_date' => date('d-M-Y',strtotime($request->end_date))
     //     ];
-        
+
     //     $type = $request->type ;
-        
+
     //     $view_name = $request->view_name ;
     //           $report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw("
     //             SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type ."
@@ -423,18 +423,18 @@ class SalesBreakdownAgainstAnalysisReport
     //         return $report_data;
     //     }
     //     else{
-            
+
     //         if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
     //             return   ['report_count_data' =>$report_count_data,
     //                       'report_view_data' =>$report_view_data];
     //         }else {
-                
+
     //             return $report_view_data;
     //         }
     //     }
 
     // }
-    
+
     public function discountsSalesBreakdownAnalysisResult(Request $request, Company $company,$result = 'view')
     {
 
@@ -512,9 +512,9 @@ class SalesBreakdownAgainstAnalysisReport
 
     public function getNetSalesValueSum(Request $request )
     {
-        
+
         $companyId = $request->get('company_id');
-        $selectedType = $request->get('selectedType') ; 
+        $selectedType = $request->get('selectedType') ;
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         $type = $request->get('type');
@@ -529,22 +529,22 @@ class SalesBreakdownAgainstAnalysisReport
         ));
 
         $request['branches'] = [$selectedType];
-        $request['type'] = $type ; 
+        $request['type'] = $type ;
         $request['interval'] = 'annually';
-        
+
 
         $invoiceResultArray = (new InvoicesAgainstAnalysisReport() )->InvoicesSalesAnalysisResult($request , Company::find($companyId) , true);
         $invoiceResultsFormatted = formatInvoiceForEachInterval($invoiceResultArray , $selectedType);
         foreach($invoiceResultsFormatted as $key=>$value)
         {
-           $db[0]->{$key} = $value ;  
+           $db[0]->{$key} = $value ;
         }
         return response()->json([
-            'data'=>$db 
+            'data'=>$db
         ]);
-        
+
     }
-    
+
 
     public function topAndBottomsForDashboard(Request $request)
     {
@@ -558,7 +558,7 @@ class SalesBreakdownAgainstAnalysisReport
         $modal_id = $request->get('modal_id');
         $selectedType = $request->get('selected_type');
         $request['date'] = $end_date ;
-    
+
 
         $queryResult = DB::select(DB::raw('
              SELECT "'. $selectedType .'" as selected_type_name , "'. $modal_id .'" as modal_id , sum(net_sales_value)  as total_sales_value ,  '. $column .' as customer_name
@@ -568,7 +568,7 @@ class SalesBreakdownAgainstAnalysisReport
                  group by '. $column .'
                  ORDER BY total_sales_value ' . ($direction == 'top' ? 'DESC limit 50' : 'ASC limit 50')
         ));
-    
+
         return response()->json([
             'data'=>$queryResult ,
             'modal_id'=>$modal_id
