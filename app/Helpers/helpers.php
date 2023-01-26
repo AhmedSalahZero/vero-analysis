@@ -1970,12 +1970,7 @@ function combineNoneZeroValues(array $first, array $second): array
 	}
 	return $combined;
 }
-function getAccountsToSentExceptionsFor(): array
-{
-	return [
-		'ahmedconan17@yahoo.com'
-	];
-}
+
 function getProductsItemsQuantity($companyId)
 {
 	return QuantityProductSeasonality::where('company_id', $companyId)->get();
