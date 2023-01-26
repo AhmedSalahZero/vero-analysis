@@ -198,10 +198,136 @@
 
 
 
+        <div class="row">
+            <div class="col-md-6">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <div class="kt-portlet__head kt-portlet__head--lg">
+                        <div class="kt-portlet__head-label">
+                            <span class="kt-portlet__head-icon">
+                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
+                            </span>
+                            <h3 class="kt-portlet__head-title">
+
+                                <b> {{__('Previous Year Seasonality')}} </b>
+
+                            </h3>
+                        </div>
+
+                    </div>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+
+
+                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
+                            @slot('table_header')
+                                <tr class="table-active text-center">
+                                    <th>#</th>
+                                    <th>{{ __('Product Item')}}</th>
+                                    <th>{{ __('Sales Values') }}</th>
+                                    <th>{{ __('Sales %') }}</th>
+                                    <th>{{ __('Sales Quantity') }}</th>
+                                    <th>{{ __('Average Price') }}</th>
+
+
+                                </tr>
+                            @endslot
+                            @slot('table_body')
+                            <?php $total = array_sum(array_column($sales_forecast['previous_year_seasonality'],'Sales Value')); ?>
+                                @foreach ($sales_forecast['previous_year_seasonality'] as $key => $item)
+                                 <tr>
+                                     <th>{{$key+1}}</th>
+                                    <th>{{$item['item']?? '-'}}</th>
+                                    <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
+                                    <td class="text-center">{{number_format($item['Sales %']??0,2)}} %</td>
+                                    <td class="text-center">{{number_format($item['Sales Quantity']??0)}}</td>
+                                    <td class="text-center">{{number_format($item['Average Price']??0)}}</td>
+
+                                 </tr>
+                                @endforeach
+                                <tr class="table-active text-center">
+                                    <th colspan="2">{{__('Total')}}</th>
+                                    <td class="hidden"></td>
+                                    <td>{{number_format($total)}}</td>
+                                    <td>100 %</td>
+                                    <td>{{number_format(  array_sum(array_column($sales_forecast['previous_year_seasonality'],'Sales Quantity')) )}}</td>
+                                    <td>{{number_format(  array_sum(array_column($sales_forecast['previous_year_seasonality'],'Average Price')) )}}</td>
+
+                                </tr>
+                            @endslot
+                        </x-table>
+
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <div class="kt-portlet__head kt-portlet__head--lg">
+                        <div class="kt-portlet__head-label">
+                            <span class="kt-portlet__head-icon">
+                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
+                            </span>
+                            <h3 class="kt-portlet__head-title">
+
+                                <b> {{__('Last 3 Years Seasonality')}} </b>
+
+                            </h3>
+                        </div>
+
+                    </div>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+
+
+                        <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
+                            @slot('table_header')
+                                <tr class="table-active text-center">
+                                    <th>#</th>
+                                    <th>{{ __('Product Item')}}</th>
+                                    <th>{{ __('Sales Values') }}</th>
+                                    <th>{{ __('Sales %') }}</th>
+                                    <th>{{ __('Sales Quantity') }}</th>
+                                    <th>{{ __('Average Price') }}</th>
+
+
+                                </tr>
+                            @endslot
+                            @slot('table_body')
+                            <?php $total = array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Sales Value')); ?>
+                                @foreach ($sales_forecast['last_3_years_seasonality'] as $key => $item)
+                                 <tr>
+                                     <th>{{$key+1}}</th>
+                                    <th>{{$item['item']?? '-'}}</th>
+                                    <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
+                                    <td class="text-center">{{number_format($item['Sales %']??0,2)}} %</td>
+                                    <td class="text-center">{{number_format($item['Sales Quantity']??0)}}</td>
+                                    <td class="text-center">{{number_format($item['Average Price']??0)}}</td>
+
+                                 </tr>
+                                @endforeach
+                                <tr class="table-active text-center">
+                                    <th colspan="2">{{__('Total')}}</th>
+                                    <td class="hidden"></td>
+                                    <td>{{number_format($total)}}</td>
+                                    <td>100 %</td>
+                                    <td>{{number_format(  array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Sales Quantity')) )}}</td>
+                                    <td>{{number_format(  array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Average Price')) )}}</td>
+
+                                </tr>
+                            @endslot
+                        </x-table>
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         {{-- Previous Year Seasonality --}}
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
                 <div class="kt-portlet kt-portlet--mobile">
 
@@ -236,7 +362,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
 
 
@@ -247,7 +373,7 @@
 
 
         {{-- Last 3 Years Seasonality --}}
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__body">
@@ -281,7 +407,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
 
 

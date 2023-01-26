@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\ProductsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownDataWithQuantity;
 use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\QuantityCategory;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityModifiedTarget;
-use App\Models\NewProductAllocationBase;
+use App\Models\QuantityNewProductAllocationBase;
 use App\Models\QuantityProduct;
 use App\Models\QuantityProductSeasonality;
 use App\Models\QuantitySalesForecast;
@@ -49,13 +50,20 @@ class QuantitySalesForecastReport
                 $end_date = $request['end_date'];
             }
 
-            $request['report_type'] = 'comparing';
+            // $request['report_type'] = 'comparing';
             $start_year = date('Y', strtotime($start_date));
             $date_of_previous_3_years = ($start_year - 3) . '-01-01';
             $request['start_date'] = $date_of_previous_3_years;
-            $end_date_for_report = ($start_year - 1) . '-12-01';
+            $end_date_for_report = ($start_year - 1) . '-01-01';
             $request['end_date'] = $start_date;
+            $request['type'] = 'product_item';
             $salesReport = (new salesReport)->result($request, $company, 'array');
+
+            $product_item_breakdown_data_previous_3_year = (new SalesBreakdownDataWithQuantity)->salesBreakdownAnalysisResult($request,$company,'array',3);
+            $request['start_date'] = $this->dateCalc($start_date, -12, 'Y-m-d');
+            $product_item_breakdown_data_previous_1_year = (new SalesBreakdownDataWithQuantity)->salesBreakdownAnalysisResult($request,$company,'array');
+
+
             // Pervious Year Sales
             $previous_1_year_sales = array_sum($salesReport['report_data'][$start_year - 1]['Sales Values'] ?? []);
             $previous_2_years_sales = array_sum($salesReport['report_data'][$start_year - 2]['Sales Values'] ?? []);
@@ -85,15 +93,16 @@ class QuantitySalesForecastReport
 
             $end_date = $this->dateCalc($start_date, 11, 'Y-m-t');
 
-            // Creating Array For View
+            // // Creating Array For View
             $sales_forecast["start_date"] = $start_date;
             $sales_forecast["end_date"] =   $end_date;
             $sales_forecast["previous_year"] = $previous_year;
             $sales_forecast["previous_1_year_sales"] = $previous_1_year_sales;
+            // dd($previous_1_year_sales);
             $sales_forecast["previous_year_gr"] = $previous_year_gr;
             $sales_forecast["average_last_3_years"] = $average_last_3_years;
-            $sales_forecast["previous_year_seasonality"] = $previous_year_seasonality;
-            $sales_forecast["last_3_years_seasonality"] = $last_3_years_seasonality;
+            $sales_forecast["previous_year_seasonality"] = $product_item_breakdown_data_previous_1_year;
+            $sales_forecast["last_3_years_seasonality"] = $product_item_breakdown_data_previous_3_year;
         } else {
             $start_date = $sales_forecast->start_date;
         }
@@ -112,8 +121,8 @@ class QuantitySalesForecastReport
         $sales_forecast["dates"] = $dates;
 
 
-        $sales_forecast['previous_year_seasonality'] = $this->sorting($sales_forecast['previous_year_seasonality']);
-        $sales_forecast['last_3_years_seasonality'] = $this->sorting($sales_forecast['last_3_years_seasonality']);
+        // $sales_forecast['previous_year_seasonality'] = $this->sorting($sales_forecast['previous_year_seasonality']);
+        // $sales_forecast['last_3_years_seasonality'] = $this->sorting($sales_forecast['last_3_years_seasonality']);
         return view(
             'client_view.quantity_forecast.sales_forecast',
             compact('company', 'sales_forecast', 'has_product_item')

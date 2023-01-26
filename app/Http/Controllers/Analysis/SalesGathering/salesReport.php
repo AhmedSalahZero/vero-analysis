@@ -31,13 +31,14 @@ class salesReport
         ];
         $data = [];
         $first = microtime(true) ;
-        
+
         $main_data = SalesGathering::company()
                                     ->whereBetween('date', [$request->start_date, $request->end_date])
                                     // ->limit(10)
                                     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%Y") as year,net_sales_value')->orderBy('date')
                                     ->get();
           $first = \microtime(true);
+          
         if ($request->report_type == 'comparing') {
             $data = $main_data->groupBy('year')->map(function($year){
                             return $year->groupBy('gr_date')->map(function($sub_item){
@@ -79,7 +80,7 @@ class salesReport
 
                 $report_data['Month Sales %'] = $this->operationAmongArrayAndNumber($report_data['Sales Values'],$total);
                 $report_data['Month Sales %'] = $this->operationAmongArrayAndNumber($report_data['Month Sales %'] ,100 ,'multiply');
-                
+
                 $dates = array_keys($report_data['Sales Values']);
                 $last_date = SalesGathering::company()->latest('date')->first()->date;
                 $last_date = date('d-M-Y',strtotime($last_date));
@@ -88,7 +89,7 @@ class salesReport
         }
 
 
-        
+
 
 
         // Alert No Data
