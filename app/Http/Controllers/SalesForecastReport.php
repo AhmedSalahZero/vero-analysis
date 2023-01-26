@@ -36,7 +36,7 @@ class SalesForecastReport
         $has_product_item = $this->fields($company);
 
         if ($sales_forecast === null) {
-            $start_date = now()->startOfYear()->format('Y-m-d'); 
+            $start_date = now()->startOfYear()->format('Y-m-d');
             $end_date = now()->endOfYear()->format('Y-m-d');
 
             if ($request->isMethod('GET')) {
@@ -126,23 +126,19 @@ class SalesForecastReport
         {
             return (new SummaryController())->goToSummaryReport($request , $company);
         }
-        
-        // dd();
-        
-// dd($request->all());
         $sales_forecast = SalesForecast::company()->first();
 
         // if(forecastHasBeenChanged($sales_forecast  , $request->all()))
         // {
         //        deleteProductItemsForForecast($company->id);
-        //        deleteNewProductAllocationBaseForForecast($company->id);    
+        //        deleteNewProductAllocationBaseForForecast($company->id);
         // }
         if ($sales_forecast !== null && $request['start_date'] !== $sales_forecast->start_date) {
-            
+
             $sales_forecast->delete();
             // toastr()->success('Please refill the data');
             // Session::flash('message', 'IT WORKS!');
-            
+
             return $this->result($company, $request);
         }
         $request->validate(
@@ -198,7 +194,7 @@ class SalesForecastReport
             return ;
         }
         toastr()->success('Saved Successfully');
-       
+
         if ($request['add_new_products'] == 0) {
             return redirect()->route('products.sales.targets', $company);
         } else {
@@ -430,7 +426,7 @@ class SalesForecastReport
 
     public function productsSalesTargets(Company $company, Request $request , $noReturn = false )
     {
-        
+
         $sales_forecast = SalesForecast::company()->first();
         $products = Product::company()->with('category')->get();
         $product_seasonality = ProductSeasonality::company()->get();
@@ -438,10 +434,10 @@ class SalesForecastReport
         $has_product_item = $this->fields($company);
         $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
         $request['type'] = $type;
-        
+
         $request['start_date'] = $sales_forecast->previous_year . '-01-01';
         $request['end_date'] = $sales_forecast->previous_year . '-12-31';
-        
+
         if ($request->isMethod('POST')) {
             $use_modified_targets = ($request->use_modified_targets ?? 0);
             $validation['percentages_total'] = (($use_modified_targets == 1) && (array_sum(array_column($request->modify_sales_target, 'percentage')) != 100)) ? 'required' : '';
@@ -449,7 +445,7 @@ class SalesForecastReport
             $request->validate(@$validation, [
                 'percentages_total.required' => 'Total Modified Sales Percentages Must be 100%'
             ]);
-            
+
             if ($modified_targets !== null) {
                 $modified_targets->update([
                     'company_id' => $company->id,
@@ -584,7 +580,7 @@ class SalesForecastReport
         if ($request->isMethod('POST') && $result == 'view') {
             if($noReturn)
             {
-                return ; 
+                return ;
             }
             return redirect()->route('allocations', $company);
         }
@@ -592,7 +588,7 @@ class SalesForecastReport
         $products_seasonality = ProductSeasonality::company()->get();
         $year = date('Y', strtotime($sales_forecast->start_date));
         // dd($sales_forecast,$products_seasonality);
-        
+
         $monthly_dates = [];
         $quarter_dates = [];
         $counter = 1;
@@ -614,13 +610,13 @@ class SalesForecastReport
             $seasonality        = $product_seasonality->seasonality;
             $seasonality_data   = $product_seasonality->seasonality_data;
             // if( $hasProductsNotDeleted){
-                    $new_products_seasonalities[$product_seasonality->name] = 
-            
-         
+                    $new_products_seasonalities[$product_seasonality->name] =
+
+
             $this->seasonalityFun($seasonality, $seasonality_data, $monthly_dates, $sales_target_value, $product_seasonality, $year);
-            
+
             // }
-        
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -656,11 +652,11 @@ class SalesForecastReport
         // if(! $hasProductsNotDeleted){
         //     $new_products_totals = [];
         //     $new_products_seasonalities = [];
-            
+
         // }
-        //end 
-        
-        
+        //end
+
+
         // dd($new_products_totals);
 
         if (($result == 'view') || ($result == 'total_sales_target')) {
@@ -764,7 +760,7 @@ class SalesForecastReport
                 }
             }
 
-          
+
             // dd(get_defined_vars());
             // total_company_sales_target
             // dd($result);
@@ -779,9 +775,9 @@ class SalesForecastReport
 
                   if($noReturn)
             {
-                return ; 
+                return ;
             }
-            
+
                 return $targets;
             }
 
@@ -792,7 +788,7 @@ class SalesForecastReport
 
   if($noReturn)
             {
-                return ; 
+                return ;
             }
             return view('client_view.forecast.products_allocations', compact(
                 'company',
@@ -891,7 +887,7 @@ class SalesForecastReport
             }
         } elseif ($seasonality == 'new_seasonality_monthly' || $seasonality == 'previous_year' || $seasonality == 'last_3_years') {
 
-            
+
 
             foreach ((array)$monthly_dates as $date => $value) {
                 $current_seasonality = ($seasonality_data[$date] ?? 0);
