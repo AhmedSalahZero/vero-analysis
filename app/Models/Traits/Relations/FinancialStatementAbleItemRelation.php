@@ -26,7 +26,7 @@ trait FinancialStatementAbleItemRelation
 			'financial_statement_able_item_id',
 			'financial_statement_able_id'
 		)
-			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'is_quantity', 'can_be_quantity']);
+			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'is_quantity', 'can_be_quantity', 'actual_dates']);
 	}
 	public function withSubItemsFor(int $financialStatementAbleId, string $subItemType = '', string $subItemName = ''): BelongsToMany
 	{

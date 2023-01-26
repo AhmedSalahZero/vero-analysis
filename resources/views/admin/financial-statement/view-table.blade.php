@@ -363,6 +363,9 @@ $tableId = 'kt_table_1';
                           <i class="la la-money icon-lg"></i>
                         </a>
 
+						<a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">
+                          <i class="la la-trash icon-lg"></i>
+                        </a>
                           
 
                      

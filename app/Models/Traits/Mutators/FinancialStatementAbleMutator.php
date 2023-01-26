@@ -84,13 +84,16 @@ trait FinancialStatementAbleMutator
 		$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 		$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 		// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
-		$pivotForModified = combineNoneZeroValues($pivotForForecast, $pivotForActual);
+		$actualDates = [];
+		$pivotForModified = combineNoneZeroValues($pivotForForecast, $pivotForActual, $actualDates);
 		$this->withSubItemsFor($financialStatementAbleItemId, 'adjusted', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
-			'payload' => json_encode($pivotForModified)
+			'payload' => json_encode($pivotForModified),
+			'actual_dates' => json_encode($actualDates)
 		]);
 		// for modified also ?? 
 		$this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
-			'payload' => json_encode($pivotForModified)
+			'payload' => json_encode($pivotForModified),
+			'actual_dates' => json_encode($actualDates)
 		]);
 	}
 	public function syncPivotFor(int $financialStatementAbleItemId, string $sub_item_type, string $sub_item_origin_name)
@@ -126,6 +129,7 @@ trait FinancialStatementAbleMutator
 	public function storeReport(Request $request)
 	{
 		$financialStatementAble = (new static)::find($request->input('financial_statement_able_id'));
+		// dd($financialStatementAble);
 		$financialStatementAbleItemId = $request->input('financial_statement_able_item_id');
 		$subItemType = $request->get('sub_item_type');
 		foreach ((array)$request->sub_items as $index => $options) {
@@ -153,7 +157,7 @@ trait FinancialStatementAbleMutator
 					//update pivot foreach item
 					if ($financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->exists()) {
 						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
-							'payload' => json_encode($payload)
+							'payload' => json_encode($payload),
 						]);
 					}
 					$financialStatementAble->syncPivotFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name);
