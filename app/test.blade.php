@@ -2,7 +2,6 @@
 $tableId = 'kt_table_1';
 @endphp
 
-
 <style>
     /* table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before, table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before,
     .dataTables_wrapper table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td:first-child::before
@@ -83,11 +82,6 @@ $tableId = 'kt_table_1';
 @csrf
 
 <input type="hidden" id="editable-by-btn" value="1">
-@if(in_array($reportType,['modified','adjusted']))
-<input type="hidden" id="fixed-column-number" value="2">
-@else
-<input type="hidden" id="fixed-column-number" value="3">
-@endif
 <input type="hidden" id="sub-item-type" value="{{ $reportType }}">
 <div class="table-custom-container position-relative  ">
     <input type="hidden" value="{{ $incomeStatement->id }}" id="model-id">
@@ -115,7 +109,7 @@ $tableId = 'kt_table_1';
 
 
 
-    <x-tables.basic-view :redirect-route="route('admin.view.financial.statement', getCurrentCompanyId())" :save-and-return="true" :form-id="'store-report-form-id'" :wrap-with-form="true" :form-action="route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()])" class="position-relative table-with-two-subrows main-table-class" id="{{ $tableId }}">
+    <x-tables.basic-view :form-id="'store-report-form-id'" :wrap-with-form="true" :form-action="route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()])" class="position-relative table-with-two-subrows main-table-class" id="{{ $tableId }}">
         <x-slot name="filter">
             @include('admin.income-statement.report.filter' , [
             'type'=>'filter'
@@ -229,9 +223,6 @@ $tableId = 'kt_table_1';
 
                         "use strict";
                         var KTDatatablesDataSourceAjaxServer = function() {
-                            function getFixedColumnNumbers() {
-                                return $('#fixed-column-number').val()
-                            }
                             var initTable1 = function() {
 
                                 var tableId = '#' + "{{ $tableId }}";
@@ -265,19 +256,15 @@ $tableId = 'kt_table_1';
                                             return elements;
                                         } else if (row.isSubItem && (row.pivot.created_from == row.pivot.sub_item_type)) {
                                             // console.log(row.pivot.);
-                                            return `
-											<div class="d-flex align-items-center justify-content-between">
-												<a  data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
+                                            return `<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
                                 <i class="fas fa-trash-alt"></i>
                                 
-                                </a>
-								</div>
-											`
+                                </a>`
                                         }
                                         return '';
                                     }
                                     , data: 'id'
-                                    , className: 'cursor-pointer sub-text-bg '
+                                    , className: 'cursor-pointer sub-text-bg d-flex justify-content-between'
                                 , });
                                 columns.push({
                                     render: function(d, b, row) {
@@ -297,10 +284,6 @@ $tableId = 'kt_table_1';
                                             date = data[i];
                                             if (row.isSubItem && row.pivot.payload) {
                                                 var payload = JSON.parse(row.pivot.payload);
-                                                var actualDates = JSON.parse(row.pivot.actual_dates);
-                                                if (actualDates && actualDates.includes(date)) {
-                                                    $('.dataTables_scrollHeadInner .main-table-class:eq(0) th:not(.is-actual).date-' + date).addClass('is-actual');
-                                                }
                                                 return payload[date] ? number_format(payload[date]) : 0;
                                             }
                                             if (row.has_sub_items) {
@@ -359,7 +342,7 @@ $tableId = 'kt_table_1';
                                         , "ordering": false
                                         , 'paging': false
                                         , "fixedColumns": {
-                                            left: getFixedColumnNumbers()
+                                            left: 3
                                         }
                                         , "serverSide": true
                                         , "responsive": false
@@ -413,15 +396,12 @@ $tableId = 'kt_table_1';
                                         , createdRow: function(row, data, dataIndex, cells, x) {
 
                                             let salesGrowthRateId = $('#sales-growth-rate-id').val();
-                                            let salesReveueId = $('#sales-revenue-id').val();
 
                                             var totalOfRowArray = [];
 
                                             var incomeStatementId = data.isSubItem ? data.pivot.financial_statement_able_id : $('#model-id').val();
                                             var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
                                             var subItemName = data.isSubItem ? data.pivot.sub_item_name : '';
-                                            let is_quantity = false;
-
                                             $(cells).filter(".editable").attr('contenteditable', true)
                                                 .attr('data-income-statement-id', incomeStatementId)
                                                 .attr('data-main-model-id', incomeStatementId)
@@ -429,31 +409,17 @@ $tableId = 'kt_table_1';
                                                 .attr('data-main-row-id', incomeStatementItemId)
                                                 .attr('data-sub-item-name', subItemName)
                                                 .attr('data-table-id', "{{$tableId}}")
-                                                .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false);
-
                                             if (data.isSubItem) {
                                                 let Depreciation = '';
-
-                                                var quantity = '';
-                                                if (data.pivot && data.pivot.can_be_quantity) {
-                                                    let checkedQuantity = '';
-                                                    if (data.pivot.is_quantity) {
-                                                        checkedQuantity = ' checked ';
-                                                    }
-                                                    quantity = `
-            <label>{{ __('Is Qauntity ? ') }}</label>
-                            
-                            <input ${checkedQuantity} class="form-check-input" type="checkbox" value="1" name="is_quantity"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
-                                                }
                                                 if (data.pivot && data.pivot.can_be_depreciation) {
-                                                    let checkedDepreciation = '';
+                                                    let checked = '';
                                                     if (data.pivot.is_depreciation_or_amortization) {
-                                                        checkedDepreciation = ' checked ';
+                                                        checked = ' checked ';
                                                     }
                                                     Depreciation = `
             <label>{{ __('Is Depreciation Or Amortization ? ') }}</label>
                             
-                            <input ${checkedDepreciation} class="form-check-input" type="checkbox" value="1" name="is_depreciation_or_amortization"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
+                            <input ${checked} class="form-check-input" type="checkbox" value="1" name="is_depreciation_or_amortization"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
                                                 }
 
 
@@ -473,13 +439,13 @@ $tableId = 'kt_table_1';
       <div class="modal-body">
         <form id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
 			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
+            
             <input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
             <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
             <input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
             <label>{{ __('name') }}</label>
             <input name="new_sub_item_name"  class="form-control   only-greater-than-zero-allowed mb-2" type="text" value="${data.pivot.sub_item_name}">
             ${Depreciation}
-			${quantity}
            <div class="mt-2">
             <label>{{ __('Sub Of') }}</label>
             <select name="sub_of_id" class="form-control main-row-select" data-selected-main-row="${data.pivot.financial_statement_able_item_id}">
@@ -542,12 +508,10 @@ $tableId = 'kt_table_1';
                                                     $(row).addClass('is-depreciation-or-amortization')
                                                 }
 
-
                                                 $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
                                                     var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
                                                         return classItem.startsWith('date-');
                                                     })[0];
-                                                    // good
                                                     filterDate = filterDate.split('date-')[1];
                                                     totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")));
 
@@ -574,6 +538,7 @@ $tableId = 'kt_table_1';
                                                 if (!data.has_sub_items) {
 
                                                     $(row).addClass('main-with-no-child').attr('data-model-id', data.id);
+
                                                     $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
 
                                                         var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
@@ -618,10 +583,6 @@ $tableId = 'kt_table_1';
                                                     if (data.is_main_for_all_calculations) {
                                                         $(row).addClass('is-main-for-all-calculations');
                                                     }
-                                                    // here
-                                                    // console.log($(cells).filter('.editable.editable-date').length);
-                                                    // console.log($(cells).filter('.editable.editable-date').length);
-                                                    // console.log('---')
                                                     $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
                                                         var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
                                                             return classItem.startsWith('date-');
@@ -641,17 +602,6 @@ $tableId = 'kt_table_1';
                                                     $(cells).each(function(index, cell) {
                                                         $(cell).removeClass('editable').removeClass('editable-text').attr('contenteditable', false)
                                                     });
-                                                    let quantityCheckbox = '';
-
-                                                    quantityCheckbox = `<div class="form-check mt-2">
-															<label class="form-check-label"  style="margin-top:3px" >
-																{{ __('Is Quantity') }}
-															</label>
-
-															<input class="form-check-input" type="checkbox" value="1" name="sub_items[0][is_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
-															<input class="form-check-input" type="hidden" value="1" name="sub_items[0][can_be_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
-															
-															`;
 
                                                     if (data.has_depreciation_or_amortization) {
                                                         $(row).addClass('has-depreciation-or-amortization');
@@ -676,11 +626,10 @@ $tableId = 'kt_table_1';
                                                         nameAndDepreciationIfExist = ` <div class="append-names mt-2" data-id="${data.id}">
 
                 <div class="form-group how-many-item" data-id="${data.id}" data-index="0">
-                    <div><label class="form-label">{{ __('Name') }}</label>
-                    <input name="sub_items[0][name]" type="text" value="" class="form-control"></div>
-					` + quantityCheckbox + `
+                    <label class="form-label">{{ __('Name') }}</label>
+                    <input name="sub_items[0][name]" type="text" value="" class="form-control">
                 </div>
-            </div> `;
+            </div>`;
 
                                                     }
                                                     $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (data.id)).attr('data-model-id', data.id).attr('data-model-name', '{{ $modelName }}')
@@ -696,9 +645,8 @@ $tableId = 'kt_table_1';
       </div>
       <div class="modal-body">
         <form id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
-            
-            <label class="label ">{{ __('How Many Items ?') }}</label>
 			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
+            <label class="label ">{{ __('How Many Items ?') }}</label>
             <input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
             <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 
@@ -709,7 +657,7 @@ $tableId = 'kt_table_1';
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-        <button type="button" class="btn btn-primary save-sub-item" data-redirect-to='' data-id="${data.id}">{{ __('Save') }}</button>
+        <button type="button" class="btn btn-primary save-sub-item" data-id="${data.id}">{{ __('Save') }}</button>
       </div>
     </div>
   </div>
@@ -783,15 +731,7 @@ $tableId = 'kt_table_1';
                                             // handle data for intervals 
                                         }
                                         , initComplete: function(settings, json) {
-
                                             var reportType = $('#sub-item-type').val();
-                                            let actualDates = []
-                                            $('.dataTables_scrollHeadInner .main-table-class:eq(0) th.is-actual').each(function(index, th) {
-                                                if (!actualDates.includes($(th).data('date'))) {
-                                                    actualDates.push($(th).data('date'));
-                                                }
-                                            })
-
                                             if (reportType == 'adjusted') {
                                                 const table = $('.main-table-class').DataTable();
                                                 table.column(1).visible(false);
@@ -799,24 +739,7 @@ $tableId = 'kt_table_1';
                                                 $('[contenteditable]').each(function(index, td) {
                                                     $(td).attr('contenteditable', false);
                                                 })
-                                                actualDates.forEach(function(actualDate) {
-                                                    $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
-                                                    $('.editable-date.date-' + actualDate).attr('contenteditable', false);
-                                                })
                                             }
-                                            if (reportType == 'modified') {
-                                                const table = $('.main-table-class').DataTable();
-                                                table.column(1).visible(false);
-                                                $('.is-name-cell[contenteditable]').each(function(index, td) {
-                                                    $(td).attr('contenteditable', false);
-                                                })
-                                                actualDates.forEach(function(actualDate) {
-                                                    $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
-                                                    $('.editable-date.date-' + actualDate).attr('contenteditable', false);
-                                                })
-                                            }
-                                            $('.main-table-class').DataTable().columns.adjust();
-
                                         }
 
 
@@ -857,6 +780,8 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
+                                        // alert('good')
+                                        // alert('reload1')
 
                                         $('.main-table-class').DataTable().ajax.reload(null, false)
                                         if (res.status) {
@@ -879,7 +804,6 @@ $tableId = 'kt_table_1';
                                     , error: function(data) {}
                                 });
                             });
-
 
 
                             $(document).on('click', '.save-sub-item-edit', function(e) {
@@ -1187,14 +1111,8 @@ $tableId = 'kt_table_1';
                                 let parentElement = $('tr.is-main-with-sub-items[data-model-id="' + parentModelId + '"] ');
                                 let total = 0;
                                 parentElement.nextAll('.maintable-1-row-class' + parentModelId).each(function(index, subRow) {
-                                    // console.log(subRow);
-                                    // if has no quantity 
-                                    if ($(subRow).find('td[data-is-quantity="1"]').length == 0) {
-                                        var subRowTdValue = parseFloat($(subRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
-                                        total += subRowTdValue;
-                                    }
-
-
+                                    var subRowTdValue = parseFloat($(subRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                                    total += subRowTdValue;
                                 })
                                 parentElement.find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val(total);
                                 parentElement.find('td.date-' + date).html(number_format(total));
@@ -1232,10 +1150,9 @@ $tableId = 'kt_table_1';
                             $(document).on('click', '.save-form', function(e) {
                                 e.preventDefault();
                                 form = document.getElementById('store-report-form-id');
-                                let redirectTo = $(this).data('redirect-to');
+
                                 var formData = new FormData(form);
 
-                                // formData.append('redirectTo', );
                                 $.ajax({
                                     type: 'POST'
                                     , url: $(form).attr('action')
@@ -1244,11 +1161,11 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
+                                        // alert('reload2')
+
                                         $('.main-table-class').DataTable().ajax.reload(null, false)
+
                                         if (res.status) {
-                                            if (redirectTo) {
-                                                window.location.href = redirectTo;
-                                            }
                                             Swal.fire({
                                                 icon: 'success'
                                                 , title: res.message

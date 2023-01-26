@@ -106,8 +106,8 @@
                     </div>
 
 
-<input type="hidden" name="main_type" value="country">
-<input type="hidden" id="append-to" value="countries">
+                    <input type="hidden" name="main_type" value="country">
+                    <input type="hidden" id="append-to" value="countries">
 
 
 
@@ -157,7 +157,7 @@
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select '.$name_of_selector_label) }}  </label>
+                            <label>{{ __('Select '.$name_of_selector_label) }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -184,7 +184,7 @@
                         </div>
                         @endif
                     </div>
-                  
+
                 </div>
                 <x-submitting />
             </div>
@@ -328,11 +328,11 @@
             , data: {
                 'main_data': countries
                 , 'main_field': 'country'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -366,11 +366,11 @@
             , data: {
                 'main_data': countries
                 , 'main_field': 'country'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -405,11 +405,11 @@
                 , 'main_field': 'country'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -464,11 +464,11 @@
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_or_service'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {

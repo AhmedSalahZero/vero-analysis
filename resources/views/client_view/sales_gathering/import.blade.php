@@ -264,7 +264,7 @@
                         data: {
                             'id': "{{ $active_job->id }}"
                         },
-                        url: '{{ route('active.job', $company) }}',
+                        url: "{{ route('active.job', $company) }}",
                         dataType: 'json',
                         accepts: 'application/json'
                     }).done(function(data) {

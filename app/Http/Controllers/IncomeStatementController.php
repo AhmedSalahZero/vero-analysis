@@ -33,9 +33,9 @@ class IncomeStatementController extends Controller
 
 	public function createReport(Company $company, IncomeStatement $incomeStatement)
 	{
-		// dd($incomeStatement);
 		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars([
-			'income_statement_id' => $incomeStatement->id, 'incomeStatement' => $incomeStatement
+			'financial_statement_able_id' => $incomeStatement->id, 'incomeStatement' => $incomeStatement,
+			'reportType' => getReportNameFromRouteName(Request()->route()->getName())
 		]));
 	}
 
@@ -63,12 +63,12 @@ class IncomeStatementController extends Controller
 	public function storeReport(Request $request)
 	{
 
+
 		$this->incomeStatementRepository->storeReport($request);
 
 		return response()->json([
 			'status' => true,
-			'message' => __('Income Statement Has Been Stored Successfully'),
-			'redirectTo' => $request->get('redirectTo')
+			'message' => __('Income Statement Has Been Stored Successfully')
 		]);
 	}
 
@@ -100,8 +100,7 @@ class IncomeStatementController extends Controller
 			->updateExistingPivot($incomeStatementId, [
 				'sub_item_name' => $request->get('new_sub_item_name'),
 				'financial_statement_able_item_id' => $request->get('sub_of_id'),
-				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
-				'is_quantity' => $request->boolean('is_quantity'),
+				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization')
 			]);
 		return response()->json([
 			'status' => true,
@@ -116,10 +115,7 @@ class IncomeStatementController extends Controller
 		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$incomeStatementItem = $incomeStatement->mainItems($incomeStatementItemId)->first();
-		$deleteSubItemsType = getDeleteSubItemsFor($request->get('sub_item_type'));
-		foreach ($deleteSubItemsType as $subItemType) {
-			$incomeStatementItem->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))->detach($incomeStatementId);
-		}
+		$incomeStatementItem->withSubItemsFor($incomeStatementId, $request->get('sub_item_type'), $request->get('sub_item_name'))->detach($incomeStatementId);
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Deleted Successfully')
@@ -129,7 +125,66 @@ class IncomeStatementController extends Controller
 
 	public function export(Request $request)
 	{
-
 		return (new IncomeStatementExport($this->incomeStatementRepository->export($request), $request))->download();
+	}
+	public function exportReport(Request $request)
+	{
+		$formattedData = $this->formatReportDataForExport($request);
+		$incomeStatementId = array_key_first($request->get('value'));
+		$incomeStatement = IncomeStatement::find($incomeStatementId);
+
+		return (new IncomeStatementExport(collect($formattedData), $request, $incomeStatement))->download();
+	}
+	protected function combineMainValuesWithItsPercentageRows(array $firstItems, array $secondItems): array
+	{
+		$mergeArray = [];
+		foreach ($firstItems as $incomeStatementId => $incomeStatementValues) {
+			foreach ($incomeStatementValues as $incomeStatementItemId => $incomeStatementItemsValues) {
+				foreach ($incomeStatementItemsValues as $date => $value) {
+					$mergeArray[$incomeStatementId][$incomeStatementItemId][$date] = $value;
+				}
+			}
+		}
+		foreach ($secondItems as $incomeStatementId => $incomeStatementValues) {
+			foreach ($incomeStatementValues as $incomeStatementItemId => $incomeStatementItemsValues) {
+				foreach ($incomeStatementItemsValues as $date => $value) {
+					$mergeArray[$incomeStatementId][$incomeStatementItemId][$date] = $value;
+				}
+			}
+		}
+
+		$mergeArray[$incomeStatementId] = orderArrayByItemsKeys($mergeArray[$incomeStatementId]);
+
+		return $mergeArray;
+	}
+	public function formatReportDataForExport(Request $request)
+	{
+		$formattedData = [];
+		$totals = $request->get('totals');
+		$subTotals = $request->get('subTotals');
+		$rateIncomeStatementItemsIds = IncomeStatementItem::rateFieldsIds();
+		$combineMainValuesWithItsPercentageRows = $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems'));
+		foreach ($combineMainValuesWithItsPercentageRows as $incomeStatementId => $incomeStatementValues) {
+			foreach ($incomeStatementValues as $incomeStatementItemId => $incomeStatementItemsValues) {
+				$incomeStatementItem = IncomeStatementItem::find($incomeStatementItemId);
+				$formattedData[$incomeStatementItem->name]['Name'] = $incomeStatementItem->name;
+				foreach ($incomeStatementItemsValues as $date => $value) {
+					$formattedData[$incomeStatementItem->name][$date] = in_array($incomeStatementItemId, $rateIncomeStatementItemsIds) ? number_format($value, 2) . ' %' : number_format($value);
+				}
+				$total = $totals[$incomeStatementId][$incomeStatementItemId];
+				$formattedData[$incomeStatementItem->name]['Total'] = in_array($incomeStatementItemId, $rateIncomeStatementItemsIds) ? number_format($total, 2) . ' %' : number_format($total);
+				if (isset($request->get('value')[$incomeStatementId][$incomeStatementItemId])) {
+					foreach ($incomeStatementItemSubItems = $request->get('value')[$incomeStatementId][$incomeStatementItemId] as $incomeStatementItemSubItemName => $incomeStatementItemSubItemValues) {
+						$formattedData[$incomeStatementItemSubItemName]['Name'] = $incomeStatementItemSubItemName;
+						foreach ($incomeStatementItemSubItemValues as $incomeStatementItemSubItemDate => $incomeStatementItemSubItemValue) {
+							$formattedData[$incomeStatementItemSubItemName][$incomeStatementItemSubItemDate] = in_array($incomeStatementItemId, $rateIncomeStatementItemsIds) ? number_format($incomeStatementItemSubItemValue, 2) . ' %' : number_format($incomeStatementItemSubItemValue);
+						}
+						$total = $subTotals[$incomeStatementId][$incomeStatementItemId][$incomeStatementItemSubItemName];
+						$formattedData[$incomeStatementItemSubItemName]['Total'] = in_array($incomeStatementItemId, $rateIncomeStatementItemsIds) ? number_format($total, 2) . ' %' : number_format($total);
+					}
+				}
+			}
+		}
+		return $formattedData;
 	}
 }

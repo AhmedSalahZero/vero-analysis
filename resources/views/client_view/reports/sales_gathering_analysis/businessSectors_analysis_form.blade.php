@@ -70,13 +70,13 @@
                                 </div>
                             </div>
                         </div>
-                          @include('comparing_type_selector')
-                          
+                        @include('comparing_type_selector')
+
                     </div>
                     @else
                     <input type="hidden" name="data_type" id="data_type" {{$data_type_selector}} value="value">
                     @endif
-                     <div class="form-group row">
+                    <div class="form-group row">
                         <div class="col-md-4">
                             <label>{{ __('Start Date') }}</label>
                             <div class="kt-input-icon">
@@ -109,9 +109,9 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <input type="hidden" name="main_type" value="business_sector">
-<input type="hidden" id="append-to" value="businessSectors">
+                    <input type="hidden" id="append-to" value="businessSectors">
 
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
@@ -187,7 +187,7 @@
                         </div>
                         @endif
                     </div>
-                   
+
                 </div>
                 <x-submitting />
             </div>
@@ -337,11 +337,11 @@
             , data: {
                 'main_data': businessSectors
                 , 'main_field': 'business_sector'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -376,11 +376,11 @@
             , data: {
                 'main_data': businessSectors
                 , 'main_field': 'business_sector'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -414,11 +414,11 @@
                 , 'main_field': 'business_sector'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -474,11 +474,11 @@
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_or_service'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {

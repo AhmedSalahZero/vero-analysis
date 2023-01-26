@@ -3,9 +3,10 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
-    div.dropdown-menu.show{
-        max-width:400px !important;
+    div.dropdown-menu.show {
+        max-width: 400px !important;
     }
+
 </style>
 @endsection
 @section('sub-header')
@@ -21,8 +22,8 @@
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action={{  $name_of_selector_label == 'Sales Discount' ? route('salesPersons.salesDiscount.analysis.result', $company) : route('salesPersons.analysis.result', $company) }} enctype="multipart/form-data">
             @csrf
-            
-        
+
+
 
 
             <div class="kt-portlet">
@@ -70,47 +71,47 @@
                         </div>
 
                         @include('comparing_type_selector')
-                          
-                          
+
+
 
                     </div>
 
-                       <div class="form-group row">
-                    <div class="col-md-4">
-                        <label>{{ __('Start Date') }}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="date" required name="start_date" class="form-control trigger-update-select-js" placeholder="Select date" />
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label>{{ __('Start Date') }}</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <input type="date" required name="start_date" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>{{ __('End Date') }}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="date" required name="end_date" value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                        <div class="col-md-4">
+                            <label>{{ __('End Date') }}</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <input type="date" required name="end_date" value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>{{ __('Select Interval') }} </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select name="interval" required class="form-control">
-                                    <option value="" selected>{{ __('Select') }}</option>
-                                    {{-- <option value="daily">{{ __('Daily') }}</option> --}}
-                                    <option value="monthly">{{ __('Monthly') }}</option>
-                                    <option value="quarterly">{{ __('Quarterly') }}</option>
-                                    <option value="semi-annually">{{ __('Semi-Annually') }}</option>
-                                    <option value="annually">{{ __('Annually') }}</option>
-                                </select>
+                        <div class="col-md-4">
+                            <label>{{ __('Select Interval') }} </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select name="interval" required class="form-control">
+                                        <option value="" selected>{{ __('Select') }}</option>
+                                        {{-- <option value="daily">{{ __('Daily') }}</option> --}}
+                                        <option value="monthly">{{ __('Monthly') }}</option>
+                                        <option value="quarterly">{{ __('Quarterly') }}</option>
+                                        <option value="semi-annually">{{ __('Semi-Annually') }}</option>
+                                        <option value="annually">{{ __('Annually') }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-    <input type="hidden" name="main_type" value="sales_person">
-			<input type="hidden" id="append-to" value="salesPersonsData">
+                    </div>
+                    <input type="hidden" name="main_type" value="sales_person">
+                    <input type="hidden" id="append-to" value="salesPersonsData">
 
                     <div class="form-group row">
                         <div class="col-md-{{$column}}">
@@ -128,92 +129,92 @@
 
                         @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Sales Persons' || $name_of_selector_label =='Products Items')
 
-                                <div class="col-md-{{$column}}">
-                        <label>{{ __('Select Categories') }}
-                         
-                         @include('max-option-span')
+                        <div class="col-md-{{$column}}">
+                            <label>{{ __('Select Categories') }}
 
-                         </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date" id="categories">
-                                <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+                                @include('max-option-span')
 
-                                </select>
+                            </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" id="categories">
+                                    <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    @endif
-                    @if($name_of_selector_label == 'Products Items' )
+                        @endif
+                        @if($name_of_selector_label == 'Products Items' )
 
-                     <div class="col-md-{{$column}}">
-                        <label>{{ __('Select Products') }}
-                         
-                         @include('max-option-span')
+                        <div class="col-md-{{$column}}">
+                            <label>{{ __('Select Products') }}
 
-                         </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date" id="products__">
-                                <select data-live-search="true" data-actions-box="true" name="products[]"  class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+                                @include('max-option-span')
 
-                                </select>
+                            </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" id="products__">
+                                    <select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
 
-                    @endif 
+                        @endif
 
 
-                    @if ( $name_of_selector_label == 'Sales Discount')
+                        @if ( $name_of_selector_label == 'Sales Discount')
 
-                    <div class="col-md-{{$column}}">
-                        <label>{{ __('Select '.$name_of_selector_label) }} </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
-                                    <option value="quantity_discount">{{ __('Quantity Discount') }}</option>
-                                    <option value="cash_discount">{{ __('Cash Discount') }}</option>
-                                    <option value="special_discount">{{ __('Special Discount') }}</option>
-                                    <option value="other_discounts">{{ __('Other Discounts') }}</option>
+                        <div class="col-md-{{$column}}">
+                            <label>{{ __('Select '.$name_of_selector_label) }} </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
+                                        <option value="quantity_discount">{{ __('Quantity Discount') }}</option>
+                                        <option value="cash_discount">{{ __('Cash Discount') }}</option>
+                                        <option value="special_discount">{{ __('Special Discount') }}</option>
+                                        <option value="other_discounts">{{ __('Other Discounts') }}</option>
 
-                                </select>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    @else
-                    <div class="col-md-{{$column}}">
-                        <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection">@include('max-option-span') </span> </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date" id="sales_channels">
-                                <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple>
+                        @else
+                        <div class="col-md-{{$column}}">
+                            <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection">@include('max-option-span') </span> </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" id="sales_channels">
+                                    <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple>
 
-                                </select>
+                                    </select>
+                                </div>
                             </div>
                         </div>
+                        @endif
                     </div>
-                    @endif
+
                 </div>
-             
+                @if('salesPersons.Items.analysis' == Request()->route()->getName())
+                <input type="hidden" id="has_product_item">
+                @endif
+                {{-- @dd(Request()->route()->getName()) --}}
+                <x-submitting />
             </div>
-            @if('salesPersons.Items.analysis' == Request()->route()->getName())
-            <input type="hidden" id="has_product_item">
-            @endif 
-            {{-- @dd(Request()->route()->getName()) --}}
-            <x-submitting />
+
+
+
+
+
+        </form>
+
+        <!--end::Form-->
+
+        <!--end::Portlet-->
     </div>
-
-
-
-
-
-    </form>
-
-    <!--end::Form-->
-
-    <!--end::Portlet-->
-</div>
 </div>
 @endsection
 @section('js')
@@ -271,8 +272,7 @@
                 salesPersonsData = $(this).val();
             }
             type_of_data = "{{$type}}";
-            if(type_of_data == 'product_item' || type_of_data == 'product_or_service' )
-            {
+            if (type_of_data == 'product_item' || type_of_data == 'product_or_service') {
                 type_of_data = 'category';
             }
             getCategories(salesPersonsData, type_of_data);
@@ -294,7 +294,7 @@
             type_of_data = "{{$type}}";
 
             categories = $(this).val();
-            getProducts(salesPersonsData, categories , 'product_or_service' , type_of_data)
+            getProducts(salesPersonsData, categories, 'product_or_service', type_of_data)
         }, getNumberOfMillSeconds());
 
 
@@ -314,7 +314,7 @@
             products = $(this).val();
 
             type_of_data = "{{$type}}";
-            getProductItems(salesPersonsData ,categories, products)
+            getProductItems(salesPersonsData, categories, products)
 
         }, getNumberOfMillSeconds());
 
@@ -340,11 +340,11 @@
             , data: {
                 'main_data': salesPersonsData
                 , 'main_field': 'sales_person'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -380,26 +380,26 @@
             , data: {
                 'main_data': salesPersonsData
                 , 'main_field': 'sales_person'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
-			let mainName = 'categories[]';
-			
-			if(! $('#categories').length){
-				mainName = 'sales_channels[]';
-			}
-			
+            let mainName = 'categories[]';
+
+            if (!$('#categories').length) {
+                mainName = 'sales_channels[]';
+            }
+
             // if($('#data_type').val()  == 'value'){
             var data_type = 'multiple';
             // }else{
             //     var data_type = '';
             // }
-            row = '<select data-live-search="true" data-actions-box="true" name="'+ mainName +'" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
+            row = '<select data-live-search="true" data-actions-box="true" name="' + mainName + '" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
             // if($('#data_type').val()  !== 'value'){
             //     row += '<option value="">Select</option>\n' ;
             // }
@@ -409,20 +409,19 @@
 
             });
             row += '</select>';
-			if($('#categories').length){
-				$('#categories').html('');
-            $('#categories').append(row);				
-			}
-			else{
-				$('#sales_channels').html('');
-			$('#sales_channels').append(row);
-			}
-			
+            if ($('#categories').length) {
+                $('#categories').html('');
+                $('#categories').append(row);
+            } else {
+                $('#sales_channels').html('');
+                $('#sales_channels').append(row);
+            }
+
             reinitializeSelect2();
         });
     }
     // Sub Categories
-    function getProducts(salesPersonsData , categories, type_of_data, type) {
+    function getProducts(salesPersonsData, categories, type_of_data, type) {
         console.log(type_of_data);
         $.ajax({
             type: 'POST'
@@ -431,13 +430,13 @@
                 , 'main_field': 'sales_person'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
-                // , 'third_main_data': products
-                // , 'third_main_field': 'product_or_service'
-                , 'field':type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                    // , 'third_main_data': products
+                    // , 'third_main_field': 'product_or_service'
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -447,8 +446,8 @@
             //     var data_type = '';
             // }
             // console.log(type);
-            if (type == 'sales_person' || type == 'product_or_service' 
-            // || type == 'product_item'
+            if (type == 'sales_person' || type == 'product_or_service'
+                // || type == 'product_item'
             ) {
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
 
@@ -457,12 +456,10 @@
 
                 });
                 appendTo = '';
-                if(type == 'product_item')
-                {
-                    appendTo ='#products__'
-                }
-                else{
-                    appendTo ='#sales_channels';
+                if (type == 'product_item') {
+                    appendTo = '#products__'
+                } else {
+                    appendTo = '#sales_channels';
                 }
                 row += '</select>';
                 $(appendTo).html('');
@@ -470,13 +467,11 @@
                 reinitializeSelect2();
             } else {
 
-                    appendTo = '';
-                if(type == 'product_item')
-                {
-                    appendTo ='#products__'
-                }
-                else{
-                    appendTo ='#sales_channels';
+                appendTo = '';
+                if (type == 'product_item') {
+                    appendTo = '#products__'
+                } else {
+                    appendTo = '#sales_channels';
                 }
 
                 row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
@@ -496,27 +491,26 @@
         });
     }
     // Product Or Services
-    function getProductItems(salesPersonsData,categories , products) {
+    function getProductItems(salesPersonsData, categories, products) {
         // if(! document.getElementById('has_product_item'))
         // {
-            // return ;
+        // return ;
         // }
 
-        
+
 
         $.ajax({
             type: 'POST'
-            , data: 
-            {
+            , data: {
                 'main_data': salesPersonsData
                 , 'main_field': 'sales_person'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_or_service'
-                , 'field': 'product_item',
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': 'product_item'
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             , }
 
             // {
@@ -526,14 +520,14 @@
             //     , 'third_main_field': 'sales_person'
             //     , 'field': type_of_data
             // , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
             var data_type = 'multiple';
 
             row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
-          
+
 
             $.each(data, function(key, val) {
                 row += '<option value*="' + val + '">' + val + '</option>\n';

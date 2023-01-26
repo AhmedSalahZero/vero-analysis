@@ -5,132 +5,118 @@ namespace App\Models;
 use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
+use App\Interfaces\Models\Interfaces\IFinancialStatementAble;
 use App\Interfaces\Models\IShareable;
 use App\Models\Traits\Accessors\IncomeStatementAccessor;
 use App\Models\Traits\Mutators\IncomeStatementMutator;
 use App\Models\Traits\Relations\IncomeStatementRelation;
 use App\Models\Traits\Scopes\CompanyScope;
-use App\Models\Traits\Scopes\Globals\StateCountryScope;
-use App\Models\Traits\Scopes\withAllRelationsScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class  IncomeStatement extends Model implements IBaseModel , IHaveAllRelations , IExportable , IShareable
+class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable, IFinancialStatementAble
 {
-    use  IncomeStatementAccessor,IncomeStatementMutator , IncomeStatementRelation , CompanyScope , withAllRelationsScope ;
-         
-        protected $guarded = [
-            'id'
-        ];
-       public static function getShareableEditViewVars($model):array 
-    {
-        
-        return [
-            'pageTitle'=>IncomeStatement::getPageTitle(),
-            
-        ];   
-    }
-    public function getRouteKeyName()
-    {
-        return 'income_statements.id' ;
-    }
-    public static function exportViewName():string {
-        return __('Income Statement'); 
-    }
-     public static function getFileName():string 
-    {
-        return __('Income Statement');
-    }
+	use  IncomeStatementAccessor, IncomeStatementMutator, IncomeStatementRelation, CompanyScope;
 
-    protected static function booted()
-    {
-        // static::addGlobalScope(new StateCountryScope);
-    }
 
-    public static function getCrudViewName():string 
-    {
-        return 'admin.income-statement.create';
-    }
-    
-    public static function getViewVars():array 
-    {
-        $currentCompanyId =  getCurrentCompanyId();
-        
-        return [
-            'getDataRoute'=>route('admin.get.income.statement' , ['company'=>$currentCompanyId]) ,
-            'modelName'=>'IncomeStatement',
-            'exportRoute'=>route('admin.export.income.statement' , $currentCompanyId),
-            'createRoute'=>route('admin.create.income.statement',$currentCompanyId),
-            'storeRoute'=>route('admin.store.income.statement',$currentCompanyId),
-            'hasChildRows'=>false ,
-            'pageTitle'=>IncomeStatement::getPageTitle(),
-            'redirectAfterSubmitRoute'=>route('admin.view.income.statement',$currentCompanyId),
-            'type'=>'create',
-            'company'=>Company::find($currentCompanyId) ,
-            'redirectAfterSubmitRoute'=>route('admin.view.income.statement',['company'=>getCurrentCompanyId()]),
-            'durationTypes'=>[
-                [
-                    'value'=>'monthly',
-                    'title'=>__('Monthly')
-                ],
-                [
-                    'value'=>'annually',
-                    'title'=>__('Annually')
-                ],
-            ]
-        ];
-        
-    }
-    public static function getReportViewVars(array $options = []):array 
-    {
-        $currentCompanyId =  getCurrentCompanyId();
-        
-        return [
-            'getDataRoute'=>route('admin.get.income.statement.report' , ['company'=>$currentCompanyId,'incomeStatement'=>$options['income_statement_id']]) ,
-            'modelName'=>'IncomeStatementReport',
-            'exportRoute'=>route('admin.export.income.statement.report' , $currentCompanyId),
-            'createRoute'=>route('admin.create.income.statement.report',[
-                'company'=>$currentCompanyId,
-                'incomeStatement'=>$options['income_statement_id'] 
-            ]),
-            'storeRoute'=>route('admin.store.income.statement.report',$currentCompanyId),
-            'hasChildRows'=>false ,
-            'pageTitle'=>__('Income Statement Report'),
-            'redirectAfterSubmitRoute'=>route('admin.view.income.statement',$currentCompanyId),
-            'type'=>'create',
-            'incomeStatement'=>$options['incomeStatement'],
-            'interval'=>[
-                [
-                    'value'=>'monthly',
-                    'title'=>__('Monthly')
-                ],[
-                    'value'=>'quarterly',
-                    'title'=>__('Quarterly')
-                ],[
-                    'value'=>'semi-annually',
-                    'title'=>__('Semi-annually')
-                ],
-                [
-                    'value'=>'annually',
-                    'title'=>__('Annually')
-                ],
-            ]
-        ];
-        
-    }
-    public static function getPageTitle():string 
-    {
-        return __('Income Statement') ;
-    }
+	protected $guarded = [
+		'id'
+	];
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'financial_statement_ables';
 
-    public function getAllRelationsNames():array 
-    {
-        return [
-            // 'revenueBusinessLine',
-            // 'serviceCategory','serviceItem','serviceNatureRelation','currency','otherVariableManpowerExpenses',
-            // 'directManpowerExpenses','salesAndMarketingExpenses','otherDirectOperationExpenses','generalExpenses','freelancerExpensePositions',
-            // 'directManpowerExpensePositions','freelancerExpenses','profitability'
-        ];
-    }
-    
-    
+	public static function getShareableEditViewVars($model): array
+	{
+		return [
+			'pageTitle' => IncomeStatement::getPageTitle(),
+		];
+	}
+
+	public function getRouteKeyName()
+	{
+		return 'financial_statement_ables.id';
+	}
+	public static function exportViewName(): string
+	{
+		return __('Income Statement');
+	}
+	public static function getFileName(): string
+	{
+		return __('Income Statement');
+	}
+
+	protected static function booted()
+	{
+		static::addGlobalScope(function (Builder $builder) {
+			$builder->where('type', 'IncomeStatement');
+		});
+		// static::addGlobalScope(new StateCountryScope);
+	}
+
+	public static function getCrudViewName(): string
+	{
+		return 'admin.income-statement.create';
+	}
+
+	public static function getViewVars(): array
+	{
+		$currentCompanyId =  getCurrentCompanyId();
+
+		return [
+			'getDataRoute' => route('admin.get.income.statement', ['company' => $currentCompanyId]),
+			'modelName' => 'IncomeStatement',
+			'exportRoute' => route('admin.export.income.statement', $currentCompanyId),
+			'createRoute' => route('admin.create.income.statement', $currentCompanyId),
+			'storeRoute' => route('admin.store.income.statement', $currentCompanyId),
+			'hasChildRows' => false,
+			'pageTitle' => IncomeStatement::getPageTitle(),
+			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
+			'type' => 'create',
+			'company' => Company::find($currentCompanyId),
+			'redirectAfterSubmitRoute' => route('admin.view.income.statement', ['company' => getCurrentCompanyId()]),
+			'durationTypes' => getDurationIntervalTypesForSelect()
+		];
+	}
+	public static function getReportViewVars(array $options = []): array
+	{
+
+		$currentCompanyId =  getCurrentCompanyId();
+		$reportType = $options['reportType'];
+
+		return [
+			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['financial_statement_able_id']]),
+			'modelName' => 'IncomeStatementReport',
+			'exportRoute' => route('admin.export.income.statement.report', $currentCompanyId),
+			'createRoute' => route('admin.create.income.statement.' . $reportType . '.report', [
+				'company' => $currentCompanyId,
+				'incomeStatement' => $options['financial_statement_able_id']
+			]),
+			'storeRoute' => route('admin.store.income.statement.report', $currentCompanyId),
+			'hasChildRows' => false,
+			'pageTitle' => __('Income Statement Report'),
+			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
+			'type' => 'create',
+			'incomeStatement' => $options['incomeStatement'],
+			'interval' => getIntervalForSelect($options['incomeStatement']->getDurationType()),
+			'reportType' => $options['reportType']
+		];
+	}
+	public static function getPageTitle(): string
+	{
+		return __('Income Statement');
+	}
+
+	public function getAllRelationsNames(): array
+	{
+		return [
+			// 'revenueBusinessLine',
+			// 'serviceCategory','serviceItem','serviceNatureRelation','currency','otherVariableManpowerExpenses',
+			// 'directManpowerExpenses','salesAndMarketingExpenses','otherDirectOperationExpenses','generalExpenses','freelancerExpensePositions',
+			// 'directManpowerExpensePositions','freelancerExpenses','profitability'
+		];
+	}
 }

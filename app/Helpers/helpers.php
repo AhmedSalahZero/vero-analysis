@@ -1244,13 +1244,13 @@ function getCacheKeyForSecondAllocationReport($companyId)
 }
 function getCacheKeyForQuantityFirstAllocationReport($companyId)
 {
-    return 'quantity_first_allocation_report_for_company_' . $companyId;
+	return 'quantity_first_allocation_report_for_company_' . $companyId;
 }
 
 
 function getCacheKeyForQuantitySecondAllocationReport($companyId)
 {
-    return 'quantity_second_allocation_report_for_company_' . $companyId;
+	return 'quantity_second_allocation_report_for_company_' . $companyId;
 }
 function formatExistingFormNewAllocation($newAllocation)
 {
@@ -1541,6 +1541,7 @@ function defaultUserDateFormat()
 	return 'd-M-Y';
 	// return 'Y F d';
 }
+
 function formatReportDataForDashBoard(string $incomeStatementDurationType, string $incomeStatementStartDate, $data, $start_date, $end_date)
 {
 
@@ -1960,13 +1961,17 @@ function getDatedOf(array $first, array $second): array
 	sort($dates);
 	return $dates;
 }
-function combineNoneZeroValues(array $first, array $second): array
+function combineNoneZeroValues(array $first, array $second, array &$actualDates): array
 {
 	$combined = [];
 	$dates = getDatedOf($first, $second);
 	foreach ($dates as $date) {
+		$isActualValue = isset($second[$date]) && $second[$date];
 		$firstVal = $first[$date] ?? 0;
-		$combined[$date] = isset($second[$date]) && $second[$date] != 0 ? $second[$date] : $firstVal;
+		$combined[$date] = $isActualValue ? $second[$date] : $firstVal;
+		if ($isActualValue) {
+			$actualDates[] = $date;
+		}
 	}
 	return $combined;
 }
@@ -1982,4 +1987,58 @@ function getNumberOfProductsItemsQuantity($companyId)
 function canShowNewItemsProductsQuantity($companyId)
 {
 	return  getNumberOfProductsItemsQuantity($companyId);
+}
+function formatOptionsForSelect(Collection $items, $idFun = 'getId', $valueFun = 'getName'): array
+{
+	$formattedData = [];
+	foreach ($items as $item) {
+		$formattedData[] = [
+			'value' => $item->$idFun(),
+			'title' => $item->$valueFun(),
+		];
+	}
+	return $formattedData;
+}
+
+function formatSelects($selects, $selectedItem, $id, $value, $addNew = false, $selectAll = false): string
+{
+	$result = '';
+	if ($addNew) {
+		// $result = '<option class="add-new-item" >'. __('Add New')  .' </option>';
+	} elseif ($selectAll) {
+		$result = '<option>' . __('All') . '</option> ';
+	} else {
+		$result = '';
+	}
+
+	foreach ($selects as $select) {
+		$ID = $select->{$id};
+		$val = $select->{$value};
+
+		if (
+			in_array($ID, explode(',', $selectedItem))
+		) {
+			$result .= "<option value='$ID' selected> $val </option> ";
+		} else {
+			$result .= "<option value='$ID' > $val </option> ";
+		}
+	}
+
+	return $result;
+}
+
+function getExportDateTime(): string
+{
+	return now()->toDateTimeString();
+}
+function getExportUserName()
+{
+	return Auth()->user()->getName();
+}
+
+function orderArrayByItemsKeys(array $array): array
+{
+	ksort($array);
+
+	return $array;
 }

@@ -45,7 +45,7 @@
                 <input type="hidden" name="type" value="{{$type}}">
                 <input type="hidden" name="view_name" value="{{$view_name}}">
                 <input type="hidden" name="main_type" value="sales_channel">
-<input type="hidden" id="append-to" value="salesChannels">
+                <input type="hidden" id="append-to" value="salesChannels">
 
                 <div class="kt-portlet__body">
                     <div class="form-group row">
@@ -63,16 +63,16 @@
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         @include('comparing_type_selector')
-                        
+
                         @else
                         <input type="hidden" name="data_type" value="value" id="data_type" {{$data_type_selector}}>
                         @endif
 
                     </div>
-                   
+
                     <div class="form-group row">
                         <div class="col-md-4">
                             <label>{{ __('Start Date') }}</label>
@@ -108,7 +108,7 @@
 
                     </div>
 
-                     <div class="form-group row">
+                    <div class="form-group row">
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select Sales Channels') }} @include('max-option-span') </label>
                             <div class="kt-input-icon">
@@ -154,7 +154,7 @@
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select '.$name_of_selector_label) }}  </label>
+                            <label>{{ __('Select '.$name_of_selector_label) }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
@@ -328,11 +328,11 @@
             , data: {
                 'main_data': salesChannels
                 , 'main_field': 'sales_channel'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -368,11 +368,11 @@
             , data: {
                 'main_data': salesChannels
                 , 'main_field': 'sales_channel'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -410,11 +410,11 @@
                 , 'main_field': 'sales_channel'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
@@ -472,11 +472,11 @@
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_or_service'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             , }
-            , url: '{{ route('get.zones.data',$company) }}'
+            , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {

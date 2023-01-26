@@ -13,9 +13,13 @@ use App\Http\Controllers\getUploadPercentage;
 use App\Http\Controllers\Helpers\DeleteSingleRecordController;
 use App\Http\Controllers\Helpers\EditTableCellsController;
 use App\Http\Controllers\IncomeStatementController;
+use App\Http\Controllers\InventoryStatementController;
+use App\Http\Controllers\InventoryStatementTestController;
 use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
 use App\Http\Controllers\RoutesDefinition;
+use App\Http\Controllers\SalesGatheringController;
+use App\Http\Controllers\SalesGatheringTestController;
 use App\Http\Livewire\AdjustedCollectionDatesForm;
 use App\Models\Branch;
 use App\Models\CachingCompany;
@@ -24,6 +28,7 @@ use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -89,29 +94,31 @@ Route::middleware([])->group(function () {
 			Route::prefix('{company}')->group(function () {
 				Route::post('get-type-based-on-dates', [FilterMainTypeBasedOnDatesController::class, '__invoke'])->name('get.type.based.on.dates');
 
-				//Income Statement
 				Route::get('income-statement', [IncomeStatementController::class, 'view'])->name('admin.view.income.statement');
-
 				Route::get('income-statement/create', [IncomeStatementController::class, 'create'])->name('admin.create.income.statement');
 				Route::get('income-statement-report/{incomeStatement}/edit', [IncomeStatementController::class, 'editItems']);
-				// Route::get('income-statement/{incomeStatement}/edit',[IncomeStatementController::class , 'edit'])->name('admin.edit.income.statement');
 				Route::post('income-statement/{incomeStatement}/update', [IncomeStatementController::class, 'update'])->name('admin.update.income.statement');
 				Route::post('income-statement/store', [IncomeStatementController::class, 'store'])->name('admin.store.income.statement');
 				Route::get('export-income-statement', 'IncomeStatementController@export')->name('admin.export.income.statement');
 				Route::get('get-income-statement', 'IncomeStatementController@paginate')->name('admin.get.income.statement');
+				Route::get('income-statement/{incomeStatement}/actual-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.actual.report');
 
+				// actual.report the first segment represent type so do not change it
+				Route::get('income-statement/{incomeStatement}/actual-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.actual.report');
 
-				//Income Statement Report
-				// Route::get('income-statement-report',[IncomeStatementReportController::class , 'view'])->name('admin.view.income.statement.report');
+				// forecast.report the first segment represent type so do not change it
+				Route::get('income-statement/{incomeStatement}/forecast-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.forecast.report');
+				// adjusted.report the first segment represent type so do not change it
 
-				Route::get('income-statement/{incomeStatement}/report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.report');
-				// Route::get('income-statement-report/{incomeStatementReport}/edit',[IncomeStatementReportController::class , 'edit'])->name('admin.edit.income.statement.report');
+				Route::get('income-statement/{incomeStatement}/adjusted-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.adjusted.report');
+
+				Route::get('income-statement/{incomeStatement}/modified-report', [IncomeStatementController::class, 'createReport'])->name('admin.create.income.statement.modified.report');
+
 				Route::post('income-statement-report/update', [IncomeStatementController::class, 'updateReport'])->name('admin.update.income.statement.report');
 				Route::post('income-statement-report/delete', [IncomeStatementController::class, 'deleteReport'])->name('admin.destroy.income.statement.report');
 				Route::post('income-statement/storeReport', [IncomeStatementController::class, 'storeReport'])->name('admin.store.income.statement.report');
-				Route::get('export-income-statement-report', 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
+				Route::post('export-income-statement-report', 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
 				Route::post('get-income-statement-report/{incomeStatement}', 'IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
-
 
 
 				Route::get('balance-sheet', [BalanceSheetController::class, 'view'])->name('admin.view.balance.sheet');
