@@ -217,7 +217,7 @@
                                     @endforeach
                                 </tr>
                             @endslot
-                            @slot('table_body')
+                            @slot('table_body') 
                                 <tr>
                                     <th class="text-center">{{ __('Seasonality') }}</th>
                                     @foreach ($sales_forecast['previous_year_seasonality'] ??[] as $date => $seasonality)
@@ -308,7 +308,7 @@
                                             <option value="previous_3_years"
                                                 {{ @$sales_forecast_data['target_base'] !== 'previous_3_years' ?: 'selected' }}>
                                                 {{ __('Based On Last 3 Years Sales') }}</option>
-                                                @endif 
+                                                @endif
                                             <option value="new_start"
                                                 {{ @$sales_forecast_data['target_base'] !== 'new_start' ?: 'selected' }}>
                                                 {{ __('New Start') }}</option>
@@ -421,7 +421,7 @@
                                             checked>
                                             <input class="rows" name="add_new_products" type="checkbox" value="1"
                                                 {{ @$sales_forecast_data['add_new_products'] == 0 ?: 'checked' }}
-                                                id="product_item_check_box" data-old-checked="{{ @$sales_forecast_data['add_new_products']?:0 }}"> 
+                                                id="product_item_check_box" data-old-checked="{{ @$sales_forecast_data['add_new_products']?:0 }}">
                                             <span></span>
                                         </span>
                                     </span>
@@ -474,7 +474,7 @@
                                                     {{ @$sales_forecast_data['seasonality'] !== 'last_3_years' ?: 'selected' }}>
                                                     {{ __('Last 3 Years Seasonality') }}</option>
 
-                                           
+
                                             </select>
                                             @if ($errors->has('seasonality'))
                                                 <div class="invalid-feedback">{{ $errors->first('seasonality') }}</div>
@@ -486,7 +486,7 @@
                         </div>
 
 
-                                                @endif 
+                                                @endif
 
                     </div>
                 </div>
