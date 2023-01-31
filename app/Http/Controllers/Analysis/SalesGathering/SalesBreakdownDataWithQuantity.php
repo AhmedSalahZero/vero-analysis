@@ -123,6 +123,7 @@ class SalesBreakdownDataWithQuantity
             $key_num = 0;
             $others =0;
             $total_sales_values = $report_data->sum('net_sales_value');
+
             $report_data = $report_data->groupBy($type)->flatMap(function($item,$name)use($num_of_years,$total_sales_values){
                 $total_net_sales_value = $item->sum('net_sales_value');
                 $total_quantity = $item->sum('quantity');
@@ -147,14 +148,16 @@ class SalesBreakdownDataWithQuantity
             {
                     $report_data  = $report_data->reverse();
             }
-            $top_50 = $report_data->take(50);
+            $top_100 = $report_data->take(100);
 
 
-            $others_count = count($report_data) - count($top_50) ;
-            $report_view_data = $top_50->toArray();
+            $others_count = count($report_data) - count($top_100) ;
+            $report_view_data = $top_100->toArray();
             $others_total = $total_of_all_data - array_sum(array_column($report_view_data,'Sales Value'));
             if($others_total > 0){
-                array_push($report_view_data,['item'=>'Others '. $others_count,'Sales Value'=>$others_total]);
+
+                array_push($report_view_data,['item'=>'Others '. $others_count,'Sales Value'=>$others_total ,
+                'Sales %' => $total_sales_values == 0 ? 0 : ((($others_total/$num_of_years)/$total_sales_values)*100),]);
 
             }
             $key_num = 0;

@@ -35,6 +35,7 @@ class QuantitySalesForecastReport
 
 
         $sales_forecast = QuantitySalesForecast::company()->first();
+
         $has_product_item = $this->fields($company);
 
         if ($sales_forecast === null) {
@@ -50,14 +51,14 @@ class QuantitySalesForecastReport
                 $end_date = $request['end_date'];
             }
 
-            // $request['report_type'] = 'comparing';
+            $request['report_type'] = 'comparing';
             $start_year = date('Y', strtotime($start_date));
             $date_of_previous_3_years = ($start_year - 3) . '-01-01';
             $request['start_date'] = $date_of_previous_3_years;
             $end_date_for_report = ($start_year - 1) . '-01-01';
             $request['end_date'] = $start_date;
-            $request['type'] = 'product_item';
             $salesReport = (new salesReport)->result($request, $company, 'array');
+            $request['type'] = 'product_item';
 
             $product_item_breakdown_data_previous_3_year = (new SalesBreakdownDataWithQuantity)->salesBreakdownAnalysisResult($request,$company,'array',3);
             $request['start_date'] = $this->dateCalc($start_date, -12, 'Y-m-d');
@@ -106,6 +107,49 @@ class QuantitySalesForecastReport
         } else {
             $start_date = $sales_forecast->start_date;
         }
+        $start_year = date('Y', strtotime($start_date));
+        $top_previous_year_100 = array_column($sales_forecast["previous_year_seasonality"],'item');
+        // others_products_previous_year
+        if (count(($sales_forecast['others_products_previous_year'] ?? [])) > 0) {
+
+            foreach ($sales_forecast['others_products_previous_year'] as $key => $value) {
+                if (false !== $found = array_search($value, $top_previous_year_100)) {
+                    unset($top_previous_year_100[$found]);
+                }
+            }
+        }
+
+        $selector_products_previous_year = SalesGathering::company()
+                ->whereNotNull('product_item')
+                ->whereBetween('date', [($sales_forecast['previous_year'] . '-01-01'), $sales_forecast['previous_year'] . '-12-31'])
+                ->where('product_item', '!=', '')
+                ->whereNotIn('product_item', $top_previous_year_100)
+                ->groupBy('product_item')
+                ->pluck('product_item')
+                ->toArray();
+
+                
+        $top_previous_3_years_100 = array_column($sales_forecast["last_3_years_seasonality"],'item');
+        $date_of_previous_3_years = ($start_year - 3);
+        // others_products_previous_3_year
+        if (count(($sales_forecast['others_products_previous_3_year'] ?? [])) > 0) {
+
+            foreach ($sales_forecast['others_products_previous_3_year'] as $key => $value) {
+                if (false !== $found = array_search($value, $top_previous_3_years_100)) {
+                    unset($top_previous_3_years_100[$found]);
+                }
+            }
+        }
+
+        $selector_products_previous_3_year = SalesGathering::company()
+                ->whereNotNull('product_item')
+                ->whereBetween('date', [($date_of_previous_3_years . '-01-01'), $start_year . '-12-31'])
+                ->where('product_item', '!=', '')
+                ->whereNotIn('product_item', $top_previous_3_years_100)
+                ->groupBy('product_item')
+                ->pluck('product_item')
+                ->toArray();
+
         $dates = [];
         $quarter_dates = [];
         $counter = 1;
@@ -117,29 +161,65 @@ class QuantitySalesForecastReport
             }
             $counter++;
         }
+
         $sales_forecast["quarter_dates"] = $quarter_dates;
         $sales_forecast["dates"] = $dates;
-
+        // $selector_products = SalesGathering::company()
+        // ->whereNotNull('product_item')
+        // ->where('product_item', '!=', '')
+        // ->whereNotIn('product_item', $products_used)
+        // ->groupBy('product_item')
+        // ->pluck('product_item')
+        // ->toArray();
 
         // $sales_forecast['previous_year_seasonality'] = $this->sorting($sales_forecast['previous_year_seasonality']);
         // $sales_forecast['last_3_years_seasonality'] = $this->sorting($sales_forecast['last_3_years_seasonality']);
         return view(
             'client_view.quantity_forecast.sales_forecast',
-            compact('company', 'sales_forecast', 'has_product_item')
+            compact('company', 'sales_forecast', 'has_product_item','selector_products_previous_year','selector_products_previous_3_year')
         );
     }
 
     public function save(Company $company, Request $request , $noReturn = false )
     {
+        if ($request->submit == 'Show Result'){
 
+            $request['start_date']  = $request->previous_year . '-01-01';
+            $request['end_date']    = $request->previous_year . '-12-31';
+            $request['type'] = 'product_item';
+            $product_item_breakdown_data_previous_year = (new SalesBreakdownDataWithQuantity)->salesBreakdownAnalysisResult($request,$company,'withOthers');
+            $request['previous_year_seasonality'] = $this->addingOthersToData($product_item_breakdown_data_previous_year,$request->others_products_previous_year);
+
+            $request['start_date']  = ($request->previous_year - 2) . '-01-01';
+            $request['end_date']    = $request->previous_year . '-12-31';
+            $request['type'] = 'product_item';
+            $product_item_breakdown_data_previous_3_years = (new SalesBreakdownDataWithQuantity)->salesBreakdownAnalysisResult($request,$company,'withOthers');
+            $request['last_3_years_seasonality'] = $this->addingOthersToData($product_item_breakdown_data_previous_3_years, $request->others_products_previous_3_year);
+            $end_date = $this->dateCalc($request['start_date'], 11, 'Y-m-t');
+
+            QuantitySalesForecast::updateOrCreate(
+                ['company_id' => $company->id],
+                [
+                    'start_date' => $request['start_date'],
+                    'end_date' => $end_date,
+                    'previous_year' => $request['previous_year'],
+                    'previous_1_year_sales' => $request['previous_1_year_sales'],
+                    'previous_year_gr' => $request['previous_year_gr'],
+                    'others_products_previous_year'=>$request['others_products_previous_year'],
+                    'others_products_previous_3_year'=>$request['others_products_previous_3_year'],
+                    'previous_year_seasonality' => $request['previous_year_seasonality'],
+                    'average_last_3_years' => $request['average_last_3_years'],
+                    'last_3_years_seasonality' => $request['last_3_years_seasonality']
+                    ]
+
+            );
+
+        }
         if(isset($request['summary_report']))
         {
             return (new QuantitySummaryController())->goToSummaryReport($request , $company);
         }
 
-        // dd();
-
-// dd($request->all());
         $sales_forecast = QuantitySalesForecast::company()->first();
 
         // if(forecastHasBeenChanged($sales_forecast  , $request->all()))
@@ -155,6 +235,7 @@ class QuantitySalesForecastReport
 
             return $this->result($company, $request);
         }
+
         $request->validate(
             [
                 'start_date' => 'required',
@@ -572,7 +653,7 @@ class QuantitySalesForecastReport
                 ->groupBy($type)
                 ->pluck($type)
                 ->toArray();
-  if($noReturn)
+         if($noReturn)
                 {
                     return ;
                 }
@@ -847,6 +928,7 @@ class QuantitySalesForecastReport
 
     public function addingOthersToData($product_item_breakdown_data, $others_target)
     {
+
         $key_num = 0;
         $report_data =  collect($product_item_breakdown_data)->sortByDesc(function ($data, $key) use ($key_num) {
             return [$data['Sales Value']];
@@ -857,9 +939,9 @@ class QuantitySalesForecastReport
         $viewing_data = $report_data->toArray();
         $total_of_all_data = array_sum(array_column($viewing_data, 'Sales Value'));
 
-        $top_50 = $report_data->take(50);
-        $others_count = count($report_data) - count($top_50) - count($added_products);
-        $report_view_data = $top_50->toArray();
+        $top_100 = $report_data->take(100);
+        $others_count = count($report_data) - count($top_100) - count($added_products);
+        $report_view_data = $top_100->toArray();
         $report_view_data =   $report_view_data + $added_products->toArray();
 
         $others_total = $total_of_all_data - array_sum(array_column($report_view_data, 'Sales Value'));
