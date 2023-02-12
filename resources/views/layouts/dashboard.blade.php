@@ -22,9 +22,20 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script> --}}
     <script>
         var wto;
+        const slugify = str =>
+            str
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
 
         function getNumberOfMillSeconds() {
             return 2000;
+        }
+
+        function covertStringToClass(str) {
+            return str.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
         }
         // window['maxOptions'] = 10 ;
         function reinitializeSelect2() {
@@ -37,7 +48,7 @@
                 maxOptions[3] = 0;
             }
             if (numberOfMulteSelects == 2) {
-                maxOptions[0] = 100;
+                maxOptions[0] = 200;
                 maxOptions[1] = 200;
                 maxOptions[2] = 0;
                 maxOptions[3] = 0;
@@ -630,6 +641,7 @@
     <!--begin:: Global Mandatory Vendors -->
     <script src="{{url('assets/vendors/general/jquery/dist/jquery.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/popper.js/dist/umd/popper.js')}}" type="text/javascript"></script>
+
     <script src="{{url('assets/vendors/general/bootstrap/dist/js/bootstrap.min.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/js-cookie/src/js.cookie.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/moment/min/moment.min.js')}}" type="text/javascript"></script>
@@ -650,6 +662,17 @@
     <script>
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
+        }
+        var monthsAsNumbers = ["01", "02", "03", "04", "05", "06", "07"
+            , "08", "09", "10", "11", "12"
+        ];
+        var formatDate = function(date, dateSeparator = '/') {
+            let month = monthsAsNumbers[date.getMonth()];
+            let day = ('0' + date.getDate()).slice(-2)
+            // 11
+            // 01
+            return month + dateSeparator + day + dateSeparator + date.getFullYear();
+            //  + " " + ('0' + date.getHours()).slice(-2) + ":" + ('0' + date.getMinutes()).slice(-2) + ":" + ('0' + date.getSeconds()).slice(-2) + ' ' + (date.getHours() < 12 ? 'AM' : 'PM');
         }
 
         function number_unformat(formattedNumber) {
@@ -962,6 +985,8 @@
                 }
             })
         });
+
+
 
         $(document).on('change', '.trigger-update-select-js', function() {
             clearTimeout(wto);

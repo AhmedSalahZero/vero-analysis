@@ -12,23 +12,24 @@ use Illuminate\Support\Facades\Cache;
 
 class ShowCompletedMessageForSuccessJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    private $jobId  , $companyId ; 
-    
-    public function __construct($companyId  , $jobId)
-    {
-        $this->companyId = $companyId ; 
-        $this->jobId = $jobId ; 
-    }
+	/**
+	 * Create a new job instance.
+	 *
+	 * @return void
+	 */
+	private $jobId, $companyId;
 
-    public function handle()
-    {
-        Cache::forever(\getShowCompletedTestMessageCacheKey($this->companyId)  , 1  );
-    }
+	public function __construct($companyId, $jobId)
+	{
+		$this->companyId = $companyId;
+		$this->jobId = $jobId;
+	}
+
+	public function handle()
+	{
+		Cache::forever(\getShowCompletedTestMessageCacheKey($this->companyId), 1);
+		logger('cache now');
+	}
 }

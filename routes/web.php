@@ -1,9 +1,10 @@
 <?php
 
+
 use App\Http;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\BalanceSheetController;
-use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CalculatedIrrController;
 use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
@@ -18,7 +19,6 @@ use App\Http\Controllers\InventoryStatementTestController;
 use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
 use App\Http\Controllers\RoutesDefinition;
-use App\Http\Controllers\SalesGatheringController;
 use App\Http\Controllers\SalesGatheringTestController;
 use App\Http\Livewire\AdjustedCollectionDatesForm;
 use App\Models\Branch;
@@ -154,7 +154,8 @@ Route::middleware([])->group(function () {
 
 
 
-
+				Route::get('update-financial-statement-date', [FinancialStatementController::class, 'updateDate'])->name('admin.update.financial.statement.date');
+				Route::delete('update-financial-statement-duration-type', [FinancialStatementController::class, 'updateDurationType'])->name('admin.update.financial.statement.duration.type');
 				Route::get('financial-statement', [FinancialStatementController::class, 'view'])->name('admin.view.financial.statement');
 				Route::get('financial-statement/create', [FinancialStatementController::class, 'create'])->name('admin.create.financial.statement');
 				Route::get('financial-statement-report/{financialStatement}/edit', [FinancialStatementController::class, 'editItems']);
@@ -480,6 +481,9 @@ Route::middleware([])->group(function () {
 
 Route::delete('deleteMultiRowsFromCaching/{company}', [DeleteMultiRowsFromCaching::class, '__invoke'])->name('deleteMultiRowsFromCaching');
 Route::get('deleteAllRowsFromCaching/{company}', [DeleteAllRowsFromCaching::class, '__invoke'])->name('deleteAllCaches');
+// Route::get('delete-cache-last-upload-phase', function (Company $company, Request $request) {
+// 	Cache::forget(getCanReloadUploadPageCachingForCompany($company->id));
+// })->name('delete.cache.for.last.stash.upload');
 Route::post('get-uploading-percentage/{companyId}', [getUploadPercentage::class, '__invoke']);
 Route::get('{lang}/remove-company-image/{company}', function ($lang, Company $company) {
 	if ($company->getFirstMedia('default')) {
@@ -487,3 +491,18 @@ Route::get('{lang}/remove-company-image/{company}', function ($lang, Company $co
 	}
 	return redirect()->back()->with('success', __('Company Image Has Been Deleted Successfully'));
 })->name('remove.company.image');
+
+
+// Route::get('irr', function () {
+// 	$yearsAndFreeCash  = [
+// 		0 => -5980364,
+// 		1 => -12935560,
+// 		2 => 72229784,
+// 		3 => 21733457,
+// 		4 => 340092719,
+// 		5 => 1545132872
+// 	];
+// 	$requiredInvestmentReturn = 25 / 100;
+// 	$result = CalculatedIrrController::calculateIrr($yearsAndFreeCash, $requiredInvestmentReturn);
+// 	dd($result);
+// });

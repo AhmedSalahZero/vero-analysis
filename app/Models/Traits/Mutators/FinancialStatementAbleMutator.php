@@ -126,30 +126,65 @@ trait FinancialStatementAbleMutator
 			$this->syncSubItemName($financialStatementAbleItemId, 'modified', $oldSubItemName, $newSubItemName);
 		}
 	}
+	public function getFinancialStatementAbleData(string $subType, string $subItemType, array $options, bool $isQuantityRepeating = false): array
+	{
+		$percentageOrFixed = isset($options['percentage_or_fixed']) && $options['percentage_or_fixed'] ? $options['percentage_or_fixed'] : 'non_repeating_fixed';
+		if ($subType == 'actual') {
+			$percentageOrFixed = 'non_repeating_fixed';
+		}
+		return [
+			'company_id' => \getCurrentCompanyId(),
+			'creator_id' => Auth::id(),
+			'sub_item_type' => $subType,
+			'sub_item_name' => $isQuantityRepeating ?  $options['name'] . __(' ( Quantity )') : $options['name'],
+			'created_from' => $subItemType,
+			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
+			'is_quantity' => $isQuantityRepeating,
+			'can_be_quantity' => $options['can_be_quantity'] ?? false,
+			'percentage_or_fixed' => $percentageOrFixed,
+			'can_be_percentage_or_fixed' => $options['can_be_percentage_or_fixed'] ?? false,
+			'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null,
+			'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ? $options['repeating_fixed_value'] : null,
+			'percentage_value' => $percentageOrFixed == 'percentage' ? $options['percentage_value'] : null,
+			'created_at' => now()
+		];
+	}
 	public function storeReport(Request $request)
 	{
+		if (count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
+			$validator = $request->validate([
+				'sub_items.*.name' => 'required'
+			], [
+				'sub_items.*.name.required' => __('Please Enter SubItem Name')
+			]);
+			if (is_object($validator) && $validator->fails()) {
+				return response()->json([
+					'message' => $validator->errors()->first,
+					'status' => false
+				]);
+			}
+		}
+
 		$financialStatementAble = (new static)::find($request->input('financial_statement_able_id'));
-		// dd($financialStatementAble);
 		$financialStatementAbleItemId = $request->input('financial_statement_able_item_id');
 		$subItemType = $request->get('sub_item_type');
-		foreach ((array)$request->sub_items as $index => $options) {
-			if ($options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
-				$insertSubItems = $this->getInsertToSubItemFields($subItemType);
-				foreach ($insertSubItems as $subType) {
-					$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, [
-						'company_id' => \getCurrentCompanyId(),
-						'creator_id' => Auth::id(),
-						'sub_item_type' => $subType,
-						'sub_item_name' => $options['name'],
-						'created_from' => $subItemType,
-						'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
-						'is_quantity' => $options['is_quantity'] ?? false,
-						'can_be_quantity' => $options['can_be_quantity'] ?? false,
-						'created_at' => now()
-					]);
+		if (!$request->has('new_sub_item_name')) {
+			foreach ((array)$request->sub_items as $index => $options) {
+				if ($options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
+					$insertSubItems = $this->getInsertToSubItemFields($subItemType);
+					foreach ($insertSubItems as $subType) {
+						if (isset($options['is_quantity']) && $options['is_quantity']) {
+							foreach ([true, false] as $isQuantityRepeating) {
+								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
+							}
+						} else {
+							$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options));
+						}
+					}
 				}
 			}
 		}
+
 		foreach ((array)$request->get('value') as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId);
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $values) {

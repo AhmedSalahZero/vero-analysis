@@ -1,12 +1,8 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
 
 
-
-	'test' => 'name',
 	/*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -71,11 +67,11 @@ return [
 		], 'mysql_production' => [
 			'driver' => 'mysql',
 			'url' => env('DATABASE_URL'),
-			'host' => 'reveroplanner.com',
+			'host' => 'veroanalysis.com',
 			'port' => env('DB_PORT', '3306'),
-			'database' => 'evoqas_veroAnalysis',
-			'username' => 'evoqas_veroAnalysis',
-			'password' => 'r[sw1i*k]6RG',
+			'database' => 'veroanalysis_db',
+			'username' => 'veroanalysis_name',
+			'password' => 'Aa@112233@aA',
 			'unix_socket' => env('DB_SOCKET', ''),
 			'charset' => 'utf8mb4',
 			'collation' => 'utf8mb4_unicode_ci',
@@ -86,7 +82,7 @@ return [
 			'options' => extension_loaded('pdo_mysql') ? array_filter([
 				PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
 			]) : [],
-		],
+		]
 
 	]
 ];
