@@ -26,7 +26,8 @@ class QuantitySalesForecast extends Model
     protected $casts = [
         'previous_year_seasonality' => 'array',
         'last_3_years_seasonality' => 'array',
-        'new_seasonality' => 'array',
+        'others_products_previous_year' => 'array',
+        'others_products_previous_3_year' => 'array',
     ];
 
     // Company Scoop
@@ -38,11 +39,11 @@ class QuantitySalesForecast extends Model
         parent::boot();
 
         static::deleting(function($forecast) { // before delete() method call this
-            $categories = Category::company()->get();
+            $categories = QuantityCategory::company()->get();
             count($categories) == 0 ?: $categories->each->delete();
-            $seasonalities = ProductSeasonality::company()->get();
+            $seasonalities = QuantityProductSeasonality::company()->get();
             count($seasonalities) == 0 ?: $seasonalities->each->delete();
-            $targets = ModifiedTarget::company()->first();
+            $targets = QuantityModifiedTarget::company()->first();
             $targets === null ?: $targets->delete();
         });
     }

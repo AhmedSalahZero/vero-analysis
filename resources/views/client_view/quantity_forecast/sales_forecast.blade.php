@@ -4,8 +4,9 @@
     <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
-        type="text/css" />
+
+        <link href="{{ url('assets/vendors/general/select2/dist/css/select2.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
     <style>
         table {
             white-space: nowrap;
@@ -75,7 +76,7 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Sales Results') }}
+                        {{ __('Sales Results (Value)') }}
                     </h3>
                 </div>
             </div>
@@ -208,17 +209,43 @@
                             </span>
                             <h3 class="kt-portlet__head-title">
 
-                                <b> {{__('Previous Year Seasonality')}} </b>
+                                <b> {{__('Previous Year Sales Breakdown')}} </b>
 
                             </h3>
                         </div>
 
+
                     </div>
+                    <div class="kt-portlet__head kt-portlet__head--lg">
+                        {{-- <div class="kt-portlet__head-label"> --}}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+
+                                        <?php $sales_forecast['others_products_previous_year'] = isset($sales_forecast['others_products_previous_year']) ? $sales_forecast['others_products_previous_year'] : old('others_products_previous_year'); ?>
+
+                                        <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
+
+                                        <select class="form-control kt-select2" id="kt_select2_9" name="others_products_previous_year[]" multiple="multiple">
+                                            @foreach ($selector_products_previous_year??[] as $product)
+                                                <option value="{{$product}}" {{(false !== $found = array_search($product,($sales_forecast['others_products_previous_year']??[]))) ? 'selected' : ''}}>{{$product}}</option>
+                                            @endforeach
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="submit" class="btn active-style" name="submit" value="{{__('Show Result')}}" >
+                                </div>
+                            </div>
+                        {{-- </div> --}}
+
+
+                    </div>
+
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
-
-
                         <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
                             @slot('table_header')
                                 <tr class="table-active text-center">
@@ -231,17 +258,24 @@
 
 
                                 </tr>
+
                             @endslot
+
                             @slot('table_body')
                             <?php $total = array_sum(array_column($sales_forecast['previous_year_seasonality'],'Sales Value')); ?>
                                 @foreach ($sales_forecast['previous_year_seasonality'] as $key => $item)
                                  <tr>
-                                     <th>{{$key+1}}</th>
+                                    <th>{{$key+1}}</th>
                                     <th>{{$item['item']?? '-'}}</th>
+                                    <input type="hidden" name="previous_year_seasonality[{{$key}}][item]" value="{{($item['item']?? '-')}}">
                                     <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
+                                    <input type="hidden" name="previous_year_seasonality[{{$key}}][Sales Value]" value="{{($item['Sales Value']??0)}}">
                                     <td class="text-center">{{number_format($item['Sales %']??0,2)}} %</td>
+                                    <input type="hidden" name="previous_year_seasonality[{{$key}}][Sales %]" value="{{($item['Sales %']??0)}}">
                                     <td class="text-center">{{number_format($item['Sales Quantity']??0)}}</td>
+                                    <input type="hidden" name="previous_year_seasonality[{{$key}}][Sales Quantity]" value="{{($item['Sales Quantity']??0)}}">
                                     <td class="text-center">{{number_format($item['Average Price']??0)}}</td>
+                                    <input type="hidden" name="previous_year_seasonality[{{$key}}][Average Price]" value="{{($item['Average Price']??0)}}">
 
                                  </tr>
                                 @endforeach
@@ -250,9 +284,10 @@
                                     <td class="hidden"></td>
                                     <td>{{number_format($total)}}</td>
                                     <td>100 %</td>
-                                    <td>{{number_format(  array_sum(array_column($sales_forecast['previous_year_seasonality'],'Sales Quantity')) )}}</td>
-                                    <td>{{number_format(  array_sum(array_column($sales_forecast['previous_year_seasonality'],'Average Price')) )}}</td>
-
+                                    {{-- <td>{{number_format(  array_sum(array_column($sales_forecast['previous_year_seasonality'],'Sales Quantity')) )}}</td>
+                                    <td>{{number_format(  array_sum(array_column($sales_forecast['previous_year_seasonality'],'Average Price')) )}}</td> --}}
+                                    <td>-</td>
+                                    <td>-</td>
                                 </tr>
                             @endslot
                         </x-table>
@@ -271,17 +306,39 @@
                             </span>
                             <h3 class="kt-portlet__head-title">
 
-                                <b> {{__('Last 3 Years Seasonality')}} </b>
+                                <b> {{__('Average Last 3 Years Sales Breakdown')}} </b>
 
                             </h3>
                         </div>
 
                     </div>
+                    <div class="kt-portlet__head kt-portlet__head--lg">
+                        {{-- <div class="kt-portlet__head-label"> --}}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <?php $sales_forecast['others_products_previous_3_year'] = isset($sales_forecast['others_products_previous_3_year']) ? $sales_forecast['others_products_previous_3_year'] : old('others_products_previous_3_year'); ?>
+                                        <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
+
+                                        <select class="form-control kt-select2" id="kt_select2_8" name="others_products_previous_3_year[]" multiple="multiple">
+                                            @foreach ($selector_products_previous_3_year??[] as $product)
+                                                <option value="{{$product}}" {{(false !== $found = array_search($product,($sales_forecast['others_products_previous_3_year']??[]))) ? 'selected' : ''}}>{{$product}}</option>
+                                            @endforeach
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="submit" class="btn active-style" name="submit" value="{{__('Show Result')}}" >
+                                </div>
+                            </div>
+                        {{-- </div> --}}
+
+
+                    </div>
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
-
-
                         <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll'">
                             @slot('table_header')
                                 <tr class="table-active text-center">
@@ -299,12 +356,17 @@
                             <?php $total = array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Sales Value')); ?>
                                 @foreach ($sales_forecast['last_3_years_seasonality'] as $key => $item)
                                  <tr>
-                                     <th>{{$key+1}}</th>
+                                    <th>{{$key+1}}</th>
                                     <th>{{$item['item']?? '-'}}</th>
+                                    <input type="hidden" name="last_3_years_seasonality[{{$key}}][item]" value="{{($item['item']?? '-')}}">
                                     <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
+                                    <input type="hidden" name="last_3_years_seasonality[{{$key}}][Sales Value]" value="{{($item['Sales Value']??0)}}">
                                     <td class="text-center">{{number_format($item['Sales %']??0,2)}} %</td>
+                                    <input type="hidden" name="last_3_years_seasonality[{{$key}}][Sales %]" value="{{($item['Sales %']??0)}}">
                                     <td class="text-center">{{number_format($item['Sales Quantity']??0)}}</td>
+                                    <input type="hidden" name="last_3_years_seasonality[{{$key}}][Sales Quantity]" value="{{($item['Sales Quantity']??0)}}">
                                     <td class="text-center">{{number_format($item['Average Price']??0)}}</td>
+                                    <input type="hidden" name="last_3_years_seasonality[{{$key}}][Average Price]" value="{{($item['Average Price']??0)}}">
 
                                  </tr>
                                 @endforeach
@@ -313,9 +375,10 @@
                                     <td class="hidden"></td>
                                     <td>{{number_format($total)}}</td>
                                     <td>100 %</td>
-                                    <td>{{number_format(  array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Sales Quantity')) )}}</td>
-                                    <td>{{number_format(  array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Average Price')) )}}</td>
-
+                                    {{-- <td>{{number_format(  array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Sales Quantity')) )}}</td>
+                                    <td>{{number_format(  array_sum(array_column($sales_forecast['last_3_years_seasonality'],'Average Price')) )}}</td> --}}
+                                    <td>-</td>
+                                    <td>-</td>
                                 </tr>
                             @endslot
                         </x-table>
@@ -324,6 +387,7 @@
                 </div>
             </div>
         </div>
+
 
 
         {{-- Previous Year Seasonality --}}
@@ -412,12 +476,10 @@
 
 
 
-
-
         <div class="row">
             <div class="col-md-12">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <?php $sales_forecast_data = App\Models\SalesForecast::company()->first() ?? old(); ?>
+                    <?php $sales_forecast_data = App\Models\QuantitySalesForecast::company()->first() ?? old(); ?>
                     <div class="kt-portlet__body">
                         <!--begin: Datatable -->
                         <div class="row">
@@ -714,6 +776,8 @@
     </form>
 @endsection
 @section('js')
+    <script src="{{ url('assets/vendors/general/select2/dist/js/select2.full.js') }}" type="text/javascript"></script>
+    <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
     <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>

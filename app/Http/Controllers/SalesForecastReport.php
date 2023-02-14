@@ -126,10 +126,6 @@ class SalesForecastReport
         {
             return (new SummaryController())->goToSummaryReport($request , $company);
         }
-
-        // dd();
-
-// dd($request->all());
         $sales_forecast = SalesForecast::company()->first();
 
         // if(forecastHasBeenChanged($sales_forecast  , $request->all()))
@@ -523,11 +519,11 @@ class SalesForecastReport
             $selector_products = SalesGathering::company()
                 ->whereNotNull($type)
                 ->where($type, '!=', '')
+                ->whereBetween('date', [$request['start_date'], $request['end_date']])
                 ->whereNotIn($type, $products_used)
                 ->groupBy($type)
                 ->pluck($type)
-                ->toArray();
-
+                ->toArray(); 
 
                 if($noReturn)
                 {
