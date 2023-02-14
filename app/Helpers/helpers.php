@@ -1971,12 +1971,12 @@ function getDatedOf(array $first, array $second): array
 	sort($dates);
 	return $dates;
 }
-function combineNoneZeroValues(array $first, array $second, array &$actualDates): array
+function combineNoneZeroValuesBasedOnComingDates(array $first, array $second, array &$actualDates): array
 {
 	$combined = [];
 	$dates = getDatedOf($first, $second);
 	foreach ($dates as $date) {
-		$isActualValue = isset($second[$date]) && $second[$date];
+		$isActualValue = isset($second[$date]) && isActualDate($date);
 		$firstVal = $first[$date] ?? 0;
 		$combined[$date] = $isActualValue ? $second[$date] : $firstVal;
 		if ($isActualValue) {
@@ -2131,4 +2131,20 @@ function getIndexesLargerThanOrEqualIndex(array $items, string $item): array
 		return array_search($item, $items) >= $index;
 	});
 	return count($newItems) ? $newItems : (array)$item;
+}
+function isActualDate(string $dateString): bool
+{
+	$year = explode('-', $dateString)[0];
+	$month = explode('-', $dateString)[1];
+	$now = now()->format('Y-m-d');
+	$currentYear = explode('-', $now)[0];
+	$currentMonth = explode('-', $now)[1];
+	$date = Carbon::make(Carbon::createFromDate($year, $month, 1)->format('Y-m-d'));
+	$currentDate = Carbon::make(Carbon::createFromDate($currentYear, $currentMonth, 1)->format('Y-m-d'));
+	return $currentDate->greaterThan($date);
+}
+function blackTableTd(): bool
+{
+	$arrayOfSegments = Request()->segments();
+	return in_array('SalesGathering', $arrayOfSegments);
 }

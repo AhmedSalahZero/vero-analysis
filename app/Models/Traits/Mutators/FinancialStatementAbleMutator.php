@@ -85,7 +85,8 @@ trait FinancialStatementAbleMutator
 		$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 		// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
 		$actualDates = [];
-		$pivotForModified = combineNoneZeroValues($pivotForForecast, $pivotForActual, $actualDates);
+		$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
+
 		$this->withSubItemsFor($financialStatementAbleItemId, 'adjusted', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
 			'payload' => json_encode($pivotForModified),
 			'actual_dates' => json_encode($actualDates)

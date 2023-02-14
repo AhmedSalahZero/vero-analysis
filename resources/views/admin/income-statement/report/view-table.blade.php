@@ -4,6 +4,15 @@ $tableId = 'kt_table_1';
 
 
 <style>
+    .width-66 {
+        width: 66% !important;
+    }
+
+    .border-bottom-popup {
+        border-bottom: 1px solid #d6d6d6;
+        padding-bottom: 20px;
+    }
+
     .flex-self-start {
         align-self: flex-start;
     }
@@ -180,10 +189,15 @@ $tableId = 'kt_table_1';
                     {{ __('Name') }}
                     {{-- {!!  !!} --}}
                 </th>
-                <input type="hidden" name="dates[]" value="{{ json_encode(array_keys($incomeStatement->getIntervalFormatted())) }}" id="dates">
+                <input type="hidden" name="dates" value="{{ json_encode(array_keys($incomeStatement->getIntervalFormatted())) }}" id="dates">
                 @foreach($incomeStatement->getIntervalFormatted() as $defaultDateFormate=>$interval)
-                <th data-date="{{ $defaultDateFormate }}" data-month-year="{{explode('-',$defaultDateFormate)[0].'-'.explode('-',$defaultDateFormate)[1]}}" class="view-table-th header-th" data-is-collection-relation="0" data-collection-item-id="0" data-db-column-name="name" data-relation-name="ServiceCategory" data-is-relation="1" class="header-th" data-is-json="0">
+                <th data-is-actual="{{ (int)isActualDate($defaultDateFormate) }}" data-date="{{ $defaultDateFormate }}" data-month-year="{{explode('-',$defaultDateFormate)[0].'-'.explode('-',$defaultDateFormate)[1]}}" class="view-table-th header-th" data-is-collection-relation="0" data-collection-item-id="0" data-db-column-name="name" data-relation-name="ServiceCategory" data-is-relation="1" class="header-th" data-is-json="0">
                     {{ $interval }}
+                    @if(isActualDate($defaultDateFormate) && ($reportType=='actual' || $reportType=='modified' ))
+                    <br>({{ __('Actual') }})
+                    @elseif($reportType=='actual' || $reportType=='modified')
+                    <br>({{ __('Forecast') }})
+                    @endif
                 </th>
                 @endforeach
                 <th class="view-table-th header-th">
@@ -203,6 +217,7 @@ $tableId = 'kt_table_1';
         <x-slot name="js">
             <script>
                 let inAddOrEditModal = false;
+                let canRefreshPercentages = false;
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
                         $(document).on('change', '.is-sub-row input', function(e) {
@@ -223,12 +238,13 @@ $tableId = 'kt_table_1';
                             if (date && parentModelId) {
                                 updateParentMainRowTotal(parentModelId, date);
                             }
+
                             if (parentModelId == salesRevenueId || parentModelId == costOfGoodsId) {
 
                                 updateGrowthRateForSalesRevenue(date);
                                 updateTotalForRow(currentRow);
                                 updateGrossProfit(date);
-                                if (parentModelId == salesRevenueId) {
+                                if (parentModelId == salesRevenueId && canRefreshPercentages) {
                                     refreshPercentagesThatDependsOnSalesRevenueValue(date)
                                 }
 
@@ -251,14 +267,13 @@ $tableId = 'kt_table_1';
 
                         });
 
-                        // const refreshPercentagesThatDependsOnSalesRevenueValue = (date) => {
-                        //     console.log('good');
-                        //     document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
-                        //         setTimeout(() => {
-                        //             $(td).trigger('blur')
-                        //         }, 1000);
-                        //     });
-                        // }
+                        const refreshPercentagesThatDependsOnSalesRevenueValue = (date) => {
+                            document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
+                                // setTimeout(() => {
+                                $(td).trigger('blur')
+                                // }, 1000);
+                            });
+                        }
 
 
 
@@ -372,7 +387,7 @@ $tableId = 'kt_table_1';
                                 var isQuantity = 0;
                                 var percentageOrFixed = formDataObject['sub_items[' + i + '][percentage_or_fixed]'];
                                 var isPercentage = percentageOrFixed == 'percentage';
-                                var isPercentageOf = isPercentage ? "[" + formDataObject['sub_items[' + i + '][is_percentage_of][]'].toString() + "]" : '[]';
+                                var isPercentageOf = isPercentage && formDataObject['sub_items[' + i + '][is_percentage_of]'] ? "[" + formDataObject['sub_items[' + i + '][is_percentage_of]'].toString() + "]" : '';
                                 var isRepeatingFixed = percentageOrFixed == 'repeating_fixed';
                                 var isNoneRepeatingFixed = percentageOrFixed == 'non_repeating_fixed';
                                 var canTriggerChange = isRepeatingFixed || isPercentage;
@@ -388,6 +403,13 @@ $tableId = 'kt_table_1';
                                         })
                                     })
                                 } else if (isPercentage) {
+
+                                    if (!isPercentageOf.length) {
+                                        rows = null;
+                                        alert('Please Enter Percentage Items For ' + subItemName);
+                                        return;
+                                    }
+
                                     var percentageValue = formDataObject['sub_items[' + i + '][percentage_value]'];
                                     tdValue = percentageValue ? percentageValue : 0;
 
@@ -404,11 +426,10 @@ $tableId = 'kt_table_1';
                                 }
                                 rows += getRowForSubItemsTr('kt_table_1', dates, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentage, percentageOrFixed, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf);
                             }
+
                             formattedTable = formateRowsForInsertaionIntoDom(rows)
                             insertTableIntoDom(formattedTable);
-                            // if (isRepeatingFixed || isPercentage) {
                             triggerBlurForEditableTd();
-                            // }
                             return formattedTable;
                         }
 
@@ -468,7 +489,6 @@ $tableId = 'kt_table_1';
 
                         $(document).on('blur', '.editable', function() {
                             let tdElement = this;
-                            console.log('blured');
                             updateEditableInputs(tdElement)
                         });
 
@@ -536,8 +556,19 @@ $tableId = 'kt_table_1';
                             })
                         }
 
+                        function getDatesLargerThanDate(searchDate, dates) {
+                            let result = [searchDate];
+
+                            dates = dates.filter((date) => {
+                                return moment(searchDate).isBefore(date);
+                            });
+
+                            return result.concat(dates);
+
+                        }
 
                         function updateEditableInputs(tdElement) {
+                            let reportType = $('#sub-item-type').val();
                             let firstDateString = $(tdElement).attr("class").split(/\s+/).filter(function(classItem) {
                                 return classItem.startsWith('date-');
                             })[0];
@@ -546,16 +577,36 @@ $tableId = 'kt_table_1';
                                 $(tdElement).parent().find('input[data-date="' + firstDate + '"]').val($(tdElement).text().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")).trigger('change');
 
                                 let is_repeating_fixed = $(tdElement).closest('tr').data('is-repeating-fixed');
-                                // let is_fixed = $(tdElement).closest('tr').data('is-fixed');
                                 let is_percentage = $(tdElement).closest('tr').data('is-percentage');
                                 let is_percentage_or_fixed = $(tdElement).closest('tr').data('can-be-percentage-or-fixed');
                                 let currentVal = $(tdElement).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "");
                                 currentVal = parseFloat(currentVal);
+                                // console.log(is_repeating_fixed)
+                                // console.log(is_percentage)
+                                // console.log(currentVal)
+                                // console.log(is_percentage_or_fixed)
+                                // console.log(tdElement);
+                                // console.log('---')
+                                return 1 / 0;
                                 if (is_percentage_or_fixed && is_repeating_fixed) {
-                                    $(tdElement).closest('tr').find('td.editable-date').html(number_format(currentVal, 2));
-                                    $(tdElement).closest('tr').find('input[data-date]').val(currentVal).trigger('change');
+                                    var tdSpecificDateIfExist = inAddOrEditModal ? '' : '.date-' + firstDate
+                                    var inputSpecificDateIfExist = inAddOrEditModal ? '' : '[data-date="' + firstDate + '"]';
+                                    if (reportType == 'modified' && !inAddOrEditModal) {
+                                        var loopingDates = getDatesLargerThanDate(firstDate, dates);
+                                        loopingDates.forEach((loopingDate) => {
+                                            tdSpecificDateIfExist = '.date-' + loopingDate
+                                            inputSpecificDateIfExist = '[data-date="' + loopingDate + '"]';
+                                            $(tdElement).closest('tr').find('td.editable-date' + tdSpecificDateIfExist).html(number_format(currentVal, 2));
+                                            $(tdElement).closest('tr').find('input[data-date]' + inputSpecificDateIfExist).val(currentVal).trigger('change');
+                                        })
+                                    } else {
+                                        $(tdElement).closest('tr').find('td.editable-date' + tdSpecificDateIfExist).html(number_format(currentVal, 2));
+                                        $(tdElement).closest('tr').find('input[data-date]' + inputSpecificDateIfExist).val(currentVal).trigger('change');
+
+                                    }
                                 }
                                 if (is_percentage_or_fixed && is_percentage) {
+
                                     var percenetage_of_array = $(tdElement).closest('tr').data('is-percentage-of');
                                     if (!Array.isArray(percenetage_of_array)) {
                                         percenetage_of_array = percenetage_of_array ? percenetage_of_array.replace(/\[|\]/g, '').split(',') : [];
@@ -564,8 +615,11 @@ $tableId = 'kt_table_1';
                                     if (percenetage_of_array && percenetage_of_array.length) {
                                         var loopDates;
                                         loopDates = inAddOrEditModal ? dates : [firstDate];
+                                        if (reportType == 'modified') {
+                                            loopDates = getDatesLargerThanDate(firstDate, dates)
+                                        }
                                         var total = 0;
-                                        dates.forEach((currentDate) => {
+                                        loopDates.forEach((currentDate) => {
                                             total = 0;
                                             percenetage_of_array.forEach(function(subItemName) {
                                                 var valOfCurrentSubItem = $('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + salesRevenueRowId + '"][data-date="' + currentDate + '"]').val();
@@ -573,6 +627,7 @@ $tableId = 'kt_table_1';
 
                                             });
 
+                                            currentVal = inAddOrEditModal ? currentVal : parseFloat($(tdElement).data('percentage-value'));
                                             currentValue = total ? currentVal / 100 * total : 0;
                                             $(tdElement).closest('tr').find('td.editable-date.date-' + currentDate).html(number_format(currentValue, 2));
                                             $(tdElement).closest('tr').find('input[data-date][data-date="' + currentDate + '"]').val(currentValue).trigger('change');
@@ -637,7 +692,10 @@ $tableId = 'kt_table_1';
                             $('#loader_id').addClass('hide_class')
 
                         });
-
+                        $(document).on('click', '.redirect-btn', function(e) {
+                            e.preventDefault();
+                            window.location.href = $(this).data('redirect-to');
+                        })
                         $(document).on('click', function(e) {
                             // close opened custom modal [for filter and export btn]
                             let target = e.target;
@@ -881,6 +939,7 @@ $tableId = 'kt_table_1';
                                                     .attr('data-sub-item-name', subItemName)
                                                     .attr('data-table-id', "{{$tableId}}")
                                                     .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false)
+                                                    .attr('data-percentage-value', data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : -1)
                                                 if (data.isSubItem) {
 
 
@@ -962,7 +1021,7 @@ $tableId = 'kt_table_1';
 																		<label class="form-label flex-self-start">{{ __('% Of') }}</label>
 																	
 																	<select multiple
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
+																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of]">
 																	${sub_items_options}
 																</select>
 																	</div>
@@ -1049,7 +1108,7 @@ $tableId = 'kt_table_1';
 													
 													</form>
 												</div>
-												<div class="modal-footer">
+												<div class="modal-footer" style="border-top:0 !important">
 													<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
 													<button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</button>
 												</div>
@@ -1085,7 +1144,7 @@ $tableId = 'kt_table_1';
 															
 															</form>
 														</div>
-														<div class="modal-footer">
+														<div class="modal-footer" style="border-top:0 !important">
 															<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
 															<button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" >{{ __('Delete') }}</button>
 														</div>
@@ -1098,6 +1157,8 @@ $tableId = 'kt_table_1';
                                                     $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (incomeStatementItemId))
                                                     $(row).addClass('d-none is-sub-row ');
                                                     $(row).attr('data-sub-item-name', data.pivot.sub_item_name)
+
+                                                    $(row).attr('data-percentage-value', data.pivot && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value || 0 : 0)
 
                                                     if (data.pivot.can_be_percentage_or_fixed) {
                                                         $(row).attr('data-can-be-percentage-or-fixed', data.pivot.can_be_percentage_or_fixed)
@@ -1264,7 +1325,7 @@ $tableId = 'kt_table_1';
 																		<label class="form-label flex-self-start">{{ __('% Of') }}</label>
 																	
 																	<select multiple
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
+																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of]">
 																	${sub_items_options}
 																</select>
 																	</div>
@@ -1302,17 +1363,20 @@ $tableId = 'kt_table_1';
 															<input class="" type="hidden" value="1" name="sub_items[0][can_be_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
 															
 															`;
+                                                        var increaseNameWidth = null;
                                                         if (data.has_percentage_or_fixed_sub_items) {
                                                             $(row).addClass('has-percentage-or-fixed-sub-items')
+                                                        } else {
+                                                            increaseNameWidth = true
                                                         }
                                                         if (data.has_depreciation_or_amortization) {
                                                             $(row).addClass('has-depreciation-or-amortization');
                                                             nameAndDepreciationIfExist = ` <div class="append-names mt-2" data-id="${data.id}">
 
-											<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center" data-id="${data.id}" data-index="0">
-											<div>
+											<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center border-bottom-popup" data-id="${data.id}" data-index="0">
+											<div >
 													<label class="form-label">{{ __('Name') }}</label>
-													<input name="sub_items[0][name]" type="text" value="" class="form-control">
+													<input  name="sub_items[0][name]" type="text" value="" class="form-control  " required>
 												</div>
 												<div class="form-check mt-2 text-center ">
 												<label class="form-check-label"  style="margin-top:3px;display:block" >
@@ -1323,13 +1387,13 @@ $tableId = 'kt_table_1';
 												</div>
 												` + has_percentage_or_fixed_sub_items + `
 												</div>
-															</div> <hr> `;
+															</div> `;
                                                         } else {
                                                             nameAndDepreciationIfExist = ` <div class="append-names mt-2" data-id="${data.id}">
 
-															<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center" data-id="${data.id}" data-index="0">
-																<div><label class="form-label">{{ __('Name') }}</label>
-																<input name="sub_items[0][name]" type="text" value="" class="form-control"></div>
+															<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center border-bottom-popup" data-id="${data.id}" data-index="0">
+																<div class="${increaseNameWidth ? 'width-66' : ''}"><label class="form-label">{{ __('Name') }}</label>
+																<input name="sub_items[0][name]" type="text" value="" class="form-control" required></div>
 																` + quantityCheckbox + `
 																` + has_percentage_or_fixed_sub_items + `
 															</div>
@@ -1361,7 +1425,7 @@ $tableId = 'kt_table_1';
 		
         </form>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="border-top:0 !important">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
         <button type="button" class="btn btn-primary save-sub-item" data-redirect-to='' data-id="${data.id}">{{ __('Save') }}</button>
       </div>
@@ -1430,8 +1494,6 @@ $tableId = 'kt_table_1';
                                             }
                                             , initComplete: function(settings, json) {
 
-
-
                                                 var reportType = $('#sub-item-type').val();
                                                 let actualDates = [];
                                                 $('.dataTables_scrollHeadInner .main-table-class:eq(0) th.is-actual').each(function(index, th) {
@@ -1440,10 +1502,34 @@ $tableId = 'kt_table_1';
                                                     }
                                                 })
 
+                                                if (reportType == 'actual') {
+                                                    const table = $('.main-table-class').DataTable();
+                                                    // if from forecast online
+                                                    $('.is-name-cell[contenteditable]').each(function(index, td) {
+                                                        $(td).attr('contenteditable', false);
+                                                    });
+                                                    document.querySelectorAll('th[data-is-actual="0"]').forEach((th) => {
+                                                        var isActual = th.getAttribute('data-is-actual');
+                                                        if (isActual) {
+                                                            var currentThDate = th.getAttribute('data-date');
+                                                            document.querySelectorAll('.editable-date.date-' + currentThDate).forEach((tdField) => {
+                                                                tdField.removeAttribute('contenteditable');
+                                                            })
+                                                        }
+                                                    })
+
+
+
+
+
+
+                                                }
+
                                                 if (reportType == 'adjusted') {
                                                     const table = $('.main-table-class').DataTable();
                                                     table.column(1).visible(false);
                                                     $('.kt-portlet__foot').css('display', 'none');
+                                                    $('#store-report-form-id .kt-portlet').append(`<div class='single-btn'><button style="float:right" type="submit" class="btn active-style redirect-btn" data-redirect-to="{{ route('admin.view.financial.statement',getCurrentCompanyId()) }}"> Back To Financial Statement </button></div>`);
                                                     $('[contenteditable]').each(function(index, td) {
                                                         $(td).attr('contenteditable', false);
                                                     })
@@ -1459,12 +1545,13 @@ $tableId = 'kt_table_1';
                                                         $(td).attr('contenteditable', false);
                                                     })
                                                     actualDates.forEach(function(actualDate) {
-                                                        $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
+                                                        // $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
                                                         $('.editable-date.date-' + actualDate).attr('contenteditable', false);
                                                     })
                                                 }
 
                                                 $('.main-table-class').DataTable().columns.adjust();
+                                                canRefreshPercentages = true;
                                             }
 
 
@@ -1514,54 +1601,65 @@ $tableId = 'kt_table_1';
                                 let formattedTable = formateTableForNewRow(formDataObject);
 
                                 // save data form also 
+                                if (formattedTable) {
 
-                                dataForm = document.getElementById('store-report-form-id');
-                                dataForm = new FormData(dataForm);
-                                for (var pair of formData.entries()) {
-                                    dataForm.append(pair[0], pair[1]);
-                                }
-                                $('.append-table-into-dom').remove();
-                                $.ajax({
-                                    type: 'POST'
-                                    , url: $(form).attr('action')
-                                    , data: dataForm
-                                    , cache: false
-                                    , contentType: false
-                                    , processData: false
-                                    , success: function(res) {
-                                        submitBtn.attr('disabled', false);
+                                    dataForm = document.getElementById('store-report-form-id');
+                                    dataForm = new FormData(dataForm);
+                                    for (var pair of formData.entries()) {
+                                        dataForm.append(pair[0], pair[1]);
+                                    }
+                                    $('.append-table-into-dom').remove();
+                                    $.ajax({
+                                        type: 'POST'
+                                        , url: $(form).attr('action')
+                                        , data: dataForm
+                                        , cache: false
+                                        , contentType: false
+                                        , processData: false
+                                        , success: function(res) {
+                                            submitBtn.attr('disabled', false);
 
-                                        $('.main-table-class').DataTable().ajax.reload(null, false)
-                                        if (res.status) {
-                                            Swal.fire({
-                                                icon: 'success'
-                                                , title: res.message
-                                            , })
-                                        } else {
+                                            $('.main-table-class').DataTable().ajax.reload(null, false)
+                                            if (res.status) {
+                                                Swal.fire({
+                                                    icon: 'success'
+                                                    , title: res.message
+                                                , })
+                                            } else {
+                                                submitBtn.attr('disabled', true);
+                                                Swal.fire({
+                                                    icon: 'error'
+                                                    , title: res.message
+                                                    , text: 'حدث خطا اثناء تنفيذ العملية'
+                                                })
+                                            }
+                                        }
+                                        , error: function(res) {
                                             submitBtn.attr('disabled', true);
+                                            let message = '';
+                                            if (res.responseJSON && res.responseJSON.message) {
+                                                message = res.responseJSON.message;
+                                                if (res.responseJSON.errors) {
+                                                    var err = res.responseJSON.errors;
+                                                    message = err[Object.keys(err)[0]][0];
+                                                }
+                                            } else if (res.statusText) {
+                                                message = res.statusText;
+                                            }
                                             Swal.fire({
                                                 icon: 'error'
-                                                , title: res.message
-                                                , text: 'حدث خطا اثناء تنفيذ العملية'
+                                                , title: "{{ __('Something Went Wrong') }}"
+                                                , text: message,
+                                                // footer: '<a href="">Why do I have this issue?</a>'
                                             })
                                         }
-                                    }
-                                    , error: function(res) {
-                                        submitBtn.attr('disabled', true);
-                                        let message = '';
-                                        if (res.responseJSON && res.responseJSON.message) {
-                                            message = res.responseJSON.message;
-                                        } else if (res.statusText) {
-                                            message = res.statusText;
-                                        }
-                                        Swal.fire({
-                                            icon: 'error'
-                                            , title: message
-                                            , text: "{{ __('Something Went Wrong') }}",
-                                            // footer: '<a href="">Why do I have this issue?</a>'
-                                        })
-                                    }
-                                });
+                                    });
+                                }
+                                submitBtn.attr('disabled', false);
+
+                                $('.append-table-into-dom').remove();
+
+                                inAddOrEditModal = false;
                             });
 
 
@@ -1588,6 +1686,9 @@ $tableId = 'kt_table_1';
                                     formDataObject[key].push(value);
                                 });
 
+                                console.log('form');
+                                console.log(formDataObject);
+
                                 if (formDataObject['sub_items[0][can_be_percentage_or_fixed]']) {
                                     var incomeStatementId = formDataObject['financial_statement_able_id'];
                                     var incomeStatementItemId = formDataObject['financial_statement_able_item_id'];
@@ -1596,17 +1697,21 @@ $tableId = 'kt_table_1';
                                     var is_percentage = percentage_or_fixed == 'percentage';
                                     var is_non_repeating_fixed = percentage_or_fixed == 'non_repeating_fixed';
                                     var is_repeating_fixed = percentage_or_fixed == 'repeating_fixed';
-                                    var is_percentage_of = is_percentage ? "[" + formDataObject['sub_items[0][is_percentage_of][]'].toString() + "]" : '[]';
+                                    var is_percentage_of = is_percentage ? "[" + formDataObject['sub_items[0][is_percentage_of]'].toString() + "]" : '';
                                     var percentage_value = is_percentage ? formDataObject['sub_items[0][percentage_value]'] : 0;
                                     var repeating_value = is_repeating_fixed ? formDataObject['sub_items[0][repeating_fixed_value]'] : 0;
+                                    console.log('percentage of value ');
+                                    console.log(percentage_or_fixed);
+                                    console.log(is_percentage);
+                                    console.log(is_non_repeating_fixed);
+                                    console.log(is_repeating_fixed);
+                                    console.log(is_percentage_of);
                                     var tdValue = 0;
                                     if (is_percentage) {
                                         tdValue = percentage_value;
                                     } else if (is_repeating_fixed) {
                                         tdValue = repeating_value;
                                     }
-
-
 
                                     $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"]').attr('data-is-percentage-of', is_percentage_of).attr('data-percentage-or-fixed', percentage_or_fixed).attr('data-is-percentage', is_percentage).attr('data-is-repeating-fixed', is_repeating_fixed).attr('data-is-none-repeating-fixed', is_non_repeating_fixed).attr('data-is-trigger-change', 'true');
 
@@ -1616,13 +1721,19 @@ $tableId = 'kt_table_1';
                                 // refresh formdata object 
                                 formData = document.getElementById('edit-sub-item-form' + id + subItemName)
                                 formData = new FormData(formData);
+                                // console.log('edit form data');
+                                // console.log(formData);
                                 // submit main table inputs 
 
                                 dataForm = document.getElementById('store-report-form-id');
                                 dataForm = new FormData(dataForm);
+                                // console.log('store form data');
+                                // console.log(dataForm);
                                 for (var pair of formData.entries()) {
                                     dataForm.append(pair[0], pair[1]);
                                 }
+                                // console.log('financial form');
+                                // console.log(dataForm);
                                 $.ajax({
                                     type: 'POST'
                                     , url: $(form).attr('action')
@@ -1654,6 +1765,8 @@ $tableId = 'kt_table_1';
 
                                     }
                                 });
+
+                                inAddOrEditModal = false;
                             });
 
 
@@ -1803,20 +1916,32 @@ $tableId = 'kt_table_1';
                                     for (i = 0; i < numberOfNewInstances; i++) {
                                         var lastInstanceClone = $('.how-many-item[data-id="' + index + '"]:last-of-type').clone(true);
                                         var lastItemIndex = parseInt($('.how-many-item[data-id="' + index + '"]:last-of-type').data('index'));
-                                        $(lastInstanceClone).attr('data-index', lastItemIndex + 1)
-
-                                        lastInstanceClone.find('input').each(function(i, v) {
+                                        $(lastInstanceClone).attr('data-index', lastItemIndex + 1);
+                                        lastInstanceClone.find('input,select').each(function(i, v) {
                                             if ($(v).attr('type') == 'text') {
                                                 $(v).val('');
                                             }
-                                            $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
+                                            // console.log(v.tagName.toLowerCase() == 'select')
+                                            if (v.tagName.toLowerCase() == 'select') {
+                                                var name = $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1);
+                                                var sub_items_options = [];
+
+                                                window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+
+                                                    sub_items_options += '<option ' + ' value="' + MainItemObject + '">' + MainItemObject + '</option>'
+                                                })
+                                                v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${sub_items_options} </select>`
+
+                                            } else {
+                                                $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
+
+                                            }
                                         })
                                         $('.append-names[data-id="' + index + '"]').append(lastInstanceClone);
+                                        reinitializeSelect2();
 
                                     }
-
                                 }
-
                             });
 
                         });

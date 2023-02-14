@@ -68,41 +68,6 @@
                 maxOptions[3] = 200;
             }
 
-            //    if(numberOfMulteSelects == 1)
-            //  {
-            // 	 maxOptions[0] = 100 ;
-            // 	 maxOptions[1] = 0 ;
-            // 	 maxOptions[2] = 0 ;
-            // 	 maxOptions[3] = 0 ;
-            //  }
-            //  if(numberOfMulteSelects == 2)
-            //  {
-            // 	 maxOptions[0] = 25 ;
-            // 	 maxOptions[1] = 50 ;
-            // 	 maxOptions[2] = 0 ;
-            // 	 maxOptions[3] = 0 ;
-            //  }
-
-            //  if(numberOfMulteSelects == 3)
-            //  {
-            // 	 maxOptions[0] = 25 ;
-            // 	 maxOptions[1] = 25 ;
-            // 	 maxOptions[2] = 50 ;
-            // 	 maxOptions[3] = 0 ;
-            //  }
-
-            //   if(numberOfMulteSelects == 4)
-            //  {
-            // 	 maxOptions[0] = 25 ;
-            // 	 maxOptions[1] = 25 ;
-            // 	 maxOptions[2] = 50 ;
-            // 	 maxOptions[3] = 50 ;
-            //  }
-
-
-
-
-
             $(document).find('select.select2-select').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
                 $(this).selectpicker({
@@ -113,9 +78,6 @@
                 $(this).data('max-options', maxOption);
 
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']');
-                //  $(this).selectpicker({
-                //    maxOptions:maxOption,
-                // 	});
 
             })
 
@@ -129,9 +91,6 @@
                 $(this).data('max-options', maxOption);
 
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']');
-                //  $(this).selectpicker({
-                //    maxOptions:maxOption,
-                // 	});
 
             })
 
@@ -187,6 +146,16 @@
     <link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
 
     <!--end::Global Theme Styles -->
+
+    @if(blackTableTd())
+    <style>
+        tbody td {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+    </style>
+    @endif
 
     <style>
         .icon-lg {
@@ -501,6 +470,20 @@
 
 <!-- begin::Body -->
 <body data-lang="{{app()->getLocale()}}" data-base-url="{{\Illuminate\Support\Facades\URL::to('/')}}" data-current-company-id="{{ $company->id ?? 0  }}" data-token="{{ csrf_token() }}" style="background-image: url({{url('assets/media/demos/demo4/header.jpg')}}); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
+    {{-- <div style="width: 100%;
+	height: 100%;
+	position: fixed;
+
+	justify-content: center;
+	align-items: center;
+	background: white;
+	z-index: 8888888888888888;
+	" class="text-center d-flex" id="full_loader_id">
+        <img src="{{ asset('loading.gif') }}">
+    <p style="margin-top: 12px;
+		margin-left: 10px;" class="please_wait">Please Wait</p>
+    </div> --}}
+
     <div class="text-center hide_class" id="loader_id">
         <img src="{{ asset('loading.gif') }}">
         <p class="please_wait">Please Wait</p>
@@ -814,6 +797,13 @@
 
     <script>
         $(function() {
+            $('#full_loader_id').addClass('hide_class').removeClass('d-flex')
+        })
+
+    </script>
+
+    <script>
+        $(function() {
             $('.dtfc-fixed-left').on('click', function(e) {
                 $('.kt_table_with_no_pagination').DataTable().columns.adjust();
             });
@@ -1029,10 +1019,6 @@
 
     </script>
     @endif
-
-    <script>
-
-    </script>
 
 
 </body>
