@@ -9,6 +9,7 @@ use App\Models\FinancialStatement;
 use App\Models\FinancialStatementItem;
 use App\Models\Repositories\FinancialStatementRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class FinancialStatementController extends Controller
 {
@@ -78,6 +79,32 @@ class FinancialStatementController extends Controller
 		]));
 	}
 
+	public function updateDate(Company $company, Request $request)
+	{
+		$financialStatement = FinancialStatement::find($request->get('financial_statement_id'));
+		$dateString = str_replace(['-', '_'], '/', $request->get('date'));
+		$financialStatement->update([
+			'start_from' => $dateString
+		]);
+		return response()->json([
+			'status' => true
+		]);
+	}
+
+	public function updateDurationType(Company $company, Request $request)
+	{
+		$financialStatement = FinancialStatement::find($request->get('financialStatementId'));
+		if ($durationType = Str::slug($request->get('durationType'))) {
+			$financialStatement->update([
+				'duration_type' => $durationType
+			]);
+		}
+
+		return response()->json([
+			'status' => true
+		]);
+	}
+
 	public function update(Company $company, Request $request, FinancialStatement $financialStatement)
 	{
 		$this->financialStatementRepository->update($financialStatement, $request);
@@ -93,7 +120,6 @@ class FinancialStatementController extends Controller
 		$financialStatementItemId = $request->get('financial_statement_item_id');
 		$financialStatement = FinancialStatement::find($financialStatementId);
 		$financialStatementItem = $financialStatement->withMainItemsFor($financialStatementItemId)->first();
-		// dd($request->get('sub_item_name'));
 		$financialStatementItem->withSubItemsFor($financialStatementId, $request->get('sub_item_type'), $request->get('sub_item_name'))
 			->updateExistingPivot($financialStatementId, [
 				'sub_item_name' => $request->get('new_sub_item_name'),
@@ -113,7 +139,6 @@ class FinancialStatementController extends Controller
 		$financialStatementItemId = $request->get('financial_statement_item_id');
 		$financialStatement = FinancialStatement::find($financialStatementId);
 		$financialStatementItem = $financialStatement->withMainItemsFor($financialStatementItemId)->first();
-		// dd($request->get('sub_item_name'));
 		$financialStatementItem->withSubItemsFor($financialStatementId, $request->get('sub_item_type'), $request->get('sub_item_name'))->detach($financialStatementId);
 		return response()->json([
 			'status' => true,
@@ -157,7 +182,6 @@ class FinancialStatementController extends Controller
 	}
 	public function formatReportDataForExport(Request $request)
 	{
-		// dd($request->all());
 		// $financial
 		$formattedData = [];
 		$totals = $request->get('totals');

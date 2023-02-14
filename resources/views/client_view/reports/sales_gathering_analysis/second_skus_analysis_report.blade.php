@@ -44,7 +44,8 @@
 
     .dataTables_wrapper .dataTable th,
     .dataTables_wrapper .dataTable td {
-        color: #595d6e;
+        font-weight: bold;
+        color: black;
     }
 
     thead * {

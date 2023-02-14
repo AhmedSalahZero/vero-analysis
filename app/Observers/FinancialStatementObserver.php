@@ -51,12 +51,12 @@ class FinancialStatementObserver
 		}
 
 		if ($cashFlowStatement) {
+
 			$cashFlowStatement->update([
 				'name' => generateNameForFinancialStatementRelations($financialStatement->name, $cashFlowStatement),
 				'duration' => $financialStatement->duration,
 				'duration_type' => $financialStatement->duration_type,
 				'start_from' => $financialStatement->start_from
-
 			]);
 		}
 	}

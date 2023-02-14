@@ -22,9 +22,20 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script> --}}
     <script>
         var wto;
+        const slugify = str =>
+            str
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
 
         function getNumberOfMillSeconds() {
             return 2000;
+        }
+
+        function covertStringToClass(str) {
+            return str.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
         }
         // window['maxOptions'] = 10 ;
         function reinitializeSelect2() {
@@ -37,7 +48,7 @@
                 maxOptions[3] = 0;
             }
             if (numberOfMulteSelects == 2) {
-                maxOptions[0] = 100;
+                maxOptions[0] = 200;
                 maxOptions[1] = 200;
                 maxOptions[2] = 0;
                 maxOptions[3] = 0;
@@ -57,41 +68,6 @@
                 maxOptions[3] = 200;
             }
 
-            //    if(numberOfMulteSelects == 1)
-            //  {
-            // 	 maxOptions[0] = 100 ;
-            // 	 maxOptions[1] = 0 ;
-            // 	 maxOptions[2] = 0 ;
-            // 	 maxOptions[3] = 0 ;
-            //  }
-            //  if(numberOfMulteSelects == 2)
-            //  {
-            // 	 maxOptions[0] = 25 ;
-            // 	 maxOptions[1] = 50 ;
-            // 	 maxOptions[2] = 0 ;
-            // 	 maxOptions[3] = 0 ;
-            //  }
-
-            //  if(numberOfMulteSelects == 3)
-            //  {
-            // 	 maxOptions[0] = 25 ;
-            // 	 maxOptions[1] = 25 ;
-            // 	 maxOptions[2] = 50 ;
-            // 	 maxOptions[3] = 0 ;
-            //  }
-
-            //   if(numberOfMulteSelects == 4)
-            //  {
-            // 	 maxOptions[0] = 25 ;
-            // 	 maxOptions[1] = 25 ;
-            // 	 maxOptions[2] = 50 ;
-            // 	 maxOptions[3] = 50 ;
-            //  }
-
-
-
-
-
             $(document).find('select.select2-select').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
                 $(this).selectpicker({
@@ -102,9 +78,6 @@
                 $(this).data('max-options', maxOption);
 
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']');
-                //  $(this).selectpicker({
-                //    maxOptions:maxOption,
-                // 	});
 
             })
 
@@ -118,9 +91,6 @@
                 $(this).data('max-options', maxOption);
 
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']');
-                //  $(this).selectpicker({
-                //    maxOptions:maxOption,
-                // 	});
 
             })
 
@@ -176,6 +146,16 @@
     <link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
 
     <!--end::Global Theme Styles -->
+
+    @if(blackTableTd())
+    <style>
+        tbody td {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+    </style>
+    @endif
 
     <style>
         .icon-lg {
@@ -490,6 +470,20 @@
 
 <!-- begin::Body -->
 <body data-lang="{{app()->getLocale()}}" data-base-url="{{\Illuminate\Support\Facades\URL::to('/')}}" data-current-company-id="{{ $company->id ?? 0  }}" data-token="{{ csrf_token() }}" style="background-image: url({{url('assets/media/demos/demo4/header.jpg')}}); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
+    {{-- <div style="width: 100%;
+	height: 100%;
+	position: fixed;
+
+	justify-content: center;
+	align-items: center;
+	background: white;
+	z-index: 8888888888888888;
+	" class="text-center d-flex" id="full_loader_id">
+        <img src="{{ asset('loading.gif') }}">
+    <p style="margin-top: 12px;
+		margin-left: 10px;" class="please_wait">Please Wait</p>
+    </div> --}}
+
     <div class="text-center hide_class" id="loader_id">
         <img src="{{ asset('loading.gif') }}">
         <p class="please_wait">Please Wait</p>
@@ -630,6 +624,7 @@
     <!--begin:: Global Mandatory Vendors -->
     <script src="{{url('assets/vendors/general/jquery/dist/jquery.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/popper.js/dist/umd/popper.js')}}" type="text/javascript"></script>
+
     <script src="{{url('assets/vendors/general/bootstrap/dist/js/bootstrap.min.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/js-cookie/src/js.cookie.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/moment/min/moment.min.js')}}" type="text/javascript"></script>
@@ -650,6 +645,17 @@
     <script>
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
+        }
+        var monthsAsNumbers = ["01", "02", "03", "04", "05", "06", "07"
+            , "08", "09", "10", "11", "12"
+        ];
+        var formatDate = function(date, dateSeparator = '/') {
+            let month = monthsAsNumbers[date.getMonth()];
+            let day = ('0' + date.getDate()).slice(-2)
+            // 11
+            // 01
+            return month + dateSeparator + day + dateSeparator + date.getFullYear();
+            //  + " " + ('0' + date.getHours()).slice(-2) + ":" + ('0' + date.getMinutes()).slice(-2) + ":" + ('0' + date.getSeconds()).slice(-2) + ' ' + (date.getHours() < 12 ? 'AM' : 'PM');
         }
 
         function number_unformat(formattedNumber) {
@@ -785,6 +791,13 @@
         $(document).ajaxComplete(function() {
             $('select.select2-select').prop('disabled', false);
             $('#loader_id').addClass('hide_class');
+        })
+
+    </script>
+
+    <script>
+        $(function() {
+            $('#full_loader_id').addClass('hide_class').removeClass('d-flex')
         })
 
     </script>
@@ -963,6 +976,8 @@
             })
         });
 
+
+
         $(document).on('change', '.trigger-update-select-js', function() {
             clearTimeout(wto);
             wto = setTimeout(() => {
@@ -1004,10 +1019,6 @@
 
     </script>
     @endif
-
-    <script>
-
-    </script>
 
 
 </body>

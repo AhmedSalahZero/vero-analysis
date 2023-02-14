@@ -55,4 +55,12 @@ trait FinancialStatementAccessor
 	{
 		return $this->depends_on;
 	}
+	public function canEditDurationType(): bool
+	{
+		$incomeStatement = $this->incomeStatement;
+		$balanceSheet = $this->balanceSheet;
+		$cashFlowStatement = $this->cashFlowStatement;
+		$canNotEditDurationType = $incomeStatement->subItems->count() || $balanceSheet->subItems->count() || $cashFlowStatement->subItems->count();
+		return !$canNotEditDurationType;
+	}
 }

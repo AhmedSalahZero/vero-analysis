@@ -9,6 +9,11 @@ $tableId = 'kt_table_1';
         margin-bottom: 1rem;
     }
 
+    td {
+        color: black;
+        font-weight: bold;
+    }
+
     .btn-border-radius {
         border-radius: 10px !important;
     }
@@ -226,7 +231,23 @@ $tableId = 'kt_table_1';
 
                                             {
                                                 render: function(d, b, row) {
-                                                    return (row['duration_type']).capitalize()
+
+                                                    let durations = ['Monthly', 'Quarterly', 'Semi Annually', 'Annually'];
+
+                                                    var select = `<select data-financial-statement-id="${row.id}" class="select select2-select change-duration-type">`;
+                                                    durations.forEach((duration) => {
+
+                                                        var durationTranslated = duration // need to be translated
+                                                        var selected = slugify(duration) == row.duration_type ? 'selected' : '';
+                                                        select += ` <option ${selected} value=" ${slugify(duration)} "> ${durationTranslated}  </option>`
+                                                    })
+                                                    select += '</select>';
+                                                    // dddd
+                                                    if (row.can_edit_duration_type) {
+                                                        return select;
+                                                    }
+                                                    console.log(row);
+                                                    return (row['duration_type'])
                                                 }
                                                 , data: 'order'
                                                 , className: 'text-center',
@@ -235,8 +256,11 @@ $tableId = 'kt_table_1';
                                             , {
                                                 data: 'start_from'
                                                 , searchable: false
+                                                , render(d, b, row) {
+                                                    return '<span class="datepicker-input">' + row['start_from'] + '</span>'
+                                                }
                                                 , orderable: false
-                                                , className: 'text-center'
+                                                , className: 'text-center date'
                                             }
                                             // , {
                                             //     data: 'creator_name'
@@ -414,6 +438,32 @@ $tableId = 'kt_table_1';
                                             $(cells).filter(".editable").attr('contenteditable', true);
 
 
+
+
+
+                                        }
+                                        , initComplete() {
+                                            reinitializeSelect2();
+                                            $(document).find('.datepicker-input').datepicker({
+                                                dateFormat: 'mm-dd-yy'
+                                                , autoclose: true
+                                            }).on('changeDate', function(dataObject) {
+                                                let dateString = formatDate(new Date(dataObject.date));
+                                                let financialStatementId = $(this).closest('tr').data('model-id')
+                                                $(this).focus().html(dateString).blur();
+                                                $.ajax({
+                                                    url: "{{ route('admin.update.financial.statement.date',getCurrentCompanyId()) }}"
+                                                    , data: {
+                                                        "date": dateString
+                                                        , "financial_statement_id": financialStatementId
+                                                    , }
+                                                })
+                                            });
+
+                                            // Shows the datepicker when clicking on the content editable div
+                                            $(document).on('click', '.date', function() {
+                                                $(this).parent().find('.datepicker-input').datepicker("show");
+                                            });
                                         }
                                         , drawCallback: function(settings) {
                                             reinitializeSelect2();
@@ -465,6 +515,20 @@ $tableId = 'kt_table_1';
         </script>
         <script>
             $(function() {
+                $(document).on('change', '.change-duration-type', function() {
+                    let durationType = $(this).val();
+                    let financialStatementId = $(this).closest('tr').data('model-id');
+                    if (durationType) {
+                        $.ajax({
+                            url: "{{ route('admin.update.financial.statement.duration.type',getCurrentCompanyId()) }}"
+                            , data: {
+                                durationType
+                                , financialStatementId
+                            }
+                            , type: 'delete'
+                        })
+                    }
+                });
                 $(document).on('click', '.submit-modal-class:not(.copy-btn)', function(e) {
                     $('.submit-modal-class').prop('disabled', true);
                     e.preventDefault();

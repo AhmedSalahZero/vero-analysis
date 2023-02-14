@@ -26,18 +26,17 @@ trait FinancialStatementAbleItemRelation
 			'financial_statement_able_item_id',
 			'financial_statement_able_id'
 		)
-			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'is_quantity', 'can_be_quantity', 'actual_dates']);
+			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'is_quantity', 'can_be_quantity', 'actual_dates', 'percentage_or_fixed', 'can_be_percentage_or_fixed', 'is_percentage_of', 'repeating_fixed_value', 'percentage_value']);
 	}
 	public function withSubItemsFor(int $financialStatementAbleId, string $subItemType = '', string $subItemName = ''): BelongsToMany
 	{
 		$subItemNameOperator = $subItemName ? '=' : '!=';
 		$subItemTypeOperator = $subItemType ? '=' : '!=';
-
 		return $this
 			->subItems()
 			->wherePivot('financial_statement_able_id', $financialStatementAbleId)
-			->wherePivot('sub_item_name', $subItemNameOperator, $subItemName)
-			->wherePivot('sub_item_type', $subItemTypeOperator, $subItemType);
+			->wherePivot('sub_item_type', $subItemTypeOperator, $subItemType)
+			->wherePivot('sub_item_name', $subItemNameOperator, $subItemName);
 	}
 	// use withMainRowsPivot Instead
 	public function mainRowsPivot(): BelongsToMany

@@ -122,6 +122,7 @@ function getPeriods($interval)
 			12 => [12],
 		];
 	}
+
 	if ($interval == 'quarterly') {
 
 		return [
@@ -561,6 +562,7 @@ function sortTwoDimensionalExcept(array &$arr, array $exceptKeys)
 		}
 	});
 }
+
 function getTypeFor($type, $companyId, $formatted = false, $date = false, $start_date = null, $end_date = null)
 {
 	if ($formatted) {
@@ -576,8 +578,14 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
 			->when($date && $end_date, function (Builder $builder) use ($end_date) {
 				$builder->where('date', '<=', $end_date);
 			})
-			->orderBy($type)->distinct()->select($type)->get()->pluck($type, $type)->toArray();;
+			->groupBy($type)
+			->distinct()
+			->select($type)
+			->orderByRaw('sum(net_sales_value) desc')
+			// ->orderBy($type)
+			->get()->pluck($type, $type)->toArray();;
 	} else {
+
 		$data = DB::table('sales_gathering')->where('company_id', $companyId)
 			->when($date && $start_date, function (Builder $builder) use ($start_date) {
 				$builder->where('date', '>=', $start_date);
@@ -585,15 +593,17 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
 			->when($date && $end_date, function (Builder $builder) use ($end_date) {
 				$builder->where('date', '<=', $end_date);
 			})
-			->orderBy($type)->distinct()->select($type)->get()->pluck($type)->toArray();
+			->groupBy($type)
+			->select($type)
+			->orderByRaw('sum(net_sales_value) desc')
+			->distinct()
+			->get()->pluck($type)->toArray();
 
 		$data = array_filter($data, function ($item) {
-
 			return $item;
 		});
 		return $data;
 	}
-	//   return  DB::table('sales_gathering')->where('company_id', $companyId)->distinct()->select($type)->get()->pluck($type)->toArray(); ;
 }
 function getNumberOfProductsItems($companyId)
 {
@@ -1961,12 +1971,12 @@ function getDatedOf(array $first, array $second): array
 	sort($dates);
 	return $dates;
 }
-function combineNoneZeroValues(array $first, array $second, array &$actualDates): array
+function combineNoneZeroValuesBasedOnComingDates(array $first, array $second, array &$actualDates): array
 {
 	$combined = [];
 	$dates = getDatedOf($first, $second);
 	foreach ($dates as $date) {
-		$isActualValue = isset($second[$date]) && $second[$date];
+		$isActualValue = isset($second[$date]) && isActualDate($date);
 		$firstVal = $first[$date] ?? 0;
 		$combined[$date] = $isActualValue ? $second[$date] : $firstVal;
 		if ($isActualValue) {
@@ -2041,4 +2051,100 @@ function orderArrayByItemsKeys(array $array): array
 	ksort($array);
 
 	return $array;
+}
+
+function  checkIfArrayAllIsAllPositive(array $array)
+{
+	$positiveNumbers = array_filter($array, function ($val) {
+		return $val > 0;
+	});
+	return count($positiveNumbers) == count($array);
+}
+
+function  checkIfArrayAllIsAllNegative(array $array)
+{
+	$negativeNumbers = array_filter($array, function ($val) {
+		return $val <= 0;
+	});
+	return count($negativeNumbers) == count($array);
+}
+
+function calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, $net_present_value, $calculatedPercentage = null, $numberOfIteration = 1)
+{
+	$yearsAndFreeCash = $annual_free_cash_array;
+	// = [
+	//     1=>-5000000 ,
+	//     2=>3000000 ,
+	//     3=>4500000,
+	//     4=>15000000 ,
+	//     5=>125000000,
+	//     // 6=>1545132872.40807
+	// ];
+
+	if ($numberOfIteration == 1 && (checkIfArrayAllIsAllNegative($yearsAndFreeCash) || checkIfArrayAllIsAllPositive($yearsAndFreeCash))) {
+		return 'No IRR';
+	}
+
+
+	$percentage = $calculatedPercentage ?: $discount_rate;
+	$discountFactor = [];
+	$npv = [];
+	foreach ($yearsAndFreeCash as $year => $freshCash) {
+
+		$discountFactor[$year] = pow(1  +  $percentage, $year);
+		$npv[$year] = $freshCash / $discountFactor[$year];
+	}
+
+	// if($numberOfIteration == 1){
+	//     $original_npv =array_sum($npv)+ $cash_and_loans;
+	// }
+	$npv_sum = array_sum($npv) + $cash_and_loans;
+
+	if ($numberOfIteration == 750000) {
+
+		return $calculatedPercentage;
+	}
+	// need to make $npv_sum = 0 by changing  $percentage  to get irr
+	if ($net_present_value >= 0) {
+		while ((!($npv_sum <= $net_present_value * 0.000001))) {
+			if ($npv_sum > 0) {
+				$irr = $percentage  + 0.00001;
+				return calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, $net_present_value, $irr, ++$numberOfIteration);
+			}
+		}
+	} elseif ($net_present_value < 0) {
+
+		while ((!($npv_sum >= $net_present_value * -0.000001))) {
+			if ($npv_sum < 0) {
+				$irr = $percentage - 0.00001;
+				return calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, $net_present_value, $irr, ++$numberOfIteration);
+			}
+		}
+	}
+
+	return $calculatedPercentage;
+}
+function getIndexesLargerThanOrEqualIndex(array $items, string $item): array
+{
+	$index = array_search($item, $items);
+	$newItems = array_filter($items, function ($item) use ($items, $index) {
+		return array_search($item, $items) >= $index;
+	});
+	return count($newItems) ? $newItems : (array)$item;
+}
+function isActualDate(string $dateString): bool
+{
+	$year = explode('-', $dateString)[0];
+	$month = explode('-', $dateString)[1];
+	$now = now()->format('Y-m-d');
+	$currentYear = explode('-', $now)[0];
+	$currentMonth = explode('-', $now)[1];
+	$date = Carbon::make(Carbon::createFromDate($year, $month, 1)->format('Y-m-d'));
+	$currentDate = Carbon::make(Carbon::createFromDate($currentYear, $currentMonth, 1)->format('Y-m-d'));
+	return $currentDate->greaterThan($date);
+}
+function blackTableTd(): bool
+{
+	$arrayOfSegments = Request()->segments();
+	return in_array('SalesGathering', $arrayOfSegments);
 }

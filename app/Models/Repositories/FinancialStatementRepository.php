@@ -95,7 +95,25 @@ class FinancialStatementRepository implements IBaseRepository
 	public function update(IBaseModel $financialStatement, Request $request): void
 	{
 	}
-
+	public function formatSelectFor(string $selectedValue): string
+	{
+		$select = '<select name="selected_interval" class="select select2">';
+		$interval = [
+			'monthly' => __('Monthly'),
+			'quarterly' => __('Quarterly'),
+			'semi-annually' => __('Semi Annually'),
+			'annually' => __('Annually')
+		];
+		foreach ($interval as $duration => $durationTranslated) {
+			if ($duration == $selectedValue) {
+				$select .= ' <option selected value="' . $duration . '">' . $durationTranslated . '</option>  ';
+			} else {
+				$select .= ' <option value="' . $duration . '">' . $durationTranslated . '</option>  ';
+			}
+		}
+		$select .= "</select>";
+		return $select;
+	}
 	public function paginate(Request $request): array
 	{
 
@@ -104,6 +122,7 @@ class FinancialStatementRepository implements IBaseRepository
 		$allFilterDataCounter = $filterData->count();
 
 		$datePerPage = $filterData->skip(Request('start'))->take(Request('length'))->get()->each(function (FinancialStatement $financialStatement, $index) {
+
 			$financialStatement->creator_name = $financialStatement->getCreatorName();
 			$financialStatement->cash_flow_statement_id = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->id : 0;
 			$financialStatement->balance_sheet_id = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->id : 0;
@@ -116,6 +135,8 @@ class FinancialStatementRepository implements IBaseRepository
 			$financialStatement->can_view_balance_sheet_actual_report = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->canViewActualReport() : false;
 
 			$financialStatement->can_view_cash_flow_statement_actual_report = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->canViewActualReport() : false;
+			$financialStatement->duration_type_select = $this->formatSelectFor($financialStatement->duration_type);
+			$financialStatement->can_edit_duration_type = $financialStatement->canEditDurationType();
 		});
 		return [
 			'data' => $datePerPage,

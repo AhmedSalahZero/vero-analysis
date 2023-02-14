@@ -60,7 +60,8 @@ div.dtsr-confirmation,div.dtsr-creation{position:fixed;top:20%;left:50%;width:50
     .secondary-row-color .dtfc-fixed-right
     {
         background-color:antiquewhite !important;
-        color:#595d6e !important;
+        color:black !important;
+		font-weight:bold; 
     }
       .group-color > .dtfc-fixed-left,  .group-color > .dtfc-fixed-right{
         background-color:#086691 !important;

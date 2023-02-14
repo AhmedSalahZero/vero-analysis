@@ -120,6 +120,7 @@ namespace App\Models{
  * @property string $name
  * @property int $has_sub_items
  * @property int $has_depreciation_or_amortization
+ * @property int $has_percentage_or_fixed_sub_items
  * @property string $financial_statement_able_type
  * @property int $is_main_for_all_calculations
  * @property int $is_sales_rate
@@ -141,6 +142,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereForIntervalComparing($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasDepreciationOrAmortization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasPercentageOrFixedSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereIsMainForAllCalculations($value)
@@ -222,6 +224,7 @@ namespace App\Models{
  * @property string $name
  * @property int $has_sub_items
  * @property int $has_depreciation_or_amortization
+ * @property int $has_percentage_or_fixed_sub_items
  * @property string $financial_statement_able_type
  * @property int $is_main_for_all_calculations
  * @property int $is_sales_rate
@@ -243,6 +246,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereForIntervalComparing($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasDepreciationOrAmortization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasPercentageOrFixedSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereIsMainForAllCalculations($value)
@@ -558,6 +562,7 @@ namespace App\Models{
  * @property string $name
  * @property int $has_sub_items
  * @property int $has_depreciation_or_amortization
+ * @property int $has_percentage_or_fixed_sub_items
  * @property string $financial_statement_able_type
  * @property int $is_main_for_all_calculations
  * @property int $is_sales_rate
@@ -579,6 +584,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereForIntervalComparing($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasDepreciationOrAmortization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasPercentageOrFixedSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereIsMainForAllCalculations($value)
@@ -894,58 +900,173 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\QuantityAllocationSetting
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting query()
+ */
+	class QuantityAllocationSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityCategory
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\QuantityProduct[] $products
+ * @property-read int|null $products_count
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory query()
+ */
+	class QuantityCategory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityCollectionSetting
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting query()
+ */
+	class QuantityCollectionSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityExistingProductAllocationBase
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase query()
+ */
+	class QuantityExistingProductAllocationBase extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityModifiedSeasonality
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality query()
+ */
+	class QuantityModifiedSeasonality extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityModifiedTarget
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget query()
+ */
+	class QuantityModifiedTarget extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityNewProductAllocationBase
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase query()
+ */
+	class QuantityNewProductAllocationBase extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityProduct
+ *
+ * @property-read \App\Models\QuantityCategory|null $category
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct query()
+ */
+	class QuantityProduct extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantityProductSeasonality
+ *
+ * @property-read \App\Models\QuantityCategory|null $category
+ * @property-read \App\Models\QuantityProduct|null $product
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality query()
+ */
+	class QuantityProductSeasonality extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantitySalesForecast
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast query()
+ */
+	class QuantitySalesForecast extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantitySecondAllocationSetting
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting query()
+ */
+	class QuantitySecondAllocationSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantitySecondExistingProductAllocationBase
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase query()
+ */
+	class QuantitySecondExistingProductAllocationBase extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\QuantitySecondNewProductAllocationBase
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase company()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase query()
+ */
+	class QuantitySecondNewProductAllocationBase extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\SalesForecast
  *
- * @property int $id
- * @property int|null $company_id
- * @property string|null $start_date
- * @property string|null $end_date
- * @property int|null $previous_year
- * @property string|null $previous_1_year_sales
- * @property string|null $previous_year_gr
- * @property string|null $average_last_3_years
- * @property array|null $previous_year_seasonality
- * @property array|null $last_3_years_seasonality
- * @property string|null $target_base
- * @property string|null $sales_target
- * @property string|null $new_start
- * @property string|null $growth_rate
- * @property int $add_new_products
- * @property int|null $number_of_products
- * @property string|null $seasonality
- * @property array|null $new_seasonality
- * @property string|null $updated_by
- * @property string|null $created_by
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast company()
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast query()
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereAddNewProducts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereAverageLast3Years($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereEndDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereGrowthRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereLast3YearsSeasonality($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereNewSeasonality($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereNewStart($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereNumberOfProducts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePrevious1YearSales($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePreviousYear($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePreviousYearGr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePreviousYearSeasonality($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereSalesTarget($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereSeasonality($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereStartDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereTargetBase($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereUpdatedBy($value)
  */
 	class SalesForecast extends \Eloquent {}
 }
