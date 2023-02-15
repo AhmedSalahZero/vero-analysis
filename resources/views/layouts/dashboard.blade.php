@@ -146,16 +146,31 @@
     <link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
 
     <!--end::Global Theme Styles -->
-
-    @if(blackTableTd())
     <style>
-        tbody td {
+        .color-red {
+            color: red !important;
+
+        }
+
+        .color-green {
+            color: green !important;
+        }
+
+        .bg-antiquewhite {
+            background-color: antiquewhite;
+
+        }
+
+    </style>
+
+    <style>
+        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td {
             color: black !important;
             font-weight: bold !important;
         }
 
     </style>
-    @endif
+
 
     <style>
         .icon-lg {
@@ -1019,7 +1034,6 @@
 
     </script>
     @endif
-
 
 </body>
 

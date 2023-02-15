@@ -144,7 +144,7 @@
                                     // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
                                     ?>
 
-        <tr class="group-color">
+        <tr class="group-color ">
             <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                 <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
                 <b>{{ __($sales_channel_name) }}</b>
@@ -179,7 +179,7 @@
             @foreach ($dates as $date)
             <td class="text-center">
                 {{ number_format(($channel_section[$name_of_report_item][$date] ?? 0),0)   }}
-                <span class="active-text-color"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
+                <span class="active-text-color color-{{ getPercentageColor($channel_section['Growth Rate %'][$date] ?? 0, 1) }}"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
             </td>
             @endforeach
             <td>{{number_format(array_sum($channel_section[$name_of_report_item]??[]),0)}}</td>
@@ -223,7 +223,7 @@
     @slot('table_body')
     <?php $chart_data = []; ?>
     @foreach ($final_report_data as $sales_channel_name => $sales_channel_data)
-    <tr class="group-color text-lg-left  ">
+    <tr class="group-color  text-lg-left  ">
         <td colspan="{{ count($total_sales_channels) + 1 }}"><b class="white-text">{{ __($sales_channel_name) }}</b></td>
         @foreach ($total_sales_channels as $date => $total)
         <td class="hidden"> </td>

@@ -129,8 +129,8 @@ class SalesGatheringTestController extends Controller
 
 		SalesGatheringTestJob::withChain([
 			new RemoveIntervalYearCashingJob($company),
-			new HandleCustomerDashboardCashingJob($company),
 			new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id),
+			new HandleCustomerDashboardCashingJob($company),
 			new HandleCustomerNatureCashingJob($company),
 			new RemoveCachingCompaniesData($company->id)
 		])->dispatch($company->id);

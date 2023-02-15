@@ -15,13 +15,7 @@ var KTDatatablesBasicPaginations = (function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                "print",
-                "copyHtml5",
-                getExportKey(),
-                "csvHtml5",
-                "pdfHtml5",
-            ],
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 
@@ -53,13 +47,7 @@ var KTDatatablesBasicPaginations = (function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                "print",
-                "copyHtml5",
-                getExportKey(),
-                "csvHtml5",
-                "pdfHtml5",
-            ],
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 
@@ -86,13 +74,7 @@ var KTDatatablesBasicPaginations = (function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                "print",
-                "copyHtml5",
-                getExportKey(),
-                "csvHtml5",
-                "pdfHtml5",
-            ],
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
     var initTableWithNoPaginationNoSearch = function () {
@@ -109,13 +91,7 @@ var KTDatatablesBasicPaginations = (function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                "print",
-                "copyHtml5",
-                getExportKey(),
-                "csvHtml5",
-                "pdfHtml5",
-            ],
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
     var initTableWithNoPaginationNoScroll = function () {
@@ -137,7 +113,6 @@ var KTDatatablesBasicPaginations = (function () {
                 "copyHtml5",
                 getExportKey(),
                 // 'excelHtml5',
-                "csvHtml5",
                 "pdfHtml5",
             ],
         });
@@ -177,14 +152,7 @@ var KTDatatablesBasicPaginations = (function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                "print",
-                "copyHtml5",
-                getExportKey(),
-                // 'excelHtml5',
-                "csvHtml5",
-                "pdfHtml5",
-            ],
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 
@@ -202,13 +170,7 @@ var KTDatatablesBasicPaginations = (function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                "print",
-                "copyHtml5",
-                getExportKey(),
-                "csvHtml5",
-                "pdfHtml5",
-            ],
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 

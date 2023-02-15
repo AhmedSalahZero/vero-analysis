@@ -18,11 +18,11 @@ $tableId = 'kt_table_1';
     }
 
     .flex-checkboxes {
-
         margin-top: 1rem;
         flex: 1;
-
+        width: 100% !important;
     }
+
 
     .flex-checkboxes>div {
         width: 100%;
@@ -193,9 +193,9 @@ $tableId = 'kt_table_1';
                 @foreach($incomeStatement->getIntervalFormatted() as $defaultDateFormate=>$interval)
                 <th data-is-actual="{{ (int)isActualDate($defaultDateFormate) }}" data-date="{{ $defaultDateFormate }}" data-month-year="{{explode('-',$defaultDateFormate)[0].'-'.explode('-',$defaultDateFormate)[1]}}" class="view-table-th header-th" data-is-collection-relation="0" data-collection-item-id="0" data-db-column-name="name" data-relation-name="ServiceCategory" data-is-relation="1" class="header-th" data-is-json="0">
                     {{ $interval }}
-                    @if(isActualDate($defaultDateFormate) && ($reportType=='actual' || $reportType=='modified' ))
+                    @if(isActualDate($defaultDateFormate) && $reportType != 'forecast')
                     <br>({{ __('Actual') }})
-                    @elseif($reportType=='actual' || $reportType=='modified')
+                    @elseif($reportType != 'forecast')
                     <br>({{ __('Forecast') }})
                     @endif
                 </th>
@@ -283,6 +283,7 @@ $tableId = 'kt_table_1';
                             let netProfitId = $('#net-profit-id').val();
                             let netProfitRow = $('.main-with-no-child[data-model-id="' + netProfitId + '"]');
                             let earningBeforeTaxesValueAtDate = $('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
+                            // let corporateTaxesValueAtDate = $('.is-main-with-sub-items[data-model-id="' + corporateTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
                             let corporateTaxesValueAtDate = $('.main-with-no-child[data-model-id="' + corporateTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
                             netprofitAtDate = earningBeforeTaxesValueAtDate - corporateTaxesValueAtDate;
                             netProfitRow.find('td.date-' + date).html(number_format(netprofitAtDate));
@@ -587,7 +588,7 @@ $tableId = 'kt_table_1';
                                 // console.log(is_percentage_or_fixed)
                                 // console.log(tdElement);
                                 // console.log('---')
-                                return 1 / 0;
+                                // return 1 / 0;
                                 if (is_percentage_or_fixed && is_repeating_fixed) {
                                     var tdSpecificDateIfExist = inAddOrEditModal ? '' : '.date-' + firstDate
                                     var inputSpecificDateIfExist = inAddOrEditModal ? '' : '[data-date="' + firstDate + '"]';
@@ -1021,7 +1022,7 @@ $tableId = 'kt_table_1';
 																		<label class="form-label flex-self-start">{{ __('% Of') }}</label>
 																	
 																	<select multiple
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of]">
+																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
 																	${sub_items_options}
 																</select>
 																	</div>
@@ -1325,7 +1326,7 @@ $tableId = 'kt_table_1';
 																		<label class="form-label flex-self-start">{{ __('% Of') }}</label>
 																	
 																	<select multiple
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of]">
+																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
 																	${sub_items_options}
 																</select>
 																	</div>
@@ -1534,7 +1535,7 @@ $tableId = 'kt_table_1';
                                                         $(td).attr('contenteditable', false);
                                                     })
                                                     actualDates.forEach(function(actualDate) {
-                                                        $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
+                                                        // $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
                                                         $('.editable-date.date-' + actualDate).attr('contenteditable', false);
                                                     })
                                                 }
@@ -1697,7 +1698,7 @@ $tableId = 'kt_table_1';
                                     var is_percentage = percentage_or_fixed == 'percentage';
                                     var is_non_repeating_fixed = percentage_or_fixed == 'non_repeating_fixed';
                                     var is_repeating_fixed = percentage_or_fixed == 'repeating_fixed';
-                                    var is_percentage_of = is_percentage ? "[" + formDataObject['sub_items[0][is_percentage_of]'].toString() + "]" : '';
+                                    var is_percentage_of = is_percentage ? "[" + formDataObject['sub_items[0][is_percentage_of][]'].toString() + "]" : '';
                                     var percentage_value = is_percentage ? formDataObject['sub_items[0][percentage_value]'] : 0;
                                     var repeating_value = is_repeating_fixed ? formDataObject['sub_items[0][repeating_fixed_value]'] : 0;
                                     console.log('percentage of value ');

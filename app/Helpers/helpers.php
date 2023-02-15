@@ -927,10 +927,6 @@ function getCustomerNature(string $customerName, array $allDataArray)
 	foreach ($allDataArray as $key => $array) {
 		foreach ($array as $type => $arr) {
 			foreach ($arr as $ar) {
-				//    if($customerName == 'TAQA Gas'  )
-				//    {
-				//  logger($ar->customer_name );
-				//    }
 				if ($ar->customer_name === $customerName) {
 					return str_replace(' ', '', $type);
 				}
@@ -944,7 +940,10 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers, $custom
 {
 	$dataFormatted = [];
 	foreach ($allFormattedWithOthers as $customerObject) {
+
 		$userType = getCustomerNature($customerObject->customer_name, $customerNature);
+
+		// dd($userType);
 		isset($dataFormatted[$userType]) ? $dataFormatted[$userType] = [
 			'count' => $dataFormatted[$userType]['count'] + 1,
 			'sales' => $dataFormatted[$userType]['sales'] + $customerObject->val
@@ -955,14 +954,6 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers, $custom
 			];
 	}
 	$dataFormatted = array_filter($dataFormatted);
-
-	// foreach($dataFormatted as $key=>$val)
-	// {
-	//     if(! $key )
-	//     {
-	//         unset($dataFormatted[$key]);
-	//     }
-	// }
 	return array_sort_type($dataFormatted);
 }
 function array_sort_type($array)
@@ -2146,5 +2137,14 @@ function isActualDate(string $dateString): bool
 function blackTableTd(): bool
 {
 	$arrayOfSegments = Request()->segments();
-	return in_array('SalesGathering', $arrayOfSegments);
+	return in_array('SalesGathering', $arrayOfSegments) || in_array('dashboard', $arrayOfSegments);
+}
+function getPercentageColor($val): string
+{
+	if ($val > 0) {
+		return 'green ';
+	} elseif ($val < 0) {
+		return 'red ';
+	}
+	return '';
 }
