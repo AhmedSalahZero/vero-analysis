@@ -148,6 +148,7 @@ class QuantitySecondAllocationsReport
         $allocations_base_row = QuantitySecondNewProductAllocationBase::company()->first();
 
         $product_seasonality = QuantityProductSeasonality::company()->get();
+        $product_seasonality_total = QuantityProductSeasonality::select(DB::raw('sum(sales_target_value * sales_target_quantity) as total'))->first()->total;
         $allocation_bases_items =   SalesGathering::company()
             ->whereNotNull($allocation_base)
             ->where($allocation_base, '!=', '')
@@ -164,6 +165,7 @@ class QuantitySecondAllocationsReport
         return view('client_view.quantity_forecast.second_new_products_allocation_base', compact(
             'company',
             'sales_forecast',
+            'product_seasonality_total',
             'allocation_bases_items',
             'product_seasonality',
             'allocation_base',
@@ -213,7 +215,7 @@ class QuantitySecondAllocationsReport
         // $percentages = [];
         foreach ((array)$allocations_base_row->allocation_base_data as $product_item_name => $item_data) {
             $product = $product_seasonality->where('name', $product_item_name)->first();
-            $sales_target_value = ($product->sales_target_value ?? 0);
+            $sales_target_value = ($product->sales_target_value*$product->sales_target_quantity ?? 0);
 
             foreach ($item_data as $base => $value) {
                 $type = array_key_first($value);
@@ -240,6 +242,7 @@ class QuantitySecondAllocationsReport
             $request['end_date'] = $sales_forecast->previous_year . '-12-31';
         }
         $breakdown_base_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
+        $total_monthly_targets  = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'total_sales_target_data');
         if ($allocations_setting->breakdown == 'new_breakdown_quarterly') {
             $total_monthly_targets  = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'array');
 
@@ -273,6 +276,7 @@ class QuantitySecondAllocationsReport
             'existing_allocations_base',
             'allocation_base',
             'allocations_base_row',
+            'total_monthly_targets',
             'sales_targets_values',
             'breakdown_base_data',
             'allocation_base',

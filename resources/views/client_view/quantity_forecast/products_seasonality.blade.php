@@ -36,9 +36,9 @@
                             @endif
                             <th>{{ __('Choose Category') }}</th>
                             <th>{{ __('Sales Target Value') }}</th>
-                            @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
-                                <th>{{ __('Sales Target %') }}</th>
-                            @endif
+                            {{-- @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target') --}}
+                                <th>{{ __('Sales Target Quantity') }}</th>
+                            {{-- @endif --}}
 
                         </tr>
                     @endslot
@@ -105,22 +105,22 @@
                                 <td class="text-center">
                                     <div class="input-group date validated">
                                         {{-- name="sales_target_value[]"  value="{{@$product_seasonality[$key]->sales_target_value}}" --}}
-                                        <input type="number" name="sales_target_value[]"  placeholder="{{__('Sales Target Value')}}" class="sales_target_value form-control" >
+                                        <input type="number" name="sales_target_value[]" value="{{($product_seasonality[$key]->sales_target_value ?? (old('sales_target_value')[$key]??''))}}"  placeholder="{{__('Sales Target Value')}}" class="sales_target_value form-control" >
                                         @if ($errors->has("sales_target_value.".$key))
                                             <div class="invalid-feedback">{{ $errors->first("sales_target_value.".$key) }}</div>
                                         @endif
                                     </div>
                                 </td>
-                                @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target')
+                                {{-- @if ($sales_forecast->target_base !== 'new_start' || $sales_forecast->new_start !=='product_target') --}}
                                     <td class="text-center">
                                         <div class="input-group date validated">
-                                            <input type="number" step="any" name="sales_target_percentage[]" placeholder="{{__('Sales Target %')}}" class="sales_target_percentage form-control" value="{{($product_seasonality[$key]->sales_target_percentage ?? (old('sales_target_percentage')[$key]??''))}}">
-                                            @if ($errors->has("sales_target_percentage.".$key))
-                                                <div class="invalid-feedback">{{ $errors->first("sales_target_percentage.".$key) }}</div>
+                                            <input type="number" step="any" name="sales_target_quantity[]" placeholder="{{__('Sales Target Quantity')}}" class="sales_target_quantity form-control" value="{{($product_seasonality[$key]->sales_target_quantity ?? (old('sales_target_quantity')[$key]??''))}}">
+                                            @if ($errors->has("sales_target_quantity.".$key))
+                                                <div class="invalid-feedback">{{ $errors->first("sales_target_quantity.".$key) }}</div>
                                             @endif
                                         </div>
                                     </td>
-                                @endif
+                                {{-- @endif --}}
                             </tr>
                             <?php $key++; ?>
                         @endfor
@@ -281,7 +281,7 @@
             for (let index = 0; index < '{{$sales_forecast->number_of_products}}' ; index++) {
                 totalFunction('.months','.total_months',index,0);
                 totalFunction('.quarters','.total_quarters',index,0);
-                percentageCangeing(index,$('.sales_target_percentage').eq(index).val());
+                // percentageCangeing(index,$('.sales_target_quantity').eq(index).val());
                 cat(index);
             }
         });
@@ -319,22 +319,22 @@
             select = '<option value="'+id+'" selected>'+name +'</option>';
             $('.categories').eq(index).append(select);
         }
-        $('.sales_target_value').on('change', function () {
-            var index = $('.sales_target_value').index(this);
-            var sales_target_value = parseFloat($(this).val());
-            var percentage = (sales_target_value/parseFloat("{{$sales_forecast->sales_target}}"))*100;
-            $('.sales_target_percentage').eq(index).val(percentage.toFixed(2));
-        });
+        // $('.sales_target_value').on('change', function () {
+        //     var index = $('.sales_target_value').index(this);
+        //     var sales_target_value = parseFloat($(this).val());
+        //     var percentage = (sales_target_value/parseFloat("{{$sales_forecast->sales_target}}"))*100;
+        //     $('.sales_target_quantity').eq(index).val(percentage.toFixed(2));
+        // });
 
-        $('.sales_target_percentage').on('change', function () {
-            var index = $('.sales_target_percentage').index(this);
-            percentageCangeing(index,$(this).val());
-        });
+        // $('.sales_target_quantity').on('change', function () {
+        //     var index = $('.sales_target_quantity').index(this);
+        //     percentageCangeing(index,$(this).val());
+        // });
 
         function percentageCangeing(index,percentage) {
 
-            var sales_target_percentage = parseFloat(percentage) /100;
-            var value = (sales_target_percentage*parseFloat("{{$sales_forecast->sales_target}}")) ;
+            var sales_target_quantity = parseFloat(percentage) /100;
+            var value = (sales_target_quantity*parseFloat("{{$sales_forecast->sales_target}}")) ;
             $('.sales_target_value').eq(index).val(value.toFixed(0));
         }
 

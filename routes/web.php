@@ -415,6 +415,7 @@ Route::middleware([])->group(function () {
 
 					Route::any('/SalesForecastQuantity', 'QuantitySalesForecastReport@result')->name('sales.forecast.quantity');
 					Route::post('/SalesForecastQuantity/save', 'QuantitySalesForecastReport@save')->name('sales.forecast.quantity.save');
+					Route::any('/ForecastedSalesValues', 'QuantitySalesForecastReport@forecastedSalesValues')->name('forecasted.sales.values');
 					Route::any('/NewCategoriesQuantity', 'QuantitySalesForecastReport@createCategories')->name('categories.quantity.create');
 					Route::any('/NewProductsQuantity', 'QuantitySalesForecastReport@createProducts')->name('products.quantity.create');
 					Route::any('/ProductsSeasonalityQuantity', 'QuantitySalesForecastReport@productsSeasonality')->name('products.seasonality.quantity');

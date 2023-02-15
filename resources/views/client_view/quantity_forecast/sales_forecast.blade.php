@@ -508,91 +508,44 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6"
-                                style="display: {{ @$sales_forecast_data['target_base'] == 'new_start' ? 'block' : 'none' }}"
-                                id="new_start_field">
-                                <div class="form-group  form-group-marginless validated">
-                                    <label>New Start</label>
-                                    <div class="col-md-12 " >
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label class="kt-option">
-                                                    <span class="kt-option__control">
-                                                        <span
-                                                            class="kt-radio kt-radio--bold kt-radio--brand kt-radio--check-bold"
-                                                            checked>
-                                                            <input type="radio" name="new_start" value="annual_target"
-                                                                {{ @$sales_forecast_data['new_start'] == 'annual_target' ? 'checked' : '' }}>
-                                                            <span></span>
-                                                        </span>
-                                                    </span>
-                                                    <span class="kt-option__label">
-                                                        <span class="kt-option__head">
-                                                            <span class="kt-option__title">
-                                                                {{ __('Annual Target') }}
-                                                            </span>
 
-                                                        </span>
-                                                        <span class="kt-option__body">
-                                                            {{-- {{__('This Section Will Be Added In The Client Side')}} --}}
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <label class="kt-option">
-                                                    <span class="kt-option__control">
-                                                        <span class="kt-radio kt-radio--bold kt-radio--brand">
-                                                            <input type="radio" name="new_start" value="product_target"
-                                                                {{ @$sales_forecast_data['new_start'] == 'product_target' ? 'checked' : '' }}>
-                                                            <span></span>
-                                                        </span>
-                                                    </span>
-                                                    <span class="kt-option__label">
-                                                        <span class="kt-option__head">
-                                                            <span class="kt-option__title">
-                                                                {{ __('Prodcuts Targets') }}
-                                                            </span>
 
-                                                        </span>
-                                                        <span class="kt-option__body">
-                                                            {{-- {{__('This Section Will Be Added In The Client Side')}} --}}
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @if ($errors->has('new_start'))
-                                            <div class="invalid-feedback">{{ $errors->first('new_start') }}</div>
+                            <div class="col-md-2"
+                                style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years'? 'block': 'none' }}"
+                                id="quantity_growth_rate_field">
+                                <label>{{ __('Quantity Growth Rate %') }} <span class="required">*</span></label>
+                                <div class="kt-input-icon validated">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="quantity_growth_rate"
+                                            value="{{ @$sales_forecast_data['quantity_growth_rate'] }}" id="quantity_growth_rate">
+                                    </div>
+                                    @if ($errors->has('quantity_growth_rate'))
+                                        <div class="invalid-feedback">{{ $errors->first('quantity_growth_rate') }}</div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years' ? 'block': 'none' }}"
+                                id="prices_increase_rate_field">
+                                <label>{{ __('Prices Increase Rate') }} <span class="required">*</span></label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group validated">
+                                        <input type="number" step="any" class="form-control" name="prices_increase_rate"
+                                            value="{{ @$sales_forecast_data['prices_increase_rate'] }}"  id="prices_increase_rate">
+                                        @if ($errors->has('prices_increase_rate'))
+                                            <div class="invalid-feedback">{{ $errors->first('prices_increase_rate') }}</div>
                                         @endif
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-md-3"
-                                style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years'? 'block': 'none' }}"
-                                id="growth_rate_field">
-                                <label>{{ __('Growth Rate %') }} <span class="required">*</span></label>
-                                <div class="kt-input-icon validated">
-                                    <div class="input-group">
-                                        <input type="number" step="any" class="form-control" name="growth_rate"
-                                            value="{{ @$sales_forecast_data['growth_rate'] }}" id="growth_rate">
-                                    </div>
-                                    @if ($errors->has('growth_rate'))
-                                        <div class="invalid-feedback">{{ $errors->first('growth_rate') }}</div>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col-md-{{ @$sales_forecast_data['new_start'] == 'annual_target' && @$sales_forecast_data['target_base'] == 'new_start'? '6': '3' }}"
-                                style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years' ||@$sales_forecast_data['new_start'] == 'annual_target'? 'block': 'none' }}"
-                                id="sales_target_field">
-                                <label>{{ __('Annual Sales Target') }} <span class="required">*</span></label>
+                            <div class="col-md-2" style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years' ? 'block': 'none' }}"
+                                id="other_products_growth_rate_field">
+                                <label>{{ __('Other Products Growth Rate') }} <span class="required">*</span></label>
                                 <div class="kt-input-icon">
                                     <div class="input-group validated">
-                                        <input type="number" step="any" class="form-control" name="sales_target"
-                                            value="{{ @$sales_forecast_data['sales_target'] }}"  id="sales_target">
-                                        @if ($errors->has('sales_target'))
-                                            <div class="invalid-feedback">{{ $errors->first('sales_target') }}</div>
+                                        <input type="number" step="any" class="form-control" name="other_products_growth_rate"
+                                            value="{{ @$sales_forecast_data['other_products_growth_rate'] }}"  id="other_products_growth_rate">
+                                        @if ($errors->has('other_products_growth_rate'))
+                                            <div class="invalid-feedback">{{ $errors->first('other_products_growth_rate') }}</div>
                                         @endif
                                     </div>
                                 </div>
@@ -642,135 +595,42 @@
                         </div>
 
 
+                        @if(hasProductsItems($company))
 
-                        <?php ?>
-                                                   @if(hasProductsItems($company))
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group  form-group-marginless">
+                                        <label>{{ __('Seasonality') }} <span class="required">*</span></label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date validated">
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group  form-group-marginless">
-                                    <label>{{ __('Seasonality') }} <span class="required">*</span></label>
-                                    <div class="kt-input-icon">
-                                        <div class="input-group date validated">
-
-                                            <select name="seasonality" class="form-control" id="seasonality">
-                                                <option value="" selected>{{ __('Select') }}</option>
-                                                <option value="previous_year"
-                                                    {{ @$sales_forecast_data['seasonality'] !== 'previous_year' ?: 'selected' }}>
-                                                    {{ __('Pervious Year Seasonality') }}</option>
-                                                <option value="last_3_years"
-                                                    {{ @$sales_forecast_data['seasonality'] !== 'last_3_years' ?: 'selected' }}>
-                                                    {{ __('Last 3 Years Seasonality') }}</option>
+                                                <select name="seasonality" class="form-control" id="seasonality">
+                                                    <option value="" selected>{{ __('Select') }}</option>
+                                                    <option value="previous_year"
+                                                        {{ @$sales_forecast_data['seasonality'] !== 'previous_year' ?: 'selected' }}>
+                                                        {{ __('Pervious Year Seasonality') }}</option>
+                                                    <option value="last_3_years"
+                                                        {{ @$sales_forecast_data['seasonality'] !== 'last_3_years' ?: 'selected' }}>
+                                                        {{ __('Last 3 Years Seasonality') }}</option>
 
 
-                                            </select>
-                                            @if ($errors->has('seasonality'))
-                                                <div class="invalid-feedback">{{ $errors->first('seasonality') }}</div>
-                                            @endif
+                                                </select>
+                                                @if ($errors->has('seasonality'))
+                                                    <div class="invalid-feedback">{{ $errors->first('seasonality') }}</div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
 
-                                                @endif
+                        @endif
 
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-
-        {{-- Monthly Seasonality --}}
-        {{-- <div class="row" id="monthly_seasonality" style="display: {{@$sales_forecast['seasonality'] == 'new_seasonality_monthly' ? 'block' :  'none'}}">
-            <div class="col-md-12">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-
-                        <h4 class="text-success"><i class="fa fa-hand-point-right">
-                            </i></i>{{ __('Total Percentages Must Be Equal To 100 %') }}</h4>
-                        <x-table :tableTitle="__('Monthly Seasonality')"
-                            :tableClass="'kt_table_with_no_pagination_no_scroll'">
-                            @slot('table_header')
-                                <tr class="table-active text-center">
-                                    <th>{{ __('Dates') }}</th>
-                                    @foreach ($sales_forecast['dates'] as $date => $value)
-                                        <th>{{ date('M-Y', strtotime($date)) }}</th>
-                                    @endforeach
-                                    <th>{{ __('Total Values') }}</th>
-                                </tr>
-                            @endslot
-                            @slot('table_body')
-                                <tr>
-                                    <th class="text-center">{{ __('Sales %') }}</th>
-                                    @foreach ($sales_forecast['dates'] as $date => $value)
-
-                                        <td class="text-center">
-                                            <input type="number" class="form-control months" name="new_seasonality_monthly[{{ $date }}]" value="{{@$sales_forecast['seasonality'] == 'new_seasonality_monthly' ? @$sales_forecast['new_seasonality'][$date]:0}}"
-                                                >
-                                        </td>
-                                    @endforeach
-                                    <td> <input type="number" disabled class="form-control total_months" value=""> </td>
-                                </tr>
-                            @endslot
-                        </x-table>
-
-
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-        {{-- Quarterly Seasonality --}}
-        {{-- <div class="row" id="quarterly_seasonality" style="display: {{@$sales_forecast['seasonality'] == 'new_seasonality_quarterly' ? 'block' :  'none'}}">
-            <div class="col-md-12">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-
-                        <h4 class="text-success"><i class="fa fa-hand-point-right"> </i>
-                            {{ __('Total Percentages Must Be Equal To 100 %') }}</h4>
-                        <x-table :tableTitle="__('Quarterly Seasonality')"
-                            :tableClass="'kt_table_with_no_pagination_no_scroll'">
-                            @slot('table_header')
-                                <tr class="table-active text-center">
-                                    <th>{{ __('Dates') }}</th>
-                                    @foreach ($sales_forecast['quarter_dates'] as $date => $value)
-                                        <th>{{ date('M-Y', strtotime($date)) }}</th>
-                                    @endforeach
-                                    <th>{{ __('Total Values') }}</th>
-                                </tr>
-                            @endslot
-                            @slot('table_body')
-
-                                <tr>
-                                    <th class="text-center">{{ __('Sales %') }}</th>
-                                    @foreach ($sales_forecast['quarter_dates'] as $date => $value)
-                                        <td class="text-center">
-                                            <input type="number" name="new_seasonality_quarterly[{{ $date }}]" value="{{@$sales_forecast['seasonality'] == 'new_seasonality_quarterly' ? @$sales_forecast['new_seasonality'][$date]:0}}"
-                                                class="form-control quarters">
-                                        </td>
-                                    @endforeach
-                                    <td> <input type="number" disabled class="form-control total_quarters"></td>
-                                </tr>
-                            @endslot
-                        </x-table>
-
-
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         <x-next__button :report="true" :companyId="$company->id"> </x-next__button>
 
     </form>
@@ -794,56 +654,51 @@
     </script>
 
     <script>
-        // $(document).ready(function () {
-        //     totalFunction('.months','.total_months',0);
-        //     totalFunction('.quarters','.total_quarters',0);
+        // $("input[name='new_start']").change(function() {
+
+        //     if ($(this).val() == 'annual_target') {
+        //         $('#prices_increase_rate_field').attr("readonly", false);
+        //         $('#prices_increase_rate_field').fadeIn(300);
+
+        //     } else {
+        //         $('#prices_increase_rate_field').fadeOut(300);
+        //         $('#prices_increase_rate_field').attr("readonly", true);
+        //     }
         // });
-        $("input[name='new_start']").change(function() {
-
-            if ($(this).val() == 'annual_target') {
-                $('#sales_target_field').attr("readonly", false);
-                $('#sales_target_field').fadeIn(300);
-
-            } else {
-                $('#sales_target_field').fadeOut(300);
-                $('#sales_target_field').attr("readonly", true);
-            }
-        });
         $('#target_base').on('change', function() {
             val = $(this).val();
 
             if (val == 'previous_year' || val == 'previous_3_years') {
 
-                $('#new_start_field').fadeOut("slow", function() {
-                    $('#growth_rate_field').fadeIn(300);
-                    $('#sales_target_field').fadeIn(300);
-                });
-                $('#sales_target_field').attr("readonly", true);
+                // $('#new_start_field').fadeOut("slow", function() {
+                    $('#quantity_growth_rate_field').fadeIn(300);
+                    $('#prices_increase_rate_field').fadeIn(300);
+                    $('#other_products_growth_rate_field').fadeIn(300);
+                // });
             } else if (val == 'new_start') {
-                $('#growth_rate_field').fadeOut("slow", function() {
-                    $('#sales_target_field').fadeOut(300);
-                    $('#new_start_field').fadeIn(300);
-                });
-                $('#sales_target_field').attr("readonly", true);
-            } else {
+                // $('#quantity_growth_rate_field').fadeOut("slow", function() {
+                    $('#quantity_growth_rate_field').fadeOut(300);
+                    $('#prices_increase_rate_field').fadeOut(300);
+                    $('#other_products_growth_rate_field').fadeOut(300);
 
+                // });
             }
         });
 
 
 
-        $('#growth_rate,#target_base').on('change', function() {
-            val = $('#target_base').val();
-            growth_rate = parseFloat($('#growth_rate').val()) / 100;
-            result = 0;
-            if (val == 'previous_year') {
-                result = parseFloat("{{ $sales_forecast['previous_1_year_sales'] }}") * (1 + growth_rate);
-            } else if (val == 'previous_3_years') {
-                result = parseFloat("{{ $sales_forecast['average_last_3_years'] }}") * (1 + growth_rate);
+        // $('#quantity_growth_rate,#target_base').on('change', function() {
+        //     val = $('#target_base').val();
+        //     quantity_growth_rate = parseFloat($('#quantity_growth_rate').val()) / 100;
+        //     result = 0;
+        //     if (val == 'previous_year') {
+        //         result = parseFloat("{{ $sales_forecast['previous_1_year_sales'] }}") * (1 + quantity_growth_rate);
+        //     } else if (val == 'previous_3_years') {
+        //         result = parseFloat("{{ $sales_forecast['average_last_3_years'] }}") * (1 + quantity_growth_rate);
 
-            }
-            $('#sales_target').val(result.toFixed(0));
-        });
+        //     }
+        //     $('#prices_increase_rate').val(result.toFixed(0));
+        // });
 
 
 
@@ -882,12 +737,7 @@
                 $('#number_of_products_field').fadeOut(300);
             }
         });
-        // $('.months').change(function(e) {
-        //     totalFunction('.months','.total_months',0);
-        // });
-        // $('.quarters').change(function(e) {
-        //     totalFunction('.quarters','.total_quarters',0);
-        // });
+
 
         function totalFunction(field_name, total_field_name, decimals) {
             total = 0;
@@ -910,10 +760,7 @@
 
             let oldNewProductsItems = parseFloat($('#number_of_products_field').attr('data-old-value'));
             let newProductsItems = parseFloat($('#number_of_products').val());
-// alert(oldIsChedked);
-// alert(newIsChecked);
-// alert(oldIsChedked != newIsChecked);
-// alert(oldNewProductsItems != newProductsItems);
+
             if(oldIsChedked != newIsChecked  || oldNewProductsItems != newProductsItems) {
                 // alert('hide')
                 $('#subkit_summary_report_id').addClass('hideit');

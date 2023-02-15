@@ -1,7 +1,8 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
+    @include('datatable_css')
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -34,7 +35,7 @@
                                 <!--begin: Datatable -->
                                                     {{-- @dd() --}}
 
-                                                    
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>{{ __('Select Allocation Base') }} <span
@@ -52,12 +53,12 @@
                                                     <option value="business_sector"
                                                         {{ @$allocations_setting['allocation_base'] !== 'business_sector' ?: 'selected' }}>
                                                         {{ __('Business Sectors') }}</option>
-                                                        @endif 
+                                                        @endif
                                                     @if(in_array('sales_channel',getExportableFieldsKeysAsValues($company->id)))
                                                     <option value="sales_channel"
                                                         {{ @$allocations_setting['allocation_base'] !== 'sales_channel' ?: 'selected' }}>
                                                         {{ __('Sales Channels') }}</option>
-                                                        @endif 
+                                                        @endif
                                                     @if(in_array('zone',getExportableFieldsKeysAsValues($company->id)))
 
                                                     <option value="zone"
@@ -87,7 +88,7 @@
                                                         <option value="last_3_years"
                                                             {{ @$allocations_setting['breakdown'] !== 'last_3_years' ?: 'selected' }}>
                                                             {{ __('Last 3 Years Average Breakdown') }}</option>
-                                            
+
                                                     </select>
                                                     @if ($errors->has('breakdown'))
                                                         <div class="invalid-feedback">{{ $errors->first('breakdown') }}</div>
@@ -97,7 +98,7 @@
                                         </div>
                                     </div>
                                     @endif
-                                    
+
                                     <div class="col-md-6"
                                         style="display: {{ @$allocations_setting['new_start'] == 'previous_year' || @$allocations_setting['new_start'] == 'previous_3_years'? 'block': 'none' }}"
                                         id="new_start_field">
@@ -370,7 +371,8 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
+    @include('js_datatable')
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">

@@ -1,7 +1,8 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
+    @include('datatable_css')
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -105,9 +106,12 @@
 
                                     $item_name = $product_data['item'];
 
-                                    $item_name = strstr($product_data['item'], 'Others') !== false ? 'Others' : $product_data['item'];
+                                    if (strstr($product_data['item'], 'Others') !== false) {
 
-                                    $percentage = $products_items_monthly_percentage[$item_name][$month] ?? 0;
+                                        $percentage = isset($products_items_monthly_percentage[$item_name][$month]) ?$products_items_monthly_percentage[$item_name][$month] : ($products_items_monthly_percentage['Others'][$month]??0) ;
+                                    }else {
+                                        $percentage = $products_items_monthly_percentage[$item_name][$month] ?? 0;
+                                    }
 
                                     ?>
                                     <td class="text-center"><input type="number" class="form-control percentage_{{$product_id}}" step="any" name="modified_seasonality[{{$product_data['item']}}][{{$month}}]" value="{{ number_format(($percentage*100) , 4) }}"></td>
@@ -147,7 +151,8 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
+    @include('js_datatable')
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
