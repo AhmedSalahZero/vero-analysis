@@ -351,7 +351,7 @@
                                 {{-- @dd( count($values) + 2 ) --}}
                                 @if(isset($values) && is_null($values[0]))
 
-                                <tr class="group-color text-lg-left  ">
+                                <tr class="group-color  table-active text-lg-left  ">
                                     <td colspan="{{ count($values) + 2 }}"><b class="white-text">{{ __($title) }}</b></td>
                                     @foreach ($values as $item)
                                     <td class="hidden"> </td>
@@ -400,7 +400,7 @@
                             </tr>
                             @endslot
                             @slot('table_body')
-                            <tr class="group-color text-lg-left  ">
+                            <tr class="group-color  text-lg-left  ">
                                 <td colspan="{{ count($dates ?? []) + 2  }}"><b class="white-text">{{ __('Monthly Sales') }}</b></td>
                                 @foreach ($dates as $date)
                                 <td class="hidden"> </td>
@@ -428,7 +428,7 @@
                                 </td>
                             </tr>
                             @endforeach
-                            <tr class="group-color text-lg-left  ">
+                            <tr class="group-color  text-lg-left  ">
                                 <td colspan="{{ count($dates ?? []) + 2 ?? 0 }}"><b class="white-text">{{ __('Accumulated Sales') }}</b></td>
                                 @foreach ($dates as $date)
                                 <td class="hidden"> </td>

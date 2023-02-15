@@ -19,7 +19,6 @@ use App\Http\Controllers\InventoryStatementTestController;
 use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
 use App\Http\Controllers\RoutesDefinition;
-use App\Http\Controllers\SalesGatheringController;
 use App\Http\Controllers\SalesGatheringTestController;
 use App\Http\Livewire\AdjustedCollectionDatesForm;
 use App\Models\Branch;

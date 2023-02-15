@@ -7,6 +7,20 @@
     }
 
 </style>
+
+@if(in_array('TwoDimensionalBreakdown',Request()->segments()))
+<style>
+    .secondary-row-color .dtfc-fixed-left,
+    .secondary-row-color .dtfc-fixed-right {
+        color: black !important;
+    }
+
+</style>
+@endif
+<script>
+    // alert(33)
+
+</script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
@@ -186,7 +200,7 @@
                         $percentage_per_value = $main_item_total == 0 ? 0 : ($value / $main_item_total) * 100; ?>
         <td class="text-center">
 
-            <span><b> {{ number_format($percentage_per_value, 1) . ' %  ' }}</b></span>
+            <span><b class="color-{{ getPercentageColor($percentage_per_value) }}"> {{ number_format($percentage_per_value, 1) . ' %  ' }}</b></span>
 
 
         </td>

@@ -160,16 +160,15 @@
 
                 <h2 class="text-center">{{ __('Top 50 Customers Nature Breakdown') }}</h2>
 
-
-
                 <div class="kt-portlet__body table-responsive">
-
-                    <table class="table text-center text-capitalize " style="background: #086691;color: #fff;font-weight: bold;">
+                    {{-- {{ dd($customers_natures) }} --}}
+                    <table class="table exclude-table text-center text-capitalize " style="background: #086691;color: #fff;font-weight: bold;">
                         <tr>
                             <th>nature</th>
                             <td>count</td>
                             <td>sales</td>
                         </tr>
+                        {{-- {{ dd($allFormattedWithOthers ,$customers_natures ) }} --}}
                         @foreach(getSummaryCustomerDashboardForEachType($allFormattedWithOthers , $customers_natures) as $arrKey=> $data )
                         @if($arrKey)
                         <tr>

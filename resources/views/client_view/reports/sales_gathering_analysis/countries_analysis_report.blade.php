@@ -138,7 +138,7 @@
                                     // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
                                  ?>
 
-        <tr class="group-color">
+        <tr class="group-color ">
             <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                 <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
                 <b>{{ __($zone_name) }}</b>
@@ -178,7 +178,7 @@
             @foreach ($dates as $date)
             <td class="text-center">
                 {{ number_format(($channel_section['Sales Values'][$date] ?? 0),0)   }}
-                <span class="active-text-color "><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
+                <span class="active-text-color color-{{ getPercentageColor($channel_section['Growth Rate %'][$date]??0) }}"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
             </td>
             @endforeach
             <td>{{number_format(array_sum($channel_section['Sales Values']??[]),0)}}</td>

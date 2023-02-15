@@ -120,7 +120,7 @@
                     @foreach ($final_report_data as $sales_channel_name => $zoone_data)
                     <?php $chart_data = []; ?>
 
-                    <tr class="group-color text-lg-left  ">
+                    <tr class="group-color  text-lg-left  ">
                         <td colspan="{{ count($total_sales_channels) + 1 }}"><b class="white-text">{{ __($sales_channel_name) }}</b>
                         </td>
                         @foreach ($total_sales_channels as $date => $total)
@@ -190,7 +190,7 @@
                     @slot('table_body')
                     <?php $chart_data = []; ?>
                     @foreach ($final_report_data as $sales_channel_name => $zoone_data)
-                    <tr class="group-color text-lg-left  ">
+                    <tr class="group-color  text-lg-left  ">
                         <td colspan="{{ count($total_sales_channels) + 1 }}"><b class="white-text">{{ __($sales_channel_name) }}</b></td>
                         @foreach ($total_sales_channels as $date => $total)
                         <td class="hidden"> </td>

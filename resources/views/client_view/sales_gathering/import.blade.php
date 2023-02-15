@@ -30,6 +30,7 @@
 </style>
 @endsection
 @section('content')
+
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
@@ -86,7 +87,11 @@
                     ->where('status', 'save_to_table')
                     ->where('model_name', 'SalesGatheringTest')
                     ->first(); @endphp
-                    @if(! $active_job_for_saving && cache(getShowCompletedTestMessageCacheKey($company->id)) && ! Cache(getCanReloadUploadPageCachingForCompany($company->id)))
+                    @php
+                    use Illuminate\Support\Facades\Cache;
+                    $canViewPleaseReviewMessage = ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id)) && ! Cache::get(getCanReloadUploadPageCachingForCompany($company->id));
+                    @endphp
+                    @if($canViewPleaseReviewMessage)
                     {{-- @if(! $active_job_for_saving && cache(getShowCompletedTestMessageCacheKey($company->id))) --}}
                     <h4 id="please-review-and-click-save" class="text-center alert alert-info " style="text-transform:capitalize;justify-content:center">{{ __('Please review And Click Save') }}</h4>
                     @endif
@@ -297,6 +302,7 @@
                     $('#percentage_value').html(data.totalPercentage.toFixed(2) + ' %');
                     if (parseFloat(data.totalPercentage) >= 100) {
                         $('#saving_data').html("{{ __('Parsing Data .. Please Wait') }}");
+
                         Swal.fire(
                             'Done!'
                             , '{{ __("Uploading Proccess Has Completed Successfully !") }}'
@@ -304,6 +310,8 @@
                         ).then(function() {
                             window.location.href = "{{ route('dashboard',getCurrentCompanyId()) }}"
                         })
+
+
 
                     }
                     // console.log('reload ? ' + data.reloadPage);

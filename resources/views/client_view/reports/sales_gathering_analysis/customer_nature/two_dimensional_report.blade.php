@@ -303,7 +303,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
                                     @endphp
                                     @foreach($customersNaturesActive[$mainType][$mainTypeItem] ?? [] as $iterationModalItem)
                                     <tr>
-                                        <td>
+                                        <td class="text-left">
                                             {{$iterationModalItem->customer_name}}
                                         </td>
                                         <td>
@@ -390,7 +390,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
                                     @endphp
                                     @foreach($customersNaturesDead[$mainType][$mainTypeItem] ?? [] as $iterationModalItem)
                                     <tr>
-                                        <td>
+                                        <td class="text-left">
                                             {{$iterationModalItem->customer_name}}
                                         </td>
                                         <td>

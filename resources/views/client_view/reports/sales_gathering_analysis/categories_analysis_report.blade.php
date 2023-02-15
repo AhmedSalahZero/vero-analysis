@@ -131,7 +131,7 @@
                     <?php $chart_data = []; ?>
 
                     @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
-                    <tr class="group-color">
+                    <tr class="group-color ">
                         <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                             <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
                             <b>{{ __($sales_channel_name) }}</b>
@@ -175,7 +175,8 @@
                         @foreach ($dates as $date)
                         <td class="text-center">
                             {{ number_format($channel_section[$name_of_report_item][$date] ?? 0, 0) }}
-                            <span class="active-text-color"><b>
+                            <span class="active-text-color color-{{ getPercentageColor($channel_section['Growth Rate %'][$date] ?? 0, 1) }}"><b>
+
                                     {{ ' [ ' . number_format($channel_section['Growth Rate %'][$date] ?? 0, 1) . ' %  ]' }}</b></span>
                         </td>
                         @endforeach
