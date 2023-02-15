@@ -1,13 +1,13 @@
 "use strict";
-var KTDatatablesBasicPaginations = function () {
-
+var KTDatatablesBasicPaginations = (function () {
     var initTable1 = function () {
-        var table = $('.kt_table_1');
+        var table = $(".kt_table_1");
 
         // begin first table
         table.DataTable({
+            deferRender: true,
             responsive: true,
-            pagingType: 'full_numbers',
+            pagingType: "full_numbers",
             pageLength: 25,
             scrollX: true,
             // Pagination settings
@@ -15,69 +15,48 @@ var KTDatatablesBasicPaginations = function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                'print',
-                'copyHtml5',
-                getExportKey(),
-                'csvHtml5',
-                'pdfHtml5',
-            ]
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 
     var initTableWithNoPagination = function () {
-
-        var table = $('.kt_table_with_no_pagination');
+        var table = $(".kt_table_with_no_pagination");
         // table.fixedHeader.adjust();
         // begin first table
-        table.DataTable(
-            {
-                // responsive:true ,
-                scrollY: true,
-                scrollX: true,
-                search: true,
-                pageLength: 100,
-                scrollCollapse: true,
-                fixedHeader: {
-                    header: true,
-                    headerOffset: 59
-                },
+        table.DataTable({
+            // responsive:true ,
+            deferRender: true,
+            scrollY: true,
+            scrollX: true,
+            search: true,
+            pageLength: 100,
+            scrollCollapse: true,
+            fixedHeader: {
+                header: true,
+                headerOffset: 59,
+            },
 
-                paging: false,
-                fixedColumns: {
-                    left: 1,
-                    right: 1
-                },
-                paging: false,
-                ordering: false,
-                dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+            paging: false,
+            fixedColumns: {
+                left: 1,
+                right: 1,
+            },
+            paging: false,
+            ordering: false,
+            dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-                buttons: [
-                    'print',
-                    'copyHtml5',
-                    getExportKey(),
-                    'csvHtml5',
-                    'pdfHtml5',
-
-                ]
-            });
-
-
-
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
+        });
     };
 
-
-
-
-
-
     var initTableWithNoPaginationNoCollapse = function () {
-        var table = $('.kt_table_with_no_pagination_no_collapse');
+        var table = $(".kt_table_with_no_pagination_no_collapse");
 
         // begin first tablea
         table.DataTable({
+            deferRender: true,
             // responsive: true,
             // scrollY:        true,
             // scrollX:        true,
@@ -86,7 +65,7 @@ var KTDatatablesBasicPaginations = function () {
             paging: false,
             fixedColumns: {
                 left: 1,
-                right: 1
+                right: 1,
             },
             paging: false,
             ordering: false,
@@ -95,22 +74,16 @@ var KTDatatablesBasicPaginations = function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                'print',
-                'copyHtml5',
-                getExportKey(),
-                'csvHtml5',
-                'pdfHtml5',
-            ]
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
     var initTableWithNoPaginationNoSearch = function () {
-        var table = $('.kt_table_with_no_pagination_no_search');
+        var table = $(".kt_table_with_no_pagination_no_search");
 
         // begin first table
         table.DataTable({
             // responsive: true,
-
+            deferRender: true,
             paging: false,
             ordering: false,
             searching: false,
@@ -118,44 +91,39 @@ var KTDatatablesBasicPaginations = function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                'print',
-                'copyHtml5',
-                getExportKey(),
-                'csvHtml5',
-                'pdfHtml5',
-            ]
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
     var initTableWithNoPaginationNoScroll = function () {
-        var table = $('.kt_table_with_no_pagination_no_scroll');
+        var table = $(".kt_table_with_no_pagination_no_scroll");
 
         // begin first table
         table.DataTable({
+            deferRender: true,
             // responsive: true,
             paging: false,
             ordering: false,
             searching: true,
             dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
-			<'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+				<'row'<'col-sm-12'tr>>
+				<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
             buttons: [
-                'print',
-                'copyHtml5',
+                "print",
+                "copyHtml5",
                 getExportKey(),
                 // 'excelHtml5',
-                'csvHtml5',
-                'pdfHtml5',
-            ]
+                "pdfHtml5",
+            ],
         });
     };
 
     var initTableWithNoPaginationNoScrollWithoutPdf = function () {
-        var table = $('.kt_table_with_no_pagination_no_scroll_without_pdf');
+        var table = $(".kt_table_with_no_pagination_no_scroll_without_pdf");
 
         // begin first table
         table.DataTable({
+            deferRender: true,
             // responsive: true,
             paging: false,
             ordering: false,
@@ -164,20 +132,17 @@ var KTDatatablesBasicPaginations = function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                'print',
-                'copyHtml5',
-                getExportKey()
-            ]
+            buttons: ["print", "copyHtml5", getExportKey()],
         });
     };
 
-
     var initTableWithNoPaginationNoScrollNoInfo = function () {
-        var table = $('.kt_table_with_no_pagination_no_scroll_no_info');
+        var table = $(".kt_table_with_no_pagination_no_scroll_no_info");
 
         // begin first table
         table.DataTable({
+            deferRender: true,
+
             // responsive: true,
             paging: false,
             ordering: false,
@@ -187,22 +152,16 @@ var KTDatatablesBasicPaginations = function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                'print',
-                'copyHtml5',
-                getExportKey(),
-                // 'excelHtml5',
-                'csvHtml5',
-                'pdfHtml5',
-            ]
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 
     var initTableWithNoPaginationNoScrollNoSearch = function () {
-        var table = $('.kt_table_with_no_pagination_no_scroll_no_search');
+        var table = $(".kt_table_with_no_pagination_no_scroll_no_search");
 
         // begin first table
         table.DataTable({
+            deferRender: true,
             // responsive: true,
             paging: false,
             ordering: false,
@@ -211,19 +170,11 @@ var KTDatatablesBasicPaginations = function () {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
 
-            buttons: [
-                'print',
-                'copyHtml5',
-                getExportKey(),
-                'csvHtml5',
-                'pdfHtml5',
-            ]
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
 
-
     return {
-
         //main function to initiate the module
         init: function () {
             initTable1();
@@ -235,23 +186,19 @@ var KTDatatablesBasicPaginations = function () {
             initTableWithNoPaginationNoScrollNoInfo();
             initTableWithNoPaginationNoScrollWithoutPdf();
         },
-
     };
-
-}();
+})();
 
 jQuery(document).ready(function () {
     KTDatatablesBasicPaginations.init();
 });
 function getExportKey() {
     return {
-        "extend": "excel",
-        title: '',
-        filename: 'Vero Analysis Report',
+        extend: "excel",
+        title: "",
+        filename: "Vero Analysis Report",
         customize: function (xlsx) {
-
-            exportToExcel(xlsx)
-
-        }
+            exportToExcel(xlsx);
+        },
     };
 }

@@ -44,7 +44,8 @@
 
     .dataTables_wrapper .dataTable th,
     .dataTables_wrapper .dataTable td {
-        color: #595d6e;
+        font-weight: bold;
+        color: black;
     }
 
     thead * {
@@ -108,7 +109,7 @@
                     $id = 0 ;
                     @endphp
                     @foreach ($mainItems as $mainItemName)
-                    <tr class="group-color">
+                    <tr class="group-color ">
 
                         <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                             <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
