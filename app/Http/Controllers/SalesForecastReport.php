@@ -523,7 +523,7 @@ class SalesForecastReport
                 ->whereNotIn($type, $products_used)
                 ->groupBy($type)
                 ->pluck($type)
-                ->toArray(); 
+                ->toArray();
 
                 if($noReturn)
                 {
@@ -555,10 +555,10 @@ class SalesForecastReport
                 ->groupBy($type)
                 ->pluck($type)
                 ->toArray();
-  if($noReturn)
-                {
-                    return ;
-                }
+            if($noReturn)
+            {
+                return ;
+            }
 
             return view('client_view.forecast.products_sales_targets', compact(
                 'company',
@@ -614,7 +614,7 @@ class SalesForecastReport
 
 
             $this->seasonalityFun($seasonality, $seasonality_data, $monthly_dates, $sales_target_value, $product_seasonality, $year);
-
+            // dd($new_products_seasonalities);
             // }
 
         }
@@ -711,7 +711,8 @@ class SalesForecastReport
 
 
             $products_items_monthly_percentage = [];
-            if ($modified_seasonality === null || count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? [])) - 1)) {
+            if ($modified_seasonality === null || count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? [])) )) {
+
                 $products_items_monthly_percentage =  (new SeasonalityReport)->productsItemsData($request, $company, $sales_forecast, $product_item_breakdown_data_items, $type);
                 if ($modified_seasonality === null) {
                     ModifiedSeasonality::create([
@@ -725,20 +726,21 @@ class SalesForecastReport
                     ]);
                 }
             } elseif (isset($modified_seasonality) && $modified_seasonality->use_modified_seasonality == 1) {
+
                 $products_items_monthly_percentage = $modified_seasonality->modified_seasonality;
             } elseif (isset($modified_seasonality) && $modified_seasonality->use_modified_seasonality == 0) {
+
                 $products_items_monthly_percentage = $modified_seasonality->original_seasonality;
             }
 
 
-
-
             $total = $modified_targets->use_modified_targets == 1 ? array_sum($products_items_monthly_values) : array_sum(array_column($product_item_breakdown_data, 'Sales Value'));
+
             $totals_per_month = [];
-            // dd($monthly_dates);
+
             $existing_products_targets = [] ;
-// dd();
             foreach ($product_item_breakdown_data as $key => $product_data) {
+
                 $total_existing_targets = 0;
                 $target = $modified_targets->use_modified_targets == 1 ? $products_items_monthly_values[$product_data['item']] : $product_data['Sales Value'];
                 $target_percentage = $total == 0 ? 0 : $target / $total;
@@ -749,9 +751,14 @@ class SalesForecastReport
 
                     $item_name = $product_data['item'];
 
-                    $item_name = strstr($product_data['item'], 'Others') !== false ? 'Others' : $product_data['item'];
+                    // $item_name = strstr($product_data['item'], 'Others') !== false ? 'Others' : $product_data['item'];
+                    if (strstr($product_data['item'], 'Others') !== false) {
 
-                    $percentage = $products_items_monthly_percentage[$item_name][$month] ?? 0;
+                        $percentage = isset($products_items_monthly_percentage[$item_name][$month]) ?$products_items_monthly_percentage[$item_name][$month] : ($products_items_monthly_percentage['Others'][$month]??0) ;
+                    }else {
+                        $percentage = $products_items_monthly_percentage[$item_name][$month] ?? 0;
+                    }
+
 
                     $result_per_month = $existing_target_per_product * $percentage;
                     $existing_products_targets[$product_data['item']][$date] =$result_per_month;
@@ -760,8 +767,7 @@ class SalesForecastReport
                 }
             }
 
-
-            // dd(get_defined_vars());
+ 
             // total_company_sales_target
             // dd($result);
             if ($result ==  'total_sales_target') {
@@ -786,7 +792,7 @@ class SalesForecastReport
             $totals_per_month = $totals_per_month ?? [];
 
 
-  if($noReturn)
+            if($noReturn)
             {
                 return ;
             }

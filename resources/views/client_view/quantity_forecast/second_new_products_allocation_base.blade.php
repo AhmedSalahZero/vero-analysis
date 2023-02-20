@@ -28,7 +28,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3>
-                            {{ __('New Products Item Sales Annual Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($product_seasonality->sum('sales_target_value')) }}
+                            {{ __('New Products Item Sales Annual Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($product_seasonality_total) }}
                         </h3>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                                 <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
                                 @foreach ($product_seasonality as $index=>$product)
                                     <th style="width: 8%">{{ $product->name }}</th>
-                                    <th class="sales_target_total" data-index="{{ $index }}" data-value="{{ $product->sales_target_value ?? 0 }}" >{{ __('Sales Target [ ') . number_format($product->sales_target_value ?? 0) . ' ]' }}
+                                    <th class="sales_target_total" data-index="{{ $index }}" data-value="{{ ($product->sales_target_value*$product->sales_target_quantity) ?? 0 }}" >{{ __('Sales Target [ ') . number_format(($product->sales_target_value*$product->sales_target_quantity) ?? 0) . ' ]' }}
                                     </th>
                                 @endforeach
 
@@ -99,7 +99,7 @@
                                                 class="sales_target_percentage_{{ $product_name }} form-control sales_target_percentage_class">
                                         </td>
                                         <td class="text-center">
-                                            <input type="hidden" name="totals" value="{{ $product_seasonality->sum('sales_target_value') ?? 0 }}">
+                                            <input type="hidden" name="totals" value="{{ $product_seasonality_total ?? 0 }}">
                                             {{-- name="sales_target_value[]"  value="{{@$product_seasonality[$key]->sales_target_value}}" --}}
                                             <input type="number" step="any" data-index="{{ $index2  }}" data-column="{{ $key_for_new_items }}" placeholder="{{ __('Insert Value') }}"
                                                 class="sales_target_value_{{ $product_name }} form-control sales_values_class">
@@ -152,7 +152,7 @@
 
     @foreach ($product_seasonality as $product)
         <?php $product_name = str_replace(' ', '_', strtolower($product->name));
-        $value = $product->sales_target_value; ?>
+        $value = ($product->sales_target_value*$product->sales_target_quantity); ?>
 
         <script>
             $(document).ready(function() {

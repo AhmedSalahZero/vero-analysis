@@ -45,6 +45,7 @@
                     @slot('table_body')
 
                         <?php $key=0; $product_seasonality = count($product_seasonality)>0 ? $product_seasonality : old() ;?>
+
                         @for ($number = 1; $number <= $sales_forecast->number_of_products; $number++)
                             <tr>
 
@@ -57,18 +58,19 @@
                                     </div>
                                 </td>
                                 @if ($has_product_item == true)
-                                    <?php $product_id = ($product_seasonality[$key]->product_id)??(old('products')[$key]??''); ?>
+                                    <?php $product_id = ($product_seasonality[$key]->product_id)??(old('products')[$key]??'');     ?>
+
                                     <td class="text-center">
                                         <div class="kt-input-icon">
                                             <div class="input-group date validated">
                                                 <select name="products[]" class="form-control products" >
                                                     <option value=""  >{{ __('Select') }}</option>
                                                     @foreach ($products as $product)
-                                                    @if($product->category)
-                                                        <option value="{{$product->id}}"
-                                                        data-name="{{$product->category->name}}" data-id="{{$product->category->id}}"
-                                                         {{( $product_id != $product->id ) ?'': "selected" }} >{{ $product->name }}</option>
-                                                    @endif
+                                                        @if(isset($product->category))
+                                                            <option value="{{$product->id}}" {{( $product_id != $product->id ) ?'': "selected" }}
+                                                            data-name="{{$product->category->name}}" data-id="{{$product->category->id}}"
+                                                            >{{ $product->name }}</option>
+                                                        @endif
                                                     @endforeach
 
                                                 </select>

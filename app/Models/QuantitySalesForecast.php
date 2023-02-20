@@ -28,6 +28,7 @@ class QuantitySalesForecast extends Model
         'last_3_years_seasonality' => 'array',
         'others_products_previous_year' => 'array',
         'others_products_previous_3_year' => 'array',
+        'forecasted_sales' => 'array',
     ];
 
     // Company Scoop

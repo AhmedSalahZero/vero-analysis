@@ -24,7 +24,7 @@
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    <?php $total_new_items_targets = array_sum($sales_targets_values); ?>
+                    <?php $total_new_items_targets = array_sum($total_monthly_targets['new']); ?>
                     <h2>
                         {{ __('New Products Items Sales Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($total_new_items_targets) }}
                     </h2>
@@ -47,6 +47,7 @@
                         $percentages = [];
                         sortTwoDimensionalArr($sales_targets_values);
                     @endphp
+                        <?php $total_new_items_targets = array_sum($total_monthly_targets['new']);?>
                         @foreach ($sales_targets_values as $base_vame => $target)
                             <?php $percentages[$base_vame] = $total_new_items_targets == 0 ? 0 : ($target / $total_new_items_targets) * 100; ?>
                             <tr>
@@ -80,7 +81,8 @@
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    <?php $existing_items_target = $sales_forecast->sales_target - $total_new_items_targets; ?>
+                     {{-- //$existing_items_target = $sales_forecast->sales_target - $total_new_items_targets;  --}}
+                    <?php $existing_items_target =array_sum($total_monthly_targets['existing']) ?>
                     <h2>
                         {{ __('Existing Products Items Sales Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($existing_items_target) }}
                     </h2>
