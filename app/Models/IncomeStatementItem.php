@@ -307,6 +307,29 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 			];
 		}
 	}
+
+	public static function _compareBetweenTwoItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, string $firstReportType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $secondReportType): array
+	{
+		// dd(get_defined_vars());
+		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType);
+		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
+		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
+		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
+		// dd($firstIntervalDate);
+		// dd($firstItems, $secondItems);
+		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
+			return [
+				$secondReportType . '#' . $secondIntervalDate => sum_each_key($secondItems),
+				$firstReportType . '#' . $firstIntervalDate => sum_each_key($firstItems),
+			];
+		} else {
+			return [
+				$firstReportType . '#' . $firstIntervalDate => sum_each_key($firstItems),
+				$secondReportType . '#' . $secondIntervalDate => sum_each_key($secondItems)
+			];
+		}
+	}
+
 	public static function getItemsForInterval(Collection $items, array $dates, $intervalName): array
 	{
 		// $items must be a collection 
@@ -318,7 +341,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		$filteredItems = [];
 
 		foreach ($items as $item) {
-			$payload = json_decode($item->payload);
+			$payload = (array)json_decode($item->payload);
 			foreach ($payload as $payloadDate => $payloadItem) {
 				$payloadDateFormatted = Carbon::make($payloadDate);
 				if ($intervalName == 'annually' && yearInArray($payloadDate, $dates)) {

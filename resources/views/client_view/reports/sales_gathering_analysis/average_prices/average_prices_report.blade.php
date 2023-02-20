@@ -124,10 +124,7 @@
         {{-- <?php $chart_data = [];?> --}}
 
         @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
-        <?php
-                                    // $row_name = str_replace(' ', '_', $sales_channel_name);
-                                    // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
-                                    ?>
+
 
         <tr class="group-color ">
             <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">

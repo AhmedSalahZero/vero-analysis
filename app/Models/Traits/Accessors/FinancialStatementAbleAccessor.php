@@ -56,4 +56,8 @@ trait FinancialStatementAbleAccessor
 	{
 		return $this->subItems()->wherePivot('sub_item_type', 'forecast')->count() > 1;
 	}
+	public function getSubItems(int $financialStatementAbleItemId, string $subItemType, string $subItemName = ''): Collection
+	{
+		return $this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->get();
+	}
 }

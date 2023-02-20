@@ -194,12 +194,13 @@ Route::middleware([])->group(function () {
 					Route::any('/income-statement-revenue-dashboard', 'HomeController@incomeStatementDashboard')->name('income.statement.dashboard');
 					Route::get('/HomePage', 'HomeController@welcomePage')->name('viewHomePage');
 					Route::any('/breakdown', 'HomeController@dashboardBreakdownAnalysis')->name('dashboard.breakdown');
-					Route::any('/income-statement-breakdown-dashboard/{incomeStatement?}', 'HomeController@dashboardBreakdownIncomeStatementAnalysis')->name('dashboard.breakdown.incomeStatement');
+					Route::any('/income-statement-breakdown-dashboard/{reportType}/{incomeStatement?}', 'HomeController@dashboardBreakdownIncomeStatementAnalysis')->name('dashboard.breakdown.incomeStatement');
 					Route::any('/customers', 'HomeController@dashboardCustomers')->name('dashboard.customers');
 					Route::any('/salesPerson', 'HomeController@dashboardSalesPerson')->name('dashboard.salesPerson');
 					Route::any('/salesDiscount', 'HomeController@dashboardSalesDiscount')->name('dashboard.salesDiscount');
 					Route::any('/intervalComparing', 'HomeController@dashboardIntervalComparing')->name('dashboard.intervalComparing');
-					Route::any('/incomeStatementIntervalComparing', 'HomeController@dashboardIncomeStatementIntervalComparing')->name('dashboard.intervalComparing.incomeStatement');
+					Route::any('/incomeStatementIntervalComparing/{subItemType}', 'HomeController@dashboardIncomeStatementIntervalComparing')->name('dashboard.intervalComparing.incomeStatement');
+					Route::any('/variousIncomeStatementComparing/{subItemType}', 'HomeController@dashboardIncomeStatementVariousComparing')->name('dashboard.various.incomeStatement');
 				});
 
 

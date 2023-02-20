@@ -170,6 +170,8 @@ class FinancialStatementRepository implements IBaseRepository
 				$dataWithRelations->add($subItem);
 			});
 		});
+
+
 		return [
 			'data' => $dataWithRelations,
 			"draw" => (int)Request('draw'),

@@ -460,7 +460,7 @@
 
             });
             row += '</select>';
-            console.log(row);
+
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();
@@ -498,7 +498,7 @@
 
             });
             row += '</select>';
-            // console.log(row);
+
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();
@@ -539,7 +539,7 @@
 
                 });
                 row += '</select>';
-                console.log(row);
+
                 $('#sales_channels').html('');
                 $('#sales_channels').append(row);
                 reinitializeSelect2();
@@ -554,7 +554,7 @@
 
                 });
                 row += '</select>';
-                // console.log(row);
+
                 $('#products').html('');
                 $('#products').append(row);
                 reinitializeSelect2();
@@ -598,7 +598,7 @@
 
                 });
                 row += '</select>';
-                // console.log(row);
+
                 $('#sales_channels').html('');
                 $('#sales_channels').append(row);
                 reinitializeSelect2();
@@ -613,7 +613,6 @@
 
                 });
                 row += '</select>';
-                // console.log(row);
                 $('#products').html('');
                 $('#products').append(row);
                 reinitializeSelect2();

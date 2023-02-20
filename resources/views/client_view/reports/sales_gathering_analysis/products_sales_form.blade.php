@@ -172,7 +172,6 @@
 
             });
             row += '</select>';
-            console.log(row);
             $('#products').html('');
             $('#products').append(row);
 

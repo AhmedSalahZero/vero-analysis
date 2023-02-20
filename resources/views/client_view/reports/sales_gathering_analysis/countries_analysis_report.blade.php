@@ -133,10 +133,7 @@
         <?php $chart_data = [];?>
 
         @if ($zone_name != 'Total' && $zone_name != 'Growth Rate %')
-        <?php
-                                    // $row_name = str_replace(' ', '_', $zone_name);
-                                    // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
-                                 ?>
+
 
         <tr class="group-color ">
             <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">

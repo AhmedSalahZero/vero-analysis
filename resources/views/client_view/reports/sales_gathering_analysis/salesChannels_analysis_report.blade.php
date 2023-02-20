@@ -139,10 +139,7 @@
         <?php $chart_data = [];?>
 
         @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
-        <?php
-                                    // $row_name = str_replace(' ', '_', $sales_channel_name);
-                                    // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
-                                    ?>
+
 
         <tr class="group-color ">
             <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
@@ -297,9 +294,7 @@
 
         // Add data
         chart.data = $('#{{ $name_of_sales_channel }}_data').data('total');
-        if ("{{ $name_of_sales_channel }}" == 'Sales_Channel_Sales_Percentages') {
-            console.log($('#{{ $name_of_sales_channel }}_data').data('total'));
-        }
+
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
         // Create axes
         var dateAxis = chart.xAxes.push(new am4charts.DateAxis());

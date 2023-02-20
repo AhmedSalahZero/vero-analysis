@@ -49,10 +49,12 @@ trait FinancialStatementAbleItemRelation
 			'financial_statement_able_id'
 		)
 			// ->wherePivot('financial_statement_able_id', $financialStatementAbleId)
-			->withPivot(['payload', 'company_id', 'creator_id']);
+			->withPivot(['payload', 'sub_item_type', 'company_id', 'creator_id']);
 	}
-	public function withMainRowsPivotFor(int $financialStatementAbleId): BelongsToMany
+	public function withMainRowsPivotFor(int $financialStatementAbleId, string $subItemType): BelongsToMany
 	{
-		return $this->mainRowsPivot()->wherePivot('financial_statement_able_id', $financialStatementAbleId);
+
+		return $this->mainRowsPivot()->wherePivot('financial_statement_able_id', $financialStatementAbleId)
+			->wherePivot('sub_item_type', $subItemType);
 	}
 }

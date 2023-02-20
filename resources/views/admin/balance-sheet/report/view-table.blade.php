@@ -1269,8 +1269,7 @@ $tableId = 'kt_table_1';
                     let salesPercentage = salesRevenueValue ? mainRowValue / salesRevenueValue * 100 : 0;
                     $('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"]').find('input[data-date="' + date + '"]').val(salesPercentage);
                     $('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"]').find('td.date-' + date).html(number_format(salesPercentage, 2) + ' %');
-                    //
-                    // console.log(mainRow);
+
                     totalPercentage = mainRow.find('.total-row').html();
 
                     if (totalPercentage) {

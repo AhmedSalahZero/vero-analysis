@@ -18,14 +18,14 @@ trait FinancialStatementMutator
 	}
 	public function storeMainItems(Request $request)
 	{
-		foreach (FinancialStatementItem::get() as $financialStatementItem) {
+		// foreach (FinancialStatementItem::get() as $financialStatementItem) {
 
-			$this->withMainItemsFor($financialStatementItem->id)->attach($financialStatementItem->id, [
-				'company_id' => \getCurrentCompanyId(),
-				'creator_id' => Auth()->user()->id,
-				'created_at' => now()
-			]);
-		}
+		// 	$this->withMainItemsFor($financialStatementItem->id)->attach($financialStatementItem->id, [
+		// 		'company_id' => \getCurrentCompanyId(),
+		// 		'creator_id' => Auth()->user()->id,
+		// 		'created_at' => now()
+		// 	]);
+		// }
 		return $this;
 	}
 	public function storeReport(Request $request)

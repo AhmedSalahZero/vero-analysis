@@ -34,6 +34,14 @@
             return 2000;
         }
 
+        function* myNextAll(e, selector) {
+            while (e = e.nextElementSibling) {
+                if (e.matches(selector)) {
+                    yield e;
+                }
+            }
+        }
+
         function covertStringToClass(str) {
             return str.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
         }
@@ -294,6 +302,8 @@
 
         }
 
+
+
         .dtfc-fixed-right {}
 
         #to__left:hover {}
@@ -469,8 +479,6 @@
         function countHeadersInPage(selector, appendSelector) {
 
             let elements = document.querySelectorAll(selector);
-            // console.log(appendSelector);
-            // console.log(document.querySelector(appendSelector));
             document.querySelector(appendSelector).setAttribute('data-value', elements.length);
         }
 
@@ -512,7 +520,7 @@
     <!-- begin:: Header Mobile -->
     <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
         <div class="kt-header-mobile__logo">
-            <a href="demo4/index.html">
+            <a href="#">
                 <img height="65px" alt="Logo" src="{{url('assets/media/logos/logo_va.png')}}" />
             </a>
         </div>

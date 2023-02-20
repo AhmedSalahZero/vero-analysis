@@ -273,12 +273,12 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
 
 
         @endphp
-        <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{str_replace(["/" ,' ','&' ] , '-' , $mainTypeItem) . str_replace(["/" ,' ','&'] , '-' , $mainType)}}">
+        <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{convertStringToClass($mainTypeItem) . convertStringToClass($mainType)}}">
                 {{ $value }}
 
             </button>
 
-            <div class="modal fade modal-hidden-class" id="kt_modal_{{str_replace(["/" ,' ' ,'&'] , '-' , $mainTypeItem) . str_replace(["/" ,' ' ,'&'] , '-' , $mainType)}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal fade modal-hidden-class" id="kt_modal_{{convertStringToClass($mainTypeItem) . convertStringToClass($mainType)}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -359,12 +359,12 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
         $percentage_per_value = $totalPerType == 0 ? 0 : ($value / $totalPerType) * 100;
         @endphp
 
-        <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{str_replace(["/" ,' ','&' ] , '-' , $mainTypeItem) . str_replace(["/" ,' ','&'] , '-' , $mainType)}}">
+        <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{convertStringToClass($mainTypeItem) .  convertStringToClass($mainType)}}">
                 {{ $value }}
 
             </button>
 
-            <div class="modal fade modal-hidden-class" id="kt_modal_{{str_replace(["/" ,' ' ,'&'] , '-' , $mainTypeItem) . str_replace(["/" ,' ' ,'&'] , '-' , $mainType)}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal fade modal-hidden-class" id="kt_modal_{{ convertStringToClass($mainTypeItem) . convertStringToClass($mainType) }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">

@@ -226,9 +226,7 @@
 
         // Add data
         chart.data = $('#{{ $name_of_category }}_data').data('total');
-        if ("{{ $name_of_category }}" == 'Categories_Sales_Percentages') {
-            console.log($('#{{ $name_of_category }}_data').data('total'));
-        }
+
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
         // Create axes
         var dateAxis = chart.xAxes.push(new am4charts.DateAxis());

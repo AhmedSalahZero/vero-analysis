@@ -83,8 +83,6 @@ class CustomerNatureCashing
 
 				$RepeatingCustomers = DB::select(
 					DB::raw(
-
-
 						"
         select  customer_name , " . $typeToCache . " ,count(*) as no_customers, sum(case when Year = " . $this->year . " then net_sales_value else 0 end ) total_sales  from sales_gathering
           " . $forceIndex . "

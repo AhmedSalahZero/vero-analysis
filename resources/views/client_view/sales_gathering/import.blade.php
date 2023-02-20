@@ -314,7 +314,6 @@
 
 
                     }
-                    // console.log('reload ? ' + data.reloadPage);
                     if (data.reloadPage) {
                         // window.location.reload();
                     }

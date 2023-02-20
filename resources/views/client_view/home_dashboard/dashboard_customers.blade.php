@@ -286,14 +286,14 @@
 
                         @if ($countVals > 0)
 
-                        <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{str_replace(["/" ,' ' ] , '-' , $staticName)}}">
+                        <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{convertStringToClass($staticName)}}">
                                 {{__($staticName.' - Customers')}}
                             </button>
 
 
 
                             @if ($countVals > 0)
-                            <div class="modal fade" id="kt_modal_{{str_replace(["/" ,' ' ] , '-' , $staticName)}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                            <div class="modal fade" id="kt_modal_{{convertStringToClass($staticName)}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -382,7 +382,7 @@ $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
     <td class="text-center">{{number_format($totalSaleForCustomerType,0)}}</td>
     <td class="text-center">{{ $totalSales ? number_format(($totalSaleForCustomerType / $totalSales)*100 , 1 ) . ' %' : 0 }}</td>
     @if ($countVals > 0)
-    <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{str_replace(["/" .' ' ] , '-' , $name)}}"> {{__($name.' - Customers')}}</button></td>
+    <td class="text-center"><button type="button" class="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_{{convertStringToClass($name)}}"> {{__($name.' - Customers')}}</button></td>
     @else
     <td class="text-center"><b>{{__('No Customers')}}</b></td>
     @endif

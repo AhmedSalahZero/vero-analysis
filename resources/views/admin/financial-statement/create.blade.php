@@ -145,7 +145,7 @@
             let form = document.getElementById('form-id');
             var formData = new FormData(form);
             $('.save-form').prop('disabled', true);
-            // console.log(form);
+
             $.ajax({
                 cache: false
                 , contentType: false
