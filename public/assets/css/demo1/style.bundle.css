@@ -9742,8 +9742,8 @@ code {
   padding-top: 1rem;
   padding-bottom: 1rem; }
 
-.table tr.table-active td, .table tr.table-active th {
-  color: #ffffff; }
+/* .table tr.table-active td, .table tr.table-active th {
+  color: #ffffff; } */
 
 .table.table-head-noborder thead th, .table.table-head-noborder thead td {
   border-top: 0; }
@@ -10536,7 +10536,7 @@ canvas {
   -ms-user-select: none; }
 
 /* Customize website's scrollbar like Mac OS */
-/* 
+/*
 ::-webkit-scrollbar {
     background-color:#f6f6f6;
     width:14px;

@@ -83,7 +83,7 @@ class SeasonalityReport
         $products_items_monthly_percentage = [];
 
 
-        if ($modified_seasonality === null || (count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? []) )-1)   )) {
+        if ($modified_seasonality === null || (count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? []) ))   )) {
 
             $products_items_monthly_percentage =  $this->productsItemsData($request, $company, $sales_forecast, $product_item_breakdown_data_items,$type);
             if ($modified_seasonality === null) {
@@ -130,6 +130,7 @@ class SeasonalityReport
             'use_modified_seasonality' => $request->use_modified_seasonality??0,
         ]);
         $modified_seasonality->save();
+
         toastr('Seasonality Updated','success');
         return redirect()->route('products.allocations',$company);
     }
@@ -187,6 +188,7 @@ class SeasonalityReport
                             return ($total == 0 ) ? 0 :  ((($net_sales_value??0)/$total)) ;
                         });
                     })->toArray();
+
                 $others =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%M') as gr_date ,id,(CASE WHEN net_sales_value < 0 THEN 0 ELSE net_sales_value END) as net_sales_value
                     FROM sales_gathering
@@ -194,12 +196,12 @@ class SeasonalityReport
 
                     ORDER BY id "
                     )))->whereNotIn($type,$products)
-                    ->groupBy('gr_date')->map(function($sub_item) {
-                         return  $sub_item->sum('net_sales_value'); ;
+                    ->groupBy('gr_date')->map(function($sub_item)  {
+
+                        return  $sub_item->sum('net_sales_value');
 
                  })->toArray();
             }
-
             $others_total = array_sum($others);
             $mainData_data['Others'] = collect($others)->map(function($sub_item) use($others_total){
                 return  ($others_total == 0 ) ? 0 :  ((($sub_item??0)/$others_total)) ;

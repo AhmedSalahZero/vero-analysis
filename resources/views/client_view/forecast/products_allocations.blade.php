@@ -1,7 +1,8 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
+    @include('datatable_css')
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -41,7 +42,7 @@
                             <div class="kt-portlet__body">
 
                                 <!--begin: Datatable -->
-{{-- @dd($new_products_totals) --}}
+
                                 <x-table
                                     :tableTitle="__('New Product '.$name.' Monthly Sales Target Year ') . date('Y',strtotime($sales_forecast->start_date))"
                                     :tableClass="'kt_table_with_no_pagination_no_scroll'">
@@ -113,7 +114,7 @@
                 <br>
                 <br>
 
-        
+
 
                 <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
@@ -126,19 +127,19 @@
                         </tr>
                     @endslot
                     @slot('table_body')
-                        <?php 
+                        <?php
                         $totals_per_month = [];
 
-                        ?> 
+                        ?>
 
-                        {{-- @dd() --}}
+                        {{-- @dd($existing_products_targets) --}}
                         @foreach ($existing_products_targets as $item => $product_data)
                             <?php $total_existing_targets = 0; ?>
                             <tr>
                                 <td> <b> {{ $item ?? '-' }}</b></td>
 
                                 @foreach ($product_data as $date => $value)
-                            
+
                                     <?php
                                         $totals_per_month[$date] = $value + ($totals_per_month[$date] ?? 0);
                                         $total_existing_targets += $value;
@@ -177,7 +178,7 @@
                     <div class="kt-portlet kt-portlet--mobile">
 
                         <div class="kt-portlet__body">
-{{-- @dd($totals_per_month) --}}
+
                             <!--begin: Datatable -->
                             <x-table :tableTitle="__('Total Company Sales Target')"
                                 :tableClass="'kt_table_with_no_pagination_no_scroll'">
@@ -274,7 +275,8 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
+    @include('js_datatable')
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">

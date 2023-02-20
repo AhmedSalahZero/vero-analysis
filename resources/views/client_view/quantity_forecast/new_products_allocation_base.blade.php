@@ -28,7 +28,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3>
-                            {{ __('New Products Item Sales Annual Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($product_seasonality->sum('sales_target_value')) }}
+                            {{ __('New Products Item Sales Annual Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($product_seasonality_total) }}
                         </h3>
                     </div>
                 </div>
@@ -45,10 +45,11 @@
                     <x-table :tableTitle="__('New Product Items Table')" :tableClass="(! ($sales_forecast->add_new_products || $sales_forecast->add_new_products > 0)) ? 'small_table_class' : '' . 'kt_table_with_no_pagination ' ">
                         @slot('table_header')
                             <tr class="table-active text-center">
+
                                 <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
                                 @forelse ($product_seasonality as $index=> $product)
                                     <th style="width: 8%">{{ $product->name }}</th>
-                                    <th class="sales_target_total" data-index="{{ $index }}" data-value="{{ $product->sales_target_value ?? 0 }}">{{ __('Sales Target [ ') . number_format($product->sales_target_value ?? 0) . ' ]' }}
+                                    <th class="sales_target_total" data-index="{{ $index }}" data-value="{{(($product->sales_target_value*$product->sales_target_quantity) ?? 0) }}">{{ __('Sales Target [ ') . number_format(($product->sales_target_value*$product->sales_target_quantity) ?? 0) . ' ]' }}
                                     </th>
                                      @empty
 
@@ -106,7 +107,7 @@
                                         </td>
                                         <td class="text-center">
                                             {{-- salah --}}
-                                            <input type="hidden" name="totalsss" value="{{ $product_seasonality->sum('sales_target_value') ?? 0 }}">
+                                            <input type="hidden" name="totalsss" value="{{ ($product->sales_target_value*$product->sales_target_quantity) ?? 0 }}">
                                             <input
                                             {{-- @if($type == 'new')
                                             name="allocation_base_data_existing[{{ $product->name }}][{{ $item }}][existing_custom]"
@@ -166,7 +167,7 @@
 
     @foreach ($product_seasonality as $product)
         <?php $product_name = str_replace(' ', '_', strtolower($product->name));
-        $value = $product->sales_target_value; ?>
+        $value = $product->sales_target_value*$product->sales_target_quantity; ?>
 
         <script>
             $(document).ready(function() {

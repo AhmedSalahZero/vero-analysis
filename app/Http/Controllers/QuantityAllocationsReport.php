@@ -9,7 +9,7 @@ use App\Models\QuantityAllocationSetting;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\QuantityExistingProductAllocationBase;
-use App\Models\ModifiedSeasonality;
+use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityModifiedTarget;
 use App\Models\QuantityNewProductAllocationBase;
 use App\Models\Product;
@@ -144,6 +144,8 @@ class QuantityAllocationsReport
         $allocations_base_row = QuantityNewProductAllocationBase::company()->first();
 
         $product_seasonality = QuantityProductSeasonality::company()->get();
+        $product_seasonality_total = QuantityProductSeasonality::select(DB::raw('sum(sales_target_value * sales_target_quantity) as total'))->first()->total;
+
         $allocation_bases_items =   SalesGathering::company()
             ->whereNotNull($allocation_base)
             ->where($allocation_base, '!=', '')
@@ -159,7 +161,7 @@ class QuantityAllocationsReport
         }
         return view('client_view.quantity_forecast.new_products_allocation_base', compact(
             'company',
-            'sales_forecast',
+            'sales_forecast','product_seasonality_total',
             'allocation_bases_items',
             'product_seasonality',
             'allocation_base',
@@ -195,6 +197,7 @@ class QuantityAllocationsReport
             return redirect()->route('new.product.seasonality.quantity', $company);
         }
         $existing_allocations_base = QuantityExistingProductAllocationBase::company()->first();
+
         $allocations_base_row = QuantityNewProductAllocationBase::company()->first();
         $sales_forecast = QuantitySalesForecast::company()->first();
         $product_seasonality = QuantityProductSeasonality::company()->get();
@@ -207,7 +210,7 @@ class QuantityAllocationsReport
         $allocations = $allocations_base_row->allocation_base_data ?? [];
         foreach ($allocations as $product_item_name => $item_data) {
             $product = $product_seasonality->where('name', $product_item_name)->first();
-            $sales_target_value = ($product->sales_target_value ?? 0);
+            $sales_target_value = ($product->sales_target_value*$product->sales_target_quantity ?? 0);
 
             foreach ($item_data as $base => $value) {
                 $type = array_key_first($value);
@@ -219,7 +222,6 @@ class QuantityAllocationsReport
             }
         }
         arsort($sales_targets_values);
-
 
         $breakdown_base_data = [];
         $last_3_years_breakdown_base_data = [];
@@ -234,6 +236,9 @@ class QuantityAllocationsReport
             $request['end_date'] = $sales_forecast->previous_year . '-12-31';
         }
         $breakdown_base_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
+
+        $total_monthly_targets  = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'total_sales_target_data');
+
         if ($allocations_setting->breakdown == 'new_breakdown_quarterly') {
             $total_monthly_targets  = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'array');
 
@@ -268,6 +273,7 @@ class QuantityAllocationsReport
         return view('client_view.quantity_forecast.existing_products_allocation_base', compact(
             'company',
             'sales_forecast',
+            'total_monthly_targets',
             'existing_allocations_base',
             'allocation_base',
             'allocations_base_row',
@@ -441,7 +447,7 @@ class QuantityAllocationsReport
     {
         $start_date = null ;
         $end_date = null ;
-        $modified_seasonality = ModifiedSeasonality::company()->first();
+        $modified_seasonality = QuantityModifiedSeasonality::company()->first();
         $allocation_setting = QuantityAllocationSetting::company()->first();
         $sales_forecast = QuantitySalesForecast::company()->first();
         // Top 50 + Chosen Others => Product_items
@@ -477,16 +483,18 @@ class QuantityAllocationsReport
         } else {
             $sales_targets = $existing_sales_targets;
         }
-        $modified_seasonality = ModifiedSeasonality::company()->first();
+        $modified_seasonality = QuantityModifiedSeasonality::company()->first();
         $seasonality = $modified_seasonality->use_modified_seasonality == 1 ? $modified_seasonality->modified_seasonality       : $modified_seasonality->original_seasonality;
 
-        $modified_targets = QuantityModifiedTarget::company()->first();
+        // $modified_targets = QuantityModifiedTarget::company()->first();
 
-        $use_modified_targets = $modified_targets->use_modified_targets;
-        $products_modified_targets = $modified_targets->products_modified_targets;
+        // $use_modified_targets = $modified_targets->use_modified_targets;
+        // $products_modified_targets = $modified_targets->products_modified_targets;
+        $products_modified_targets  = array_combine(array_column($sales_forecast->forecasted_sales,'item'),array_column($sales_forecast->forecasted_sales,'Forecasted Sales Value'));
+
         // Others Index
         $input = preg_quote('Others', '~'); // don't forget to quote input string!
-        $others_name_index = preg_grep('~' . $input . '~', array_keys($modified_targets->sales_targets_percentages?: []));
+        $others_name_index = preg_grep('~' . $input . '~', array_keys($products_modified_targets?: []));
         $others_name_index = Arr::first($others_name_index);
 
         // Check if the calculation on sales value OR net sales
@@ -503,63 +511,67 @@ class QuantityAllocationsReport
         )))
             ->where($allocation_base, '!=', '')
             ->groupBy($allocation_base)
-            ->map(function ($item, $name) use ($type, $used_field, $products_items, $sales_targets, $use_modified_targets, $products_modified_targets, $others_name_index) {
+            ->map(function ($item, $name) use ($type, $used_field, $products_items, $sales_targets , $products_modified_targets, $others_name_index) {
                 $total = $item->sum($used_field);
                 $sales_target = ($sales_targets[$name] ?? 0);
                 //1- product_items
 
-                $product_items_top = $item->whereIn($type, $products_items)->groupBy($type)->map(function ($sub_item, $product_item) use ($total, $used_field, $sales_target, $use_modified_targets, $products_modified_targets) {
-                    if (($use_modified_targets == 1 && $products_modified_targets[$product_item]['percentage'] !== null && $products_modified_targets[$product_item]['percentage'] !== 0) || ($use_modified_targets == 0)) {
+                $product_items_top = $item->whereIn($type, $products_items)->groupBy($type)->map(function ($sub_item, $product_item) use ($total, $used_field, $sales_target, $products_modified_targets) {
+                    // if (($use_modified_targets == 1 && $products_modified_targets[$product_item]['percentage'] !== null && $products_modified_targets[$product_item]['percentage'] !== 0) || ($use_modified_targets == 0)) {
                         $sales_value = $sub_item->sum($used_field);
 
                         $product_item_percentage = ($total == 0) ? 0 : ((($sales_value ?? 0) / $total));
                         return ($product_item_percentage * $sales_target);
-                    } else {
-                        return 0;
-                    }
+                    // }
+                    // else {
+                    //     return 0;
+                    // }
                 });
                 //2- Others
                 $others = $item->whereNotIn($type, $products_items)->groupBy($type)->map(function ($sub_item) use ($used_field) {
                     return $sub_item->sum($used_field);
                 });
                 $others_percentage = ($total == 0) ? 0 : (array_sum($others->toArray()) / $total);
-                if (isset( $products_modified_targets[$others_name_index]) && ($use_modified_targets == 1 && $products_modified_targets[$others_name_index]['percentage'] !== null && $products_modified_targets[$others_name_index]['percentage']??0 !== 0) || ($use_modified_targets == 0)) {
+                // if (isset( $products_modified_targets[$others_name_index]) && ($use_modified_targets == 1 && $products_modified_targets[$others_name_index]['percentage'] !== null && $products_modified_targets[$others_name_index]['percentage']??0 !== 0) || ($use_modified_targets == 0)) {
                     $product_items_top["Others " . count($others)] = $others_percentage * $sales_target;
-                } else {
-                    $product_items_top["Others " . count($others)] = 0;
-                }
+                // } else {
+                //     $product_items_top["Others " . count($others)] = 0;
+                // }
                 return $product_items_top;
             })
             ->toArray();
 
 
-        if ($use_modified_targets == 1) {
-            $result = [];
-            foreach ($product_items_percentages as $base_name => $base_products_items) {
-                $total_base_products_items = array_sum($base_products_items);
-                foreach ($base_products_items as $product_item => $value) {
-                    $percentage = ($total_base_products_items == 0) ? $total_base_products_items : $value / $total_base_products_items;
-                    $result[$base_name][$product_item] = ($sales_targets[$base_name] ?? 0) * $percentage;
-                }
-            }
-            $product_items_percentages = $result;
-        }
+        // if ($use_modified_targets == 1) {
+        //     $result = [];
+        //     foreach ($product_items_percentages as $base_name => $base_products_items) {
+        //         $total_base_products_items = array_sum($base_products_items);
+        //         foreach ($base_products_items as $product_item => $value) {
+        //             $percentage = ($total_base_products_items == 0) ? $total_base_products_items : $value / $total_base_products_items;
+        //             $result[$base_name][$product_item] = ($sales_targets[$base_name] ?? 0) * $percentage;
+        //         }
+        //     }
+        //     $product_items_percentages = $result;
+        // // }
 
 
 
 
- $newProductAllocations = QuantityNewProductAllocationBase::company()->first() ;
+        $newProductAllocations = QuantityNewProductAllocationBase::company()->first() ;
         $new_allocation_bases_names = $newProductAllocations ? $newProductAllocations->new_allocation_bases_names : [];
 
         if (isset($new_allocation_bases_names) && count($new_allocation_bases_names) > 0) {
+            // Change
 
-            $target_percentages = $modified_targets->sales_targets_percentages;
+
+            // $target_percentages = $modified_targets->sales_targets_percentages;
+            $target_percentages  = array_combine(array_column($sales_forecast->forecasted_sales,'item'),array_column($sales_forecast->forecasted_sales,'Sales %'));
 
 
             foreach ($new_allocation_bases_names as $key => $base_name) {
                 $sales_target_per_new_base = ($sales_targets[$base_name] ?? 0);
                 foreach ((array)$target_percentages as $product_name => $percentage) {
-                    $product_items_percentages[$base_name][$product_name] =  $percentage * $sales_target_per_new_base;
+                    $product_items_percentages[$base_name][$product_name] =  ($percentage/100) * $sales_target_per_new_base;
                 }
             }
         }
