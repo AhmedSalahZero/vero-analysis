@@ -365,7 +365,6 @@
 
             });
             row += '</select>';
-            console.log(row);
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();
@@ -374,7 +373,6 @@
 
     // Categories
     function getCategories(salesPersonsData, type_of_data) {
-        // console.log(salesPersonsData, type_of_data);
         $.ajax({
             type: 'POST'
             , data: {
@@ -422,7 +420,7 @@
     }
     // Sub Categories
     function getProducts(salesPersonsData, categories, type_of_data, type) {
-        console.log(type_of_data);
+
         $.ajax({
             type: 'POST'
             , data: {
@@ -440,12 +438,9 @@
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
-            // if($('#data_type').val()  == 'value'){
+
             var data_type = 'multiple';
-            // }else{
-            //     var data_type = '';
-            // }
-            // console.log(type);
+
             if (type == 'sales_person' || type == 'product_or_service'
                 // || type == 'product_item'
             ) {
@@ -534,7 +529,7 @@
 
             });
             row += '</select>';
-            console.log(row);
+
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();

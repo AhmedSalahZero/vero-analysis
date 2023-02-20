@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @section('dash_nav')
-@include('client_view.home_dashboard.main_navs-income-statement',['active'=>'interval_dashboard'])
+@include('client_view.home_dashboard.main_navs-income-statement',['active'=>'various_incomestatement_dashboard'])
 
 @endsection
 @section('css')
@@ -11,6 +11,14 @@
 
 
 <style>
+    html body table tbody td.green {
+        color: green !important
+    }
+
+    html body table tbody td.red {
+        color: red !important;
+    }
+
     .modal-backdrop {
         display: none !important;
     }
@@ -96,17 +104,28 @@
         </div>
     </div>
     <div class="kt-portlet__body">
-        <form action="{{route('dashboard.intervalComparing.incomeStatement',['company'=>$company,'subItemType'=>Request()->segments()[4]])}}" method="POST">
+        <form action="{{route('dashboard.various.incomeStatement',['company'=>$company,'subItemType'=>Request()->segments()[4]])}}" method="POST">
             @csrf
             <div class="form-group row ">
                 <div class="col-md-3">
-                    <label style="margin-right: 10px;"><b>{{__('Comparing Types')}}</b></label>
+                    <label style="margin-right: 10px;"><b>{{__('Income Statement')}}</b></label>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-4">
+                    <div class="input-group date">
+                        <select data-live-search="true" data-max-options="1" name="income_statement_id" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
+                            @foreach($incomeStatements as $incomeSatatement)
+                            <option value="{{ $incomeSatatement->id }}" @if($incomeStatement->id == $incomeSatatement->id ) selected @endif > {{ $incomeSatatement->name  }}</option>
+                            @endforeach
+                        </select>
+
+
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="input-group date">
                         <select data-actions-box="true" data-live-search="true" data-max-options="0" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all" multiple>
                             {{-- <option disabled value="0
-                                            ">{{ __('Types (Two Options As Maxium)') }}</option> --}}
+											">{{ __('Types (Two Options As Maxium)') }}</option> --}}
                             @foreach ($permittedTypes as $id=>$name)
                             <option value="{{ $id }}" @if(in_array($id , $selectedTypes )) selected @endif> {{ $name }} </option>
                             {{-- <option value="{{ $name }}"> {{ __($zone) }}</option> --}}
@@ -116,18 +135,18 @@
                 </div>
 
 
+
             </div>
             <div class="form-group row ">
 
                 <div class="col-md-3">
-                    <label><b>{{__('First Inteval')}}</b></label>
+                    <label>{{__('First Interval')}}</label>
                 </div>
                 <div class="col-md-3">
-                    <label>{{__('Income Statement')}}</label>
-
-                    <select data-live-search="true" data-max-options="2" name="financial_statement_able_first_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
-                        @foreach($incomeStatements as $incomeSatatement)
-                        <option value="{{ $incomeSatatement->id }}" @if($firstIncomeStatement->id == $incomeSatatement->id ) selected @endif > {{ $incomeSatatement->name  }}</option>
+                    <label>{{__('Report Type')}}</label>
+                    <select data-actions-box="true" data-live-search="true" data-max-options="0" name="first_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                        @foreach (getAllFinancialAbleTypes(['adjusted','modified']) as $reportType)
+                        <option value="{{ $reportType }}"> {{ $reportType }} </option>
                         @endforeach
                     </select>
 
@@ -144,7 +163,7 @@
                     <label>{{__('End Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date_one" required value="{{$end_date_0}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
+                            <input type="date" name="end_date_one" required value="{{$end_date_0}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -158,19 +177,21 @@
             </div> --}}
     </div>
     <div class="form-group row ">
+
         <div class="col-md-3">
-            <label><b>{{__('Second Inteval')}}</b></label>
+            <label>{{__('Second Interval')}}</label>
         </div>
         <div class="col-md-3">
-            <label>{{__('Income Statement')}}</label>
-            <select data-live-search="true" data-max-options="2" name="financial_statement_able_second_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
-                @foreach($incomeStatements as $incomeStatement)
-                <option value="{{ $incomeStatement->id }}" @if($secondIncomeStatement->id == $incomeStatement->id ) selected @endif > {{ $incomeStatement->name }}</option>
+            <label>{{__('Report Type')}}</label>
+            <select data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                @foreach (getAllFinancialAbleTypes() as $secondReportType)
+                <option value="{{ $secondReportType }}"> {{ $secondReportType }} </option>
                 @endforeach
 
             </select>
 
         </div>
+
         <div class="col-md-3">
             <label>{{__('Start Date Two')}}</label>
             <div class="kt-input-icon">
@@ -183,7 +204,7 @@
             <label>{{__('End Date Two')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <input type="date" name="end_date_two" required value="{{$end_date_1}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
+                    <input type="date" name="end_date_two" required value="{{$end_date_1}}" class="form-control" placeholder="Select date" />
                 </div>
             </div>
         </div>
@@ -298,7 +319,7 @@
 
                     @foreach ($intervalComparing as $theType => $intervals)
 
-                    <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ str_replace(['#','/',' ' ,'(',')','&','%','$'] , '-',$theType) }}">
+                    <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
                         <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg">+</td>
                         <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
                         @php
@@ -308,13 +329,13 @@
                         @php
                         $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
                         @endphp
-                        <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+                        <td class="sub-numeric-bg text-nowrap " style="color:{{ getPercentageColor(sum_all_keys($intervalComparing[$theType][$intervalName])) }} !important"> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
                         @endforeach
                         @php
                         $val = $currentValue[1] - $currentValue[0] ;
                         @endphp
-                        <td class="sub-numeric-bg text-nowrap ">{{ number_format($val)  }}</td>
-                        <td class="sub-numeric-bg text-nowrap ">
+                        <td class="sub-numeric-bg text-nowrap " style="color:{{ getPercentageColor($val) }} !important">{{ number_format($val)  }}</td>
+                        <td class="sub-numeric-bg text-nowrap  " style="color:{{ getPercentageColor(isset($currentValue[0]) && $currentValue[0] ? $val/ $currentValue[0]:0) }} !important">
                             {{ isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100    , 2) . ' %' : number_format(0,2). ' %' }}
                         </td>
 
@@ -322,12 +343,9 @@
                     @php
                     $currentValue=[];
                     @endphp
-                    {{-- {{ dd($intervalComparing) }} --}}
 
-                    {{-- @foreach ($intervalComparing[$theType][$intervalName] as $subItemName => $subItemValue  ) --}}
-                    {{-- {{ dd($subItemName , $subItemValue) }} --}}
                     @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
-                    <tr class="edit-info-row add-sub maintable-1-row-class{{ str_replace(['#','/',' ' ,'(',')','&','%','$'] , '-',$theType) }} is-sub-row even d-none">
+                    <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
                         <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
                         <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
                         @php
@@ -338,15 +356,15 @@
                         $salesValue = $values[$newIntervalName] ?? 0;
                         $currentValues[] = $salesValue ;
                         @endphp
-                        <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ number_format($salesValue) }} </td>
+                        <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
                         @endforeach
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell ">
                             @php
                             $val = $currentValues[1] - $currentValues[0] ;
                             @endphp
                             {{ number_format($val ) }}
                         </td>
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell ">
                             {{ isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] *100 , 2)  . ' %' : number_format(0,2). ' %' }}
                         </td>
                         @endforeach

@@ -378,9 +378,7 @@
 
         // Add data
         chart.data = $('#{{ $name_of_zone }}_data').data('total');
-        if ("{{ $name_of_zone }}" == 'Branch_Sales_Percentages') {
-            console.log($('#{{ $name_of_zone }}_data').data('total'));
-        }
+
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
         // Create axes
         var dateAxis = chart.xAxes.push(new am4charts.DateAxis());

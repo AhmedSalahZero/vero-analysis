@@ -33,11 +33,12 @@ License: You must have a valid license purchased only from themeforest(the above
         WebFont.load({
             google: {
                 "families": ["Poppins:300,400,500,600,700"]
-            },
-            active: function() {
+            }
+            , active: function() {
                 sessionStorage.fonts = true;
             }
         });
+
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,6 +78,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <style>
         /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
         /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
+
     </style>
     <!--begin::Layout Skins(used by all pages) -->
 
@@ -102,7 +104,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <!-- begin:: Header Mobile -->
     <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
         <div class="kt-header-mobile__logo">
-            <a href="demo4/index.html">
+            <a href="#">
                 <img height="65px" alt="Logo" src="{{url('assets/media/logos/logo_va.png')}}" />
             </a>
         </div>
@@ -148,13 +150,13 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <!--Begin::Dashboard 4-->
                             @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
                             @endif
                             <div class="row">
                                 <div class="col-12">
@@ -241,7 +243,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                                     <div class="col-6">
                                                         <label>{{__('Company Name En')}} <span class="required">*</span></label>
                                                         <div class="kt-input-icon">
-                                                            <input type="text" name="company_name[en]" class="form-control" placeholder="{{__('Company Name')}}" value="{{(old('company_name')["en"])??''}}"  required>
+                                                            <input type="text" name="company_name[en]" class="form-control" placeholder="{{__('Company Name')}}" value="{{(old('company_name')["en"])??''}}" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
@@ -296,21 +298,22 @@ License: You must have a valid license purchased only from themeforest(the above
         var KTAppOptions = {
             "colors": {
                 "state": {
-                    "brand": "#366cf3",
-                    "light": "#ffffff",
-                    "dark": "#282a3c",
-                    "primary": "#5867dd",
-                    "success": "#34bfa3",
-                    "info": "#36a3f7",
-                    "warning": "#ffb822",
-                    "danger": "#fd3995"
-                },
-                "base": {
-                    "label": ["#c5cbe3", "#a1a8c3", "#3d4465", "#3e4466"],
-                    "shape": ["#f0f3ff", "#d9dffa", "#afb4d4", "#646c9a"]
+                    "brand": "#366cf3"
+                    , "light": "#ffffff"
+                    , "dark": "#282a3c"
+                    , "primary": "#5867dd"
+                    , "success": "#34bfa3"
+                    , "info": "#36a3f7"
+                    , "warning": "#ffb822"
+                    , "danger": "#fd3995"
+                }
+                , "base": {
+                    "label": ["#c5cbe3", "#a1a8c3", "#3d4465", "#3e4466"]
+                    , "shape": ["#f0f3ff", "#d9dffa", "#afb4d4", "#646c9a"]
                 }
             }
         };
+
     </script>
 
     <!-- end::Global Config -->

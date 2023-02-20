@@ -118,8 +118,6 @@
 
                     @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
                     <?php
-                                    // $row_name = str_replace(' ', '_', $sales_channel_name);
-                                    // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
                                     ?>
 
                     <tr class="group-color ">
@@ -283,16 +281,13 @@
 
         // Create chart instance
 
-        var chart = am4core.create("{{ $name_of_sales_channel }}_count_chartdiv", am4charts.XYChart);
+        var chart = am4core.create("{{ convertStringToClass($name_of_sales_channel) }}_count_chartdiv", am4charts.XYChart);
 
         // Increase contrast by taking evey second color
         chart.colors.step = 2;
-
         // Add data
-        chart.data = $('#{{ $name_of_sales_channel }}_data').data('total');
-        if ("{{ $name_of_sales_channel }}" == 'Sales_Channel_Sales_Percentages') {
-            console.log($('#{{ $name_of_sales_channel }}_data').data('total'));
-        }
+        chart.data = $('#{{ convertStringToClass($name_of_sales_channel) }}_data').data('total');
+
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
         // Create axes
         var dateAxis = chart.xAxes.push(new am4charts.DateAxis());

@@ -22,10 +22,8 @@ class getUploadPercentage extends Controller
 		});
 
 		$currentUploadedNumber = cache::get(getTotalUploadCacheKey($companyId, $jobId)) ?: 0;
-		dump(getTotalUploadCacheKey($companyId, $jobId));
 		$currentPercentage =  $totalCachedItems ? $currentUploadedNumber / $totalCachedItems * 100 : 0;
 		$cacheHasReloadKey = Cache::has(getCanReloadUploadPageCachingForCompany($companyId));
-
 		if ($cacheHasReloadKey) {
 			cache::forget(getCanReloadUploadPageCachingForCompany($companyId));
 		}

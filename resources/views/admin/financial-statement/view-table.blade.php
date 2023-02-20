@@ -246,7 +246,7 @@ $tableId = 'kt_table_1';
                                                     if (row.can_edit_duration_type) {
                                                         return select;
                                                     }
-                                                    console.log(row);
+
                                                     return (row['duration_type'])
                                                 }
                                                 , data: 'order'

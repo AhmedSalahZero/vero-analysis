@@ -91,8 +91,6 @@
                     @if ($zone_name != 'Total' && $zone_name != 'Growth Rate %')
 
                     <?php
-                                    // $row_name = str_replace(' ', '_', $zone_name);
-                                    // $row_name = str_replace(['&','(',')','{','}'], '_', $row_name);
                                      ?>
                     <tr class="group-color ">
                         {{-- <td class="text-center" style="cursor: pointer;"
@@ -243,9 +241,7 @@ chart.colors.step = 2;
 
 // Add data
 chart.data = $('#{{ $name_of_zone }}_data').data('total');
-if ("{{ $name_of_zone }}" == 'Zone_Sales_Percentages') {
-console.log($('#{{ $name_of_zone }}_data').data('total'));
-}
+
 chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
 // Create axes
 var dateAxis = chart.xAxes.push(new am4charts.DateAxis());

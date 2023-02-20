@@ -111,6 +111,8 @@ class IncomeStatementRepository implements IBaseRepository
 			$incomeStatementItem->created_at_formatted = formatDateFromString($incomeStatementItem->created_at);
 			$incomeStatementItem->updated_at_formatted = formatDateFromString($incomeStatementItem->updated_at);
 			$incomeStatementItem->order = $index + 1;
+
+			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id,$subItemType);
 			$dataWithRelations->add($incomeStatementItem);
 			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($dataWithRelations, $incomeStatementItem) {
 				$subItem->isSubItem = true; // isSubRow
@@ -119,6 +121,7 @@ class IncomeStatementRepository implements IBaseRepository
 				}
 				$dataWithRelations->add($subItem);
 			});
+		
 		});
 		return [
 			'data' => $dataWithRelations,

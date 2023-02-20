@@ -86,7 +86,7 @@ $totalOfDepreactionAndAmortization = 0;
         </div>
     </div>
     <div class="kt-portlet__body">
-        <form action="{{route('dashboard.breakdown.incomeStatement',$company)}}" method="POST">
+        <form action="{{route('dashboard.breakdown.incomeStatement',['company'=>$company,'reportType'=>Request()->segments()[4]])}}" method="POST">
             @csrf
             <div class="form-group row">
                 <div class="col-md-4">
@@ -168,7 +168,7 @@ $totalOfDepreactionAndAmortization = 0;
                                 $totalsOfEachRows = get_total_for_group_by_key($reports_data , $type) ;
                                 $total_of_each_group_with_depreciation =$totalsOfEachRows['total_with_depreciation'] ;
                                 $total_of_each_group_depreciation = $totalsOfEachRows['total_depreciation'] ;
-
+                                $total_of_sales_revenue = 0 ;
                                 @endphp
                                 {{ number_format($total_of_each_group_with_depreciation) }}
 
@@ -192,8 +192,8 @@ $totalOfDepreactionAndAmortization = 0;
 
                         </div>
 
-                        <input type="hidden" id="top_for_{{ $type }}" value="{{ $top_data[$type]['item'] ?? '' }}">
-                        <input type="hidden" id="value_for_{{ $type }}" value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
+                        <input type="hidden" id="top_for_{{ convertStringToClass($type) }}" value="{{ $top_data[$type]['item'] ?? '' }}">
+                        <input type="hidden" id="value_for_{{ convertStringToClass($type) }}" value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
 
 
                         <div class="progress progress--sm">
@@ -392,12 +392,12 @@ $totalOfDepreactionAndAmortization = 0;
                 <div class="kt-portlet__head-toolbar">
                     <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#kt_apps_contacts_view_tab_1_{{str_replace([' ','&','_','/'],'-',$type)}}" role="tab">
+                            <a class="nav-link active" data-toggle="tab" href="#kt_apps_contacts_view_tab_1_{{convertStringToClass($type)}}" role="tab">
                                 <i class="flaticon-line-graph"></i> &nbsp; Charts
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " data-toggle="tab" href="#kt_apps_contacts_view_tab_2_{{str_replace([' ','&','_','/'],'-',$type)}}" role="tab">
+                            <a class="nav-link " data-toggle="tab" href="#kt_apps_contacts_view_tab_2_{{convertStringToClass($type)}}" role="tab">
                                 <i class="flaticon2-checking"></i>Reports Table
                             </a>
                         </li>
@@ -407,7 +407,7 @@ $totalOfDepreactionAndAmortization = 0;
             <div class="kt-portlet__body">
                 <div class="tab-content  kt-margin-t-20">
 
-                    <div class="tab-pane active" id="kt_apps_contacts_view_tab_1_{{str_replace([' ','&','_','/'],'-',$type)}}" role="tabpanel">
+                    <div class="tab-pane active" id="kt_apps_contacts_view_tab_1_{{convertStringToClass($type)}}" role="tabpanel">
 
                         {{-- Monthly Chart --}}
                         <div class="col-xl-12">
@@ -417,7 +417,7 @@ $totalOfDepreactionAndAmortization = 0;
                                         <div class="kt-widget12__chart">
                                             <!-- HTML -->
                                             {{-- <h4> {{ __('Sales Values') }} </h4> --}}
-                                            <div id="chartdiv_{{str_replace([' ','&','_','/'],'-',$type)}}" class="chartDiv"></div>
+                                            <div id="chartdiv_{{convertStringToClass($type)}}" class="chartDiv"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -425,7 +425,7 @@ $totalOfDepreactionAndAmortization = 0;
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="kt_apps_contacts_view_tab_2_{{str_replace([' ' ,'&','_','/'],'-',$type)}}" role="tabpanel">
+                    <div class="tab-pane" id="kt_apps_contacts_view_tab_2_{{convertStringToClass($type)}}" role="tabpanel">
                         <div class="col-md-12">
                             <div class="kt-portlet kt-portlet--mobile">
 
@@ -496,7 +496,7 @@ $totalOfDepreactionAndAmortization = 0;
                             </div>
                         </div>
                         {{-- {{ dd() }} --}}
-                        <input type="hidden" id="total_{{str_replace([' ','&','_','/'],'-',$type)}}" data-total="{{ json_encode( format_for_chart($reports_data[$type]['sub_items']) ) }}">
+                        <input type="hidden" id="total_{{convertStringToClass($type)}}" data-total="{{ json_encode( format_for_chart($reports_data[$type]['sub_items']) ) }}">
                     </div>
                 </div>
             </div>
@@ -571,11 +571,11 @@ $totalOfDepreactionAndAmortization = 0;
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdiv_" + "{{str_replace([' ','&','_','/'],'-',$type)}}", am4charts.PieChart);
+        var chart = am4core.create("chartdiv_" + "{{convertStringToClass($type)}}", am4charts.PieChart);
 
         // Add data
-        chart.data = $('#total_' + "{{str_replace([' ','&','_','/'],'-',$type)}}").data('total');
-        console.log(chart.data);
+        chart.data = $('#total_' + "{{convertStringToClass($type)}}").data('total');
+
         // Add and configure Series
         var pieSeries = chart.series.push(new am4charts.PieSeries());
         pieSeries.dataFields.value = "Sales Value";
@@ -606,9 +606,9 @@ $totalOfDepreactionAndAmortization = 0;
 @foreach ($types as $type)
 
 <script>
-    $(document).on('change', '#business_sector_select_{{ $type }}', function(e) {
+    $(document).on('change', '#business_sector_select_{{ convertStringToClass($type) }}', function(e) {
         e.preventDefault();
-        $('#modal_for_' + "{{ $type }}").trigger('show.bs.modal')
+        $('#modal_for_' + "{{ convertStringToClass($type) }}").trigger('show.bs.modal')
     })
 
 </script>

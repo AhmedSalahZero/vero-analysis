@@ -2148,3 +2148,8 @@ function getPercentageColor($val): string
 	}
 	return '';
 }
+function convertStringToClass(string $str): string
+{
+	$reg = " /^[\d]+|[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\~\{\|\}\^ ]/ ";
+	return preg_replace($reg, '-', $str);
+}

@@ -155,6 +155,27 @@ $tableId = 'kt_table_1';
     <script>
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         const sales_rate_maps = JSON.parse(sales_rates_maps);
+        const domElements = {
+            salesRevenueId: document.getElementById('sales-revenue-id').value
+            , salesGrowthRateId: document.getElementById('sales-growth-rate-id').value
+            , growthProfitId: document.getElementById('gross-profit-id').value
+            , corporateTaxesId: document.getElementById('corporate-taxes-id').value
+            , costOfGoodsId: document.getElementById('cost-of-goods-id').value
+            , financialIncomeOrExpensesId: document.getElementById('financial-income-or-expenses-id').value
+            , marketExpensesId: document.getElementById('market-expenses-id').value
+            , generalExpensesId: document.getElementById('general-expenses-id').value
+            , salesAndDistributionExpensesId: document.getElementById('sales-and-distribution-expenses-id').value
+            , earningBeforeInterestTaxesId: document.getElementById('earning-before-interest-taxes-id').value
+            , earningBeforeInterestTaxesDepreciationAmor: document.getElementById('earning-before-interest-taxes-depreciation-amortization-id').value
+            , earningBeforeTaxesId: document.getElementById('earning-before-taxes-id').value
+            , netProfitId: document.getElementById('net-profit-id').value
+
+
+
+        }
+        const vars = {
+            subItemType: document.getElementById('sub-item-type').value
+        }
 
     </script>
 
@@ -221,38 +242,36 @@ $tableId = 'kt_table_1';
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
                         $(document).on('change', '.is-sub-row input', function(e) {
-                            let grossProfitId = $('#gross-profit-id').val();
-                            let costOfGoodsId = $('#cost-of-goods-id').val();
-                            let salesRevenueId = $('#sales-revenue-id').val();
-                            let financialIncomeOrExpenses = $('#financial-income-or-expenses-id').val();
-                            let corporateTaxesId = $('#corporate-taxes-id').val();
-                            let currentRow = $(this).closest('tr');
+                            let grossProfitId = domElements.growthProfitId;
+                            let costOfGoodsId = domElements.costOfGoodsId;
+                            let salesRevenueId = domElements.salesRevenueId;
+                            let financialIncomeOrExpenses = domElements.financialIncomeOrExpensesId;
+                            let corporateTaxesId = domElements.corporateTaxesId;
+                            let currentRow = this.closest('tr');
 
-                            let marketExpensesId = $('#market-expenses-id').val();
-                            let salesAndDistributionExpensesId = $('#sales-and-distribution-expenses-id').val();
-                            let generalExpensesId = $('#general-expenses-id').val();
+                            let marketExpensesId = domElements.marketExpensesId;
+                            let salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId;
+                            let generalExpensesId = domElements.generalExpensesId;
 
-                            let parentModelId = $(this).data('parent-model-id');
-                            let date = $(this).data('date');
-
+                            let parentModelId = this.getAttribute('data-parent-model-id');
+                            let date = this.getAttribute('data-date');
                             if (date && parentModelId) {
                                 updateParentMainRowTotal(parentModelId, date);
                             }
 
                             if (parentModelId == salesRevenueId || parentModelId == costOfGoodsId) {
-
                                 updateGrowthRateForSalesRevenue(date);
                                 updateTotalForRow(currentRow);
                                 updateGrossProfit(date);
                                 if (parentModelId == salesRevenueId && canRefreshPercentages) {
                                     refreshPercentagesThatDependsOnSalesRevenueValue(date)
+
                                 }
 
                             }
                             if (parentModelId == marketExpensesId || parentModelId == salesAndDistributionExpensesId || parentModelId == generalExpensesId) {
                                 updateEarningBeforeIntersetTaxesDepreciationAmortization(date);
                             }
-
                             if (parentModelId == financialIncomeOrExpenses) {
                                 updateEarningBeforeTaxes(date);
                             }
@@ -263,90 +282,109 @@ $tableId = 'kt_table_1';
 
                             updatePercentageOfSalesFor(parentModelId, date);
 
+
                             updateAllMainsRowPercentageOfSales()
+
 
                         });
 
                         const refreshPercentagesThatDependsOnSalesRevenueValue = (date) => {
                             document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
-                                // setTimeout(() => {
-                                $(td).trigger('blur')
-                                // }, 1000);
+                                td.dispatchEvent(new Event('blur', {
+                                    'bubbles': true
+                                }))
                             });
                         }
 
 
 
                         function updateNetProfit(date) {
-                            let earningBeforeTaxesId = $('#earning-before-taxes-id').val();
-                            let corporateTaxesId = $('#corporate-taxes-id').val();
-                            let netProfitId = $('#net-profit-id').val();
-                            let netProfitRow = $('.main-with-no-child[data-model-id="' + netProfitId + '"]');
-                            let earningBeforeTaxesValueAtDate = $('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
-                            // let corporateTaxesValueAtDate = $('.is-main-with-sub-items[data-model-id="' + corporateTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
-                            let corporateTaxesValueAtDate = $('.main-with-no-child[data-model-id="' + corporateTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
+                            let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
+                            let corporateTaxesId = domElements.corporateTaxesId;
+                            let netProfitId = domElements.netProfitId;
+                            let netProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + netProfitId + '"]');
+                            let earningBeforeTaxesValueAtDate = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
+                            let corporateTaxesValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + corporateTaxesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
                             netprofitAtDate = earningBeforeTaxesValueAtDate - corporateTaxesValueAtDate;
-                            netProfitRow.find('td.date-' + date).html(number_format(netprofitAtDate));
-                            netProfitRow.find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val(netprofitAtDate).trigger('change');
+                            netProfitRow.querySelector('td.date-' + date).innerHTML = number_format(netprofitAtDate);
+                            var input = netProfitRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]');
+                            input.value = netprofitAtDate;
+                            input.dispatchEvent(new Event('change', {
+                                'bubbles': true
+                            }))
                             updateTotalForRow(netProfitRow);
                         }
 
                         function updateEarningBeforeTaxes(date) {
-                            let earningBeforeInterstTaxesId = $('#earning-before-interest-taxes-id').val();
-                            let financialIncomeOrExpensesId = $('#financial-income-or-expenses-id').val();
-                            let earningBeforeTaxesId = $('#earning-before-taxes-id').val();
-                            let earningBeforeTaxesIdRow = $('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"]');
-                            let earningBeforeInterstTaxesValueAtDate = $('.main-with-no-child[data-model-id="' + earningBeforeInterstTaxesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
-                            let financialIncomeOrExpensesValueAtDate = $('.is-main-with-sub-items[data-model-id="' + financialIncomeOrExpensesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
+                            let earningBeforeInterstTaxesId = domElements.earningBeforeInterestTaxesId;
+                            let financialIncomeOrExpensesId = domElements.financialIncomeOrExpensesId;
+                            let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
+                            let earningBeforeTaxesIdRow = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"]');
+                            let earningBeforeInterstTaxesValueAtDate = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeInterstTaxesId + '"]' + ' td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
+                            let financialIncomeOrExpensesValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + financialIncomeOrExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
                             earningBeforeTaxesAtDate = parseFloat(earningBeforeInterstTaxesValueAtDate) + parseFloat(financialIncomeOrExpensesValueAtDate);
-                            earningBeforeTaxesIdRow.find('td.date-' + date).html(number_format(earningBeforeTaxesAtDate));
-                            earningBeforeTaxesIdRow.find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val(earningBeforeTaxesAtDate).trigger('change');
+                            earningBeforeTaxesIdRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeTaxesAtDate);
+                            var input = earningBeforeTaxesIdRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]');
+                            input.value = earningBeforeTaxesAtDate;
+                            input.dispatchEvent(new Event('change', {
+                                'bubbles': true
+                            }))
                             updateTotalForRow(earningBeforeTaxesIdRow);
                             updateNetProfit(date);
                         }
 
                         function updateEarningBeforeIntersetTaxesDepreciationAmortization(date) {
-                            let grossProfitId = $('#gross-profit-id').val();
-                            let marketExpensesId = $('#market-expenses-id').val();
-                            let salesAndDistributionExpensesId = $('#sales-and-distribution-expenses-id').val();
-                            let generalExpensesId = $('#general-expenses-id').val();
-                            let costOfGoodsId = $('#cost-of-goods-id').val();
-                            let earningBeforeInterstTaxesDepreciationAmortizationId = $('#earning-before-interest-taxes-depreciation-amortization-id').val();
-                            let earningBeforeInterestTaxesDepreciationAmortizationRow = $('.main-with-no-child[data-model-id="' + earningBeforeInterstTaxesDepreciationAmortizationId + '"]');
-                            let grossProfitAtDate = parseFloat($('.main-with-no-child[data-model-id="' + grossProfitId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
-                            let marketExpensesAtDate = parseFloat($('.is-main-with-sub-items[data-model-id="' + marketExpensesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
-                            let salesAndDistributionExpensesAtDate = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesAndDistributionExpensesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
-                            let generalExpensesAtDate = parseFloat($('.is-main-with-sub-items[data-model-id="' + generalExpensesId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                            let grossProfitId = domElements.growthProfitId;
+                            let marketExpensesId = domElements.marketExpensesId;
+                            let salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId;
+                            let generalExpensesId = domElements.generalExpensesId;
+                            let costOfGoodsId = domElements.costOfGoodsId;
+                            let earningBeforeInterstTaxesDepreciationAmortizationId = domElements.earningBeforeInterestTaxesDepreciationAmor;
+                            let earningBeforeInterestTaxesDepreciationAmortizationRow = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeInterstTaxesDepreciationAmortizationId + '"]');
+                            let grossProfitAtDate = parseFloat(document.querySelector('.main-with-no-child[data-model-id="' + grossProfitId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
+                            let marketExpensesAtDate = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + marketExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
+                            let salesAndDistributionExpensesAtDate = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesAndDistributionExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
+                            let generalExpensesAtDate = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + generalExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
+                            var mainWithSubItemsCostOfGoods = document.querySelector('.is-main-with-sub-items[data-model-id="' + costOfGoodsId + '"]')
 
-                            let depreciationForCostOfGoodsSold = $('.is-main-with-sub-items[data-model-id="' + costOfGoodsId + '"]').nextAll('tr.is-depreciation-or-amortization.maintable-1-row-class' + costOfGoodsId);
+                            let depreciationForCostOfGoodsSold = [...myNextAll(mainWithSubItemsCostOfGoods, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + costOfGoodsId)]
+
                             let totalDepreciationForCostOfGoodsSoldAtDate = 0;
                             for (depreciationRow of depreciationForCostOfGoodsSold) {
-                                totalDepreciationForCostOfGoodsSoldAtDate += parseFloat($(depreciationRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                                totalDepreciationForCostOfGoodsSoldAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
                             }
 
+                            var mainWithSubItemsMarketExpenses = document.querySelector('.is-main-with-sub-items[data-model-id="' + marketExpensesId + '"]')
+                            let depreciationForMarketExpenses = [...myNextAll(mainWithSubItemsMarketExpenses, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + marketExpensesId)]
 
-                            let depreciationForMarketExpenses = $('.is-main-with-sub-items[data-model-id="' + marketExpensesId + '"]').nextAll('tr.is-depreciation-or-amortization.maintable-1-row-class' + marketExpensesId);
                             let totalDepreciationForMarketExpensesAtDate = 0;
                             for (depreciationRow of depreciationForMarketExpenses) {
-                                totalDepreciationForMarketExpensesAtDate += parseFloat($(depreciationRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                                totalDepreciationForMarketExpensesAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
                             }
 
-                            let depreciationForSalesAndDistributionExpense = $('.is-main-with-sub-items[data-model-id="' + salesAndDistributionExpensesId + '"]').nextAll('tr.is-depreciation-or-amortization.maintable-1-row-class' + salesAndDistributionExpensesId);
+                            var mainWithSubItemsSalesAndDistrubtionExpenses = document.querySelector('.is-main-with-sub-items[data-model-id="' + salesAndDistributionExpensesId + '"]')
+
+                            let depreciationForSalesAndDistributionExpense = [...myNextAll(mainWithSubItemsSalesAndDistrubtionExpenses, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + salesAndDistributionExpensesId)];
                             let totalDepreciationForSalesAndDistributionExpenseAtDate = 0;
                             for (depreciationRow of depreciationForSalesAndDistributionExpense) {
-                                totalDepreciationForSalesAndDistributionExpenseAtDate += parseFloat($(depreciationRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                                totalDepreciationForSalesAndDistributionExpenseAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
                             }
-
-                            let depreciationForGeneralExpenses = $('.is-main-with-sub-items[data-model-id="' + generalExpensesId + '"]').nextAll('tr.is-depreciation-or-amortization.maintable-1-row-class' + generalExpensesId);
+                            var mainWithSubItemsGeneralExpenses = document.querySelector('.is-main-with-sub-items[data-model-id="' + generalExpensesId + '"]')
+                            let depreciationForGeneralExpenses = [...myNextAll(mainWithSubItemsGeneralExpenses, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + generalExpensesId)];
                             let totalDepreciationForGeneralExpensesAtDate = 0;
                             for (depreciationRow of depreciationForGeneralExpenses) {
-                                totalDepreciationForGeneralExpensesAtDate += parseFloat($(depreciationRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                                totalDepreciationForGeneralExpensesAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
                             }
                             let totalDepreciationsAtDate = totalDepreciationForGeneralExpensesAtDate + totalDepreciationForSalesAndDistributionExpenseAtDate + totalDepreciationForMarketExpensesAtDate + totalDepreciationForCostOfGoodsSoldAtDate
                             let earningBeforeInterestTaxesAtDate = grossProfitAtDate - marketExpensesAtDate - salesAndDistributionExpensesAtDate - generalExpensesAtDate;
                             let earningBeforeInterstTaxesDepreciationAmortizationAtDate = earningBeforeInterestTaxesAtDate + totalDepreciationsAtDate;
-                            earningBeforeInterestTaxesDepreciationAmortizationRow.find('td.date-' + date).html(number_format(earningBeforeInterstTaxesDepreciationAmortizationAtDate));
-                            earningBeforeInterestTaxesDepreciationAmortizationRow.find('input[data-date="' + date + '"]').val(earningBeforeInterstTaxesDepreciationAmortizationAtDate).trigger('change');
+                            earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeInterstTaxesDepreciationAmortizationAtDate);
+                            var input = earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('input[data-date="' + date + '"]')
+
+                            input.value = earningBeforeInterstTaxesDepreciationAmortizationAtDate
+                            input.dispatchEvent(new Event('change', {
+                                'bubbles': true
+                            }));
                             updateTotalForRow(earningBeforeInterestTaxesDepreciationAmortizationRow);
 
                             updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBeforeInterestTaxesAtDate, date)
@@ -354,10 +392,15 @@ $tableId = 'kt_table_1';
                         }
 
                         function updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBeforeInterestTaxesWithoutDepreciationAtDate, date) {
-                            let EarningBeforeInterestTaxesId = $('#earning-before-interest-taxes-id').val();
-                            let earningBeforeInterestTaxesRow = $('.main-with-no-child[data-model-id="' + EarningBeforeInterestTaxesId + '"]');
-                            earningBeforeInterestTaxesRow.find('td.date-' + date).html(number_format(earningBeforeInterestTaxesWithoutDepreciationAtDate));
-                            earningBeforeInterestTaxesRow.find('input[data-date="' + date + '"]').val(earningBeforeInterestTaxesWithoutDepreciationAtDate).trigger('change');
+                            let EarningBeforeInterestTaxesId = domElements.earningBeforeInterestTaxesId;
+                            let earningBeforeInterestTaxesRow = document.querySelector('.main-with-no-child[data-model-id="' + EarningBeforeInterestTaxesId + '"]');
+                            earningBeforeInterestTaxesRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeInterestTaxesWithoutDepreciationAtDate);
+                            var input = earningBeforeInterestTaxesRow.querySelector('input[data-date="' + date + '"]')
+
+                            input.value = earningBeforeInterestTaxesWithoutDepreciationAtDate
+                            input.dispatchEvent(new Event('change', {
+                                'bubbles': true
+                            }));
                             updateTotalForRow(earningBeforeInterestTaxesRow);
 
                         }
@@ -376,7 +419,7 @@ $tableId = 'kt_table_1';
                             let numberOfAddedItems = formDataObject.how_many_items;
                             let incomeStatementId = formDataObject.financial_statement_able_id;
                             let incomeStatementItemId = formDataObject.financial_statement_able_item_id;
-                            let salesRevenueId = $('#sales-revenue-id').val();
+                            let salesRevenueId = domElements.salesRevenueId;
                             rows = ``;
                             var i = 0;
                             for (i; i < numberOfAddedItems; i++) {
@@ -388,7 +431,7 @@ $tableId = 'kt_table_1';
                                 var isQuantity = 0;
                                 var percentageOrFixed = formDataObject['sub_items[' + i + '][percentage_or_fixed]'];
                                 var isPercentage = percentageOrFixed == 'percentage';
-                                var isPercentageOf = isPercentage && formDataObject['sub_items[' + i + '][is_percentage_of]'] ? "[" + formDataObject['sub_items[' + i + '][is_percentage_of]'].toString() + "]" : '';
+                                var isPercentageOf = isPercentage && formDataObject['sub_items[' + i + '][is_percentage_of][]'] ? "[" + formDataObject['sub_items[' + i + '][is_percentage_of][]'].toString() + "]" : '';
                                 var isRepeatingFixed = percentageOrFixed == 'repeating_fixed';
                                 var isNoneRepeatingFixed = percentageOrFixed == 'non_repeating_fixed';
                                 var canTriggerChange = isRepeatingFixed || isPercentage;
@@ -404,7 +447,6 @@ $tableId = 'kt_table_1';
                                         })
                                     })
                                 } else if (isPercentage) {
-
                                     if (!isPercentageOf.length) {
                                         rows = null;
                                         alert('Please Enter Percentage Items For ' + subItemName);
@@ -436,25 +478,29 @@ $tableId = 'kt_table_1';
 
 
                         function updateGrossProfit(date) {
-                            let grossProfitId = $('#gross-profit-id').val();
-                            let costOfGoodsId = $('#cost-of-goods-id').val();
-                            let salesReveueId = $('#sales-revenue-id').val();
-                            let grossProfitRow = $('.main-with-no-child[data-model-id="' + grossProfitId + '"]');
-                            let salesRevenueValueAtDate = $('.is-main-with-sub-items[data-model-id="' + salesReveueId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
-                            let costOfGoodsValueAtDate = $('.is-main-with-sub-items[data-model-id="' + costOfGoodsId + '"]').find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val();
+                            let grossProfitId = domElements.growthProfitId;
+                            let costOfGoodsId = domElements.costOfGoodsId;
+                            let salesReveueId = domElements.salesRevenueId;
+                            let grossProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + grossProfitId + '"]');
+                            let salesRevenueValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + salesReveueId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
+                            let costOfGoodsValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + costOfGoodsId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
                             grossProfitAtDate = salesRevenueValueAtDate - costOfGoodsValueAtDate;
-                            grossProfitRow.find('td.date-' + date).html(number_format(grossProfitAtDate));
-                            grossProfitRow.find('input[data-date="' + date + '"]').val(grossProfitAtDate).trigger('change');
+                            grossProfitRow.querySelector('td.date-' + date).innerHTML = number_format(grossProfitAtDate);
+                            var input = grossProfitRow.querySelector('input[data-date="' + date + '"]')
+                            input.value = grossProfitAtDate
+                            input.dispatchEvent(new Event('change', {
+                                'bubbles': true
+                            }));
                             updateTotalForRow(grossProfitRow);
 
                         }
 
                         function getRowForSubItemsTr(tableId, dates, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentageOrFixed, fixedOrPercentage, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf) {
-                            let row = `<tr class="d-none edit-info-row add-sub maintable-1-row-class${incomeStatementItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-percentage-of="${isPercentageOf}" data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
+                            let row = `<tr  data-financial-statement-item-able-id="${incomeStatementItemId}" dclass="d-none edit-info-row add-sub maintable-1-row-class${incomeStatementItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-percentage-of="${isPercentageOf}"  data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
 																<td class="red reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
 																<td class="cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 70.25px; position: sticky;">
 												<div class="d-flex align-items-center justify-content-between">
-													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-income-statement-id="16" data-target="#edit-sub-modal${incomeStatementItemId}${subItemName}"> <i class="fa fa-pen-alt"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${incomeStatementId}${subItemName}">
+													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-income-statement-id="${incomeStatementId}" data-target="#edit-sub-modal${incomeStatementItemId}${subItemName}"> <i class="fa fa-pen-alt"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${incomeStatementId}${subItemName}">
 														<i class="fas fa-trash-alt"></i>
 
 													</a>
@@ -481,11 +527,11 @@ $tableId = 'kt_table_1';
 
                         function updateTotalForRow(row) {
                             var total = 0;
-                            row.find('input[data-date]').each(function(index, input) {
-                                total += parseFloat($(input).val());
+                            row.querySelectorAll('input[data-date]').forEach(function(input, index) {
+                                total += parseFloat(input.value);
                             });
-                            $(row).find('.input-hidden-for-total').val(total);
-                            $(row).find('td.total-row').html(number_format(total));
+                            row.querySelector('.input-hidden-for-total').value = total;
+                            row.querySelector('td.total-row').innerHTML = number_format(total);
                         }
 
                         $(document).on('blur', '.editable', function() {
@@ -496,19 +542,27 @@ $tableId = 'kt_table_1';
                         function updateGrowthRateForSalesRevenue(currentDate) {
 
                             let dates = getDates();
+
                             let previousDate = getPreviousDate(dates, currentDate);
                             if (previousDate) {
-                                let salesRevenueId = $('#sales-revenue-id').val();
-                                let salesGrowthRateId = $('#sales-growth-rate-id').val();
-                                let currentTotalSalesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('input[data-date="' + currentDate + '"]').val());
-                                let previousTotalSalesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('input[data-date="' + previousDate + '"]').val());
+                                let salesRevenueId = domElements.salesRevenueId;
+                                let salesGrowthRateId = domElements.salesGrowthRateId;
+                                let currentTotalSalesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] ' + 'input[data-date="' + currentDate + '"]').value);
+                                let previousTotalSalesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] ' + 'input[data-date="' + previousDate + '"]').value);
                                 var salesRevenueGrowthRate = 0;
                                 if (previousTotalSalesRevenueValue) {
                                     salesRevenueGrowthRate = currentTotalSalesRevenueValue ? ((currentTotalSalesRevenueValue - previousTotalSalesRevenueValue) / previousTotalSalesRevenueValue) * 100 : 0;
                                 }
+                                var input = document.querySelector('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"] ' + 'input[data-date="' + currentDate + '"]');
+                                if (input) {
+                                    input.value = salesRevenueGrowthRate;
+                                    input.dispatchEvent(new Event('change', {
+                                        'bubbles': true
+                                    }))
+                                    document.querySelector('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"] ' + 'td.date-' + currentDate).innerHTML = number_format(salesRevenueGrowthRate, 2) + ' %';
 
-                                $('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"]').find('input[data-date="' + currentDate + '"]').val(salesRevenueGrowthRate).trigger('change');
-                                $('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"]').find('td.date-' + currentDate).html(number_format(salesRevenueGrowthRate, 2) + ' %');
+                                }
+
                             }
 
                             return number_format(0, 2) + ' %';
@@ -531,30 +585,39 @@ $tableId = 'kt_table_1';
                             return JSON.parse(dates);
                         }
 
+
+
                         function updateParentMainRowTotal(parentModelId, date) {
-                            let parentElement = $('tr.is-main-with-sub-items[data-model-id="' + parentModelId + '"] ');
+                            let parentElement = document.querySelector('tr.is-main-with-sub-items[data-model-id="' + parentModelId + '"]');
                             let total = 0;
-                            parentElement.nextAll('.maintable-1-row-class' + parentModelId).each(function(index, subRow) {
+                            let siblings = [...myNextAll(parentElement, '.maintable-1-row-class' + parentModelId)]
+
+                            siblings.forEach(function(subRow, index) {
                                 // if has no quantity 
-                                if ($(subRow).find('td[data-is-quantity="1"]').length == 0) {
-                                    var subRowTdValue = parseFloat($(subRow).find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val());
+                                if (subRow.querySelectorAll('td[data-is-quantity="1"]').length == 0) {
+                                    var subRowTdValue = parseFloat(subRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
                                     total += subRowTdValue;
                                 }
 
 
                             });
-                            parentElement.find('td.date-' + date).parent().find('input[data-date="' + date + '"]').val(total);
-                            parentElement.find('td.date-' + date).html(number_format(total));
+                            parentElement.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value = total;
+                            parentElement.querySelector('td.date-' + date).innerHTML = number_format(total);
                             updateTotalForRow(parentElement);
 
                         }
 
                         function triggerBlurForEditableTd() {
-                            $('table.append-table-into-dom').find('tr[data-is-trigger-change="true"]').each(function(index, tr) {
-                                $(tr).find('td.editable-date:eq(0)').each(function(i, td) {
-                                    $(td).trigger('blur');
-                                })
+
+
+                            document.querySelectorAll('table.append-table-into-dom tr[data-is-trigger-change="true"]').forEach(function(tr, index) {
+                                // get only first one
+                                var firstEditableDateField = tr.querySelector('td.editable-date');
+                                firstEditableDateField.dispatchEvent(new Event('blur', {
+                                    'bubbles': true
+                                }))
                             })
+
                         }
 
                         function getDatesLargerThanDate(searchDate, dates) {
@@ -569,85 +632,134 @@ $tableId = 'kt_table_1';
                         }
 
                         function updateEditableInputs(tdElement) {
-                            let reportType = $('#sub-item-type').val();
+                            console.log('start update editable');
+                            console.log('tdElement')
+                            console.log(tdElement)
+                            var startDate = performance.now();
+
+                            let reportType = vars.subItemType;
+                            let financialStatementAbleItemId = tdElement.closest('tr').getAttribute('data-financial-statement-able-item-id');
+                            let corporateTaxesId = domElements.corporateTaxesId;
+                            let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
+                            let salesRevenueId = domElements.salesRevenueId;
                             let firstDateString = $(tdElement).attr("class").split(/\s+/).filter(function(classItem) {
                                 return classItem.startsWith('date-');
                             })[0];
                             if (firstDateString) {
+                                var startDate2 = performance.now()
                                 var firstDate = firstDateString.split('date-')[1]
-                                $(tdElement).parent().find('input[data-date="' + firstDate + '"]').val($(tdElement).text().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")).trigger('change');
-
-                                let is_repeating_fixed = $(tdElement).closest('tr').data('is-repeating-fixed');
-                                let is_percentage = $(tdElement).closest('tr').data('is-percentage');
-                                let is_percentage_or_fixed = $(tdElement).closest('tr').data('can-be-percentage-or-fixed');
-                                let currentVal = $(tdElement).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "");
+                                var value = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "");
+                                var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]');
+                                input.value = value;
+                                input.dispatchEvent(new Event('change', {
+                                    'bubbles': true
+                                }))
+                                let is_repeating_fixed = tdElement.closest('tr').getAttribute('data-is-repeating-fixed');
+                                let is_percentage = tdElement.closest('tr').getAttribute('data-is-percentage');
+                                let is_percentage_or_fixed = tdElement.closest('tr').getAttribute('data-can-be-percentage-or-fixed');
+                                let currentVal = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '');
                                 currentVal = parseFloat(currentVal);
-                                // console.log(is_repeating_fixed)
-                                // console.log(is_percentage)
-                                // console.log(currentVal)
-                                // console.log(is_percentage_or_fixed)
-                                // console.log(tdElement);
-                                // console.log('---')
-                                // return 1 / 0;
+
                                 if (is_percentage_or_fixed && is_repeating_fixed) {
                                     var tdSpecificDateIfExist = inAddOrEditModal ? '' : '.date-' + firstDate
                                     var inputSpecificDateIfExist = inAddOrEditModal ? '' : '[data-date="' + firstDate + '"]';
                                     if (reportType == 'modified' && !inAddOrEditModal) {
+
                                         var loopingDates = getDatesLargerThanDate(firstDate, dates);
                                         loopingDates.forEach((loopingDate) => {
                                             tdSpecificDateIfExist = '.date-' + loopingDate
                                             inputSpecificDateIfExist = '[data-date="' + loopingDate + '"]';
-                                            $(tdElement).closest('tr').find('td.editable-date' + tdSpecificDateIfExist).html(number_format(currentVal, 2));
-                                            $(tdElement).closest('tr').find('input[data-date]' + inputSpecificDateIfExist).val(currentVal).trigger('change');
+                                            tdElement.closest('tr').querySelector('td.editable-date' + tdSpecificDateIfExist).innerHTML = number_format(currentVal, 2);
+                                            var input = tdElement.closest('tr').querySelector('input[data-date]' + inputSpecificDateIfExist)
+                                            input.value = currentVal
+                                            input.dispatchEvent(new Event('change', {
+                                                'bubbles': true
+                                            }));
                                         })
                                     } else {
-                                        $(tdElement).closest('tr').find('td.editable-date' + tdSpecificDateIfExist).html(number_format(currentVal, 2));
-                                        $(tdElement).closest('tr').find('input[data-date]' + inputSpecificDateIfExist).val(currentVal).trigger('change');
+
+                                        tdElement.closest('tr').querySelectorAll('td.editable-date' + tdSpecificDateIfExist).forEach(function(td, index) {
+                                            td.innerHTML = number_format(currentVal, 2);
+                                        })
+                                        tdElement.closest('tr').querySelectorAll('input[data-date]' + inputSpecificDateIfExist).forEach(function(input, index) {
+                                            input.value = currentVal
+                                            input.dispatchEvent(new Event('change', {
+                                                'bubbles': true
+                                            }));
+
+                                        })
+
 
                                     }
                                 }
-                                if (is_percentage_or_fixed && is_percentage) {
 
-                                    var percenetage_of_array = $(tdElement).closest('tr').data('is-percentage-of');
-                                    if (!Array.isArray(percenetage_of_array)) {
-                                        percenetage_of_array = percenetage_of_array ? percenetage_of_array.replace(/\[|\]/g, '').split(',') : [];
+                                if (is_percentage_or_fixed && is_percentage) {
+                                    var percentage_of_array = tdElement.closest('tr').getAttribute('data-is-percentage-of');
+
+                                    if (!Array.isArray(percentage_of_array)) {
+
+                                        percentage_of_array = percentage_of_array ? percentage_of_array.replace(/\[|\]/g, '').split(',') : [];
                                     }
-                                    var salesRevenueRowId = $('#sales-revenue-id').val();
-                                    if (percenetage_of_array && percenetage_of_array.length) {
+                                    var salesRevenueRowId = domElements.salesRevenueId;
+                                    if (percentage_of_array && percentage_of_array.length) {
                                         var loopDates;
                                         loopDates = inAddOrEditModal ? dates : [firstDate];
                                         if (reportType == 'modified') {
                                             loopDates = getDatesLargerThanDate(firstDate, dates)
                                         }
                                         var total = 0;
+                                        var percentageElementId = financialStatementAbleItemId == corporateTaxesId ? earningBeforeTaxesId : salesRevenueRowId;
+
                                         loopDates.forEach((currentDate) => {
                                             total = 0;
-                                            percenetage_of_array.forEach(function(subItemName) {
-                                                var valOfCurrentSubItem = $('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + salesRevenueRowId + '"][data-date="' + currentDate + '"]').val();
+                                            percentage_of_array.forEach(function(subItemName) {
+
+                                                var valOfCurrentSubItem = 0;
+                                                if (financialStatementAbleItemId == corporateTaxesId) {
+                                                    valOfCurrentSubItem = parseFloat(document.querySelector('input[data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value);
+                                                    if (valOfCurrentSubItem < 0) {
+                                                        valOfCurrentSubItem = 0;
+                                                    }
+                                                } else {
+                                                    valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name=' + subItemName + '] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
+                                                }
                                                 total += parseFloat(valOfCurrentSubItem);
 
                                             });
 
-                                            currentVal = inAddOrEditModal ? currentVal : parseFloat($(tdElement).data('percentage-value'));
+                                            currentVal = inAddOrEditModal ? currentVal : parseFloat(tdElement.getAttribute('data-percentage-value'));
                                             currentValue = total ? currentVal / 100 * total : 0;
-                                            $(tdElement).closest('tr').find('td.editable-date.date-' + currentDate).html(number_format(currentValue, 2));
-                                            $(tdElement).closest('tr').find('input[data-date][data-date="' + currentDate + '"]').val(currentValue).trigger('change');
+                                            tdElement.closest('tr').querySelector('td.editable-date.date-' + currentDate).innerHTML = number_format(currentValue, 2);
+                                            var input = tdElement.closest('tr').querySelector('input[data-date][data-date="' + currentDate + '"]')
+                                            input.value = currentValue
+                                            input.dispatchEvent(new Event('change', {
+                                                'bubbles': true
+                                            }));
                                         })
                                     }
+
                                 } else {
-                                    $(this).parent().find('input[data-date="' + firstDate + '"]').val($(this).text().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")).trigger('change');
+                                    var val = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '');
+                                    var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]')
+                                    input.value = val
+                                    input.dispatchEvent(new Event('change', {
+                                        'bubbles': true
+                                    }));
+
 
                                 }
 
 
                             } else {
-
-                                $(tdElement).parent().find('input.text-input-hidden').val($(tdElement).text().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")).trigger('change');
+                                var val = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "");
+                                var input = tdElement.parentElement.querySelector('input.text-input-hidden')
+                                input.value = val
+                                input.dispatchEvent(new Event('change', {
+                                    'bubbles': true
+                                }));
                             }
-
-
+                            console.log((performance.now() - startDate) / 1000)
                             $('.main-table-class').DataTable().columns.adjust();
-
                         }
 
                         function formatsubrow1(d, dates) {
@@ -685,7 +797,6 @@ $tableId = 'kt_table_1';
 
                         $(document).on('click', '.filter-btn-class', function(e) {
                             e.preventDefault();
-
                             $('#loader_id').removeClass('hide_class');
                             const interval = $('select[name="interval_view"]').val();
                             formatDatesForInterval(interval);
@@ -735,7 +846,7 @@ $tableId = 'kt_table_1';
                                 function() {
 
                                     var tableId = '#' + "{{ $tableId }}";
-
+                                    var salesGrowthRateId = domElements.salesGrowthRateId
                                     var table = $(tableId);
                                     let data = $('#dates').val();
                                     data = JSON.parse(data);
@@ -770,7 +881,7 @@ $tableId = 'kt_table_1';
                                             } else if (row.isSubItem && (row.pivot.created_from == row.pivot.sub_item_type)) {
                                                 return `
 											<div class="d-flex align-items-center justify-content-between">
-												<a  data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
+												<a  data-is-subitem="1" data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
 													<i class="fas fa-trash-alt"></i>
 													
 													</a>
@@ -810,12 +921,17 @@ $tableId = 'kt_table_1';
                                                     let total = get_total_of_object(row.sub_items, date);
                                                     return row.sub_items ? number_format(total) : 0
                                                 }
-                                                // if(row.sub_items && row.sub_items[0]){
-                                                //     var payload = row.sub_items[0].pivot.payload ;
-                                                //     return   payload ? JSON.parse(payload)[date] : 0; 
-                                                // }
 
-                                                return 0
+                                                if (row.main_rows && row.main_rows[0]) {
+                                                    var isPercentageRow = row.is_sales_rate || row.id == salesGrowthRateId
+                                                    var noDecimals = isPercentageRow ? 2 : 0;
+                                                    var percentageMarket = isPercentageRow ? ' %' : '';
+
+                                                    var autoCalculatedValue = row.main_rows[0].pivot.payload;
+                                                    return autoCalculatedValue ? number_format(JSON.parse(autoCalculatedValue)[date], noDecimals) + percentageMarket : 0
+
+                                                }
+                                                return 0;
 
                                             }
                                             , data: 'id'
@@ -881,7 +997,7 @@ $tableId = 'kt_table_1';
                                                     , "text": '<svg style="margin-right:10px;position:relative;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect id="bound" x="0" y="0" width="24" height="24"/><path d="M5,4 L19,4 C19.2761424,4 19.5,4.22385763 19.5,4.5 C19.5,4.60818511 19.4649111,4.71345191 19.4,4.8 L14,12 L14,20.190983 C14,20.4671254 13.7761424,20.690983 13.5,20.690983 C13.4223775,20.690983 13.3458209,20.6729105 13.2763932,20.6381966 L10,19 L10,12 L4.6,4.8 C4.43431458,4.5790861 4.4790861,4.26568542 4.7,4.1 C4.78654809,4.03508894 4.89181489,4 5,4 Z" id="Path-33" fill="#000000"/></g></svg>' + '{{ __("Analysis") }}'
                                                     , 'className': 'btn btn-bold btn-secondary filter-table-btn  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away'
                                                     , "action": function() {
-                                                        window.location.href = "{{ route('dashboard.breakdown.incomeStatement',[$company->id,$incomeStatement->id]) }}"
+                                                        window.location.href = "{{ route('dashboard.breakdown.incomeStatement',[$company->id,$reportType,$incomeStatement->id]) }}"
                                                     }
                                                 },
 
@@ -913,9 +1029,11 @@ $tableId = 'kt_table_1';
 
                                             ]
                                             , createdRow: function(row, data, dataIndex, cells) {
-                                                let reportType = $('#sub-item-type').val();
-                                                let salesGrowthRateId = $('#sales-growth-rate-id').val();
-                                                let salesReveueId = $('#sales-revenue-id').val();
+
+                                                let reportType = vars.subItemType;
+                                                let salesGrowthRateId = domElements.salesGrowthRateId;
+                                                let corporateTaxesId = domElements.corporateTaxesId;
+                                                let salesReveueId = domElements.salesRevenueId;
                                                 if (data.id == salesReveueId) {
                                                     sales_revenues_sub_items_names = [];
                                                     data.sub_items.forEach(function(subItemParent) {
@@ -954,10 +1072,16 @@ $tableId = 'kt_table_1';
                                                         if (data.pivot.percentage_value) {
                                                             checkedPercentages = JSON.parse(data.pivot.is_percentage_of);
                                                         }
-                                                        window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
-                                                            var isCurrentChecked = checkedPercentages.includes(MainItemObject) ? ' selected' : ' ';
-                                                            sub_items_options += '<option ' + isCurrentChecked + ' value="' + MainItemObject + '">' + MainItemObject + '</option>'
-                                                        })
+                                                        if (data.pivot.financial_statement_able_item_id == corporateTaxesId) {
+                                                            sub_items_options = '<option selected value="Earning Before Taxes - EBT" selected>Earning Before Taxes - EBT</option>'
+
+                                                        } else {
+                                                            window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+                                                                var isCurrentChecked = checkedPercentages.includes(MainItemObject) ? ' selected' : ' ';
+                                                                sub_items_options += '<option ' + isCurrentChecked + ' value="' + MainItemObject + '">' + MainItemObject + '</option>'
+                                                            })
+                                                        }
+
                                                         var nonRepeatingFixedisChecked = '';
                                                         var repeatingFixedisChecked = '';
                                                         var percentageisChecked = '';
@@ -981,7 +1105,7 @@ $tableId = 'kt_table_1';
                                                         has_percentage_or_fixed_sub_items =
                                                             `
 															<br>
-															<div class="flex-checkboxes how-many-item" data-id="1">
+															<div class="flex-checkboxes how-many-item" data-id="0">
 																<div class="form-check mt-2">
 															
 															<div class="form-group custom-divs-class">
@@ -1090,7 +1214,7 @@ $tableId = 'kt_table_1';
 													</button>
 												</div>
 												<div class="modal-body">
-													<form id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+													<form data-financial-statement-able-item-id="${data.pivot.financial_statement_able_item_id}" id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
 														<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 														<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
@@ -1102,7 +1226,7 @@ $tableId = 'kt_table_1';
 														${has_percentage_or_fixed_sub_items}
 													<div class="mt-2">
 														<label>{{ __('Sub Of') }}</label>
-														<select name="sub_of_id" class="form-control main-row-select" data-selected-main-row="${data.pivot.financial_statement_able_item_id}">
+														<select  name="sub_of_id" class="form-control main-row-select" data-selected-main-row="${data.pivot.financial_statement_able_item_id}">
 															
 														</select>
 														</div>
@@ -1168,7 +1292,7 @@ $tableId = 'kt_table_1';
                                                         $(row).attr('data-is-percentage', data.pivot.percentage_or_fixed == 'percentage')
                                                         $(row).attr('data-is-repeating-fixed', data.pivot.percentage_or_fixed == 'repeating_fixed')
                                                         $(row).attr('data-is-none-repeating-fixed', data.pivot.percentage_or_fixed == 'non_repeating_fixed')
-                                                        // $(row).attr('data-is-repeating', data.pivot.is_repeating)
+                                                        $(row).attr('data-financial-statement-able-item-id', incomeStatementItemId)
 
                                                     }
 
@@ -1190,7 +1314,7 @@ $tableId = 'kt_table_1';
 
                                                         var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                                                         $(dateDt).after(hiddenInput);
-                                                        $(hiddenInput).trigger('change');
+
                                                     });
 
                                                     $(row).append(
@@ -1219,6 +1343,8 @@ $tableId = 'kt_table_1';
 
                                                             var hiddenInput = `<input type="hidden" name="valueMainRowWithoutSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                                                             $(dateDt).after(hiddenInput);
+
+
                                                         });
 
                                                         $(row).append(`
@@ -1226,7 +1352,7 @@ $tableId = 'kt_table_1';
 										`);
 
 
-                                                        let dependOn = JSON.parse(data.depends_on);
+                                                        let dependOn = data.depends_on ? JSON.parse(data.depends_on) : [];
                                                         if (dependOn.length) {
                                                             $(row).attr('data-depends-on', dependOn.join(','))
                                                         }
@@ -1278,9 +1404,17 @@ $tableId = 'kt_table_1';
 
                                                         if (data.has_percentage_or_fixed_sub_items && reportType != 'actual') {
                                                             sub_items_options = '';
-                                                            window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
-                                                                sub_items_options += '<option value="' + MainItemObject + '">' + MainItemObject + '</option>'
-                                                            })
+                                                            let corporateTaxesId = $('#corporate-taxes-id').val();
+
+                                                            if (data.id == corporateTaxesId) {
+                                                                sub_items_options = '<option value="Earning Before Taxes - EBT" selected>Earning Before Taxes - EBT</option>'
+                                                            } else {
+                                                                window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+                                                                    sub_items_options += '<option value="' + MainItemObject + '">' + MainItemObject + '</option>'
+                                                                })
+
+                                                            }
+
                                                             has_percentage_or_fixed_sub_items =
                                                                 `
 															<br>
@@ -1413,7 +1547,7 @@ $tableId = 'kt_table_1';
         </button>
       </div>
       <div class="modal-body">
-        <form id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+        <form  data-financial-statement-able-item-id="${data.id}" id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
             
             <label class="label ">{{ __('How Many Items ?') }}</label>
 			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
@@ -1450,54 +1584,81 @@ $tableId = 'kt_table_1';
                                                     $(row).find('td.total-row').html(number_format(totals));
                                                     $(row).find('.input-hidden-for-total').val(totals)
                                                 }
+
                                             }
                                             , drawCallback: function(settings) {
+                                                var startDate = performance.now()
+                                                let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 $('tr[data-percentage-or-fixed="percentage"] td.editable').attr('contenteditable', false);
                                                 var dates = "{{ json_encode(array_keys($incomeStatement->getIntervalFormatted())) }}";
                                                 dates = dates.replace(/(&quot\;)/g, "\"")
-
-                                                if ($('.is-main-for-all-calculations').length) {
+                                                var isMainForAllCalculations = document.querySelectorAll('.is-main-for-all-calculations')
+                                                if (isMainForAllCalculations.length) {
                                                     var mainRowWithSubItems = null;
-                                                    $('.is-main-for-all-calculations').each(function(index, mainRow) {
+                                                    isMainForAllCalculations.forEach(function(mainRow, index) {
                                                         if (!mainRowWithSubItems) {
-                                                            var modelId = $(mainRow).data('model-id');
-                                                            if ($(mainRow).nextAll('.is-sub-row.maintable-1-row-class' + modelId).length) {
+                                                            var modelId = mainRow.getAttribute('data-model-id');
+                                                            var siblings = [...myNextAll(mainRow, '.is-sub-row.maintable-1-row-class' + modelId)]
+                                                            if (siblings.length) {
                                                                 mainRowWithSubItems = mainRow
                                                             }
 
                                                         }
 
                                                     });
-                                                    if (mainRowWithSubItems) {
-                                                        dates = JSON.parse(dates);
-                                                        for (date of dates) {
-                                                            $(mainRowWithSubItems).next('tr').find('input[data-date="' + date + '"]').trigger('change');
-                                                        }
-                                                    }
+                                                    // if (mainRowWithSubItems) {
+                                                    //     dates = JSON.parse(dates);
+                                                    //     for (date of dates) {
+                                                    //         // $(mainRowWithSubItems).next('tr').find('input[data-date="' + date + '"]').trigger('change');
+                                                    //     }
+                                                    // }
                                                     let options = '';
-                                                    $('.is-main-with-sub-items').each(function(index, row) {
-                                                        var name = $(row).find('.is-name-cell').html();
-                                                        options += ` <option value="${$(row).data('model-id')}"> ${name} </option> `
+
+                                                    document.querySelectorAll('.is-main-with-sub-items').forEach(function(row, index) {
+                                                        let modelId = row.getAttribute('data-model-id');
+                                                        var name = row.querySelector('.is-name-cell').innerHTML;
+                                                        options += ` <option value="${modelId}"> ${name} </option> `
                                                     })
 
-                                                    $('.main-row-select').each(function(index, mainRowSelect) {
-                                                        var selectedRowId = $(mainRowSelect).data('selected-main-row');
+                                                    document.querySelectorAll('.main-row-select').forEach(function(mainRowSelect, index) {
+                                                        var selectedRowId = mainRowSelect.getAttribute('data-selected-main-row');
                                                         var replace = `value="${selectedRowId}"`;
                                                         var replaceWith = `selected value="${selectedRowId}"`
                                                         options = options.replace(replace, replaceWith);
-                                                        $(mainRowSelect).empty().append(options);
+                                                        mainRowSelect.innerHTML = options;
+                                                    });
+                                                    document.querySelectorAll('.main-row-select[data-selected-main-row="' + corporateTaxesId + '"] option').forEach((option) => {
+                                                        if (option.value != corporateTaxesId) {
+                                                            option.remove();
+                                                        }
                                                     })
+
+
                                                 }
                                                 updateAllMainsRowPercentageOfSales(dates);
+                                                var addBtnForCorporateTaxes = document.querySelector('.add-btn[data-income-statement-item-id="' + corporateTaxesId + '"]')
+                                                var deleteBtnForCorporateTaxes = document.querySelector('.delete-btn[data-income-statement-item-id="' + corporateTaxesId + '"]')
+                                                if (addBtnForCorporateTaxes) {
+                                                    addBtnForCorporateTaxes.classList.add('d-none')
+                                                    addBtnForCorporateTaxes.classList.remove('d-block')
+                                                }
+                                                if (deleteBtnForCorporateTaxes) {
+                                                    deleteBtnForCorporateTaxes.classList.add('d-none')
+                                                    deleteBtnForCorporateTaxes.classList.remove('d-block')
+
+                                                }
+
                                                 reinitializeSelect2();
 
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
 
-                                                var reportType = $('#sub-item-type').val();
+                                                var reportType = vars.subItemType;
                                                 let actualDates = [];
-                                                $('.dataTables_scrollHeadInner .main-table-class:eq(0) th.is-actual').each(function(index, th) {
+                                                // alert($('.dataTables_scrollHeadInner .main-table-class:eq(0) th.is-actual').length)
+                                                // alert(document.querySelectorAll('.dataTables_scrollHeadInner .main-table-class:first-of-type th.is-actual').length)
+                                                document.querySelectorAll('.dataTables_scrollHeadInner .main-table-class:first-of-type th.is-actual').forEach(function(th, index) {
                                                     if (!actualDates.includes($(th).data('date'))) {
                                                         actualDates.push($(th).data('date'));
                                                     }
@@ -1506,8 +1667,9 @@ $tableId = 'kt_table_1';
                                                 if (reportType == 'actual') {
                                                     const table = $('.main-table-class').DataTable();
                                                     // if from forecast online
-                                                    $('.is-name-cell[contenteditable]').each(function(index, td) {
-                                                        $(td).attr('contenteditable', false);
+                                                    document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
+                                                        td.setAttribute('contenteditable', false)
+                                                        // $().attr('contenteditable', false);
                                                     });
                                                     document.querySelectorAll('th[data-is-actual="0"]').forEach((th) => {
                                                         var isActual = th.getAttribute('data-is-actual');
@@ -1531,23 +1693,26 @@ $tableId = 'kt_table_1';
                                                     table.column(1).visible(false);
                                                     $('.kt-portlet__foot').css('display', 'none');
                                                     $('#store-report-form-id .kt-portlet').append(`<div class='single-btn'><button style="float:right" type="submit" class="btn active-style redirect-btn" data-redirect-to="{{ route('admin.view.financial.statement',getCurrentCompanyId()) }}"> Back To Financial Statement </button></div>`);
-                                                    $('[contenteditable]').each(function(index, td) {
-                                                        $(td).attr('contenteditable', false);
+                                                    document.querySelectorAll('[contenteditable]').forEach(function(td, index) {
+                                                        td.setAttribute('contenteditable', false);
                                                     })
                                                     actualDates.forEach(function(actualDate) {
-                                                        // $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
-                                                        $('.editable-date.date-' + actualDate).attr('contenteditable', false);
+                                                        document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
+                                                            td.setAttribute('contenteditable', false);
+                                                        })
                                                     })
                                                 }
                                                 if (reportType == 'modified') {
                                                     const table = $('.main-table-class').DataTable();
                                                     table.column(1).visible(false);
-                                                    $('.is-name-cell[contenteditable]').each(function(index, td) {
-                                                        $(td).attr('contenteditable', false);
+                                                    document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
+                                                        td.setAttribute('contenteditable', false);
                                                     })
                                                     actualDates.forEach(function(actualDate) {
                                                         // $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
-                                                        $('.editable-date.date-' + actualDate).attr('contenteditable', false);
+                                                        document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
+                                                            td.setAttribute('contenteditable', false);
+                                                        })
                                                     })
                                                 }
 
@@ -1581,6 +1746,7 @@ $tableId = 'kt_table_1';
 
                                 let submitBtn = $(this);
                                 submitBtn.attr('disabled', true);
+
                                 e.preventDefault();
                                 inAddOrEditModal = true;
                                 let id = $(this).data('id');
@@ -1636,7 +1802,7 @@ $tableId = 'kt_table_1';
                                             }
                                         }
                                         , error: function(res) {
-                                            submitBtn.attr('disabled', true);
+                                            submitBtn.attr('disabled', false);
                                             let message = '';
                                             if (res.responseJSON && res.responseJSON.message) {
                                                 message = res.responseJSON.message;
@@ -1687,9 +1853,6 @@ $tableId = 'kt_table_1';
                                     formDataObject[key].push(value);
                                 });
 
-                                console.log('form');
-                                console.log(formDataObject);
-
                                 if (formDataObject['sub_items[0][can_be_percentage_or_fixed]']) {
                                     var incomeStatementId = formDataObject['financial_statement_able_id'];
                                     var incomeStatementItemId = formDataObject['financial_statement_able_item_id'];
@@ -1701,12 +1864,6 @@ $tableId = 'kt_table_1';
                                     var is_percentage_of = is_percentage ? "[" + formDataObject['sub_items[0][is_percentage_of][]'].toString() + "]" : '';
                                     var percentage_value = is_percentage ? formDataObject['sub_items[0][percentage_value]'] : 0;
                                     var repeating_value = is_repeating_fixed ? formDataObject['sub_items[0][repeating_fixed_value]'] : 0;
-                                    console.log('percentage of value ');
-                                    console.log(percentage_or_fixed);
-                                    console.log(is_percentage);
-                                    console.log(is_non_repeating_fixed);
-                                    console.log(is_repeating_fixed);
-                                    console.log(is_percentage_of);
                                     var tdValue = 0;
                                     if (is_percentage) {
                                         tdValue = percentage_value;
@@ -1714,7 +1871,7 @@ $tableId = 'kt_table_1';
                                         tdValue = repeating_value;
                                     }
 
-                                    $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"]').attr('data-is-percentage-of', is_percentage_of).attr('data-percentage-or-fixed', percentage_or_fixed).attr('data-is-percentage', is_percentage).attr('data-is-repeating-fixed', is_repeating_fixed).attr('data-is-none-repeating-fixed', is_non_repeating_fixed).attr('data-is-trigger-change', 'true');
+                                    $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"]').attr('data-financial-statement-able-item-id', incomeStatementItemId).attr('data-is-percentage-of', is_percentage_of).attr('data-percentage-or-fixed', percentage_or_fixed).attr('data-is-percentage', is_percentage).attr('data-is-repeating-fixed', is_repeating_fixed).attr('data-is-none-repeating-fixed', is_non_repeating_fixed).attr('data-is-trigger-change', 'true');
 
                                     $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"] td.editable-date:eq(0)').html(number_format(tdValue)).trigger('blur');
 
@@ -1722,19 +1879,13 @@ $tableId = 'kt_table_1';
                                 // refresh formdata object 
                                 formData = document.getElementById('edit-sub-item-form' + id + subItemName)
                                 formData = new FormData(formData);
-                                // console.log('edit form data');
-                                // console.log(formData);
                                 // submit main table inputs 
 
                                 dataForm = document.getElementById('store-report-form-id');
                                 dataForm = new FormData(dataForm);
-                                // console.log('store form data');
-                                // console.log(dataForm);
                                 for (var pair of formData.entries()) {
                                     dataForm.append(pair[0], pair[1]);
                                 }
-                                // console.log('financial form');
-                                // console.log(dataForm);
                                 $.ajax({
                                     type: 'POST'
                                     , url: $(form).attr('action')
@@ -1829,12 +1980,12 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('change', '.main-with-no-child input', function(e) {
-                                let rowId = $(this).data('parent-model-id');
-                                let grossProfitId = $('#gross-profit-id').val();
-                                let earningBeforeInterestTaxesDepreciationAmortizationId = $('#earning-before-interest-taxes-depreciation-amortization-id').val();
-                                let earningBeforeInterestTaxesId = $('#earning-before-interest-taxes-id').val();
-                                let earningBeforeTaxesId = $('#earning-before-taxes-id').val();
-                                let date = $(this).data('date');
+                                let rowId = this.getAttribute('data-parent-model-id');
+                                let grossProfitId = domElements.growthProfitId;
+                                let earningBeforeInterestTaxesDepreciationAmortizationId = domElements.earningBeforeInterestTaxesDepreciationAmor;
+                                let earningBeforeInterestTaxesId = domElements.earningBeforeInterestTaxesId;
+                                let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
+                                let date = this.getAttribute('data-date');
                                 if (rowId == grossProfitId) {
                                     updateEarningBeforeIntersetTaxesDepreciationAmortization(date);
                                 } else if (rowId == earningBeforeInterestTaxesId) {
@@ -1842,7 +1993,6 @@ $tableId = 'kt_table_1';
                                 } else if (rowId == earningBeforeTaxesId) {
                                     updateNetProfit(date);
                                 }
-
 
                                 updatePercentageOfSalesFor(rowId, date);
                             });
@@ -1852,7 +2002,7 @@ $tableId = 'kt_table_1';
                             $(document).on('click', '.save-form', function(e) {
                                 e.preventDefault();
                                 form = document.getElementById('store-report-form-id');
-                                let redirectTo = $(this).data('redirect-to');
+                                let redirectTo = this.getAttribute('data-redirect-to');
                                 var formData = new FormData(form);
 
                                 // formData.append('redirectTo', );
@@ -1893,10 +2043,10 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('keyup', '.how-many-class', function() {
-                                let index = $(this).data('id');
-                                let oldHowMany = parseInt($('.old-how-many[data-id="' + index + '"]').val());
-                                let currentHowMany = parseInt($('.how-many-class[data-id="' + index + '"]').val());
+                                let index = parseInt(this.getAttribute('data-id'));
+                                let currentHowMany = parseInt(document.querySelector('.how-many-class[data-id="' + index + '"]').value);
                                 let currentHowManyInstances = $('.how-many-item[data-id="' + index + '"]').length;
+                                let financialStatementAbleItemId = this.closest('form').getAttribute('data-financial_statement_able_item_id')
                                 if (currentHowMany < 1) {
                                     currentHowMany = 1;
                                 }
@@ -1904,11 +2054,9 @@ $tableId = 'kt_table_1';
                                     return;
                                 }
                                 if (currentHowManyInstances >= currentHowMany) {
-                                    $('.how-many-item[data-id="' + index + '"]').each(function(index, val) {
+                                    document.querySelectorAll('.how-many-item[data-id="' + index + '"]').forEach(function(val, index) {
                                         var order = index + 1;
-
                                         if (order > currentHowMany) {
-
                                             $(val).remove();
                                         }
                                     })
@@ -1922,16 +2070,24 @@ $tableId = 'kt_table_1';
                                             if ($(v).attr('type') == 'text') {
                                                 $(v).val('');
                                             }
-                                            // console.log(v.tagName.toLowerCase() == 'select')
                                             if (v.tagName.toLowerCase() == 'select') {
                                                 var name = $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1);
-                                                var sub_items_options = [];
+                                                var sub_items_options = '';
 
-                                                window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+                                                let corporateTaxesId = $('#corporate-taxes-id').val();
 
-                                                    sub_items_options += '<option ' + ' value="' + MainItemObject + '">' + MainItemObject + '</option>'
-                                                })
-                                                v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${sub_items_options} </select>`
+                                                if (financialStatementAbleItemId == corporateTaxesId) {
+                                                    sub_items_options += '<option value="Earning Before Taxes - EBT" selected>Earning Before Taxes - EBT</option>'
+                                                } else {
+                                                    window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+                                                        sub_items_options += '<option value="' + MainItemObject + '">' + MainItemObject + '</option>'
+                                                    })
+                                                }
+
+                                                if (v.closest('.dropdown.bootstrap-select')) {
+                                                    v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${sub_items_options} </select>`
+
+                                                }
 
                                             } else {
                                                 $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
@@ -1959,48 +2115,70 @@ $tableId = 'kt_table_1';
                         dates = dates.replace(/(&quot\;)/g, "\"")
                         dates = JSON.parse(dates);
                     }
-
-
-                    $('.is-main-with-sub-items').each(function(index, val) {
-                        var mainRowId = $(val).data('model-id');
+                    document.querySelectorAll('.is-main-with-sub-items').forEach(function(val) {
+                        // var mainRowId = $(val).data('model-id');
+                        var mainRowId = val.getAttribute('data-model-id');
                         dates = Array.isArray(dates) ? dates : JSON.parse(dates);
                         for (date of dates) {
                             updatePercentageOfSalesFor(mainRowId, date, false);
                         }
                     })
+                    // $('.is-main-with-sub-items').each(function(index, val) {
+                    //     var mainRowId = $(val).data('model-id');
+                    //     dates = Array.isArray(dates) ? dates : JSON.parse(dates);
+                    //     for (date of dates) {
+                    //         updatePercentageOfSalesFor(mainRowId, date, false);
+                    //     }
+                    // })
 
                 }
 
                 function updatePercentageOfSalesFor(rowId, date, mainRowIsSub = true) {
 
-                    let salesRevenueId = $('#sales-revenue-id').val();
+                    let salesRevenueId = document.getElementById('sales-revenue-id').value;
                     let rateMainRowId = sales_rate_maps[rowId];
                     let mainRowValue = 0;
                     let salesRevenueValue = 0;
                     mainRow = '';
                     if (mainRowIsSub) {
-                        mainRow = $('.main-with-no-child[data-model-id="' + rowId + '"]');
-                        mainRowValue = parseFloat(mainRow.find('input[data-date="' + date + '"]').val());
-                        salesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('input[data-date="' + date + '"]').val());
+                        mainRow = document.querySelector('.main-with-no-child[data-model-id="' + rowId + '"]');
+                        if (mainRow) {
 
+                            mainRowValue = parseFloat(mainRow.querySelector('input[data-date="' + date + '"]').value);
+                            salesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] input[data-date="' + date + '"]').value);
+
+                        }
                     } else {
-                        mainRow = $('.is-main-with-sub-items[data-model-id="' + rowId + '"]')
-                        mainRowValue = parseFloat(mainRow.find('input[data-date="' + date + '"]').val());
-                        salesRevenueValue = parseFloat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('input[data-date="' + date + '"]').val());
+                        mainRow = document.querySelector('.is-main-with-sub-items[data-model-id="' + rowId + '"]')
+                        mainRowValue = parseFloat(mainRow.querySelector('input[data-date="' + date + '"]').value);
+                        salesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] input[data-date="' + date + '"]').value);
 
                     }
                     let salesPercentage = salesRevenueValue ? mainRowValue / salesRevenueValue * 100 : 0;
-                    $('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"]').find('input[data-date="' + date + '"]').val(salesPercentage);
-                    $('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"]').find('td.date-' + date).html(number_format(salesPercentage, 2) + ' %');
-                    totalPercentage = mainRow.find('.total-row').html();
+                    var input = document.querySelector('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"] input[data-date="' + date + '"]');
+                    if (input) {
+                        input.value = salesPercentage;
+
+                    }
+                    var element = document.querySelector('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"] ' + 'td.date-' + date);
+                    if (element) {
+                        element.innerHTML = number_format(salesPercentage, 2) + ' %';
+                    }
+                    totalPercentage = mainRow ? mainRow.querySelector('.total-row').innerHTML : 0;
 
                     if (totalPercentage) {
                         totalPercentage = parseFloat(number_unformat(totalPercentage));
-                        totalSalesRevenue = parseFloat(number_unformat($('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"]').find('.total-row').html()));
+                        totalSalesRevenue = parseFloat(number_unformat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] .total-row').innerHTML));
 
                         if (totalPercentage && totalSalesRevenue) {
-                            $('.main-with-no-child[data-model-id="' + rateMainRowId + '"]').find('.input-hidden-for-total').val(totalPercentage / totalSalesRevenue * 100)
-                            $('.main-with-no-child[data-model-id="' + rateMainRowId + '"]').find('.total-row').html(number_format(totalPercentage / totalSalesRevenue * 100, 2) + ' %');
+                            var element = document.querySelector('.main-with-no-child[data-model-id="' + rateMainRowId + '"] .input-hidden-for-total');
+                            if (element) {
+                                element.value = (totalPercentage / totalSalesRevenue * 100)
+                            }
+                            var element = document.querySelector('.main-with-no-child[data-model-id="' + rateMainRowId + '"] .total-row');
+                            if (element) {
+                                element.innerHTML = (number_format(totalPercentage / totalSalesRevenue * 100, 2) + ' %');
+                            }
 
                         }
 
@@ -2018,8 +2196,8 @@ $tableId = 'kt_table_1';
 
 
                     const firstDateColumn = $('td.editable-date').eq(0);
-                    salesGrowthRateId = $('#sales-growth-rate-id').val();
-                    salesRevenueId = $('#sales-revenue-id').val();
+                    salesGrowthRateId = domElements.salesGrowthRateId;
+                    salesRevenueId = domElements.salesRevenueId;
                     var visiableHeaderDates = [];
 
                     const allYears = getYearsFromDates(dates);
@@ -2153,7 +2331,8 @@ $tableId = 'kt_table_1';
                                         if (!visiableHeaderDates.includes(loopYear + '-' + loopMonth + '-' + currentDay)) {
                                             visiableHeaderDates.push(loopYear + '-' + loopMonth + '-' + currentDay);
                                         }
-                                        for (rowId = 1; rowId <= $('tbody tr').length; rowId++) {
+                                        var tBodyLength = $('tbody tr').length
+                                        for (rowId = 1; rowId <= tBodyLength; rowId++) {
                                             currentRow = $('tbody tr:nth-of-type(' + rowId + ')');
                                             // rowId = currentRow.find('.is-name-cell').html();
                                             var searchRowValue = -1;
@@ -2255,6 +2434,7 @@ $tableId = 'kt_table_1';
 
                     }
                     table.columns(hiddenIndexes).visible(false)
+
                     updateSalesGrowthRate(visiableHeaderDates.sort());
                     updatePercentageRows(visiableHeaderDates);
 
@@ -2266,7 +2446,7 @@ $tableId = 'kt_table_1';
             <script>
                 function updatePercentageRows(visiableHeaderDates) {
                     var percentage = 0;
-                    const salesRevenueId = $('#sales-revenue-id').val();
+                    const salesRevenueId = domElements.salesRevenueId;
                     $('tr.is-sales-rate').each(function(index, isSalesRow) {
 
                         for (visiableHeaderDate of visiableHeaderDates) {
@@ -2297,8 +2477,9 @@ $tableId = 'kt_table_1';
                 }
 
                 function updateSalesGrowthRate(visiableHeaderDates) {
-                    const salesRevenueId = $('#sales-revenue-id').val();
-                    const salesGrowthRateId = $('#sales-growth-rate-id').val();
+
+                    const salesRevenueId = domElements.salesRevenueId;
+                    const salesGrowthRateId = domElements.salesGrowthRateId;
                     for (visiableHeaderDate of visiableHeaderDates) {
                         previousDate = getPreviousElementInArray(visiableHeaderDates, visiableHeaderDate);
                         if (previousDate) {

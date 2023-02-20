@@ -38,9 +38,13 @@ trait IncomeStatementItemAccessor
 
 
 
-	public function getMainRowsPivot(int $incomeStatementId): Collection
+	public function getMainRowsPivot(int $incomeStatementId, string $subItemType): Collection
 	{
-		return $this->withMainRowsPivotFor($incomeStatementId)->get()->pluck('pivot');
+		return $this->withMainRowsPivotFor($incomeStatementId, $subItemType)->get()->pluck('pivot');
+	}
+	public function getMainRows(int $incomeStatementId, string $subItemType): Collection
+	{
+		return $this->withMainRowsPivotFor($incomeStatementId, $subItemType)->get();
 	}
 
 	public function getParentTableClassName(): string

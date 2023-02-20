@@ -74,8 +74,8 @@
 
 
 
-                       @include('comparing_type_selector')
-                       
+                        @include('comparing_type_selector')
+
 
                     </div>
                     @else
@@ -88,7 +88,7 @@
                         $formattedZones = '[' .  implode(',', $zones) . ']';
                         
                         ?>
-                        <div class="form-group row">
+                    <div class="form-group row">
                         <div class="col-md-4">
                             <label>{{ __('Start Date') }}</label>
                             <div class="kt-input-icon">
@@ -129,11 +129,11 @@
                                 @include('max-option-span')
                             </label>
                             <input type="hidden" name="main_type" value="zone">
-<input type="hidden" id="append-to" value="zones">
+                            <input type="hidden" id="append-to" value="zones">
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select  data-live-search="true" data-actions-box="true" data-max-options="0" name="zones[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder " id="zones" multiple>
+                                    <select data-live-search="true" data-actions-box="true" data-max-options="0" name="zones[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder " id="zones" multiple>
                                         @foreach ($oldZones as $zone)
                                         <option value="{{ $zone }}"> {{ __($zone) }}</option>
                                         @endforeach
@@ -173,7 +173,7 @@
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">
-                            <label>{{ __('Select '.$name_of_selector_label) }}  </label>
+                            <label>{{ __('Select '.$name_of_selector_label) }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-actions-box="true" data-live-search="true" name="sales_discounts_fields[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" id="sales_discounts_fields" multiple>
@@ -200,7 +200,7 @@
                         </div>
                         @endif
                     </div>
-                    
+
                 </div>
                 <x-submitting />
             </div>
@@ -357,9 +357,9 @@
                 , data: {
                     'main_data': zones
                     , 'main_field': 'zone'
-                    , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                    , 'field': type_of_data
+                    , 'start_date': $('input[name="start_date"]').val()
+                    , 'end_date': $('input[name="end_date"]').val()
                 }
                 , url: "{{ route('get.zones.data',$company) }}"
                 , dataType: 'json'
@@ -400,9 +400,9 @@
                 , data: {
                     'main_data': zones
                     , 'main_field': 'zone'
-                    , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                    , 'field': type_of_data
+                    , 'start_date': $('input[name="start_date"]').val()
+                    , 'end_date': $('input[name="end_date"]').val()
                 }
                 , url: "{{ route('get.zones.data',$company) }}"
                 , dataType: 'json'
@@ -443,9 +443,9 @@
                     , 'main_field': 'zone'
                     , 'second_main_data': categories
                     , 'sub_main_field': 'category'
-                    , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                    , 'field': type_of_data
+                    , 'start_date': $('input[name="start_date"]').val()
+                    , 'end_date': $('input[name="end_date"]').val()
                 }
                 , url: "{{ route('get.zones.data',$company) }}"
                 , dataType: 'json'
@@ -471,7 +471,6 @@
 
                     });
                     row += '</select>';
-                    console.log(row);
                     $('#sales_channels').html('');
                     $('#sales_channels').append(row);
                 } else {
@@ -486,7 +485,6 @@
 
                     });
                     row += '</select>';
-                    console.log(row);
                     $('#products').html('');
                     $('#products').append(row);
 
@@ -510,9 +508,9 @@
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
                 , 'third_main_field': 'product_or_service'
-                , 'field': type_of_data,
-                'start_date':$('input[name="start_date"]').val(),
-                'end_date':$('input[name="end_date"]').val()
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
             , }
             , url: "{{ route('get.zones.data',$company) }}"
             , dataType: 'json'
@@ -531,7 +529,6 @@
 
             });
             row += '</select>';
-            console.log(row);
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
             reinitializeSelect2();

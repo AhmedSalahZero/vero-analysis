@@ -2,6 +2,8 @@
 
 namespace App\Models\Traits\Mutators;
 
+use App\Models\IncomeStatement;
+use App\Models\IncomeStatementItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Iterator;
@@ -16,11 +18,24 @@ trait FinancialStatementAbleMutator
 	public function storeMainItems(Request $request)
 	{
 		foreach (($this->getMainItemTableClassName())::get() as $financialStatementAbleItem) {
-			$this->withMainItemsFor($financialStatementAbleItem->id)->attach($financialStatementAbleItem->id, [
+			$financialStatementAbleItemId = $financialStatementAbleItem->id;
+			$this->withMainItemsFor($financialStatementAbleItemId)->attach($financialStatementAbleItemId, [
 				'company_id' => getCurrentCompanyId(),
 				'creator_id' => Auth()->user()->id,
 				'created_at' => now()
 			]);
+
+			if ($financialStatementAbleItemId == IncomeStatementItem::CORPORATE_TAXES_ID) {
+				foreach (getAllFinancialAbleTypes() as $subItemType) {
+					$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, 'Corporate Taxes')->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subItemType, 'forecast', [
+						'percentage_or_fixed' => 'percentage',
+						'can_be_percentage_or_fixed' => 1,
+						'name' => 'Corporate Taxes',
+						'percentage_value' => 0,
+						'is_percentage_of' => ['Earning Before Taxes - EBT']
+					]));
+				}
+			}
 		}
 		return $this;
 	}
@@ -39,6 +54,7 @@ trait FinancialStatementAbleMutator
 				'payload' => json_encode(json_encode($pivotForModified)),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'sub_item_type' => 'adjusted'
 			], false);
 
 
@@ -47,6 +63,8 @@ trait FinancialStatementAbleMutator
 				'payload' => json_encode(json_encode($pivotForModified)),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'sub_item_type' => 'modified'
+
 			], false);
 		}
 	}
@@ -65,6 +83,7 @@ trait FinancialStatementAbleMutator
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'sub_item_type' => 'adjusted'
 			], false);
 
 
@@ -73,6 +92,7 @@ trait FinancialStatementAbleMutator
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'sub_item_type' => 'modified'
 			], false);
 		}
 	}
@@ -222,6 +242,7 @@ trait FinancialStatementAbleMutator
 					'payload' => json_encode($payload),
 					'company_id' => \getCurrentCompanyId(),
 					'creator_id' => Auth::id(),
+					'sub_item_type' => $subItemType,
 				], false);
 				$financialStatementAble->updateTotalRowsForAdjusted($financialStatementAbleItemId, $subItemType);
 			}
@@ -235,6 +256,7 @@ trait FinancialStatementAbleMutator
 					'payload' => json_encode($payload),
 					'company_id' => \getCurrentCompanyId(),
 					'creator_id' => Auth::id(),
+					'sub_item_type' => $subItemType
 				], false);
 				$financialStatementAble->updateTotalRowsWithoutSubItemsForAdjusted($financialStatementAbleItemId, $subItemType);
 			}
