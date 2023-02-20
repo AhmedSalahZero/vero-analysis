@@ -11,6 +11,14 @@
 
 
 <style>
+    html body table tbody td.green {
+        color: green !important
+    }
+
+    html body table tbody td.red {
+        color: red !important;
+    }
+
     .modal-backdrop {
         display: none !important;
     }
@@ -321,13 +329,13 @@
                         @php
                         $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
                         @endphp
-                        <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+                        <td class="sub-numeric-bg text-nowrap " style="color:{{ getPercentageColor(sum_all_keys($intervalComparing[$theType][$intervalName])) }} !important"> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
                         @endforeach
                         @php
                         $val = $currentValue[1] - $currentValue[0] ;
                         @endphp
-                        <td class="sub-numeric-bg text-nowrap ">{{ number_format($val)  }}</td>
-                        <td class="sub-numeric-bg text-nowrap ">
+                        <td class="sub-numeric-bg text-nowrap " style="color:{{ getPercentageColor($val) }} !important">{{ number_format($val)  }}</td>
+                        <td class="sub-numeric-bg text-nowrap  " style="color:{{ getPercentageColor(isset($currentValue[0]) && $currentValue[0] ? $val/ $currentValue[0]:0) }} !important">
                             {{ isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100    , 2) . ' %' : number_format(0,2). ' %' }}
                         </td>
 
@@ -348,15 +356,15 @@
                         $salesValue = $values[$newIntervalName] ?? 0;
                         $currentValues[] = $salesValue ;
                         @endphp
-                        <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ number_format($salesValue) }} </td>
+                        <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
                         @endforeach
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell ">
                             @php
                             $val = $currentValues[1] - $currentValues[0] ;
                             @endphp
                             {{ number_format($val ) }}
                         </td>
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell ">
                             {{ isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] *100 , 2)  . ' %' : number_format(0,2). ' %' }}
                         </td>
                         @endforeach
