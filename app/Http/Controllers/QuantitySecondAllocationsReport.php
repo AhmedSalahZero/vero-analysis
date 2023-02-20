@@ -520,15 +520,16 @@ class QuantitySecondAllocationsReport
         $modified_seasonality = QuantityModifiedSeasonality::company()->first();
         $seasonality = $modified_seasonality->use_modified_seasonality == 1 ? $modified_seasonality->modified_seasonality       : $modified_seasonality->original_seasonality;
 
-        $modified_targets = QuantityModifiedTarget::company()->first();
+        // $modified_targets = QuantityModifiedTarget::company()->first();
 
-        $use_modified_targets = $modified_targets->use_modified_targets;
-        $products_modified_targets = $modified_targets->products_modified_targets;
+        // $use_modified_targets = $modified_targets->use_modified_targets;
+        // $products_modified_targets = $modified_targets->products_modified_targets;
+        $products_modified_targets  = array_combine(array_column($sales_forecast->forecasted_sales,'item'),array_column($sales_forecast->forecasted_sales,'Forecasted Sales Value'));
         // Others Index
 
         $input = preg_quote('Others', '~'); // don't forget to quote input string!
 
-        $others_name_index = preg_grep('~' . $input . '~', array_keys($modified_targets->sales_targets_percentages ?: []));
+        $others_name_index = preg_grep('~' . $input . '~', array_keys($products_modified_targets ?: []));
         $others_name_index = Arr::first($others_name_index);
 
         // Check if the calculation on sales value OR net sales
@@ -549,20 +550,20 @@ class QuantitySecondAllocationsReport
                 )))
         ->where($allocation_base, '!=', '')
         ->groupBy($allocation_base)
-        ->map(function($item,$name)use($type,$used_field,$products_items,$sales_targets,$use_modified_targets,$products_modified_targets,$others_name_index){
+        ->map(function($item,$name)use($type,$used_field,$products_items,$sales_targets,$products_modified_targets,$others_name_index){
             $total = $item->sum($used_field);
             $sales_target = ($sales_targets[$name]??0);
             //1- product_items
 
-            $product_items_top = $item->whereIn($type,$products_items)->groupBy($type)->map(function($sub_item,$product_item) use($total,$used_field,$sales_target,$use_modified_targets,$products_modified_targets){
-                if(($use_modified_targets == 1 && $products_modified_targets[$product_item]['percentage'] !== null && $products_modified_targets[$product_item]['percentage'] !== 0) || ($use_modified_targets == 0) ){
+            $product_items_top = $item->whereIn($type,$products_items)->groupBy($type)->map(function($sub_item,$product_item) use($total,$used_field,$sales_target,$products_modified_targets){
+                // if(($use_modified_targets == 1 && $products_modified_targets[$product_item]['percentage'] !== null && $products_modified_targets[$product_item]['percentage'] !== 0) || ($use_modified_targets == 0) ){
                     $sales_value = $sub_item->sum($used_field);
 
                     $product_item_percentage = ($total == 0 ) ? 0 :  ((($sales_value??0)/$total));
                     return  ($product_item_percentage * $sales_target);
-                }else{
-                    return 0;
-                }
+                // }else{
+                //     return 0;
+                // }
             });
             //2- Others
             $others = $item->whereNotIn($type,$products_items)->groupBy($type)->map(function($sub_item) use($used_field)  {
@@ -572,29 +573,29 @@ class QuantitySecondAllocationsReport
             $others_percentage = ($total == 0 ) ? 0 :  ( array_sum($others->toArray()) /$total ) ;
 
 
-            if(isset( $products_modified_targets[$others_name_index]) && ($use_modified_targets == 1 && $products_modified_targets[$others_name_index]['percentage'] !== null && $products_modified_targets[$others_name_index]['percentage'] !== 0) || ($use_modified_targets == 0)){
+            // if(isset( $products_modified_targets[$others_name_index]) && ($use_modified_targets == 1 && $products_modified_targets[$others_name_index]['percentage'] !== null && $products_modified_targets[$others_name_index]['percentage'] !== 0) || ($use_modified_targets == 0)){
                 $product_items_top["Others " .count($others)] = $others_percentage *$sales_target;
 
-            }else{
-                $product_items_top["Others " .count($others)] = 0;
-            }
+            // }else{
+            //     $product_items_top["Others " .count($others)] = 0;
+            // }
             return $product_items_top;
         })
         ->toArray();
 
 
 
-        if ($use_modified_targets == 1) {
-            $result = [];
-            foreach ($product_items_percentages as $base_name => $base_products_items) {
-                $total_base_products_items = array_sum($base_products_items);
-                foreach ($base_products_items as $product_item => $value) {
-                    $percentage = ($total_base_products_items == 0) ? $total_base_products_items : $value / $total_base_products_items;
-                    $result[$base_name][$product_item] = ($sales_targets[$base_name] ?? 0) * $percentage;
-                }
-            }
-            $product_items_percentages = $result;
-        }
+        // if ($use_modified_targets == 1) {
+        //     $result = [];
+        //     foreach ($product_items_percentages as $base_name => $base_products_items) {
+        //         $total_base_products_items = array_sum($base_products_items);
+        //         foreach ($base_products_items as $product_item => $value) {
+        //             $percentage = ($total_base_products_items == 0) ? $total_base_products_items : $value / $total_base_products_items;
+        //             $result[$base_name][$product_item] = ($sales_targets[$base_name] ?? 0) * $percentage;
+        //         }
+        //     }
+        //     $product_items_percentages = $result;
+        // }
 
 
 
@@ -604,12 +605,13 @@ class QuantitySecondAllocationsReport
 
         if (isset($new_allocation_bases_names) && count($new_allocation_bases_names) > 0) {
 
-            $target_percentages = $modified_targets->sales_targets_percentages;
+            // $target_percentages = $modified_targets->sales_targets_percentages;
+            $target_percentages  = array_combine(array_column($sales_forecast->forecasted_sales,'item'),array_column($sales_forecast->forecasted_sales,'Sales %'));
 
             foreach ($new_allocation_bases_names as $key => $base_name) {
                 $sales_target_per_new_base = ($sales_targets[$base_name] ?? 0);
                 foreach ((array)$target_percentages as $product_name => $percentage) {
-                    $product_items_percentages[$base_name][$product_name] =  $percentage * $sales_target_per_new_base;
+                    $product_items_percentages[$base_name][$product_name] =  ($percentage/100) * $sales_target_per_new_base;
                 }
             }
         }

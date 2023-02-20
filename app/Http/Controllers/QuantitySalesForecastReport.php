@@ -912,7 +912,7 @@ class QuantitySalesForecastReport
 
 
         if (($result == 'view') || ($result == 'total_sales_target') || ($result == 'total_sales_target_data')) {
-            $modified_targets = QuantityModifiedTarget::company()->first();
+            // $modified_targets = QuantityModifiedTarget::company()->first();
 
 
             $products = salesGathering::company()
@@ -948,17 +948,21 @@ class QuantitySalesForecastReport
             // $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers', $products_data);
             // $product_item_breakdown_data = $this->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
             // dd($sales_forecast->forecasted_sales);
+            // $modified_seasonality = QuantityModifiedSeasonality::company()->first();
 
             $product_item_breakdown_data = $sales_forecast->forecasted_sales;
             $products_items = array_column($product_item_breakdown_data, 'item');
 
+
             $last_key = (array_key_last($products_items));
             $products_items_monthly_values = [];
 
-            if ($modified_targets->use_modified_targets == 1) {
-                $products_items_monthly_values =  $modified_targets->products_modified_targets;
-                $products_items_monthly_values =  array_combine(array_keys($products_items_monthly_values), array_column($products_items_monthly_values, 'value'));
-            }
+            // if (isset($modified_targets->use_modified_targets) && $modified_targets->use_modified_targets == 1) {
+            //     $products_items_monthly_values =  $modified_targets->products_modified_targets;
+            //     $products_items_monthly_values =  array_combine(array_keys($products_items_monthly_values), array_column($products_items_monthly_values, 'value'));
+            // }else{
+
+            // }
             $product_item_breakdown_data_items = array_combine(array_column($product_item_breakdown_data, 'item'), array_column($product_item_breakdown_data, 'Sales Quantity'));
 
             $modified_seasonality = QuantityModifiedSeasonality::company()->first();
@@ -993,14 +997,16 @@ class QuantitySalesForecastReport
                         'original_seasonality' => $products_items_monthly_percentage,
                     ]);
                 }
-            } elseif (isset($modified_seasonality) && $modified_seasonality->use_modified_seasonality == 1) {
+            }
+            if (isset($modified_seasonality) && $modified_seasonality->use_modified_seasonality == 1) {
                 $products_items_monthly_percentage = $modified_seasonality->modified_seasonality;
             } elseif (isset($modified_seasonality) && $modified_seasonality->use_modified_seasonality == 0) {
                 $products_items_monthly_percentage = $modified_seasonality->original_seasonality;
             }
 
 
-            $total = $modified_targets->use_modified_targets == 1 ? array_sum($products_items_monthly_values) : array_sum(array_column($product_item_breakdown_data, 'Sales Quantity'));
+            // $total = (isset($modified_targets->use_modified_targets) && $modified_targets->use_modified_targets == 1 )? array_sum($products_items_monthly_values) : array_sum(array_column($product_item_breakdown_data, 'Sales Quantity'));
+            $total =  array_sum(array_column($product_item_breakdown_data, 'Sales Quantity'));
 
             $totals_per_month = [];
 
@@ -1010,7 +1016,8 @@ class QuantitySalesForecastReport
             foreach ($product_item_breakdown_data as $key => $product_data) {
 
                 $total_existing_targets = 0;
-                $target = $modified_targets->use_modified_targets == 1 ? $products_items_monthly_values[$product_data['item']] : $product_data['Sales Quantity'];
+                // $target = (isset($modified_targets->use_modified_targets) && $modified_targets->use_modified_targets == 1 )? $products_items_monthly_values[$product_data['item']] : $product_data['Sales Quantity'];
+                $target =  $product_data['Sales Quantity'];
                 $target_percentage = $total == 0 ? 0 : $target / $total;
 
                 // $existing_target_per_product = $target_percentage * $product_data['Forecasted Quantity'];
@@ -1085,7 +1092,7 @@ class QuantitySalesForecastReport
                 'total_sales_targets_values',
                 'products_items_monthly_values',
                 'product_item_breakdown_data',
-                'modified_targets',
+                
                 'has_product_item',
                 'products_items_monthly_percentage',
                 'existing_products_targets',

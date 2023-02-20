@@ -21,7 +21,15 @@
             position: sticky;
             top: 0;
         }
+        input {
+            width: 200%;
+            padding: 10px;
+            margin: 0px;
+        }
 
+        table .last, td:last-child {
+            padding: 2px 24px 2px 0px;
+        }
     </style>
 @endsection
 @section('content')
@@ -114,7 +122,9 @@
                                     }
 
                                     ?>
-                                    <td class="text-center"><input type="number" class="form-control percentage_{{$product_id}}" step="any" name="modified_seasonality[{{$product_data['item']}}][{{$month}}]" value="{{ number_format(($percentage*100) , 4) }}"></td>
+                                    <td class="text-center percentage_class">
+                                        <input type="number" class="form-control  percentage_{{$product_id}}" step="any" name="modified_seasonality[{{$product_data['item']}}][{{$month}}]" value="{{ number_format(($percentage*100) , 4) }}">
+                                    </td>
                                 @endforeach
                                 <td class="percentage_total_{{$product_id}}">
 

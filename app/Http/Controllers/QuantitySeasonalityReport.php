@@ -84,7 +84,7 @@ class QuantitySeasonalityReport
 
         // $products_items_monthly_percentage = [];
 
-        $modified_targets = QuantityModifiedTarget::company()->first();
+        // $modified_targets = QuantityModifiedTarget::company()->first();
 
 
         $products = salesGathering::company()
@@ -127,10 +127,10 @@ class QuantitySeasonalityReport
         $last_key = (array_key_last($products_items));
         $products_items_monthly_values = [];
 
-        if ($modified_targets->use_modified_targets == 1) {
-            $products_items_monthly_values =  $modified_targets->products_modified_targets;
-            $products_items_monthly_values =  array_combine(array_keys($products_items_monthly_values), array_column($products_items_monthly_values, 'value'));
-        }
+        // if (isset($modified_targets->use_modified_targets) && $modified_targets->use_modified_targets == 1) {
+        //     $products_items_monthly_values =  $modified_targets->products_modified_targets;
+        //     $products_items_monthly_values =  array_combine(array_keys($products_items_monthly_values), array_column($products_items_monthly_values, 'value'));
+        // }
         $product_item_breakdown_data_items = array_combine(array_column($product_item_breakdown_data, 'item'), array_column($product_item_breakdown_data, 'Sales Quantity'));
 
         $modified_seasonality = QuantityModifiedSeasonality::company()->first();
@@ -167,7 +167,8 @@ class QuantitySeasonalityReport
                 ]);
                 $modified_seasonality->save();
             }
-        } elseif (isset($modified_seasonality) && $modified_seasonality->modified_seasonality !== null ) {
+        }
+        if (isset($modified_seasonality) && $modified_seasonality->modified_seasonality !== null ) {
 
             $products_items_monthly_percentage = $modified_seasonality->modified_seasonality;
         }else{
@@ -181,7 +182,6 @@ class QuantitySeasonalityReport
                 'products_seasonality',
                 'products_items_monthly_values',
                 'product_item_breakdown_data',
-                'modified_targets',
                 'modified_seasonality',
                 'products_items_monthly_percentage'));
     }
@@ -213,12 +213,13 @@ class QuantitySeasonalityReport
             $products = array_keys($product_item_breakdown_data);
 
             $mainData_data = [];
+
             $others = [];
             if ($sales_forecast->seasonality == "last_3_years") {
                 $mainData_data =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%M') as gr_date ,id,(CASE WHEN quantity < 0 THEN 0 ELSE quantity END) as quantity," . $type ."
                     FROM sales_gathering
-                    WHERE ( company_id = '".$company->id."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                    WHERE ( company_id = '".$company->id."' AND date between '".$request['start_date']."' and '". $request['end_date']."')
 
                     ORDER BY id "
                     )))->whereIn($type,$products)
@@ -233,7 +234,7 @@ class QuantitySeasonalityReport
                 $others =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%M') as gr_date ,id,(CASE WHEN quantity < 0 THEN 0 ELSE quantity END) as quantity," . $type ."
                     FROM sales_gathering
-                    WHERE ( company_id = '".$company->id."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                    WHERE ( company_id = '".$company->id."' AND date between '".$request['start_date']."' and '". $request['end_date']."')
 
                     ORDER BY id "
                     )))->whereNotIn($type,$products)
@@ -246,7 +247,7 @@ class QuantitySeasonalityReport
                 $mainData_data =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%M') as gr_date ,id,(CASE WHEN quantity < 0 THEN 0 ELSE quantity END) as quantity," . $type ."
                     FROM sales_gathering
-                    WHERE ( company_id = '".$company->id."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                    WHERE ( company_id = '".$company->id."' AND date between '".$request['start_date']."' and '". $request['end_date']."')
 
                     ORDER BY id "
                     )))->whereIn($type,$products)
@@ -261,12 +262,12 @@ class QuantitySeasonalityReport
                 $others =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%M') as gr_date ,id,(CASE WHEN quantity < 0 THEN 0 ELSE quantity END) as quantity
                     FROM sales_gathering
-                    WHERE ( company_id = '".$company->id."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                    WHERE ( company_id = '".$company->id."' AND date between '".$request['start_date']."' and '". $request['end_date']."')
 
                     ORDER BY id "
                     )))->whereNotIn($type,$products)
                     ->groupBy('gr_date')->map(function($sub_item) {
-                         return  $sub_item->sum('quantity'); ;
+                         return  $sub_item->sum('quantity');
 
                  })->toArray();
             }
