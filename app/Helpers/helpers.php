@@ -2153,3 +2153,11 @@ function convertStringToClass(string $str): string
 	$reg = " /^[\d]+|[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\~\{\|\}\^ ]/ ";
 	return preg_replace($reg, '-', $str);
 }
+function secondReportIsFirstInArray(string $firstReportType)
+{
+	return $firstReportType != 'forecast';
+}
+function getFirstSegmentInString(string $str, string $separator): string
+{
+	return 	explode($separator, $str)[0];
+}

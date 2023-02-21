@@ -51,7 +51,7 @@ trait FinancialStatementAbleMutator
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->attach($financialStatementAbleItemId, [
-				'payload' => json_encode(json_encode($pivotForModified)),
+				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
 				'sub_item_type' => 'adjusted'
@@ -60,7 +60,7 @@ trait FinancialStatementAbleMutator
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
-				'payload' => json_encode(json_encode($pivotForModified)),
+				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
 				'sub_item_type' => 'modified'

@@ -310,14 +310,11 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 
 	public static function _compareBetweenTwoItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, string $firstReportType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $secondReportType): array
 	{
-		// dd(get_defined_vars());
 		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType);
 		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
-		// dd($firstIntervalDate);
-		// dd($firstItems, $secondItems);
-		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
+		if (secondReportIsFirstInArray($firstReportType)) {
 			return [
 				$secondReportType . '#' . $secondIntervalDate => sum_each_key($secondItems),
 				$firstReportType . '#' . $firstIntervalDate => sum_each_key($firstItems),
@@ -338,12 +335,15 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		$firstDate = Carbon::make($dates[\array_key_first($dates)]);
 		$lastDate = Carbon::make($dates[\array_key_last($dates)]);
 
+
 		$filteredItems = [];
 
 		foreach ($items as $item) {
+			// dd($item->payload);
 			$payload = (array)json_decode($item->payload);
 			foreach ($payload as $payloadDate => $payloadItem) {
 				$payloadDateFormatted = Carbon::make($payloadDate);
+
 				if ($intervalName == 'annually' && yearInArray($payloadDate, $dates)) {
 					$filteredItems[$item->sub_item_name][$payloadDate] = $payloadItem;
 				} elseif (

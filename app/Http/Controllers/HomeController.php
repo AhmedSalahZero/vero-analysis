@@ -857,9 +857,22 @@ class HomeController extends Controller
 		}
 
 		$intervals = getIntervals($intervalComparing);
+
+		$selectedItems = [
+			'income_statement_id' => $incomeStatementId ?: $incomeStatement->id,
+			'main_items' => (array) $request->types,
+			'first_report_type' => $firstComparingType,
+			'first_start_date' =>  $start_date_0,
+			'first_end_date' =>   $end_date_0,
+			'second_report_type' => $secondComparingType,
+			'second_start_date' =>  $start_date_1,
+			'second_end_date' =>  $end_date_1,
+
+		];
 		// dd($intervalComparing);
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(
 			'company',
+			'selectedItems',
 			'start_date_0',
 			'end_date_0',
 			'start_date_1',

@@ -114,7 +114,7 @@
                     <div class="input-group date">
                         <select data-live-search="true" data-max-options="1" name="income_statement_id" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
                             @foreach($incomeStatements as $incomeSatatement)
-                            <option value="{{ $incomeSatatement->id }}" @if($incomeStatement->id == $incomeSatatement->id ) selected @endif > {{ $incomeSatatement->name  }}</option>
+                            <option value="{{ $incomeSatatement->id }}" @if($selectedItems['income_statement_id']==$incomeSatatement->id) selected @endif> {{ $incomeSatatement->name  }}</option>
                             @endforeach
                         </select>
 
@@ -127,7 +127,7 @@
                             {{-- <option disabled value="0
 											">{{ __('Types (Two Options As Maxium)') }}</option> --}}
                             @foreach ($permittedTypes as $id=>$name)
-                            <option value="{{ $id }}" @if(in_array($id , $selectedTypes )) selected @endif> {{ $name }} </option>
+                            <option value="{{ $id }}" @if(in_array($id , $selectedItems['main_items'] )) selected @endif> {{ $name }} </option>
                             {{-- <option value="{{ $name }}"> {{ __($zone) }}</option> --}}
                             @endforeach
                         </select>
@@ -144,9 +144,9 @@
                 </div>
                 <div class="col-md-3">
                     <label>{{__('Report Type')}}</label>
-                    <select data-actions-box="true" data-live-search="true" data-max-options="0" name="first_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                    <select id="first-report-type" data-actions-box="true" data-live-search="true" data-max-options="0" name="first_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
                         @foreach (getAllFinancialAbleTypes(['adjusted','modified']) as $reportType)
-                        <option value="{{ $reportType }}"> {{ $reportType }} </option>
+                        <option @if($reportType==$selectedItems['first_report_type']) selected @endif value="{{ $reportType }}"> {{ $reportType }} </option>
                         @endforeach
                     </select>
 
@@ -155,7 +155,7 @@
                     <label>{{__('Start Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="start_date_one" required value="{{$start_date_0}}" class="form-control" placeholder="Select date" />
+                            <input type="date" name="start_date_one" required value="{{$selectedItems['first_start_date']}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                     <label>{{__('End Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date_one" required value="{{$end_date_0}}" class="form-control" placeholder="Select date" />
+                            <input type="date" name="end_date_one" required value="{{$selectedItems['first_end_date']}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -183,9 +183,9 @@
         </div>
         <div class="col-md-3">
             <label>{{__('Report Type')}}</label>
-            <select data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                @foreach (getAllFinancialAbleTypes() as $secondReportType)
-                <option value="{{ $secondReportType }}"> {{ $secondReportType }} </option>
+            <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                @foreach (getAllFinancialAbleTypes(['forecast']) as $secondReportType)
+                <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
                 @endforeach
 
             </select>
@@ -196,7 +196,7 @@
             <label>{{__('Start Date Two')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <input type="date" name="start_date_two" required value="{{$start_date_1}}" class="form-control" placeholder="Select date" />
+                    <input type="date" name="start_date_two" required value="{{$selectedItems['second_start_date']}}" class="form-control" placeholder="Select date" />
                 </div>
             </div>
         </div>
@@ -204,7 +204,7 @@
             <label>{{__('End Date Two')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <input type="date" name="end_date_two" required value="{{$end_date_1}}" class="form-control" placeholder="Select date" />
+                    <input type="date" name="end_date_two" required value="{{$selectedItems['second_end_date']}}" class="form-control" placeholder="Select date" />
                 </div>
             </div>
         </div>
@@ -308,8 +308,9 @@
                         <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">#</th>
                         <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
                         {{-- {{ dd() }} --}}
+                        {{-- @dd($intervals) --}}
                         @foreach ($intervals as $intervalName )
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
+                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
                         @endforeach
                         <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
                         <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
@@ -387,7 +388,8 @@
 
 </div>
 
-
+<div id="selects-except-forecast-actual" data-value="{{ json_encode(getAllFinancialAbleTypes(['forecast','actual'])) }}"></div>
+<div id="selects-except-forecast" data-value="{{ json_encode(getAllFinancialAbleTypes(['forecast'])) }}"></div>
 @endsection
 @section('js')
 
@@ -403,6 +405,30 @@
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
 <script>
     reinitializeSelect2();
+
+</script>
+
+<script>
+    // const firstReportTypeSelect = document.querySelector('#first-report-type')
+    // firstReportTypeSelect.addEventListener('change', function() {
+    //     const secondReportTypeSelect = document.querySelector('#second-report-type')
+    //     var options = ''
+    //     var optionsExceptForcastAndActual = JSON.parse(document.getElementById('selects-except-forecast-actual').getAttribute('data-value'))
+    //     var optionsExceptForcast = JSON.parse(document.getElementById('selects-except-forecast').getAttribute('data-value'))
+
+    //     var firstSelectedOption = firstReportTypeSelect.value
+    //     for (var i = 0; i < optionsExceptForcast.length; i++) {
+    //         var option = optionsExceptForcast[i];
+    //         if (firstSelectedOption != 'actual' || option != 'actual') {
+    //             options += `<option value="${option}">${option}</option>`
+    //         }
+    //     }
+    //     console.log(options)
+    //     console.log(secondReportTypeSelect)
+    //     $(secondReportTypeSelect).empty().append(options)
+    //     reinitializeSelect2()
+
+    // })
 
 </script>
 <script>

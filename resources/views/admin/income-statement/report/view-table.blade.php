@@ -1606,12 +1606,16 @@ $tableId = 'kt_table_1';
                                                         }
 
                                                     });
-                                                    // if (mainRowWithSubItems) {
-                                                    //     dates = JSON.parse(dates);
-                                                    //     for (date of dates) {
-                                                    //         // $(mainRowWithSubItems).next('tr').find('input[data-date="' + date + '"]').trigger('change');
-                                                    //     }
-                                                    // }
+                                                    if (mainRowWithSubItems) {
+                                                        dates = JSON.parse(dates);
+                                                        for (date of dates) {
+                                                            // المفروض دي تشتغل في اول مره بس الصفحه تشتغل فيها او لما تضيف عنصر جديد (علي ما اتذكر) 
+                                                            // فا حطه في ال
+                                                            // init complete 
+                                                            // وبعد اما يضيف العنصر الجديد
+                                                            // $(mainRowWithSubItems).next('tr').find('input[data-date="' + date + '"]').trigger('change');
+                                                        }
+                                                    }
                                                     let options = '';
 
                                                     document.querySelectorAll('.is-main-with-sub-items').forEach(function(row, index) {

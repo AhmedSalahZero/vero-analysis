@@ -139,10 +139,7 @@ class IntervalsComparingForIncomeStatementReport
 		$secondIncomeStatementItemSubItemsPivot = count($secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType))  ? $secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType) : $secondMainItem->getMainRowsPivot($secondIncomeStatementId, $secondReportType);
 		$secondIncomeStatementItemSubItemsPivot = count($secondIncomeStatementItemSubItemsPivot) ? $secondIncomeStatementItemSubItemsPivot : collect([]);
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
-		// dd($secondIncomeStatementItemSubItemsPivot, $firstIncomeStatementItemSubItemsPivot);
-
 		$report_result = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType);
-		// dd($report_result);
 		return $report_result;
 	}
 }
