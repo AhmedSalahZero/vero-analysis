@@ -94,12 +94,14 @@
 </style>
 @endsection
 @section('content')
-
+@php
+$currentReportType = Request()->segment(5)
+@endphp
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
-                {{ __('Dashboard Results') }}
+            <h3 class="kt-portlet__head-title head-title text-primary text-capitalize">
+                {{ __('Various Comparing') . ' [ ' .  $currentReportType  . ' ]' }}
             </h3>
         </div>
     </div>
@@ -121,14 +123,16 @@
 
                     </div>
                 </div>
+                @php
+                $selectedTypesCount = count($selectedItems['main_items']) ;
+                $selectAllOptions = $requestMethod == 'GET';
+                @endphp
+
                 <div class="col-md-4">
                     <div class="input-group date">
                         <select data-actions-box="true" data-live-search="true" data-max-options="0" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all" multiple>
-                            {{-- <option disabled value="0
-											">{{ __('Types (Two Options As Maxium)') }}</option> --}}
                             @foreach ($permittedTypes as $id=>$name)
-                            <option value="{{ $id }}" @if(in_array($id , $selectedItems['main_items'] )) selected @endif> {{ $name }} </option>
-                            {{-- <option value="{{ $name }}"> {{ __($zone) }}</option> --}}
+                            <option value="{{ $id }}" @if(in_array($id , $selectedItems['main_items'] ) || $selectAllOptions ) selected @endif> {{ $name }} </option>
                             @endforeach
                         </select>
                     </div>
@@ -140,33 +144,29 @@
             <div class="form-group row ">
 
                 <div class="col-md-3">
-                    <label>{{__('First Interval')}}</label>
+                    <label>{{__('Reports')}}</label>
                 </div>
                 <div class="col-md-3">
                     <label>{{__('Report Type')}}</label>
                     <select id="first-report-type" data-actions-box="true" data-live-search="true" data-max-options="0" name="first_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                        @foreach (getAllFinancialAbleTypes(['adjusted','modified']) as $reportType)
+                        @foreach (getAllFinancialAbleTypes() as $reportType)
                         <option @if($reportType==$selectedItems['first_report_type']) selected @endif value="{{ $reportType }}"> {{ $reportType }} </option>
                         @endforeach
                     </select>
 
                 </div>
+
                 <div class="col-md-3">
-                    <label>{{__('Start Date One')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="date" name="start_date_one" required value="{{$selectedItems['first_start_date']}}" class="form-control" placeholder="Select date" />
-                        </div>
-                    </div>
+                    <label>{{__('Report Type')}}</label>
+                    <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                        @foreach (getAllFinancialAbleTypes() as $secondReportType)
+                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
+                        @endforeach
+
+                    </select>
+
                 </div>
-                <div class="col-md-3">
-                    <label>{{__('End Date One')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="date" name="end_date_one" required value="{{$selectedItems['first_end_date']}}" class="form-control" placeholder="Select date" />
-                        </div>
-                    </div>
-                </div>
+
                 {{-- <div class="col-md-3">
                     <label>{{__('Note')}} </label>
                 <div class="kt-input-icon">
@@ -179,35 +179,28 @@
     <div class="form-group row ">
 
         <div class="col-md-3">
-            <label>{{__('Second Interval')}}</label>
-        </div>
-        <div class="col-md-3">
-            <label>{{__('Report Type')}}</label>
-            <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                @foreach (getAllFinancialAbleTypes(['forecast']) as $secondReportType)
-                <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
-                @endforeach
-
-            </select>
-
+            <label>{{__('Interval')}}</label>
         </div>
 
+
+
         <div class="col-md-3">
-            <label>{{__('Start Date Two')}}</label>
+            <label>{{__('Start Date')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <input type="date" name="start_date_two" required value="{{$selectedItems['second_start_date']}}" class="form-control" placeholder="Select date" />
+                    <input type="date" name="start_date" required value="{{$selectedItems['start_date']}}" class="form-control" placeholder="Select date" />
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <label>{{__('End Date Two')}}</label>
+            <label>{{__('End Date')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <input type="date" name="end_date_two" required value="{{$selectedItems['second_end_date']}}" class="form-control" placeholder="Select date" />
+                    <input type="date" name="end_date" required value="{{$selectedItems['end_date']}}" class="form-control" placeholder="Select date" />
                 </div>
             </div>
         </div>
+
 
 
 

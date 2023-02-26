@@ -91,7 +91,7 @@
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
             <h3 class="kt-portlet__head-title head-title text-primary">
-                {{ __('Dashboard Results') }}
+                {{ __('Income Statement Comparing') }}
             </h3>
         </div>
     </div>
@@ -105,11 +105,8 @@
                 <div class="col-md-9">
                     <div class="input-group date">
                         <select data-actions-box="true" data-live-search="true" data-max-options="0" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all" multiple>
-                            {{-- <option disabled value="0
-                                            ">{{ __('Types (Two Options As Maxium)') }}</option> --}}
                             @foreach ($permittedTypes as $id=>$name)
                             <option value="{{ $id }}" @if(in_array($id , $selectedTypes )) selected @endif> {{ $name }} </option>
-                            {{-- <option value="{{ $name }}"> {{ __($zone) }}</option> --}}
                             @endforeach
                         </select>
                     </div>
@@ -120,10 +117,10 @@
             <div class="form-group row ">
 
                 <div class="col-md-3">
-                    <label><b>{{__('First Inteval')}}</b></label>
+                    <label><b>{{__('Income Statements')}}</b></label>
                 </div>
                 <div class="col-md-3">
-                    <label>{{__('Income Statement')}}</label>
+                    <label>{{__('First Income Statement')}}</label>
 
                     <select data-live-search="true" data-max-options="2" name="financial_statement_able_first_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
                         @foreach($incomeStatements as $incomeSatatement)
@@ -132,6 +129,73 @@
                     </select>
 
                 </div>
+
+
+                <div class="col-md-3">
+                    <label>{{__('Second Income Statement')}}</label>
+                    <select data-live-search="true" data-max-options="2" name="financial_statement_able_second_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
+                        @foreach($incomeStatements as $incomeStatement)
+                        <option value="{{ $incomeStatement->id }}" @if($secondIncomeStatement->id == $incomeStatement->id ) selected @endif > {{ $incomeStatement->name }}</option>
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+            <div class="form-group row ">
+                <div class="col-md-3">
+                    <label><b>{{__('Report Type')}}</b></label>
+                </div>
+
+
+                <div class="col-md-3">
+                    <label>{{__('First Report Type')}}</label>
+                    <select id="first-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="first_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                        @foreach (getAllFinancialAbleTypes() as $firstReportType)
+                        <option value="{{ $firstReportType }}" @if($firstReportType==$selectedItems['first_report_type']) selected @endif> {{ $firstReportType }} </option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+
+
+                <div class="col-md-3">
+                    <label>{{__('Second Report Type')}}</label>
+                    <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                        @foreach (getAllFinancialAbleTypes() as $secondReportType)
+                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+            <div class="form-group row ">
+                <div class="col-md-3">
+                    <label><b>{{__('Start Date')}}</b></label>
+                </div>
+
+
                 <div class="col-md-3">
                     <label>{{__('Start Date One')}}</label>
                     <div class="kt-input-icon">
@@ -140,6 +204,34 @@
                         </div>
                     </div>
                 </div>
+
+
+
+                <div class="col-md-3">
+                    <label>{{__('Start Date Two')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="date" name="start_date_two" required value="{{$start_date_1}}" class="form-control" placeholder="Select date" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+            </div>
+
+
+
+            <div class="form-group row ">
+                <div class="col-md-3">
+                    <label><b>{{__('End Date')}}</b></label>
+                </div>
+
+
+
                 <div class="col-md-3">
                     <label>{{__('End Date One')}}</label>
                     <div class="kt-input-icon">
@@ -148,263 +240,162 @@
                         </div>
                     </div>
                 </div>
-                {{-- <div class="col-md-3">
-                    <label>{{__('Note')}} </label>
-                <div class="kt-input-icon">
-                    <div class="input-group ">
-                        <input type="text" class="form-control" disabled value="{{__('The Report Will Show Max Top 50')}}">
+
+
+
+                <div class="col-md-3">
+                    <label>{{__('End Date Two')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="date" name="end_date_two" required value="{{$end_date_1}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
+                        </div>
                     </div>
                 </div>
-            </div> --}}
-    </div>
-    <div class="form-group row ">
-        <div class="col-md-3">
-            <label><b>{{__('Second Inteval')}}</b></label>
-        </div>
-        <div class="col-md-3">
-            <label>{{__('Income Statement')}}</label>
-            <select data-live-search="true" data-max-options="2" name="financial_statement_able_second_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
-                @foreach($incomeStatements as $incomeStatement)
-                <option value="{{ $incomeStatement->id }}" @if($secondIncomeStatement->id == $incomeStatement->id ) selected @endif > {{ $incomeStatement->name }}</option>
-                @endforeach
 
-            </select>
 
-        </div>
-        <div class="col-md-3">
-            <label>{{__('Start Date Two')}}</label>
-            <div class="kt-input-icon">
-                <div class="input-group date">
-                    <input type="date" name="start_date_two" required value="{{$start_date_1}}" class="form-control" placeholder="Select date" />
-                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <label>{{__('End Date Two')}}</label>
-            <div class="kt-input-icon">
-                <div class="input-group date">
-                    <input type="date" name="end_date_two" required value="{{$end_date_1}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
-                </div>
-            </div>
-        </div>
 
-
-
-        {{-- <div class="col-md-3">
-                    <label>{{__('Data Type')}} </label>
-        <div class="kt-input-icon">
-            <div class="input-group ">
-                <input type="text" class="form-control" disabled value="{{__('Value')}}">
-            </div>
-        </div>
-    </div> --}}
-</div>
-
-
-
-{{-- <div class="form-group row ">
-                <div class="col-md-3">
-                    <label><b>{{__('Third Inteval')}}</b></label>
-</div>
-<div class="col-md-3">
-    <label>{{__('Start Date Three')}}</label>
-    <div class="kt-input-icon">
-        <div class="input-group date">
-            <input type="date" name="start_date_three" required value="{{$start_date_2}}" class="form-control" placeholder="Select date" />
-        </div>
-    </div>
-</div>
-<div class="col-md-3">
-    <label>{{__('End Date Three')}}</label>
-    <div class="kt-input-icon">
-        <div class="input-group date">
-            <input type="date" name="end_date_three" required value="{{$end_date_2}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
-        </div>
+            <x-submitting />
+        </form>
     </div>
 </div>
 
-
-
-<div class="col-md-3">
-    <label>{{__('Data Type')}} </label>
-    <div class="kt-input-icon">
-        <div class="input-group ">
-            <input type="text" class="form-control" disabled value="{{__('Value')}}">
-        </div>
-    </div>
-</div>
-</div> --}}
-
-<x-submitting />
-</form>
-</div>
-</div>
-
-{{-- Title --}}
-{{-- <div class="row">
-    <div class="kt-portlet ">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Products Items Sales Interval Comparing Analysis')}}
-</h3>
-</div>
-</div>
-</div>
-</div> --}}
-
-{{-- FIRST CARD --}}
 <div class="row">
 
 
 
 
-    <div class="row w-100" {{-- style="order:{{ ++$i }}" --}}>
-        {{--
-          <div style="width:100%" class=" text-center mt-3 mb-3">
-                        <div class="kt-portlet ">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title head-title text-primary " style="text-transform: capitalize">
-                                    <b>{{ (ucfirst(str_replace('_',' ' ,$theType))) . ' IncomeStatement Interval Comparing Analysis ' }}</b>
-        </h3>
-    </div>
-</div>
-</div>
-</div> --}}
-{{-- {{ dd($intervalComparing) }} --}}
-{{-- {{ dd($intervalComparing) }} --}}
-<div class="col-md-12
+    <div class="row w-100">
+
+        <div class="col-md-12
             ">
-    <div class="kt-portlet kt-portlet--mobile">
+            <div class="kt-portlet kt-portlet--mobile">
 
-        {{-- @include('interval_date' , ['k'=>$k % 2 ]) --}}
+                <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+                    <table class="table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                        <thead>
+                            <tr class="header-tr ">
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">#</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
+                                {{-- {{ dd() }} --}}
+                                @foreach ($intervals as $i=>$intervalName )
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.$selectedTypesIndexes[$i].' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
+                                @endforeach
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-        <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
-            <table class="table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
-                <thead>
-                    <tr class="header-tr ">
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">#</th>
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
-                        {{-- {{ dd() }} --}}
-                        @foreach ($intervals as $intervalName )
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
-                        @endforeach
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
+                            @foreach ($intervalComparing as $theType => $intervals)
 
-                    @foreach ($intervalComparing as $theType => $intervals)
+                            <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
+                                <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg">+</td>
+                                <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
+                                @php
+                                $currentValue =[ ]
+                                @endphp
+                                @foreach ($intervals as $intervalName => $data )
+                                @php
+                                $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
+                                @endphp
+                                <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+                                @endforeach
+                                @php
+                                $val = $currentValue[1] - $currentValue[0] ;
+                                @endphp
+                                <td class="sub-numeric-bg text-nowrap ">{{ number_format($val)  }}</td>
+                                <td class="sub-numeric-bg text-nowrap ">
+                                    {{ isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100    , 2) . ' %' : number_format(0,2). ' %' }}
+                                </td>
 
-                    <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ str_replace(['#','/',' ' ,'(',')','&','%','$'] , '-',$theType) }}">
-                        <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg">+</td>
-                        <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
-                        @php
-                        $currentValue =[ ]
-                        @endphp
-                        @foreach ($intervals as $intervalName => $data )
-                        @php
-                        $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
-                        @endphp
-                        <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
-                        @endforeach
-                        @php
-                        $val = $currentValue[1] - $currentValue[0] ;
-                        @endphp
-                        <td class="sub-numeric-bg text-nowrap ">{{ number_format($val)  }}</td>
-                        <td class="sub-numeric-bg text-nowrap ">
-                            {{ isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100    , 2) . ' %' : number_format(0,2). ' %' }}
-                        </td>
-
-                    </tr>
-                    @php
-                    $currentValue=[];
-                    @endphp
-                    {{-- {{ dd($intervalComparing) }} --}}
-
-                    {{-- @foreach ($intervalComparing[$theType][$intervalName] as $subItemName => $subItemValue  ) --}}
-                    {{-- {{ dd($subItemName , $subItemValue) }} --}}
-                    @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
-                    <tr class="edit-info-row add-sub maintable-1-row-class{{ str_replace(['#','/',' ' ,'(',')','&','%','$'] , '-',$theType) }} is-sub-row even d-none">
-                        <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
-                        <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
-                        @php
-                        $currentValues =[];
-                        @endphp
-                        @foreach($intervals as $newIntervalName => $intervalValue)
-                        @php
-                        $salesValue = $values[$newIntervalName] ?? 0;
-                        $currentValues[] = $salesValue ;
-                        @endphp
-                        <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ number_format($salesValue) }} </td>
-                        @endforeach
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                            </tr>
                             @php
-                            $val = $currentValues[1] - $currentValues[0] ;
+                            $currentValue=[];
                             @endphp
-                            {{ number_format($val ) }}
-                        </td>
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
-                            {{ isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] *100 , 2)  . ' %' : number_format(0,2). ' %' }}
-                        </td>
-                        @endforeach
+                            {{-- {{ dd($intervalComparing) }} --}}
+
+                            {{-- @foreach ($intervalComparing[$theType][$intervalName] as $subItemName => $subItemValue  ) --}}
+                            {{-- {{ dd($subItemName , $subItemValue) }} --}}
+                            @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
+                            <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToCass($theType) }} is-sub-row even d-none">
+                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
+                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
+                                @php
+                                $currentValues =[];
+                                @endphp
+                                @foreach($intervals as $newIntervalName => $intervalValue)
+                                @php
+                                $salesValue = $values[$newIntervalName] ?? 0;
+                                $currentValues[] = $salesValue ;
+                                @endphp
+                                <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ number_format($salesValue) }} </td>
+                                @endforeach
+                                <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                                    @php
+                                    $val = $currentValues[1] - $currentValues[0] ;
+                                    @endphp
+                                    {{ number_format($val ) }}
+                                </td>
+                                <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
+                                    {{ isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] *100 , 2)  . ' %' : number_format(0,2). ' %' }}
+                                </td>
+                                @endforeach
 
 
-                    </tr>
+                            </tr>
 
-                    @endforeach
-                </tbody>
-            </table>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
+        {{-- @endforeach --}}
+
+
+
+
+
     </div>
-</div>
-
-{{-- @endforeach --}}
 
 
+    @endsection
+    @section('js')
 
+    <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
+    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
 
+    <script src="{{ url('assets/vendors/general/select2/dist/js/select2.full.js') }}" type="text/javascript"></script>
+    <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
+    <script>
+        reinitializeSelect2();
 
-</div>
+    </script>
+    <script>
+        $(document).on('click', '.trigger-child-row-1', function(e) {
+            const parentId = $(e.target.closest('tr')).data('model-id');
+            var parentRow = $(e.target).parent();
+            var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
 
+            subRows.toggleClass('d-none');
+            if (subRows.hasClass('d-none')) {
+                parentRow.find('td.trigger-child-row-1').html('+');
+            } else if (!subRows.length) {
+                // if parent row has no sub rows then remove + or - 
+                parentRow.find('td.trigger-child-row-1').html('×');
+            } else {
+                parentRow.find('td.trigger-child-row-1').html('-');
+            }
 
-@endsection
-@section('js')
+        });
 
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
+    </script>
 
-<script src="{{ url('assets/vendors/general/select2/dist/js/select2.full.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
-<script>
-    reinitializeSelect2();
-
-</script>
-<script>
-    $(document).on('click', '.trigger-child-row-1', function(e) {
-        const parentId = $(e.target.closest('tr')).data('model-id');
-        var parentRow = $(e.target).parent();
-        var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
-
-        subRows.toggleClass('d-none');
-        if (subRows.hasClass('d-none')) {
-            parentRow.find('td.trigger-child-row-1').html('+');
-        } else if (!subRows.length) {
-            // if parent row has no sub rows then remove + or - 
-            parentRow.find('td.trigger-child-row-1').html('×');
-        } else {
-            parentRow.find('td.trigger-child-row-1').html('-');
-        }
-
-    });
-
-</script>
-
-@endsection
+    @endsection

@@ -17,9 +17,8 @@ class IntervalsComparingForIncomeStatementReport
 	use GeneralFunctions;
 
 
-	public function result(Request $request, Company $company, $result = 'view', array $intervalDates)
+	public function result(Request $request, Company $company, $result = 'view', array $intervalDates, string $firstReportType, string $secondReportType)
 	{
-		$subItemType = Request()->segments()[4];
 		$start_date_one  = $intervalDates['first_start_date'];
 		$end_date_one  = $intervalDates['first_end_date'];
 
@@ -71,11 +70,11 @@ class IntervalsComparingForIncomeStatementReport
 		$firstIncomeStatementId = $firstIncomeStatement->id;
 		$secondIncomeStatementId = $secondIncomeStatement->id;
 		$firstMainItem = $firstIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();
-		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $subItemType);
-		$firstIncomeStatementItemSubItemsPivot = count($firstIncomeStatementItemSubItemsPivot) ? $firstIncomeStatementItemSubItemsPivot : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $subItemType);
+		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $firstReportType);
+		$firstIncomeStatementItemSubItemsPivot = count($firstIncomeStatementItemSubItemsPivot) ? $firstIncomeStatementItemSubItemsPivot : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$secondMainItem = $secondIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$firstIncomeStatementDurationType = $firstIncomeStatement->duration_type;
-		$secondIncomeStatementItemSubItemsPivot = count($secondMainItem->getSubItemsPivot($secondIncomeStatementId, $subItemType))  ? $secondMainItem->getSubItemsPivot($secondIncomeStatementId, $subItemType) : $secondMainItem->getMainRowsPivot($secondIncomeStatementId, $subItemType);
+		$secondIncomeStatementItemSubItemsPivot = count($secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType))  ? $secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType) : $secondMainItem->getMainRowsPivot($secondIncomeStatementId, $secondReportType);
 		$secondIncomeStatementItemSubItemsPivot = count($secondIncomeStatementItemSubItemsPivot) ? $secondIncomeStatementItemSubItemsPivot : collect([]);
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
 		// dd($firstIntervalDates , $secondIntervalDates);
@@ -87,15 +86,8 @@ class IntervalsComparingForIncomeStatementReport
 
 	public function resultVariousComparing(Request $request, Company $company, array $intervalDates, string $firstReportType, string $secondReportType)
 	{
-		// $subItemType = Request()->segments()[4];
-		$start_date_one  = $intervalDates['first_start_date'];
-		$end_date_one  = $intervalDates['first_end_date'];
-
-		$start_date_two  = $intervalDates['second_start_date'];
-		$end_date_two  = $intervalDates['second_end_date'];
-
-		// $start_date_three  = $request->start_date_three;
-		// $end_date_three  = $request->end_date_three;
+		$start_date  = $intervalDates['start_date'];
+		$end_date  = $intervalDates['end_date'];
 		$type = $request->type;
 		$view_name = $request->view_name;
 
@@ -103,23 +95,18 @@ class IntervalsComparingForIncomeStatementReport
 
 
 		$dates = [
-			'start_date_one' => date('d-M-Y', strtotime($start_date_one)),
-			'end_date_one' => date('d-M-Y', strtotime($end_date_one)),
-			'start_date_two' => date('d-M-Y', strtotime($start_date_two)),
-			'end_date_two' => date('d-M-Y', strtotime($end_date_two)),
+			'start_date' => date('d-M-Y', strtotime($start_date)),
+			'end_date' => date('d-M-Y', strtotime($end_date)),
 		];
 
 		// First_interval
-		$request['start_date'] = $start_date_one;
-		$request['end_date'] = $end_date_one;
-		$firstIntervalDates = generateDatesBetweenTwoDates(Carbon::make($start_date_one), Carbon::make($end_date_one));
+		$request['start_date'] = $start_date;
+		$request['end_date'] = $end_date;
+		$firstIntervalDates = generateDatesBetweenTwoDates(Carbon::make($start_date), Carbon::make($end_date));
 		$result_for_interval_one = [];
 
 		// Second_interval
-		$request['start_date'] = $start_date_two;
-		$request['end_date'] = $end_date_two;
 
-		$secondIntervalDates = generateDatesBetweenTwoDates(Carbon::make($start_date_two), Carbon::make($end_date_two));
 
 		$firstIncomeStatementId = $request->get('income_statement_id');
 		$secondIncomeStatementId = $request->get('income_statement_id');
@@ -139,6 +126,7 @@ class IntervalsComparingForIncomeStatementReport
 		$secondIncomeStatementItemSubItemsPivot = count($secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType))  ? $secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType) : $secondMainItem->getMainRowsPivot($secondIncomeStatementId, $secondReportType);
 		$secondIncomeStatementItemSubItemsPivot = count($secondIncomeStatementItemSubItemsPivot) ? $secondIncomeStatementItemSubItemsPivot : collect([]);
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
+		$secondIntervalDates = $firstIntervalDates;
 		$report_result = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType);
 		return $report_result;
 	}

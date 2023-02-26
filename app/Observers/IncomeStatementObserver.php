@@ -11,8 +11,8 @@ class IncomeStatementObserver
 		$incomeStatementItems = $incomeStatement->mainItems;
 		foreach ($incomeStatementItems as $incomeStatementItem) {
 			$incomeStatementItem->withSubItemsFor($incomeStatement->id)->detach();
-			$incomeStatementItem->withMainRowsFor($incomeStatement->id)->detach();
-			$incomeStatementItem->withMainItemsFor($incomeStatement->id)->detach();
+			$incomeStatementItem->withMainRowsPivotFor($incomeStatement->id)->detach();
+			$incomeStatementItem->financialStatementAbles($incomeStatement->id)->detach();
 		}
 	}
 }

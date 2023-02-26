@@ -655,8 +655,8 @@ class HomeController extends Controller
 
 	public function dashboardIncomeStatementIntervalComparing(Request $request, Company $company)
 	{
-		// dd($request->all());
-
+		$firstReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
+		$secondReportType = $request->has('second_report_type') ? $request->get('second_report_type') : 'actual';
 
 		$start_date_0 = date('2021-01-01');
 		$end_date_0   = date('2021-12-31');
@@ -666,6 +666,7 @@ class HomeController extends Controller
 		if (!(count($incomeStatements) >= 1)) {
 			return redirect()->back()->with('fail', __('You Must Have At Least One Income Statements'));
 		}
+
 		$firstIncomeStatement = $incomeStatements[0];
 		$secondIncomeStatement = $incomeStatements[1] ?? optional(null);
 
@@ -730,7 +731,7 @@ class HomeController extends Controller
 
 		foreach ((array)$request->types as $typeId) {
 			$request['mainItemId'] = $typeId;
-			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = (new IntervalsComparingForIncomeStatementReport)->result($request, $company, 'array', $intervalDates);
+			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = (new IntervalsComparingForIncomeStatementReport)->result($request, $company, 'array', $intervalDates, $firstReportType, $secondReportType);
 		}
 
 		$firstIncomeStatementId = $request->get('financial_statement_able_first_interval');
@@ -741,11 +742,18 @@ class HomeController extends Controller
 		if ($secondIncomeStatementId) {
 			$secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId);
 		}
-
-
+		$selectedItems = [
+			'first_report_type' => $firstReportType,
+			'second_report_type' => $secondReportType
+		];
 		$intervals = getIntervals($intervalComparing);
+		$selectedTypesIndexes = [
+			$firstReportType, $secondReportType
+		];
 		return view('client_view.home_dashboard.dashboard_intervalComparing_income_statements', compact(
+			'selectedItems',
 			'company',
+			'selectedTypesIndexes',
 			'start_date_0',
 			'end_date_0',
 			'start_date_1',
@@ -775,10 +783,8 @@ class HomeController extends Controller
 			return redirect()->back()->with('fail', __('Please Select Different Comparing Types'));
 		}
 
-		$start_date_0 = date('2021-01-01');
-		$end_date_0   = date('2021-12-31');
-		$start_date_1 = date('2020-01-01');
-		$end_date_1   = date('2020-12-31');
+		$start_date = date('2021-01-01');
+		$end_date   = date('2021-12-31');
 		$incomeStatements  = IncomeStatement::where('company_id', $company->id)->get();
 		if (!(count($incomeStatements) >= 1)) {
 			return redirect()->back()->with('fail', __('You Must Have At Least One Income Statements'));
@@ -795,8 +801,8 @@ class HomeController extends Controller
 		}
 		$selectedTypes = (array)$request->types;
 		$intervalComparing = [];
-
-
+		// dd();
+		$requestMethod = $request->method();
 		if ($request->isMethod('GET')) {
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[1] ?? 0;
@@ -808,40 +814,26 @@ class HomeController extends Controller
 				// ,$thirdKey 
 			];
 			// dd($firstType, $secondType);
-			$request['start_date_one'] = $start_date_0;
-			$request['end_date_one'] = $end_date_0;
-			$request['start_date_two'] = $start_date_1;
-			$request['end_date_two'] = $end_date_1;
-
-			//  $request['start_date_three'] = $start_date_2;
-			// $request['end_date_three'] = $end_date_2;
-
+			$request['start_date'] = $start_date;
+			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
 
 
-			$start_date_0  = $request['start_date_one'];
-			$end_date_0  = $request['end_date_one'];
-			$start_date_1  = $request['start_date_two'];
-			$end_date_1  = $request['end_date_two'];
+			$start_date  = $request['start_date'];
+			$end_date  = $request['end_date'];
 			// $start_date_2  = $request['start_date_three'];
 			// $end_date_2  = $request['end_date_three'];
 		}
 
-		if (Carbon::make($end_date_0)->lessThan(Carbon::make($start_date_0))) {
-			$start_date_wap = $start_date_0;
-			$start_date_0 = $end_date_0;
-			$end_date_0 = $start_date_wap;
+		if (Carbon::make($end_date)->lessThan(Carbon::make($start_date))) {
+			$start_date_wap = $start_date;
+			$start_date = $end_date;
+			$end_date = $start_date_wap;
 		}
-		if (Carbon::make($end_date_1)->lessThan(Carbon::make($start_date_1))) {
-			$start_date_wap = $start_date_1;
-			$start_date_1 = $end_date_1;
-			$end_date_1 = $start_date_wap;
-		}
+
 		$intervalDates  = [
-			'first_start_date' => $start_date_0,
-			'first_end_date' => $end_date_0,
-			'second_start_date' => $start_date_1,
-			'second_end_date' => $end_date_1
+			'start_date' => $start_date,
+			'end_date' => $end_date,
 		];
 		// dd($request->types);
 		// foreach ([$firstComparingType, $secondComparingType] as $reportType) {
@@ -862,26 +854,23 @@ class HomeController extends Controller
 			'income_statement_id' => $incomeStatementId ?: $incomeStatement->id,
 			'main_items' => (array) $request->types,
 			'first_report_type' => $firstComparingType,
-			'first_start_date' =>  $start_date_0,
-			'first_end_date' =>   $end_date_0,
+			'start_date' =>  $start_date,
+			'end_date' =>   $end_date,
 			'second_report_type' => $secondComparingType,
-			'second_start_date' =>  $start_date_1,
-			'second_end_date' =>  $end_date_1,
 
 		];
 		// dd($intervalComparing);
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(
 			'company',
 			'selectedItems',
-			'start_date_0',
-			'end_date_0',
-			'start_date_1',
-			'end_date_1',
+			'start_date',
+			'end_date',
 			'incomeStatements',
 			'incomeStatement',
 			'incomeStatement',
 			'intervals',
 			'intervalDates',
+			'requestMethod',
 			// 'start_date_2', 'end_date_2',
 
 			'permittedTypes',

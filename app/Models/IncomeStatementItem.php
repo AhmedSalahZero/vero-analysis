@@ -314,7 +314,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
-		if (secondReportIsFirstInArray($firstReportType)) {
+		if (secondReportIsFirstInArray($firstReportType, $secondReportType)) {
 			return [
 				$secondReportType . '#' . $secondIntervalDate => sum_each_key($secondItems),
 				$firstReportType . '#' . $firstIntervalDate => sum_each_key($firstItems),
