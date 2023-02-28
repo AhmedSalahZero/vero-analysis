@@ -2,7 +2,6 @@
 
 namespace App\Models\Traits\Accessors;
 
-use App\Models\BalanceSheet;
 use App\Models\BalanceSheetItem;
 
 trait BalanceSheetAccessor

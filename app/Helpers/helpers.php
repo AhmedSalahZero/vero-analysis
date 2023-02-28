@@ -1398,7 +1398,7 @@ function sum_all_array_values($array)
 
 function preventUserFromForeCast()
 {
-	return [12, 13, 14, 15, 16];
+	return [12, 13, 14, 15, 16, 22, 21, 20, 18];
 }
 
 function getCanReloadUploadPageCachingForCompany($companyId)

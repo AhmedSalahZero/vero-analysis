@@ -4,14 +4,15 @@ namespace App\Providers;
 
 use App\Http\Controllers\ExportTable;
 use App\Mail\sendDeleteTestMail;
+
 use App\Models\Company;
-
 use App\Models\IncomeStatement;
-use App\Models\Language;
 
+use App\Models\Language;
 use App\Models\SalesGathering;
 use App\Models\Section;
 use Auth;
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;

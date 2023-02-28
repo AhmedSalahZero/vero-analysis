@@ -14,6 +14,13 @@
             font-size:12px !important;
 
         }
+		
+		table.dataTable tbody tr>.dtfc-fixed-right,
+    table.dataTable tbody tr>.dtfc-fixed-left {
+        right: 0 !important;
+        background-color: #086691 !important;
+        color: white;
+    }
 
     </style>
 @endsection

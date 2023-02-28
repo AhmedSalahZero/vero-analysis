@@ -37,7 +37,7 @@
                     {{-- --}}
 
                     @if(! ($section->id == 220) ||(Auth()->check() && ! in_array(Auth()->user()->id , preventUserFromForeCast() )))
-                    @if($section->id != 269 || Auth()->check() && Auth()->user()->canViewIncomeStatement())
+                    @if($section->id != 275 || Auth()->check() && Auth()->user()->canViewIncomeStatement())
                     @if ($section->route != null && count($section->subSections) == 0)
                     <?php $route = isset($section->route) && $section->route !== null ? explode('.', $section->route) : null; ?>
 

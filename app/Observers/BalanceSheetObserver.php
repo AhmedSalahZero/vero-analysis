@@ -11,8 +11,8 @@ class BalanceSheetObserver
 		$balanceSheetItems = $balanceSheet->mainItems;
 		foreach ($balanceSheetItems as $balanceSheetItem) {
 			$balanceSheetItem->withSubItemsFor($balanceSheet->id)->detach();
-			$balanceSheet->withMainRowsFor($balanceSheetItem->id)->detach();
-			$balanceSheet->withMainItemsFor($balanceSheetItem->id)->detach();
+			$balanceSheetItem->withMainRowsPivotFor($balanceSheet->id)->detach();
+			$balanceSheetItem->financialStatementAbles($balanceSheet->id)->detach();
 		}
 	}
 }

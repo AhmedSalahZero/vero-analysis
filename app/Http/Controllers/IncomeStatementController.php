@@ -145,7 +145,7 @@ class IncomeStatementController extends Controller
 	public function exportReport(Request $request)
 	{
 		$formattedData = $this->formatReportDataForExport($request);
-		$incomeStatementId = array_key_first($request->get('value'));
+		$incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 
 		return (new IncomeStatementExport(collect($formattedData), $request, $incomeStatement))->download();

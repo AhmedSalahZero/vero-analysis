@@ -154,7 +154,7 @@ class FinancialStatementController extends Controller
 	public function exportReport(Request $request)
 	{
 		$formattedData = $this->formatReportDataForExport($request);
-		$financialStatementId = array_key_first($request->get('value'));
+		$financialStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
 		$financialStatement = FinancialStatement::find($financialStatementId);
 		return (new FinancialStatementExport(collect($formattedData), $request, $financialStatement))->download();
 	}

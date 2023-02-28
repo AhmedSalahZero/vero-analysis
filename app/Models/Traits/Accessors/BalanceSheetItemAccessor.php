@@ -3,7 +3,6 @@
 namespace App\Models\Traits\Accessors;
 
 use App\Models\BalanceSheet;
-use App\Models\BalanceSheetItem;
 use Illuminate\Support\Collection;
 
 trait BalanceSheetItemAccessor
@@ -32,15 +31,22 @@ trait BalanceSheetItemAccessor
 	{
 		return $this->withSubItemsFor($balanceSheetId, $subItemType, $subItemName)->get();
 	}
-	public function getSubItemsPivot(int $balanceSheetId, string $subItemType, string $subItemName = ''): Collection
+	public function getSubItemsPivot(int $balanceSheetId, $subItemType): Collection
 	{
-		return $this->getSubItems($balanceSheetId, $subItemType, $subItemName)->pluck('pivot');
+		return $this->getSubItems($balanceSheetId, $subItemType)->pluck('pivot');
 	}
 
-	public function getMainRowsPivot(int $balanceSheetId): Collection
+
+
+	public function getMainRowsPivot(int $balanceSheetId, string $subItemType): Collection
 	{
-		return $this->withMainRowsPivotFor($balanceSheetId)->get()->pluck('pivot');
+		return $this->withMainRowsPivotFor($balanceSheetId, $subItemType)->get()->pluck('pivot');
 	}
+	public function getMainRows(int $balanceSheetId, string $subItemType): Collection
+	{
+		return $this->withMainRowsPivotFor($balanceSheetId, $subItemType)->get();
+	}
+
 	public function getParentTableClassName(): string
 	{
 		return get_class(new BalanceSheet);

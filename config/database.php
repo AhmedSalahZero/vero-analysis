@@ -14,8 +14,8 @@ return [
     |
     */
 
-	// 'default' => 'mysql_production',
-	'default' => 'mysql',
+	'default' => 'mysql_production',
+	// 'default' => 'mysql',
 
 	/*
     |--------------------------------------------------------------------------

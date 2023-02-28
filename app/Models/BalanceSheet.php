@@ -11,46 +11,50 @@ use App\Models\Traits\Accessors\BalanceSheetAccessor;
 use App\Models\Traits\Mutators\BalanceSheetMutator;
 use App\Models\Traits\Relations\BalanceSheetRelation;
 use App\Models\Traits\Scopes\CompanyScope;
-use App\Models\Traits\Scopes\withAllRelationsScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class  BalanceSheet extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable, IFinancialStatementAble
 {
-	use  BalanceSheetAccessor, BalanceSheetMutator, BalanceSheetRelation, CompanyScope, withAllRelationsScope;
-	protected $table = 'financial_statement_ables';
+	use  BalanceSheetAccessor, BalanceSheetMutator, BalanceSheetRelation, CompanyScope;
+
+
 	protected $guarded = [
 		'id'
 	];
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'financial_statement_ables';
 
 	public static function getShareableEditViewVars($model): array
 	{
-
 		return [
 			'pageTitle' => BalanceSheet::getPageTitle(),
-
 		];
 	}
+
 	public function getRouteKeyName()
 	{
 		return 'financial_statement_ables.id';
 	}
-
 	public static function exportViewName(): string
 	{
-		return __('Balance Sheet');
+		return __('Income Statement');
 	}
 	public static function getFileName(): string
 	{
-		return __('Balance Sheet');
+		return __('Income Statement');
 	}
-
 
 	protected static function booted()
 	{
 		static::addGlobalScope(function (Builder $builder) {
 			$builder->where('type', 'BalanceSheet');
 		});
+		// static::addGlobalScope(new StateCountryScope);
 	}
 
 	public static function getCrudViewName(): string
@@ -79,28 +83,31 @@ class  BalanceSheet extends Model implements IBaseModel, IHaveAllRelations, IExp
 	}
 	public static function getReportViewVars(array $options = []): array
 	{
+
 		$currentCompanyId =  getCurrentCompanyId();
+		$reportType = $options['reportType'];
 
 		return [
 			'getDataRoute' => route('admin.get.balance.sheet.report', ['company' => $currentCompanyId, 'balanceSheet' => $options['financial_statement_able_id']]),
 			'modelName' => 'BalanceSheetReport',
 			'exportRoute' => route('admin.export.balance.sheet.report', $currentCompanyId),
-			'createRoute' => route('admin.create.balance.sheet.report', [
+			'createRoute' => route('admin.create.balance.sheet.' . $reportType . '.report', [
 				'company' => $currentCompanyId,
 				'balanceSheet' => $options['financial_statement_able_id']
 			]),
 			'storeRoute' => route('admin.store.balance.sheet.report', $currentCompanyId),
 			'hasChildRows' => false,
-			'pageTitle' => __('Balance Sheet Report'),
+			'pageTitle' => __('Income Statement Report'),
 			'redirectAfterSubmitRoute' => route('admin.view.balance.sheet', $currentCompanyId),
 			'type' => 'create',
 			'balanceSheet' => $options['balanceSheet'],
-			'interval' => getIntervalForSelect($options['balanceSheet']->getDurationType())
+			'interval' => getIntervalForSelect($options['balanceSheet']->getDurationType()),
+			'reportType' => $options['reportType']
 		];
 	}
 	public static function getPageTitle(): string
 	{
-		return __('Balance Sheet');
+		return __('Income Statement');
 	}
 
 	public function getAllRelationsNames(): array

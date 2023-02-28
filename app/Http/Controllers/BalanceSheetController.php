@@ -16,9 +16,6 @@ class BalanceSheetController extends Controller
 
 	public function __construct(BalanceSheetRepository $balanceSheetRepository)
 	{
-		// $this->middleware('permission:view branches')->only(['index']);
-		// $this->middleware('permission:create branches')->only(['store']);
-		// $this->middleware('permission:update branches')->only(['update']);
 		$this->balanceSheetRepository = $balanceSheetRepository;
 	}
 
@@ -33,9 +30,9 @@ class BalanceSheetController extends Controller
 
 	public function createReport(Company $company, BalanceSheet $balanceSheet)
 	{
-		// dd($balanceSheet);
 		return view('admin.balance-sheet.report.view', BalanceSheet::getReportViewVars([
-			'financial_statement_able_id' => $balanceSheet->id, 'balanceSheet' => $balanceSheet
+			'financial_statement_able_id' => $balanceSheet->id, 'balanceSheet' => $balanceSheet,
+			'reportType' => getReportNameFromRouteName(Request()->route()->getName())
 		]));
 	}
 
@@ -63,7 +60,6 @@ class BalanceSheetController extends Controller
 	public function storeReport(Request $request)
 	{
 
-		//   dd($request->all());
 		$this->balanceSheetRepository->storeReport($request);
 
 		return response()->json([
@@ -94,14 +90,26 @@ class BalanceSheetController extends Controller
 		$balanceSheetId = $request->get('financial_statement_able_id');
 		$balanceSheetItemId = $request->get('financial_statement_able_item_id');
 		$balanceSheet = BalanceSheet::find($balanceSheetId);
+		$balanceSheet->storeReport($request);
 		$balanceSheetItem = $balanceSheet->withMainItemsFor($balanceSheetItemId)->first();
-		// dd($request->get('sub_item_name'));
-		$balanceSheetItem->withSubItemsFor($balanceSheetId, $request->get('sub_item_type'), $request->get('sub_item_name'))
-			->updateExistingPivot($balanceSheetId, [
-				'sub_item_name' => $request->get('new_sub_item_name'),
-				'financial_statement_able_item_id' => $request->get('sub_of_id'),
-				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization')
-			]);
+		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
+		foreach ($subItemTypesToDetach as $subItemType) {
+			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
+			$balanceSheetItem
+				->withSubItemsFor($balanceSheetId, $subItemType, $request->get('sub_item_name'))
+				->updateExistingPivot($balanceSheetId, [
+					'sub_item_name' => $request->get('new_sub_item_name'),
+					'financial_statement_able_item_id' => $request->get('sub_of_id'),
+					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
+					'percentage_or_fixed' => $percentageOrFixed,
+					'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
+					'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,
+					'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
+
+				]);
+		}
+
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Updated Successfully')
@@ -114,8 +122,12 @@ class BalanceSheetController extends Controller
 		$balanceSheetId = $request->get('financial_statement_able_id');
 		$balanceSheetItemId = $request->get('financial_statement_able_item_id');
 		$balanceSheet = BalanceSheet::find($balanceSheetId);
+		$balanceSheet->storeReport($request);
 		$balanceSheetItem = $balanceSheet->withMainItemsFor($balanceSheetItemId)->first();
-		$balanceSheetItem->withSubItemsFor($balanceSheetId, $request->get('sub_item_type'), $request->get('sub_item_name'))->detach($balanceSheetId);
+		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
+		foreach ($subItemTypesToDetach as $subItemType) {
+			$balanceSheetItem->withSubItemsFor($balanceSheetId, $subItemType, $request->get('sub_item_name'))->detach($balanceSheetId);
+		}
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Deleted Successfully')
@@ -130,7 +142,7 @@ class BalanceSheetController extends Controller
 	public function exportReport(Request $request)
 	{
 		$formattedData = $this->formatReportDataForExport($request);
-		$balanceSheetId = array_key_first($request->get('value'));
+		$balanceSheetId = array_key_first($request->get('valueMainRowThatHasSubItems'));
 		$balanceSheet = BalanceSheet::find($balanceSheetId);
 
 		return (new BalanceSheetExport(collect($formattedData), $request, $balanceSheet))->download();
@@ -159,8 +171,6 @@ class BalanceSheetController extends Controller
 	}
 	public function formatReportDataForExport(Request $request)
 	{
-		// dd($request->all());
-		// $income
 		$formattedData = [];
 		$totals = $request->get('totals');
 		$subTotals = $request->get('subTotals');

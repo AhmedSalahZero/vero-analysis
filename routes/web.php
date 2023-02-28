@@ -94,6 +94,7 @@ Route::middleware([])->group(function () {
 			Route::prefix('{company}')->group(function () {
 				Route::post('get-type-based-on-dates', [FilterMainTypeBasedOnDatesController::class, '__invoke'])->name('get.type.based.on.dates');
 
+
 				Route::get('income-statement', [IncomeStatementController::class, 'view'])->name('admin.view.income.statement');
 				Route::get('income-statement/create', [IncomeStatementController::class, 'create'])->name('admin.create.income.statement');
 				Route::get('income-statement-report/{incomeStatement}/edit', [IncomeStatementController::class, 'editItems']);
@@ -121,6 +122,11 @@ Route::middleware([])->group(function () {
 				Route::post('get-income-statement-report/{incomeStatement}', 'IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
 
 
+				// balance sheet 
+
+
+
+
 				Route::get('balance-sheet', [BalanceSheetController::class, 'view'])->name('admin.view.balance.sheet');
 				Route::get('balance-sheet/create', [BalanceSheetController::class, 'create'])->name('admin.create.balance.sheet');
 				Route::get('balance-sheet-report/{balanceSheet}/edit', [BalanceSheetController::class, 'editItems']);
@@ -128,7 +134,19 @@ Route::middleware([])->group(function () {
 				Route::post('balance-sheet/store', [BalanceSheetController::class, 'store'])->name('admin.store.balance.sheet');
 				Route::get('export-balance-sheet', 'BalanceSheetController@export')->name('admin.export.balance.sheet');
 				Route::get('get-balance-sheet', 'BalanceSheetController@paginate')->name('admin.get.balance.sheet');
-				Route::get('balance-sheet/{balanceSheet}/report', [BalanceSheetController::class, 'createReport'])->name('admin.create.balance.sheet.report');
+				Route::get('balance-sheet/{balanceSheet}/actual-report', [BalanceSheetController::class, 'createReport'])->name('admin.create.balance.sheet.actual.report');
+
+				// actual.report the first segment represent type so do not change it
+				Route::get('balance-sheet/{balanceSheet}/actual-report', [BalanceSheetController::class, 'createReport'])->name('admin.create.balance.sheet.actual.report');
+
+				// forecast.report the first segment represent type so do not change it
+				Route::get('balance-sheet/{balanceSheet}/forecast-report', [BalanceSheetController::class, 'createReport'])->name('admin.create.balance.sheet.forecast.report');
+				// adjusted.report the first segment represent type so do not change it
+
+				Route::get('balance-sheet/{balanceSheet}/adjusted-report', [BalanceSheetController::class, 'createReport'])->name('admin.create.balance.sheet.adjusted.report');
+
+				Route::get('balance-sheet/{balanceSheet}/modified-report', [BalanceSheetController::class, 'createReport'])->name('admin.create.balance.sheet.modified.report');
+
 				Route::post('balance-sheet-report/update', [BalanceSheetController::class, 'updateReport'])->name('admin.update.balance.sheet.report');
 				Route::post('balance-sheet-report/delete', [BalanceSheetController::class, 'deleteReport'])->name('admin.destroy.balance.sheet.report');
 				Route::post('balance-sheet/storeReport', [BalanceSheetController::class, 'storeReport'])->name('admin.store.balance.sheet.report');
@@ -195,11 +213,12 @@ Route::middleware([])->group(function () {
 					Route::get('/HomePage', 'HomeController@welcomePage')->name('viewHomePage');
 					Route::any('/breakdown', 'HomeController@dashboardBreakdownAnalysis')->name('dashboard.breakdown');
 					Route::any('/income-statement-breakdown-dashboard/{reportType}/{incomeStatement?}', 'HomeController@dashboardBreakdownIncomeStatementAnalysis')->name('dashboard.breakdown.incomeStatement');
+					Route::any('/balance-sheet-breakdown-dashboard/{reportType}/{balanceSheet?}', 'HomeController@dashboardBreakdownBalanceSheetAnalysis')->name('dashboard.breakdown.balanceSheet');
 					Route::any('/customers', 'HomeController@dashboardCustomers')->name('dashboard.customers');
 					Route::any('/salesPerson', 'HomeController@dashboardSalesPerson')->name('dashboard.salesPerson');
 					Route::any('/salesDiscount', 'HomeController@dashboardSalesDiscount')->name('dashboard.salesDiscount');
 					Route::any('/intervalComparing', 'HomeController@dashboardIntervalComparing')->name('dashboard.intervalComparing');
-					Route::any('/incomeStatementIntervalComparing/{subItemType}', 'HomeController@dashboardIncomeStatementIntervalComparing')->name('dashboard.intervalComparing.incomeStatement');
+					Route::any('/incomeStatementIntervalComparing/{subItemType?}', 'HomeController@dashboardIncomeStatementIntervalComparing')->name('dashboard.intervalComparing.incomeStatement');
 					Route::any('/variousIncomeStatementComparing/{subItemType}', 'HomeController@dashboardIncomeStatementVariousComparing')->name('dashboard.various.incomeStatement');
 				});
 

@@ -15,7 +15,7 @@
     table.dataTable tbody tr>.dtfc-fixed-left {
         right: 0 !important;
         background-color: #086691 !important;
-
+        color: white;
     }
 
     /* table.dataTable tbody tr:hover>.dtfc-fixed-right,

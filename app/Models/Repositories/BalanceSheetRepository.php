@@ -62,7 +62,7 @@ class BalanceSheetRepository implements IBaseRepository
 
 	public function storeReport(Request $request): IBaseModel
 	{
-		$balanceSheet = App(BalanceSheet::class);
+		$balanceSheet = new BalanceSheet();
 
 		$balanceSheet
 			->storeReport($request);
@@ -72,8 +72,8 @@ class BalanceSheetRepository implements IBaseRepository
 
 	public function update(IBaseModel $balanceSheet, Request $request): void
 	{
-		$balanceSheet
-			->updateProfitability($request);
+		// $balanceSheet
+		// 	->updateProfitability($request);
 	}
 
 	public function paginate(Request $request): array
@@ -101,18 +101,20 @@ class BalanceSheetRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $balanceSheet);
-
+		$subItemType = $request->get('sub_item_type');
 		$allFilterDataCounter = $filterData->count();
 
 		$dataWithRelations = collect([]);
 
-		$datePerPage = $filterData->get()->each(function (BalanceSheetItem $balanceSheetItem, $index) use ($dataWithRelations, $balanceSheet) {
+		$datePerPage = $filterData->get()->each(function (BalanceSheetItem $balanceSheetItem, $index) use ($dataWithRelations, $balanceSheet, $subItemType) {
 			$balanceSheetItem->creator_name = $balanceSheetItem->getCreatorName();
 			$balanceSheetItem->created_at_formatted = formatDateFromString($balanceSheetItem->created_at);
-			$balanceSheetItem->updated_at_formatted = formatDateFromString($balanceSheetItem->updated_at);
+			// $balanceSheetItem->updated_at_formatted = formatDateFromString($balanceSheetItem->updated_at);
 			$balanceSheetItem->order = $index + 1;
+
+			$balanceSheetItem['main_rows'] = $balanceSheetItem->getMainRows($balanceSheet->id, $subItemType);
 			$dataWithRelations->add($balanceSheetItem);
-			$balanceSheetItem->getSubItems($balanceSheet->id)->each(function ($subItem) use ($dataWithRelations, $balanceSheetItem) {
+			$balanceSheetItem->getSubItems($balanceSheet->id, $subItemType)->each(function ($subItem) use ($dataWithRelations, $balanceSheetItem) {
 				$subItem->isSubItem = true; // isSubRow
 				if ($balanceSheetItem->has_depreciation_or_amortization) {
 					$subItem->pivot->can_be_depreciation = true;
@@ -139,16 +141,31 @@ class BalanceSheetRepository implements IBaseRepository
 					});
 				});
 		})
-			->orderBy('balance_sheets.' . getDefaultOrderBy()['column'], getDefaultOrderBy()['direction']);
+			->orderBy('financial_statement_ables.' . getDefaultOrderBy()['column'], getDefaultOrderBy()['direction']);
 	}
 
 	public function commonScopeForReport(Request $request, BalanceSheet $balanceSheet): builder
 	{
-		return BalanceSheetItem::with(['subItems' => function ($builder) use ($balanceSheet) {
-			$builder->where('financial_statement_able_id', $balanceSheet->id);
-		}])->whereHas('financialStatementAbles', function (Builder $builder) use ($balanceSheet) {
-			$builder->where('financial_statement_ables.id', $balanceSheet->id);
-		})
+		$subItemType = $request->get('sub_item_type');
+
+		return BalanceSheetItem::with(['subItems' => function ($builder) use ($balanceSheet, $subItemType) {
+			$builder
+				->wherePivot('financial_statement_able_id', $balanceSheet->id)
+				->wherePivot('sub_item_type', $subItemType);
+		}])
+			// ->whereHas('financialStatementAbles', function (Builder $builder) use ($balanceSheet) {
+			// 	$builder->where('financial_statement_ables.id', $balanceSheet->id);
+			// })
+			// ->whereHas('financialStatementAbles', function (Builder $builder) use ($balanceSheet) {
+			// 	$builder->where('financial_statement_ables.id', $balanceSheet->id);
+			// })
 			->orderBy('financial_statement_able_items.id', 'asc');
+
+		// return BalanceSheetItem::with(['subItems' => function ($builder) use ($balanceSheet) {
+		// 	$builder->where('financial_statement_able_id', $balanceSheet->id);
+		// }])->whereHas('financialStatementAbles', function (Builder $builder) use ($balanceSheet) {
+		// 	$builder->where('financial_statement_ables.id', $balanceSheet->id);
+		// })
+		// 	->orderBy('financial_statement_able_items.id', 'asc');
 	}
 }

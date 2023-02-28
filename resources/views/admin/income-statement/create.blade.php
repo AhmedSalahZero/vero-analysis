@@ -9,7 +9,7 @@
     <div class="row">
 
         <div class="col-md-12">
-            <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ isset($disabled) && $disabled ? '#' : (isset($model) ? route('admin.update.income.statment', [$company->id, $model->id]) : $storeRoute) }}">
+            <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ isset($disabled) && $disabled ? '#' : (isset($model) ? route('admin.update.income.statement', [$company->id, $model->id]) : $storeRoute) }}">
                 @csrf <input type="hidden" name="company_id" value="{{ getCurrentCompanyId() }}">
                 <input type="hidden" name="creator_id" value="{{ \Auth::id() }}">
                 <div class="kt-portlet">
