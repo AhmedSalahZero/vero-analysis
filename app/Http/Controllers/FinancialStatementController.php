@@ -35,7 +35,8 @@ class FinancialStatementController extends Controller
 	public function createReport(Company $company, FinancialStatement $financialStatement)
 	{
 		return view('admin.financial-statement.report.view', FinancialStatement::getReportViewVars([
-			'financial_statement_id' => $financialStatement->id, 'financialStatement' => $financialStatement
+			'financial_statement_id' => $financialStatement->id, 'financialStatement' => $financialStatement,
+			// ''
 		]));
 	}
 

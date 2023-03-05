@@ -569,26 +569,6 @@
 
                             @yield('content')
 
-                            {{--
-										<div id="scroll-fixed" class=""
-								style="position: fixed;
-									top: 50%;
-									right: 100px;
-									z-index:999999999999999;
-									font-size:2.5rem;">
-
-							<a id="to__left" href="#" class="to-left">
-								<i class="fas fa-arrow-circle-left "></i>
-							</a>
-
-
-							<a id="to__right" href="#" class="to-right">
-								<i class="fas fa-arrow-circle-right"></i>
-							</a>
-							
-							</div> --}}
-
-
                             <!--End::Row-->
 
                             <!--End::Dashboard 4-->

@@ -192,20 +192,13 @@
                     @endslot
                 </x-table>
 
+
                 <x-table :tableTitle="__($collection_base.' Collection Policy')" :tableClass="'kt_table_with_no_pagination_no_scroll'">
                     @slot('table_header')
 
                     @endslot
                     @slot('table_body')
                     <?php $total = []; ?>
-
-
-
-
-
-
-
-
                     <tr class="table-active text-center mt-5">
                         <th>{{ __( 'Accumulation / Months') }}</th>
                         {{-- <th>{{ __($collection_base . ' / Months') }}</th> --}}
@@ -426,4 +419,5 @@
     }); // end am4core.ready()
 
 </script>
+
 @endsection

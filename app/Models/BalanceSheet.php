@@ -86,7 +86,7 @@ class  BalanceSheet extends Model implements IBaseModel, IHaveAllRelations, IExp
 
 		$currentCompanyId =  getCurrentCompanyId();
 		$reportType = $options['reportType'];
-
+		// dd();
 		return [
 			'getDataRoute' => route('admin.get.balance.sheet.report', ['company' => $currentCompanyId, 'balanceSheet' => $options['financial_statement_able_id']]),
 			'modelName' => 'BalanceSheetReport',
@@ -102,7 +102,8 @@ class  BalanceSheet extends Model implements IBaseModel, IHaveAllRelations, IExp
 			'type' => 'create',
 			'balanceSheet' => $options['balanceSheet'],
 			'interval' => getIntervalForSelect($options['balanceSheet']->getDurationType()),
-			'reportType' => $options['reportType']
+			'reportType' => $reportType = $options['reportType'],
+			'dependsRelation' => getDependsMaps($options['financial_statement_able_id'], new static)
 		];
 	}
 	public static function getPageTitle(): string

@@ -53,6 +53,7 @@ class  FinancialStatement extends Model implements IBaseModel, IHaveAllRelations
 
 	public static function getViewVars(): array
 	{
+		// dd('e');
 		$currentCompanyId =  getCurrentCompanyId();
 
 		return [
@@ -89,7 +90,7 @@ class  FinancialStatement extends Model implements IBaseModel, IHaveAllRelations
 			'redirectAfterSubmitRoute' => route('admin.view.financial.statement', $currentCompanyId),
 			'type' => 'create',
 			'financialStatement' => $options['financialStatement'],
-			'interval' => getIntervalForSelect($options['financialStatement']->getDurationType())
+			'interval' => getIntervalForSelect($options['financialStatement']->getDurationType()),
 		];
 	}
 	public static function getPageTitle(): string

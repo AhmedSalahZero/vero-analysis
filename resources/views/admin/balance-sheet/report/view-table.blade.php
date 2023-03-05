@@ -158,6 +158,7 @@ $tableId = 'kt_table_1';
         // let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         // const sales_rate_maps = JSON.parse(sales_rates_maps);
         // let inUpdateSalesRevenueToUpdateAllLevelsBelow = false;
+        const dependsRelation = @json($dependsRelation);
         const domElements = {
             // salesRevenueId: document.getElementById('sales-revenue-id').value
             salesRevenueId: 0
@@ -253,8 +254,6 @@ $tableId = 'kt_table_1';
                             let marketExpensesId = domElements.marketExpensesId;
                             let salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId;
                             let generalExpensesId = domElements.generalExpensesId;
-                            console.log('trigger change');
-                            console.log(e.target)
 
                             let parentModelId = this.getAttribute('data-parent-model-id');
                             let date = this.getAttribute('data-date');
@@ -513,7 +512,7 @@ $tableId = 'kt_table_1';
                                 }
                                 row += `<td class="sub-numeric-bg text-nowrap editable editable-date date-${date}" data-balance-sheet-id="${balanceSheetId}" data-main-model-id="${balanceSheetId}" data-balance-sheet-item-id="${balanceSheetItemId}" data-main-row-id="${balanceSheetItemId}" data-sub-item-name="${subItemName}" data-table-id="${tableId}" data-is-quantity="${isQuantity}" contenteditable="true">${currentValue}</td>
 
-								<input type="hidden" name="value[${balanceSheetId}][${balanceSheetItemId}][${subItemName}][${date}]" data-date="${date}" data-parent-model-id="${balanceSheetItemId}" value="0">`;
+								<input type="hidden" data-sub-item-name="${subItemName}" data-balance-sheet-id="${balanceSheetId}" data-balance-sheet-item-id="${balanceSheetItemId}" name="value[${balanceSheetId}][${balanceSheetItemId}][${subItemName}][${date}]" data-date="${date}" data-parent-model-id="${balanceSheetItemId}" value="0">`;
                             })
 
                             row += `<td class="  sub-numeric-bg text-nowrap total-row">0</td>
@@ -532,14 +531,208 @@ $tableId = 'kt_table_1';
                             row.querySelector('td.total-row').innerHTML = number_format(total);
                         }
 
-                        $(document).on('blur', '.editable', function() {
-                            let tdElement = this;
-                            let changedInputs = updateEditableInputs(tdElement)
-                            for (var i = 0; i < changedInputs.length; i++) {
-                                changedInputs[i].dispatchEvent(new Event('change', {
-                                    'bubbles': true
-                                }))
+                        // start here 
+
+                        function isSubItem(tdElement) {
+                            return tdElement.getAttribute('data-sub-item-name') != ''
+                        }
+
+
+
+                        function convertStringtoNumber(str) {
+                            if (!str) {
+                                return 0
                             }
+                            return str.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '')
+                        }
+
+                        function getInputOfTdElement(tdElement, mainRowId, date) {
+                            const subItemName = tdElement.getAttribute('data-sub-item-name')
+                            const balanceSheetItemId = tdElement.getAttribute('data-main-row-id')
+                            return document.querySelector('input[data-balance-sheet-item-id="' + balanceSheetItemId + '"][data-sub-item-name="' + subItemName + '"][data-date="' + date + '"]');
+                        }
+
+                        function getTdElementFromRow(row, date) {
+                            return row.querySelector('td.date-' + date)
+                        }
+
+                        function getInputElementFromRow(row, date) {
+                            return row.querySelector('input[data-date="' + date + '"]')
+                        }
+
+                        function updateSubItemInput(tdElement, mainRowId, date, tdValue) {
+                            const inputForTdElement = getInputOfTdElement(tdElement, mainRowId, date)
+                            inputForTdElement.value = tdValue
+                        }
+
+                        function getDateFromTd(tdElement) {
+                            return $(tdElement).attr("class").split(/\s+/).filter(function(classItem) {
+                                return classItem.startsWith('date-');
+                            })[0].split('date-')[1]
+                        }
+
+                        function updateSubItemRowTotal(subRow) {
+                            const subTotalTdForSubRow = subRow.querySelector('td.total-row')
+                            const subTotalInputForSubRow = subRow.querySelector('input.input-hidden-for-total')
+                            let totalOfSubRow = 0
+
+                            subRow.querySelectorAll('input[data-date]').forEach(input => totalOfSubRow += parseFloat(input.value))
+                            subTotalInputForSubRow.innerHTML = number_format(totalOfSubRow)
+                            subTotalTdForSubRow.innerHTML = number_format(totalOfSubRow, 2)
+                        }
+
+                        function getsubTrsForMainRow(mainRowId) {
+
+                            return document.querySelectorAll('tr.is-sub-row[data-financial-statement-able-item-id="' + mainRowId + '"]')
+                        }
+
+                        function getTotalValueOfSubInputsForMainRow(mainRow, date) {
+                            const mainRowId = mainRow.getAttribute('data-model-id')
+                            const subTrsForMainRow = getsubTrsForMainRow(mainRowId)
+                            let totalSubRowForDate = 0
+                            subTrsForMainRow.forEach(subTr => totalSubRowForDate += parseFloat(subTr.querySelector('input[data-date="' + date + '"]').value))
+                            return totalSubRowForDate
+                        }
+
+                        function updateParentTotal(mainRow, date) {
+                            const subinputsTotals = getTotalValueOfSubInputsForMainRow(mainRow, date)
+                            const mainRowTotalTd = mainRow.querySelector('td.date-' + date)
+                            const mainRowTotalInput = mainRow.querySelector('input[data-date="' + date + '"]')
+                            mainRowTotalInput.value = subinputsTotals
+                            mainRowTotalTd.innerHTML = number_format(subinputsTotals, 2)
+                        }
+
+                        function getTotalOfAllRow(mainRow) {
+                            let total = 0
+                            mainRow.querySelectorAll('input[data-date]').forEach(input => total += parseFloat(input.value))
+                            return total
+                        }
+
+                        function updateAutoDepreciationFor(mainRow, autoDepreciationRow, date) {
+                            const total = getTotalOrRowFromDateExceptCurrentDateToStart(mainRow, autoDepreciationRow, date)
+                            const tdOfCurrentDate = getTdElementFromRow(autoDepreciationRow, date)
+                            const inputOfCurrentDate = getInputElementFromRow(autoDepreciationRow, date)
+                            inputOfCurrentDate.value = total
+                            tdOfCurrentDate.innerHTML = number_format(total, 2)
+                        }
+
+                        function getTotalOrRowFromDateExceptCurrentDateToStart(mainRow, autoDepreciationRow, date) {
+                            const previousDates = getPreviousDates(dates, date)
+                            if (!previousDates.length) {
+                                return;
+                            }
+
+                            // to exclude current date value 
+                            let total = 0
+
+                            // to include current date value 
+                            // let total = parseFloat(getInputElementFromRow(mainRow, date).value)
+                            for (dateIndex in dates) {
+                                var currentDate = previousDates[dateIndex]
+                                if (currentDate) {
+                                    total += parseFloat(getInputElementFromRow(mainRow, currentDate).value)
+                                }
+
+                            }
+                            return total;
+                        }
+
+                        function getRowWithoutSubItems(rowId) {
+                            return document.querySelector('tr.main-with-no-child[data-model-id="' + rowId + '"]')
+                        }
+
+                        function getMainRowOfSubItemTd(tdElement) {
+                            const balanceSheetItemId = tdElement.getAttribute('data-balance-sheet-item-id')
+                            const mainRowOfSubItem = document.querySelector('.maintable-1-row-class' + balanceSheetItemId)
+                            return mainRowOfSubItem
+                        }
+
+                        function getMainRowFromId(rowId) {
+                            return document.querySelector('tr[data-model-id="' + rowId + '"]')
+                        }
+
+                        function getRowWithSubITems(rowId) {
+                            return document.querySelector('tr')
+                        }
+
+                        function updateParentTotalForAllRow(mainRow) {
+                            const total = getTotalOfAllRow(mainRow)
+                            const rowTotalInput = mainRow.querySelector('.input-hidden-for-total')
+                            const rowTotalTd = mainRow.querySelector('.total-row')
+                            rowTotalInput.value = total
+                            rowTotalTd.innerHTML = number_format(total, 2)
+                        }
+
+                        function generateEquationFromString(equation, date) {
+                            const regx = /[-+/*]/g
+                            const result = equation.split(regx)
+                            for (rowId of result) {
+                                var mainRow = getMainRowFromId(rowId)
+                                var input = getInputElementFromRow(mainRow, date)
+                                equation = equation.replace(rowId, input.value)
+                            }
+                            return equation
+                        }
+
+                        function getDependsOnIdsFor(dependId) {
+
+                            return dependsRelation[dependId] ? JSON.parse(dependsRelation[dependId]) : []
+
+                        }
+
+                        function getChangableRowsFor(dependsArr) {
+                            let result = dependsArr
+                            let dependsSearchFor = dependsArr
+                            while (dependsSearchFor.length) {
+                                for (var dependId of dependsSearchFor) {
+                                    dependsSearchFor = getDependsOnIdsFor(dependId)
+                                    result = result.concat(dependsSearchFor)
+                                }
+                            }
+                            return result;
+                        }
+                        $(document).on('blur', '.editable.editable-date', function() {
+                            const mainTd = this
+                            const mainRow = getMainRowOfSubItemTd(mainTd)
+                            const subRow = mainTd.closest('tr')
+                            const mainRowId = mainRow.getAttribute('data-model-id')
+                            const tdValue = convertStringtoNumber(mainTd.innerHTML)
+                            const date = getDateFromTd(mainTd)
+
+                            if (isSubItem(mainTd)) {
+                                updateSubItemInput(mainTd, mainRowId, date, tdValue)
+                                updateSubItemRowTotal(subRow)
+                                updateParentTotal(mainRow, date)
+                                updateParentTotalForAllRow(mainRow)
+                            }
+                            // if (mainRow.getAttribute('data-has-auto-depreciation')) {
+                            //     var autoDepreciationRow = document.querySelector('tr[data-is-auto-depreciation-for="' + mainRowId + '"]')
+                            //    updateAutoDepreciationFor(mainRow, autoDepreciationRow, date)
+                            // }
+                            // update rows that depends on that main row
+                            const depends_on = mainRow.getAttribute('data-depends-on') ? JSON.parse(mainRow.getAttribute('data-depends-on')) : []
+                            const allDependAbels = getChangableRowsFor(depends_on)
+                            if (allDependAbels.length) {
+                                for (updateAbleRowId of allDependAbels) {
+                                    var updateRow = getRowWithoutSubItems(updateAbleRowId)
+                                    var updateTd = getTdElementFromRow(updateRow, date)
+                                    var updateInput = getInputElementFromRow(updateRow, date)
+                                    var equation = generateEquationFromString(updateRow.getAttribute('data-equation'), date)
+                                    var equationValue = eval(equation)
+                                    updateTd.innerHTML = number_format(equationValue, 2)
+                                    updateInput.value = equationValue
+                                }
+                            }
+
+                            $('.main-table-class').DataTable().columns.adjust();
+
+                            // let tdElement = this;
+                            // let changedInputs = updateEditableInputs(tdElement)
+                            // for (var i = 0; i < changedInputs.length; i++) {
+                            //     changedInputs[i].dispatchEvent(new Event('change', {
+                            //         'bubbles': true
+                            //     }))
+                            // }
 
                         });
 
@@ -582,6 +775,24 @@ $tableId = 'kt_table_1';
 
                         }
 
+                        function getPreviousDates(dates, currentDate) {
+                            const previousDates = []
+                            let index = dates.indexOf(currentDate);
+                            if (index == 0) {
+                                return [];
+                            }
+                            for (currentDateIndex in dates) {
+                                var date = dates[currentDateIndex]
+                                if (index > currentDateIndex) {
+                                    previousDates.push(date)
+                                } else {
+                                    break;
+                                }
+                            }
+                            return previousDates;
+
+                        }
+
                         function getDates() {
                             var dates = "{{ json_encode(array_keys($balanceSheet->getIntervalFormatted())) }}";
                             dates = dates.replace(/(&quot\;)/g, "\"");
@@ -615,10 +826,12 @@ $tableId = 'kt_table_1';
 
                             document.querySelectorAll('table.append-table-into-dom tr[data-is-trigger-change="true"]').forEach(function(tr, index) {
                                 // get only first one
-                                var firstEditableDateField = tr.querySelector('td.editable-date');
-                                firstEditableDateField.dispatchEvent(new Event('blur', {
-                                    'bubbles': true
-                                }))
+                                var firstEditableDateFields = tr.querySelectorAll('td.editable-date').forEach((firstEditableDateField) => {
+                                    firstEditableDateField.dispatchEvent(new Event('blur', {
+                                        'bubbles': true
+                                    }))
+                                });
+
                             })
 
                         }
@@ -1054,6 +1267,7 @@ $tableId = 'kt_table_1';
                                                     .attr('data-table-id', "{{$tableId}}")
                                                     .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false)
                                                     .attr('data-percentage-value', data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : -1)
+                                                    .attr('data-financial-statement-able-item-id', data.pivot ? data.pivot.financial_statement_able_item_id : 0)
                                                 if (data.isSubItem) {
 
 
@@ -1071,10 +1285,13 @@ $tableId = 'kt_table_1';
                                                             sub_items_options = '<option selected value="Earning Before Taxes - EBT" selected>Earning Before Taxes - EBT</option>'
 
                                                         } else {
-                                                            window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
-                                                                var isCurrentChecked = checkedPercentages.includes(MainItemObject) ? ' selected' : ' ';
-                                                                sub_items_options += '<option ' + isCurrentChecked + ' value="' + MainItemObject + '">' + MainItemObject + '</option>'
-                                                            })
+                                                            if (window['sales_revenues_sub_items_names']) {
+                                                                window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+                                                                    var isCurrentChecked = checkedPercentages.includes(MainItemObject) ? ' selected' : ' ';
+                                                                    sub_items_options += '<option ' + isCurrentChecked + ' value="' + MainItemObject + '">' + MainItemObject + '</option>'
+                                                                })
+                                                            }
+
                                                         }
 
                                                         var nonRepeatingFixedisChecked = '';
@@ -1117,12 +1334,12 @@ $tableId = 'kt_table_1';
 																	</div>
 															</div>
 															
-														<div class="form-group custom-divs-class">
+														{{-- <div class="form-group custom-divs-class">
 															<div class="d-flex flex-column align-items-center justify-content-center flex-wrap">
 																<label >{{ __('% Of Sales') }}</label>
 															<input ${percentageisChecked} class="can_be_percentage_or_fixed_class percentage-of-sales" type="checkbox" value="percentage" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
 															</div>
-															</div>
+															</div> --}}
 															
 															</div>
 															
@@ -1270,6 +1487,7 @@ $tableId = 'kt_table_1';
                                                     $(row).attr('data-sub-item-name', data.pivot.sub_item_name)
 
                                                     $(row).attr('data-percentage-value', data.pivot && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value || 0 : 0)
+                                                        .attr('data-financial-statement-able-item-id', data.pivot ? data.pivot.financial_statement_able_item_id : 0)
 
                                                     if (data.pivot.can_be_percentage_or_fixed) {
                                                         $(row).attr('data-can-be-percentage-or-fixed', data.pivot.can_be_percentage_or_fixed)
@@ -1298,13 +1516,13 @@ $tableId = 'kt_table_1';
                                                         totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")));
 
 
-                                                        var hiddenInput = `<input type="hidden" name="value[${balanceSheetId}][${balanceSheetItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${balanceSheetItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
+                                                        var hiddenInput = `<input data-sub-item-name="${data.pivot?data.pivot.sub_item_name:''}" data-balance-sheet-id="${balanceSheetId}" data-balance-sheet-item-id="${balanceSheetItemId}" type="hidden" name="value[${balanceSheetId}][${balanceSheetItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${balanceSheetItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                                                         $(dateDt).after(hiddenInput);
 
                                                     });
 
                                                     $(row).append(
-                                                        `<input type="hidden" class="input-hidden-for-total" name="subTotals[${balanceSheetId}][${balanceSheetItemId}][${subItemName}]"  data-parent-model-id="${balanceSheetItemId}" value="0" >`
+                                                        `<input data-sub-item-name="${data.pivot?data.pivot.sub_item_name:''}" type="hidden" class="input-hidden-for-total" name="subTotals[${balanceSheetId}][${balanceSheetItemId}][${subItemName}]"  data-parent-model-id="${balanceSheetItemId}" value="0" >`
                                                     );
 
 
@@ -1318,8 +1536,10 @@ $tableId = 'kt_table_1';
 
                                                 } else {
                                                     if (!data.has_sub_items) {
-
-                                                        $(row).addClass('main-with-no-child').attr('data-model-id', data.id);
+                                                        $(row).addClass('main-with-no-child').attr('data-model-id', data.id).attr('data-equation', data.equation).attr('data-financial-statement-able-item-id', data.id);
+                                                        if (data.is_auto_depreciation_for) {
+                                                            $(row).attr('data-is-auto-depreciation-for', data.is_auto_depreciation_for)
+                                                        }
                                                         $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
 
                                                             var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
@@ -1395,9 +1615,12 @@ $tableId = 'kt_table_1';
                                                             if (data.id == corporateTaxesId) {
                                                                 sub_items_options = '<option value="Earning Before Taxes - EBT" selected>Earning Before Taxes - EBT</option>'
                                                             } else {
-                                                                window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
-                                                                    sub_items_options += '<option value="' + MainItemObject + '">' + MainItemObject + '</option>'
-                                                                })
+                                                                if (window['sales_revenues_sub_items_names']) {
+                                                                    window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+                                                                        sub_items_options += '<option value="' + MainItemObject + '">' + MainItemObject + '</option>'
+                                                                    })
+                                                                }
+
 
                                                             }
 
@@ -1422,12 +1645,12 @@ $tableId = 'kt_table_1';
 																	</div>
 															</div>
 															
-														<div class="form-group custom-divs-class">
+														{{-- <div class="form-group custom-divs-class">
 															<div class="d-flex flex-column align-items-center justify-content-center flex-wrap">
 																<label >{{ __('% Of Sales') }}</label>
 															<input class="can_be_percentage_or_fixed_class percentage-of-sales" type="checkbox" value="percentage" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
 															</div>
-															</div>
+															</div> --}}
 															
 															</div>
 															
@@ -1475,6 +1698,10 @@ $tableId = 'kt_table_1';
 															
 															`;
                                                         var increaseNameWidth = null;
+                                                        if (data.has_auto_depreciation) {
+                                                            $(row).attr('data-has-auto-depreciation', 1)
+                                                        }
+
                                                         if (data.has_percentage_or_fixed_sub_items) {
                                                             $(row).addClass('has-percentage-or-fixed-sub-items')
                                                         } else {
@@ -1511,7 +1738,10 @@ $tableId = 'kt_table_1';
 														</div> `;
 
                                                         }
-                                                        $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (data.id)).attr('data-model-id', data.id).attr('data-model-name', '{{ $modelName }}')
+                                                        $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (data.id)).attr('data-model-id', data.id)
+                                                            .attr('data-model-name', '{{ $modelName }}')
+                                                            .attr('data-depends-on', data.depends_on)
+                                                            .attr('data-equation', data.equation)
                                                             .append(`
                     <div class="modal fade" id="add-sub-modal${data.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -2392,15 +2622,11 @@ $tableId = 'kt_table_1';
                     var triggerBlurTDs = []
                     var isMainForAllCalculations = document.querySelectorAll('.is-main-for-all-calculations')
                     if (isMainForAllCalculations.length) {
-                        // console.log('length is good')
                         var mainRowWithSubItems = null;
                         isMainForAllCalculations.forEach(function(mainRow, index) {
-                            // console.log('from foreach')
                             if (!mainRowWithSubItems) {
                                 var modelId = mainRow.getAttribute('data-model-id');
                                 var siblings = [...myNextAll(mainRow, '.is-sub-row.maintable-1-row-class' + modelId)]
-                                // console.log('sublings')
-                                // console.log(siblings)
                                 if (siblings.length) {
                                     mainRowWithSubItems = mainRow
                                 }

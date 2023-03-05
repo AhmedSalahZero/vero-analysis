@@ -2161,3 +2161,7 @@ function getFirstSegmentInString(string $str, string $separator): string
 {
 	return 	explode($separator, $str)[0];
 }
+function getDependsMaps($financialStatementAbleId, $financialStatementAbleClass):array 
+{
+	return $financialStatementAbleClass::find($financialStatementAbleId)->mainItems->pluck('depends_on', 'id')->toArray();
+}
