@@ -44,7 +44,7 @@ class  CashFlowStatementItem extends Model implements IFinancialStatementAbleIte
 	//         self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 	//         self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 	//         self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-	//         self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+	//         self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 	//     ];
 	// }
 
@@ -61,7 +61,7 @@ class  CashFlowStatementItem extends Model implements IFinancialStatementAbleIte
 	//         self::FINANCIAL_INCOME_OR_EXPENSE_ID => self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 	//         self::EARNING_BEFORE_TAXES_ID => self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 	//         self::CORPORATE_TAXES_ID => self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-	//         self::NEXT_PROFIT_ID => self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+	//         self::NEXT_PROFIT_ID => self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 	//     ];
 	// }
 
@@ -255,7 +255,7 @@ class  CashFlowStatementItem extends Model implements IFinancialStatementAbleIte
 	//             , 'is_sales_rate' => false
 	//         ],
 	//         'Net Profit ' . self::PERCENTAGE_OF_SALES => [
-	//             'id' =>  self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+	//             'id' =>  self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 	//             'hasSubItems' => false,
 	//             'has_depreciation_or_amortization' => false,
 	//             'depends_on' => [$salesRevenueId],

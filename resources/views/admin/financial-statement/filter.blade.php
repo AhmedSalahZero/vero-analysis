@@ -1,4 +1,4 @@
-<x-form.modal :title="__('Filter Options')" :table-id="$tableId" :type="'filter'">
+{{-- <x-form.modal :title="__('Filter Options')" :table-id="$tableId" :type="'filter'">
 
     @include('admin.financial-statement.options' , [
     'type'=>'filter'
@@ -8,4 +8,4 @@
 
     </x-form.filter-btn>
 
-</x-form.modal>
+</x-form.modal> --}}

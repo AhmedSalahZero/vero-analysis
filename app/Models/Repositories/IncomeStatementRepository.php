@@ -54,7 +54,6 @@ class IncomeStatementRepository implements IBaseRepository
 	public function store(Request $request): IBaseModel
 	{
 		$incomeStatement = App(IncomeStatement::class);
-
 		$incomeStatement = $incomeStatement
 			->storeMainSection($request)->storeMainItems($request);
 		return $incomeStatement;
@@ -112,7 +111,7 @@ class IncomeStatementRepository implements IBaseRepository
 			$incomeStatementItem->updated_at_formatted = formatDateFromString($incomeStatementItem->updated_at);
 			$incomeStatementItem->order = $index + 1;
 
-			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id,$subItemType);
+			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id, $subItemType);
 			$dataWithRelations->add($incomeStatementItem);
 			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($dataWithRelations, $incomeStatementItem) {
 				$subItem->isSubItem = true; // isSubRow
@@ -121,7 +120,6 @@ class IncomeStatementRepository implements IBaseRepository
 				}
 				$dataWithRelations->add($subItem);
 			});
-		
 		});
 		return [
 			'data' => $dataWithRelations,

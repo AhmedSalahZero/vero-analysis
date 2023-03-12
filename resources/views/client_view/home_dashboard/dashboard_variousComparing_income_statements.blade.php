@@ -101,7 +101,7 @@ $currentReportType = Request()->segment(5)
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
             <h3 class="kt-portlet__head-title head-title text-primary text-capitalize">
-                {{ __('Various Comparing') . ' [ ' .  $currentReportType  . ' ]' }}
+                {{ __('Variance Comparing') . ' [ ' .  $currentReportType  . ' ]' }}
             </h3>
         </div>
     </div>
@@ -323,7 +323,7 @@ $currentReportType = Request()->segment(5)
                         @php
                         $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
                         @endphp
-                        <td class="sub-numeric-bg text-nowrap " style="color:{{ getPercentageColor(sum_all_keys($intervalComparing[$theType][$intervalName])) }} !important"> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+                        <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
                         @endforeach
                         @php
                         $val = $currentValue[1] - $currentValue[0] ;

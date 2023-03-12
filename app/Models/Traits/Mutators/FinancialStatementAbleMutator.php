@@ -47,20 +47,27 @@ trait FinancialStatementAbleMutator
 			$pivotForActual = $this->withMainRowsFor($financialStatementAbleItemId, 'actual')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
-			$pivotForModified = array_merge($pivotForForecast, $pivotForActual);
+			// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
+			// and here
+			$actualDates = [];
+			$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'total' => array_sum($pivotForModified),
 				'sub_item_type' => 'adjusted'
 			], false);
+
+
 
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
+				'total' => array_sum($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
 				'sub_item_type' => 'modified'
@@ -76,13 +83,18 @@ trait FinancialStatementAbleMutator
 			$pivotForActual = $this->withMainRowsFor($financialStatementAbleItemId, 'actual')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
-			$pivotForModified = array_merge($pivotForForecast, $pivotForActual);
+			//$pivotForModified = array_merge($pivotForForecast, $pivotForActual);
+			$actualDates = [];
+			$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
+			// and here
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
+
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'total' => array_sum($pivotForModified),
 				'sub_item_type' => 'adjusted'
 			], false);
 
@@ -92,6 +104,7 @@ trait FinancialStatementAbleMutator
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
+				'total' => array_sum($pivotForModified),
 				'sub_item_type' => 'modified'
 			], false);
 		}
@@ -172,6 +185,9 @@ trait FinancialStatementAbleMutator
 	}
 	public function storeReport(Request $request)
 	{
+
+		// dd($request->valueMainRowThatHasSubItems[130][1]);
+
 		if (count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
 				'sub_items.*.name' => 'required'
@@ -240,6 +256,7 @@ trait FinancialStatementAbleMutator
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->detach($financialStatementAbleItemId);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($payload),
+					'total' => array_sum($payload),
 					'company_id' => \getCurrentCompanyId(),
 					'creator_id' => Auth::id(),
 					'sub_item_type' => $subItemType,
@@ -256,6 +273,7 @@ trait FinancialStatementAbleMutator
 					'payload' => json_encode($payload),
 					'company_id' => \getCurrentCompanyId(),
 					'creator_id' => Auth::id(),
+					'total' => array_sum($payload),
 					'sub_item_type' => $subItemType
 				], false);
 				$financialStatementAble->updateTotalRowsWithoutSubItemsForAdjusted($financialStatementAbleItemId, $subItemType);

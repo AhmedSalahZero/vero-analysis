@@ -56,7 +56,7 @@
 			@if($active == 'various_incomestatement_dashboard')
 			 active-text
 			  @endif 
-			  ">{{__("Various Comparing")}}</span></a>
+			  ">{{__("Variance Comparing")}}</span></a>
     </li>
 
 </ul>

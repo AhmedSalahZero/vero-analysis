@@ -63,7 +63,7 @@ trait FinancialStatementAbleRelation
 			'financial_statement_able_id',
 			'financial_statement_able_item_id'
 		)
-			->withPivot(['payload', 'sub_item_type', 'company_id', 'creator_id']);
+			->withPivot(['payload', 'sub_item_type', 'total', 'company_id', 'creator_id']);
 	}
 	public function withMainRowsFor(int $financialStatementAbleItemId, string $subItemType = '')
 	{

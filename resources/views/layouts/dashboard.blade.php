@@ -34,6 +34,11 @@
             return 2000;
         }
 
+        function myNextAllWithNested(e) {
+            var parentId = e.getAttribute('data-model-id')
+            return document.querySelectorAll('tr.maintable-1-row-class' + parentId + '.is-sub-row')
+        }
+
         function* myNextAll(e, selector) {
             while (e = e.nextElementSibling) {
                 if (e.matches(selector)) {

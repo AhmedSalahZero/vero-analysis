@@ -41,7 +41,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 	const CORPORATE_TAXES_ID = 21;
 	const CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID = 22;
 	const NEXT_PROFIT_ID = 23;
-	const NEXT_PROFIT_PERCENTAGE_OF_SALES_ID = 24;
+	const NET_PROFIT_PERCENTAGE_OF_SALES_ID = 24;
 
 	protected $guarded = [
 		'id'
@@ -61,10 +61,9 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 			self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 			self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 			self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-			self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+			self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 		];
 	}
-
 	public static function salesRateMap(): array
 	{
 		return [
@@ -78,7 +77,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 			self::FINANCIAL_INCOME_OR_EXPENSE_ID => self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 			self::EARNING_BEFORE_TAXES_ID => self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 			self::CORPORATE_TAXES_ID => self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-			self::NEXT_PROFIT_ID => self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+			self::NEXT_PROFIT_ID => self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 		];
 	}
 
@@ -272,7 +271,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 	// 			, 'is_sales_rate' => false
 	// 		],
 	// 		'Net Profit ' . self::PERCENTAGE_OF_SALES => [
-	// 			'id' =>  self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+	// 			'id' =>  self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 	// 			'hasSubItems' => false,
 	// 			'has_depreciation_or_amortization' => false,
 	// 			'depends_on' => [$salesRevenueId],

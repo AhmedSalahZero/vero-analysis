@@ -53,7 +53,7 @@ class  BalanceSheetItem extends Model implements IFinancialStatementAbleItem
 	// const CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID = 22;
 	// Short Term Banking Facilities
 	const SHORT_TERM_BANKING_FACULTIES = 55;
-	// const NEXT_PROFIT_PERCENTAGE_OF_SALES_ID = 24;
+	// const NET_PROFIT_PERCENTAGE_OF_SALES_ID = 24;
 	// Current Portion Of Long Terms Banking Facilities
 	const CURRENT_PORTION_OF_LONG_TERMS_BANKING_FACILITIES = 57;
 	// Taxes And Social Insurance
@@ -93,7 +93,7 @@ class  BalanceSheetItem extends Model implements IFinancialStatementAbleItem
 			self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 			self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 			self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-			self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+			self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 		];
 	}
 
@@ -110,7 +110,7 @@ class  BalanceSheetItem extends Model implements IFinancialStatementAbleItem
 	// 		self::FINANCIAL_INCOME_OR_EXPENSE_ID => self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 	// 		self::EARNING_BEFORE_TAXES_ID => self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 	// 		self::CORPORATE_TAXES_ID => self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-	// 		self::NEXT_PROFIT_ID => self::NEXT_PROFIT_PERCENTAGE_OF_SALES_ID,
+	// 		self::NEXT_PROFIT_ID => self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 	// 	];
 	// }
 

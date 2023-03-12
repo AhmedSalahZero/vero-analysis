@@ -456,6 +456,18 @@ $tableId = 'kt_table_1';
                                     var percentageValue = formDataObject['sub_items[' + i + '][percentage_value]'];
                                     tdValue = percentageValue ? percentageValue : 0;
 
+
+
+
+
+
+
+
+
+
+
+
+
                                     dates.forEach(function(date) {
                                         value = tdValue;
                                         valuesOfDates.push({
@@ -493,7 +505,7 @@ $tableId = 'kt_table_1';
                         }
 
                         function getRowForSubItemsTr(tableId, dates, balanceSheetId, balanceSheetItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentageOrFixed, fixedOrPercentage, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf) {
-                            let row = `<tr  data-financial-statement-item-able-id="${balanceSheetItemId}" class="d-none edit-info-row add-sub maintable-1-row-class${balanceSheetItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-percentage-of="${isPercentageOf}"  data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
+                            let row = `<tr  data-financial-statement-able-item-id="${balanceSheetItemId}" class="d-none edit-info-row add-sub maintable-1-row-class${balanceSheetItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-percentage-of="${isPercentageOf}"  data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
 																<td class="red reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
 																<td class="cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 70.25px; position: sticky;">
 												<div class="d-flex align-items-center justify-content-between">
@@ -590,6 +602,7 @@ $tableId = 'kt_table_1';
                             const mainRowId = mainRow.getAttribute('data-model-id')
                             const subTrsForMainRow = getsubTrsForMainRow(mainRowId)
                             let totalSubRowForDate = 0
+                            console.log(subTrsForMainRow.length)
                             subTrsForMainRow.forEach(subTr => totalSubRowForDate += parseFloat(subTr.querySelector('input[data-date="' + date + '"]').value))
                             return totalSubRowForDate
                         }
@@ -663,12 +676,14 @@ $tableId = 'kt_table_1';
                             rowTotalTd.innerHTML = number_format(total, 2)
                         }
 
-                        function generateEquationFromString(equation, date) {
+                        function generateEquationFromString(equation, date, updateRowId) {
                             const regx = /[-+/*]/g
                             const result = equation.split(regx)
+
                             for (rowId of result) {
                                 var mainRow = getMainRowFromId(rowId)
                                 var input = getInputElementFromRow(mainRow, date)
+
                                 equation = equation.replace(rowId, input.value)
                             }
                             return equation
@@ -692,13 +707,13 @@ $tableId = 'kt_table_1';
                             return result;
                         }
                         $(document).on('blur', '.editable.editable-date', function() {
+
                             const mainTd = this
                             const mainRow = getMainRowOfSubItemTd(mainTd)
                             const subRow = mainTd.closest('tr')
                             const mainRowId = mainRow.getAttribute('data-model-id')
                             const tdValue = convertStringtoNumber(mainTd.innerHTML)
                             const date = getDateFromTd(mainTd)
-
                             if (isSubItem(mainTd)) {
                                 updateSubItemInput(mainTd, mainRowId, date, tdValue)
                                 updateSubItemRowTotal(subRow)
@@ -712,13 +727,17 @@ $tableId = 'kt_table_1';
                             // update rows that depends on that main row
                             const depends_on = mainRow.getAttribute('data-depends-on') ? JSON.parse(mainRow.getAttribute('data-depends-on')) : []
                             const allDependAbels = getChangableRowsFor(depends_on)
+
                             if (allDependAbels.length) {
                                 for (updateAbleRowId of allDependAbels) {
                                     var updateRow = getRowWithoutSubItems(updateAbleRowId)
                                     var updateTd = getTdElementFromRow(updateRow, date)
                                     var updateInput = getInputElementFromRow(updateRow, date)
-                                    var equation = generateEquationFromString(updateRow.getAttribute('data-equation'), date)
+
+                                    var equation = generateEquationFromString(updateRow.getAttribute('data-equation'), date, updateAbleRowId)
                                     var equationValue = eval(equation)
+
+                                    console.log('----')
                                     updateTd.innerHTML = number_format(equationValue, 2)
                                     updateInput.value = equationValue
                                 }
@@ -824,7 +843,7 @@ $tableId = 'kt_table_1';
                         function triggerBlurForEditableTd() {
 
 
-                            document.querySelectorAll('table.append-table-into-dom tr[data-is-trigger-change="true"]').forEach(function(tr, index) {
+                            document.querySelectorAll('table.append-table-into-dom tr').forEach(function(tr, index) {
                                 // get only first one
                                 var firstEditableDateFields = tr.querySelectorAll('td.editable-date').forEach((firstEditableDateField) => {
                                     firstEditableDateField.dispatchEvent(new Event('blur', {
@@ -908,6 +927,7 @@ $tableId = 'kt_table_1';
                                 }
 
                                 if (is_percentage_or_fixed && is_percentage) {
+
                                     var percentage_of_array = tdElement.closest('tr').getAttribute('data-is-percentage-of');
 
                                     if (!Array.isArray(percentage_of_array)) {
@@ -1154,6 +1174,9 @@ $tableId = 'kt_table_1';
 
                                     columns.push({
                                         render: function(d, b, row, setting) {
+
+                                            var subTotal = row.main_rows && row.main_rows[0] ? row.main_rows[0].pivot.total : 0
+                                            return subTotal
 
                                             return 0
 
@@ -1598,8 +1621,10 @@ $tableId = 'kt_table_1';
                                                             var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${balanceSheetId}][${balanceSheetItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${balanceSheetItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                                                             $(dateDt).after(hiddenInput);
                                                         });
+                                                        var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
+                                                        totalOfRowArray.push(parseFloat(subTotal))
                                                         $(row).append(
-                                                            `<input type="hidden" class="input-hidden-for-total" name="totals[${balanceSheetId}][${balanceSheetItemId}]"  data-parent-model-id="${balanceSheetItemId}" value="0" >`
+                                                            `<input type="hidden" class="input-hidden-for-total" name="totals[${balanceSheetId}][${balanceSheetItemId}]"  data-parent-model-id="${balanceSheetItemId}" value="${subTotal}" >`
                                                         );
 
                                                         $(cells).each(function(index, cell) {
@@ -1962,6 +1987,7 @@ $tableId = 'kt_table_1';
                                         dataForm.append(pair[0], pair[1]);
                                     }
                                     $('.append-table-into-dom').remove();
+
                                     $.ajax({
                                         type: 'POST'
                                         , url: $(form).attr('action')

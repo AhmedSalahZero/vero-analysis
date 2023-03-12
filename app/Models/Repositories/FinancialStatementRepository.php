@@ -56,6 +56,7 @@ class FinancialStatementRepository implements IBaseRepository
 	}
 	public function store(Request $request): IBaseModel
 	{
+
 		$financialStatement = new FinancialStatement();
 
 		$incomeStatement = new IncomeStatement();

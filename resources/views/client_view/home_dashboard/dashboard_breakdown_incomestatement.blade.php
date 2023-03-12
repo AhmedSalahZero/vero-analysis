@@ -147,7 +147,6 @@ $totalOfDepreactionAndAmortization = 0;
                 $currentIndex = array_search($singleType,array_keys($types)) ;
                 @endphp
 
-                {{-- @dd() --}}
                 <div @if($currentIndex==0 || $currentIndex==1 ||$currentIndex==2 ) class="col-md-4" @else class="col-md-3" @endif>
                     <!--begin::Total Profit-->
                     <div class="kt-widget24 text-center">
@@ -158,8 +157,9 @@ $totalOfDepreactionAndAmortization = 0;
                                 </h4>
                             </div>
                         </div>
-
-
+                        @php
+                        $total_of_sales_revenue = get_total_for_group_by_key($reports_data,'Sales Revenue')['total_with_depreciation'] ?? 0;
+                        @endphp
 
 
                         <div class="kt-widget24__details">
@@ -168,10 +168,8 @@ $totalOfDepreactionAndAmortization = 0;
                                 $totalsOfEachRows = get_total_for_group_by_key($reports_data , $type) ;
                                 $total_of_each_group_with_depreciation =$totalsOfEachRows['total_with_depreciation'] ;
                                 $total_of_each_group_depreciation = $totalsOfEachRows['total_depreciation'] ;
-                                $total_of_sales_revenue = 0 ;
                                 @endphp
                                 {{ number_format($total_of_each_group_with_depreciation) }}
-
                                 @if($singleType == __('Sales Revenue'))
                                 @php
                                 $total_of_sales_revenue = $total_of_each_group_with_depreciation ;
