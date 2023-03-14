@@ -37,7 +37,14 @@
          <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--right">
              <ul class="kt-menu__subnav">
                  @foreach(['forecast'=>__('Forecast Dashboard'),'actual'=>__('Actual Dashboard'),'adjusted'=>__('Adjusted Dashboard'),'modified'=>__('Modified Dashboard'),'comparing'=>__('Comparing Dashboard')] as $reportType=>$reportName)
+
+                 @if($reportType == 'comparing')
+                 <li class="kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.intervalComparing.incomeStatement',['company'=>$company->id , 'subItemType'=>$reportType]) }}" class="kt-menu__link "><span class="kt-menu__link-text">{{ $reportName }}</span></a></li>
+
+                 @else
+
                  <li class="kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.breakdown.incomeStatement',['company'=>$company->id , 'reportType'=>$reportType]) }}" class="kt-menu__link "><span class="kt-menu__link-text">{{ $reportName }}</span></a></li>
+                 @endif
                  @endforeach
              </ul>
          </div>

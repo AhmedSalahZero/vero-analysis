@@ -250,7 +250,7 @@ $tableId = 'kt_table_1';
                                                     return (row['duration_type'])
                                                 }
                                                 , data: 'order'
-                                                , className: 'text-center',
+                                                , className: 'text-center text-capitalize',
 
                                             }
                                             , {

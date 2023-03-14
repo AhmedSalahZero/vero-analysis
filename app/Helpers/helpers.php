@@ -1534,9 +1534,16 @@ function formatDateFromString(string $date): string
 	if ($date) {
 		return \Carbon\Carbon::make($date)->format(defaultUserDateFormat());
 	}
-
 	return __('N/A');
 }
+function formatDateWithoutDayFromString(string $date): string
+{
+	if ($date) {
+		return \Carbon\Carbon::make($date)->format('M-Y');
+	}
+	return __('N/A');
+}
+
 function defaultUserDateFormat()
 {
 	return 'd-M-Y';
@@ -2148,6 +2155,25 @@ function getPercentageColor($val): string
 	}
 	return '';
 }
+
+function getPercentageColorOfSubTypes($val, $type): string
+{
+	if (($type == 'Sales Revenue' || $type == 'Gross Profit' || $type == 'Earning Before Interest Taxes Depreciation Amortization - EBITDA' || $type == 'Earning Before Interest Taxes - EBIT' || $type == 'Earning Before Taxes - EBT' || $type == 'Net Profit') && $val >= 0
+		|| (($type == 'Cost Of Goods / Service Sold' || $type == 'Marketing Expenses' || $type == 'Sales Expenses' || $type == 'General Expenses' || $type == 'Finance Income/(Expenses)' || $type == 'Corporate Taxes') && $val <= 0)
+
+	) {
+		return 'green ';
+	} else {
+		return 'red ';
+	}
+	// if ($val > 0) {
+	// 	return 'green ';
+	// } elseif ($val < 0) {
+	// 	return 'red ';
+	// }
+	return '';
+}
+
 function convertStringToClass(string $str): string
 {
 	$reg = " /^[\d]+|[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\~\{\|\}\^ ]/ ";
@@ -2155,13 +2181,235 @@ function convertStringToClass(string $str): string
 }
 function secondReportIsFirstInArray(string $firstReportType, string $secondReportType)
 {
+
 	return $firstReportType != 'forecast' && $secondReportType != 'modified' && $secondReportType != 'actual';
 }
 function getFirstSegmentInString(string $str, string $separator): string
 {
 	return 	explode($separator, $str)[0];
 }
-function getDependsMaps($financialStatementAbleId, $financialStatementAbleClass):array 
+function getDependsMaps($financialStatementAbleId, $financialStatementAbleClass): array
 {
 	return $financialStatementAbleClass::find($financialStatementAbleId)->mainItems->pluck('depends_on', 'id')->toArray();
+}
+function getLastSegmentInRequest()
+{
+	return Request()->segments()[count(Request()->segments()) - 1];
+}
+function getTotalPerYears(array $array)
+{
+	$totalPerYears = [];
+	foreach ($array as $date => $valArr) {
+		$year = explode('-', $date)[0];
+		if (isset($totalPerYears['year'])) {
+			$totalPerYears[$year] += $valArr['total_with_depreciation'];
+		} else {
+			$totalPerYears[$year] = $valArr['total_with_depreciation'];
+		}
+	}
+	return $totalPerYears;
+}
+// function getPreviousDate(dates, currentDate) {
+
+
+// }
+function getPreviousDate(?array $array, ?string $date, $datesExistsAsKeys = true)
+{
+
+	$searched = array_search($date, $datesExistsAsKeys ? array_keys($array) : $array);
+	$arrayPlusOne = $datesExistsAsKeys ? @array_keys($array)[$searched - 1] : @($array)[$searched - 1];
+	if ($searched !== null &&  isset($arrayPlusOne)) {
+		return $datesExistsAsKeys ? array_keys($array)[$searched - 1] : ($array)[$searched - 1];
+	}
+	return null;
+}
+
+function formatDataForChart(array $data): array
+{
+	$formattedReport = [];
+	if (!isset($data['Sales Revenue'])) {
+		return [];
+	}
+	$salesRevenueData = $data['Sales Revenue'];
+	$totalPerYears = getTotalPerYears($salesRevenueData['data']);
+	foreach ($salesRevenueData['data'] as $date => $reportValueArr) {
+
+		$previousDate = getPreviousDate($salesRevenueData['data'], $date);
+		$previousMonthSales = $previousDate  ? $salesRevenueData['data'][$previousDate]['total_with_depreciation'] : 0;
+		$year = explode('-', $date)[0];
+		$currentYearTotal = $totalPerYears[$year] ?? 0;
+		$formattedReport[] = [
+			'Sales Values' => $monthSales = $reportValueArr['total_with_depreciation'] ?? 0,
+			'date' => Carbon::make($date)->format('d-M-Y'),
+			'Month Sales %' => $currentYearTotal ? number_format($monthSales / $currentYearTotal * 100, 2) : 0,
+			'Growth Rate %' => $previousDate && $previousMonthSales ?  number_format(($monthSales - $previousMonthSales)  / $previousMonthSales * 100, 2) : 0
+		];
+	}
+	return $formattedReport;
+}
+function getArrayWhereIndexLessThanOrEqual($formattedData, $index)
+{
+	$data = [];
+	foreach ($formattedData as $i => $value) {
+		if ($i <= $index) {
+			$data[] = $formattedData[$i];
+		}
+	}
+	return $data;
+}
+function array_sum_key(array $array, $key)
+{
+	$total = 0;
+	foreach ($array as $index => $arr) {
+		$total += $arr[$key];
+	}
+	return $total;
+}
+function getMonthlyChartCumulative(array $formattedData): array
+{
+	$result = [];
+	foreach ($formattedData as $index => $data) {
+		$result[] = [
+			'date' => $data['date'],
+			'price' => array_sum_key(getArrayWhereIndexLessThanOrEqual($formattedData, $index), 'Sales Values')
+		];
+	}
+	return $result;
+}
+function extractMainItemsAndSubItemsFrom(array $array): array
+{
+	$mainItemsAndSubitems = [];
+	foreach ($array as $mainItemName => $values) {
+		foreach ($values as $reportType => $reportValues) {
+			foreach ($reportValues as  $subItemName => $subItemValue) {
+				if (!isset($mainItemsAndSubitems[$mainItemName]) || !in_array($subItemName, $mainItemsAndSubitems[$mainItemName])) {
+					$mainItemsAndSubitems[$mainItemName][] = $subItemName;
+				}
+			}
+		}
+	}
+	return $mainItemsAndSubitems;
+}
+function getFirstKeyReportType($arrayOfData): array
+{
+	$key = array_key_first($arrayOfData);
+	return [
+		'key' => $key,
+		'reportType' => explode('#', $key)[0]
+	];
+}
+function getSecondKeyReportType($arrayOfData, $firstReportKey): array
+{
+	$key = '#';
+	foreach ($arrayOfData as $index => $value) {
+		if ($index != $firstReportKey) {
+			$key = $index;
+		}
+	}
+	return [
+		'key' => $key,
+		'reportType' => explode('#', $key)[0]
+	];
+}
+function strEndsWith($string, $endString)
+{
+	$len = strlen($endString);
+	if ($len == 0) {
+		return true;
+	}
+	return substr($string, -$len) === $endString;
+}
+function sumAllExceptQuantityOfData(array $array, string $date)
+{
+	$total = 0;
+	foreach ($array as $key => $values) {
+		if (!strEndsWith($key, '( Quantity )')) {
+			$total += $values[$date] ?? 0;
+		}
+	}
+	return $total;
+}
+function getChartsData($chartItems, $dates, $arrayOfData, $mainItemName)
+{
+	$data = [];
+	$firstReportTypeKey = getFirstKeyReportType($arrayOfData)['key'];
+	$firstReportType = getFirstKeyReportType($arrayOfData)['reportType'];
+	$secondReportTypeKey = getSecondKeyReportType($arrayOfData, $firstReportTypeKey)['key'];
+	$secondReportType = getSecondKeyReportType($arrayOfData, $firstReportTypeKey)['reportType'];
+	$firstTypeAccumulated = 0;
+	$secondTypeAccumulated = 0;
+	$subItems = $chartItems[$mainItemName] ?? [];
+
+	$subItemName = $subItems[0] ?? null;
+	if (is_null($subItemName)) {
+		return [];
+	}
+	if (!$subItemName) {
+		$subItemName = 'all';
+	}
+
+	foreach ($dates as $date) {
+		//barChart chart
+		$data['barChart'][$mainItemName][$subItemName][$date][$firstReportType] = $subItemName == 'all' ? sumAllExceptQuantityOfData($arrayOfData[$firstReportTypeKey], $date) : $arrayOfData[$firstReportTypeKey][$subItemName][$date] ?? 0;
+		$data['barChart'][$mainItemName][$subItemName][$date][$secondReportType] = $subItemName == 'all' ? sumAllExceptQuantityOfData($arrayOfData[$secondReportTypeKey], $date) : $arrayOfData[$secondReportTypeKey][$subItemName][$date] ?? 0;
+		$data['barChart'][$mainItemName][$subItemName][$date]['variance'] = $data['barChart'][$mainItemName][$subItemName][$date][$secondReportType] - $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType];
+		$data['barChart'][$mainItemName][$subItemName][$date]['var %'] = $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType] ? $data['barChart'][$mainItemName][$subItemName][$date]['variance'] / $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType] * 100 : 0;
+
+		// two lines charts
+		$firstTypeAccumulated +=  $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType];
+		$secondTypeAccumulated +=  $data['barChart'][$mainItemName][$subItemName][$date][$secondReportType];
+		$data['twoLinesChart'][$mainItemName][$subItemName][$date][$firstReportType] = $firstTypeAccumulated;
+		$data['twoLinesChart'][$mainItemName][$subItemName][$date][$secondReportType] = $secondTypeAccumulated;
+		$data['twoLinesChart'][$mainItemName][$subItemName][$date]['variance'] = $data['twoLinesChart'][$mainItemName][$subItemName][$date][$secondReportType] - $data['twoLinesChart'][$mainItemName][$subItemName][$date][$firstReportType];
+		// dd();
+		$data['twoLinesChart'][$mainItemName][$subItemName][$date]['var %'] = $data['twoLinesChart'][$mainItemName][$subItemName][$date][$secondReportType] ? $data['twoLinesChart'][$mainItemName][$subItemName][$date]['variance'] / $data['twoLinesChart'][$mainItemName][$subItemName][$date][$firstReportType]  * 100  : 0;
+	}
+	return $data;
+}
+function formatDataForBarChart(array $subItemValues, $firstReportType, $secondReportType)
+{
+	$formattedData = [];
+	foreach ($subItemValues as $date => $values) {
+		// dd();
+		$formattedData[] = ['category' => explode('-', $date)[1] . '-' . explode('-', $date)[0], 'first' => $values[$firstReportType], 'second' => $values[$secondReportType], 'third' => $values['variance']];
+	}
+	return $formattedData;
+}
+function formatDataFromTwoLinesChart(array $subItemValues)
+{
+	$formattedData = [];
+	foreach ($subItemValues as $date => $values) {
+		$formattedData[] = ['date' => $date, 'Variance' => $values['variance'], 'Var %' => $values['var %']];
+	}
+	return $formattedData;
+}
+function formatDataFromTwoLinesChart2(array $subItemValues)
+{
+	$formattedData = [];
+	foreach ($subItemValues as $date => $values) {
+		$formattedData[] = ['date' => $date, 'Accumulated Variance' => number_format($values['variance'], 2), 'Accumulated Var %' => number_format($values['var %'], 2)];
+	}
+	return $formattedData;
+}
+function removeFirstKeyAndMergeOthers(array $array)
+{
+	$newArray = [];
+	foreach ($array as $mainTypeName => $values) {
+		if ($newArray) {
+			foreach ($newArray as $key => $value) {
+				$newArray[$key][$mainTypeName] = array_values($values[$key])[0];
+			}
+		} else {
+			$newArray = $values;
+		}
+	}
+	return $newArray;
+}
+function addAllSubItemForMainItemsArray(array $mainItems)
+{
+	$data = [];
+	foreach ($mainItems as $mainItemName) {
+		$data[$mainItemName] = ['all'];
+	}
+	return $data;
 }

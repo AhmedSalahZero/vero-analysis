@@ -11,8 +11,24 @@
 
 
 <style>
+    .reset-padding {
+        padding-left: 20px !important;
+        padding-right: 0 !important;
+
+    }
+
     html body table tbody td.green {
         color: green !important
+    }
+
+    .kt-list-timeline__items {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .chart-div {
+        width: 100%;
+        height: 500px;
     }
 
     html body table tbody td.red {
@@ -83,6 +99,42 @@
         border-radius: 10px !important;
     }
 
+    .is-sub-row td.sub-numeric-bg,
+    .is-sub-row td.sub-text-bg {
+        background-color: #a4d2e4 !important;
+        color: black !important;
+    }
+
+    .card-title:not(.collapsed) {
+        background-color: #046187 !important;
+        color: white !important;
+    }
+
+    .card-title span {
+        font-size: 22px !important;
+    }
+
+    .card-title.collapsed span {
+        color: #366cf3 !important;
+    }
+
+    .card-title.collapsed i,
+    .card-title.collapsed::after {
+        color: #366cf3 !important
+    }
+
+    .card-title:not(.collapsed) i,
+    .card-title:not(.collapsed)::after,
+    .card-title:not(.collapsed) span {
+        color: white !important;
+    }
+
+
+    .custom-table-classes th {
+        background-color: #046187 !important;
+        color: white !important;
+    }
+
 </style>
 
 
@@ -109,7 +161,7 @@ $currentReportType = Request()->segment(5)
         <form action="{{route('dashboard.various.incomeStatement',['company'=>$company,'subItemType'=>Request()->segments()[4]])}}" method="POST">
             @csrf
             <div class="form-group row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label style="margin-right: 10px;"><b>{{__('Income Statement')}}</b></label>
                 </div>
                 <div class="col-md-4">
@@ -143,10 +195,10 @@ $currentReportType = Request()->segment(5)
             </div>
             <div class="form-group row ">
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('Reports')}}</label>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('Report Type')}}</label>
                     <select id="first-report-type" data-actions-box="true" data-live-search="true" data-max-options="0" name="first_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
                         @foreach (getAllFinancialAbleTypes() as $reportType)
@@ -156,7 +208,7 @@ $currentReportType = Request()->segment(5)
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('Report Type')}}</label>
                     <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
                         @foreach (getAllFinancialAbleTypes() as $secondReportType)
@@ -167,7 +219,7 @@ $currentReportType = Request()->segment(5)
 
                 </div>
 
-                {{-- <div class="col-md-3">
+                {{-- <div class="col-md-4">
                     <label>{{__('Note')}} </label>
                 <div class="kt-input-icon">
                     <div class="input-group ">
@@ -178,13 +230,13 @@ $currentReportType = Request()->segment(5)
     </div>
     <div class="form-group row ">
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label>{{__('Interval')}}</label>
         </div>
 
 
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label>{{__('Start Date')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -192,7 +244,7 @@ $currentReportType = Request()->segment(5)
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label>{{__('End Date')}}</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -204,7 +256,7 @@ $currentReportType = Request()->segment(5)
 
 
 
-        {{-- <div class="col-md-3">
+        {{-- <div class="col-md-4">
                     <label>{{__('Data Type')}} </label>
         <div class="kt-input-icon">
             <div class="input-group ">
@@ -217,10 +269,10 @@ $currentReportType = Request()->segment(5)
 
 
 {{-- <div class="form-group row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label><b>{{__('Third Inteval')}}</b></label>
 </div>
-<div class="col-md-3">
+<div class="col-md-4">
     <label>{{__('Start Date Three')}}</label>
     <div class="kt-input-icon">
         <div class="input-group date">
@@ -228,7 +280,7 @@ $currentReportType = Request()->segment(5)
         </div>
     </div>
 </div>
-<div class="col-md-3">
+<div class="col-md-4">
     <label>{{__('End Date Three')}}</label>
     <div class="kt-input-icon">
         <div class="input-group date">
@@ -239,7 +291,7 @@ $currentReportType = Request()->segment(5)
 
 
 
-<div class="col-md-3">
+<div class="col-md-4">
     <label>{{__('Data Type')}} </label>
     <div class="kt-input-icon">
         <div class="input-group ">
@@ -249,199 +301,688 @@ $currentReportType = Request()->segment(5)
 </div>
 </div> --}}
 
+
 <x-submitting />
+</div>
+</div>
+
+
+@foreach($mainItemsWithItemsSubItems as $mainItemName=>$subItems)
+
+
+<div class="kt-iconbox__content d-flex align-items-start flex-column w-100">
+    <div class="kt-list-timeline__items">
+
+
+
+        <div class="kt-portlet__body">
+            <div class="kt-list-timeline">
+                <div class="accordion  accordion-toggle-arrow" id="accordionExample{{ convertStringToClass($mainItemName) }}">
+                    <div class="card">
+                        <div class="card-header bg-white">
+                            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne{{ convertStringToClass($mainItemName) }}" aria-expanded="true" aria-controls="collapseOne{{ convertStringToClass($mainItemName) }}">
+                                <i class="flaticon2-layers-1"></i>
+
+                                <span>{{ __($mainItemName) }}</span>
+
+                            </div>
+
+
+
+                        </div>
+                        <div id="collapseOne{{ convertStringToClass($mainItemName) }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample{{ convertStringToClass($mainItemName) }}">
+                            <div class="card-body with-padding">
+                                <x-bar-nav :link="'#'">
+
+                                    <div>
+                                        <select name="chart_items[{{ $mainItemName }}][]" class="form-control" style="max-width:300px;display:inline-flex;">
+                                            <option value="0">{{ __('All') }}</option>
+                                            @foreach($subItems as $subItemName)
+                                            @if($subItemName)
+                                            <option @if(isset($chartItems[$mainItemName]) && $chartItems[$mainItemName][0]==$subItemName) selected @endif value="{{ $subItemName }}">{{ __($subItemName) }}</option>
+                                            @endif
+                                            @endforeach
+                                        </select>
+                                        <button class="btn rounded btn-primary" type="submit">{{ __('Go') }}</button>
+                                    </div>
+
+
+                                </x-bar-nav>
+
+
+                                <div class="row">
+                                    @foreach($charts['barChart'][$mainItemName] ?? [] as $subItemName => $subItemValues)
+
+
+
+                                    <div class="col-md-12">
+
+
+                                        <div class="kt-portlet kt-portlet--mobile">
+
+                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+                                                <div id="chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}" class="chart-div"></div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="col-md-6">
+
+                                        <div class="kt-portlet kt-portlet--mobile">
+
+                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+
+                                                <input type="hidden" id="monthly_data{{ convertStringToClass($mainItemName.$subItemName) }}" data-total="{{ json_encode(formatDataFromTwoLinesChart($subItemValues) ?? []) }}">
+
+                                                <div id="monthly_chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}" class="chart-div" class="chartdashboard"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="kt-portlet kt-portlet--mobile">
+
+                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+
+                                                <input type="hidden" id="monthly_data2{{ convertStringToClass($mainItemName.$subItemName) }}" data-total="{{ json_encode(formatDataFromTwoLinesChart2($charts['twoLinesChart'][$mainItemName][$subItemName]) ?? []) }}">
+
+                                                <div id="monthly_chartdiv2{{ convertStringToClass($mainItemName.$subItemName) }}" class="chart-div" class="chartdashboard"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <div class="kt-portlet kt-portlet--mobile">
+
+                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+
+                                                <table class="custom-table-classes table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center text-capitalize">{{ __('Months') }}</th>
+                                                            <th class="text-center text-capitalize">{{ __($selectedItems['first_report_type']) }}</th>
+                                                            <th class="text-center text-capitalize">{{ __($selectedItems['second_report_type']) }}</th>
+                                                            <th class="text-center text-capitalize">{{ __('Variance') }}</th>
+                                                            <th class="text-center text-capitalize">{{ __('Var %') }}</th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($dates as $date)
+                                                        <tr>
+                                                            <td class="text-center">{{ formatDateWithoutDayFromString($date,true) }}</td>
+                                                            <td class="text-center">{{ number_format($subItemValues[$date][$selectedItems['first_report_type']]) }}</td>
+                                                            <td class="text-center">{{ number_format($subItemValues[$date][$selectedItems['second_report_type']]) }}</td>
+                                                            <td class="text-center">{{ number_format($subItemValues[$date]['variance']) }}</td>
+                                                            <td class="text-center">{{ number_format($subItemValues[$date]['var %'],2) . ' %' }}</td>
+                                                        </tr>
+                                                        @endforeach
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <div class="kt-portlet kt-portlet--mobile">
+
+                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+
+                                                <table class="custom-table-classes table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                                                    <thead>
+                                                        <tr>
+
+
+                                                            <th class="text-center text-capitalize">{{ __('Months') }}</th>
+                                                            <th class="text-center text-capitalize">{{ __('Accumulated').' '. __($selectedItems['first_report_type']) }}</th>
+                                                            <th class="text-center text-capitalize">{{ __('Accumulated').' ' .__($selectedItems['second_report_type']) }}</th>
+                                                            <th class="text-center text-capitalize">{{ __('Accumulated Variance') }}</th>
+                                                            <th class="text-center text-capitalize">{{ __('Accumulated Var %') }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($dates as $date)
+                                                        <tr>
+
+                                                            <td class="text-center">{{ formatDateWithoutDayFromString($date,true) }}</td>
+                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date][$selectedItems['first_report_type']]) }}</td>
+                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date][$selectedItems['second_report_type']]) }}</td>
+                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date]['variance']) }}</td>
+                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date]['var %'],2) . ' %' }}</td>
+
+                                                        </tr>
+                                                        @endforeach
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    @endforeach
+
+
+
+
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+@endforeach
 </form>
-</div>
-</div>
-
-{{-- Title --}}
-{{-- <div class="row">
-    <div class="kt-portlet ">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Products Items Sales Interval Comparing Analysis')}}
-</h3>
-</div>
-</div>
-</div>
-</div> --}}
-
-{{-- FIRST CARD --}}
 <div class="row">
 
 
 
 
     <div class="row w-100" {{-- style="order:{{ ++$i }}" --}}>
-        {{--
-          <div style="width:100%" class=" text-center mt-3 mb-3">
-                        <div class="kt-portlet ">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title head-title text-primary " style="text-transform: capitalize">
-                                    <b>{{ (ucfirst(str_replace('_',' ' ,$theType))) . ' IncomeStatement Interval Comparing Analysis ' }}</b>
-        </h3>
-    </div>
-</div>
-</div>
-</div> --}}
-{{-- {{ dd($intervalComparing) }} --}}
-{{-- {{ dd($intervalComparing) }} --}}
-<div class="col-md-12
-            ">
-    <div class="kt-portlet kt-portlet--mobile">
 
-        {{-- @include('interval_date' , ['k'=>$k % 2 ]) --}}
+        <div class="col-md-12 reset-padding">
+            <div class="kt-portlet kt-portlet--mobile">
 
-        <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
-            <table class="table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
-                <thead>
-                    <tr class="header-tr ">
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">#</th>
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
-                        {{-- {{ dd() }} --}}
-                        {{-- @dd($intervals) --}}
-                        @foreach ($intervals as $intervalName )
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
-                        @endforeach
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
-                        <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+                    <table class="table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                        <thead>
+                            <tr class="header-tr ">
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell trigger-expand is-opened" style="cursor:pointer">{{ __('Expand All') }}</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
+                                {{-- {{ dd() }} --}}
+                                {{-- @dd($intervals) --}}
+                                @foreach ($intervals as $intervalName )
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
+                                @endforeach
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                    @foreach ($intervalComparing as $theType => $intervals)
+                            @foreach ($intervalComparing as $theType => $intervals)
 
-                    <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
-                        <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg">+</td>
-                        <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
-                        @php
-                        $currentValue =[ ]
-                        @endphp
-                        @foreach ($intervals as $intervalName => $data )
-                        @php
-                        $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
-                        @endphp
-                        <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
-                        @endforeach
-                        @php
-                        $val = $currentValue[1] - $currentValue[0] ;
-                        @endphp
-                        <td class="sub-numeric-bg text-nowrap " style="color:{{ getPercentageColor($val) }} !important">{{ number_format($val)  }}</td>
-                        <td class="sub-numeric-bg text-nowrap  " style="color:{{ getPercentageColor(isset($currentValue[0]) && $currentValue[0] ? $val/ $currentValue[0]:0) }} !important">
-                            {{ isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100    , 2) . ' %' : number_format(0,2). ' %' }}
-                        </td>
+                            <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
+                                <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg sub-closed">+</td>
+                                <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
+                                @php
+                                $currentValue =[ ]
+                                @endphp
+                                @foreach ($intervals as $intervalName => $data )
+                                @php
+                                $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
+                                @endphp
+                                <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+                                @endforeach
+                                @php
+                                $val = $currentValue[1] - $currentValue[0] ;
+                                $percentage = isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100 , 2) : number_format(0,2) ;
+                                if($val > 0 && $currentValue[0] <0) { $percentage=$percentage * -1; } $color=getPercentageColorOfSubTypes($val,$theType) ; @endphp <td class="sub-numeric-bg text-nowrap " style="color:{{  $color }} !important">{{ number_format($val)  }}</td>
+                                    <td class="sub-numeric-bg text-nowrap  " style="color:{{ getPercentageColorOfSubTypes($percentage , $theType) }} !important">
+                                        {{ $percentage . ' %' }}
+                                    </td>
 
-                    </tr>
-                    @php
-                    $currentValue=[];
-                    @endphp
-
-                    @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
-                    <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
-                        <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
-                        <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
-                        @php
-                        $currentValues =[];
-                        @endphp
-                        @foreach($intervals as $newIntervalName => $intervalValue)
-                        @php
-                        $salesValue = $values[$newIntervalName] ?? 0;
-                        $currentValues[] = $salesValue ;
-                        @endphp
-                        <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
-                        @endforeach
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell ">
+                            </tr>
                             @php
-                            $val = $currentValues[1] - $currentValues[0] ;
+                            $currentValue=[];
                             @endphp
-                            {{ number_format($val ) }}
-                        </td>
-                        <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell ">
-                            {{ isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] *100 , 2)  . ' %' : number_format(0,2). ' %' }}
-                        </td>
-                        @endforeach
+
+                            @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
+                            <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
+                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
+                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
+                                @php
+                                $currentValues =[];
+                                @endphp
+                                @foreach($intervals as $newIntervalName => $intervalValue)
+                                @php
+                                $salesValue = $values[$newIntervalName] ?? 0;
+                                $currentValues[] = $salesValue ;
+                                @endphp
+                                <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
+                                @endforeach
+
+                                @php
+
+                                $val = $currentValues[1] - $currentValues[0] ;
+                                $percentage = isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] * 100 , 2) : number_format(0,2) ;
+                                if($val > 0 && $currentValues[0] <0) { $percentage=$percentage * -1; } $color=getPercentageColorOfSubTypes($val,$theType) ; @endphp <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell " style="color:{{ getPercentageColorOfSubTypes($val , $theType) }} !important">
+                                    {{ number_format($val ) }}
 
 
-                    </tr>
+                                    </td>
+                                    <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell " style="color:{{ getPercentageColorOfSubTypes($percentage , $theType) }} !important">
+                                        {{ $percentage .' %' }}
+                                    </td>
+                                    @endforeach
 
-                    @endforeach
-                </tbody>
-            </table>
+
+                            </tr>
+
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
+        {{-- @endforeach --}}
+
+
+
+
+
     </div>
-</div>
 
-{{-- @endforeach --}}
+    <div id="selects-except-forecast-actual" data-value="{{ json_encode(getAllFinancialAbleTypes(['forecast','actual'])) }}"></div>
+    <div id="selects-except-forecast" data-value="{{ json_encode(getAllFinancialAbleTypes(['forecast'])) }}"></div>
+    @endsection
+    @section('js')
+
+    <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
+    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
+
+    <script src="{{ url('assets/vendors/general/select2/dist/js/select2.full.js') }}" type="text/javascript"></script>
+    <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
+    <script>
+        reinitializeSelect2();
+
+    </script>
+
+    <script>
+        $(document).on('click', '.trigger-child-row-1', function(e) {
+            const parentId = $(e.target.closest('tr')).data('model-id');
+            var parentRow = $(e.target).parent();
+            var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
+
+            subRows.toggleClass('d-none');
+            if (subRows.hasClass('d-none')) {
+                parentRow.find('td.trigger-child-row-1').html('+').addClass('sub-opened');
+            } else if (!subRows.length) {
+                // if parent row has no sub rows then remove + or - 
+                parentRow.find('td.trigger-child-row-1').html('×').addClass('sub-closed');
+            } else {
+                parentRow.find('td.trigger-child-row-1').html('-').addClass('sub-closed');
+            }
+
+        });
+
+    </script>
+
+    <script>
+        document.querySelector('.trigger-expand').addEventListener('click', function(e) {
+            const expandText = "{{ __('Expand All') }}";
+            const collapseText = "{{ __('Collapse All') }}";
+            const element = e.target
+            if (element.classList.contains('is-opened')) {
+                element.classList.remove('is-opened');
+                element.classList.add('is-closed');
+                element.innerHTML = collapseText
+                document.querySelectorAll('.sub-closed').forEach((elementTh) => {
+                    $(elementTh).trigger('click')
+                    elementTh.classList.remove('sub-closed');
+                    elementTh.classList.add('sub-opened');
+                })
+            } else {
+                element.innerHTML = expandText
+                element.classList.remove('is-closed');
+                element.classList.add('is-opened');
+                document.querySelectorAll('.sub-opened').forEach((elementTh) => {
+                    $(elementTh).trigger('click')
+                    //elementTh.dispatchEvent(new Event('click'))
+                    elementTh.classList.remove('sub-opened');
+                    elementTh.classList.add('sub-closed');
+                })
+            }
+
+        })
+
+    </script>
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+
+    @foreach($mainItemsWithItemsSubItems as $mainItemName=>$subItems)
+    @foreach($charts['barChart'][$mainItemName] ?? [] as $subItemName => $subItemValues)
+    <script>
+        am4core.ready(function() {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+
+            var chart = am4core.create("monthly_chartdiv2{{ convertStringToClass($mainItemName.$subItemName) }}", am4charts.XYChart);
+
+            // Increase contrast by taking evey second color
+            chart.colors.step = 2;
+
+            // Add data
+            chart.data = $('#monthly_data2{{ convertStringToClass($mainItemName.$subItemName) }}').data('total');
+
+            chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+            // Create axes
+            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis.renderer.minGridDistance = 50;
+
+            // Create series
+            function createAxisAndSeries(field, name, opposite, bullet) {
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                if (chart.yAxes.indexOf(valueAxis) != 0) {
+                    valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
+                }
+
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = field;
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 2;
+                series.yAxis = valueAxis;
+                series.name = name;
+                series.tooltipText = "{name}: [bold]{valueY}[/]";
+                series.tensionX = 0.8;
+                series.showOnInit = true;
+
+                var interfaceColors = new am4core.InterfaceColorSet();
+
+                switch (bullet) {
+                    case "triangle":
+                        var bullet = series.bullets.push(new am4charts.Bullet());
+                        bullet.width = 12;
+                        bullet.height = 12;
+                        bullet.horizontalCenter = "middle";
+                        bullet.verticalCenter = "middle";
+
+                        var triangle = bullet.createChild(am4core.Triangle);
+                        triangle.stroke = interfaceColors.getFor("background");
+                        triangle.strokeWidth = 2;
+                        triangle.direction = "top";
+                        triangle.width = 12;
+                        triangle.height = 12;
+                        break;
+                    case "rectangle":
+                        var bullet = series.bullets.push(new am4charts.Bullet());
+                        bullet.width = 10;
+                        bullet.height = 10;
+                        bullet.horizontalCenter = "middle";
+                        bullet.verticalCenter = "middle";
+
+                        var rectangle = bullet.createChild(am4core.Rectangle);
+                        rectangle.stroke = interfaceColors.getFor("background");
+                        rectangle.strokeWidth = 2;
+                        rectangle.width = 10;
+                        rectangle.height = 10;
+                        break;
+                    default:
+                        var bullet = series.bullets.push(new am4charts.CircleBullet());
+                        bullet.circle.stroke = interfaceColors.getFor("background");
+                        bullet.circle.strokeWidth = 2;
+                        break;
+                }
+
+                valueAxis.renderer.line.strokeOpacity = 1;
+                valueAxis.renderer.line.strokeWidth = 2;
+                valueAxis.renderer.line.stroke = series.stroke;
+                valueAxis.renderer.labels.template.fill = series.stroke;
+                valueAxis.renderer.opposite = opposite;
+            }
+            $.each(chart.data[0], function(key, val) {
+                if (key != 'date') {
+                    createAxisAndSeries(key, key, true, "circle");
+                }
+            });
 
 
 
+            // Add legend
+            chart.legend = new am4charts.Legend();
+
+            // Add cursor
+            chart.cursor = new am4charts.XYCursor();
 
 
-</div>
+        }); // end am4core.ready()
 
-<div id="selects-except-forecast-actual" data-value="{{ json_encode(getAllFinancialAbleTypes(['forecast','actual'])) }}"></div>
-<div id="selects-except-forecast" data-value="{{ json_encode(getAllFinancialAbleTypes(['forecast'])) }}"></div>
-@endsection
-@section('js')
+    </script>
 
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
+    <script>
+        am4core.ready(function() {
 
-<script src="{{ url('assets/vendors/general/select2/dist/js/select2.full.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/select2.js') }}" type="text/javascript"></script>
-<script>
-    reinitializeSelect2();
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
 
-</script>
+            // Create chart instance
 
-<script>
-    // const firstReportTypeSelect = document.querySelector('#first-report-type')
-    // firstReportTypeSelect.addEventListener('change', function() {
-    //     const secondReportTypeSelect = document.querySelector('#second-report-type')
-    //     var options = ''
-    //     var optionsExceptForcastAndActual = JSON.parse(document.getElementById('selects-except-forecast-actual').getAttribute('data-value'))
-    //     var optionsExceptForcast = JSON.parse(document.getElementById('selects-except-forecast').getAttribute('data-value'))
+            var chart = am4core.create("monthly_chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}", am4charts.XYChart);
 
-    //     var firstSelectedOption = firstReportTypeSelect.value
-    //     for (var i = 0; i < optionsExceptForcast.length; i++) {
-    //         var option = optionsExceptForcast[i];
-    //         if (firstSelectedOption != 'actual' || option != 'actual') {
-    //             options += `<option value="${option}">${option}</option>`
-    //         }
-    //     }
-    //     console.log(options)
-    //     console.log(secondReportTypeSelect)
-    //     $(secondReportTypeSelect).empty().append(options)
-    //     reinitializeSelect2()
+            // Increase contrast by taking evey second color
+            chart.colors.step = 2;
 
-    // })
+            // Add data
+            chart.data = $('#monthly_data{{ convertStringToClass($mainItemName.$subItemName) }}').data('total');
 
-</script>
-<script>
-    $(document).on('click', '.trigger-child-row-1', function(e) {
-        const parentId = $(e.target.closest('tr')).data('model-id');
-        var parentRow = $(e.target).parent();
-        var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
+            chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+            // Create axes
+            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis.renderer.minGridDistance = 50;
 
-        subRows.toggleClass('d-none');
-        if (subRows.hasClass('d-none')) {
-            parentRow.find('td.trigger-child-row-1').html('+');
-        } else if (!subRows.length) {
-            // if parent row has no sub rows then remove + or - 
-            parentRow.find('td.trigger-child-row-1').html('×');
-        } else {
-            parentRow.find('td.trigger-child-row-1').html('-');
-        }
+            // Create series
+            function createAxisAndSeries(field, name, opposite, bullet) {
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                if (chart.yAxes.indexOf(valueAxis) != 0) {
+                    valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
+                }
 
-    });
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = field;
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 2;
+                series.yAxis = valueAxis;
+                series.name = name;
+                series.tooltipText = "{name}: [bold]{valueY}[/]";
+                series.tensionX = 0.8;
+                series.showOnInit = true;
 
-</script>
+                var interfaceColors = new am4core.InterfaceColorSet();
 
-@endsection
+                switch (bullet) {
+                    case "triangle":
+                        var bullet = series.bullets.push(new am4charts.Bullet());
+                        bullet.width = 12;
+                        bullet.height = 12;
+                        bullet.horizontalCenter = "middle";
+                        bullet.verticalCenter = "middle";
+
+                        var triangle = bullet.createChild(am4core.Triangle);
+                        triangle.stroke = interfaceColors.getFor("background");
+                        triangle.strokeWidth = 2;
+                        triangle.direction = "top";
+                        triangle.width = 12;
+                        triangle.height = 12;
+                        break;
+                    case "rectangle":
+                        var bullet = series.bullets.push(new am4charts.Bullet());
+                        bullet.width = 10;
+                        bullet.height = 10;
+                        bullet.horizontalCenter = "middle";
+                        bullet.verticalCenter = "middle";
+
+                        var rectangle = bullet.createChild(am4core.Rectangle);
+                        rectangle.stroke = interfaceColors.getFor("background");
+                        rectangle.strokeWidth = 2;
+                        rectangle.width = 10;
+                        rectangle.height = 10;
+                        break;
+                    default:
+                        var bullet = series.bullets.push(new am4charts.CircleBullet());
+                        bullet.circle.stroke = interfaceColors.getFor("background");
+                        bullet.circle.strokeWidth = 2;
+                        break;
+                }
+
+                valueAxis.renderer.line.strokeOpacity = 1;
+                valueAxis.renderer.line.strokeWidth = 2;
+                valueAxis.renderer.line.stroke = series.stroke;
+                valueAxis.renderer.labels.template.fill = series.stroke;
+                valueAxis.renderer.opposite = opposite;
+            }
+            $.each(chart.data[0], function(key, val) {
+                if (key != 'date') {
+                    createAxisAndSeries(key, key, true, "circle");
+                }
+            });
+
+
+
+            // Add legend
+            chart.legend = new am4charts.Legend();
+
+            // Add cursor
+            chart.cursor = new am4charts.XYCursor();
+
+
+        }); // end am4core.ready()
+
+    </script>
+    <script>
+        am4core.ready(function() {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            var chart = am4core.create('chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}', am4charts.XYChart)
+            chart.colors.step = 2;
+
+            chart.legend = new am4charts.Legend()
+            chart.legend.position = 'top'
+            chart.legend.paddingBottom = 20
+            chart.legend.labels.template.maxWidth = 25095
+            chart.tooltip.label.wrap = true;
+            chart.tooltip.label.maxWidth = 150;
+
+            var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+            xAxis.dataFields.category = 'category'
+            xAxis.renderer.cellStartLocation = 0.1
+            xAxis.renderer.cellEndLocation = 0.9
+            xAxis.renderer.grid.template.location = 0;
+
+            var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            //yAxis.min = 0;
+
+            function createSeries(value, name) {
+                var series = chart.series.push(new am4charts.ColumnSeries())
+                series.dataFields.valueY = value
+                series.dataFields.categoryX = 'category'
+                series.name = name
+                //series.columns.template.width = "70";
+                series.columns.template.tooltipText = "{categoryX} -{name}: {valueY}";
+                series.events.on("hidden", arrangeColumns);
+                series.events.on("shown", arrangeColumns);
+                series.columns.template.tooltipY = am4core.percent(0);
+                var bullet = series.bullets.push(new am4charts.LabelBullet())
+                bullet.interactionsEnabled = false
+                bullet.dy = 30;
+
+                bullet.label.fill = am4core.color('#ffffff')
+
+                return series;
+            }
+
+            chart.data = @json(formatDataForBarChart($subItemValues, $selectedItems['first_report_type'], $selectedItems['second_report_type']));
+
+            createSeries('first', "{{ ucfirst($selectedItems['first_report_type']) }}");
+            createSeries('second', "{{ ucfirst($selectedItems['second_report_type']) }}");
+            createSeries('third', '{{ "Variance" }}');
+
+            function arrangeColumns() {
+
+                var series = chart.series.getIndex(0);
+
+                var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
+                if (series.dataItems.length > 1) {
+                    var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
+                    var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
+                    var delta = ((x1 - x0) / chart.series.length) * w;
+                    if (am4core.isNumber(delta)) {
+                        var middle = chart.series.length / 2;
+
+                        var newIndex = 0;
+                        chart.series.each(function(series) {
+                            if (!series.isHidden && !series.isHiding) {
+                                series.dummyData = newIndex;
+                                newIndex++;
+                            } else {
+                                series.dummyData = chart.series.indexOf(series);
+                            }
+                        })
+                        var visibleCount = newIndex;
+                        var newMiddle = visibleCount / 2;
+
+                        chart.series.each(function(series) {
+                            var trueIndex = chart.series.indexOf(series);
+                            var newIndex = series.dummyData;
+
+                            var dx = (newIndex - trueIndex + middle - newMiddle) * delta
+
+                            series.animate({
+                                property: "dx"
+                                , to: dx
+                            }, series.interpolationDuration, series.interpolationEasing);
+                            series.bulletsContainer.animate({
+                                property: "dx"
+                                , to: dx
+                            }, series.interpolationDuration, series.interpolationEasing);
+                        })
+                    }
+                }
+            }
+
+        }); // end am4core.ready()
+
+    </script>
+
+    <script>
+        $(function() {
+            $('#skip').on('click', function(e) {
+                e.preventDefault();
+                $('#first_card').fadeOut("slow", function() {
+                    $('#second_card').fadeIn(500);
+                });
+            });
+
+        })
+
+    </script>
+    @endforeach
+    @endforeach
+
+
+
+    @endsection

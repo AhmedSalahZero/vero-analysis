@@ -21,6 +21,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 use Spatie\Permission\Models\Role;
 
 class HomeController extends Controller
@@ -188,7 +190,6 @@ class HomeController extends Controller
             select sum(net_sales_value) as current_month_sales from sales_gathering where Year = " . $currentYear . " and Month=" . $currentMonth . " and company_id = 
             " . $company->id
 		));
-		// dd($currentMonthSales);
 		$currentMonthSales = $currentMonthSales[0]->current_month_sales ?: 0;
 		$previousMonth = Carbon::make($end_date)->startOfMonth()->subMonths(1)->month;
 
@@ -300,8 +301,6 @@ class HomeController extends Controller
 		}
 
 
-		// dd();
-
 		return [
 			'cumulative' => $cumulative,
 			'formattedData' => $formattedData,
@@ -410,22 +409,23 @@ class HomeController extends Controller
 		];
 		$reports_data = [];
 		$top_data = [];
-		// dd();
 		$incomeStatement = IncomeStatement::find($request->get('income_statement_id') ?: $incomeStatementID) ?: IncomeStatement::where('company_id', $company->id)->latest()->first();
-		// dd($incomeStatement);
 		if ($incomeStatement) {
 			$breakdown_data = (new IncomeStatementBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, $incomeStatement, $reportType, $isComparingReport);
 		} else {
 			$incomeStatement = optional();
 			$breakdown_data   = [];
 		}
-
+		$formattedDataForChart = formatDataForChart($breakdown_data);
+		$monthlyChartCumulative = getMonthlyChartCumulative($formattedDataForChart);
 		$types = array_unique(array_keys($breakdown_data));
 		$types = \array_fill_keys_with_values($types);
 		// $incomeStatement = $request->get('incomeStatement')
 		$reports_data = $breakdown_data;
 		return view('client_view.home_dashboard.dashboard_breakdown_incomestatement', compact(
 			'company',
+			'formattedDataForChart',
+			'monthlyChartCumulative',
 			'incomeStatement',
 			'reports_data',
 			'types',
@@ -656,7 +656,7 @@ class HomeController extends Controller
 	public function dashboardIncomeStatementIntervalComparing(Request $request, Company $company)
 	{
 		$firstReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
-		$secondReportType = $request->has('second_report_type') ? $request->get('second_report_type') : 'actual';
+		$secondReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
 
 		$start_date_0 = date('2021-01-01');
 		$end_date_0   = date('2021-12-31');
@@ -690,9 +690,7 @@ class HomeController extends Controller
 
 			$request['types'] = [
 				$firstKey, $secondKey
-				// ,$thirdKey 
 			];
-			// dd($firstType, $secondType);
 			$request['start_date_one'] = $start_date_0;
 			$request['end_date_one'] = $end_date_0;
 			$request['start_date_two'] = $start_date_1;
@@ -750,6 +748,7 @@ class HomeController extends Controller
 		$selectedTypesIndexes = [
 			$firstReportType, $secondReportType
 		];
+
 		return view('client_view.home_dashboard.dashboard_intervalComparing_income_statements', compact(
 			'selectedItems',
 			'company',
@@ -778,7 +777,6 @@ class HomeController extends Controller
 
 		$firstComparingType = $request->has('first_comparing_type') ? $request->get('first_comparing_type') : 'forecast';
 		$secondComparingType = $request->has('second_comparing_type') ? $request->get('second_comparing_type') : 'actual';
-
 		if ($firstComparingType == $secondComparingType) {
 			return redirect()->back()->with('fail', __('Please Select Different Comparing Types'));
 		}
@@ -801,7 +799,6 @@ class HomeController extends Controller
 		}
 		$selectedTypes = (array)$request->types;
 		$intervalComparing = [];
-		// dd();
 		$requestMethod = $request->method();
 		if ($request->isMethod('GET')) {
 			$keys = array_keys($permittedTypes);
@@ -813,7 +810,6 @@ class HomeController extends Controller
 				$firstKey, $secondKey
 				// ,$thirdKey 
 			];
-			// dd($firstType, $secondType);
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
@@ -835,20 +831,31 @@ class HomeController extends Controller
 			'start_date' => $start_date,
 			'end_date' => $end_date,
 		];
-		// dd($request->types);
-		// foreach ([$firstComparingType, $secondComparingType] as $reportType) {
+		$charts = [];
+		$dates = [];
+		$chartHasBeenFound = false;
+
+		$chartItems = (array)$request->get('chart_items') ?: addAllSubItemForMainItemsArray($allTypes);
+
 		foreach ((array)$request->types as $typeId) {
 			$request['mainItemId'] = $typeId;
-			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = (new IntervalsComparingForIncomeStatementReport)->resultVariousComparing($request, $company, $intervalDates, $firstComparingType, $secondComparingType);
+			$dataOfVarious = (new IntervalsComparingForIncomeStatementReport)->resultVariousComparing($request, $company, $intervalDates, $firstComparingType, $secondComparingType, $chartHasBeenFound, IncomeStatementItem::where('id', $typeId)->first()->name, $chartItems);
+			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = $dataOfVarious['report'];
+			$charts[IncomeStatementItem::where('id', $typeId)->first()->name] = $dataOfVarious['charts'];
+			if (!$chartHasBeenFound) {
+				$chartHasBeenFound = true;
+				$dates = $dataOfVarious['dates'];
+			}
 		}
-		// dd($intervalComparing);
+		$charts = removeFirstKeyAndMergeOthers($charts);
+
 		$incomeStatementId = $request->get('income_statement_id');
-		// $secondIncomeStatementId = $request->get('income_statement_id');
 		if ($incomeStatementId) {
 			$selectedIncomeStatement =     IncomeStatement::find($incomeStatementId);
 		}
 
 		$intervals = getIntervals($intervalComparing);
+
 
 		$selectedItems = [
 			'income_statement_id' => $incomeStatementId ?: $incomeStatement->id,
@@ -858,9 +865,15 @@ class HomeController extends Controller
 			'end_date' =>   $end_date,
 			'second_report_type' => $secondComparingType,
 
+
 		];
-		// dd($intervalComparing);
+		$mainItemsWithItemsSubItems = extractMainItemsAndSubItemsFrom($intervalComparing);
+
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(
+			'chartItems',
+			'charts',
+			'dates',
+			'mainItemsWithItemsSubItems',
 			'company',
 			'selectedItems',
 			'start_date',

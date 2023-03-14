@@ -99,10 +99,10 @@
         <form action="{{route('dashboard.intervalComparing.incomeStatement',['company'=>$company,'subItemType'=>Request()->segments()[4]])}}" method="POST">
             @csrf
             <div class="form-group row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label style="margin-right: 10px;"><b>{{__('Comparing Types')}}</b></label>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <div class="input-group date">
                         <select data-actions-box="true" data-live-search="true" data-max-options="0" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all" multiple>
                             @foreach ($permittedTypes as $id=>$name)
@@ -116,10 +116,10 @@
             </div>
             <div class="form-group row ">
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label><b>{{__('Income Statements')}}</b></label>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('First Income Statement')}}</label>
 
                     <select data-live-search="true" data-max-options="2" name="financial_statement_able_first_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
@@ -131,7 +131,7 @@
                 </div>
 
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('Second Income Statement')}}</label>
                     <select data-live-search="true" data-max-options="2" name="financial_statement_able_second_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
                         @foreach($incomeStatements as $incomeStatement)
@@ -151,13 +151,13 @@
 
 
             <div class="form-group row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label><b>{{__('Report Type')}}</b></label>
                 </div>
 
 
-                <div class="col-md-3">
-                    <label>{{__('First Report Type')}}</label>
+                <div class="col-md-8">
+                    <label>{{__('Report Type')}}</label>
                     <select id="first-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="first_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
                         @foreach (getAllFinancialAbleTypes() as $firstReportType)
                         <option value="{{ $firstReportType }}" @if($firstReportType==$selectedItems['first_report_type']) selected @endif> {{ $firstReportType }} </option>
@@ -168,15 +168,7 @@
 
 
 
-                <div class="col-md-3">
-                    <label>{{__('Second Report Type')}}</label>
-                    <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                        @foreach (getAllFinancialAbleTypes() as $secondReportType)
-                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
-                        @endforeach
 
-                    </select>
-                </div>
 
 
 
@@ -191,12 +183,12 @@
 
 
             <div class="form-group row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label><b>{{__('Start Date')}}</b></label>
                 </div>
 
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('Start Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -207,7 +199,7 @@
 
 
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('Start Date Two')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -226,28 +218,28 @@
 
 
             <div class="form-group row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label><b>{{__('End Date')}}</b></label>
                 </div>
 
 
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('End Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date_one" required value="{{$end_date_0}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
+                            <input type="date" name="end_date_one" required value="{{$end_date_0}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
 
 
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>{{__('End Date Two')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date_two" required value="{{$end_date_1}}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
+                            <input type="date" name="end_date_two" required value="{{$end_date_1}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -313,12 +305,8 @@
                             @php
                             $currentValue=[];
                             @endphp
-                            {{-- {{ dd($intervalComparing) }} --}}
-
-                            {{-- @foreach ($intervalComparing[$theType][$intervalName] as $subItemName => $subItemValue  ) --}}
-                            {{-- {{ dd($subItemName , $subItemValue) }} --}}
                             @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
-                            <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToCass($theType) }} is-sub-row even d-none">
+                            <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
                                 <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
                                 <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
                                 @php

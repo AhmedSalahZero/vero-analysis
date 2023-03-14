@@ -87,6 +87,8 @@
     </div>
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
+
+            <div id="chartdiv"></div>
             <!--End:: Tab  EGP FX Rate Table -->
             <!--Begin:: Tab USD FX Rate Table -->
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">

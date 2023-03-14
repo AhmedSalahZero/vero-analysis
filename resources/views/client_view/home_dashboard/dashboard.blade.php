@@ -491,12 +491,9 @@
                             @endslot
                             </x-table> --}}
 
-
                             <input type="hidden" id="monthly_data" data-total="{{ json_encode($formattedDataForChart ?? []) }}">
                             <input type="hidden" id="accumulated_data" data-total="{{ json_encode($monthlyChartCumulative ?? []) }}">
 
-                            {{-- <input type="hidden" id="monthly_data" data-total="{{ json_encode($chart_data ?? []) }}">
-                            <input type="hidden" id="accumulated_data" data-total="{{ json_encode($accumulated_chart_data ?? []) }}"> --}}
                         </div>
                     </div>
                 </div>
@@ -506,6 +503,7 @@
     </div>
 
 </div>
+
 
 
 @endsection

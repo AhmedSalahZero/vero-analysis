@@ -71,13 +71,13 @@ class FinancialStatementRepository implements IBaseRepository
 
 		$request['financial_statement_id'] = $financialStatement->id;
 
-		$request['name'] = $financialStatementName . ' IncomeStatement';
+		$request['name'] = $financialStatementName . ' Income Statement';
 		$incomeStatement = $incomeStatement->storeMainSection($request)->storeMainItems($request);
 
-		$request['name'] = $financialStatementName . ' CashFlowStatement';
+		$request['name'] = $financialStatementName . ' Cash Flow Statement';
 		$cashFlowStatement = $cashFlowStatement->storeMainSection($request)->storeMainItems($request);
 
-		$request['name'] = $financialStatementName . ' BalanceSheet';
+		$request['name'] = $financialStatementName . ' Balance Sheet';
 		$balanceSheet = $balanceSheet->storeMainSection($request)->storeMainItems($request);
 
 

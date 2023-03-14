@@ -501,7 +501,7 @@ $tableId = 'kt_table_1';
                                                     valOfCurrentSubItem = 0;
                                                 }
                                             } else {
-                                                valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name=' + subItemName + '] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
+                                                valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
                                             }
                                             total += parseFloat(valOfCurrentSubItem);
 
@@ -593,8 +593,10 @@ $tableId = 'kt_table_1';
                                 row.querySelector('td.total-row').innerHTML = number_format(totalOfNetProfit);
                             } else if (row.getAttribute('data-model-id') == domElements.corporateTaxesId) {
                                 var earningBeforeTaxesTotalValue = parseFloat(document.querySelector('.main-with-no-child[data-financial-statement-able-item-id="' + domElements.earningBeforeTaxesId + '"] input.input-hidden-for-total').value)
-                                row.querySelector('.input-hidden-for-total').value = earningBeforeTaxesTotalValue;
-                                row.querySelector('td.total-row').innerHTML = number_format(earningBeforeTaxesTotalValue);
+                                var corporateTaxesPercentageValue = parseFloat(document.querySelector('.is-sub-row.maintable-1-row-class' + domElements.corporateTaxesId + ' td.editable-date').getAttribute('data-percentage-value')) / 100
+                                var corporateTaxesValue = earningBeforeTaxesTotalValue < 0 ? 0 : earningBeforeTaxesTotalValue * corporateTaxesPercentageValue
+                                row.querySelector('.input-hidden-for-total').value = corporateTaxesValue;
+                                row.querySelector('td.total-row').innerHTML = number_format(corporateTaxesValue);
                             } else {
                                 row.querySelector('.input-hidden-for-total').value = total;
                                 row.querySelector('td.total-row').innerHTML = number_format(total);
@@ -621,7 +623,6 @@ $tableId = 'kt_table_1';
                                 }
                             }
                             changedInputs = newArr;
-                            console.log(changedInputs)
 
                             for (var i = 0; i < changedInputs.length; i++) {
                                 changedInputs[i].dispatchEvent(new Event('change', {
@@ -808,7 +809,8 @@ $tableId = 'kt_table_1';
                                                         valOfCurrentSubItem = 0;
                                                     }
                                                 } else {
-                                                    valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name=' + subItemName + '] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
+                                                    subItemName = subItemName.replace(/["]+/g, '').trim()
+                                                    valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
                                                 }
                                                 total += parseFloat(valOfCurrentSubItem);
 
@@ -1702,6 +1704,7 @@ $tableId = 'kt_table_1';
                                                     }
                                                 } else {
                                                     var totals = array_sum(totalOfRowArray);
+
                                                     $(row).find('td.total-row').html(number_format(totals));
                                                     $(row).find('.input-hidden-for-total').val(totals)
                                                 }
@@ -1742,12 +1745,60 @@ $tableId = 'kt_table_1';
                                                     deleteBtnForCorporateTaxes.classList.remove('d-block')
 
                                                 }
+                                                const netProfitId = domElements.netProfitId;
+                                                const corporateTaxesPercentageValue = document.querySelector('.is-sub-row.maintable-1-row-class' + corporateTaxesId + ' td.editable-date').getAttribute('data-percentage-value') / 100;
+                                                const earningBeforeTaxesTotalValue = document.querySelector('.main-with-no-child[data-financial-statement-able-item-id="' + domElements.earningBeforeTaxesId + '"] input.input-hidden-for-total').value;
+                                                const totalCorporateTaxes = earningBeforeTaxesTotalValue < 0 ? 0 : earningBeforeTaxesTotalValue * corporateTaxesPercentageValue;
+                                                const corporateTaxesRow = document.querySelector('tr[data-model-id="' + corporateTaxesId + '"]')
+                                                const corporateTaxesSubRowRow = document.querySelector('tr.is-sub-row.maintable-1-row-class' + corporateTaxesId)
+                                                const salesRevenueId = domElements.salesRevenueId
+                                                const corporateTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[corporateTaxesId] + '"]')
+                                                const netProfitTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[netProfitId] + '"]')
+
+                                                const totalOfSalesRevenue = document.querySelector('.maintable-1-row-class' + salesRevenueId + ' .input-hidden-for-total').value;
+                                                const netProfitRow = document.querySelector('tr[data-model-id="' + netProfitId + '"]')
+                                                corporateTaxesRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
+                                                corporateTaxesSubRowRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
+                                                corporateTaxesRow.querySelector('input.input-hidden-for-total').value = totalCorporateTaxes
+                                                corporateTaxesSubRowRow.querySelector('input.input-hidden-for-total').value = totalCorporateTaxes
+                                                corporateTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalCorporateTaxes / totalOfSalesRevenue * 100 : 0, 2) + ' %'
+
+                                                const totalValueForNetProfit = earningBeforeTaxesTotalValue - totalCorporateTaxes;
+                                                netProfitRow.querySelector('td.total-row').innerHTML = number_format(totalValueForNetProfit)
+                                                netProfitRow.querySelector('input.input-hidden-for-total').value = totalValueForNetProfit
+                                                netProfitTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalValueForNetProfit / totalOfSalesRevenue * 100 : 0, 2) + ' %'
 
                                                 reinitializeSelect2();
 
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
+
+
+                                                // if (data.id == domElements.corporateTaxesId) {
+                                                //     window['dddd'] = 5555;
+                                                //
+                                                // update corporate taxes and net Profit
+
+
+                                                //updateCorporateTaxesAndNetProfitTotalRow()
+
+
+
+                                                //    var earningBeforeTaxesTotalValue = parseFloat(document.querySelector('.main-with-no-child[data-financial-statement-able-item-id="' + domElements.earningBeforeTaxesId + '"] input.input-hidden-for-total').value)
+
+
+
+                                                //    var corporateTaxesPercentageValue = parseFloat(document.querySelector('.is-sub-row.maintable-1-row-class' + domElements.corporateTaxesId + ' td.editable-date').getAttribute('data-percentage-value')) / 100
+
+
+
+                                                //    var corporateTaxesValue = earningBeforeTaxesTotalValue * corporateTaxesPercentageValue
+
+
+
+                                                //    totals = corporateTaxesValue;
+                                                // }
 
                                                 var reportType = vars.subItemType;
                                                 let actualDates = [];
@@ -2117,8 +2168,6 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('change', '.main-with-no-child input', function(e) {
-
-                                // console.log('with-no-child')
 
                                 let rowId = this.getAttribute('data-parent-model-id');
                                 const currentRow = this.closest('tr')

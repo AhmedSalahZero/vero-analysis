@@ -293,7 +293,6 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
-		// dd($firstIntervalDate);
 		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
 			return [
 				'second-interval#' . $secondIntervalDate => sum_each_key($secondItems),
@@ -307,21 +306,23 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		}
 	}
 
-	public static function _compareBetweenTwoItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, string $firstReportType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $secondReportType): array
+	public static function _compareBetweenTwoItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, string $firstReportType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $secondReportType, $sumInterval = true): array
 	{
 		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType);
 		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
 		if (secondReportIsFirstInArray($firstReportType, $secondReportType)) {
+
 			return [
-				$secondReportType . '#' . $secondIntervalDate => sum_each_key($secondItems),
-				$firstReportType . '#' . $firstIntervalDate => sum_each_key($firstItems),
+				$secondReportType . '#' . $secondIntervalDate => $sumInterval ? sum_each_key($secondItems) : $secondItems,
+				$firstReportType . '#' . $firstIntervalDate => $sumInterval ? sum_each_key($firstItems) : $firstItems,
 			];
 		} else {
+
 			return [
-				$firstReportType . '#' . $firstIntervalDate => sum_each_key($firstItems),
-				$secondReportType . '#' . $secondIntervalDate => sum_each_key($secondItems)
+				$firstReportType . '#' . $firstIntervalDate => $sumInterval ? sum_each_key($firstItems) : $firstItems,
+				$secondReportType . '#' . $secondIntervalDate => $sumInterval ? sum_each_key($secondItems) : $secondItems
 			];
 		}
 	}
@@ -329,7 +330,6 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 	public static function getItemsForInterval(Collection $items, array $dates, $intervalName): array
 	{
 		// $items must be a collection 
-		// dd($dates);
 
 		$firstDate = Carbon::make($dates[\array_key_first($dates)]);
 		$lastDate = Carbon::make($dates[\array_key_last($dates)]);
@@ -338,7 +338,6 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		$filteredItems = [];
 
 		foreach ($items as $item) {
-			// dd($item->payload);
 			$payload = (array)json_decode($item->payload);
 			foreach ($payload as $payloadDate => $payloadItem) {
 				$payloadDateFormatted = Carbon::make($payloadDate);
@@ -360,5 +359,9 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		static::addGlobalScope(function (Builder $builder) {
 			$builder->where('financial_statement_able_type', 'IncomeStatement');
 		});
+	}
+	public static function _generateChartsData(array $dates, array $chartItems, array $arrayOfData, string $mainItemName)
+	{
+		return getChartsData($chartItems, $dates, $arrayOfData, $mainItemName);
 	}
 }

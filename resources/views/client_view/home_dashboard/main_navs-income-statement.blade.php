@@ -24,23 +24,9 @@
                 active-text
                     @endif 
 
-                ">Breakdown Dashboard</span></a>
+                "> Income Statement Dashboard</span></a>
     </li>
-    <li class="kt-menu__item  kt-menu__item 
-          @if($active == 'interval_dashboard')
-                   active-button
-                    @endif 
 
-        
-        " aria-haspopup="true"><a href="{{ route('dashboard.intervalComparing.incomeStatement',['subItemType'=>'forecast','company'=>$company]) }}" class="kt-menu__link 
-                
-                
-                "><span class="kt-menu__link-text 
-                  @if($active == 'interval_dashboard')
-                   active-text
-                    @endif 
-                    ">{{__("Income Statement Comparing")}}</span></a>
-    </li>
 
     <li class="kt-menu__item  kt-menu__item 
 	@if($active == 'various_incomestatement_dashboard')
@@ -58,5 +44,23 @@
 			  @endif 
 			  ">{{__("Variance Comparing")}}</span></a>
     </li>
+
+
+    <li class="kt-menu__item  kt-menu__item 
+          @if($active == 'interval_dashboard')
+                   active-button
+                    @endif 
+
+        
+        " aria-haspopup="true"><a href="{{ route('dashboard.intervalComparing.incomeStatement',['subItemType'=>'forecast','company'=>$company]) }}" class="kt-menu__link 
+                
+                
+                "><span class="kt-menu__link-text 
+                  @if($active == 'interval_dashboard')
+                   active-text
+                    @endif 
+                    ">{{__("Income Statement Comparing")}}</span></a>
+    </li>
+
 
 </ul>
