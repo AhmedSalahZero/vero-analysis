@@ -171,7 +171,7 @@ trait FinancialStatementAbleMutator
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
 			'sub_item_type' => $subType,
-			'sub_item_name' => $isQuantityRepeating ?  $options['name'] . __(' ( Quantity )') : $options['name'],
+			'sub_item_name' => $isQuantityRepeating ?  $options['name'] . __(quantityIdentifier) : $options['name'],
 			'created_from' => $subItemType,
 			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
 			'is_quantity' => $isQuantityRepeating,
@@ -179,8 +179,10 @@ trait FinancialStatementAbleMutator
 			'percentage_or_fixed' => $percentageOrFixed,
 			'can_be_percentage_or_fixed' => $options['can_be_percentage_or_fixed'] ?? false,
 			'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null,
+			'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode((array)$options['is_cost_of_unit_of']) : null,
 			'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ? $options['repeating_fixed_value'] : null,
 			'percentage_value' => $percentageOrFixed == 'percentage' ? $options['percentage_value'] : null,
+			'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ? $options['cost_of_unit_value'] : null,
 			'created_at' => now()
 		];
 	}

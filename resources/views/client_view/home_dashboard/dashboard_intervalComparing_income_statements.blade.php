@@ -122,7 +122,7 @@
                 <div class="col-md-4">
                     <label>{{__('First Income Statement')}}</label>
 
-                    <select data-live-search="true" data-max-options="2" name="financial_statement_able_first_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
+                    <select id="income_statement_first_id" data-live-search="true" data-max-options="2" name="financial_statement_able_first_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
                         @foreach($incomeStatements as $incomeSatatement)
                         <option value="{{ $incomeSatatement->id }}" @if($firstIncomeStatement->id == $incomeSatatement->id ) selected @endif > {{ $incomeSatatement->name  }}</option>
                         @endforeach
@@ -133,7 +133,7 @@
 
                 <div class="col-md-4">
                     <label>{{__('Second Income Statement')}}</label>
-                    <select data-live-search="true" data-max-options="2" name="financial_statement_able_second_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
+                    <select id="income_statement_second_id" data-live-search="true" data-max-options="2" name="financial_statement_able_second_interval" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
                         @foreach($incomeStatements as $incomeStatement)
                         <option value="{{ $incomeStatement->id }}" @if($secondIncomeStatement->id == $incomeStatement->id ) selected @endif > {{ $incomeStatement->name }}</option>
                         @endforeach
@@ -192,7 +192,7 @@
                     <label>{{__('Start Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="start_date_one" required value="{{$start_date_0}}" class="form-control" placeholder="Select date" />
+                            <input type="date" id="start_date_one_input_id" name="start_date_one" required value="{{$start_date_0}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -203,7 +203,7 @@
                     <label>{{__('Start Date Two')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="start_date_two" required value="{{$start_date_1}}" class="form-control" placeholder="Select date" />
+                            <input type="date" id="start_date_second_input_id" name="start_date_two" required value="{{$start_date_1}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                     <label>{{__('End Date One')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date_one" required value="{{$end_date_0}}" class="form-control" placeholder="Select date" />
+                            <input id="end_date_one_input_id" type="date" name="end_date_one" required value="{{$end_date_0}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
                     <label>{{__('End Date Two')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date_two" required value="{{$end_date_1}}" class="form-control" placeholder="Select date" />
+                            <input id="end_date_second_input_id" type="date" name="end_date_two" required value="{{$end_date_1}}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -386,4 +386,70 @@
 
     </script>
 
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        $(function() {
+            const incomeStatementElement = document.querySelector('#income_statement_first_id');
+            incomeStatementElement.addEventListener('change', function(e) {
+                e.preventDefault();
+                const income_statement_id = e.target.value
+                const startDateInput = document.querySelector('#start_date_one_input_id')
+                const endDateInput = document.querySelector('#end_date_one_input_id')
+                if (income_statement_id) {
+                    startDateInput.setAttribute('disabled', true)
+                    endDateInput.setAttribute('disabled', true)
+                    axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
+                        params: {
+                            company_id: '{{ getCurrentCompanyId() }}'
+                            , income_statement_id
+                        }
+                    }).then((res) => {
+                        if (res.data && res.data.status) {
+                            startDateInput.value = res.data.dates.start_date
+                            endDateInput.value = res.data.dates.end_date
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                    }).finally(ee => {
+                        startDateInput.removeAttribute('disabled')
+                        endDateInput.removeAttribute('disabled')
+                    })
+                }
+            })
+            incomeStatementElement.dispatchEvent(new Event('change'))
+
+            const incomeStatementSecondElement = document.querySelector('#income_statement_second_id');
+            incomeStatementSecondElement.addEventListener('change', function(e) {
+                e.preventDefault();
+                const income_statement_id = e.target.value
+                const startDateInput = document.querySelector('#start_date_second_input_id')
+                const endDateInput = document.querySelector('#end_date_second_input_id')
+                if (income_statement_id) {
+                    startDateInput.setAttribute('disabled', true)
+                    endDateInput.setAttribute('disabled', true)
+                    axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
+                        params: {
+                            company_id: '{{ getCurrentCompanyId() }}'
+                            , income_statement_id
+                        }
+                    }).then((res) => {
+                        if (res.data && res.data.status) {
+                            startDateInput.value = res.data.dates.start_date
+                            endDateInput.value = res.data.dates.end_date
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                    }).finally(ee => {
+                        startDateInput.removeAttribute('disabled')
+                        endDateInput.removeAttribute('disabled')
+                    })
+                }
+            })
+            incomeStatementSecondElement.dispatchEvent(new Event('change'))
+
+        })
+
+    </script>
     @endsection

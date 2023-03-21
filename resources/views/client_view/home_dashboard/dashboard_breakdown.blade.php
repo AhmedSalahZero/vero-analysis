@@ -191,7 +191,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                         <input type="hidden" name="type" value="{{ $type }}">
                                         <label class="text-left font-weight-bold  w-100 mb-3 text-black">{{ __('Please Select') }} {{ ucwords(str_replace('_',' ',$type)) }}</label>
                                         <select id="business_sector_select_{{ convertStringToClass($type) }}" data-live-search="true" data-actions-box="true" name="selected_type" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select">
-                                            {{-- {{ logger($businessSectors) }} --}}
                                             @foreach($businessSectors as $businesSector)
                                             <option value="{{ $businesSector }}"> {{ __($businesSector) }} </option>
                                             @endforeach
@@ -297,9 +296,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                     <span class="kt-widget24__stats kt-font-{{$color}}" style="font-size:1.4rem">
                         {{ __( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0)) }}
                 </div>
-                {{-- {{ logger($top_data[$type]['item'] ?? '') }} --}}
-                {{-- {{ logger($top_data[$type]['item'] ?? '') }} --}}
-                {{-- logger() --}}
                 <input type="hidden" id="top_for_{{ $type }}" value="{{ $top_data[$type]['item'] ?? '' }}">
                 <input type="hidden" id="value_for_{{ $type }}" value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
 

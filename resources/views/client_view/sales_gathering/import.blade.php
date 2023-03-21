@@ -89,10 +89,9 @@
                     ->first(); @endphp
                     @php
                     use Illuminate\Support\Facades\Cache;
-                    $canViewPleaseReviewMessage = ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id)) && ! Cache::get(getCanReloadUploadPageCachingForCompany($company->id));
+                    $canViewPleaseReviewMessage = ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id)) && ! (bool)Cache::get(getCanReloadUploadPageCachingForCompany($company->id));
                     @endphp
                     @if($canViewPleaseReviewMessage)
-                    {{-- @if(! $active_job_for_saving && cache(getShowCompletedTestMessageCacheKey($company->id))) --}}
                     <h4 id="please-review-and-click-save" class="text-center alert alert-info " style="text-transform:capitalize;justify-content:center">{{ __('Please review And Click Save') }}</h4>
                     @endif
                     @if ($active_job)
@@ -287,6 +286,8 @@
 
 
 @if ($active_job_for_saving )
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
     $(document).ready(function() {
         setInterval(function() {
@@ -300,15 +301,24 @@
                 success: function(data) {
                     $('#progress_id').css('width', (data.totalPercentage) + '%');
                     $('#percentage_value').html(data.totalPercentage.toFixed(2) + ' %');
-                    if (parseFloat(data.totalPercentage) >= 100) {
+                    if (parseFloat(data.totalPercentage) >= 100 || data.reloadPage) {
                         $('#saving_data').html("{{ __('Parsing Data .. Please Wait') }}");
-
-                        Swal.fire(
-                            'Done!'
-                            , '{{ __("Uploading Proccess Has Completed Successfully !") }}'
-                            , 'success'
-                        ).then(function() {
+                        const company_id = "{{ $company->id }}"
+                        Swal.fire({
+                            position: 'center'
+                            , icon: 'success'
+                            , title: '{{ __("Uploading Proccess Has Completed Successfully !") }}'
+                            , showConfirmButton: false
+                            , timer: 1500
+                        }).then(function() {
                             window.location.href = "{{ route('dashboard',getCurrentCompanyId()) }}"
+                            //               axios.get('/removeCashForCanReloadPageAndShowCompleteMessage', {
+                            //                   params: {
+                            //                       company_id
+                            //                   }
+                            //               }).then(() => {
+                            //
+                            //               })
                         })
 
 

@@ -228,18 +228,18 @@
                                 @elseif ($subSection->id == 275 || $subSection->id == 276 || $subSection->id == 277 || $subSection->id == 278 || $subSection->id == 279)
                                 <?php
                                                                 $show_route = 0 ;
-                                                                $modified_seasonality =  App\Models\ModifiedSeasonality::where('company_id', $company->id)->first();
+                                                                $modified_seasonality =  App\Models\QuantityModifiedSeasonality::where('company_id', $company->id)->first();
                                                                 if (($subSection->id == 275 || $subSection->id == 279) && isset($modified_seasonality)  ) {
                                                                     $show_route = 1 ;
                                                                 }
                                                                 elseif ($subSection->id == 276 && isset($modified_seasonality) &&
-                                                                (( App\Models\ExistingProductAllocationBase::where('company_id', $company->id)->first()) !== null) ) {
+                                                                (( App\Models\QuantityExistingProductAllocationBase::where('company_id', $company->id)->first()) !== null) ) {
                                                                     $show_route = 1 ;
                                                                 }elseif (($subSection->id == 277) && isset($modified_seasonality) &&
-                                                                ((App\Models\SecondExistingProductAllocationBase::where('company_id', $company->id)->first()) !== null) ) {
+                                                                ((App\Models\QuantitySecondExistingProductAllocationBase::where('company_id', $company->id)->first()) !== null) ) {
                                                                     $show_route = 1 ;
                                                                 }elseif (($subSection->id == 278  ) && isset($modified_seasonality) &&
-                                                                ((App\Models\CollectionSetting::where('company_id', $company->id)->first()) !== null) ) {
+                                                                ((App\Models\QuantityCollectionSetting::where('company_id', $company->id)->first()) !== null) ) {
                                                                     $show_route = 1 ;
                                                                 }else {
                                                                     $show_route = 0;

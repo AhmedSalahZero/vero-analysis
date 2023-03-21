@@ -108,7 +108,6 @@
                                 if($yoyGR < 0 ) { $yoyGRColor='red !important' ; } elseif($yoyGR> 0){
                                     $yoyGRColor = 'green !important';
                                     }
-                                    logger($yoyGRColor);
                                     @endphp
                                     <td style="color:{{ $yoyGRColor  }}">{{number_format(($yoyGR),2) . ' %'}}</td>
                             </tr>

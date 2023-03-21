@@ -3,7 +3,7 @@
         <div class="kt-form__actions">
             <div class="row">
                 <div class="col-lg-6 kt-align-right">
-                    <button type="submit" class="btn btn-primary" >{{$displayName}}</button>
+                    <button type="submit" class="btn btn-primary download-btn">{{$displayName}}</button>
                 </div>
             </div>
         </div>

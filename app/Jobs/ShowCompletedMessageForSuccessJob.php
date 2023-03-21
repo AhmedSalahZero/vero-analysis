@@ -29,7 +29,7 @@ class ShowCompletedMessageForSuccessJob implements ShouldQueue
 
 	public function handle()
 	{
+
 		Cache::forever(\getShowCompletedTestMessageCacheKey($this->companyId), 1);
-		logger('cache now');
 	}
 }

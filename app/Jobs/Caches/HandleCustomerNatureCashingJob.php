@@ -15,26 +15,22 @@ use Illuminate\Support\Facades\Cache;
 
 class HandleCustomerNatureCashingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels ;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-      public $timeout = 500000*60;
-    public $failOnTimeout = true;
-    
-    private Company $company ; 
-    
-    public function __construct(Company $company)
-    {
-        $this->company = $company ;
-    }
-   
-    public function handle()
-    {
-                  Cache::forever(getCanReloadUploadPageCachingForCompany($this->company->id) , 1);
-                   $cachingService = new CashingService($this->company);
-                  $cachingService->refreshCustomerNatureCashing();
-    }
+	public $timeout = 500000 * 60;
+	public $failOnTimeout = true;
 
+	private Company $company;
 
+	public function __construct(Company $company)
+	{
+		$this->company = $company;
+	}
 
-    
+	public function handle()
+	{
+		//       Cache::forever(getCanReloadUploadPageCachingForCompany($this->company->id) , 1);
+		$cachingService = new CashingService($this->company);
+		$cachingService->refreshCustomerNatureCashing();
+	}
 }

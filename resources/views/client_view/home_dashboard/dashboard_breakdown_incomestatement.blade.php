@@ -91,7 +91,7 @@ $totalOfDepreactionAndAmortization = 0;
             <div class="form-group row">
                 <div class="col-md-4">
                     <label>{{__('Choose Income Statement')}} </label>
-                    <select class="form-control kt-selectpicker" name="income_statement_id">
+                    <select id="income_statement_select_id" class="form-control kt-selectpicker" name="income_statement_id">
                         <option value="">{{__('Select')}}</option>
                         @foreach (getIncomeStatementForCompany($company->id) as $item)
                         <option value="{{$item->id}}" {{@$incomeStatement->id !=  $item->id ?: 'selected'}}> {{__($item->getName())}}
@@ -104,7 +104,7 @@ $totalOfDepreactionAndAmortization = 0;
                     <label>{{ __('Start Date') }}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="start_date" required value="{{ $start_date }}" max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
+                            <input type="date" id="start_date_input_id" name="start_date" required value="{{ $start_date }}" max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ $totalOfDepreactionAndAmortization = 0;
                     <label>{{ __('End Date') }}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" name="end_date" required value="{{ $end_date}}" {{-- max="{{ date('Y-m-d') }}" --}} class="form-control" placeholder="Select date" />
+                            <input type="date" id="end_date_input_id" name="end_date" required value="{{ $end_date}}" {{-- max="{{ date('Y-m-d') }}" --}} class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -177,6 +177,7 @@ $totalOfDepreactionAndAmortization = 0;
                                 @endif
                                 @if($singleType != __('Sales Revenue'))
                                 <span style="color:black !important;">
+
                                     [ {{ $total_of_sales_revenue ? number_format($total_of_each_group_with_depreciation / $total_of_sales_revenue  *100 , 2  ) . ' %' : 0 }} ]
                                 </span>
                                 @endif
@@ -184,9 +185,6 @@ $totalOfDepreactionAndAmortization = 0;
                                 $total_of_main_with_rows_with_depreciation[$singleType] = $total_of_each_group_with_depreciation ;
                                 $total_of_main_with_rows_depreciation[$singleType] = $total_of_each_group_depreciation ;
                                 @endphp
-
-
-
 
                         </div>
 
@@ -443,7 +441,6 @@ $totalOfDepreactionAndAmortization = 0;
                                 <div class="kt-portlet__body kt-portlet__body--fluid">
                                     <div class="kt-widget12">
                                         <div class="kt-widget12__chart">
-                                            <!-- HTML -->
                                             {{-- <h4> {{ __('Sales Values') }} </h4> --}}
                                             <div id="chartdiv_{{convertStringToClass($type)}}" class="chartDiv"></div>
                                         </div>
@@ -469,14 +466,17 @@ $totalOfDepreactionAndAmortization = 0;
                                                 }
                                                 $total = array_sum(array_column(($report_data??[]),'Sales Value'));$key=0;
                                             ?>
-
                                     <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_without_pdf'">
                                         @slot('table_header')
                                         <tr class="table-active text-center">
                                             {{-- <th>#</th> --}}
                                             <th class="text-center">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
+
                                             <th class="text-center">{{ __('Value') }}</th>
                                             <th class="text-center">{{ __('Perc.% / Total') }}</th>
+                                            @if($singleType == __('Sales Revenue'))
+                                            <th class="text-center">{{ __('Qauntity') }}</th>
+                                            @endif
                                             @if($singleType != __('Sales Revenue'))
                                             <th class="text-center">{{ __('Perc.% / Revenue') }}</th>
                                             @endif
@@ -486,9 +486,11 @@ $totalOfDepreactionAndAmortization = 0;
 
 
                                         @php
-                                        $totalForAll = array_sum($reports_data[$type]['sub_items']) ;
+                                        $totalForAll = getTotalForQuantityAndValues(($reports_data[$type]['sub_items']),$singleType == __('Sales Revenue')) ;
+                                        $totalOfSalesRevenuePercentage = 0 ;
                                         @endphp
                                         @foreach ($reports_data[$type]['sub_items'] as $key => $item)
+                                        @if(!isQuantitySubItem($key))
 
                                         <tr>
                                             {{-- {{ dd(number_format($item )) }} --}}
@@ -496,24 +498,38 @@ $totalOfDepreactionAndAmortization = 0;
                                             <td>{{$key?? '-'}}</td>
                                             {{-- {{ dd($item) }} --}}
                                             <td class="text-center">{{number_format($item)}}</td>
-                                            <td class="text-center">{{$totalForAll ? number_format($item / $totalForAll * 100,2)  . ' %' : 0}}</td>
+                                            <td class="text-center">{{$totalForAll['value'] ? number_format($item / $totalForAll['value'] * 100,2)  . ' %' : 0}}</td>
+                                            @if($singleType == __('Sales Revenue'))
+                                            <td>{{ hasQuantityRow($reports_data[$type]['sub_items'],$key) ?  number_format($totalForAll['quantity']) : '-' }}</td>
+                                            @endif
                                             @if($singleType != __('Sales Revenue'))
-                                            <td class="text-center">{{
-                                                                $total_of_sales_revenue ? number_format($item / $total_of_sales_revenue  * 100 , 2) . ' %' : 0
+
+                                            <td class="text-center">
+                                                @php
+                                                $currentSalesRevenuePercentage = $total_of_sales_revenue ? number_format($item / $total_of_sales_revenue * 100 , 2) : 0;
+                                                $totalOfSalesRevenuePercentage += $currentSalesRevenuePercentage
+                                                @endphp
+                                                {{
+                                                                 $currentSalesRevenuePercentage . ' %'
                                                                 }}</td>
                                             @endif
 
                                         </tr>
+                                        @endif
                                         @endforeach
 
                                         <tr class="table-active text-center">
                                             <td>{{__('Total')}}</td>
                                             {{-- <td class="hidden"></td> --}}
 
-                                            <td>{{number_format($totalForAll)}}</td>
+                                            <td>{{number_format($totalForAll['value'])}}</td>
                                             <td>100 %</td>
+                                            @if($singleType == __('Sales Revenue'))
+                                            <td>{{ number_format($totalForAll['quantity']) }}</td>
+                                            @endif
+
                                             @if($singleType != __('Sales Revenue'))
-                                            <td>100 %</td>
+                                            <td>{{ isset($totalOfSalesRevenuePercentage) ? $totalOfSalesRevenuePercentage . ' %':0 }}</td>
                                             @endif
                                         </tr>
                                         @endslot
@@ -523,7 +539,6 @@ $totalOfDepreactionAndAmortization = 0;
                                 </div>
                             </div>
                         </div>
-                        {{-- {{ dd() }} --}}
                         <input type="hidden" id="total_{{convertStringToClass($type)}}" data-total="{{ json_encode( format_for_chart($reports_data[$type]['sub_items']) ) }}">
                     </div>
                 </div>
@@ -723,8 +738,6 @@ $totalOfDepreactionAndAmortization = 0;
 
         // Add data
 
-
-
         chart.data = $('#total_' + "{{convertStringToClass($type)}}").data('total')
         // Add and configure Series
         var pieSeries = chart.series.push(new am4charts.PieSeries());
@@ -747,7 +760,7 @@ $totalOfDepreactionAndAmortization = 0;
         chart.legend.position = "right";
         chart.legend.scrollable = true;
 
-    }); // end am4core.ready()
+    });
 
 </script>
 @endforeach
@@ -958,5 +971,42 @@ $totalOfDepreactionAndAmortization = 0;
 
 </script>
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    $(function() {
+        const incomeStatementElement = document.querySelector('#income_statement_select_id');
+        incomeStatementElement.addEventListener('change', function(e) {
+            e.preventDefault();
+            const income_statement_id = e.target.value
+            const startDateInput = document.querySelector('#start_date_input_id')
+            const endDateInput = document.querySelector('#end_date_input_id')
+            if (income_statement_id) {
+                startDateInput.setAttribute('disabled', true)
+                endDateInput.setAttribute('disabled', true)
+                axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
+                    params: {
+                        company_id: '{{ getCurrentCompanyId() }}'
+                        , income_statement_id
+                    }
+                }).then((res) => {
+                    if (res.data && res.data.status) {
+                        startDateInput.value = res.data.dates.start_date
+                        endDateInput.value = res.data.dates.end_date
+                    }
+                }).catch(err => {
+                    console.log(err)
+                }).finally(ee => {
+                    startDateInput.removeAttribute('disabled')
+                    endDateInput.removeAttribute('disabled')
+                })
+            }
+        })
+        incomeStatementElement.dispatchEvent(new Event('change'))
+
+    })
+
+</script>
 
 @endsection

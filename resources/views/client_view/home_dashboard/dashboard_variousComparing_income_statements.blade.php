@@ -166,7 +166,7 @@ $currentReportType = Request()->segment(5)
                 </div>
                 <div class="col-md-4">
                     <div class="input-group date">
-                        <select data-live-search="true" data-max-options="1" name="income_statement_id" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
+                        <select data-live-search="true" data-max-options="1" id="income_statement_select_id" name="income_statement_id" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder" {{-- multiple --}}>
                             @foreach($incomeStatements as $incomeSatatement)
                             <option value="{{ $incomeSatatement->id }}" @if($selectedItems['income_statement_id']==$incomeSatatement->id) selected @endif> {{ $incomeSatatement->name  }}</option>
                             @endforeach
@@ -198,72 +198,72 @@ $currentReportType = Request()->segment(5)
                 <div class="col-md-4">
                     <label>{{__('Reports')}}</label>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-8">
                     <label>{{__('Report Type')}}</label>
-                    <select id="first-report-type" data-actions-box="true" data-live-search="true" data-max-options="0" name="first_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                        @foreach (getAllFinancialAbleTypes() as $reportType)
-                        <option @if($reportType==$selectedItems['first_report_type']) selected @endif value="{{ $reportType }}"> {{ $reportType }} </option>
+                    <select id="report-type" data-actions-box="true" data-live-search="true" data-max-options="0" name="report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                        @foreach (getAllFinancialAbleTypesFormattedForDashboard() as $reportName=>$reportNameFormatted)
+                        <option @if($reportName==$selectedItems['report_type']) selected @endif value="{{ $reportName }}"> {{ $reportNameFormatted }} </option>
                         @endforeach
-                    </select>
-
-                </div>
-
-                <div class="col-md-4">
-                    <label>{{__('Report Type')}}</label>
-                    <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                        @foreach (getAllFinancialAbleTypes() as $secondReportType)
-                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
-                        @endforeach
-
                     </select>
 
                 </div>
 
                 {{-- <div class="col-md-4">
-                    <label>{{__('Note')}} </label>
-                <div class="kt-input-icon">
-                    <div class="input-group ">
-                        <input type="text" class="form-control" disabled value="{{__('The Report Will Show Max Top 50')}}">
-                    </div>
-                </div>
+                    <label>{{__('Report Type')}}</label>
+                <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_comparing_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                    @foreach (getAllFinancialAbleTypes() as $secondReportType)
+                    <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
+                    @endforeach
+
+                </select>
+
             </div> --}}
-    </div>
-    <div class="form-group row ">
 
-        <div class="col-md-4">
-            <label>{{__('Interval')}}</label>
-        </div>
-
-
-
-        <div class="col-md-4">
-            <label>{{__('Start Date')}}</label>
+            {{-- <div class="col-md-4">
+                    <label>{{__('Note')}} </label>
             <div class="kt-input-icon">
-                <div class="input-group date">
-                    <input type="date" name="start_date" required value="{{$selectedItems['start_date']}}" class="form-control" placeholder="Select date" />
+                <div class="input-group ">
+                    <input type="text" class="form-control" disabled value="{{__('The Report Will Show Max Top 50')}}">
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <label>{{__('End Date')}}</label>
-            <div class="kt-input-icon">
-                <div class="input-group date">
-                    <input type="date" name="end_date" required value="{{$selectedItems['end_date']}}" class="form-control" placeholder="Select date" />
-                </div>
-            </div>
-        </div>
-
-
-
-
-        {{-- <div class="col-md-4">
-                    <label>{{__('Data Type')}} </label>
-        <div class="kt-input-icon">
-            <div class="input-group ">
-                <input type="text" class="form-control" disabled value="{{__('Value')}}">
-            </div>
-        </div>
     </div> --}}
+</div>
+<div class="form-group row ">
+
+    <div class="col-md-4">
+        <label>{{__('Interval')}}</label>
+    </div>
+
+
+
+    <div class="col-md-4">
+        <label>{{__('Start Date')}}</label>
+        <div class="kt-input-icon">
+            <div class="input-group date">
+                <input id="start_date_input_id" type="date" name="start_date" required value="{{$selectedItems['start_date']}}" class="form-control" placeholder="Select date" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label>{{__('End Date')}}</label>
+        <div class="kt-input-icon">
+            <div class="input-group date">
+                <input id="end_date_input_id" type="date" name="end_date" required value="{{$selectedItems['end_date']}}" class="form-control" placeholder="Select date" />
+            </div>
+        </div>
+    </div>
+
+
+
+
+    {{-- <div class="col-md-4">
+                    <label>{{__('Data Type')}} </label>
+    <div class="kt-input-icon">
+        <div class="input-group ">
+            <input type="text" class="form-control" disabled value="{{__('Value')}}">
+        </div>
+    </div>
+</div> --}}
 </div>
 
 
@@ -306,7 +306,6 @@ $currentReportType = Request()->segment(5)
 </div>
 </div>
 
-
 @foreach($mainItemsWithItemsSubItems as $mainItemName=>$subItems)
 
 
@@ -335,15 +334,41 @@ $currentReportType = Request()->segment(5)
                                 <x-bar-nav :link="'#'">
 
                                     <div>
-                                        <select name="chart_items[{{ $mainItemName }}][]" class="form-control" style="max-width:300px;display:inline-flex;">
-                                            <option value="0">{{ __('All') }}</option>
+                                        @if($mainItemName == __('Sales Revenue'))
+                                        @php
+                                        $currentSalesRevenueValue = isset($chartItems[$mainItemName]) && isQuantitySubItem(array_values($chartItems[$mainItemName])[0]) ?'quantity':'value' ;
+
+                                        @endphp
+                                        <input type="hidden" name="sales_revenue_type" value="{{ $currentSalesRevenueValue  }}">
+                                        <select id="value_sales_revenue_id" {{-- @if($currentSalesRevenueValue=='quantity' ) disabled @endif --}} multiple name="chart_items[{{ $mainItemName }}][]" class="form-control mr-3" style="max-width:300px;display:inline-flex;">
+
+                                            {{-- <option value="0">{{ __('All') }}</option> --}}
                                             @foreach($subItems as $subItemName)
-                                            @if($subItemName)
-                                            <option @if(isset($chartItems[$mainItemName]) && $chartItems[$mainItemName][0]==$subItemName) selected @endif value="{{ $subItemName }}">{{ __($subItemName) }}</option>
+                                            @if(!isQuantitySubItem($subItemName))
+                                            <option @if(isset($chartItems[$mainItemName]) && in_array($subItemName,$chartItems[$mainItemName])) selected @endif value="{{ $subItemName }}">{{ __($subItemName) }}</option>
                                             @endif
                                             @endforeach
                                         </select>
-                                        <button class="btn rounded btn-primary" type="submit">{{ __('Go') }}</button>
+
+                                        <select id="quantity_sales_revenue_id" {{-- @if($currentSalesRevenueValue=='value' ) disabled @endif  --}} multiple name="chart_items[{{ $mainItemName }}][]" class="form-control" style="max-width:300px;display:inline-flex;">
+                                            {{-- <option value="0">{{ __('All') }}</option> --}}
+                                            @foreach($subItems as $subItemName)
+                                            @if(isQuantitySubItem($subItemName))
+                                            <option @if(isset($chartItems[$mainItemName]) && in_array($subItemName,$chartItems[$mainItemName])) selected @endif value="{{ $subItemName }}">{{ __($subItemName) }}</option>
+                                            @endif
+                                            @endforeach
+                                        </select>
+
+                                        @else
+                                        <select multiple name="chart_items[{{ $mainItemName }}][]" class="form-control" style="max-width:300px;display:inline-flex;">
+                                            {{-- <option value="0">{{ __('All') }}</option> --}}
+                                            @foreach($subItems as $subItemName)
+                                            <option @if(isset($chartItems[$mainItemName]) && in_array($subItemName,$chartItems[$mainItemName])) selected @endif value="{{ $subItemName }}">{{ __($subItemName) }}</option>
+                                            @endforeach
+                                        </select>
+                                        @endif
+
+                                        <button class="btn rounded btn-primary ml-4" type="submit">{{ __('Go') }}</button>
                                     </div>
 
 
@@ -351,8 +376,9 @@ $currentReportType = Request()->segment(5)
 
 
                                 <div class="row">
-                                    @foreach($charts['barChart'][$mainItemName] ?? [] as $subItemName => $subItemValues)
-
+                                    @php
+                                    $subItemValues = $charts['barChart'][$mainItemName]
+                                    @endphp
 
 
                                     <div class="col-md-12">
@@ -361,7 +387,7 @@ $currentReportType = Request()->segment(5)
                                         <div class="kt-portlet kt-portlet--mobile">
 
                                             <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
-                                                <div id="chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}" class="chart-div"></div>
+                                                <div id="chartdiv{{ convertStringToClass($mainItemName) }}" class="chart-div"></div>
 
                                             </div>
                                         </div>
@@ -376,9 +402,9 @@ $currentReportType = Request()->segment(5)
 
                                             <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
 
-                                                <input type="hidden" id="monthly_data{{ convertStringToClass($mainItemName.$subItemName) }}" data-total="{{ json_encode(formatDataFromTwoLinesChart($subItemValues) ?? []) }}">
+                                                <input type="hidden" id="monthly_data{{ convertStringToClass($mainItemName) }}" data-total="{{ json_encode(formatDataFromTwoLinesChart($charts['barChart'][$mainItemName]) ?? []) }}">
 
-                                                <div id="monthly_chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}" class="chart-div" class="chartdashboard"></div>
+                                                <div id="monthly_chartdiv{{ convertStringToClass($mainItemName) }}" class="chart-div" class="chartdashboard"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -386,107 +412,211 @@ $currentReportType = Request()->segment(5)
                                         <div class="kt-portlet kt-portlet--mobile">
 
                                             <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
-
-                                                <input type="hidden" id="monthly_data2{{ convertStringToClass($mainItemName.$subItemName) }}" data-total="{{ json_encode(formatDataFromTwoLinesChart2($charts['twoLinesChart'][$mainItemName][$subItemName]) ?? []) }}">
-
-                                                <div id="monthly_chartdiv2{{ convertStringToClass($mainItemName.$subItemName) }}" class="chart-div" class="chartdashboard"></div>
+                                                <input type="hidden" id="monthly_data2{{ convertStringToClass($mainItemName) }}" data-total="{{ json_encode(formatDataFromTwoLinesChart2($charts['twoLinesChart'][$mainItemName]) ?? []) }}">
+                                                <div id="monthly_chartdiv2{{ convertStringToClass($mainItemName) }}" class="chart-div" class="chartdashboard"></div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
 
-                                        <div class="kt-portlet kt-portlet--mobile">
-
-                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
-
-                                                <table class="custom-table-classes table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-center text-capitalize">{{ __('Months') }}</th>
-                                                            <th class="text-center text-capitalize">{{ __($selectedItems['first_report_type']) }}</th>
-                                                            <th class="text-center text-capitalize">{{ __($selectedItems['second_report_type']) }}</th>
-                                                            <th class="text-center text-capitalize">{{ __('Variance') }}</th>
-                                                            <th class="text-center text-capitalize">{{ __('Var %') }}</th>
-
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($dates as $date)
-                                                        <tr>
-                                                            <td class="text-center">{{ formatDateWithoutDayFromString($date,true) }}</td>
-                                                            <td class="text-center">{{ number_format($subItemValues[$date][$selectedItems['first_report_type']]) }}</td>
-                                                            <td class="text-center">{{ number_format($subItemValues[$date][$selectedItems['second_report_type']]) }}</td>
-                                                            <td class="text-center">{{ number_format($subItemValues[$date]['variance']) }}</td>
-                                                            <td class="text-center">{{ number_format($subItemValues[$date]['var %'],2) . ' %' }}</td>
-                                                        </tr>
-                                                        @endforeach
-
-                                                    </tbody>
-                                                </table>
+                                    {{-- donut charts [for foreach type (forecast and actual for example)] --}}
+                                    @for($i = 0 ; $i<2 ; $i++) @php $currentReportItem=$i==0 ? $selectedItems['first_report_type'] : $selectedItems['second_report_type']; @endphp <div class="col-sm-12 col-lg-6">
+                                        <div class="kt-portlet">
+                                            <div class="kt-portlet__head">
+                                                <div class="kt-portlet__head-label">
+                                                    <h3 class="kt-portlet__head-title head-title text-primary text-capitalize">
+                                                        {{ __(ucwords(str_replace('_',' ',$mainItemName))) }} ({{ __($currentReportItem) }})
+                                                    </h3>
+                                                </div>
                                             </div>
                                         </div>
 
-                                    </div>
+                                        <div class="kt-portlet kt-portlet--tabs">
+                                            <div class="kt-portlet__head">
+                                                <div class="kt-portlet__head-toolbar">
+                                                    <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" data-toggle="tab" href="#kt_apps_contacts_view_tab_1_{{convertStringToClass($mainItemName.$currentReportItem)}}" role="tab">
+                                                                <i class="flaticon-line-graph"></i> &nbsp; {{ __('Charts') }}
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link " data-toggle="tab" href="#kt_apps_contacts_view_tab_2_{{convertStringToClass($mainItemName.$currentReportItem)}}" role="tab">
+                                                                <i class="flaticon2-checking"></i>{{ __('Reports Table') }}
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="kt-portlet__body">
+                                                <div class="tab-content  kt-margin-t-20">
 
-                                    <div class="col-md-6">
+                                                    <div class="tab-pane active" id="kt_apps_contacts_view_tab_1_{{convertStringToClass($mainItemName.$currentReportItem)}}" role="tabpanel">
 
-                                        <div class="kt-portlet kt-portlet--mobile">
+                                                        {{-- Monthly Chart --}}
+                                                        <div class="col-xl-12">
+                                                            <div class="kt-portlet kt-portlet--height-fluid">
+                                                                <div class="kt-portlet__body kt-portlet__body--fluid">
+                                                                    <div class="kt-widget12">
+                                                                        <div class="kt-widget12__chart">
+                                                                            {{-- <h4> {{ __('Sales Values') }} </h4> --}}
+                                                                            <div id="chartdiv_pie{{convertStringToClass($mainItemName.$currentReportItem)}}" class="chart-div"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                                            <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+                                                    <div class="tab-pane" id="kt_apps_contacts_view_tab_2_{{convertStringToClass($mainItemName.$currentReportItem)}}" role="tabpanel">
+                                                        <div class="col-md-12">
+                                                            <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_without_pdf'">
+                                                                @slot('table_header')
+                                                                <tr class="table-active text-center ">
+                                                                    <th class="text-center">
+                                                                        {{ __($mainItemName) }}
+                                                                    </th>
+                                                                    <th class="text-center">
+                                                                        {{ __('Value') }}
+                                                                    </th>
+                                                                    <th class="text-center">
+                                                                        {{ __('Perc.% / Total') }}
+                                                                    </th>
+                                                                    @if(__($mainItemName) != __('Sales Revenue'))
+                                                                    <th class="text-center">
+                                                                        {{ __('Perc.% / Revenue') }}
+                                                                    </th>
+                                                                    @endif
+                                                                </tr>
+                                                                @endslot
 
-                                                <table class="custom-table-classes table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
-                                                    <thead>
-                                                        <tr>
+                                                                @slot('table_body')
 
-
-                                                            <th class="text-center text-capitalize">{{ __('Months') }}</th>
-                                                            <th class="text-center text-capitalize">{{ __('Accumulated').' '. __($selectedItems['first_report_type']) }}</th>
-                                                            <th class="text-center text-capitalize">{{ __('Accumulated').' ' .__($selectedItems['second_report_type']) }}</th>
-                                                            <th class="text-center text-capitalize">{{ __('Accumulated Variance') }}</th>
-                                                            <th class="text-center text-capitalize">{{ __('Accumulated Var %') }}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($dates as $date)
-                                                        <tr>
-
-                                                            <td class="text-center">{{ formatDateWithoutDayFromString($date,true) }}</td>
-                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date][$selectedItems['first_report_type']]) }}</td>
-                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date][$selectedItems['second_report_type']]) }}</td>
-                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date]['variance']) }}</td>
-                                                            <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$subItemName][$date]['var %'],2) . ' %' }}</td>
-
-                                                        </tr>
-                                                        @endforeach
-
-                                                    </tbody>
-                                                </table>
+                                                                @foreach($charts['donutChart'][$mainItemName][$currentReportItem] ??[] as $subItemName=>$value)
+                                                                @php
+                                                                $total = array_sum($charts['donutChart'][$mainItemName][$currentReportItem]);
+                                                                $totalOfSalesRevenue = isset($charts['donutChart'][__('Sales Revenue')][$currentReportItem]) ? array_sum($charts['donutChart'][__('Sales Revenue')][$currentReportItem]) : 0
+                                                                @endphp
+                                                                <tr>
+                                                                    <td>
+                                                                        {{ $subItemName }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($value)  }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($total ? $value / $total * 100 : 0 , 2 ) }} %
+                                                                    </td>
+                                                                    @if(__($mainItemName) != __('Sales Revenue'))
+                                                                    <td>
+                                                                        {{ number_format($totalOfSalesRevenue ? $value / $totalOfSalesRevenue *100 :0 , 2) }} %
+                                                                    </td>
+                                                                    @endif
+                                                                </tr>
+                                                                @endforeach
+                                                                @endslot
+                                                            </x-table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                </div>
+                                @endfor
 
+                                <div class="col-md-6">
+
+                                    <div class="kt-portlet kt-portlet--mobile">
+
+                                        <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+
+                                            <table class="custom-table-classes table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center text-capitalize">{{ __('Months') }}</th>
+                                                        <th class="text-center text-capitalize">{{ __($selectedItems['first_report_type']) }}</th>
+                                                        <th class="text-center text-capitalize">{{ __($selectedItems['second_report_type']) }}</th>
+                                                        <th class="text-center text-capitalize">{{ __('Variance') }}</th>
+                                                        <th class="text-center text-capitalize">{{ __('Var %') }}</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @foreach($dates as $date)
+
+                                                    <tr>
+                                                        <td class="text-center">{{ formatDateWithoutDayFromString($date,true) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['barChart'][$mainItemName][$date][$selectedItems['first_report_type']]) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['barChart'][$mainItemName][$date][$selectedItems['second_report_type']]) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['barChart'][$mainItemName][$date]['variance']) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['barChart'][$mainItemName][$date]['var %'],2) . ' %' }}</td>
+                                                    </tr>
+                                                    @endforeach
+
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-
-
-                                    @endforeach
-
-
-
-
-
-
 
                                 </div>
 
+                                <div class="col-md-6">
+
+                                    <div class="kt-portlet kt-portlet--mobile">
+
+                                        <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
+
+                                            <table class="custom-table-classes table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                                                <thead>
+                                                    <tr>
+
+
+                                                        <th class="text-center text-capitalize">{{ __('Months') }}</th>
+                                                        <th class="text-center text-capitalize">{{ __('Accumulated').' '. __($selectedItems['first_report_type']) }}</th>
+                                                        <th class="text-center text-capitalize">{{ __('Accumulated').' ' .__($selectedItems['second_report_type']) }}</th>
+                                                        <th class="text-center text-capitalize">{{ __('Accumulated Variance') }}</th>
+                                                        <th class="text-center text-capitalize">{{ __('Accumulated Var %') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($dates as $date)
+                                                    <tr>
+
+                                                        <td class="text-center">{{ formatDateWithoutDayFromString($date,true) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$date][$selectedItems['first_report_type']]) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$date][$selectedItems['second_report_type']]) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$date]['variance']) }}</td>
+                                                        <td class="text-center">{{ number_format($charts['twoLinesChart'][$mainItemName][$date]['var %'],2) . ' %' }}</td>
+
+                                                    </tr>
+                                                    @endforeach
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+
+
+
+
+
                             </div>
+
                         </div>
                     </div>
-
                 </div>
 
             </div>
+
         </div>
     </div>
+</div>
 
 
 </div>
@@ -508,8 +638,6 @@ $currentReportType = Request()->segment(5)
                             <tr class="header-tr ">
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell trigger-expand is-opened" style="cursor:pointer">{{ __('Expand All') }}</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
-                                {{-- {{ dd() }} --}}
-                                {{-- @dd($intervals) --}}
                                 @foreach ($intervals as $intervalName )
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
                                 @endforeach
@@ -546,10 +674,12 @@ $currentReportType = Request()->segment(5)
                             $currentValue=[];
                             @endphp
 
-                            @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
+                            @foreach(getSubItemsNames($intervalComparing[$theType]) as $date=>$values )
                             <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
                                 <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
-                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
+                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">
+                                    {{ __($theType) }}
+                                </td>
                                 @php
                                 $currentValues =[];
                                 @endphp
@@ -668,7 +798,9 @@ $currentReportType = Request()->segment(5)
 
 
     @foreach($mainItemsWithItemsSubItems as $mainItemName=>$subItems)
-    @foreach($charts['barChart'][$mainItemName] ?? [] as $subItemName => $subItemValues)
+    @php
+    $subItemValues = $charts['barChart'][$mainItemName];
+    @endphp
     <script>
         am4core.ready(function() {
 
@@ -678,13 +810,13 @@ $currentReportType = Request()->segment(5)
 
             // Create chart instance
 
-            var chart = am4core.create("monthly_chartdiv2{{ convertStringToClass($mainItemName.$subItemName) }}", am4charts.XYChart);
+            var chart = am4core.create("monthly_chartdiv2{{ convertStringToClass($mainItemName) }}", am4charts.XYChart);
 
             // Increase contrast by taking evey second color
             chart.colors.step = 2;
 
             // Add data
-            chart.data = $('#monthly_data2{{ convertStringToClass($mainItemName.$subItemName) }}').data('total');
+            chart.data = $('#monthly_data2{{ convertStringToClass($mainItemName) }}').data('total');
 
             chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
             // Create axes
@@ -779,13 +911,13 @@ $currentReportType = Request()->segment(5)
 
             // Create chart instance
 
-            var chart = am4core.create("monthly_chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}", am4charts.XYChart);
+            var chart = am4core.create("monthly_chartdiv{{ convertStringToClass($mainItemName) }}", am4charts.XYChart);
 
             // Increase contrast by taking evey second color
             chart.colors.step = 2;
 
             // Add data
-            chart.data = $('#monthly_data{{ convertStringToClass($mainItemName.$subItemName) }}').data('total');
+            chart.data = $('#monthly_data{{ convertStringToClass($mainItemName) }}').data('total');
 
             chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
             // Create axes
@@ -877,7 +1009,7 @@ $currentReportType = Request()->segment(5)
             am4core.useTheme(am4themes_animated);
             // Themes end
 
-            var chart = am4core.create('chartdiv{{ convertStringToClass($mainItemName.$subItemName) }}', am4charts.XYChart)
+            var chart = am4core.create('chartdiv{{ convertStringToClass($mainItemName) }}', am4charts.XYChart)
             chart.colors.step = 2;
 
             chart.legend = new am4charts.Legend()
@@ -915,10 +1047,13 @@ $currentReportType = Request()->segment(5)
                 return series;
             }
 
-            chart.data = @json(formatDataForBarChart($subItemValues, $selectedItems['first_report_type'], $selectedItems['second_report_type']));
+            chart.data = @json(formatDataForBarChart($charts['barChart'][$mainItemName], $selectedItems['first_report_type'], $selectedItems['second_report_type']))
 
-            createSeries('first', "{{ ucfirst($selectedItems['first_report_type']) }}");
-            createSeries('second', "{{ ucfirst($selectedItems['second_report_type']) }}");
+
+            createSeries('first', "{{ ucfirst($selectedItems['first_report_type']) }}")
+
+            createSeries('second', "{{ ucfirst($selectedItems['second_report_type']) }}")
+
             createSeries('third', '{{ "Variance" }}');
 
             function arrangeColumns() {
@@ -968,21 +1103,110 @@ $currentReportType = Request()->segment(5)
 
     </script>
 
-    <script>
-        $(function() {
-            $('#skip').on('click', function(e) {
-                e.preventDefault();
-                $('#first_card').fadeOut("slow", function() {
-                    $('#second_card').fadeIn(500);
+    @for($i = 0 ; $i<2 ; $i++) @php $currentReportItem=$i==0 ? $selectedItems['first_report_type'] : $selectedItems['second_report_type']; @endphp <script>
+        am4core.ready(function() {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("chartdiv_pie{{convertStringToClass($mainItemName.$currentReportItem)}}", am4charts.PieChart);
+        // Add data
+        chart.data = @json(isset($charts['donutChart'][$mainItemName][$currentReportItem]) ? formatDataForDonutChart($charts['donutChart'][$mainItemName][$currentReportItem]) : []);
+        console.log(chart.data)
+        // Add and configure Series
+        var pieSeries = chart.series.push(new am4charts.PieSeries());
+        pieSeries.dataFields.value = "value";
+        pieSeries.dataFields.category = "name";
+        pieSeries.innerRadius = am4core.percent(50);
+        pieSeries.ticks.template.disabled = true;
+        pieSeries.labels.template.disabled = true;
+
+        var rgm = new am4core.RadialGradientModifier();
+        rgm.brightnesses.push(-0.8, -0.8, -0.5, 0, -0.5);
+        pieSeries.slices.template.fillModifier = rgm;
+        pieSeries.slices.template.strokeModifier = rgm;
+        pieSeries.slices.template.strokeOpacity = 0.4;
+        pieSeries.slices.template.strokeWidth = 0;
+
+        chart.legend = new am4charts.Legend();
+        chart.legend.position = "right";
+
+        }); // end am4core.ready()
+
+        </script>
+        @endfor
+        <script>
+            $(function() {
+                $('#skip').on('click', function(e) {
+                    e.preventDefault();
+                    $('#first_card').fadeOut("slow", function() {
+                        $('#second_card').fadeIn(500);
+                    });
                 });
-            });
 
-        })
+            })
 
-    </script>
-    @endforeach
-    @endforeach
+        </script>
 
 
+        @endforeach
 
-    @endsection
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            $(function() {
+                const incomeStatementElement = document.querySelector('#income_statement_select_id');
+                incomeStatementElement.addEventListener('change', function(e) {
+                    e.preventDefault();
+                    const income_statement_id = e.target.value
+                    const startDateInput = document.querySelector('#start_date_input_id')
+                    const endDateInput = document.querySelector('#end_date_input_id')
+                    if (income_statement_id) {
+                        startDateInput.setAttribute('disabled', true)
+                        endDateInput.setAttribute('disabled', true)
+                        axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
+                            params: {
+                                company_id: '{{ getCurrentCompanyId() }}'
+                                , income_statement_id
+                            }
+                        }).then((res) => {
+                            if (res.data && res.data.status) {
+                                startDateInput.value = res.data.dates.start_date
+                                endDateInput.value = res.data.dates.end_date
+                            }
+                        }).catch(err => {
+                            console.log(err)
+                        }).finally(ee => {
+                            startDateInput.removeAttribute('disabled')
+                            endDateInput.removeAttribute('disabled')
+                        })
+                    }
+                })
+                incomeStatementElement.dispatchEvent(new Event('change'))
+
+            })
+
+        </script>
+        <script>
+            $(document).on('change', '#value_sales_revenue_id', function() {
+                $('#quantity_sales_revenue_id option').prop('selected', false)
+            })
+
+            $(document).on('change', '#quantity_sales_revenue_id', function() {
+                $('#value_sales_revenue_id option').prop('selected', false)
+            })
+
+            $('form').on('submit', function() {
+                if ($('#quantity_sales_revenue_id option:selected').length) {
+                    $('#value_sales_revenue_id').prop('disabled', true)
+                }
+                if ($('#value_sales_revenue_id option:selected').length) {
+                    $('#quantity_sales_revenue_id').prop('disabled', true)
+                }
+            })
+
+        </script>
+
+        @endsection

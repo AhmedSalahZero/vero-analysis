@@ -70,13 +70,8 @@ class IncomeStatementBreakdownAgainstAnalysisReport
 
 	public function salesBreakdownAnalysisResult(Request $request, Company $company, IncomeStatement $incomeStatement, $subItemType, $isComparingReport = false)
 	{
-		$dimension = $request->report_type;
 		$report_data = [];
 		$report_view_data = [];
-		$growth_rate_data = [];
-		$report_count_data = [];
-
-		$type = $request->type;
 
 		$dates = [
 			'start_date' => date('d-M-Y', strtotime($request->start_date)),
@@ -84,7 +79,6 @@ class IncomeStatementBreakdownAgainstAnalysisReport
 		];
 
 		$report_data = formatReportDataForDashBoard($incomeStatement->duration_type, $incomeStatement->start_from, $incomeStatement->getSubItems(0, $subItemType)->sortBy('id'), $dates['start_date'], $dates['end_date']);
-		// dd($report_data);
 		$report_view_data = $report_data;
 		return $report_view_data;
 	}

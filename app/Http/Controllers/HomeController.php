@@ -381,8 +381,9 @@ class HomeController extends Controller
 		} elseif ($reportType != 'comparing') {
 			abort(404);
 		}
-		$start_date = date('2022-01-01');
-		$end_date   = date('2022-12-31');
+		$incomeStatement = IncomeStatement::find($request->get('income_statement_id') ?: $incomeStatementID) ?: IncomeStatement::where('company_id', $company->id)->latest()->first();
+		$start_date = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['start_date'] : date('2022-01-01');
+		$end_date   =  $incomeStatement ? $incomeStatement->getFirstAndEndDate()['end_date'] : date('2022-12-31');
 
 		if ($request->isMethod('GET')) {
 			$request['start_date'] = $start_date;
@@ -420,6 +421,7 @@ class HomeController extends Controller
 		$monthlyChartCumulative = getMonthlyChartCumulative($formattedDataForChart);
 		$types = array_unique(array_keys($breakdown_data));
 		$types = \array_fill_keys_with_values($types);
+
 		// $incomeStatement = $request->get('incomeStatement')
 		$reports_data = $breakdown_data;
 		return view('client_view.home_dashboard.dashboard_breakdown_incomestatement', compact(
@@ -564,8 +566,6 @@ class HomeController extends Controller
 	}
 	public function dashboardIntervalComparing(Request $request, Company $company)
 	{
-
-
 		$start_date_0 = date('2021-01-01');
 		$end_date_0   = date('2021-12-31');
 		$start_date_1 = date('2020-01-01');
@@ -658,18 +658,27 @@ class HomeController extends Controller
 		$firstReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
 		$secondReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
 
-		$start_date_0 = date('2021-01-01');
-		$end_date_0   = date('2021-12-31');
-		$start_date_1 = date('2020-01-01');
-		$end_date_1   = date('2020-12-31');
 		$incomeStatements  = IncomeStatement::where('company_id', $company->id)->get();
 		if (!(count($incomeStatements) >= 1)) {
 			return redirect()->back()->with('fail', __('You Must Have At Least One Income Statements'));
 		}
 
 		$firstIncomeStatement = $incomeStatements[0];
-		$secondIncomeStatement = $incomeStatements[1] ?? optional(null);
+		$secondIncomeStatement = $incomeStatements[1] ?? null;
 
+		$firstIncomeStatementId = $request->get('financial_statement_able_first_interval');
+		$secondIncomeStatementId = $request->get('financial_statement_able_second_interval');
+		if ($firstIncomeStatementId) {
+			$firstIncomeStatement =     IncomeStatement::find($firstIncomeStatementId);
+		}
+		if ($secondIncomeStatementId) {
+			$secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId);
+		}
+		$start_date_0 = $firstIncomeStatement ? $firstIncomeStatement->getFirstAndEndDate()['start_date'] : date('2021-01-01');
+		$end_date_0   = $firstIncomeStatement ? $firstIncomeStatement->getFirstAndEndDate()['end_date'] : date('2021-12-31');
+		$start_date_1 = $secondIncomeStatement ? $secondIncomeStatement->getFirstAndEndDate()['start_date'] : date('2020-01-01');
+		$end_date_1   = $secondIncomeStatement ? $secondIncomeStatement->getFirstAndEndDate()['end_date'] : date('2020-12-31');
+		$secondIncomeStatement = $secondIncomeStatement ?: optional(null);
 		$allTypes = IncomeStatementItem::formattedViewForDashboard();
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 		$db_names = array_keys($exportableFields);
@@ -729,17 +738,10 @@ class HomeController extends Controller
 
 		foreach ((array)$request->types as $typeId) {
 			$request['mainItemId'] = $typeId;
-			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = (new IntervalsComparingForIncomeStatementReport)->result($request, $company, 'array', $intervalDates, $firstReportType, $secondReportType);
+			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = (new IntervalsComparingForIncomeStatementReport)->result($request, $company, $intervalDates, $firstReportType, $secondReportType);
 		}
 
-		$firstIncomeStatementId = $request->get('financial_statement_able_first_interval');
-		$secondIncomeStatementId = $request->get('financial_statement_able_second_interval');
-		if ($firstIncomeStatementId) {
-			$firstIncomeStatement =     IncomeStatement::find($firstIncomeStatementId);
-		}
-		if ($secondIncomeStatementId) {
-			$secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId);
-		}
+
 		$selectedItems = [
 			'first_report_type' => $firstReportType,
 			'second_report_type' => $secondReportType
@@ -775,19 +777,24 @@ class HomeController extends Controller
 	public function dashboardIncomeStatementVariousComparing(Request $request, Company $company)
 	{
 
-		$firstComparingType = $request->has('first_comparing_type') ? $request->get('first_comparing_type') : 'forecast';
-		$secondComparingType = $request->has('second_comparing_type') ? $request->get('second_comparing_type') : 'actual';
+		$reportType = $request->get('report_type') ?: 'forecast-actual';
+		$firstComparingType =  explode('-', $reportType)[0];
+		$secondComparingType = explode('-', $reportType)[1];
 		if ($firstComparingType == $secondComparingType) {
 			return redirect()->back()->with('fail', __('Please Select Different Comparing Types'));
 		}
 
-		$start_date = date('2021-01-01');
-		$end_date   = date('2021-12-31');
 		$incomeStatements  = IncomeStatement::where('company_id', $company->id)->get();
 		if (!(count($incomeStatements) >= 1)) {
 			return redirect()->back()->with('fail', __('You Must Have At Least One Income Statements'));
 		}
 		$incomeStatement = $incomeStatements[0];
+		$incomeStatementId = $request->get('income_statement_id');
+		if ($incomeStatementId) {
+			$incomeStatement =     IncomeStatement::find($incomeStatementId);
+		}
+		$start_date = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['start_date'] : date('2021-01-01');
+		$end_date   = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['end_date'] : date('2021-12-31');
 		$allTypes = IncomeStatementItem::formattedViewForDashboard();
 
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
@@ -805,11 +812,7 @@ class HomeController extends Controller
 			$firstKey = $keys[1] ?? 0;
 			$secondKey = $keys[2] ?? 0;
 			// $thirdKey = $keys[2] ?? 0;
-
-			$request['types'] = [
-				$firstKey, $secondKey
-				// ,$thirdKey 
-			];
+			$request['types'] = $keys;
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
@@ -820,7 +823,6 @@ class HomeController extends Controller
 			// $start_date_2  = $request['start_date_three'];
 			// $end_date_2  = $request['end_date_three'];
 		}
-
 		if (Carbon::make($end_date)->lessThan(Carbon::make($start_date))) {
 			$start_date_wap = $start_date;
 			$start_date = $end_date;
@@ -834,9 +836,7 @@ class HomeController extends Controller
 		$charts = [];
 		$dates = [];
 		$chartHasBeenFound = false;
-
 		$chartItems = (array)$request->get('chart_items') ?: addAllSubItemForMainItemsArray($allTypes);
-
 		foreach ((array)$request->types as $typeId) {
 			$request['mainItemId'] = $typeId;
 			$dataOfVarious = (new IntervalsComparingForIncomeStatementReport)->resultVariousComparing($request, $company, $intervalDates, $firstComparingType, $secondComparingType, $chartHasBeenFound, IncomeStatementItem::where('id', $typeId)->first()->name, $chartItems);
@@ -848,7 +848,6 @@ class HomeController extends Controller
 			}
 		}
 		$charts = removeFirstKeyAndMergeOthers($charts);
-
 		$incomeStatementId = $request->get('income_statement_id');
 		if ($incomeStatementId) {
 			$selectedIncomeStatement =     IncomeStatement::find($incomeStatementId);
@@ -864,13 +863,13 @@ class HomeController extends Controller
 			'start_date' =>  $start_date,
 			'end_date' =>   $end_date,
 			'second_report_type' => $secondComparingType,
-
+			'report_type' => $reportType
 
 		];
 		$mainItemsWithItemsSubItems = extractMainItemsAndSubItemsFrom($intervalComparing);
-
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(
 			'chartItems',
+			'reportType',
 			'charts',
 			'dates',
 			'mainItemsWithItemsSubItems',
@@ -890,5 +889,17 @@ class HomeController extends Controller
 			'selectedTypes',
 			'intervalComparing'
 		));
+	}
+	public function getIncomeStatementStartDateAndEndDate(Request $request)
+	{
+		$income_statement_id = $request->get('income_statement_id');
+		$incomeStatement  = IncomeStatement::where('id', $income_statement_id)->first();
+		if ($incomeStatement) {
+			$dates = $incomeStatement->getFirstAndEndDate();
+			return response()->json([
+				'status' => count($dates),
+				'dates' => $dates
+			]);
+		}
 	}
 }

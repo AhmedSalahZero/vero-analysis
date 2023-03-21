@@ -126,7 +126,6 @@ class SalesGatheringTestController extends Controller
 		}
 		Cache::forget(getShowCompletedTestMessageCacheKey($company->id));
 
-
 		SalesGatheringTestJob::withChain([
 			new RemoveIntervalYearCashingJob($company),
 			new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id),

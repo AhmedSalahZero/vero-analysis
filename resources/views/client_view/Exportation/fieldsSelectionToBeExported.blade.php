@@ -4,6 +4,21 @@
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    setInterval(() => {
+        let company_id = "{{ $company->id }}"
+        axios.get('/removeSessionForRedirect').then(res => {
+            console.log(res.data.status)
+            if (res.data.status) {
+                window.location.href = res.data.url
+            }
+
+        })
+    }, 2000)
+
+</script>
+
 <div class="row">
     <div class="col-lg-12">
         @if ($errors->any())
@@ -72,6 +87,7 @@
                         <div class="col-md-12">
                             <div class="row">
                                 @foreach ($columnsWithViewingNames as $fieldName => $displayName)
+                                @if(!hideExportField($fieldName , $columnsWithViewingNames))
                                 <?php
                                             $status_disanbeled_fields = $fieldName == 'net_sales_value' || 
                                                             ($fieldName == 'sales_value'  && count(array_intersect($selected_fields, ['quantity_discount','cash_discount','special_discount','other_discounts'])) == 0 );
@@ -105,12 +121,22 @@
                                             <span class="kt-option__head">
                                                 <span class="kt-option__title">
                                                     {{ __($displayName) }}
+                                                    @if($fieldName == 'document_type')
+                                                    <span> ( Only Allowed Content
+                                                        <u>
+                                                            [INV , inv , invoice , INVOICE ,فاتوره ]
+                                                        </u> )
+                                                    </span>
+
+                                                    @endif
                                                 </span>
 
                                             </span>
                                         </span>
                                     </label>
                                 </div>
+                                @endif
+
                                 @endforeach
                             </div>
                         </div>
@@ -140,6 +166,7 @@
         } else {
             $('.fields').prop("checked", false);
         }
+        $('#date').prop('checked', true)
     });
     $('#quantity_discount,#cash_discount,#special_discount,#other_discounts').change(function(e) {
         if ($('#quantity_discount').prop("checked") || $('#cash_discount').prop("checked") || $('#special_discount').prop("checked") || $('#other_discounts').prop("checked")) {
@@ -150,4 +177,13 @@
     });
 
 </script>
+
+<script>
+    $('#date').on('change', function() {
+        $(this).prop('checked', true)
+    })
+    $('#date').prop('checked', true)
+
+</script>
+
 @endsection

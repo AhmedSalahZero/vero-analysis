@@ -60,4 +60,25 @@ trait FinancialStatementAbleAccessor
 	{
 		return $this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->get();
 	}
+	public function getFirstAndEndDate(): array
+	{
+		$dates = $this->getIntervalFormatted();
+		$dates = array_keys($dates);
+		$dateLength = count($dates);
+		$interval = [];
+		if ($dateLength) {
+			$interval = [
+				'start_date' => ($dates[0]),
+				'end_date' => ($dates[$dateLength - 1])
+			];
+		}
+		return $interval;
+	}
 }
+// function formatDateStringForInputField(string $date)
+// {
+// 	dd($date);
+// 	$day = explode('-', $date);
+// 	$month = explode('-', $date);
+// 	$year = explode('-', $date);
+// }

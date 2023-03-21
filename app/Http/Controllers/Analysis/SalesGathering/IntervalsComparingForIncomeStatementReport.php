@@ -17,7 +17,7 @@ class IntervalsComparingForIncomeStatementReport
 	use GeneralFunctions;
 
 
-	public function result(Request $request, Company $company, $result = 'view', array $intervalDates, string $firstReportType, string $secondReportType)
+	public function result(Request $request, Company $company, array $intervalDates, string $firstReportType, string $secondReportType)
 	{
 		$start_date_one  = $intervalDates['first_start_date'];
 		$end_date_one  = $intervalDates['first_end_date'];

@@ -502,9 +502,6 @@ Route::middleware([])->group(function () {
 
 Route::delete('deleteMultiRowsFromCaching/{company}', [DeleteMultiRowsFromCaching::class, '__invoke'])->name('deleteMultiRowsFromCaching');
 Route::get('deleteAllRowsFromCaching/{company}', [DeleteAllRowsFromCaching::class, '__invoke'])->name('deleteAllCaches');
-// Route::get('delete-cache-last-upload-phase', function (Company $company, Request $request) {
-// 	Cache::forget(getCanReloadUploadPageCachingForCompany($company->id));
-// })->name('delete.cache.for.last.stash.upload');
 Route::post('get-uploading-percentage/{companyId}', [getUploadPercentage::class, '__invoke']);
 Route::get('{lang}/remove-company-image/{company}', function ($lang, Company $company) {
 	if ($company->getFirstMedia('default')) {
@@ -527,3 +524,19 @@ Route::get('{lang}/remove-company-image/{company}', function ($lang, Company $co
 // 	$result = CalculatedIrrController::calculateIrr($yearsAndFreeCash, $requiredInvestmentReturn);
 // 	dd($result);
 // });
+Route::get('getStartDateAndEndDateOfIncomeStatementForCompany', 'HomeController@getIncomeStatementStartDateAndEndDate');
+Route::get('removeSessionForRedirect', function () {
+	if (session()->has('redirectTo')) {
+		$url = session()->get('redirectTo');
+		session()->forget('redirectTo');
+		return response()->json([
+			'status' => true,
+			'url' => $url
+		]);
+	}
+});
+Route::get('/removeCashForCanReloadPageAndShowCompleteMessage', function (Request $request) {
+	$companyId = $request->get('company_id');
+//	Cache::forget(getShowCompletedTestMessageCacheKey($companyId));
+//	Cache::forget(getCanReloadUploadPageCachingForCompany($companyId));
+});

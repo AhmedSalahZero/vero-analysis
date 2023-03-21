@@ -41,7 +41,7 @@ const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Tr
 const Customers_Against_Categories_Trend_Analysis = 'Customers Against Categories Trend Analysis';
 const Customers_Against_Products_ITEMS_Trend_Analysis = 'Customers Against Products Items Trend Analysis';
 const INVOICES = 'Invoices';
-
+const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
 {
 	return preg_replace('/(?<!\ )[A-Z]/', ' $0', $string);;
@@ -943,7 +943,6 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers, $custom
 
 		$userType = getCustomerNature($customerObject->customer_name, $customerNature);
 
-		// dd($userType);
 		isset($dataFormatted[$userType]) ? $dataFormatted[$userType] = [
 			'count' => $dataFormatted[$userType]['count'] + 1,
 			'sales' => $dataFormatted[$userType]['sales'] + $customerObject->val
@@ -1396,11 +1395,6 @@ function sum_all_array_values($array)
 	return $total;
 }
 
-function preventUserFromForeCast()
-{
-	return [12, 13, 14, 15, 16, 22, 21, 20, 18];
-}
-
 function getCanReloadUploadPageCachingForCompany($companyId)
 {
 	return 'can_reload_caching_page_for_company_' . $companyId;
@@ -1653,12 +1647,15 @@ function getTotalInPivotDate(string $incomeStatementDurationType, string $income
 	// 2023
 	if (inDurationDate($date, $dates, $incomeStatementDurationType)) {
 		foreach ($pivot as $data) {
-			$formattedDate = explode('-', $date)[0] . '-' .  explode('-', $date)[1] . '-' . sprintf("%02d", $incomeStatementStartDate->day);
-			$payload = $data->payload ? (array)json_decode($data->payload) : null;
-			if ($payload && isset($payload[$formattedDate]) && $payload[$formattedDate]) {
-				$totalWithDepreciation += $payload[$formattedDate];
-				if ($data->is_depreciation_or_amortization) {
-					$totalDepreciation += $payload[$formattedDate];
+
+			if (!isQuantitySubItem($data->sub_item_name)) {
+				$formattedDate = explode('-', $date)[0] . '-' .  explode('-', $date)[1] . '-' . sprintf("%02d", $incomeStatementStartDate->day);
+				$payload = $data->payload ? (array)json_decode($data->payload) : null;
+				if ($payload && isset($payload[$formattedDate]) && $payload[$formattedDate]) {
+					$totalWithDepreciation += $payload[$formattedDate];
+					if ($data->is_depreciation_or_amortization) {
+						$totalDepreciation += $payload[$formattedDate];
+					}
 				}
 			}
 		}
@@ -1959,6 +1956,17 @@ function getAllFinancialAbleTypes(array $exclude = []): array
 		}
 	}
 	return $types;
+}
+function getAllFinancialAbleTypesFormattedForDashboard()
+{
+	return [
+		'forecast-actual' => __('Forecast Vs Actual'),
+		'forecast-adjusted' => __('Forecast Vs Adjusted'),
+		'forecast-modified' => __('Forecast Vs Modified'),
+		'adjusted-actual' => __('Adjusted Vs Actual'),
+		'adjusted-modified' => __('Adjusted Vs Modified'),
+		'modified-actual' => __('Modified Vs Actual'),
+	];
 }
 function getDatedOf(array $first, array $second): array
 {
@@ -2319,13 +2327,25 @@ function strEndsWith($string, $endString)
 	}
 	return substr($string, -$len) === $endString;
 }
+function sumAllKeysOfData(array $array, array $keysToSum, string $date)
+{
+	$total = 0;
+	foreach ($array as $key => $values) {
+		if (
+			in_array($key, $keysToSum)
+		) {
+			$total += $values[$date] ?? 0;
+		}
+	}
+	return $total;
+}
 function sumAllExceptQuantityOfData(array $array, string $date)
 {
 	$total = 0;
 	foreach ($array as $key => $values) {
-		if (!strEndsWith($key, '( Quantity )')) {
-			$total += $values[$date] ?? 0;
-		}
+		//	if (!isQuantitySubItem($key)) {
+		$total += $values[$date] ?? 0;
+		//	}
 	}
 	return $total;
 }
@@ -2339,30 +2359,27 @@ function getChartsData($chartItems, $dates, $arrayOfData, $mainItemName)
 	$firstTypeAccumulated = 0;
 	$secondTypeAccumulated = 0;
 	$subItems = $chartItems[$mainItemName] ?? [];
-
-	$subItemName = $subItems[0] ?? null;
-	if (is_null($subItemName)) {
-		return [];
-	}
-	if (!$subItemName) {
-		$subItemName = 'all';
-	}
-
 	foreach ($dates as $date) {
 		//barChart chart
-		$data['barChart'][$mainItemName][$subItemName][$date][$firstReportType] = $subItemName == 'all' ? sumAllExceptQuantityOfData($arrayOfData[$firstReportTypeKey], $date) : $arrayOfData[$firstReportTypeKey][$subItemName][$date] ?? 0;
-		$data['barChart'][$mainItemName][$subItemName][$date][$secondReportType] = $subItemName == 'all' ? sumAllExceptQuantityOfData($arrayOfData[$secondReportTypeKey], $date) : $arrayOfData[$secondReportTypeKey][$subItemName][$date] ?? 0;
-		$data['barChart'][$mainItemName][$subItemName][$date]['variance'] = $data['barChart'][$mainItemName][$subItemName][$date][$secondReportType] - $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType];
-		$data['barChart'][$mainItemName][$subItemName][$date]['var %'] = $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType] ? $data['barChart'][$mainItemName][$subItemName][$date]['variance'] / $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType] * 100 : 0;
 
+		$data['barChart'][$mainItemName][$date][$firstReportType] = sumAllKeysOfData($arrayOfData[$firstReportTypeKey], $subItems, $date);
+		$data['barChart'][$mainItemName][$date][$secondReportType] =  sumAllKeysOfData($arrayOfData[$secondReportTypeKey], $subItems, $date);
+		$data['barChart'][$mainItemName][$date]['variance'] = $data['barChart'][$mainItemName][$date][$secondReportType] - $data['barChart'][$mainItemName][$date][$firstReportType];
+		$data['barChart'][$mainItemName][$date]['var %'] = $data['barChart'][$mainItemName][$date][$firstReportType] ? $data['barChart'][$mainItemName][$date]['variance'] / $data['barChart'][$mainItemName][$date][$firstReportType] * 100 : 0;
+		$data['barChart'][$mainItemName][$date][$secondReportType] =  sumAllKeysOfData($arrayOfData[$secondReportTypeKey], $subItems, $date);
 		// two lines charts
-		$firstTypeAccumulated +=  $data['barChart'][$mainItemName][$subItemName][$date][$firstReportType];
-		$secondTypeAccumulated +=  $data['barChart'][$mainItemName][$subItemName][$date][$secondReportType];
-		$data['twoLinesChart'][$mainItemName][$subItemName][$date][$firstReportType] = $firstTypeAccumulated;
-		$data['twoLinesChart'][$mainItemName][$subItemName][$date][$secondReportType] = $secondTypeAccumulated;
-		$data['twoLinesChart'][$mainItemName][$subItemName][$date]['variance'] = $data['twoLinesChart'][$mainItemName][$subItemName][$date][$secondReportType] - $data['twoLinesChart'][$mainItemName][$subItemName][$date][$firstReportType];
-		// dd();
-		$data['twoLinesChart'][$mainItemName][$subItemName][$date]['var %'] = $data['twoLinesChart'][$mainItemName][$subItemName][$date][$secondReportType] ? $data['twoLinesChart'][$mainItemName][$subItemName][$date]['variance'] / $data['twoLinesChart'][$mainItemName][$subItemName][$date][$firstReportType]  * 100  : 0;
+		$firstTypeAccumulated +=  $data['barChart'][$mainItemName][$date][$firstReportType];
+		$secondTypeAccumulated +=  $data['barChart'][$mainItemName][$date][$secondReportType];
+		$data['twoLinesChart'][$mainItemName][$date][$firstReportType] = $firstTypeAccumulated;
+		$data['twoLinesChart'][$mainItemName][$date][$secondReportType] = $secondTypeAccumulated;
+		$data['twoLinesChart'][$mainItemName][$date]['variance'] = $data['twoLinesChart'][$mainItemName][$date][$secondReportType] - $data['twoLinesChart'][$mainItemName][$date][$firstReportType];
+		$data['twoLinesChart'][$mainItemName][$date]['var %'] = $data['twoLinesChart'][$mainItemName][$date][$firstReportType] ? $data['twoLinesChart'][$mainItemName][$date]['variance'] / $data['twoLinesChart'][$mainItemName][$date][$firstReportType]  * 100  : 0;
+	}
+	// donut chart
+
+	foreach ($subItems as $subItemName) {
+		$data['donutChart'][$mainItemName][$firstReportType][$subItemName] = isset($arrayOfData[$firstReportTypeKey][$subItemName]) ? array_sum($arrayOfData[$firstReportTypeKey][$subItemName]) : 0;
+		$data['donutChart'][$mainItemName][$secondReportType][$subItemName] = isset($arrayOfData[$secondReportTypeKey][$subItemName]) ? array_sum($arrayOfData[$secondReportTypeKey][$subItemName]) : 0;
 	}
 	return $data;
 }
@@ -2370,7 +2387,6 @@ function formatDataForBarChart(array $subItemValues, $firstReportType, $secondRe
 {
 	$formattedData = [];
 	foreach ($subItemValues as $date => $values) {
-		// dd();
 		$formattedData[] = ['category' => explode('-', $date)[1] . '-' . explode('-', $date)[0], 'first' => $values[$firstReportType], 'second' => $values[$secondReportType], 'third' => $values['variance']];
 	}
 	return $formattedData;
@@ -2393,11 +2409,19 @@ function formatDataFromTwoLinesChart2(array $subItemValues)
 }
 function removeFirstKeyAndMergeOthers(array $array)
 {
+
 	$newArray = [];
 	foreach ($array as $mainTypeName => $values) {
+
 		if ($newArray) {
 			foreach ($newArray as $key => $value) {
-				$newArray[$key][$mainTypeName] = array_values($values[$key])[0];
+				if ($key != 'donutChart') {
+					$newArray[$key][$mainTypeName] =  array_values($values[$key])[0];
+				} else {
+					foreach ($values['donutChart'][$mainTypeName] ?? [] as $subItemName => $subItemValue) {
+						$newArray[$key][$mainTypeName][$subItemName] = $subItemValue;
+					}
+				}
 			}
 		} else {
 			$newArray = $values;
@@ -2412,4 +2436,61 @@ function addAllSubItemForMainItemsArray(array $mainItems)
 		$data[$mainItemName] = ['all'];
 	}
 	return $data;
+}
+function formatForPieChart(array $array): array
+{
+	$formattedData = [];
+
+	foreach ($array as $subItemName => $subItemValues) {
+		foreach ($subItemValues as $date => $value) {
+			$formattedData[$subItemName] = $value;
+		}
+	}
+	return $formattedData;
+}
+function hideExportField($fieldName): bool
+{
+	$hidden  = ['local_or_export', 'sub_category', 'return_reason', 'quantity_status', 'quantity_bonus'];
+	return in_array($fieldName, $hidden);
+}
+
+function preventUserFromForeCast()
+{
+	return [12, 13, 14, 15, 16, 22, 21, 20, 18];
+}
+function formatDataForDonutChart(array $array)
+{
+	$formattedData = [];
+	foreach ($array as $subItemName => $value) {
+		$formattedData[] = [
+			'name' => $subItemName,
+			'value' => $value
+		];
+	}
+	return $formattedData;
+}
+function isQuantitySubItem($subItemName): bool
+{
+
+	return strEndsWith($subItemName, quantityIdentifier) || strEndsWith($subItemName, __(quantityIdentifier));
+}
+function getTotalForQuantityAndValues(array $items, bool $is_sales_revenue): array
+{
+	$totals = [
+		'quantity' => 0,
+		'value' => 0
+	];
+	foreach ($items as $subItemName => $value) {
+		if (isQuantitySubItem($subItemName) && $is_sales_revenue) {
+			$totals['quantity'] += $value;
+		} else {
+			$totals['value'] += $value;
+		}
+	}
+	return $totals;
+}
+function hasQuantityRow(array $subItemsName, string $mainRowName): bool
+{
+	$subItems = array_keys($subItemsName);
+	return in_array($mainRowName . quantityIdentifier, $subItems) || in_array($mainRowName . __(quantityIdentifier), $subItems);
 }
