@@ -4,6 +4,10 @@ $tableId = 'kt_table_1';
 
 
 <style>
+    .basis-100 {
+        flex-basis: 100%;
+    }
+
     .how-many-item {
         flex-wrap: wrap !important;
         flex-direction: column;
@@ -278,6 +282,49 @@ $tableId = 'kt_table_1';
                 let canRefreshPercentages = false;
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
+                        $(document).on('change', '.collection_rate_input', function() {
+                            let percentage = $(this).val().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '')
+                            percentage = parseFloat(percentage)
+
+                            if (percentage > 100) {
+                                $(this).val(0)
+                                Swal.fire({
+                                    text: 'Percentage Can Not Be Greater Than 100'
+                                    , icon: 'warning'
+                                })
+                            }
+                            let total = 0;
+
+                            $('.collection_rate_input').each(function(index, input) {
+                                total += parseFloat(input.value)
+                            })
+                            if (total > 100) {
+                                total = total - percentage
+                                $(this).val(0)
+                                Swal.fire({
+                                    text: 'Total Can Not Be Greater Than 100'
+                                    , icon: 'warning'
+                                })
+
+                            }
+                            const index = $(this).closest('.how-many-item').attr('data-index')
+                            $('input[name="sub_items[' + index + '][collection_rate_total][]"]').val(number_format(total, 2) + ' %')
+
+
+
+
+
+                        })
+
+                        $(document).on('change', '.only-one-checked', function() {
+                            const parent = $(this).closest('.only-one-checked-parent')
+                            parent.find('.only-one-checked').prop('checked', false)
+                            parent.find('.for-only-one-checked').addClass('d-none')
+                            $(this).prop('checked', true)
+                            const checkBoxValue = $(this).val()
+                            console.log(checkBoxValue)
+                            parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none')
+                        })
 
                         $(document).on('change', '.is-sub-row input', function(e) {
                             let grossProfitId = domElements.growthProfitId;
@@ -292,6 +339,7 @@ $tableId = 'kt_table_1';
 
                             let parentModelId = this.getAttribute('data-parent-model-id');
                             let date = this.getAttribute('data-date');
+                            console.log(parentModelId, financialIncomeOrExpenses)
                             if (date && parentModelId) {
                                 updateParentMainRowTotal(parentModelId, date);
                             }
@@ -303,7 +351,7 @@ $tableId = 'kt_table_1';
                                 updateGrossProfit(date);
 
                                 if (parentModelId == salesRevenueId && canRefreshPercentages) {
-                                    refreshPercentagesThatDependsOnSalesRevenueValue(date)
+                                    refreshPercentagesThatDependsOnSalesRevenueValue(date, this)
                                 }
 
                             }
@@ -321,12 +369,24 @@ $tableId = 'kt_table_1';
                             updateAllMainsRowPercentageOfSales([date])
                         });
 
-                        const refreshPercentagesThatDependsOnSalesRevenueValue = (date) => {
-                            document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
-                                td.dispatchEvent(new Event('blur', {
-                                    'bubbles': true
-                                }))
-                            });
+                        const refreshPercentagesThatDependsOnSalesRevenueValue = (date, currentInputThatChanged) => {
+                            // update inputs that depends on Quantity
+                            if (currentInputThatChanged.getAttribute('data-is-quantity')) {
+                                document.querySelectorAll('tr[data-is-cost-of-unit="true"] td.date-' + date).forEach((td) => {
+                                    td.dispatchEvent(new Event('blur', {
+                                        'bubbles': true
+                                    }))
+                                });
+                            } else {
+                                // update inputs that depends on percentage
+                                document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
+                                    td.dispatchEvent(new Event('blur', {
+                                        'bubbles': true
+                                    }))
+                                });
+                            }
+
+
                         }
 
 
@@ -527,7 +587,9 @@ $tableId = 'kt_table_1';
                                                     valOfCurrentSubItem = 0;
                                                 }
                                             } else {
-                                                valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
+                                                var subItemTD = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]')
+
+                                                valOfCurrentSubItem = subItemTD ? subItemTD.value : 0;
                                             }
                                             total += parseFloat(valOfCurrentSubItem);
 
@@ -838,7 +900,9 @@ $tableId = 'kt_table_1';
                                                     }
                                                 } else {
                                                     subItemName = subItemName.replace(/["]+/g, '').trim()
-                                                    valOfCurrentSubItem = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value;
+                                                    var subItemTd = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]')
+
+                                                    valOfCurrentSubItem = subItemTd ? subItemTd.value : 0;
                                                 }
                                                 total += parseFloat(valOfCurrentSubItem);
 
@@ -861,10 +925,7 @@ $tableId = 'kt_table_1';
                                                 input.value = currentValue
                                                 inputs.push(input)
 
-                                            } else {
-                                                console.log('not update')
-                                                console.log(currentDate)
-                                            }
+                                            } else {}
                                         })
                                         return inputs
                                     }
@@ -909,6 +970,15 @@ $tableId = 'kt_table_1';
                         })
                         $(document).on('click', '.edit-modal-icon', function() {
                             inEditMode = true
+                        })
+                        $(document).on('change', '.has-collection-policy-class', function() {
+                            const hasCollectionPolicy = this.checked
+                            const collectionPolicyContent = $(this).closest('.collection-policy').find('.collection-policy-content')
+                            if (hasCollectionPolicy) {
+                                collectionPolicyContent.removeClass('d-none')
+                            } else {
+                                collectionPolicyContent.addClass('d-none')
+                            }
                         })
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
                             let val = $(this).val();
@@ -1178,28 +1248,35 @@ $tableId = 'kt_table_1';
                                                 if (data.id == salesReveueId) {
                                                     sales_revenues_sub_items_names = [];
                                                     sales_revenues_quantity_sub_items_names = [];
-                                                    data.sub_items.forEach(function(subItemParent) {
-                                                        if (subItemParent.pivot.is_quantity == 0) {
-                                                            sales_revenues_sub_items_names.push(subItemParent.pivot.sub_item_name)
-                                                        } else if (subItemParent.pivot.is_quantity && subItemParent.pivot.is_quantity != 0) {
-                                                            sales_revenues_quantity_sub_items_names.push(subItemParent.pivot.sub_item_name)
 
-                                                        }
-                                                    });
+                                                    if (data.sub_items) {
+                                                        data.sub_items.forEach(function(subItemParent) {
+
+                                                            if (subItemParent.pivot.is_quantity == 0) {
+                                                                sales_revenues_sub_items_names.push(subItemParent.pivot.sub_item_name)
+                                                            } else if (subItemParent.pivot.is_quantity && subItemParent.pivot.is_quantity != 0) {
+                                                                sales_revenues_quantity_sub_items_names.push(subItemParent.pivot.sub_item_name)
+
+                                                            }
+                                                        });
+                                                    }
+
                                                     window['sales_revenues_sub_items_names'] = sales_revenues_sub_items_names;
                                                     window['sales_revenues_quantity_sub_items_names'] = sales_revenues_quantity_sub_items_names;
                                                 }
                                                 if (data.id == costOfGoodsId) {
                                                     cost_of_goods_sub_items_names = [];
-                                                    data.sub_items.forEach(function(subItemParent) {
-                                                        if (subItemParent.pivot.is_quantity == 0) {
-                                                            cost_of_goods_sub_items_names.push(subItemParent.pivot.sub_item_name)
-                                                        }
-                                                    });
+                                                    if (data.sub_items) {
+                                                        data.sub_items.forEach(function(subItemParent) {
+                                                            if (subItemParent.pivot.is_quantity == 0) {
+                                                                cost_of_goods_sub_items_names.push(subItemParent.pivot.sub_item_name)
+                                                            }
+                                                        });
+                                                    }
+
                                                     window['cost_of_goods_sub_items_names'] = cost_of_goods_sub_items_names;
                                                 }
                                                 var totalOfRowArray = [];
-
                                                 var incomeStatementId = data.isSubItem ? data.pivot.financial_statement_able_id : $('#model-id').val();
                                                 var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
                                                 var subItemName = data.isSubItem ? data.pivot.sub_item_name : '';
@@ -1218,10 +1295,6 @@ $tableId = 'kt_table_1';
                                                     .attr('data-percentage-value', data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : -1)
                                                     .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : -1)
                                                 if (data.isSubItem) {
-
-
-
-
                                                     let has_percentage_or_fixed_sub_items = '';
                                                     if (data.pivot.can_be_percentage_or_fixed && reportType != 'actual') {
                                                         sub_items_options = '';
@@ -1573,7 +1646,7 @@ $tableId = 'kt_table_1';
                                                         totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")));
 
 
-                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
+                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
                                                         $(dateDt).after(hiddenInput);
 
                                                     });
@@ -1838,7 +1911,7 @@ $tableId = 'kt_table_1';
 																` + quantityCheckbox + `</div>` +
                                                                 `
 																` + has_percentage_or_fixed_sub_items + `
-															</div>
+															</div> ` + getCollectionPolicyHtml() + `
 														</div> `;
 
                                                         }
@@ -1934,7 +2007,6 @@ $tableId = 'kt_table_1';
                                                 if (deleteBtnForCorporateTaxes) {
                                                     deleteBtnForCorporateTaxes.classList.add('d-none')
                                                     deleteBtnForCorporateTaxes.classList.remove('d-block')
-
                                                 }
                                                 if (reportType != 'actual') {
                                                     const netProfitId = domElements.netProfitId;
@@ -2065,6 +2137,9 @@ $tableId = 'kt_table_1';
                             $(document).on('click', '.save-sub-item', function(e) {
                                 $(this).prop('disabled', true)
                                 const salesRevenueId = domElements.salesRevenueId
+                                const financeIncomeOrExpensesId = domElements.financialIncomeOrExpensesId
+                                const marketExpensesId = domElements.marketExpensesId
+                                const generalExpensesId = domElements.generalExpensesId
                                 const salesRevenueSubItem = window['sales_revenues_sub_items_names'].length ? window['sales_revenues_sub_items_names'][0] : null
                                 const costOfGoodsId = domElements.costOfGoodsId
                                 const costOfGoodsSubItem = window['cost_of_goods_sub_items_names'].length ? window['cost_of_goods_sub_items_names'][0] : null
@@ -2102,6 +2177,17 @@ $tableId = 'kt_table_1';
                                     if (id == salesRevenueId && !salesRevenueSubItem) {
                                         updateCurrentRow = true;
                                     }
+                                    if (id == financeIncomeOrExpensesId) {
+                                        updateCurrentRow = true;
+                                    }
+                                    if (id == financeIncomeOrExpensesId) {
+                                        updateCurrentRow = true;
+                                    }
+                                    if (id == financeIncomeOrExpensesId || id == marketExpensesId || id == generalExpensesId) {
+                                        updateCurrentRow = true;
+                                    }
+
+
                                     for (date of dates) {
                                         // do not update anything if you add sales renuve sub item because it will be 0 anyway
                                         if (id != salesRevenueId) {
@@ -2381,7 +2467,6 @@ $tableId = 'kt_table_1';
                                 form = document.getElementById('store-report-form-id');
                                 let redirectTo = this.getAttribute('data-redirect-to');
                                 var formData = new FormData(form);
-
                                 $.ajax({
                                     type: 'POST'
                                     , url: $(form).attr('action')
@@ -2500,7 +2585,6 @@ $tableId = 'kt_table_1';
                 }
 
                 function getFirstDataForecast() {
-                    console.log($('th[data-is-actual="0"]:eq(0)').attr('data-date'))
                     return $('th[data-is-actual="0"]:eq(0)').attr('data-date')
                 }
 
@@ -2863,6 +2947,90 @@ $tableId = 'kt_table_1';
 
                 }
 
+                function getCollectionPolicyHtml() {
+                    return '';
+                    let collectionRates = ``
+                    let dueInDays = ``
+                    for (let i = 0; i < 5; i++) {
+                        collectionRates += `<div class="collection-rate-item mb-3">
+												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_rate][]" style="width:100px;" value="0">
+											</div>`
+
+                        dueInDays += `<div class="collection-rate-item mb-3">
+												<select name="sub_items[0][due_in_days][]" class="form-control">
+													<option value="0">0</optionv>
+													<option value="15">15</optionv>
+													<option value="30">30</optionv>
+													<option value="45">45</optionv>
+													<option value="60">60</optionv>
+													<option value="75">75</optionv>
+													<option value="90">90</optionv>
+													<option value="120">120</optionv>
+													<option value="150">150</optionv>
+													<option value="180">180</optionv>
+												</select>
+											</div>`
+                    }
+
+                    return `
+					<div class="collection-policy d-flex flex-wrap w-100 mt-3">
+						<div class="collection-policy-header basis-100 mb-4">
+							<div class="check-boxes">
+								<div class="checkbox-item d-flex ">
+									<label class="form-label label  mr-3">{{ __('Has Collection Policy') }}</label>
+									<input type="checkbox" style="width:16px;height:16px;" class="checkbox has-collection-policy-class form-control" name="sub_items[0][has_collection_policy]" value="1">
+								</div>
+							</div>
+						</div>
+						<div class="collection-policy-content basis-100 d-none only-one-checked-parent">
+							<div class="collection-policy-wrapper ">
+								<div class="collection-policy-checkboxes d-flex">
+									<div class="checkbox-item d-flex mr-3">
+									<label class="form-label label  mr-3">{{ __('System Default') }}</label>
+									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][system_default]" value="system_default">
+								</div>
+								
+								<div class="checkbox-item d-flex ">
+									<label class="form-label label  mr-3">{{ __('Customize') }}</label>
+									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][custimze]" value="custimze">
+								</div>
+								
+								</div>
+								
+							</div>
+							
+							<div class="checkboxes-content d-flex mt-4">
+								<div class="basis-100 for-only-one-checked d-none" data-item="system_default">
+										<div class="system-default-select">
+											<select name="sub_items[0][custimze_values]" class="select form-control">
+												<option>{{ __('Monthly') }}</option>
+												<option>{{ __('Quarterly') }}</option>
+												<option>{{ __('Semi-annually') }}</option>
+												<option>{{ __('Annually') }}</option>
+											</select>
+										</div>
+								</div>
+								<div class="basis-100 for-only-one-checked d-none" data-item="custimze">
+									<div class="custimze-content" style="display:flex;gap:50px;">
+										<div class="collection-rate d-flex flex-column ">
+											<h5 class="mb-3 label form-label">{{ __('Collection Rate %') }} </h5>
+											${collectionRates}
+											<label class="label form-label">{{ __('Total') }}</label>
+											<input style="width:100px;" value="0" disabled class="form-control" name="sub_items[0][collection_rate_total][]">
+										</div>
+										<div class="due-in-days d-flex flex-column">
+											<h5 class="label form-label mb-3">{{ __('Due In Days') }}</h5>
+											${dueInDays}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					`;
+                }
+
                 function updateSalesGrowthRate(visiableHeaderDates) {
 
                     const salesRevenueId = domElements.salesRevenueId;
@@ -2903,6 +3071,10 @@ $tableId = 'kt_table_1';
                     });
 
                 }
+
+            </script>
+            <script>
+
 
             </script>
 

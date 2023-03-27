@@ -34,6 +34,7 @@ trait FinancialStatementItemAccessor
 	{
 		return $this->getSubItems($financialStatementId, $subItemType, $subItemName)->pluck('pivot');
 	}
+	
 	public function getMainRowsPivot(int $financialStatementId, string $subItemType): Collection
 	{
 		return $this->withMainRowsPivotFor($financialStatementId, $subItemType)->get()->pluck('pivot');

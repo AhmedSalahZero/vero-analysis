@@ -11,6 +11,10 @@
 
 
 <style>
+    .kt-portlet__body.dataTables_wrapper.dt-bootstrap4.no-footer {
+        overflow: scroll
+    }
+
     .reset-padding {
         padding-left: 20px !important;
         padding-right: 0 !important;
@@ -339,6 +343,7 @@ $currentReportType = Request()->segment(5)
                                         $currentSalesRevenueValue = isset($chartItems[$mainItemName]) && isQuantitySubItem(array_values($chartItems[$mainItemName])[0]) ?'quantity':'value' ;
 
                                         @endphp
+
                                         <input type="hidden" name="sales_revenue_type" value="{{ $currentSalesRevenueValue  }}">
                                         <select id="value_sales_revenue_id" {{-- @if($currentSalesRevenueValue=='quantity' ) disabled @endif --}} multiple name="chart_items[{{ $mainItemName }}][]" class="form-control mr-3" style="max-width:300px;display:inline-flex;">
 
@@ -360,6 +365,7 @@ $currentReportType = Request()->segment(5)
                                         </select>
 
                                         @else
+
                                         <select multiple name="chart_items[{{ $mainItemName }}][]" class="form-control" style="max-width:300px;display:inline-flex;">
                                             {{-- <option value="0">{{ __('All') }}</option> --}}
                                             @foreach($subItems as $subItemName)
@@ -420,6 +426,8 @@ $currentReportType = Request()->segment(5)
 
 
                                     {{-- donut charts [for foreach type (forecast and actual for example)] --}}
+
+                                    @if(count($subItems) && $mainItemName != $subItems[0])
                                     @for($i = 0 ; $i<2 ; $i++) @php $currentReportItem=$i==0 ? $selectedItems['first_report_type'] : $selectedItems['second_report_type']; @endphp <div class="col-sm-12 col-lg-6">
                                         <div class="kt-portlet">
                                             <div class="kt-portlet__head">
@@ -523,6 +531,7 @@ $currentReportType = Request()->segment(5)
                                         </div>
                                 </div>
                                 @endfor
+                                @endif
 
                                 <div class="col-md-6">
 
@@ -647,6 +656,7 @@ $currentReportType = Request()->segment(5)
                         </thead>
                         <tbody>
 
+
                             @foreach ($intervalComparing as $theType => $intervals)
 
                             <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
@@ -674,11 +684,12 @@ $currentReportType = Request()->segment(5)
                             $currentValue=[];
                             @endphp
 
-                            @foreach(getSubItemsNames($intervalComparing[$theType]) as $date=>$values )
+                            @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
+
                             <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
                                 <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
                                 <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">
-                                    {{ __($theType) }}
+                                    {{ $subItemName }}
                                 </td>
                                 @php
                                 $currentValues =[];

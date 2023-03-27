@@ -1701,10 +1701,12 @@ function format_for_chart($array)
 {
 	$formattedData  = [];
 	foreach ($array as $key => $data) {
-		$formattedData[] = [
-			'item' => $key,
-			'Sales Value' => $data
-		];
+		if (!isQuantitySubItem($key)) {
+			$formattedData[] = [
+				'item' => $key,
+				'Sales Value' => $data
+			];
+		}
 	}
 	return $formattedData;
 }
@@ -1755,6 +1757,7 @@ function getDataOfYear($data, $year): array
 }
 function sum_each_key($array)
 {
+
 	$sumForEachItem = [];
 	foreach ($array as $key => $values) {
 		$sumForEachItem[$key] = array_sum($values);
@@ -1778,8 +1781,11 @@ function getIntervalFromString(string $str): string
 function sum_all_keys(array $items)
 {
 	$total = 0;
-	foreach ($items as $itemValue) {
-		$total += $itemValue;
+
+	foreach ($items as $name => $itemValue) {
+		if (!isQuantitySubItem($name)) {
+			$total += $itemValue;
+		}
 	}
 	return $total;
 }
@@ -2209,7 +2215,7 @@ function getTotalPerYears(array $array)
 	$totalPerYears = [];
 	foreach ($array as $date => $valArr) {
 		$year = explode('-', $date)[0];
-		if (isset($totalPerYears['year'])) {
+		if (isset($totalPerYears[$year])) {
 			$totalPerYears[$year] += $valArr['total_with_depreciation'];
 		} else {
 			$totalPerYears[$year] = $valArr['total_with_depreciation'];
@@ -2217,10 +2223,6 @@ function getTotalPerYears(array $array)
 	}
 	return $totalPerYears;
 }
-// function getPreviousDate(dates, currentDate) {
-
-
-// }
 function getPreviousDate(?array $array, ?string $date, $datesExistsAsKeys = true)
 {
 
@@ -2429,13 +2431,25 @@ function removeFirstKeyAndMergeOthers(array $array)
 	}
 	return $newArray;
 }
-function addAllSubItemForMainItemsArray(array $mainItems)
+function getSubItemsForMainItemName($incomeStatement, int $financialStatementAbleItemId, string $reportType)
+{
+	$subItems = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $reportType)->get()->pluck('pivot.sub_item_name')->toArray();
+	$subItems = array_filter($subItems, function ($subItem) {
+		return !isQuantitySubItem($subItem);
+	});
+	return array_values($subItems);
+}
+function addAllSubItemForMainItemsArray(array $mainItems, $incomeStatement, $reportType)
 {
 	$data = [];
-	foreach ($mainItems as $mainItemName) {
-		$data[$mainItemName] = ['all'];
+	foreach ($mainItems as $mainItemId => $mainItemName) {
+		$data[$mainItemName] = mainItemHasSubItems($incomeStatement, $mainItemId) ?  getSubItemsForMainItemName($incomeStatement, $mainItemId, $reportType) : [$mainItemName];
 	}
 	return $data;
+}
+function mainItemHasSubItems($incomeStatement, int $mainItemId): bool
+{
+	return $incomeStatement->withMainItemsFor($mainItemId)->first()->has_sub_items ?? false;
 }
 function formatForPieChart(array $array): array
 {
@@ -2474,23 +2488,50 @@ function isQuantitySubItem($subItemName): bool
 
 	return strEndsWith($subItemName, quantityIdentifier) || strEndsWith($subItemName, __(quantityIdentifier));
 }
-function getTotalForQuantityAndValues(array $items, bool $is_sales_revenue): array
+function getTotalForQuantityAndValues(array $items, bool $is_sales_revenue, bool $totalForAllItems, string $currentSubItemName = null): array
 {
+	$currentSubItemName = $currentSubItemName ? $currentSubItemName . quantityIdentifier : '';
 	$totals = [
 		'quantity' => 0,
 		'value' => 0
 	];
 	foreach ($items as $subItemName => $value) {
-		if (isQuantitySubItem($subItemName) && $is_sales_revenue) {
-			$totals['quantity'] += $value;
-		} else {
-			$totals['value'] += $value;
+
+		if ($totalForAllItems || $subItemName == $currentSubItemName) {
+
+			if (isQuantitySubItem($subItemName) && $is_sales_revenue) {
+				$totals['quantity'] += $value;
+			} else {
+				$totals['value'] += $value;
+			}
 		}
 	}
+
 	return $totals;
 }
 function hasQuantityRow(array $subItemsName, string $mainRowName): bool
 {
 	$subItems = array_keys($subItemsName);
 	return in_array($mainRowName . quantityIdentifier, $subItems) || in_array($mainRowName . __(quantityIdentifier), $subItems);
+}
+function formatSubItemsNamesForQuantity(string $subItemName): array
+{
+	$subItems = [];
+	$subItemNameTrimmedFromQuantityIdentifier = removeStringFromEnd($subItemName, quantityIdentifier);
+	$subItemNameWithQuantityIdentifier = appendStringTo($subItemNameTrimmedFromQuantityIdentifier, quantityIdentifier);
+	$subItems[] = $subItemNameTrimmedFromQuantityIdentifier;
+	$subItems[] = $subItemNameWithQuantityIdentifier;
+	return $subItems;
+}
+function removeStringFromEnd(string $haystack, string $needle): string
+{
+	$needle_length = strlen($needle);
+	if (substr($haystack, -$needle_length) === $needle) {
+		return substr($haystack, 0, -$needle_length);
+	}
+	return $haystack;
+}
+function appendStringTo(string $str, string $append): string
+{
+	return $str . $append;
 }

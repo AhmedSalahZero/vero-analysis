@@ -486,21 +486,28 @@ $totalOfDepreactionAndAmortization = 0;
 
 
                                         @php
-                                        $totalForAll = getTotalForQuantityAndValues(($reports_data[$type]['sub_items']),$singleType == __('Sales Revenue')) ;
                                         $totalOfSalesRevenuePercentage = 0 ;
+                                        $totalForAll = getTotalForQuantityAndValues(($reports_data[$type]['sub_items']),$singleType == __('Sales Revenue'),true) ;
+
                                         @endphp
                                         @foreach ($reports_data[$type]['sub_items'] as $key => $item)
                                         @if(!isQuantitySubItem($key))
+                                        @php
+                                        $totalForSub = getTotalForQuantityAndValues(($reports_data[$type]['sub_items']),$singleType == __('Sales Revenue'),false,$key) ;
+
+                                        @endphp
 
                                         <tr>
                                             {{-- {{ dd(number_format($item )) }} --}}
                                             {{-- <th>{{($key??0)+1}}</th> --}}
                                             <td>{{$key?? '-'}}</td>
                                             {{-- {{ dd($item) }} --}}
+
+
                                             <td class="text-center">{{number_format($item)}}</td>
                                             <td class="text-center">{{$totalForAll['value'] ? number_format($item / $totalForAll['value'] * 100,2)  . ' %' : 0}}</td>
                                             @if($singleType == __('Sales Revenue'))
-                                            <td>{{ hasQuantityRow($reports_data[$type]['sub_items'],$key) ?  number_format($totalForAll['quantity']) : '-' }}</td>
+                                            <td>{{ hasQuantityRow($reports_data[$type]['sub_items'],$key) ?  number_format($totalForSub['quantity']) : '-' }}</td>
                                             @endif
                                             @if($singleType != __('Sales Revenue'))
 

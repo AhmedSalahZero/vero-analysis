@@ -186,4 +186,11 @@
     })
 
 </script>
+<script>
+    $(document).find('.datepicker-input').datepicker({
+        dateFormat: 'mm-dd-yy'
+        , autoclose: true
+    })
+
+</script>
 @endsection

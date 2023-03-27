@@ -98,7 +98,7 @@ class BalanceSheetController extends Controller
 			$balanceSheetItem
 				->withSubItemsFor($balanceSheetId, $subItemType, $request->get('sub_item_name'))
 				->updateExistingPivot($balanceSheetId, [
-					'sub_item_name' => $request->get('new_sub_item_name'),
+					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
 					'financial_statement_able_item_id' => $request->get('sub_of_id'),
 					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
 					'percentage_or_fixed' => $percentageOrFixed,

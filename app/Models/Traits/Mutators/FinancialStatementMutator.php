@@ -70,7 +70,7 @@ trait FinancialStatementMutator
 				foreach ($financialStatementItems as $financialStatementItemId => $names) {
 					$financialStatement->withSubItemsFor($financialStatementItemId, array_keys($names)[0])
 						->updateExistingPivot($financialStatementItemId, [
-							'sub_item_name' => array_values($names)[0]
+							'sub_item_name' => html_entity_decode(array_values($names)[0])
 						]);
 				}
 			}

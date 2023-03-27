@@ -104,7 +104,7 @@ class IncomeStatementController extends Controller
 			$incomeStatementItem
 				->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))
 				->updateExistingPivot($incomeStatementId, [
-					'sub_item_name' => $request->get('new_sub_item_name'),
+					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
 					'financial_statement_able_item_id' => $request->get('sub_of_id'),
 					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
 					'percentage_or_fixed' => $percentageOrFixed,
@@ -130,11 +130,15 @@ class IncomeStatementController extends Controller
 		$incomeStatementId = $request->get('financial_statement_able_id');
 		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
+		$subItemsNames = formatSubItemsNamesForQuantity($request->get('sub_item_name'));
 		$incomeStatement->storeReport($request);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
 		foreach ($subItemTypesToDetach as $subItemType) {
-			$incomeStatementItem->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))->detach($incomeStatementId);
+			foreach ($subItemsNames as $subItemName) {
+
+				$incomeStatementItem->withSubItemsFor($incomeStatementId, $subItemType, $subItemName)->detach($incomeStatementId);
+			}
 		}
 		return response()->json([
 			'status' => true,

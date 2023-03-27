@@ -44,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function boot(Request $request)
 	{
+
 		// if(!isProduction()){
 
 		//     View::composer('*',function($view){

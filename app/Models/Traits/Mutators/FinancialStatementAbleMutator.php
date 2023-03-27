@@ -142,7 +142,7 @@ trait FinancialStatementAbleMutator
 	{
 
 		$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $oldName)->updateExistingPivot($financialStatementAbleItemId, [
-			'sub_item_name' =>  $newName
+			'sub_item_name' =>  html_entity_decode($newName)
 		]);
 	}
 	public function syncSubItemNameForPivot(int $financialStatementAbleItemId, string $subItemType, string $oldSubItemName, string $newSubItemName)
@@ -171,7 +171,7 @@ trait FinancialStatementAbleMutator
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
 			'sub_item_type' => $subType,
-			'sub_item_name' => $isQuantityRepeating ?  $options['name'] . __(quantityIdentifier) : $options['name'],
+			'sub_item_name' => $isQuantityRepeating ?  html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']),
 			'created_from' => $subItemType,
 			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
 			'is_quantity' => $isQuantityRepeating,

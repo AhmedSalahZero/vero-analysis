@@ -286,11 +286,12 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		return IncomeStatementItem::where('for_interval_comparing', 1)->pluck('name', 'id')->toArray();
 	}
 
-	public static function compareBetweenTowItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType): array
+	public static function compareBetweenTowItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $mainItemName): array
 	{
 
-		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType);
-		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
+
+		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType, $mainItemName);
+		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType, $mainItemName);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
 		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
@@ -306,10 +307,10 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		}
 	}
 
-	public static function _compareBetweenTwoItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, string $firstReportType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $secondReportType, $sumInterval = true): array
+	public static function _compareBetweenTwoItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, string $firstReportType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $secondReportType, string $mainItemName, $sumInterval = true): array
 	{
-		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType);
-		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType);
+		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType, $mainItemName);
+		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType, $mainItemName);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
 		if (secondReportIsFirstInArray($firstReportType, $secondReportType)) {
@@ -327,7 +328,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		}
 	}
 
-	public static function getItemsForInterval(Collection $items, array $dates, $intervalName): array
+	public static function getItemsForInterval(Collection $items, array $dates, $intervalName, $mainItemName = ''): array
 	{
 		// $items must be a collection 
 
@@ -343,11 +344,11 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 				$payloadDateFormatted = Carbon::make($payloadDate);
 
 				if ($intervalName == 'annually' && yearInArray($payloadDate, $dates)) {
-					$filteredItems[$item->sub_item_name][$payloadDate] = $payloadItem;
-				} elseif (
-					dateIsBetweenTwoDates($payloadDateFormatted, $firstDate, $lastDate)
-				) {
-					$filteredItems[$item->sub_item_name][$payloadDate] = $payloadItem;
+
+					$filteredItems[$item->sub_item_name ?: $mainItemName][$payloadDate] = $payloadItem;
+				} elseif (dateIsBetweenTwoDates($payloadDateFormatted, $firstDate, $lastDate)) {
+
+					$filteredItems[$item->sub_item_name ?: $mainItemName][$payloadDate] = $payloadItem;
 				}
 			}
 		}

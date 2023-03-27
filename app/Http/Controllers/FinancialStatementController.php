@@ -123,7 +123,7 @@ class FinancialStatementController extends Controller
 		$financialStatementItem = $financialStatement->withMainItemsFor($financialStatementItemId)->first();
 		$financialStatementItem->withSubItemsFor($financialStatementId, $request->get('sub_item_type'), $request->get('sub_item_name'))
 			->updateExistingPivot($financialStatementId, [
-				'sub_item_name' => $request->get('new_sub_item_name'),
+				'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
 				'financial_statement_item_id' => $request->get('sub_of_id'),
 				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization')
 			]);

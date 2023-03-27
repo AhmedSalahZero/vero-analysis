@@ -836,10 +836,12 @@ class HomeController extends Controller
 		$charts = [];
 		$dates = [];
 		$chartHasBeenFound = false;
-		$chartItems = (array)$request->get('chart_items') ?: addAllSubItemForMainItemsArray($allTypes);
+		$chartItems = (array)$request->get('chart_items') ?: addAllSubItemForMainItemsArray($allTypes, $incomeStatement, request()->segments()[4]);
+
 		foreach ((array)$request->types as $typeId) {
 			$request['mainItemId'] = $typeId;
 			$dataOfVarious = (new IntervalsComparingForIncomeStatementReport)->resultVariousComparing($request, $company, $intervalDates, $firstComparingType, $secondComparingType, $chartHasBeenFound, IncomeStatementItem::where('id', $typeId)->first()->name, $chartItems);
+
 			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = $dataOfVarious['report'];
 			$charts[IncomeStatementItem::where('id', $typeId)->first()->name] = $dataOfVarious['charts'];
 			if (!$chartHasBeenFound) {
@@ -847,11 +849,13 @@ class HomeController extends Controller
 				$dates = $dataOfVarious['dates'];
 			}
 		}
+
 		$charts = removeFirstKeyAndMergeOthers($charts);
 		$incomeStatementId = $request->get('income_statement_id');
 		if ($incomeStatementId) {
 			$selectedIncomeStatement =     IncomeStatement::find($incomeStatementId);
 		}
+
 
 		$intervals = getIntervals($intervalComparing);
 
@@ -866,6 +870,7 @@ class HomeController extends Controller
 			'report_type' => $reportType
 
 		];
+
 		$mainItemsWithItemsSubItems = extractMainItemsAndSubItemsFrom($intervalComparing);
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(
 			'chartItems',

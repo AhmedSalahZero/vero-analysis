@@ -19,6 +19,7 @@ class IntervalsComparingForIncomeStatementReport
 
 	public function result(Request $request, Company $company, array $intervalDates, string $firstReportType, string $secondReportType)
 	{
+
 		$start_date_one  = $intervalDates['first_start_date'];
 		$end_date_one  = $intervalDates['first_end_date'];
 
@@ -61,8 +62,8 @@ class IntervalsComparingForIncomeStatementReport
 
 		$firstIncomeStatementId = $request->get('financial_statement_able_first_interval');
 		$secondIncomeStatementId = $request->get('financial_statement_able_second_interval');
-		$firstIncomeStatement = IncomeStatement::find($firstIncomeStatementId) ?: IncomeStatement::where('company_id', $company->id)->first();
-		$secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId) ?: IncomeStatement::where('company_id', $company->id)->first();
+		$firstIncomeStatement = IncomeStatement::find($firstIncomeStatementId) ?: IncomeStatement::where('company_id', $company->id)->latest()->first();
+		$secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId) ?: IncomeStatement::where('company_id', $company->id)->latest()->first();
 		$incomeStatementItemId = $request->get('mainItemId');
 		if (!$firstIncomeStatement || !$secondIncomeStatement) {
 			return [];
@@ -70,20 +71,23 @@ class IntervalsComparingForIncomeStatementReport
 		$firstIncomeStatementId = $firstIncomeStatement->id;
 		$secondIncomeStatementId = $secondIncomeStatement->id;
 		$firstMainItem = $firstIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();
-		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $firstReportType);
+
+		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->has_sub_items ? $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $firstReportType) : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$firstIncomeStatementItemSubItemsPivot = count($firstIncomeStatementItemSubItemsPivot) ? $firstIncomeStatementItemSubItemsPivot : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$secondMainItem = $secondIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$firstIncomeStatementDurationType = $firstIncomeStatement->duration_type;
 		$secondIncomeStatementItemSubItemsPivot = count($secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType))  ? $secondMainItem->getSubItemsPivot($secondIncomeStatementId, $secondReportType) : $secondMainItem->getMainRowsPivot($secondIncomeStatementId, $secondReportType);
 		$secondIncomeStatementItemSubItemsPivot = count($secondIncomeStatementItemSubItemsPivot) ? $secondIncomeStatementItemSubItemsPivot : collect([]);
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
-		$report_result = IncomeStatementItem::compareBetweenTowItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType);
+		$report_result = IncomeStatementItem::compareBetweenTowItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $mainItemName);
 		return $report_result;
 	}
 
 
 	public function resultVariousComparing(Request $request, Company $company, array $intervalDates, string $firstReportType, string $secondReportType, bool $chartHasBeenFound, string $mainItemName, array $chartItems)
 	{
+
+
 		$start_date  = $intervalDates['start_date'];
 		$end_date  = $intervalDates['end_date'];
 		$type = $request->type;
@@ -108,7 +112,7 @@ class IntervalsComparingForIncomeStatementReport
 
 		$firstIncomeStatementId = $request->get('income_statement_id');
 		$secondIncomeStatementId = $request->get('income_statement_id');
-		$firstIncomeStatement = IncomeStatement::find($firstIncomeStatementId) ?: IncomeStatement::where('company_id', $company->id)->first();
+		$firstIncomeStatement = IncomeStatement::find($firstIncomeStatementId) ?: IncomeStatement::where('company_id', $company->id)->latest()->first();
 		$secondIncomeStatement = $firstIncomeStatement;
 		$incomeStatementItemId = $request->get('mainItemId');
 		if (!$firstIncomeStatement || !$secondIncomeStatement) {
@@ -117,7 +121,7 @@ class IntervalsComparingForIncomeStatementReport
 		$firstIncomeStatementId = $firstIncomeStatement->id;
 		$secondIncomeStatementId = $secondIncomeStatement->id;
 		$firstMainItem = $firstIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();
-		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $firstReportType);
+		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->has_sub_items ? $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $firstReportType) : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$firstIncomeStatementItemSubItemsPivot = count($firstIncomeStatementItemSubItemsPivot) ? $firstIncomeStatementItemSubItemsPivot : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$secondMainItem = $firstMainItem;
 		$firstIncomeStatementDurationType = $firstIncomeStatement->duration_type;
@@ -125,9 +129,8 @@ class IntervalsComparingForIncomeStatementReport
 		$secondIncomeStatementItemSubItemsPivot = count($secondIncomeStatementItemSubItemsPivot) ? $secondIncomeStatementItemSubItemsPivot : collect([]);
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
 		$secondIntervalDates = $firstIntervalDates;
-
-		$report_result = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType);
-		$report_result_for_charts = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, false);
+		$report_result = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, $mainItemName, true);
+		$report_result_for_charts = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, $mainItemName, false);
 		$charts = [];
 		$charts = IncomeStatementItem::_generateChartsData($firstIntervalDates, $chartItems, $report_result_for_charts, $mainItemName);
 		return [
