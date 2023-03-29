@@ -11,6 +11,6 @@ trait CashFlowStatementAccessor
 
 	public function getMainItemTableClassName(): string
 	{
-		return get_class(new CashFlowStatementItem);;
+		return get_class(new CashFlowStatementItem);
 	}
 }

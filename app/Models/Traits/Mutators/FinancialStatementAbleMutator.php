@@ -17,6 +17,7 @@ trait FinancialStatementAbleMutator
 	}
 	public function storeMainItems(Request $request)
 	{
+
 		foreach (($this->getMainItemTableClassName())::get() as $financialStatementAbleItem) {
 			$financialStatementAbleItemId = $financialStatementAbleItem->id;
 			$this->withMainItemsFor($financialStatementAbleItemId)->attach($financialStatementAbleItemId, [
@@ -167,6 +168,13 @@ trait FinancialStatementAbleMutator
 		if ($subType == 'actual') {
 			$percentageOrFixed = 'non_repeating_fixed';
 		}
+		$collection_value = '';
+		if(isset($options['collection_policy']['type']['value']) && is_array($options['collection_policy']['type']['value'])){
+			$collection_value = json_encode($options['collection_policy']['type']['value']);
+		}
+		elseif(isset($options['collection_policy']['type']['value'])){
+			$collection_value = $options['collection_policy']['type']['value'] ;
+		}
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
@@ -174,6 +182,9 @@ trait FinancialStatementAbleMutator
 			'sub_item_name' => $isQuantityRepeating ?  html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']),
 			'created_from' => $subItemType,
 			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
+			'has_collection_policy' => $options['collection_policy']['has_collection_policy'] ?? false,
+			'collection_policy_type' => $options['collection_policy']['type']['name'] ?? '',
+			'collection_policy_value' => $collection_value ,
 			'is_quantity' => $isQuantityRepeating,
 			'can_be_quantity' => $options['can_be_quantity'] ?? false,
 			'percentage_or_fixed' => $percentageOrFixed,
@@ -189,7 +200,8 @@ trait FinancialStatementAbleMutator
 	public function storeReport(Request $request)
 	{
 
-		// dd($request->valueMainRowThatHasSubItems[130][1]);
+
+
 
 		if (count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
@@ -212,6 +224,7 @@ trait FinancialStatementAbleMutator
 			foreach ((array)$request->sub_items as $index => $options) {
 				if ($options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
 					$insertSubItems = $this->getInsertToSubItemFields($subItemType);
+
 					foreach ($insertSubItems as $subType) {
 						if (isset($options['is_quantity']) && $options['is_quantity']) {
 							foreach ([true, false] as $isQuantityRepeating) {
@@ -257,9 +270,6 @@ trait FinancialStatementAbleMutator
 			$financialStatementAble = (new static)::find($financialStatementAbleId)->load('mainRows');
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $payload) {
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->detach($financialStatementAbleItemId);
-				if ($financialStatementAbleItemId == 21) {
-					//dd($request->totals[$financialStatementAbleId][$financialStatementAbleItemId]);
-				}
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($payload),
 					'total' => $request->totals[$financialStatementAbleId][$financialStatementAbleItemId],
@@ -286,6 +296,7 @@ trait FinancialStatementAbleMutator
 				$financialStatementAble->updateTotalRowsWithoutSubItemsForAdjusted($financialStatementAbleItemId, $subItemType);
 			}
 		}
+		return $financialStatementAble;
 	}
 	public function getInsertToSubItemFields(string $subItemType): array
 	{

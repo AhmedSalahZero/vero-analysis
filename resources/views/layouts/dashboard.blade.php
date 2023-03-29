@@ -703,7 +703,9 @@
                 if (obj.pivot && obj.pivot.payload) {
                     var valueFormatted = JSON.parse(obj.pivot.payload)[date];
                     if (valueFormatted) {
-                        valueFormatted = valueFormatted.replace(/,/g, "");
+                        if (typeof valueFormatted === 'string' || valueFormatted instanceof String) {
+                            valueFormatted = valueFormatted.replace(/,/g, "");
+                        }
                         total = total + parseFloat(valueFormatted);
                     }
 

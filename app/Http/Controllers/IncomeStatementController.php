@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\IncomeStatementExport;
 use App\Http\Requests\IncomeStatementRequest;
+use App\Models\CashFlowStatement;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
@@ -36,8 +37,11 @@ class IncomeStatementController extends Controller
 
 	public function createReport(Company $company, IncomeStatement $incomeStatement)
 	{
+		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
 		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars([
-			'financial_statement_able_id' => $incomeStatement->id, 'incomeStatement' => $incomeStatement,
+			'financial_statement_able_id' => $incomeStatement->id,
+			'incomeStatement' => $incomeStatement,
+			'cashFlowStatement' => $cashFlowStatement,
 			'reportType' => getReportNameFromRouteName(Request()->route()->getName())
 		]));
 	}
@@ -99,6 +103,13 @@ class IncomeStatementController extends Controller
 		$incomeStatement->storeReport($request);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
+		$collection_value = '';
+		$collection_value_arr = $request->input('collection_policy.type.value');
+		if (isset($collection_value_arr) && is_array($collection_value_arr)) {
+			$collection_value = json_encode($collection_value_arr);
+		} elseif (isset($collection_value_arr)) {
+			$collection_value = $collection_value_arr;
+		}
 		foreach ($subItemTypesToDetach as $subItemType) {
 			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
 			$incomeStatementItem
@@ -107,6 +118,9 @@ class IncomeStatementController extends Controller
 					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
 					'financial_statement_able_item_id' => $request->get('sub_of_id'),
 					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
+					'has_collection_policy' => $request->input('collection_policy.has_collection_policy'),
+					'collection_policy_type' => $request->input('collection_policy.type.name'),
+					'collection_policy_value' => $collection_value,
 					'percentage_or_fixed' => $percentageOrFixed,
 					'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
 					'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,

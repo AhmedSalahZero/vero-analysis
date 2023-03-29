@@ -286,12 +286,12 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		return IncomeStatementItem::where('for_interval_comparing', 1)->pluck('name', 'id')->toArray();
 	}
 
-	public static function compareBetweenTowItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, string $mainItemName): array
+	public static function compareBetweenTowItems(Collection $firstItems, array $firstIntervalOfDates, string $firstIncomeStatementDurationType, Collection $secondItems, array $secondIntervalOfDates, string $secondIncomeStatementDurationType, ?string $firstMainItemName, ?string $secondMainItemName): array
 	{
 
 
-		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType, $mainItemName);
-		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType, $mainItemName);
+		$firstItems = self::getItemsForInterval($firstItems, $firstIntervalOfDates, $firstIncomeStatementDurationType, $firstMainItemName);
+		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondIncomeStatementDurationType, $secondMainItemName);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
 		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {

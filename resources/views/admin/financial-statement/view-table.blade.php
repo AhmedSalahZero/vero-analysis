@@ -363,22 +363,32 @@ $tableId = 'kt_table_1';
 
 
                                                 render: function(d, b, row) {
-                                                    return `
-     
-
-                        <a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.financial_statement_able_id}/report"  data-id="${row.financial_statement_able_id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Balance Sheet Report') }}">
-                          <i class="la la-money icon-lg"></i>
+                                                    var actual = `
+			<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/actual-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Actual Cash Flow Statement Report') }}">
+				
+				{{ __('Actual') }}
+				
                         </a>
+						`;
 
-                          
+                                                    var adjusted = `
+					<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/adjusted-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff !important;margin-right:10px;" title="{{ __('View Adjusted Cash Flow Statement Report') }}">{{ __('Adjusted') }}</a>
+						`;
 
-                        
-                        `
+                                                    var modified = `
+							<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/modified-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Modified Cash Flow Statement Report') }}">{{ __('Modified') }}</a>
+						`;
 
-                                                    ;
-                                                    // 							<a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.financial_statement_able_id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">
-                                                    //    <i class="la la-trash icon-lg"></i>
-                                                    //  </a>
+                                                    if (row.type == 'actual') {
+                                                        return actual;
+                                                    }
+                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/forecast-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Cash Flow Statement Report') }}">{{ __('Forecast') }}</a>`
+
+                                                    if (row.can_view_cash_flow_statement_actual_report) {
+                                                        return forecast + actual + ' <br> <br>' + adjusted + modified;
+                                                    } else {
+                                                        return forecast;
+                                                    }
 
                                                 }
                                             }

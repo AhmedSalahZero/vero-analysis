@@ -182,6 +182,7 @@ class QuantitySalesForecastReport
 
 	public function save(Company $company, Request $request, $noReturn = false)
 	{
+		// dd($request->all());
 		if ($request->submit == 'Show Result') {
 
 			$request['start_date']  = $request->previous_year . '-01-01';

@@ -166,6 +166,7 @@ $tableId = 'kt_table_1';
 <input type="hidden" id="fixed-column-number" value="3">
 @endif
 <input type="hidden" id="sub-item-type" value="{{ $reportType }}">
+<input type="hidden" id="income_statement_id" value="{{ $incomeStatement->id }}">
 <div class="table-custom-container position-relative  ">
     <input type="hidden" value="{{ $incomeStatement->id }}" id="model-id">
     <input type="hidden" id="income-statement-duration-type" value="{{ $incomeStatement->duration_type ?? '' }}">
@@ -319,11 +320,11 @@ $tableId = 'kt_table_1';
                         $(document).on('change', '.only-one-checked', function() {
                             const parent = $(this).closest('.only-one-checked-parent')
                             parent.find('.only-one-checked').prop('checked', false)
-                            parent.find('.for-only-one-checked').addClass('d-none')
+                            parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
                             $(this).prop('checked', true)
                             const checkBoxValue = $(this).val()
                             console.log(checkBoxValue)
-                            parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none')
+                            parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input,select').prop('disabled', false)
                         })
 
                         $(document).on('change', '.is-sub-row input', function(e) {
@@ -1178,6 +1179,7 @@ $tableId = 'kt_table_1';
                                                 "data": function(d) {
                                                     d.search_input = $(getSearchInputSelector(tableId)).val();
                                                     d.sub_item_type = $('#sub-item-type').val()
+                                                    d.income_statement_id = $('#income_statement_id').val()
                                                 }
 
                                             }
@@ -1539,6 +1541,8 @@ $tableId = 'kt_table_1';
 														<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 														<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
+														<input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
+														<input  type="hidden" name="cash_flow_statement_id"  value="{{ $cashFlowStatement->id }}">
 														<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
 														<div class="d-flex align-items-center">
 														
@@ -1591,7 +1595,7 @@ $tableId = 'kt_table_1';
 														<div class="modal-body">
 															<form id="delete-sub-item-form${data.pivot.financial_statement_able_item_id+data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
 																<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
-																
+																<input type="hidden" name="income_statement_id" value="{{$incomeStatement->id}}">
 																<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 																<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 																<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
@@ -1679,7 +1683,7 @@ $tableId = 'kt_table_1';
                                                             $(dateDt).after(hiddenInput);
                                                         });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
-                                                        totalOfRowArray.push(parseFloat(subTotal))
+                                                        //     totalOfRowArray.push(parseFloat(subTotal))
                                                         $(row).append(`
 											<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]" value="${subTotal}">
 										`);
@@ -1933,6 +1937,7 @@ $tableId = 'kt_table_1';
 			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
             <input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
             <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
+            <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
 
             <input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" name="how_many_items" type="number" value="1">
           
@@ -2948,16 +2953,15 @@ $tableId = 'kt_table_1';
                 }
 
                 function getCollectionPolicyHtml() {
-                    return '';
                     let collectionRates = ``
                     let dueInDays = ``
                     for (let i = 0; i < 5; i++) {
                         collectionRates += `<div class="collection-rate-item mb-3">
-												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_rate][]" style="width:100px;" value="0">
+												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_policy][type][value][rate][]" style="width:100px;" value="0">
 											</div>`
 
                         dueInDays += `<div class="collection-rate-item mb-3">
-												<select name="sub_items[0][due_in_days][]" class="form-control">
+												<select name="sub_items[0][collection_policy][type][value][due_in_days][]" class="form-control">
 													<option value="0">0</optionv>
 													<option value="15">15</optionv>
 													<option value="30">30</optionv>
@@ -2978,7 +2982,7 @@ $tableId = 'kt_table_1';
 							<div class="check-boxes">
 								<div class="checkbox-item d-flex ">
 									<label class="form-label label  mr-3">{{ __('Has Collection Policy') }}</label>
-									<input type="checkbox" style="width:16px;height:16px;" class="checkbox has-collection-policy-class form-control" name="sub_items[0][has_collection_policy]" value="1">
+									<input type="checkbox" style="width:16px;height:16px;" class="checkbox has-collection-policy-class form-control" name="sub_items[0][collection_policy][has_collection_policy]" value="1">
 								</div>
 							</div>
 						</div>
@@ -2987,12 +2991,12 @@ $tableId = 'kt_table_1';
 								<div class="collection-policy-checkboxes d-flex">
 									<div class="checkbox-item d-flex mr-3">
 									<label class="form-label label  mr-3">{{ __('System Default') }}</label>
-									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][system_default]" value="system_default">
+									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][collection_policy][type][name]" value="system_default">
 								</div>
 								
 								<div class="checkbox-item d-flex ">
 									<label class="form-label label  mr-3">{{ __('Customize') }}</label>
-									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][custimze]" value="custimze">
+									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][collection_policy][type][name]" value="customize">
 								</div>
 								
 								</div>
@@ -3002,16 +3006,16 @@ $tableId = 'kt_table_1';
 							<div class="checkboxes-content d-flex mt-4">
 								<div class="basis-100 for-only-one-checked d-none" data-item="system_default">
 										<div class="system-default-select">
-											<select name="sub_items[0][custimze_values]" class="select form-control">
-												<option>{{ __('Monthly') }}</option>
-												<option>{{ __('Quarterly') }}</option>
-												<option>{{ __('Semi-annually') }}</option>
-												<option>{{ __('Annually') }}</option>
+											<select name="sub_items[0][collection_policy][type][value]" class="select form-control">
+												<option value="monthly">{{ __('Monthly') }}</option>
+												<option value="quarterly">{{ __('Quarterly') }}</option>
+												<option value="semi-annually">{{ __('Semi-annually') }}</option>
+												<option value="annually">{{ __('Annually') }}</option>
 											</select>
 										</div>
 								</div>
-								<div class="basis-100 for-only-one-checked d-none" data-item="custimze">
-									<div class="custimze-content" style="display:flex;gap:50px;">
+								<div class="basis-100 for-only-one-checked d-none" data-item="customize">
+									<div class="customize-content" style="display:flex;gap:50px;">
 										<div class="collection-rate d-flex flex-column ">
 											<h5 class="mb-3 label form-label">{{ __('Collection Rate %') }} </h5>
 											${collectionRates}

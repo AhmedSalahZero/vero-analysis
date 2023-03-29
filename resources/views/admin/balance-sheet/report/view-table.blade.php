@@ -1622,7 +1622,7 @@ $tableId = 'kt_table_1';
                                                             $(dateDt).after(hiddenInput);
                                                         });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
-                                                        totalOfRowArray.push(parseFloat(subTotal))
+                                                        //  totalOfRowArray.push(parseFloat(subTotal))
                                                         $(row).append(
                                                             `<input type="hidden" class="input-hidden-for-total" name="totals[${balanceSheetId}][${balanceSheetItemId}]"  data-parent-model-id="${balanceSheetItemId}" value="${subTotal}" >`
                                                         );

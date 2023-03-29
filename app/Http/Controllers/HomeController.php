@@ -689,9 +689,10 @@ class HomeController extends Controller
 		}
 		$selectedTypes = (array)$request->types;
 		$intervalComparing = [];
-
+		$selectAllOptions = false;
 
 		if ($request->isMethod('GET')) {
+			$selectAllOptions = true;
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[1] ?? 0;
 			$secondKey = $keys[2] ?? 0;
@@ -764,6 +765,7 @@ class HomeController extends Controller
 			'secondIncomeStatement',
 			'intervals',
 			'intervalDates',
+			'selectAllOptions',
 			// 'start_date_2', 'end_date_2',
 
 			'permittedTypes',

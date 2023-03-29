@@ -62,10 +62,21 @@ class IncomeStatementRepository implements IBaseRepository
 	public function storeReport(Request $request): IBaseModel
 	{
 		$incomeStatement = new IncomeStatement();
-
-		$incomeStatement
-			->storeReport($request);
-
+		$incomeStatement = $incomeStatement->storeReport($request);
+		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		$dates = array_keys($incomeStatement->getIntervalFormatted());
+		$request['dates'] = $dates;
+		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
+		$request['income_statement_id'] = $incomeStatement->id;
+		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
+		$request['financial_statement_able_id'] = $cashFlowStatement->id;
+		$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id) : 0;
+		$request['value'] = $cashFlowStatementDataFormatted['value'];
+		$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
+		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
+		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
+		$request['valueMainRowWithoutSubItems'] = [];
+		$cashFlowStatement->storeReport($request);
 		return $incomeStatement;
 	}
 

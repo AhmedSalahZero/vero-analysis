@@ -8,10 +8,13 @@ use App\Models\CashFlowStatement;
 use App\Models\CashFlowStatementItem;
 use App\Models\Company;
 use App\Models\Repositories\CashFlowStatementRepository;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CashFlowStatementController extends Controller
 {
+
 	private CashFlowStatementRepository $cashFlowStatementRepository;
 
 	public function __construct(CashFlowStatementRepository $cashFlowStatementRepository)
@@ -33,9 +36,12 @@ class CashFlowStatementController extends Controller
 
 	public function createReport(Company $company, CashFlowStatement $cashFlowStatement)
 	{
-		// dd($cashFlowStatement);
+		$cashFlowStatement = $cashFlowStatement->financialStatement->cashFlowStatement;
 		return view('admin.cash-flow-statement.report.view', CashFlowStatement::getReportViewVars([
-			'financial_statement_able_id' => $cashFlowStatement->id, 'cashFlowStatement' => $cashFlowStatement
+			'financial_statement_able_id' => $cashFlowStatement->id,
+			'cashFlowStatement' => $cashFlowStatement,
+			'cashFlowStatement' => $cashFlowStatement,
+			'reportType' => getReportNameFromRouteName(Request()->route()->getName())
 		]));
 	}
 
@@ -55,20 +61,19 @@ class CashFlowStatementController extends Controller
 		$cashFlowStatement = $this->cashFlowStatementRepository->store($request);
 		return response()->json([
 			'status' => true,
-			'message' => __('Cash Flow Statement Has Been Stored Successfully'),
-			'redirectTo' => route('admin.create.cash.flow.statement.report', ['company' => getCurrentCompanyId(), 'cashFlowStatement' => $cashFlowStatement->id])
+			'message' => __('Income Statement Has Been Stored Successfully'),
+			'redirectTo' => route('admin.create.income.statement.report', ['company' => getCurrentCompanyId(), 'cashFlowStatement' => $cashFlowStatement->id])
 		]);
 	}
 
 	public function storeReport(Request $request)
 	{
 
-		//   dd($request->all());
 		$this->cashFlowStatementRepository->storeReport($request);
 
 		return response()->json([
 			'status' => true,
-			'message' => __('Cash Flow Statement Has Been Stored Successfully')
+			'message' => __('Income Statement Has Been Stored Successfully')
 		]);
 	}
 
@@ -85,7 +90,7 @@ class CashFlowStatementController extends Controller
 		$this->cashFlowStatementRepository->update($cashFlowStatement, $request);
 		return response()->json([
 			'status' => true,
-			'message' => __('Cash Flow Statement Has Been Updated Successfully')
+			'message' => __('Income Statement Has Been Updated Successfully')
 		]);
 	}
 
@@ -94,14 +99,28 @@ class CashFlowStatementController extends Controller
 		$cashFlowStatementId = $request->get('financial_statement_able_id');
 		$cashFlowStatementItemId = $request->get('financial_statement_able_item_id');
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
+		$cashFlowStatement->storeReport($request);
 		$cashFlowStatementItem = $cashFlowStatement->withMainItemsFor($cashFlowStatementItemId)->first();
-		// dd($request->get('sub_item_name'));
-		$cashFlowStatementItem->withSubItemsFor($cashFlowStatementId, $request->get('sub_item_type'), $request->get('sub_item_name'))
-			->updateExistingPivot($cashFlowStatementId, [
-				'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
-				'financial_statement_able_item_id' => $request->get('sub_of_id'),
-				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization')
-			]);
+		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
+		foreach ($subItemTypesToDetach as $subItemType) {
+			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
+			$cashFlowStatementItem
+				->withSubItemsFor($cashFlowStatementId, $subItemType, $request->get('sub_item_name'))
+				->updateExistingPivot($cashFlowStatementId, [
+					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
+					'financial_statement_able_item_id' => $request->get('sub_of_id'),
+					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
+					'percentage_or_fixed' => $percentageOrFixed,
+					'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
+					'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,
+					'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ?  $request->input('sub_items.0.cost_of_unit_value') : null,
+					'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
+					'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
+
+				]);
+		}
+
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Updated Successfully')
@@ -114,16 +133,21 @@ class CashFlowStatementController extends Controller
 		$cashFlowStatementId = $request->get('financial_statement_able_id');
 		$cashFlowStatementItemId = $request->get('financial_statement_able_item_id');
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
+		$subItemsNames = formatSubItemsNamesForQuantity($request->get('sub_item_name'));
+		$cashFlowStatement->storeReport($request);
 		$cashFlowStatementItem = $cashFlowStatement->withMainItemsFor($cashFlowStatementItemId)->first();
-		// dd($request->get('sub_item_name'));
-		$cashFlowStatementItem->withSubItemsFor($cashFlowStatementId, $request->get('sub_item_type'), $request->get('sub_item_name'))->detach($cashFlowStatementId);
+		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
+		foreach ($subItemTypesToDetach as $subItemType) {
+			foreach ($subItemsNames as $subItemName) {
+
+				$cashFlowStatementItem->withSubItemsFor($cashFlowStatementId, $subItemType, $subItemName)->detach($cashFlowStatementId);
+			}
+		}
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Deleted Successfully')
 		]);
 	}
-
-
 	public function export(Request $request)
 	{
 		return (new CashFlowStatementExport($this->cashFlowStatementRepository->export($request), $request))->download();
@@ -131,7 +155,7 @@ class CashFlowStatementController extends Controller
 	public function exportReport(Request $request)
 	{
 		$formattedData = $this->formatReportDataForExport($request);
-		$cashFlowStatementId = array_key_first($request->get('value'));
+		$cashFlowStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
 
 		return (new CashFlowStatementExport(collect($formattedData), $request, $cashFlowStatement))->download();

@@ -54,7 +54,6 @@ class CashFlowStatementRepository implements IBaseRepository
 	public function store(Request $request): IBaseModel
 	{
 		$cashFlowStatement = App(CashFlowStatement::class);
-
 		$cashFlowStatement = $cashFlowStatement
 			->storeMainSection($request)->storeMainItems($request);
 		return $cashFlowStatement;
@@ -62,18 +61,15 @@ class CashFlowStatementRepository implements IBaseRepository
 
 	public function storeReport(Request $request): IBaseModel
 	{
-		$cashFlowStatement = App(CashFlowStatement::class);
-
-		$cashFlowStatement
-			->storeReport($request);
-
+		$cashFlowStatement = new CashFlowStatement();
+		$cashFlowStatement = $cashFlowStatement->storeReport($request);
 		return $cashFlowStatement;
 	}
 
 	public function update(IBaseModel $cashFlowStatement, Request $request): void
 	{
-		$cashFlowStatement
-			->updateProfitability($request);
+		// $cashFlowStatement
+		// 	->updateProfitability($request);
 	}
 
 	public function paginate(Request $request): array
@@ -101,18 +97,20 @@ class CashFlowStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $cashFlowStatement);
-
+		$subItemType = $request->get('sub_item_type');
 		$allFilterDataCounter = $filterData->count();
 
 		$dataWithRelations = collect([]);
 
-		$datePerPage = $filterData->get()->each(function (CashFlowStatementItem $cashFlowStatementItem, $index) use ($dataWithRelations, $cashFlowStatement) {
+		$datePerPage = $filterData->get()->each(function (CashFlowStatementItem $cashFlowStatementItem, $index) use ($dataWithRelations, $cashFlowStatement, $subItemType) {
 			$cashFlowStatementItem->creator_name = $cashFlowStatementItem->getCreatorName();
 			$cashFlowStatementItem->created_at_formatted = formatDateFromString($cashFlowStatementItem->created_at);
 			$cashFlowStatementItem->updated_at_formatted = formatDateFromString($cashFlowStatementItem->updated_at);
 			$cashFlowStatementItem->order = $index + 1;
+
+			$cashFlowStatementItem['main_rows'] = $cashFlowStatementItem->getMainRows($cashFlowStatement->id, $subItemType);
 			$dataWithRelations->add($cashFlowStatementItem);
-			$cashFlowStatementItem->getSubItems($cashFlowStatement->id)->each(function ($subItem) use ($dataWithRelations, $cashFlowStatementItem) {
+			$cashFlowStatementItem->getSubItems($cashFlowStatement->id, $subItemType)->each(function ($subItem) use ($dataWithRelations, $cashFlowStatementItem) {
 				$subItem->isSubItem = true; // isSubRow
 				if ($cashFlowStatementItem->has_depreciation_or_amortization) {
 					$subItem->pivot->can_be_depreciation = true;
@@ -144,11 +142,26 @@ class CashFlowStatementRepository implements IBaseRepository
 
 	public function commonScopeForReport(Request $request, CashFlowStatement $cashFlowStatement): builder
 	{
-		return CashFlowStatementItem::with(['subItems' => function ($builder) use ($cashFlowStatement) {
-			$builder->where('financial_statement_able_id', $cashFlowStatement->id);
-		}])->whereHas('financialStatementAbles', function (Builder $builder) use ($cashFlowStatement) {
-			$builder->where('financial_statement_ables.id', $cashFlowStatement->id);
-		})
+		$subItemType = $request->get('sub_item_type');
+
+		return CashFlowStatementItem::with(['subItems' => function ($builder) use ($cashFlowStatement, $subItemType) {
+			$builder
+				->wherePivot('financial_statement_able_id', $cashFlowStatement->id)
+				->wherePivot('sub_item_type', $subItemType);
+		}])
+			// ->whereHas('financialStatementAbles', function (Builder $builder) use ($cashFlowStatement) {
+			// 	$builder->where('financial_statement_ables.id', $cashFlowStatement->id);
+			// })
+			// ->whereHas('financialStatementAbles', function (Builder $builder) use ($cashFlowStatement) {
+			// 	$builder->where('financial_statement_ables.id', $cashFlowStatement->id);
+			// })
 			->orderBy('financial_statement_able_items.id', 'asc');
+
+		// return CashFlowStatementItem::with(['subItems' => function ($builder) use ($cashFlowStatement) {
+		// 	$builder->where('financial_statement_able_id', $cashFlowStatement->id);
+		// }])->whereHas('financialStatementAbles', function (Builder $builder) use ($cashFlowStatement) {
+		// 	$builder->where('financial_statement_ables.id', $cashFlowStatement->id);
+		// })
+		// 	->orderBy('financial_statement_able_items.id', 'asc');
 	}
 }

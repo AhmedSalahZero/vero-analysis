@@ -14,6 +14,8 @@ trait FinancialStatementMutator
 
 	public function storeMainSection(Request $request)
 	{
+
+
 		return FinancialStatement::create($request->except(['_token']));
 	}
 	public function storeMainItems(Request $request)

@@ -14,7 +14,7 @@
     .hideit {
         display: none;
     }
-
+	
 </style>
 @endsection
 @section('content')

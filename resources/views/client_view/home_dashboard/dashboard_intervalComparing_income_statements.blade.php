@@ -106,7 +106,7 @@
                     <div class="input-group date">
                         <select data-actions-box="true" data-live-search="true" data-max-options="0" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all" multiple>
                             @foreach ($permittedTypes as $id=>$name)
-                            <option value="{{ $id }}" @if(in_array($id , $selectedTypes )) selected @endif> {{ $name }} </option>
+                            <option value="{{ $id }}" @if(in_array($id , $selectedTypes ) || $selectAllOptions) selected @endif> {{ $name }} </option>
                             @endforeach
                         </select>
                     </div>

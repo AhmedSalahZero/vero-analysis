@@ -8,12 +8,7 @@ class FinancialStatementObserver
 {
 	public function deleting(FinancialStatement $FinancialStatement)
 	{
-		// $FinancialStatementItems = $FinancialStatement->mainItems;
-		// foreach ($FinancialStatementItems as $FinancialStatementItem) {
-		// 	$FinancialStatementItem->withSubItemsFor($FinancialStatement->id)->detach();
-		// 	$FinancialStatement->withMainRowsFor($FinancialStatementItem->id)->detach();
-		// 	$FinancialStatement->withMainItemsFor($FinancialStatementItem->id)->detach();
-		// }
+
 		$incomeStatement = $FinancialStatement->incomeStatement;
 		if ($incomeStatement) {
 			$incomeStatement->delete();

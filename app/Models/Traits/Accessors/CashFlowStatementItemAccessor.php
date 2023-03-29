@@ -31,15 +31,22 @@ trait CashFlowStatementItemAccessor
 	{
 		return $this->withSubItemsFor($cashFlowStatementId, $subItemType, $subItemName)->get();
 	}
-	public function getSubItemsPivot(int $cashFlowStatementId, string $subItemType, string $subItemName = ''): Collection
+	public function getSubItemsPivot(int $cashFlowStatementId, $subItemType): Collection
 	{
-		return $this->getSubItems($cashFlowStatementId, $subItemType, $subItemName)->pluck('pivot');
+		return $this->getSubItems($cashFlowStatementId, $subItemType)->pluck('pivot');
 	}
 
-	public function getMainRowsPivot(int $cashFlowStatementId): Collection
+
+
+	public function getMainRowsPivot(int $cashFlowStatementId, string $subItemType): Collection
 	{
-		return $this->withMainRowsPivotFor($cashFlowStatementId)->get()->pluck('pivot');
+		return $this->withMainRowsPivotFor($cashFlowStatementId, $subItemType)->get()->pluck('pivot');
 	}
+	public function getMainRows(int $cashFlowStatementId, string $subItemType): Collection
+	{
+		return $this->withMainRowsPivotFor($cashFlowStatementId, $subItemType)->get();
+	}
+
 	public function getParentTableClassName(): string
 	{
 		return get_class(new CashFlowStatement);

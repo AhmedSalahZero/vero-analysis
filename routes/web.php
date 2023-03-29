@@ -154,16 +154,30 @@ Route::middleware([])->group(function () {
 				Route::post('get-balance-sheet-report/{balanceSheet}', 'BalanceSheetController@paginateReport')->name('admin.get.balance.sheet.report');
 
 
+				// cash flow statement
+
 
 
 				Route::get('cash-flow-statement', [CashFlowStatementController::class, 'view'])->name('admin.view.cash.flow.statement');
 				Route::get('cash-flow-statement/create', [CashFlowStatementController::class, 'create'])->name('admin.create.cash.flow.statement');
-				Route::get('cash-flow-statement-report/{balanceSheet}/edit', [CashFlowStatementController::class, 'editItems']);
+				Route::get('cash-flow-statement-report/{cashFlowStatement}/edit', [CashFlowStatementController::class, 'editItems']);
 				Route::post('cash-flow-statement/{cashFlowStatement}/update', [CashFlowStatementController::class, 'update'])->name('admin.update.cash.flow.statement');
 				Route::post('cash-flow-statement/store', [CashFlowStatementController::class, 'store'])->name('admin.store.cash.flow.statement');
 				Route::get('export-cash-flow-statement', 'CashFlowStatementController@export')->name('admin.export.cash.flow.statement');
 				Route::get('get-cash-flow-statement', 'CashFlowStatementController@paginate')->name('admin.get.cash.flow.statement');
-				Route::get('cash-flow-statement/{cashFlowStatement}/report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.report');
+				Route::get('cash-flow-statement/{cashFlowStatement}/actual-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.actual.report');
+
+				// actual.report the first segment represent type so do not change it
+				Route::get('cash-flow-statement/{cashFlowStatement}/actual-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.actual.report');
+
+				// forecast.report the first segment represent type so do not change it
+				Route::get('cash-flow-statement/{cashFlowStatement}/forecast-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.forecast.report');
+				// adjusted.report the first segment represent type so do not change it
+
+				Route::get('cash-flow-statement/{cashFlowStatement}/adjusted-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.adjusted.report');
+
+				Route::get('cash-flow-statement/{cashFlowStatement}/modified-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.modified.report');
+
 				Route::post('cash-flow-statement-report/update', [CashFlowStatementController::class, 'updateReport'])->name('admin.update.cash.flow.statement.report');
 				Route::post('cash-flow-statement-report/delete', [CashFlowStatementController::class, 'deleteReport'])->name('admin.destroy.cash.flow.statement.report');
 				Route::post('cash-flow-statement/storeReport', [CashFlowStatementController::class, 'storeReport'])->name('admin.store.cash.flow.statement.report');
@@ -214,6 +228,7 @@ Route::middleware([])->group(function () {
 					Route::any('/breakdown', 'HomeController@dashboardBreakdownAnalysis')->name('dashboard.breakdown');
 					Route::any('/income-statement-breakdown-dashboard/{reportType}/{incomeStatement?}', 'HomeController@dashboardBreakdownIncomeStatementAnalysis')->name('dashboard.breakdown.incomeStatement');
 					Route::any('/balance-sheet-breakdown-dashboard/{reportType}/{balanceSheet?}', 'HomeController@dashboardBreakdownBalanceSheetAnalysis')->name('dashboard.breakdown.balanceSheet');
+					Route::any('/cash-flow-statement-breakdown-dashboard/{reportType}/{cashFlowStatement?}', 'HomeController@dashboardBreakdownCashFlowStatementAnalysis')->name('dashboard.breakdown.cashFlowStatement');
 					Route::any('/customers', 'HomeController@dashboardCustomers')->name('dashboard.customers');
 					Route::any('/salesPerson', 'HomeController@dashboardSalesPerson')->name('dashboard.salesPerson');
 					Route::any('/salesDiscount', 'HomeController@dashboardSalesDiscount')->name('dashboard.salesDiscount');
@@ -537,6 +552,6 @@ Route::get('removeSessionForRedirect', function () {
 });
 Route::get('/removeCashForCanReloadPageAndShowCompleteMessage', function (Request $request) {
 	$companyId = $request->get('company_id');
-//	Cache::forget(getShowCompletedTestMessageCacheKey($companyId));
-//	Cache::forget(getCanReloadUploadPageCachingForCompany($companyId));
+	//	Cache::forget(getShowCompletedTestMessageCacheKey($companyId));
+	//	Cache::forget(getCanReloadUploadPageCachingForCompany($companyId));
 });
