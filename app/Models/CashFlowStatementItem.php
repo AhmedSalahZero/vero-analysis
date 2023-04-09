@@ -14,12 +14,17 @@ use Illuminate\Support\Collection;
 class  CashFlowStatementItem extends Model implements IFinancialStatementAbleItem
 {
 	protected $table = 'financial_statement_able_items';
+	public static function percentageOfSalesRows(): array  // do not remove
+	{
+		return [];
+	}
 
 	use  CashFlowStatementItemRelation, CashFlowStatementItemAccessor;
 	// must start from 1  not zero
 	const CASH_IN_ID = 76;
 	const CASH_OUT_ID = 77;
-	const NET_CASH_PROFIT = 78;
+	const NET_CASH_PROFIT_ID = 78;
+	const ACCUMULATED_NET_CASH = 79;
 	protected $guarded = [
 		'id'
 	];

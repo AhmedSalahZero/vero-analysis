@@ -39,47 +39,9 @@ class AppServiceProvider extends ServiceProvider
 		// 
 	}
 
-	/**
-	 * Bootstrap any application services.
-	 *
-	 * @return void
-	 */
+
 	public function boot(Request $request)
 	{
-		// $items = [
-		// 	"01-01-2021" => 1,
-		// 	"01-02-2021" => 2,
-		// 	"01-03-2021" => 3,
-		// 	"01-04-2021" => 4,
-		// 	"01-05-2021" => 5,
-		// 	"01-06-2021" => 6,
-		// 	"01-07-2021" => 7,
-		// 	"01-08-2021" => 8,
-		// 	"01-09-2021" => 9,
-		// 	"01-10-2021" => 10,
-		// 	"01-11-2021" => 11,
-		// 	"01-12-2021" => 12,
-		// 	"01-01-2022" => 1,
-		// ];
-		// $interval = 'quarterly';
-		// dd();
-
-		// if(!isProduction()){
-
-		//     View::composer('*',function($view){
-		//     $view->with('client_sections',[]);
-		//     $view->with('exportables',[]);
-		//     $view->with('super_admin_sections',[]);
-		//     $view->with('lang','en');
-		//     $view->with('company',Company::find(Request()->segment(2)));
-		// });
-
-		// }
-
-		// Mail::to('ahmedconan17@yahoo.com')->send(new sendDeleteTestMail());
-		// else{
-		// throw new \Exception('Exeption message Here');
-
 		$Language = new stdClass();
 		$Language->id = 2;
 		$Language->name = 'Arabic';

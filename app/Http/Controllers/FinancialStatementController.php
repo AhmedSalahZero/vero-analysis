@@ -127,6 +127,11 @@ class FinancialStatementController extends Controller
 				'financial_statement_item_id' => $request->get('sub_of_id'),
 				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization')
 			]);
+
+
+
+
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Updated Successfully')

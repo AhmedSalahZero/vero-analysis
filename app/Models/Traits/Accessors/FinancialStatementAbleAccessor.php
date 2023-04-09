@@ -54,6 +54,9 @@ trait FinancialStatementAbleAccessor
 	}
 	public function canViewActualReport(): bool
 	{
+		if (strEndsWith(get_class($this), 'CashFlowStatement')) {
+			return false;
+		}
 		return $this->subItems()->wherePivot('sub_item_type', 'forecast')->count() > 1;
 	}
 	public function getSubItems(int $financialStatementAbleItemId, string $subItemType, string $subItemName = ''): Collection
@@ -75,10 +78,3 @@ trait FinancialStatementAbleAccessor
 		return $interval;
 	}
 }
-// function formatDateStringForInputField(string $date)
-// {
-// 	dd($date);
-// 	$day = explode('-', $date);
-// 	$month = explode('-', $date);
-// 	$year = explode('-', $date);
-// }

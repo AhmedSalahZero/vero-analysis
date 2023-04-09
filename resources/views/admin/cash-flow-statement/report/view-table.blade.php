@@ -75,8 +75,10 @@ $tableId = 'kt_table_1';
     }
 
     .is-sub-row td.sub-numeric-bg,
-    .is-sub-row td.sub-text-bg {
-        background-color: #0e96cd !important;
+    .is-sub-row td.sub-text-bg,
+    tr[data-financial-statement-able-item-id="{{ \App\Models\CashFlowStatementItem::NET_CASH_PROFIT_ID }}"] td.sub-text-bg,
+    tr[data-financial-statement-able-item-id="{{ \App\Models\CashFlowStatementItem::NET_CASH_PROFIT_ID }}"] td.sub-numeric-bg {
+        background-color: #046187 !important;
         color: white !important;
 
     }
@@ -131,13 +133,19 @@ $tableId = 'kt_table_1';
 @if(in_array($reportType,['modified','adjusted']))
 <input type="hidden" id="fixed-column-number" value="2">
 @else
-<input type="hidden" id="fixed-column-number" value="3">
+<input type="hidden" id="fixed-column-number" value="2">
 @endif
 <input type="hidden" id="sub-item-type" value="{{ $reportType }}">
 <div class="table-custom-container position-relative  ">
     <input type="hidden" id="cash-flow-statement-duration-type" value="{{ $cashFlowStatement->duration_type ?? '' }}">
     <input type="hidden" value="{{ $cashFlowStatement->id }}" id="model-id">
+    <input type="hidden" id="cash-in-id" value="{{ \App\Models\CashFlowStatementItem::CASH_IN_ID }}">
+    <input type="hidden" id="cash-out-id" value="{{ \App\Models\CashFlowStatementItem::CASH_OUT_ID }}">
+    <input type="hidden" id="net-cash-profit-id" value="{{ \App\Models\CashFlowStatementItem::NET_CASH_PROFIT_ID }}">
+    <input type="hidden" id="accumlated-net-cash-id" value="{{ \App\Models\CashFlowStatementItem::ACCUMULATED_NET_CASH }}">
+
     {{--
+
 
 
     <input type="hidden" id="cost-of-goods-id" value="{{ \App\Models\CashFlowStatementItem::COST_OF_GOODS_ID }}">
@@ -160,20 +168,10 @@ $tableId = 'kt_table_1';
         // let inUpdateSalesRevenueToUpdateAllLevelsBelow = false;
         const dependsRelation = @json($dependsRelation);
         const domElements = {
-            // salesRevenueId: document.getElementById('sales-revenue-id').value
-            salesRevenueId: 0
-            , salesGrowthRateId: 0
-            , growthProfitId: 0
-            , corporateTaxesId: 0
-            , costOfGoodsId: 0
-            , financialIncomeOrExpensesId: 0
-            , marketExpensesId: 0
-            , generalExpensesId: 0
-            , salesAndDistributionExpensesId: 0
-            , earningBeforeInterestTaxesId: 0
-            , earningBeforeInterestTaxesDepreciationAmor: 0
-            , earningBeforeTaxesId: 0
-            , netProfitId: 0
+            cashInId: document.getElementById('cash-in-id').value
+            , cashOutId: document.getElementById('cash-out-id').value
+            , netCashProfitId: document.getElementById('net-cash-profit-id').value
+            , accumlatedNetCash: document.getElementById('accumlated-net-cash-id').value
 
         }
         const vars = {
@@ -263,13 +261,10 @@ $tableId = 'kt_table_1';
                             }
 
                             if (parentModelId == salesRevenueId || parentModelId == costOfGoodsId) {
-                                updateGrowthRateForSalesRevenue(date);
+
                                 updateTotalForRow(currentRow);
                                 updateGrossProfit(date);
 
-                                if (parentModelId == salesRevenueId && canRefreshPercentages) {
-                                    refreshPercentagesThatDependsOnSalesRevenueValue(date)
-                                }
 
                             }
                             if (parentModelId == marketExpensesId || parentModelId == salesAndDistributionExpensesId || parentModelId == generalExpensesId) {
@@ -282,131 +277,14 @@ $tableId = 'kt_table_1';
                             if (parentModelId == corporateTaxesId) {
                                 updateNetProfit(date);
                             }
-                            updatePercentageOfSalesFor(parentModelId, date);
-                            updateAllMainsRowPercentageOfSales([date])
 
 
                         });
 
-                        const refreshPercentagesThatDependsOnSalesRevenueValue = (date) => {
-                            document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
-                                td.dispatchEvent(new Event('blur', {
-                                    'bubbles': true
-                                }))
-                            });
-                        }
 
-
-
-                        function updateNetProfit(date) {
-                            let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
-                            let corporateTaxesId = domElements.corporateTaxesId;
-                            let netProfitId = domElements.netProfitId;
-                            let netProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + netProfitId + '"]');
-                            let earningBeforeTaxesValueAtDate = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            let corporateTaxesValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + corporateTaxesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            netprofitAtDate = earningBeforeTaxesValueAtDate - corporateTaxesValueAtDate;
-                            netProfitRow.querySelector('td.date-' + date).innerHTML = number_format(netprofitAtDate);
-                            var input = netProfitRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]');
-                            input.value = netprofitAtDate;
-                            input.dispatchEvent(new Event('change', {
-                                'bubbles': true
-                            }))
-                            updateTotalForRow(netProfitRow);
-                        }
-
-                        function updateEarningBeforeTaxes(date) {
-                            let earningBeforeInterstTaxesId = domElements.earningBeforeInterestTaxesId;
-                            let financialIncomeOrExpensesId = domElements.financialIncomeOrExpensesId;
-                            let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
-                            let earningBeforeTaxesIdRow = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeTaxesId + '"]');
-                            let earningBeforeInterstTaxesValueAtDate = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeInterstTaxesId + '"]' + ' td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            let financialIncomeOrExpensesValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + financialIncomeOrExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            earningBeforeTaxesAtDate = parseFloat(earningBeforeInterstTaxesValueAtDate) + parseFloat(financialIncomeOrExpensesValueAtDate);
-                            earningBeforeTaxesIdRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeTaxesAtDate);
-                            var input = earningBeforeTaxesIdRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]');
-                            input.value = earningBeforeTaxesAtDate;
-                            input.dispatchEvent(new Event('change', {
-                                'bubbles': true
-                            }))
-                            updateTotalForRow(earningBeforeTaxesIdRow);
-                            updateNetProfit(date);
-                        }
-
-                        function updateEarningBeforeIntersetTaxesDepreciationAmortization(date) {
-                            let grossProfitId = domElements.growthProfitId;
-                            let marketExpensesId = domElements.marketExpensesId;
-                            let salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId;
-                            let generalExpensesId = domElements.generalExpensesId;
-                            let costOfGoodsId = domElements.costOfGoodsId;
-                            let earningBeforeInterstTaxesDepreciationAmortizationId = domElements.earningBeforeInterestTaxesDepreciationAmor;
-                            let earningBeforeInterestTaxesDepreciationAmortizationRow = document.querySelector('.main-with-no-child[data-model-id="' + earningBeforeInterstTaxesDepreciationAmortizationId + '"]');
-                            let grossProfitAtDate = parseFloat(document.querySelector('.main-with-no-child[data-model-id="' + grossProfitId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            let marketExpensesAtDate = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + marketExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            let salesAndDistributionExpensesAtDate = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesAndDistributionExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            let generalExpensesAtDate = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + generalExpensesId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            var mainWithSubItemsCostOfGoods = document.querySelector('.is-main-with-sub-items[data-model-id="' + costOfGoodsId + '"]')
-
-                            let depreciationForCostOfGoodsSold = [...myNextAll(mainWithSubItemsCostOfGoods, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + costOfGoodsId)]
-
-                            let totalDepreciationForCostOfGoodsSoldAtDate = 0;
-                            for (depreciationRow of depreciationForCostOfGoodsSold) {
-                                totalDepreciationForCostOfGoodsSoldAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            }
-
-                            var mainWithSubItemsMarketExpenses = document.querySelector('.is-main-with-sub-items[data-model-id="' + marketExpensesId + '"]')
-                            let depreciationForMarketExpenses = [...myNextAll(mainWithSubItemsMarketExpenses, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + marketExpensesId)]
-
-                            let totalDepreciationForMarketExpensesAtDate = 0;
-                            for (depreciationRow of depreciationForMarketExpenses) {
-                                totalDepreciationForMarketExpensesAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            }
-
-                            var mainWithSubItemsSalesAndDistrubtionExpenses = document.querySelector('.is-main-with-sub-items[data-model-id="' + salesAndDistributionExpensesId + '"]')
-
-                            let depreciationForSalesAndDistributionExpense = [...myNextAll(mainWithSubItemsSalesAndDistrubtionExpenses, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + salesAndDistributionExpensesId)];
-                            let totalDepreciationForSalesAndDistributionExpenseAtDate = 0;
-                            for (depreciationRow of depreciationForSalesAndDistributionExpense) {
-                                totalDepreciationForSalesAndDistributionExpenseAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            }
-                            var mainWithSubItemsGeneralExpenses = document.querySelector('.is-main-with-sub-items[data-model-id="' + generalExpensesId + '"]')
-                            let depreciationForGeneralExpenses = [...myNextAll(mainWithSubItemsGeneralExpenses, 'tr.is-depreciation-or-amortization.maintable-1-row-class' + generalExpensesId)];
-                            let totalDepreciationForGeneralExpensesAtDate = 0;
-                            for (depreciationRow of depreciationForGeneralExpenses) {
-                                totalDepreciationForGeneralExpensesAtDate += parseFloat(depreciationRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value);
-                            }
-                            let totalDepreciationsAtDate = totalDepreciationForGeneralExpensesAtDate + totalDepreciationForSalesAndDistributionExpenseAtDate + totalDepreciationForMarketExpensesAtDate + totalDepreciationForCostOfGoodsSoldAtDate
-                            let earningBeforeInterestTaxesAtDate = grossProfitAtDate - marketExpensesAtDate - salesAndDistributionExpensesAtDate - generalExpensesAtDate;
-                            let earningBeforeInterstTaxesDepreciationAmortizationAtDate = earningBeforeInterestTaxesAtDate + totalDepreciationsAtDate;
-                            earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeInterstTaxesDepreciationAmortizationAtDate);
-                            var input = earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('input[data-date="' + date + '"]')
-
-                            input.value = earningBeforeInterstTaxesDepreciationAmortizationAtDate
-                            input.dispatchEvent(new Event('change', {
-                                'bubbles': true
-                            }));
-                            updateTotalForRow(earningBeforeInterestTaxesDepreciationAmortizationRow);
-
-                            updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBeforeInterestTaxesAtDate, date)
-
-                        }
-
-                        function updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBeforeInterestTaxesWithoutDepreciationAtDate, date) {
-                            let EarningBeforeInterestTaxesId = domElements.earningBeforeInterestTaxesId;
-                            let earningBeforeInterestTaxesRow = document.querySelector('.main-with-no-child[data-model-id="' + EarningBeforeInterestTaxesId + '"]');
-                            earningBeforeInterestTaxesRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeInterestTaxesWithoutDepreciationAtDate);
-                            var input = earningBeforeInterestTaxesRow.querySelector('input[data-date="' + date + '"]')
-
-                            input.value = earningBeforeInterestTaxesWithoutDepreciationAtDate
-                            input.dispatchEvent(new Event('change', {
-                                'bubbles': true
-                            }));
-                            updateTotalForRow(earningBeforeInterestTaxesRow);
-
-                        }
 
                         function formateRowsForInsertaionIntoDom(rowsAsString) {
-                            return `<table class="append-table-into-dom"> <tbody> ` + rowsAsString + ' </tbody></table>';
+                            return `<table class="append-table-into-dom "> <tbody> ` + rowsAsString + ' </tbody></table>';
                         }
 
                         function insertTableIntoDom(tableString) {
@@ -486,21 +364,48 @@ $tableId = 'kt_table_1';
                         }
 
 
-                        function updateGrossProfit(date) {
-                            let grossProfitId = domElements.growthProfitId;
-                            let costOfGoodsId = domElements.costOfGoodsId;
-                            let salesReveueId = domElements.salesRevenueId;
-                            let grossProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + grossProfitId + '"]');
-                            let salesRevenueValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + salesReveueId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            let costOfGoodsValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + costOfGoodsId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            grossProfitAtDate = salesRevenueValueAtDate - costOfGoodsValueAtDate;
-                            grossProfitRow.querySelector('td.date-' + date).innerHTML = number_format(grossProfitAtDate);
-                            var input = grossProfitRow.querySelector('input[data-date="' + date + '"]')
-                            input.value = grossProfitAtDate
+                        function updateNetCashProfit(date) {
+                            let cashInId = domElements.cashInId;
+                            let cashOutId = domElements.cashOutId;
+                            let netCashProfitId = domElements.netCashProfitId;
+                            let netCashProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + netCashProfitId + '"]');
+                            let cashInValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + cashInId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
+                            let cashOutValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + cashOutId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
+                            netCashProfitAtDate = cashInValueAtDate - cashOutValueAtDate;
+                            netCashProfitRow.querySelector('td.date-' + date).innerHTML = number_format(netCashProfitAtDate);
+                            var input = netCashProfitRow.querySelector('input[data-date="' + date + '"]')
+                            input.value = netCashProfitAtDate
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
                             }));
-                            updateTotalForRow(grossProfitRow);
+                            updateTotalForRow(netCashProfitRow);
+
+                        }
+
+                        function updateAccumlatedNetCash(date) {
+                            const netCashProfitId = domElements.netCashProfitId;
+                            const accumlatedNetCashId = domElements.accumlatedNetCash;
+                            const netCashProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + netCashProfitId + '"]');
+                            const accumlatedNetCashRow = document.querySelector('.main-with-no-child[data-model-id="' + accumlatedNetCashId + '"]');
+
+                            let accumlatedNetCashAtDate = parseFloat(netCashProfitRow.querySelector('input[data-date="' + date + '"]').value);
+                            let previousDates = getPreviousDates(dates, date);
+                            for (var currentDate of previousDates) {
+                                accumlatedNetCashAtDate += parseFloat(netCashProfitRow.querySelector('input[data-date="' + currentDate + '"]').value)
+                            }
+                            console.log(accumlatedNetCashAtDate)
+                            accumlatedNetCashRow.querySelector('td.date-' + date).innerHTML = number_format(accumlatedNetCashAtDate);
+                            console.log(accumlatedNetCashRow, date, accumlatedNetCashRow.querySelector('td.date-' + date).innerHTML.length)
+                            var input = accumlatedNetCashRow.querySelector('input[data-date="' + date + '"]')
+                            input.value = accumlatedNetCashAtDate
+                            input.dispatchEvent(new Event('change', {
+                                'bubbles': true
+                            }));
+
+                            // to update total 
+                            accumlatedNetCashRow.querySelector('.input-hidden-for-total').value = 0;
+                            accumlatedNetCashRow.querySelector('td.total-row').innerHTML = '-';
+                            //updateTotalForRow(accumlatedNetCashRow, '-');
 
                         }
 
@@ -539,6 +444,7 @@ $tableId = 'kt_table_1';
                             row.querySelectorAll('input[data-date]').forEach(function(input, index) {
                                 total += parseFloat(input.value);
                             });
+
                             row.querySelector('.input-hidden-for-total').value = total;
                             row.querySelector('td.total-row').innerHTML = number_format(total);
                         }
@@ -732,6 +638,8 @@ $tableId = 'kt_table_1';
                                     var updateRow = getRowWithoutSubItems(updateAbleRowId)
                                     var updateTd = getTdElementFromRow(updateRow, date)
                                     var updateInput = getInputElementFromRow(updateRow, date)
+                                    console.log('update row')
+                                    console.log(updateRow)
 
                                     var equation = generateEquationFromString(updateRow.getAttribute('data-equation'), date, updateAbleRowId)
                                     var equationValue = eval(equation)
@@ -753,35 +661,7 @@ $tableId = 'kt_table_1';
 
                         });
 
-                        function updateGrowthRateForSalesRevenue(currentDate) {
-                            let dates = getDates();
 
-                            let previousDate = getPreviousDate(dates, currentDate);
-                            if (previousDate) {
-                                let salesRevenueId = domElements.salesRevenueId;
-                                let salesGrowthRateId = domElements.salesGrowthRateId;
-                                let currentTotalSalesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] ' + 'input[data-date="' + currentDate + '"]').value);
-                                let previousTotalSalesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] ' + 'input[data-date="' + previousDate + '"]').value);
-                                var salesRevenueGrowthRate = 0;
-                                if (previousTotalSalesRevenueValue) {
-                                    salesRevenueGrowthRate = currentTotalSalesRevenueValue ? ((currentTotalSalesRevenueValue - previousTotalSalesRevenueValue) / previousTotalSalesRevenueValue) * 100 : 0;
-                                }
-                                var input = document.querySelector('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"] ' + 'input[data-date="' + currentDate + '"]');
-                                if (input) {
-                                    input.value = salesRevenueGrowthRate;
-                                    input.dispatchEvent(new Event('change', {
-                                        'bubbles': true
-                                    }))
-                                    document.querySelector('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"] ' + 'td.date-' + currentDate).innerHTML = number_format(salesRevenueGrowthRate, 2) + ' %';
-
-                                }
-
-                            }
-
-                            return number_format(0, 2) + ' %';
-
-
-                        }
 
                         function getPreviousDate(dates, currentDate) {
                             let index = dates.indexOf(currentDate);
@@ -1141,11 +1021,11 @@ $tableId = 'kt_table_1';
                                                     if (actualDates && actualDates.includes(date)) {
                                                         $('.dataTables_scrollHeadInner .main-table-class:eq(0) th:not(.is-actual).date-' + date).addClass('is-actual');
                                                     }
-                                                    return payload[date] ? number_format(payload[date]) : 0;
+                                                    return payload[date] ? number_format(payload[date] < 0 ? payload[date] * -1 : payload[date]) : 0;
                                                 }
                                                 if (row.has_sub_items) {
                                                     let total = get_total_of_object(row.sub_items, date);
-                                                    return row.sub_items ? number_format(total) : 0
+                                                    return row.sub_items ? number_format(total < 0 ? total * -1 : total) : 0
                                                 }
 
                                                 if (row.main_rows && row.main_rows[0]) {
@@ -1616,7 +1496,7 @@ $tableId = 'kt_table_1';
                                                             $(dateDt).after(hiddenInput);
                                                         });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
-                                                        console.log('sub', subTotal);
+
                                                         //   totalOfRowArray.push(parseFloat(subTotal))
                                                         $(row).append(
                                                             `<input type="hidden" class="input-hidden-for-total" name="totals[${cashFlowStatementId}][${cashFlowStatementItemId}]"  data-parent-model-id="${cashFlowStatementItemId}" value="${subTotal}" >`
@@ -1813,11 +1693,11 @@ $tableId = 'kt_table_1';
 
                                             }
                                             , drawCallback: function(settings) {
+                                                $('table').addClass('exclude-table')
 
+                                                $('.editable-text,.editable-date').attr('contenteditable', false)
                                                 let corporateTaxesId = domElements.corporateTaxesId;
                                                 $('tr[data-percentage-or-fixed="percentage"] td.editable').attr('contenteditable', false);
-
-
                                                 let options = '';
                                                 document.querySelectorAll('.is-main-with-sub-items').forEach(function(row, index) {
                                                     let modelId = row.getAttribute('data-model-id');
@@ -1850,10 +1730,20 @@ $tableId = 'kt_table_1';
                                                 }
 
                                                 reinitializeSelect2();
+                                                // recalculate main rows
+                                                for (date of dates) {
+                                                    updateNetCashProfit(date)
+                                                    updateAccumlatedNetCash(date)
+                                                }
+
+
 
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
+                                                const currentTable = $('.main-table-class').DataTable();
+                                                currentTable.column(1).visible(false);
+                                                $('.kt-portlet__foot').addClass('d-none')
 
                                                 var reportType = vars.subItemType;
                                                 let actualDates = [];
@@ -1865,6 +1755,7 @@ $tableId = 'kt_table_1';
 
                                                 if (reportType == 'actual') {
                                                     const table = $('.main-table-class').DataTable();
+
                                                     // if from forecast online
                                                     document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
                                                         td.setAttribute('contenteditable', false)
@@ -1886,6 +1777,7 @@ $tableId = 'kt_table_1';
 
 
                                                 }
+
 
                                                 if (reportType == 'adjusted') {
                                                     const table = $('.main-table-class').DataTable();
@@ -1969,11 +1861,7 @@ $tableId = 'kt_table_1';
                                 // save data form also 
                                 if (formattedTable) {
 
-                                    // var triggerBlurTds = triggerBlurForSalesRevenueInAllDate();
-                                    // var triggerBlursTDSLength = triggerBlurTds.length
-                                    // for (var i = 0; i < triggerBlursTDSLength; i++) {
-                                    //     triggerBlurTds[i].trigger('blur')
-                                    // }
+
                                     inUpdateSalesRevenueToUpdateAllLevelsBelow = false;
 
 
@@ -2138,7 +2026,7 @@ $tableId = 'kt_table_1';
                                 let subItemName = $(this).data('sub-item-name');
 
                                 $(this).prop('disabled', true);
-                                document.querySelectorAll('tr[data-financial-statement-able-item-id="' + id + '"][data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
+                                document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
                                     editableDateTd.innerHTML = 0
                                     editableDateTd.dispatchEvent(new Event('blur'));
                                 })
@@ -2205,7 +2093,7 @@ $tableId = 'kt_table_1';
                                 } else if (rowId == earningBeforeTaxesId) {
                                     updateNetProfit(date);
                                 }
-                                updatePercentageOfSalesFor(rowId, date);
+                                //   updatePercentageOfSalesFor(rowId, date);
                             });
 
 
@@ -2295,6 +2183,9 @@ $tableId = 'kt_table_1';
                                                 if (v.closest('.dropdown.bootstrap-select')) {
                                                     v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${sub_items_options} </select>`
 
+                                                } else {
+                                                    $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
+
                                                 }
 
                                             } else {
@@ -2315,73 +2206,6 @@ $tableId = 'kt_table_1';
 
                 function getSearchInputSelector(tableId) {
                     return tableId + '_filter' + ' label input';
-                }
-
-                function updateAllMainsRowPercentageOfSales(dates = null) {
-                    if (!dates) {
-                        dates = "{{ json_encode(array_keys($cashFlowStatement->getIntervalFormatted())) }}";
-                        dates = dates.replace(/(&quot\;)/g, "\"")
-                        dates = JSON.parse(dates);
-                    }
-                    document.querySelectorAll('.is-main-with-sub-items').forEach(function(val) {
-                        var mainRowId = val.getAttribute('data-model-id');
-                        dates = Array.isArray(dates) ? dates : JSON.parse(dates);
-                        for (date of dates) {
-                            updatePercentageOfSalesFor(mainRowId, date, false);
-                        }
-                    })
-                }
-
-                function updatePercentageOfSalesFor(rowId, date, mainRowIsSub = true) {
-
-                    let salesRevenueId = document.getElementById('sales-revenue-id').value;
-                    let rateMainRowId = sales_rate_maps[rowId];
-                    let mainRowValue = 0;
-                    let salesRevenueValue = 0;
-                    mainRow = '';
-                    if (mainRowIsSub) {
-                        mainRow = document.querySelector('.main-with-no-child[data-model-id="' + rowId + '"]');
-                        if (mainRow) {
-
-                            mainRowValue = parseFloat(mainRow.querySelector('input[data-date="' + date + '"]').value);
-                            salesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] input[data-date="' + date + '"]').value);
-
-                        }
-                    } else {
-                        mainRow = document.querySelector('.is-main-with-sub-items[data-model-id="' + rowId + '"]')
-                        mainRowValue = parseFloat(mainRow.querySelector('input[data-date="' + date + '"]').value);
-                        salesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] input[data-date="' + date + '"]').value);
-
-                    }
-                    let salesPercentage = salesRevenueValue ? mainRowValue / salesRevenueValue * 100 : 0;
-                    var input = document.querySelector('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"] input[data-date="' + date + '"]');
-                    if (input) {
-                        input.value = salesPercentage;
-
-                    }
-                    var element = document.querySelector('.main-with-no-child.is-sales-rate[data-model-id="' + rateMainRowId + '"] ' + 'td.date-' + date);
-                    if (element) {
-                        element.innerHTML = number_format(salesPercentage, 2) + ' %';
-                    }
-                    totalPercentage = mainRow ? mainRow.querySelector('.total-row').innerHTML : 0;
-
-                    if (totalPercentage) {
-                        totalPercentage = parseFloat(number_unformat(totalPercentage));
-                        totalSalesRevenue = parseFloat(number_unformat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] .total-row').innerHTML));
-
-                        if (totalPercentage && totalSalesRevenue) {
-                            var element = document.querySelector('.main-with-no-child[data-model-id="' + rateMainRowId + '"] .input-hidden-for-total');
-                            if (element) {
-                                element.value = (totalPercentage / totalSalesRevenue * 100)
-                            }
-                            var element = document.querySelector('.main-with-no-child[data-model-id="' + rateMainRowId + '"] .total-row');
-                            if (element) {
-                                element.innerHTML = (number_format(totalPercentage / totalSalesRevenue * 100, 2) + ' %');
-                            }
-
-                        }
-
-                    }
                 }
 
                 function formatDatesForInterval(intervalName) {
@@ -2631,8 +2455,6 @@ $tableId = 'kt_table_1';
                     }
                     table.columns(hiddenIndexes).visible(false)
 
-                    updateSalesGrowthRate(visiableHeaderDates.sort());
-                    updatePercentageRows(visiableHeaderDates);
 
 
                 };
@@ -2674,63 +2496,7 @@ $tableId = 'kt_table_1';
                     return triggerBlurTDs;
                 }
 
-                function updatePercentageRows(visiableHeaderDates) {
-                    var percentage = 0;
-                    const salesRevenueId = domElements.salesRevenueId;
-                    $('tr.is-sales-rate').each(function(index, isSalesRow) {
 
-                        for (visiableHeaderDate of visiableHeaderDates) {
-
-
-
-                            var currentRowId = $(isSalesRow).data('model-id');
-                            var parentId = getKeyByValue(sales_rate_maps, currentRowId);
-
-                            let parentRowValAtDate = parseFloat(number_unformat($('tbody tr[data-model-id="' + parentId + '"]').find('td.date-' + visiableHeaderDate).html()));
-                            let salesRevenueAtDate = parseFloat(number_unformat($('tbody tr[data-model-id="' + salesRevenueId + '"]').find('td.date-' + visiableHeaderDate).html()));
-                            if (salesRevenueAtDate) {
-                                percentage = parentRowValAtDate / salesRevenueAtDate * 100
-                            }
-
-                            var number_formatted = number_format(percentage, 2) + ' %';
-                            $('tbody tr[data-model-id="' + currentRowId + '"]').find('td.editable-date.date-' + visiableHeaderDate).html(number_formatted);
-
-                        }
-
-
-
-                    })
-
-
-
-
-                }
-
-                function updateSalesGrowthRate(visiableHeaderDates) {
-
-                    const salesRevenueId = domElements.salesRevenueId;
-                    const salesGrowthRateId = domElements.salesGrowthRateId;
-                    for (visiableHeaderDate of visiableHeaderDates) {
-                        previousDate = getPreviousElementInArray(visiableHeaderDates, visiableHeaderDate);
-                        if (previousDate) {
-
-                            var currentSalesRevenueValue = number_unformat($('tbody tr[data-model-id="' + salesRevenueId + '"] td.editable-date.date-' + visiableHeaderDate).html());
-                            var previousSalesRevenueValue = number_unformat($('tbody tr[data-model-id="' + salesRevenueId + '"] td.editable-date.date-' + previousDate).html());
-                            if (previousSalesRevenueValue) {
-                                $('tbody tr[data-model-id="' + salesGrowthRateId + '"] td.editable-date.date-' + visiableHeaderDate).html(number_format((currentSalesRevenueValue - previousSalesRevenueValue) / previousSalesRevenueValue * 100, 2) + ' %');
-                            } else {
-                                $('tbody tr[data-model-id="' + salesGrowthRateId + '"] td.editable-date.date-' + visiableHeaderDate).html(number_format(0, 2) + ' %');
-
-                            }
-
-
-                        } else {
-                            $('tbody tr[data-model-id="' + salesGrowthRateId + '"] td.editable-date.date-' + visiableHeaderDate).html(number_format(0, 2) + ' %');
-                        }
-                    }
-
-
-                }
 
                 function getYearsFromDates(dates) {
                     years = [];

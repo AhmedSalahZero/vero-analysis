@@ -16,6 +16,7 @@ use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
 use App\Models\IncomeStatement;
+use App\Models\IncomeStatementItem;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
@@ -2026,9 +2027,10 @@ function combineNoneZeroValuesBasedOnComingDates(array $first, array $second, ar
 	$combined = [];
 	$dates = getDatedOf($first, $second);
 	foreach ($dates as $date) {
-		$isActualValue = isset($second[$date]) && isActualDate($date);
+		$isActualValue =  isActualDate($date);
 		$firstVal = $first[$date] ?? 0;
-		$combined[$date] = $isActualValue ? $second[$date] : $firstVal;
+		$actualVal = $second[$date] ?? 0;
+		$combined[$date] = $isActualValue ? $actualVal : $firstVal;
 		if ($isActualValue) {
 			$actualDates[] = $date;
 		}
@@ -2523,7 +2525,7 @@ function formatDataForDonutChart(array $array)
 }
 function isQuantitySubItem($subItemName): bool
 {
-
+	// note that (isQuantitySubItem) is also js function (edit it also if you edited this condition)
 	return strEndsWith($subItemName, quantityIdentifier) || strEndsWith($subItemName, __(quantityIdentifier));
 }
 function getTotalForQuantityAndValues(array $items, bool $is_sales_revenue, bool $totalForAllItems, string $currentSubItemName = null): array
@@ -2576,7 +2578,7 @@ function appendStringTo(string $str, string $append): string
 function formatRatesWithDueDays(array $ratesAndDueDays): array
 {
 	$result = [];
-	foreach ($ratesAndDueDays['due_in_days'] as $index => $dueDay) {
+	foreach ($ratesAndDueDays['due_in_days'] ?? [] as $index => $dueDay) {
 		$rate = $ratesAndDueDays['rate'][$index] ?? 0;
 		if ($rate) {
 			if (isset($result[$dueDay])) {
@@ -2588,10 +2590,15 @@ function formatRatesWithDueDays(array $ratesAndDueDays): array
 	}
 	return $result;
 }
-function applyCollectionPolicy(string $collectionPolicyType, $collectionPolicyValue, array $dateValue)
+function applyCollectionPolicy($hasCollectionPolicy, ?string $collectionPolicyType, $collectionPolicyValue, array $dateValue)
 {
 	$collections = [];
-	if ($collectionPolicyType == 'customize') {
+	if (!$hasCollectionPolicy) {
+		// reset Collection Policy
+		foreach ($dateValue as $date => $value) {
+			$collections[$date] = 0;
+		}
+	} elseif ($collectionPolicyType == 'customize') {
 
 		$ratesWithDueDays = formatRatesWithDueDays($collectionPolicyValue);
 		foreach ($dateValue as $currentDate => $target) {
@@ -2606,10 +2613,9 @@ function applyCollectionPolicy(string $collectionPolicyType, $collectionPolicyVa
 				$collections[$fullDate] = ($target * $rate) + ($collections[$fullDate] ?? 0);
 			}
 		}
-	} elseif ($collectionPolicyType == 'system_default') {
+	} elseif ($collectionPolicyType == 'system_default' && is_string($collectionPolicyValue)) {
 		$collections = sumForInterval($dateValue, $collectionPolicyValue);
 	}
-
 	return $collections;
 }
 
@@ -2631,9 +2637,19 @@ function sumForInterval(array $dateValues, string $intervalName)
 }
 function getSumMonth($month, $mapMonths)
 {
+
 	foreach ($mapMonths as $sumMonth => $sumMonths) {
 		if (in_array($month, $sumMonths)) {
 			return $sumMonth;
 		}
 	}
+}
+function getTotalOfSalesRevenueFor(int $incomeStatementId, string $subItemType, int $percentageOfSalesRowId): float
+{
+	$mainRowId = array_flip(IncomeStatementItem::salesRateMap())[$percentageOfSalesRowId];
+	$mainRow = IncomeStatementItem::find($mainRowId);
+	$mainRowSalesRevenue = IncomeStatementItem::find(IncomeStatementItem::SALES_REVENUE_ID);
+	$totalOfRow = $mainRow->withMainRowsPivotFor($incomeStatementId, $subItemType)->first()->pivot->total;
+	$totalOfSalesRevenue = $mainRowSalesRevenue->withMainRowsPivotFor($incomeStatementId, $subItemType)->first()->pivot->total;
+	return $totalOfSalesRevenue ? $totalOfRow / $totalOfSalesRevenue * 100 : 0;
 }

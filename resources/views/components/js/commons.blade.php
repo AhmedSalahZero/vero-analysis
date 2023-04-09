@@ -1,4 +1,3 @@
-l
 <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
 </script>
@@ -23,12 +22,12 @@ l
 {{-- <script  type="text/javascript" src={{ asset('datatable_modify.js') }}></script> --}}
 
 <script>
-    function getBaseUrlToCompanyId()
-    {
-        return $('body').data('base-url')+'/'+ $('body').data('lang') +'/'+ $('body').data('current-company-id') ;
+    function getBaseUrlToCompanyId() {
+        return $('body').data('base-url') + '/' + $('body').data('lang') + '/' + $('body').data('current-company-id');
     }
+
 </script>
-{{-- 
+{{--
 <script>
 
     $(document).on('change','select[id*="customer_id"]',function(event){

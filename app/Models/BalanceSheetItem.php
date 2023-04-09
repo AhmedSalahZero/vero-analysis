@@ -82,6 +82,10 @@ class  BalanceSheetItem extends Model implements IFinancialStatementAbleItem
 	{
 		return [];
 	}
+	public static function percentageOfSalesRows(): array  // do not remove
+	{
+		return [];
+	}
 
 	public static function formattedViewForDashboard(): array
 	{

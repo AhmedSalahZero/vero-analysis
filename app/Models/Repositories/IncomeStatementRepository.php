@@ -69,13 +69,17 @@ class IncomeStatementRepository implements IBaseRepository
 		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
 		$request['income_statement_id'] = $incomeStatement->id;
 		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
+		// dd($cashFlowStatementDataFormatted);
 		$request['financial_statement_able_id'] = $cashFlowStatement->id;
-		$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id) : 0;
+		//$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id) : 0;
 		$request['value'] = $cashFlowStatementDataFormatted['value'];
 		$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
 		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
 		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
 		$request['valueMainRowWithoutSubItems'] = [];
+		// dd($request['financialStatementAbleItemName']);
+		// dd($request->all());
+
 		$cashFlowStatement->storeReport($request);
 		return $incomeStatement;
 	}

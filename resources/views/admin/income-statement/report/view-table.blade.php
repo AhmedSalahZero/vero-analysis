@@ -2,10 +2,14 @@
 $tableId = 'kt_table_1';
 @endphp
 
-
 <style>
     .basis-100 {
         flex-basis: 100%;
+    }
+
+    .pl-25 {
+        padding-left: 17px;
+        padding-right: 17px;
     }
 
     .how-many-item {
@@ -13,7 +17,6 @@ $tableId = 'kt_table_1';
         flex-direction: column;
         justify-content: flex-start !important;
         align-items: flex-start !important;
-
     }
 
     .flex-checkboxes {
@@ -189,7 +192,13 @@ $tableId = 'kt_table_1';
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         const sales_rate_maps = JSON.parse(sales_rates_maps);
         let inEditMode = false;
-        let lastInputValue = 0
+        let lastInputValue = 0;
+        let numberOfConsole = 0
+        let lastPercentageSubItemOfEachMainRow = {}
+        let lastCostOfUnitSubItemOfEachMainRow = {}
+        let modalIsOpenInAddOrEdit = false
+        let currentDelete = {}
+        let deleteModalIsOpen = false
 
         const domElements = {
             salesRevenueId: document.getElementById('sales-revenue-id').value
@@ -278,15 +287,44 @@ $tableId = 'kt_table_1';
         </x-slot>
 
         <x-slot name="js">
+
             <script>
                 let inAddOrEditModal = false;
                 let canRefreshPercentages = false;
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
-                        $(document).on('change', '.collection_rate_input', function() {
-                            let percentage = $(this).val().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '')
-                            percentage = parseFloat(percentage)
 
+                        window.addEventListener('scroll', function() {
+                            const top = window.scrollY > 140 ? window.scrollY : 140;
+
+                            $('.arrow-nav').css('top', top + 'px')
+                        })
+                        if ($('.kt-portlet__body').length) {
+
+                            $('.kt-portlet__body').append(`
+						<i class="cursor-pointer text-dark arrow-nav  arrow-left fa fa-arrow-left"></i>
+						<i class="cursor-pointer text-dark arrow-nav arrow-right fa  fa-arrow-right"></i>
+						`)
+                            $(document).on('click', '.arrow-nav', function() {
+                                const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
+                                const scrollByUnit = 50
+                                if (this.classList.contains('arrow-right')) {
+                                    document.querySelector('.dataTables_scrollBody').scrollLeft += scrollByUnit
+
+                                } else {
+                                    document.querySelector('.dataTables_scrollBody').scrollLeft -= scrollByUnit
+
+                                }
+                            })
+
+                        }
+
+                        $(document).on('change', '.trim-when-key-up', function() {
+                            $(this).val($(this).val().trim())
+                        })
+                        $(document).on('change', '.collection_rate_input', function() {
+                            let percentage = filterNumericUserInput($(this).val())
+                            percentage = parseFloat(percentage)
                             if (percentage > 100) {
                                 $(this).val(0)
                                 Swal.fire({
@@ -296,9 +334,10 @@ $tableId = 'kt_table_1';
                             }
                             let total = 0;
 
-                            $('.collection_rate_input').each(function(index, input) {
-                                total += parseFloat(input.value)
+                            $(this).closest('.collection-policy').find('.collection_rate_input').each(function(index, input) {
+                                total += parseFloat(input.value ? input.value : 0)
                             })
+
                             if (total > 100) {
                                 total = total - percentage
                                 $(this).val(0)
@@ -308,11 +347,7 @@ $tableId = 'kt_table_1';
                                 })
 
                             }
-                            const index = $(this).closest('.how-many-item').attr('data-index')
-                            $('input[name="sub_items[' + index + '][collection_rate_total][]"]').val(number_format(total, 2) + ' %')
-
-
-
+                            $(this).closest('.collection-policy').find('.collection_rate_total_class').val(number_format(total, 2) + ' %')
 
 
                         })
@@ -323,11 +358,37 @@ $tableId = 'kt_table_1';
                             parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
                             $(this).prop('checked', true)
                             const checkBoxValue = $(this).val()
-                            console.log(checkBoxValue)
                             parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input,select').prop('disabled', false)
                         })
+                        $(document).on('change', '.only-one-checkbox', function() {
+                            const parent = $(this).closest('.only-one-checkbox-parent')
+                            parent.find('.only-one-checkbox').prop('checked', false)
+                            $(this).prop('checked', true)
+                        })
 
-                        $(document).on('change', '.is-sub-row input', function(e) {
+                        function isLastSublingPercentageOfCostOfUnitOfParent(subRow) {
+							return true 
+
+                            if (modalIsOpenInAddOrEdit) {
+                                return true
+                            }
+
+                            let isCostOfUnit = subRow.getAttribute('data-is-cost-of-unit') && subRow.getAttribute('data-is-cost-of-unit') != 'false'
+                            let isPercentage = subRow.getAttribute('data-is-percentage') && subRow.getAttribute('data-is-percentage') != 'false'
+                            if (!isCostOfUnit && !isPercentage) {
+                                return true;
+                            }
+                            // check if is last one of the same type of the same parent 
+                            let mainRowId = subRow.getAttribute('data-financial-statement-able-item-id')
+                            let lastPercentageSubItem = lastPercentageSubItemOfEachMainRow[mainRowId]
+                            let lastCostOfUnitSubItem = lastCostOfUnitSubItemOfEachMainRow[mainRowId]
+                            let currentSubItemName = subRow.getAttribute('data-sub-item-name')
+
+                            return currentSubItemName == lastPercentageSubItem || currentSubItemName == lastCostOfUnitSubItem;
+
+                        }
+
+                        $(document).on('change', '.is-sub-row input:not([type="checkbox"]):not(.collection_rate_input)', function(e) {
                             let grossProfitId = domElements.growthProfitId;
                             let costOfGoodsId = domElements.costOfGoodsId;
                             let salesRevenueId = domElements.salesRevenueId;
@@ -340,46 +401,47 @@ $tableId = 'kt_table_1';
 
                             let parentModelId = this.getAttribute('data-parent-model-id');
                             let date = this.getAttribute('data-date');
-                            console.log(parentModelId, financialIncomeOrExpenses)
-                            if (date && parentModelId) {
+                            if (date && parentModelId && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
                                 updateParentMainRowTotal(parentModelId, date);
                             }
-
-                            if (parentModelId == salesRevenueId || parentModelId == costOfGoodsId) {
+                            if ((parentModelId == salesRevenueId || parentModelId == costOfGoodsId) && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
 
                                 updateGrowthRateForSalesRevenue(date);
                                 updateTotalForRow(currentRow);
                                 updateGrossProfit(date);
-
                                 if (parentModelId == salesRevenueId && canRefreshPercentages) {
                                     refreshPercentagesThatDependsOnSalesRevenueValue(date, this)
                                 }
 
                             }
-                            if (parentModelId == marketExpensesId || parentModelId == salesAndDistributionExpensesId || parentModelId == generalExpensesId) {
+                            if ((parentModelId == marketExpensesId || parentModelId == salesAndDistributionExpensesId || parentModelId == generalExpensesId) && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
                                 updateEarningBeforeIntersetTaxesDepreciationAmortization(date);
                             }
-                            if (parentModelId == financialIncomeOrExpenses) {
+                            if (parentModelId == financialIncomeOrExpenses && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
+
                                 updateEarningBeforeTaxes(date);
                             }
-                            if (parentModelId == corporateTaxesId) {
+                            if (parentModelId == corporateTaxesId && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
                                 updateNetProfit(date);
                             }
+
                             updateTotalForRow(currentRow);
-                            updatePercentageOfSalesFor(parentModelId, date);
-                            updateAllMainsRowPercentageOfSales([date])
+                            if (isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
+                                updatePercentageOfSalesFor(parentModelId, date);
+                                updateAllMainsRowPercentageOfSales([date])
+
+                            }
                         });
 
                         const refreshPercentagesThatDependsOnSalesRevenueValue = (date, currentInputThatChanged) => {
-                            // update inputs that depends on Quantity
-                            if (currentInputThatChanged.getAttribute('data-is-quantity')) {
+                            if (!!parseInt(currentInputThatChanged.getAttribute('data-is-quantity'))) {
                                 document.querySelectorAll('tr[data-is-cost-of-unit="true"] td.date-' + date).forEach((td) => {
                                     td.dispatchEvent(new Event('blur', {
                                         'bubbles': true
                                     }))
                                 });
                             } else {
-                                // update inputs that depends on percentage
+
                                 document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
                                     td.dispatchEvent(new Event('blur', {
                                         'bubbles': true
@@ -389,8 +451,6 @@ $tableId = 'kt_table_1';
 
 
                         }
-
-
 
                         function updateNetProfit(date) {
                             let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
@@ -477,6 +537,7 @@ $tableId = 'kt_table_1';
                             var input = earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('input[data-date="' + date + '"]')
 
                             input.value = earningBeforeInterstTaxesDepreciationAmortizationAtDate
+
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
                             }));
@@ -496,6 +557,7 @@ $tableId = 'kt_table_1';
                             var input = earningBeforeInterestTaxesRow.querySelector('input[data-date="' + date + '"]')
 
                             input.value = earningBeforeInterestTaxesWithoutDepreciationAtDate
+
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
                             }));
@@ -514,6 +576,7 @@ $tableId = 'kt_table_1';
 
 
                         function formateTableForNewRow(formDataObject) {
+
                             let numberOfAddedItems = formDataObject.how_many_items;
                             let incomeStatementId = formDataObject.financial_statement_able_id;
                             let incomeStatementItemId = formDataObject.financial_statement_able_item_id;
@@ -525,6 +588,9 @@ $tableId = 'kt_table_1';
                                 var subItemName = formDataObject['sub_items[' + i + '][name]'];
                                 var isDepreciationOrAmortization = formDataObject['sub_items[' + i + '][is_depreciation_or_amortization]'];
                                 var canBePercentage = formDataObject['sub_items[' + i + '][can_be_percentage_or_fixed]'];
+                                var isFinancialExpense = formDataObject['sub_items[' + i + '][is_financial_expense]'] == '1';
+                                var isFinancialIncome = formDataObject['sub_items[' + i + '][is_financial_income]'] == '1';
+
                                 var isQuantity = 0;
                                 var percentageOrFixed = formDataObject['sub_items[' + i + '][percentage_or_fixed]'];
                                 var isPercentage = percentageOrFixed == 'percentage';
@@ -607,13 +673,16 @@ $tableId = 'kt_table_1';
                                         }
                                         value = currentValue;
                                         tdValue = currentValue
+                                        if (isFinancialExpense) {
+
+                                        }
                                         valuesOfDates.push({
                                             date
                                             , value // not change value name
                                         });
                                     });
                                 }
-                                rows += getRowForSubItemsTr('kt_table_1', dates, percentageOrCostOfUnitValue, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentage, percentageOrFixed, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf, isCostOfUnit, isCostOfUnitOf);
+                                rows += getRowForSubItemsTr('kt_table_1', dates, percentageOrCostOfUnitValue, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentage, percentageOrFixed, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf, isCostOfUnit, isCostOfUnitOf, isFinancialExpense);
                             }
 
                             formattedTable = formateRowsForInsertaionIntoDom(rows)
@@ -644,12 +713,12 @@ $tableId = 'kt_table_1';
 
                         }
 
-                        function getRowForSubItemsTr(tableId, dates, percentageOrCostOfUnitValue, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentageOrFixed, fixedOrPercentage, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf, isCostOfUnit, isCostOfUnitOf) {
+                        function getRowForSubItemsTr(tableId, dates, percentageOrCostOfUnitValue, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentageOrFixed, fixedOrPercentage, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf, isCostOfUnit, isCostOfUnitOf, isFinancialExpense) {
                             let row = `<tr   data-financial-statement-able-item-id="${incomeStatementItemId}" class="d-none edit-info-row add-sub maintable-1-row-class${incomeStatementItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-cost-of-unit="${isCostOfUnit}" data-is-percentage-of="${isPercentageOf}" data-is-cost-of-unit-of="${isCostOfUnitOf}"  data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
 																<td class="red reset-table-width trigger-child-row-1 cursor-pointer  sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
 																<td class="cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 70.25px; position: sticky;">
 												<div class="d-flex align-items-center justify-content-between">
-													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-income-statement-id="${incomeStatementId}" data-target="#edit-sub-modal${incomeStatementItemId}${subItemName}"> <i class="fa fa-pen-alt edit-modal-icon"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${incomeStatementId}${subItemName}">
+													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-income-statement-id="${incomeStatementId}" data-target="#edit-sub-modal${incomeStatementItemId}${convertStringToClass(subItemName)}"> <i class="fa fa-pen-alt edit-modal-icon"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${incomeStatementId}${convertStringToClass(subItemName)}">
 														<i class="fas fa-trash-alt"></i>
 
 													</a>
@@ -662,9 +731,12 @@ $tableId = 'kt_table_1';
                                 if (currentValueIndex >= 0) {
                                     var currentValue = valuesOfDates[currentValueIndex].value;
                                 }
-                                row += `<td class="sub-numeric-bg text-nowrap editable editable-date date-${date}" data-income-statement-id="${incomeStatementId}" data-main-model-id="${incomeStatementId}" data-income-statement-item-id="${incomeStatementItemId}" data-main-row-id="${incomeStatementItemId}" data-sub-item-name="${subItemName}" data-table-id="${tableId}" data-is-quantity="${isQuantity}" contenteditable="true" title="{{ __('Click To Edit') }}" data-percentage-value="${isCostOfUnit ? 0 : percentageOrCostOfUnitValue}" data-cost-of-unit-value="${isCostOfUnit ? percentageOrCostOfUnitValue : 0}">${currentValue}</td>
+                                row += `<td class="sub-numeric-bg text-nowrap editable editable-date date-${date}" data-income-statement-id="${incomeStatementId}" data-main-model-id="${incomeStatementId}" data-income-statement-item-id="${incomeStatementItemId}" data-main-row-id="${incomeStatementItemId}" data-sub-item-name="${subItemName}" data-table-id="${tableId}" data-is-quantity="${isQuantity}" contenteditable="true" title="{{ __('Click To Edit') }}" data-percentage-value="${isCostOfUnit ? 0 : percentageOrCostOfUnitValue}" data-cost-of-unit-value="${isCostOfUnit ? percentageOrCostOfUnitValue : 0}" data-is-financial-expense="${isFinancialExpense ? 1 :0}">${currentValue}</td>
 
-								<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${date}]" data-date="${date}" data-parent-model-id="${incomeStatementItemId}" value="${currentValue}">`;
+								<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${date}]" data-date="${date}" data-parent-model-id="${incomeStatementItemId}" value="${currentValue}">
+								<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"   value="${currentValue}">
+								
+								`;
                             })
 
                             row += `<td class="  sub-numeric-bg text-nowrap total-row" data-financial-statement-able-item-id="${incomeStatementItemId}" data-sub-item-name="${subItemName}">0</td>
@@ -744,6 +816,7 @@ $tableId = 'kt_table_1';
                                 }
                                 var input = document.querySelector('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"] ' + 'input[data-date="' + currentDate + '"]');
                                 if (input) {
+
                                     input.value = salesRevenueGrowthRate;
                                     input.dispatchEvent(new Event('change', {
                                         'bubbles': true
@@ -819,13 +892,13 @@ $tableId = 'kt_table_1';
                             let corporateTaxesId = domElements.corporateTaxesId;
                             let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
                             let salesRevenueId = domElements.salesRevenueId;
-
+                            let isFinancialExpense = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-financial-expense') : tdElement.getAttribute('data-is-financial-expense')
                             let firstDateString = $(tdElement).attr("class").split(/\s+/).filter(function(classItem) {
                                 return classItem.startsWith('date-');
                             })[0];
                             if (firstDateString) {
                                 var firstDate = firstDateString.split('date-')[1]
-                                var value = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "");
+                                var value = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                 var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]');
                                 input.value = value;
                                 let is_repeating_fixed = tdElement.closest('tr').getAttribute('data-is-repeating-fixed');
@@ -837,7 +910,7 @@ $tableId = 'kt_table_1';
                                 is_cost_of_unit = is_cost_of_unit == 'true' || is_cost_of_unit == 1
                                 let is_percentage_or_fixed = tdElement.closest('tr').getAttribute('data-can-be-percentage-or-fixed');
                                 is_percentage_or_fixed = is_percentage_or_fixed == 'true' || is_percentage_or_fixed == 1;
-                                let currentVal = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '');
+                                let currentVal = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                 currentVal = parseFloat(currentVal);
                                 inputs.push(input)
                                 if (is_percentage_or_fixed && is_repeating_fixed || is_percentage_or_fixed && !is_percentage && !is_cost_of_unit && inAddOrEditModal) {
@@ -932,7 +1005,7 @@ $tableId = 'kt_table_1';
                                     }
 
                                 } else {
-                                    var val = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '');
+                                    var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                     var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]')
                                     input.value = val
                                     inputs.push(input)
@@ -941,7 +1014,7 @@ $tableId = 'kt_table_1';
 
 
                             } else {
-                                var val = tdElement.innerHTML.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "");
+                                var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                 var input = tdElement.parentElement.querySelector('input.text-input-hidden')
                                 input.value = val
                                 inputs.push(input)
@@ -951,6 +1024,18 @@ $tableId = 'kt_table_1';
 
 
                         }
+
+                        function filterNumericUserInput(value, isFinancialExpense = false) {
+                            if (!value) {
+                                return 0;
+                            }
+                            value = value.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "").replace(/[%]/g, '')
+
+
+                            return isFinancialExpense == 1 && value > 0 ? value * -1 : value
+                        }
+
+
 
                         function formatsubrow1(d, dates) {
 
@@ -974,13 +1059,17 @@ $tableId = 'kt_table_1';
                         })
                         $(document).on('change', '.has-collection-policy-class', function() {
                             const hasCollectionPolicy = this.checked
+
                             const collectionPolicyContent = $(this).closest('.collection-policy').find('.collection-policy-content')
+                            $(this).closest('.collection-policy').find('.has_collection_policy_input').val(hasCollectionPolicy ? 1 : 0)
+
                             if (hasCollectionPolicy) {
                                 collectionPolicyContent.removeClass('d-none')
                             } else {
                                 collectionPolicyContent.addClass('d-none')
                             }
                         })
+
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
                             let val = $(this).val();
                             $(this).closest('.how-many-item').find('.non-repeating-fixed-sub,.repeating-fixed-sub,.percentage-sub,.cost-of-unit-sub').removeClass('d-flex').addClass('d-none');
@@ -1088,13 +1177,13 @@ $tableId = 'kt_table_1';
                                                 if (vars.subItemType == 'modified' && (row.pivot.percentage_or_fixed == 'non_repeating_fixed' || row.pivot.percentage_or_fixed == 'repeating_fixed')) {
                                                     return '';
                                                 }
-                                                var deleteItem = vars.subItemType == 'modified' && row.pivot ? '' : `<a data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
+                                                var deleteItem = vars.subItemType == 'modified' && row.pivot ? '' : `<a data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }">
 													<i class="fas fa-trash-alt"></i>
 													
 													</a>`;
                                                 return `
 											<div class="d-flex align-items-center justify-content-between">
-												<a  data-is-subitem="1" data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> 
+												<a  data-is-subitem="1" data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }"> 
 												<i class="fa fa-pen-alt edit-modal-icon"></i>  
 												</a> 
 												${deleteItem}
@@ -1170,6 +1259,8 @@ $tableId = 'kt_table_1';
                                     table.DataTable({
 
 
+
+
                                             dom: 'Bfrtip',
                                             // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
                                             "ajax": {
@@ -1185,6 +1276,7 @@ $tableId = 'kt_table_1';
                                             }
                                             , "processing": false
                                             , "scrollX": true
+                                            , "scrollY": true
                                             , "ordering": false
                                             , 'paging': false
                                             , "fixedColumns": {
@@ -1294,6 +1386,8 @@ $tableId = 'kt_table_1';
                                                     .attr('data-sub-item-name', subItemName)
                                                     .attr('data-table-id', "{{$tableId}}")
                                                     .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false)
+                                                    .attr('data-is-financial-expense', data.isSubItem ? data.pivot.is_financial_expense : false)
+                                                    .attr('data-is-financial-income', data.isSubItem ? data.pivot.is_financial_income : false)
                                                     .attr('data-percentage-value', data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : -1)
                                                     .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : -1)
                                                 if (data.isSubItem) {
@@ -1433,10 +1527,9 @@ $tableId = 'kt_table_1';
 															
 															
 															<input type="hidden" name="sub_items[0][can_be_percentage_or_fixed]" value="1">
-																</div>
-																
-																<div class="cost-of-unit-sub w-100 ${costOfUnitDisplay}">
-																<div class="d-flex align-items-center justify-content-between">
+															
+															<div class="cost-of-unit-sub w-100 ${costOfUnitDisplay}">
+																<div class="d-flex align-items-center justify-content-between" style="flex:1">
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap" style="width:60% !important">
 																	<div class="d-flex flex-column align-items-center justify-content-center flex-wrap " style="width:100% !important">
 																		<label class="form-label flex-self-start">{{ __('Cost Per Unit Of') }}</label>
@@ -1455,6 +1548,10 @@ $tableId = 'kt_table_1';
 																	</div>
 															</div>
 																</div>
+																
+																</div>
+																
+																
 																
 																` : `
 															<input type="hidden" name="sub_items[0][is_percentage_of][]" value="Earning Before Taxes - EBT">
@@ -1527,7 +1624,7 @@ $tableId = 'kt_table_1';
                                                         `
                             
                             
-									<div class="modal fade edit-sub-modal-class" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+									<div class="modal fade edit-sub-modal-class" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name) }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 											<div class="modal-dialog" role="document">
 												<div class="modal-content modal-xl">
 												<div class="modal-header">
@@ -1537,12 +1634,15 @@ $tableId = 'kt_table_1';
 													</button>
 												</div>
 												<div class="modal-body">
-													<form data-financial-statement-able-item-id="${data.pivot.financial_statement_able_item_id}" id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+													<form data-financial-statement-able-item-id="${data.pivot.financial_statement_able_item_id}" id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name)  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+														<input type="hidden" name="in_add_or_edit_modal" value="1">
 														<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 														<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 														<input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
 														<input  type="hidden" name="cash_flow_statement_id"  value="{{ $cashFlowStatement->id }}">
+														<input  type="hidden" name="was_financial_income"  value="${data.pivot && data.pivot.is_financial_income!=null ? data.pivot.is_financial_income :''}">
+														<input  type="hidden" name="was_financial_expense"  value="${data.pivot && data.pivot.is_financial_expense!=null ? data.pivot.is_financial_expense :''}">
 														<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
 														<div class="d-flex align-items-center">
 														
@@ -1567,10 +1667,13 @@ $tableId = 'kt_table_1';
 														${has_percentage_or_fixed_sub_items}
 														${subOfSelect}
 														</div>
+														${getFinancialIncomeOrExpenseCheckBoxes(true ,data.pivot,data.pivot.financial_statement_able_item_id )}
+														${getCollectionPolicyHtml(true,data.pivot,data.pivot.financial_statement_able_item_id)}
+														
 													</form>
 												<div class="modal-footer" style="border-top:0 !important">
 													<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-													<button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">{{ __('Edit') }}</button>
+													<button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name }">{{ __('Edit') }}</button>
 												</div>
 												</div>
 											</div>
@@ -1583,7 +1686,7 @@ $tableId = 'kt_table_1';
                                                         `
                             
                             
-											<div class="modal fade" id="delete-sub-modal${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+											<div class="modal fade delete-item-modal" data-item-id="${data.pivot.financial_statement_able_item_id}" data-sub-name="${data.pivot.sub_item_name}" id="delete-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name)}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 													<div class="modal-dialog" role="document">
 														<div class="modal-content ">
 														<div class="modal-header">
@@ -1593,20 +1696,21 @@ $tableId = 'kt_table_1';
 															</button>
 														</div>
 														<div class="modal-body">
-															<form id="delete-sub-item-form${data.pivot.financial_statement_able_item_id+data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+															<form id="delete-sub-item-form${data.pivot.financial_statement_able_item_id+convertStringToClass(data.pivot.sub_item_name) }" class="delete-submit-sub-item" action="{{ route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+																<input type="hidden" value="1" name="in_delete_modal" >
 																<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 																<input type="hidden" name="income_statement_id" value="{{$incomeStatement->id}}">
+																<input type="hidden" name="is_financial_income" value="${data.pivot.is_financial_income}">
+																<input type="hidden" name="is_financial_expense" value="${data.pivot.is_financial_expense}">
 																<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 																<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 																<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
 																<p>{{ __('Are You Sure To Delete ') }} ${data.pivot.sub_item_name}  ? </p>
-															
-															
 															</form>
 														</div>
 														<div class="modal-footer" style="border-top:0 !important">
 															<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-															<button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }" >{{ __('Delete') }}</button>
+															<button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name }" >{{ __('Delete') }}</button>
 														</div>
 														</div>
 													</div>
@@ -1619,7 +1723,9 @@ $tableId = 'kt_table_1';
                                                     $(row).attr('data-sub-item-name', data.pivot.sub_item_name)
 
                                                     $(row).attr('data-percentage-value', data.pivot && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value || 0 : 0)
-                                                    $(row).attr('data-cost-of-unit-value', data.pivot && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value_value || 0 : 0)
+                                                    $(row).attr('data-cost-of-unit-value', data.pivot && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value || 0 : 0)
+                                                    $(row).attr('data-is-financial-expense', data.pivot && data.pivot.is_financial_expense == '1' ? 1 : 0)
+                                                    $(row).attr('data-is-financial-income', data.pivot && data.pivot.is_financial_income == '1' ? 1 : 0)
 
                                                     if (data.pivot.can_be_percentage_or_fixed) {
                                                         $(row).attr('data-can-be-percentage-or-fixed', data.pivot.can_be_percentage_or_fixed)
@@ -1647,10 +1753,12 @@ $tableId = 'kt_table_1';
                                                         })[0];
                                                         // good
                                                         filterDate = filterDate.split('date-')[1];
-                                                        totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")));
+                                                        totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
 
-
-                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
+                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0 ))}" >
+														<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  value="${data.pivot ? data.pivot.is_financial_income :0}" >
+														
+														 `;
                                                         $(dateDt).after(hiddenInput);
 
                                                     });
@@ -1679,11 +1787,11 @@ $tableId = 'kt_table_1';
                                                             })[0];
                                                             filterDate = filterDate.split('date-')[1];
 
-                                                            var hiddenInput = `<input type="hidden" name="valueMainRowWithoutSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
+                                                            var hiddenInput = `<input type="hidden" name="valueMainRowWithoutSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(),data.pivot ? data.pivot.is_financial_expense : false))}" > `;
                                                             $(dateDt).after(hiddenInput);
                                                         });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
-                                                        //     totalOfRowArray.push(parseFloat(subTotal))
+                                                        totalOfRowArray.push(parseFloat(subTotal))
                                                         $(row).append(`
 											<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]" value="${subTotal}">
 										`);
@@ -1724,9 +1832,9 @@ $tableId = 'kt_table_1';
 
 
                                                             filterDate = filterDate.split('date-')[1];
-                                                            totalOfRowArray.push(parseFloat($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")));
+                                                            totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
 
-                                                            var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${($(dateDt).html().replace(/(<([^>]+)>)/gi, "").replace(/,/g, ""))}" > `;
+                                                            var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(),data.pivot ? data.pivot.is_financial_expense : 0))}" > `;
                                                             $(dateDt).after(hiddenInput);
                                                         });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
@@ -1888,8 +1996,9 @@ $tableId = 'kt_table_1';
 											<div style="display:flex;align-items:center;justify-content:space-between;width:100%">
 												<div style="width:60%">
 													<label class="form-label">{{ __('Name') }}</label>
-													<input  name="sub_items[0][name]" type="text" value="" class="form-control  " required>
+													<input  name="sub_items[0][name]" type="text" value="" class="form-control  trim-when-key-up" required>
 												</div>
+												
 												<div class="form-check mt-2 text-center ">
 												<label class="form-check-label"  style="margin-top:3px;display:block" >
 													{{ __('Is Depreciation Or Amortization ?') }}
@@ -1900,7 +2009,7 @@ $tableId = 'kt_table_1';
 											</div>
 												` + has_percentage_or_fixed_sub_items + `
 												</div>
-															</div> `;
+															 `;
                                                         } else {
                                                             if (data.id == domElements.financialIncomeOrExpensesId) {
                                                                 quantityCheckbox = ''
@@ -1911,17 +2020,18 @@ $tableId = 'kt_table_1';
 															<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center border-bottom-popup" data-id="${data.id}" data-index="0">
 																<div style="display:flex;align-items:center;width:100%;justify-content:space-between; ">
 																<div class="${increaseNameWidth ? 'width-66' : ''}"><label class="form-label">{{ __('Name') }}</label>
-																<input name="sub_items[0][name]" type="text" value="" class="form-control" required></div>
+																<input name="sub_items[0][name]" type="text" value="" class="form-control trim-when-key-up" required></div>
 																` + quantityCheckbox + `</div>` +
                                                                 `
 																` + has_percentage_or_fixed_sub_items + `
-															</div> ` + getCollectionPolicyHtml() + `
-														</div> `;
+															</div> ` + '' + `
+														 `;
 
                                                         }
+
                                                         $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (data.id)).attr('data-model-id', data.id).attr('data-model-name', '{{ $modelName }}')
                                                             .append(`
-                    <div class="modal fade" id="add-sub-modal${data.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal fade add-sub-item-modal" id="add-sub-modal${data.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-xl">
       <div class="modal-header">
@@ -1934,6 +2044,8 @@ $tableId = 'kt_table_1';
         <form  data-financial-statement-able-item-id="${data.id}" id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
             
             <label class="label ">{{ __('How Many Items ?') }}</label>
+														<input type="hidden" name="in_add_or_edit_modal" value="1">
+			
 			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
             <input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
             <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
@@ -1942,7 +2054,9 @@ $tableId = 'kt_table_1';
             <input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" name="how_many_items" type="number" value="1">
           
            ${nameAndDepreciationIfExist}
-		
+		   ${getFinancialIncomeOrExpenseCheckBoxes(false ,null, data.id)}
+		  ${getCollectionPolicyHtml(false,null,data.id)}
+		</div>
         </form>
       </div>
       <div class="modal-footer" style="border-top:0 !important">
@@ -1980,7 +2094,19 @@ $tableId = 'kt_table_1';
 
                                             }
                                             , drawCallback: function(settings) {
+                                                getLastSubItemOfEachMainRow()
                                                 const reportType = vars.subItemType;
+                                                $('.editable-text').attr('contenteditable', false)
+
+                                                //                  if (reportType == 'adjusted' || reportType == 'actual' || reportType == 'modified') {
+                                                //
+                                                //                      if ($(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row`).length) {
+                                                //                          $(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row td.editable-date`).trigger('blur')
+                                                //                      } else {
+                                                //                          $(`.maintable-1-row-class${domElements.costOfGoodsId}.is-sub-row td.editable-date`).trigger('blur')
+                                                //                      }
+                                                //
+                                                //                  }
 
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 $('tr[data-percentage-or-fixed="percentage"] td.editable,tr[data-percentage-or-fixed="cost_of_unit"] td.editable').attr('contenteditable', false).attr('title', '');
@@ -2108,9 +2234,17 @@ $tableId = 'kt_table_1';
                                                     })
                                                 }
 
+                                                $('.has-collection-policy-class:checked').trigger('change')
+                                                $('.only-one-checked:checked').trigger('change')
+                                                $('.collection_rate_input').trigger('change')
+
+
+
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
+
+
 
 
                                                 $('.main-table-class').DataTable().columns.adjust();
@@ -2139,10 +2273,66 @@ $tableId = 'kt_table_1';
                         jQuery(document).ready(function() {
                             KTDatatablesDataSourceAjaxServer.init();
 
+                            function validatePercentage() {
+                                let hasError = false
+                                $('.how-many-item').each(function(index, howManyItemDiv) {
+                                    var hasCollectionPolicy = $(howManyItemDiv).find('.has-collection-policy-class')[0]
+									if(hasCollectionPolicy && hasCollectionPolicy.checked){
+										hasCollectionPolicy = true 
+									}
+									else{
+										hasCollectionPolicy = false 
+									}
+                                    var customCollectionPolicy = $(howManyItemDiv).find('.only-one-checked:checked').val();
+                                    var total = $(howManyItemDiv).find('.collection_rate_total_class').val();
+                                    if (hasCollectionPolicy && customCollectionPolicy == 'customize' && total != '100.00 %') {
+                                        hasError = true
+                                        Swal.fire({
+                                            text: 'Percentage Must Be 100 %'
+                                            , icon: 'warning'
+                                        })
+
+                                    }
+                                    return;
+
+                                })
+                                return hasError;
+
+
+                            }
+                            $(document).on('show.bs.modal', '.edit-sub-modal-class,.add-sub-item-modal', function() {
+                                modalIsOpenInAddOrEdit = true
+                            })
+                            $(document).on('hide.bs.modal', '.edit-sub-modal-class,.add-sub-item-modal', function() {
+                                modalIsOpenInAddOrEdit = false
+                            })
+
+                            $(document).on('show.bs.modal', '.delete-item-modal', function() {
+                                let mainRowId = this.getAttribute('data-item-id')
+                                let subItemName = this.getAttribute('data-sub-name')
+                                deleteModalIsOpen = true
+                                currentDelete = {
+                                    id: mainRowId
+                                    , subName: subItemName
+                                }
+                            })
+                            $(document).on('hide.bs.modal', '.delete-item-modal', function() {
+                                currentDelete = {}
+                                deleteModalIsOpen = false
+                            })
+
                             $(document).on('click', '.save-sub-item', function(e) {
+
+                                // valiation
+
+                                let hasError = validatePercentage()
+                                if (hasError) {
+                                    return;
+                                }
                                 $(this).prop('disabled', true)
                                 const salesRevenueId = domElements.salesRevenueId
                                 const financeIncomeOrExpensesId = domElements.financialIncomeOrExpensesId
+                                const salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId
                                 const marketExpensesId = domElements.marketExpensesId
                                 const generalExpensesId = domElements.generalExpensesId
                                 const salesRevenueSubItem = window['sales_revenues_sub_items_names'].length ? window['sales_revenues_sub_items_names'][0] : null
@@ -2154,7 +2344,9 @@ $tableId = 'kt_table_1';
                                 inAddOrEditModal = true;
                                 let id = $(this).data('id');
                                 let form = document.getElementById('add-sub-item-form' + id);
-                                var formData = new FormData(form);
+                                var formData = new FormData(form)
+
+
                                 var formDataObject = {};
                                 formData.forEach((value, key) => {
                                     if (!Reflect.has(formDataObject, key)) {
@@ -2188,11 +2380,9 @@ $tableId = 'kt_table_1';
                                     if (id == financeIncomeOrExpensesId) {
                                         updateCurrentRow = true;
                                     }
-                                    if (id == financeIncomeOrExpensesId || id == marketExpensesId || id == generalExpensesId) {
+                                    if (id == financeIncomeOrExpensesId || id == marketExpensesId || id == generalExpensesId || id == salesAndDistributionExpensesId) {
                                         updateCurrentRow = true;
                                     }
-
-
                                     for (date of dates) {
                                         // do not update anything if you add sales renuve sub item because it will be 0 anyway
                                         if (id != salesRevenueId) {
@@ -2269,13 +2459,34 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('click', '.save-sub-item-edit', function(e) {
+                                var hasCollectionPolicy = $(this).closest('.modal-content').find('.has-collection-policy-class')[0]
+								//var hasCollectionPolicy = $(howManyItemDiv).find('.has-collection-policy-class')[0]
+									if(hasCollectionPolicy && hasCollectionPolicy.checked){
+										hasCollectionPolicy = true 
+									}
+									else{
+										hasCollectionPolicy = false 
+									}
+                                var customCollectionPolicy = $(this).closest('.modal-content').find('.only-one-checked:checked').val();
+                                var isFinancialExpense = $(this).closest('.modal-content').find('.is-financial-expense-class:checked').val();
+                                var total = $(this).closest('.modal-content').find('.collection_rate_total_class').val();
+                                if (hasCollectionPolicy && customCollectionPolicy == 'customize' && total != '100.00 %') {
+                                    Swal.fire({
+                                        text: 'Percentage Must Be 100 %'
+                                        , icon: 'warning'
+                                    })
+                                    return
+
+                                }
+
                                 e.preventDefault();
                                 inAddOrEditModal = true;
+                                inEditMode = true
                                 const btn = $(this);
                                 btn.prop('disabled', true);
                                 let id = $(this).data('id');
                                 let subItemName = $(this).data('sub-item-name');
-                                let form = document.getElementById('edit-sub-item-form' + id + subItemName);
+                                let form = document.getElementById('edit-sub-item-form' + id + convertStringToClass(subItemName));
                                 var formData = new FormData(form);
 
                                 var formDataObject = {};
@@ -2312,26 +2523,22 @@ $tableId = 'kt_table_1';
                                     } else if (is_cost_of_unit) {
                                         tdValue = cost_of_unit_value;
                                     }
+                                    if (isFinancialExpense) {
 
-                                    $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"]').attr('data-percentage-value', is_percentage ? tdValue : 0).attr('data-cost-of-unit-value', is_cost_of_unit ? tdValue : 0).attr('data-financial-statement-able-item-id', incomeStatementItemId).attr('data-is-percentage-of', is_percentage_of).attr('data-is-cost-of-unit-of', is_cost_of_unit_of).attr('data-percentage-or-fixed', percentage_or_fixed).attr('data-is-percentage', is_percentage).attr('data-is-cost-of-unit', is_cost_of_unit).attr('data-is-repeating-fixed', is_repeating_fixed).attr('data-is-none-repeating-fixed', is_non_repeating_fixed).attr('data-is-trigger-change', 'true');
+                                    }
+                                    $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"]').attr('data-is-financial-expense', isFinancialExpense == 1 ? 1 : 0).attr('data-percentage-value', is_percentage ? tdValue : 0).attr('data-cost-of-unit-value', is_cost_of_unit ? tdValue : 0).attr('data-financial-statement-able-item-id', incomeStatementItemId).attr('data-is-percentage-of', is_percentage_of).attr('data-is-cost-of-unit-of', is_cost_of_unit_of).attr('data-percentage-or-fixed', percentage_or_fixed).attr('data-is-percentage', is_percentage).attr('data-is-cost-of-unit', is_cost_of_unit).attr('data-is-repeating-fixed', is_repeating_fixed).attr('data-is-none-repeating-fixed', is_non_repeating_fixed).attr('data-is-trigger-change', 'true');
                                     if (vars.subItemType == 'modified') {
                                         var firstDateForecast = getFirstDataForecast()
                                         if (firstDateForecast) {
-                                            $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"] td.editable-date.date-' + firstDateForecast).html(number_format(tdValue)).trigger('blur');
-
+                                            $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"] td.editable-date.date-' + firstDateForecast).attr('data-is-financial-expense', isFinancialExpense == 1 ? 1 : 0).html(number_format(tdValue)).trigger('blur');
                                         }
-
                                     } else {
                                         $('tr.maintable-1-row-class' + incomeStatementItemId + '[data-sub-item-name="' + oldSubItemName + '"] td.editable-date:eq(0)').html(number_format(tdValue)).trigger('blur');
 
                                     }
-
                                 }
-
-
-
                                 // refresh formdata object 
-                                formData = document.getElementById('edit-sub-item-form' + id + subItemName)
+                                formData = document.getElementById('edit-sub-item-form' + id + convertStringToClass(subItemName))
                                 formData = new FormData(formData);
                                 // submit main table inputs 
 
@@ -2373,6 +2580,7 @@ $tableId = 'kt_table_1';
                                 });
 
                                 inAddOrEditModal = false;
+                                inEditMode = false
                             });
 
 
@@ -2384,12 +2592,31 @@ $tableId = 'kt_table_1';
                                 let subItemName = $(this).data('sub-item-name');
 
                                 $(this).prop('disabled', true);
-                                document.querySelectorAll('tr[data-financial-statement-able-item-id="' + id + '"][data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
-                                    editableDateTd.innerHTML = 0
-                                    editableDateTd.dispatchEvent(new Event('blur'));
-                                })
+                                // edit-info-row add-sub maintable-1-row-class1 is-sub-row even
+                                if (id == domElements.salesRevenueId) {
+                                    let subItemWithoutQuantity = getSubItemsFromString(subItemName)
+                                    let subItemWithQuantity = subItemWithoutQuantity + "{{ __(quantityIdentifier) }}"
+                                    for (subName of [subItemWithoutQuantity, subItemWithQuantity]) {
+                                        document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subName + '"] td.editable-date').forEach((editableDateTd) => {
+                                            editableDateTd.innerHTML = 0
+                                            editableDateTd.setAttribute('data-percentage-value', 0)
+                                            editableDateTd.setAttribute('data-cost-of-unit-value', 0)
+                                            editableDateTd.dispatchEvent(new Event('blur'));
+                                        })
+                                    }
 
-                                let form = document.getElementById('delete-sub-item-form' + id + subItemName);
+                                } else {
+
+                                    document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
+                                        editableDateTd.innerHTML = 0
+                                        editableDateTd.setAttribute('data-percentage-value', 0)
+                                        editableDateTd.setAttribute('data-cost-of-unit-value', 0)
+                                        editableDateTd.dispatchEvent(new Event('blur'));
+                                    })
+                                }
+
+
+                                let form = document.getElementById('delete-sub-item-form' + id + convertStringToClass(subItemName));
 
                                 var formData = new FormData(form);
 
@@ -2398,7 +2625,6 @@ $tableId = 'kt_table_1';
                                 for (var pair of formData.entries()) {
                                     dataForm.append(pair[0], pair[1]);
                                 }
-
                                 $.ajax({
                                     type: 'POST'
                                     , url: $(form).attr('action')
@@ -2455,10 +2681,12 @@ $tableId = 'kt_table_1';
                                 } else if (rowId == earningBeforeInterestTaxesId) {
                                     updateEarningBeforeTaxes(date);
                                     updateTotalForRow(currentRow);
+
                                     updatePercentageOfSalesFor(rowId, date);
                                 } else if (rowId == earningBeforeTaxesId) {
                                     updateNetProfit(date);
                                     updateTotalForRow(currentRow);
+
                                     updatePercentageOfSalesFor(rowId, date);
 
                                 }
@@ -2472,6 +2700,7 @@ $tableId = 'kt_table_1';
                                 form = document.getElementById('store-report-form-id');
                                 let redirectTo = this.getAttribute('data-redirect-to');
                                 var formData = new FormData(form);
+
                                 $.ajax({
                                     type: 'POST'
                                     , url: $(form).attr('action')
@@ -2556,12 +2785,13 @@ $tableId = 'kt_table_1';
 
                                                 if (v.closest('.dropdown.bootstrap-select')) {
                                                     v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${name.includes('is_cost_of_unit_of') ? sub_items_quantity_options :sub_items_options} </select>`
+                                                } else {
+                                                    $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
 
                                                 }
 
                                             } else {
                                                 $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
-
                                             }
                                         })
                                         $('.append-names[data-id="' + index + '"]').append(lastInstanceClone);
@@ -2572,11 +2802,44 @@ $tableId = 'kt_table_1';
                             });
 
                         });
+
+
                     })(jQuery);
+
                 });
 
                 function getSearchInputSelector(tableId) {
                     return tableId + '_filter' + ' label input';
+                }
+
+                function getLastPercentageOfSalesOrCostOfUnitNameOf(mainRowId) {
+                    let name = {
+                        percentage: null
+                        , costOfUnit: null
+                    };
+                    $('.is-sub-row.maintable-1-row-class' + mainRowId).each(function(index, subRow) {
+                        var isPercentage = subRow.getAttribute('data-is-percentage') && subRow.getAttribute('data-is-percentage') != 'false'
+                        var isCostOfUnit = subRow.getAttribute('data-is-cost-of-unit') && subRow.getAttribute('data-is-cost-of-unit') != 'false'
+                        var subItemName = subRow.getAttribute('data-sub-item-name')
+                        if (isPercentage) {
+                            name['percentage'] = subItemName;
+                        }
+                        if (isCostOfUnit) {
+                            name['costOfUnit'] = subItemName;
+                        }
+                    })
+                    return name;
+                }
+
+                function getLastSubItemOfEachMainRow() {
+                    lastPercentageSubItemOfEachMainRow = {}
+                    lastCostOfUnitSubItemOfEachMainRow = {}
+                    $('.is-main-with-sub-items').each(function(index, mainRow) {
+                        var mainRowId = mainRow.getAttribute('data-financial-statement-able-item-id')
+                        var lastSubItems = getLastPercentageOfSalesOrCostOfUnitNameOf(mainRowId)
+                        lastPercentageSubItemOfEachMainRow[mainRowId] = lastSubItems.percentage
+                        lastCostOfUnitSubItemOfEachMainRow[mainRowId] = lastSubItems.costOfUnit
+                    })
                 }
 
 
@@ -2603,6 +2866,7 @@ $tableId = 'kt_table_1';
                         var mainRowId = val.getAttribute('data-model-id');
                         dates = Array.isArray(dates) ? dates : JSON.parse(dates);
                         for (date of dates) {
+
                             updatePercentageOfSalesFor(mainRowId, date, false);
                         }
                     })
@@ -2952,37 +3216,67 @@ $tableId = 'kt_table_1';
 
                 }
 
-                function getCollectionPolicyHtml() {
+                function getFinancialIncomeOrExpenseCheckBoxes(editMode, pivot, id) {
+                    if (id != domElements.financialIncomeOrExpensesId) {
+                        return '';
+                    }
+                    const isExpense = editMode && pivot.is_financial_expense
+                    return `
+					<div class="financial-income-or-expense-id only-one-checkbox-parent d-flex mb-2 ${editMode ?'mt-3':''}">
+					<div class="d-flex flex-column align-items-center justify-content-center flex-wrap mr-5 ">
+					<label >{{ __('Income') }}</label>
+					<input ${!isExpense ? 'checked' : ''} class="only-one-checkbox"   type="checkbox" value="1" name="sub_items[0][is_financial_income]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+					</div>
+					
+					<div class="d-flex flex-column align-items-center justify-content-center flex-wrap ">
+							<label >{{ __('Expense') }}</label>
+					<input ${isExpense ? 'checked':''} class="is-financial-expense-class only-one-checkbox" type="checkbox" value="1" name="sub_items[0][is_financial_expense]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+					</div>
+					</div>
+					
+					`;
+                }
+
+                function getCollectionPolicyHtml(editMode, pivot = null, id) {
+                    let valueOfCustom = [];
+                    let isCustom = pivot && pivot && pivot.has_collection_policy && pivot.collection_policy_type == 'customize'
+                    let isSystemDefault = pivot && pivot.has_collection_policy && pivot.collection_policy_type == 'system_default'
+                    let collectionOrPayment = id == domElements.salesRevenueId ? 'Collection' : 'Payment'
+                    if (isCustom) {
+                        valueOfCustom = JSON.parse(pivot.collection_policy_value)
+                    }
                     let collectionRates = ``
                     let dueInDays = ``
+
                     for (let i = 0; i < 5; i++) {
                         collectionRates += `<div class="collection-rate-item mb-3">
-												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_policy][type][value][rate][]" style="width:100px;" value="0">
+												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_policy][type][value][rate][${i}]" style="width:100px;" value="${isCustom && valueOfCustom.rate && valueOfCustom.rate[i]?valueOfCustom.rate[i] :0 }">
 											</div>`
 
                         dueInDays += `<div class="collection-rate-item mb-3">
-												<select name="sub_items[0][collection_policy][type][value][due_in_days][]" class="form-control">
-													<option value="0">0</optionv>
-													<option value="15">15</optionv>
-													<option value="30">30</optionv>
-													<option value="45">45</optionv>
-													<option value="60">60</optionv>
-													<option value="75">75</optionv>
-													<option value="90">90</optionv>
-													<option value="120">120</optionv>
-													<option value="150">150</optionv>
-													<option value="180">180</optionv>
+												<select name="sub_items[0][collection_policy][type][value][due_in_days][${i}]" class="form-control">
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==0?'selected':'' } value="0">0</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==15 ? 'selected' :''} value="15">15</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==30 ? 'selected' :''} value="30">30</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==45 ? 'selected' :''} value="45">45</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==60 ? 'selected' :''} value="60">60</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==75 ? 'selected' :''} value="75">75</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==90 ? 'selected' :''} value="90">90</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==120? 'selected' :'' } value="120">120</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==150? 'selected' :'' } value="150">150</optionv>
+													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==180? 'selected' :'' } value="180">180</optionv>
 												</select>
 											</div>`
                     }
 
                     return `
-					<div class="collection-policy d-flex flex-wrap w-100 mt-3">
+					<div class="collection-policy d-flex flex-wrap w-100 mt-3 ${id == domElements.salesRevenueId && editMode  ? 'pl-25' :''}">
 						<div class="collection-policy-header basis-100 mb-4">
 							<div class="check-boxes">
 								<div class="checkbox-item d-flex ">
-									<label class="form-label label  mr-3">{{ __('Has Collection Policy') }}</label>
-									<input type="checkbox" style="width:16px;height:16px;" class="checkbox has-collection-policy-class form-control" name="sub_items[0][collection_policy][has_collection_policy]" value="1">
+									<label class="form-label label  mr-3">{{ __('Has ${collectionOrPayment} Policy') }}</label>
+									<input ${pivot && pivot.has_collection_policy ? 'checked' : ''} type="checkbox" style="width:16px;height:16px;" name="" class="checkbox has-collection-policy-class form-control"  value="1">
+									<input type="hidden" class="has_collection_policy_input" name="sub_items[0][collection_policy][has_collection_policy]" value="${pivot && pivot.has_collection_policy ? 1 : 0}">
 								</div>
 							</div>
 						</div>
@@ -2991,12 +3285,12 @@ $tableId = 'kt_table_1';
 								<div class="collection-policy-checkboxes d-flex">
 									<div class="checkbox-item d-flex mr-3">
 									<label class="form-label label  mr-3">{{ __('System Default') }}</label>
-									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][collection_policy][type][name]" value="system_default">
+									<input ${isSystemDefault ? 'checked' : ''} type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][collection_policy][type][name]" value="system_default">
 								</div>
 								
 								<div class="checkbox-item d-flex ">
 									<label class="form-label label  mr-3">{{ __('Customize') }}</label>
-									<input type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][collection_policy][type][name]" value="customize">
+									<input ${isCustom ? 'checked' : ''} type="checkbox" style="width:16px;height:16px;" class="checkbox only-one-checked form-control" name="sub_items[0][collection_policy][type][name]" value="customize">
 								</div>
 								
 								</div>
@@ -3007,20 +3301,20 @@ $tableId = 'kt_table_1';
 								<div class="basis-100 for-only-one-checked d-none" data-item="system_default">
 										<div class="system-default-select">
 											<select name="sub_items[0][collection_policy][type][value]" class="select form-control">
-												<option value="monthly">{{ __('Monthly') }}</option>
-												<option value="quarterly">{{ __('Quarterly') }}</option>
-												<option value="semi-annually">{{ __('Semi-annually') }}</option>
-												<option value="annually">{{ __('Annually') }}</option>
+												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='monthly' ? 'selected' : ''} value="monthly">{{ __('Monthly') }}</option>
+												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='quarterly' ? 'selected' : ''} value="quarterly">{{ __('Quarterly') }}</option>
+												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='semi-annually' ? 'selected' : ''} value="semi-annually">{{ __('Semi-annually') }}</option>
+												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='annually' ? 'selected' : ''} value="annually">{{ __('Annually') }}</option>
 											</select>
 										</div>
 								</div>
 								<div class="basis-100 for-only-one-checked d-none" data-item="customize">
 									<div class="customize-content" style="display:flex;gap:50px;">
 										<div class="collection-rate d-flex flex-column ">
-											<h5 class="mb-3 label form-label">{{ __('Collection Rate %') }} </h5>
+											<h5 class="mb-3 label form-label">{{ __('${collectionOrPayment} Rate %') }} </h5>
 											${collectionRates}
 											<label class="label form-label">{{ __('Total') }}</label>
-											<input style="width:100px;" value="0" disabled class="form-control" name="sub_items[0][collection_rate_total][]">
+											<input style="width:100px;" value="0" disabled class="form-control collection_rate_total_class" name="sub_items[0][collection_rate_total][]">
 										</div>
 										<div class="due-in-days d-flex flex-column">
 											<h5 class="label form-label mb-3">{{ __('Due In Days') }}</h5>
@@ -3036,7 +3330,6 @@ $tableId = 'kt_table_1';
                 }
 
                 function updateSalesGrowthRate(visiableHeaderDates) {
-
                     const salesRevenueId = domElements.salesRevenueId;
                     const salesGrowthRateId = domElements.salesGrowthRateId;
                     for (visiableHeaderDate of visiableHeaderDates) {
@@ -3081,6 +3374,7 @@ $tableId = 'kt_table_1';
 
 
             </script>
+
 
         </x-slot>
 

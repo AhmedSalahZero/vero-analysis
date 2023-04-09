@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits\Mutators;
 
+use App\Models\CashFlowStatement;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use Illuminate\Http\Request;
@@ -58,7 +59,7 @@ trait FinancialStatementAbleMutator
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
-				'total' => array_sum($pivotForModified),
+				'total' => in_array($financialStatementAbleItemId, ($this->getMainItemTableClassName())::percentageOfSalesRows()) ? getTotalOfSalesRevenueFor($this->id, 'adjusted', $financialStatementAbleItemId) : array_sum($pivotForModified),
 				'sub_item_type' => 'adjusted'
 			], false);
 
@@ -68,7 +69,7 @@ trait FinancialStatementAbleMutator
 			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
-				'total' => array_sum($pivotForModified),
+				'total' => in_array($financialStatementAbleItemId, ($this->getMainItemTableClassName())::percentageOfSalesRows()) ? getTotalOfSalesRevenueFor($this->id, 'adjusted', $financialStatementAbleItemId) : array_sum($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
 				'creator_id' => Auth::id(),
 				'sub_item_type' => 'modified'
@@ -76,7 +77,7 @@ trait FinancialStatementAbleMutator
 			], false);
 		}
 	}
-	public function updateTotalRowsForAdjusted(int $financialStatementAbleId, int $financialStatementAbleItemId, $subItemType): void
+	public function updateTotalRowsForAdjusted(int $financialStatementAbleItemId, $subItemType): void
 	{
 
 
@@ -91,7 +92,6 @@ trait FinancialStatementAbleMutator
 			// and here
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
-
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
 				'company_id' => \getCurrentCompanyId(),
@@ -169,11 +169,10 @@ trait FinancialStatementAbleMutator
 			$percentageOrFixed = 'non_repeating_fixed';
 		}
 		$collection_value = '';
-		if(isset($options['collection_policy']['type']['value']) && is_array($options['collection_policy']['type']['value'])){
+		if (isset($options['collection_policy']['type']['value']) && is_array($options['collection_policy']['type']['value'])) {
 			$collection_value = json_encode($options['collection_policy']['type']['value']);
-		}
-		elseif(isset($options['collection_policy']['type']['value'])){
-			$collection_value = $options['collection_policy']['type']['value'] ;
+		} elseif (isset($options['collection_policy']['type']['value'])) {
+			$collection_value = $options['collection_policy']['type']['value'];
 		}
 		return [
 			'company_id' => \getCurrentCompanyId(),
@@ -184,7 +183,7 @@ trait FinancialStatementAbleMutator
 			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
 			'has_collection_policy' => $options['collection_policy']['has_collection_policy'] ?? false,
 			'collection_policy_type' => $options['collection_policy']['type']['name'] ?? '',
-			'collection_policy_value' => $collection_value ,
+			'collection_policy_value' => $collection_value,
 			'is_quantity' => $isQuantityRepeating,
 			'can_be_quantity' => $options['can_be_quantity'] ?? false,
 			'percentage_or_fixed' => $percentageOrFixed,
@@ -194,16 +193,14 @@ trait FinancialStatementAbleMutator
 			'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ? $options['repeating_fixed_value'] : null,
 			'percentage_value' => $percentageOrFixed == 'percentage' ? $options['percentage_value'] : null,
 			'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ? $options['cost_of_unit_value'] : null,
+			'is_financial_expense' => isset($options['is_financial_expense']) && $options['is_financial_expense'],
+			'is_financial_income' => isset($options['is_financial_income']) && $options['is_financial_income'],
 			'created_at' => now()
 		];
 	}
 	public function storeReport(Request $request)
 	{
-
-
-
-
-		if (count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
+		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
 				'sub_items.*.name' => 'required'
 			], [
@@ -219,30 +216,41 @@ trait FinancialStatementAbleMutator
 
 		$financialStatementAble = (new static)::find($request->input('financial_statement_able_id'));
 		$financialStatementAbleItemId = $request->input('financial_statement_able_item_id');
+		$cashFlowStatement = new CashFlowStatement();
+
 		$subItemType = $request->get('sub_item_type');
 		if (!$request->has('new_sub_item_name')) {
 			foreach ((array)$request->sub_items as $index => $options) {
-				if ($options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
+				if (isset($options['name']) && $options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
 					$insertSubItems = $this->getInsertToSubItemFields($subItemType);
-
 					foreach ($insertSubItems as $subType) {
-						if (isset($options['is_quantity']) && $options['is_quantity']) {
+						if (isset($options['is_quantity']) && $options['is_quantity'] && get_class($this) != CashFlowStatement::class) {
 							foreach ([true, false] as $isQuantityRepeating) {
 								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
 							}
 						} else {
-							$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options));
+							if (get_class($this) == CashFlowStatement::class) {
+								$isFinancialIncome = isset($options['is_financial_income']) && $options['is_financial_income'];
+								logger(['income_statement_item_id', $financialStatementAbleItemId, $isFinancialIncome, $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])]);
+							}
+							// $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])
+							$financialStatementAbleItemOrCashFlowStatementItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income']);
+							$financialStatementAble->withSubItemsFor($financialStatementAbleItemOrCashFlowStatementItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemOrCashFlowStatementItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options));
 						}
 					}
 				}
 			}
 		}
 
+
 		foreach ((array)$request->get('value') as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId);
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $values) {
 				foreach ($values as $sub_item_origin_name => $payload) {
-					//update pivot foreach item
+					// if (get_class($this) == CashFlowStatement::class) {
+					// 	dd((array)$request->get('value'));
+					// }
+					//$financialStatementAbleItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, $request->get('is_financial_income')[$financialStatementAbleId][$financialStatementAbleItemId][$sub_item_origin_name] ?? false);
 					if ($financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->exists()) {
 						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
 							'payload' => json_encode($payload),
@@ -255,20 +263,22 @@ trait FinancialStatementAbleMutator
 
 		foreach ((array)$request->get('financialStatementAbleItemName') as $financialStatementAbleId => $financialStatementAbleItems) {
 
-			foreach ($values as $sub_item_origin_name => $payload) {
-				$financialStatementAble = (new static)::find($financialStatementAbleId);
-				foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $names) {
-					foreach ($names as $oldName => $newName) {
-						$financialStatementAble->syncSubItemName($financialStatementAbleItemId, $subItemType, $oldName, $newName);
-						$financialStatementAble->syncSubItemNameForPivot($financialStatementAbleItemId, $subItemType, $oldName, $newName);
-					}
+			// foreach ($values as $sub_item_origin_name => $payload) {
+			$financialStatementAble = (new static)::find($financialStatementAbleId);
+			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $names) {
+				foreach ($names as $oldName => $newName) {
+					//$financialStatementAbleItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, $request->get('is_financial_income')[$financialStatementAbleId][$financialStatementAbleItemId][$oldName] ?? false);
+					$financialStatementAble->syncSubItemName($financialStatementAbleItemId, $subItemType, $oldName, $newName);
+					$financialStatementAble->syncSubItemNameForPivot($financialStatementAbleItemId, $subItemType, $oldName, $newName);
 				}
 			}
+			// }
 		}
 		// store auto Calculated values
 		foreach ((array)$request->valueMainRowThatHasSubItems as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId)->load('mainRows');
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $payload) {
+				//$financialStatementAbleItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId,  false);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->detach($financialStatementAbleItemId);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($payload),
@@ -277,13 +287,14 @@ trait FinancialStatementAbleMutator
 					'creator_id' => Auth::id(),
 					'sub_item_type' => $subItemType,
 				], false);
-				$financialStatementAble->updateTotalRowsForAdjusted($financialStatementAbleId, $financialStatementAbleItemId, $subItemType);
+				$financialStatementAble->updateTotalRowsForAdjusted($financialStatementAbleItemId, $subItemType);
 			}
 		}
 
 		foreach ((array)$request->valueMainRowWithoutSubItems as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId)->load('mainRows');
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $payload) {
+				//	$financialStatementAbleItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId,  false);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->detach($financialStatementAbleItemId);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($payload),

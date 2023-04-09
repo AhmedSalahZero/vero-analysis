@@ -34,6 +34,8 @@
             return 2000;
         }
 
+
+
         function myNextAllWithNested(e) {
             var parentId = e.getAttribute('data-model-id')
             return document.querySelectorAll('tr.maintable-1-row-class' + parentId + '.is-sub-row')
@@ -47,9 +49,23 @@
             }
         }
 
-        function covertStringToClass(str) {
-            return str.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
+        function getSubItemsFromString(str) {
+            let stringToReplaceEn = "[(] {{ 'Quantity' }} [)]$"
+            let stringToReplaceAr = "[(] {{ __('Quantity') }} [)]$"
+            let regEn = new RegExp(stringToReplaceEn, "g")
+            let regAr = new RegExp(stringToReplaceAr, "g")
+            return str.replace(regEn, '').replace(regAr, '').trim()
+
         }
+
+        function isQuantitySubItem(str) {
+            return str.endsWith("{{ quantityIdentifier }}") || str.endsWith("{{ __(quantityIdentifier) }}")
+        }
+
+        function convertStringToClass(str) {
+            return str.replace(/[ !\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
+        }
+
         // window['maxOptions'] = 10 ;
         function reinitializeSelect2() {
             let numberOfMulteSelects = $(document).find('select.select2-select').length;
@@ -160,6 +176,28 @@
 
     <!--end::Global Theme Styles -->
     <style>
+        .arrow-nav {
+            font-size: 18px;
+            color: white !important;
+            background-color: #0B8576;
+            border-radius: 20px;
+            padding: 4px;
+            position: absolute;
+            top: 140px;
+        }
+
+        .arrow-right {
+            right: 0;
+        }
+
+        .arrow-left {
+            left: 0
+        }
+
+        .crusor-pointer {
+            cursor: pointer
+        }
+
         .color-red {
             color: red !important;
 

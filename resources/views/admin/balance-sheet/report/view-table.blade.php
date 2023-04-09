@@ -509,7 +509,7 @@ $tableId = 'kt_table_1';
 																<td class="red reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
 																<td class="cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 70.25px; position: sticky;">
 												<div class="d-flex align-items-center justify-content-between">
-													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-balance-sheet-id="${balanceSheetId}" data-target="#edit-sub-modal${balanceSheetItemId}${subItemName}"> <i class="fa fa-pen-alt"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${balanceSheetId}${subItemName}">
+													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-balance-sheet-id="${balanceSheetId}" data-target="#edit-sub-modal${balanceSheetItemId}${subItemName}"> <i class="fa fa-pen-alt"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${balanceSheetId}${convertStringToClass(subItemName)}">
 														<i class="fas fa-trash-alt"></i>
 
 													</a>
@@ -1109,7 +1109,7 @@ $tableId = 'kt_table_1';
                                             } else if (row.isSubItem && (row.pivot.created_from == row.pivot.sub_item_type)) {
                                                 return `
 											<div class="d-flex align-items-center justify-content-between">
-												<a  data-is-subitem="1" data-balance-sheet-item-id="${row.pivot.financial_statement_able_item_id}" data-balance-sheet-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-balance-sheet-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a data-balance-sheet-item-id="${row.pivot.financial_statement_able_item_id}" data-balance-sheet-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }">
+												<a  data-is-subitem="1" data-balance-sheet-item-id="${row.pivot.financial_statement_able_item_id}" data-balance-sheet-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-balance-sheet-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + row.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-') }"> <i class="fa fa-pen-alt"></i>  </a> <a data-balance-sheet-item-id="${row.pivot.financial_statement_able_item_id}" data-balance-sheet-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }">
 													<i class="fas fa-trash-alt"></i>
 													
 													</a>
@@ -1474,7 +1474,7 @@ $tableId = 'kt_table_1';
                                                         `
                             
                             
-											<div class="modal fade" id="delete-sub-modal${data.pivot.financial_statement_able_item_id + data.pivot.sub_item_name.replaceAll('/','-').replaceAll('&','-').replaceAll('%','-').replaceAll(' ','-').replaceAll('(','-').replaceAll(')','-')}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+											<div class="modal fade" id="delete-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name)}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 													<div class="modal-dialog" role="document">
 														<div class="modal-content ">
 														<div class="modal-header">
@@ -1818,6 +1818,8 @@ $tableId = 'kt_table_1';
 
                                             }
                                             , drawCallback: function(settings) {
+                                                $('.editable-text').attr('contenteditable', false)
+
                                                 let corporateTaxesId = domElements.corporateTaxesId;
                                                 $('tr[data-percentage-or-fixed="percentage"] td.editable').attr('contenteditable', false);
 
@@ -2142,7 +2144,7 @@ $tableId = 'kt_table_1';
                                 let subItemName = $(this).data('sub-item-name');
 
                                 $(this).prop('disabled', true);
-                                document.querySelectorAll('tr[data-financial-statement-able-item-id="' + id + '"][data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
+                                document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
                                     editableDateTd.innerHTML = 0
                                     editableDateTd.dispatchEvent(new Event('blur'));
                                 })
@@ -2298,6 +2300,9 @@ $tableId = 'kt_table_1';
 
                                                 if (v.closest('.dropdown.bootstrap-select')) {
                                                     v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${sub_items_options} </select>`
+
+                                                } else {
+                                                    $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
 
                                                 }
 

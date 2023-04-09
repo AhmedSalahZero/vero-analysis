@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Exports\IncomeStatementExport;
+use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Requests\IncomeStatementRequest;
 use App\Models\CashFlowStatement;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
+use App\Models\Repositories\CashFlowStatementRepository;
 use App\Models\Repositories\IncomeStatementRepository;
 use App\Models\User;
 use Carbon\Carbon;
@@ -58,7 +60,6 @@ class IncomeStatementController extends Controller
 
 	public function store(IncomeStatementRequest $request)
 	{
-
 		$incomeStatement = $this->incomeStatementRepository->store($request);
 		return response()->json([
 			'status' => true,
@@ -71,7 +72,6 @@ class IncomeStatementController extends Controller
 	{
 
 		$this->incomeStatementRepository->storeReport($request);
-
 		return response()->json([
 			'status' => true,
 			'message' => __('Income Statement Has Been Stored Successfully')
@@ -104,7 +104,7 @@ class IncomeStatementController extends Controller
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
 		$collection_value = '';
-		$collection_value_arr = $request->input('collection_policy.type.value');
+		$collection_value_arr = $request->input('sub_items.0.collection_policy.type.value');
 		if (isset($collection_value_arr) && is_array($collection_value_arr)) {
 			$collection_value = json_encode($collection_value_arr);
 		} elseif (isset($collection_value_arr)) {
@@ -112,19 +112,22 @@ class IncomeStatementController extends Controller
 		}
 		foreach ($subItemTypesToDetach as $subItemType) {
 			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
+
 			$incomeStatementItem
 				->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))
 				->updateExistingPivot($incomeStatementId, [
 					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
-					'financial_statement_able_item_id' => $request->get('sub_of_id'),
+					'financial_statement_able_item_id' => $request->get('sub_of_id') ?: $request->get('financial_statement_able_item_id'),
 					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
-					'has_collection_policy' => $request->input('collection_policy.has_collection_policy'),
-					'collection_policy_type' => $request->input('collection_policy.type.name'),
+					'has_collection_policy' => $request->input('sub_items.0.collection_policy.has_collection_policy'),
+					'collection_policy_type' => $request->input('sub_items.0.collection_policy.type.name'),
 					'collection_policy_value' => $collection_value,
 					'percentage_or_fixed' => $percentageOrFixed,
 					'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
 					'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,
 					'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ?  $request->input('sub_items.0.cost_of_unit_value') : null,
+					'is_financial_expense' => $request->input('sub_items.0.is_financial_expense'),
+					'is_financial_income' => $request->input('sub_items.0.is_financial_income'),
 					'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
 					'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
 
@@ -132,6 +135,21 @@ class IncomeStatementController extends Controller
 		}
 
 
+		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		$dates = array_keys($incomeStatement->getIntervalFormatted());
+		$request['dates'] = $dates;
+		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
+		$request['income_statement_id'] = $incomeStatement->id;
+		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
+		//dd($cashFlowStatementDataFormatted);
+		//$request['financial_statement_able_id'] = $cashFlowStatement->id;
+		//$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id) : 0;
+		$request['value'] = $cashFlowStatementDataFormatted['value'];
+		$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
+		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
+		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
+		$request['valueMainRowWithoutSubItems'] = [];
+		(new CashFlowStatementController(new CashFlowStatementRepository))->updateReport($company, $request);
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Updated Successfully')
@@ -145,15 +163,34 @@ class IncomeStatementController extends Controller
 		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$subItemsNames = formatSubItemsNamesForQuantity($request->get('sub_item_name'));
+		$isFinancialIncome = (bool)$request->get('is_financial_income');
 		$incomeStatement->storeReport($request);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
 		foreach ($subItemTypesToDetach as $subItemType) {
 			foreach ($subItemsNames as $subItemName) {
-
 				$incomeStatementItem->withSubItemsFor($incomeStatementId, $subItemType, $subItemName)->detach($incomeStatementId);
 			}
 		}
+
+
+		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		$dates = array_keys($incomeStatement->getIntervalFormatted());
+		$request['dates'] = $dates;
+		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
+		$request['income_statement_id'] = $incomeStatement->id;
+		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
+
+		$request['financial_statement_able_id'] = $cashFlowStatement->id;
+		$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id, $isFinancialIncome) : 0;
+		$request['value'] = $cashFlowStatementDataFormatted['value'];
+		$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
+		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
+		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
+		$request['valueMainRowWithoutSubItems'] = [];
+		(new CashFlowStatementController(new CashFlowStatementRepository))->deleteReport($company, $request);
+
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Deleted Successfully')

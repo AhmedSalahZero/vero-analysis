@@ -96,28 +96,58 @@ class CashFlowStatementController extends Controller
 
 	public function updateReport(Company $company, Request $request)
 	{
-		$cashFlowStatementId = $request->get('financial_statement_able_id');
-		$cashFlowStatementItemId = $request->get('financial_statement_able_item_id');
+		$cashFlowStatementId = $request->get('cash_flow_statement_id');
+		$incomeStatementId = $request->get('income_statement_id');
+		// $subItemName = $request->get('sub_item_name');
+		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
+		$isFinancialIncome = (bool)$request->input('sub_items.0.is_financial_income');
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
-		$cashFlowStatement->storeReport($request);
-		$cashFlowStatementItem = $cashFlowStatement->withMainItemsFor($cashFlowStatementItemId)->first();
+		$cashFlowStatementItemId = $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementItemId, $isFinancialIncome);
+		$request['financial_statement_able_item_id']  = $incomeStatementItemId;
+		$cashFlowStatement->storeReport($request);;
+		$request['financial_statement_able_item_id']  = $cashFlowStatementItemId;
+		$oldCashFlowStatementItemId = $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementId, (bool)$request->get('was_financial_income'));
+		$oldCashFlowStatementItem = $cashFlowStatement->withMainItemsFor($oldCashFlowStatementItemId)->first();
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
+		$collection_value = '';
+		$collection_value_arr = $request->input('sub_items.0.collection_policy.type.value');
+		if (isset($collection_value_arr) && is_array($collection_value_arr)) {
+			$collection_value = json_encode($collection_value_arr);
+		} elseif (isset($collection_value_arr)) {
+			$collection_value = $collection_value_arr;
+		}
+
 		foreach ($subItemTypesToDetach as $subItemType) {
 			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
-			$cashFlowStatementItem
-				->withSubItemsFor($cashFlowStatementId, $subItemType, $request->get('sub_item_name'))
-				->updateExistingPivot($cashFlowStatementId, [
-					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
-					'financial_statement_able_item_id' => $request->get('sub_of_id'),
-					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
-					'percentage_or_fixed' => $percentageOrFixed,
-					'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
-					'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,
-					'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ?  $request->input('sub_items.0.cost_of_unit_value') : null,
-					'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
-					'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
+			$pivotArr = [
+				'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
+				'financial_statement_able_item_id' =>  $request->get('financial_statement_able_item_id'),
+				'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
+				'has_collection_policy' => $request->input('sub_items.0.collection_policy.has_collection_policy'),
+				'collection_policy_type' => $request->input('sub_items.0.collection_policy.type.name'),
+				'collection_policy_value' => $collection_value,
+				'percentage_or_fixed' => $percentageOrFixed,
+				'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
+				'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,
+				'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ?  $request->input('sub_items.0.cost_of_unit_value') : null,
+				'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
+				'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
+				'is_financial_expense' => $request->input('sub_items.0.is_financial_expense'),
+				'is_financial_income' => $request->input('sub_items.0.is_financial_income'),
+				'company_id' => $company->id,
+				// 'financial_statement_able_item_id' => $cashFlowStatementItem->id,
+				// 'financial_statement_able_id' => $cashFlowStatementId,
+				// 'sub_item_type' => $subItemType
 
-				]);
+			];
+
+			$oldCashFlowStatementItem
+				->withSubItemsFor($cashFlowStatementId, $subItemType, $request->get('sub_item_name'))
+				->updateExistingPivot(
+					$cashFlowStatementId,
+					$pivotArr
+
+				);
 		}
 
 

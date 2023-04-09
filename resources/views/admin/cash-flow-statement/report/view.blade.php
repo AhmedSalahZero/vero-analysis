@@ -13,7 +13,7 @@
 
 
             <div class="kt-portlet__body">
-                @include('admin.balance-sheet.report.view-table' )
+                @include('admin.cash-flow-statement.report.view-table' )
             </div>
         </div>
     </div>
