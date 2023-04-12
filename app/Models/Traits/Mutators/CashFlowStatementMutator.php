@@ -91,12 +91,17 @@ trait CashFlowStatementMutator
 		}
 		return $result;
 	}
-	public function replaceIncomeStatementItemIdWithCashFlowStatementId(array $items, array $financialIncomeOrExpenseArray): array
+	public function replaceIncomeStatementItemIdWithCashFlowStatementId(array $items,  $financialIncomeOrExpense): array
 	{
 		$dataFormatted = [];
+		$isFinancialIncome = false;
 		foreach ($items as $incomeStatementItemId => $oldNamesAndNewNames) {
 			foreach ($oldNamesAndNewNames as $oldName => $newName) {
-				$isFinancialIncome = $financialIncomeOrExpenseArray[$incomeStatementItemId][$oldName] ?? false;
+				if (is_array($financialIncomeOrExpense)) {
+					$isFinancialIncome =   $financialIncomeOrExpense[$incomeStatementItemId][$oldName] ?? false;
+				} else {
+					$isFinancialIncome = $financialIncomeOrExpense;
+				}
 				$cashFlowStatementItemId = $this->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementItemId, $isFinancialIncome);
 				$dataFormatted[$cashFlowStatementItemId][$oldName] = $newName;
 			}
@@ -109,8 +114,13 @@ trait CashFlowStatementMutator
 		$incomeStatementId = $request->get('income_statement_id');
 		$values = $this->formatSubItems($request);
 		$mainRowValuesWithTotal = $this->formatTotalForMainItem($values);
-
-		$financialStatementAbleItemName[$cashFlowStatementId] = $this->replaceIncomeStatementItemIdWithCashFlowStatementId($request->financialStatementAbleItemName[$incomeStatementId], (array)$request->get('is_financial_income')[$incomeStatementId]);
+		$isFinancialIncome = false;
+		if (is_array($request->get('is_financial_income'))) {
+			$isFinancialIncome = $request->get('is_financial_income')[$incomeStatementId] ?? [];
+		} else {
+			$isFinancialIncome = $request->get('is_financial_income');
+		}
+		$financialStatementAbleItemName[$cashFlowStatementId] = $this->replaceIncomeStatementItemIdWithCashFlowStatementId($request->financialStatementAbleItemName[$incomeStatementId], $isFinancialIncome);
 
 		return [
 			'value' => $values,

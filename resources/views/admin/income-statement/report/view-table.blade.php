@@ -7,6 +7,8 @@ $tableId = 'kt_table_1';
         flex-basis: 100%;
     }
 
+
+
     .pl-25 {
         padding-left: 17px;
         padding-right: 17px;
@@ -199,6 +201,29 @@ $tableId = 'kt_table_1';
         let modalIsOpenInAddOrEdit = false
         let currentDelete = {}
         let deleteModalIsOpen = false
+	//	const performance2 = {
+	//		
+	//	isLastSublingPercentageOfCostOfUnitOfParent:0,
+	//	updateNetProfit:0,
+	//	updateEarningBeforeTaxes:0,
+	//	updateEarningBeforeIntersetTaxesDepreciationAmortization:0,
+	//	updateEarningBeforeInterestTaxesDepreciationAmortizationId:0,
+	//	insertTableIntoDom:0,
+	//	formateTableForNewRow:0,
+	//	updateGrossProfit:0,
+	//	getRowForSubItemsTr:0,
+	//	updateTotalForRow:0,
+	//	updateGrowthRateForSalesRevenue:0,
+	//	updatePercentageOfSalesFor:0,
+	//	getPreviousDate:0,
+	//	getDates:0,
+	//	updateParentMainRowTotal:0 ,
+	//	updateEditableInputs:0,
+	//	updatePercentageRows:0,
+	//	blur:0,
+	//	triggerChangeInsideBlur:0,
+	//	refreshPercentagesThatDependsOnSalesRevenueValue:0
+	//	}
 
         const domElements = {
             salesRevenueId: document.getElementById('sales-revenue-id').value
@@ -367,7 +392,6 @@ $tableId = 'kt_table_1';
                         })
 
                         function isLastSublingPercentageOfCostOfUnitOfParent(subRow) {
-							return true 
 
                             if (modalIsOpenInAddOrEdit) {
                                 return true
@@ -383,7 +407,6 @@ $tableId = 'kt_table_1';
                             let lastPercentageSubItem = lastPercentageSubItemOfEachMainRow[mainRowId]
                             let lastCostOfUnitSubItem = lastCostOfUnitSubItemOfEachMainRow[mainRowId]
                             let currentSubItemName = subRow.getAttribute('data-sub-item-name')
-
                             return currentSubItemName == lastPercentageSubItem || currentSubItemName == lastCostOfUnitSubItem;
 
                         }
@@ -410,7 +433,16 @@ $tableId = 'kt_table_1';
                                 updateTotalForRow(currentRow);
                                 updateGrossProfit(date);
                                 if (parentModelId == salesRevenueId && canRefreshPercentages) {
-                                    refreshPercentagesThatDependsOnSalesRevenueValue(date, this)
+									
+                                    let items = refreshPercentagesThatDependsOnSalesRevenueValue(date, this)
+									items.forEach(itemObject=>{
+										var key = Object.keys(itemObject)[0]
+										var item = itemObject[key]
+										  item.dispatchEvent(new Event(key, {
+                                  		      'bubbles': true
+                                    		}))
+									})
+										
                                 }
 
                             }
@@ -434,25 +466,86 @@ $tableId = 'kt_table_1';
                         });
 
                         const refreshPercentagesThatDependsOnSalesRevenueValue = (date, currentInputThatChanged) => {
+							let items = []
+							
+							
+							
                             if (!!parseInt(currentInputThatChanged.getAttribute('data-is-quantity'))) {
-                                document.querySelectorAll('tr[data-is-cost-of-unit="true"] td.date-' + date).forEach((td) => {
-                                    td.dispatchEvent(new Event('blur', {
-                                        'bubbles': true
-                                    }))
+                                document.querySelectorAll('tr[data-is-cost-of-unit="true"]' ).forEach((tr) => {
+									var input =  tr.querySelector('input[data-date="'+ date +'"]')
+									var td = tr.querySelector('td.date-'+date)
+									var item = {} 
+									if(deleteModalIsOpen){
+										item = {change:input}
+									}
+									else{
+										item = {
+												blur:td 
+											}
+									
+									}
+								   items.push(item)
+								  
                                 });
                             } else {
-
-                                document.querySelectorAll('tr[data-is-percentage="true"] td.date-' + date).forEach((td) => {
-                                    td.dispatchEvent(new Event('blur', {
-                                        'bubbles': true
-                                    }))
+								
+                                document.querySelectorAll('tr[data-is-percentage="true"]').forEach((tr) => {
+                                  var input =  tr.querySelector('input[data-date="'+ date +'"]')
+									var td = tr.querySelector('td.date-'+date)
+									var item = {} 
+									if(deleteModalIsOpen){
+										item = {change:input}
+									}
+									else{
+										item = {
+												blur:td 
+											}
+									
+									}
+								   items.push(item)
+								  
+								 
                                 });
+								
+                             
                             }
+							
+							return items 
+			
 
+                        }
+						
+						
+						
+						const refreshPercentagesThatDependsOnSalesRevenueValue2 = (date) => {
+							let items = []
+							
+							
+							
+                                document.querySelectorAll('tr[data-is-cost-of-unit="true"]' ).forEach((tr) => {
+									var input =  tr.querySelector('input[data-date="'+ date +'"]')
+								   items.push(input)
+								  
+                                });
+								
+                                document.querySelectorAll('tr[data-is-percentage="true"]').forEach((tr) => {
+                                  var input =  tr.querySelector('input[data-date="'+ date +'"]')
+								   items.push(input)
+								  
+								 
+                                });
+								
+								
+								return items
+								
+                             
+                      
+			
 
                         }
 
                         function updateNetProfit(date) {
+						
                             let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
                             let corporateTaxesId = domElements.corporateTaxesId;
                             let netProfitId = domElements.netProfitId;
@@ -466,6 +559,8 @@ $tableId = 'kt_table_1';
                             // input.dispatchEvent(new Event('change', {
                             //     'bubbles': true
                             // }))
+							
+						
                             updateTotalForRow(netProfitRow);
                             updatePercentageOfSalesFor(domElements.netProfitId, date);
                         }
@@ -481,6 +576,7 @@ $tableId = 'kt_table_1';
                             earningBeforeTaxesIdRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeTaxesAtDate);
                             var input = earningBeforeTaxesIdRow.querySelector('td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]');
                             input.value = earningBeforeTaxesAtDate;
+							
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
                             }))
@@ -537,6 +633,7 @@ $tableId = 'kt_table_1';
                             var input = earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('input[data-date="' + date + '"]')
 
                             input.value = earningBeforeInterstTaxesDepreciationAmortizationAtDate
+		
 
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
@@ -551,12 +648,14 @@ $tableId = 'kt_table_1';
                         }
 
                         function updateEarningBeforeInterestTaxesDepreciationAmortizationId(earningBeforeInterestTaxesWithoutDepreciationAtDate, date) {
+					
                             let EarningBeforeInterestTaxesId = domElements.earningBeforeInterestTaxesId;
                             let earningBeforeInterestTaxesRow = document.querySelector('.main-with-no-child[data-model-id="' + EarningBeforeInterestTaxesId + '"]');
                             earningBeforeInterestTaxesRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeInterestTaxesWithoutDepreciationAtDate);
                             var input = earningBeforeInterestTaxesRow.querySelector('input[data-date="' + date + '"]')
 
                             input.value = earningBeforeInterestTaxesWithoutDepreciationAtDate
+						
 
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
@@ -708,12 +807,15 @@ $tableId = 'kt_table_1';
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
                             }));
+							
+						
 
                             updateTotalForRow(grossProfitRow);
 
                         }
 
                         function getRowForSubItemsTr(tableId, dates, percentageOrCostOfUnitValue, incomeStatementId, incomeStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentageOrFixed, fixedOrPercentage, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf, isCostOfUnit, isCostOfUnitOf, isFinancialExpense) {
+							
                             let row = `<tr   data-financial-statement-able-item-id="${incomeStatementItemId}" class="d-none edit-info-row add-sub maintable-1-row-class${incomeStatementItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-cost-of-unit="${isCostOfUnit}" data-is-percentage-of="${isPercentageOf}" data-is-cost-of-unit-of="${isCostOfUnitOf}"  data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
 																<td class="red reset-table-width trigger-child-row-1 cursor-pointer  sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
 																<td class="cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 70.25px; position: sticky;">
@@ -733,7 +835,7 @@ $tableId = 'kt_table_1';
                                 }
                                 row += `<td class="sub-numeric-bg text-nowrap editable editable-date date-${date}" data-income-statement-id="${incomeStatementId}" data-main-model-id="${incomeStatementId}" data-income-statement-item-id="${incomeStatementItemId}" data-main-row-id="${incomeStatementItemId}" data-sub-item-name="${subItemName}" data-table-id="${tableId}" data-is-quantity="${isQuantity}" contenteditable="true" title="{{ __('Click To Edit') }}" data-percentage-value="${isCostOfUnit ? 0 : percentageOrCostOfUnitValue}" data-cost-of-unit-value="${isCostOfUnit ? percentageOrCostOfUnitValue : 0}" data-is-financial-expense="${isFinancialExpense ? 1 :0}">${currentValue}</td>
 
-								<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${date}]" data-date="${date}" data-parent-model-id="${incomeStatementItemId}" value="${currentValue}">
+								<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${date}]" data-is-quantity="${isQuantity}" data-is-cost-of-unit="${isCostOfUnit}" data-date="${date}" data-parent-model-id="${incomeStatementItemId}" value="${currentValue}">
 								<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"   value="${currentValue}">
 								
 								`;
@@ -742,7 +844,6 @@ $tableId = 'kt_table_1';
                             row += `<td class="  sub-numeric-bg text-nowrap total-row" data-financial-statement-able-item-id="${incomeStatementItemId}" data-sub-item-name="${subItemName}">0</td>
 										<input type="hidden" class="input-hidden-for-total" name="subTotals[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]" data-parent-model-id="${incomeStatementItemId}" value="0">
 										</tr>`;
-
                             return row;
                         }
 
@@ -770,6 +871,8 @@ $tableId = 'kt_table_1';
                                 row.querySelector('td.total-row').innerHTML = number_format(total);
 
                             }
+							
+							
                         }
                         $(document).on('focus', '.editable-date', function() {
                             lastInputValue = $(this).html()
@@ -791,19 +894,18 @@ $tableId = 'kt_table_1';
                                 }
                             }
                             changedInputs = newArr;
+							
                             for (var i = 0; i < changedInputs.length; i++) {
                                 changedInputs[i].dispatchEvent(new Event('change', {
                                     'bubbles': true
                                 }))
                             }
-
                             $('.main-table-class').DataTable().columns.adjust()
 
                         });
 
                         function updateGrowthRateForSalesRevenue(currentDate) {
                             let dates = getDates();
-
                             let previousDate = getPreviousDate(dates, currentDate);
                             if (previousDate) {
                                 let salesRevenueId = domElements.salesRevenueId;
@@ -826,7 +928,6 @@ $tableId = 'kt_table_1';
                                 }
 
                             }
-
                             return number_format(0, 2) + ' %';
 
 
@@ -928,6 +1029,7 @@ $tableId = 'kt_table_1';
                                             inputs.push(input)
 
                                         })
+							
                                         return inputs;
                                     } else {
                                         tdElement.closest('tr').querySelectorAll('td.editable-date' + tdSpecificDateIfExist).forEach(function(td, index) {
@@ -938,7 +1040,7 @@ $tableId = 'kt_table_1';
                                             inputs.push(input)
 
                                         })
-
+										
                                         return inputs
 
 
@@ -1001,6 +1103,7 @@ $tableId = 'kt_table_1';
 
                                             } else {}
                                         })
+										
                                         return inputs
                                     }
 
@@ -1017,7 +1120,7 @@ $tableId = 'kt_table_1';
                                 var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                 var input = tdElement.parentElement.querySelector('input.text-input-hidden')
                                 input.value = val
-                                inputs.push(input)
+                                inputs.push(input)		
                                 return inputs
 
                             }
@@ -1504,10 +1607,11 @@ $tableId = 'kt_table_1';
 															
 															<div class="percentage-sub w-100 ${percentageDisplay}">
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap" style="width:60% !important">
-																	<div class="d-flex flex-column align-items-center justify-content-center flex-wrap" style="width:100% !important">
+																	<div class="d-flex parent-for-select flex-column align-items-center justify-content-center flex-wrap" style="width:100% !important">
 																		<label class="form-label flex-self-start">{{ __('% Of') }}</label>
 																	
 																	<select multiple
+																	data-width="auto"
 																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
 																	${sub_items_options}
 																</select>
@@ -1755,7 +1859,7 @@ $tableId = 'kt_table_1';
                                                         filterDate = filterDate.split('date-')[1];
                                                         totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
 
-                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0 ))}" >
+                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-is-cost-of-unit="${data.pivot ? data.pivot.is_cost_of_unit_of : 0}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0 ))}" >
 														<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  value="${data.pivot ? data.pivot.is_financial_income :0}" >
 														
 														 `;
@@ -1926,10 +2030,11 @@ $tableId = 'kt_table_1';
 															
 															<div class="percentage-sub d-none w-100">
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap" style="width:60% !important">
-																	<div class="d-flex flex-column align-items-center justify-content-center flex-wrap" style="width:100% !important">
+																	<div class="d-flex parent-for-select flex-column align-items-center justify-content-center flex-wrap" style="width:100% !important">
 																		<label class="form-label flex-self-start">{{ __('% Of') }}</label>
 																	
 																	<select multiple
+																	data-width="auto"
 																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
 																	${sub_items_options}
 																</select>
@@ -2237,7 +2342,27 @@ $tableId = 'kt_table_1';
                                                 $('.has-collection-policy-class:checked').trigger('change')
                                                 $('.only-one-checked:checked').trigger('change')
                                                 $('.collection_rate_input').trigger('change')
-
+												
+												
+												
+												
+												
+												
+											//	console.log('start')
+											//	var start   = performance.now()
+											//	for(date of dates){
+											//		
+											//	var inputs = refreshPercentagesThatDependsOnSalesRevenueValue2(date)
+											//	for(var input of inputs){
+											//	
+											//	input.dispatchEvent(new Event('change',{
+											//		bubbles:true
+											//	}))	
+											//	}
+											//	}
+											//	var end = (performance.now() ) 
+											//	console.log('end')
+											//	console.log((end - start)/1000)
 
 
                                                 // handle data for intervals 
@@ -2590,7 +2715,6 @@ $tableId = 'kt_table_1';
                                 e.preventDefault();
                                 let id = $(this).data('id');
                                 let subItemName = $(this).data('sub-item-name');
-
                                 $(this).prop('disabled', true);
                                 // edit-info-row add-sub maintable-1-row-class1 is-sub-row even
                                 if (id == domElements.salesRevenueId) {
@@ -2601,12 +2725,19 @@ $tableId = 'kt_table_1';
                                             editableDateTd.innerHTML = 0
                                             editableDateTd.setAttribute('data-percentage-value', 0)
                                             editableDateTd.setAttribute('data-cost-of-unit-value', 0)
-                                            editableDateTd.dispatchEvent(new Event('blur'));
+                                          //  editableDateTd.dispatchEvent(new Event('blur'));
+                                        })
+										document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subName + '"] input[data-date]').forEach((editableDateInput) => {
+                                            editableDateInput.value = 0
+                                            //editableDateTd.setAttribute('data-percentage-value', 0)
+                                            //editableDateTd.setAttribute('data-cost-of-unit-value', 0)
+                                            editableDateInput.dispatchEvent(new Event('change',{
+                                  		      'bubbles': true
+                                    		}));
                                         })
                                     }
 
                                 } else {
-
                                     document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subItemName + '"] td.editable-date').forEach((editableDateTd) => {
                                         editableDateTd.innerHTML = 0
                                         editableDateTd.setAttribute('data-percentage-value', 0)
@@ -2930,6 +3061,7 @@ $tableId = 'kt_table_1';
                         }
 
                     }
+				
                 }
 
                 function formatDatesForInterval(intervalName) {
@@ -3210,10 +3342,7 @@ $tableId = 'kt_table_1';
 
 
                     })
-
-
-
-
+					
                 }
 
                 function getFinancialIncomeOrExpenseCheckBoxes(editMode, pivot, id) {
@@ -3236,6 +3365,14 @@ $tableId = 'kt_table_1';
 					
 					`;
                 }
+				function getSalesRevenueModal(editModal , pivot = null , id){
+					
+					
+					return `
+					
+					
+					`;
+				}
 
                 function getCollectionPolicyHtml(editMode, pivot = null, id) {
                     let valueOfCustom = [];

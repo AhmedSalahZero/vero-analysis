@@ -200,6 +200,7 @@ trait FinancialStatementAbleMutator
 	}
 	public function storeReport(Request $request)
 	{
+
 		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
 				'sub_items.*.name' => 'required'

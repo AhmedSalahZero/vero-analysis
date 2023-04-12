@@ -158,7 +158,6 @@ class IncomeStatementController extends Controller
 
 	public function deleteReport(Company $company, Request $request)
 	{
-
 		$incomeStatementId = $request->get('financial_statement_able_id');
 		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
