@@ -21,6 +21,28 @@
 @endsection
 @section('js')
 <x-js.commons></x-js.commons>
+
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+
+    function getDateFormatted(yourDate) {
+        const offset = yourDate.getTimezoneOffset()
+        yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
+        return yourDate.toISOString().split('T')[0]
+    }
+	
+    am4core.ready(function() {
+
+        // Themes begin
+       
+
+
+    }); // end am4core.ready()
+
+</script>
 <script>
     // $(function(){
     //         $(document).on('blur','.editable',function(){

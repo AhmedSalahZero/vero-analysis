@@ -1,7 +1,9 @@
 @extends('layouts.dashboard')
 
 @section('css')
-    <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+@include('datatable_css')
+
+    {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
     <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet"
@@ -252,6 +254,7 @@
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__body">
                         <!--begin: Datatable -->
+						{{-- {{ dd($sales_forecast['last_3_years_seasonality']) }} --}}
                         <x-table :tableTitle="__('Last 3 Years Seasonality')"
                             :tableClass="'kt_table_with_no_pagination_no_scroll'">
                             @slot('table_header')
@@ -590,7 +593,9 @@
 @section('js')
     <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
     </script>
-    <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+    @include('js_datatable')
+	
+    {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
     <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"
         type="text/javascript"></script>
     <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">

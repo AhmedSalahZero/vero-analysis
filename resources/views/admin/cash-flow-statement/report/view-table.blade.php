@@ -135,6 +135,8 @@ $tableId = 'kt_table_1';
 @else
 <input type="hidden" id="fixed-column-number" value="2">
 @endif
+
+ <input type="hidden" id="monthly_data_monthly_net_cash" data-total="{{ json_encode($formattedDataForMonthlyNetCashChart ?? []) }}">
 <input type="hidden" id="sub-item-type" value="{{ $reportType }}">
 <div class="table-custom-container position-relative  ">
     <input type="hidden" id="cash-flow-statement-duration-type" value="{{ $cashFlowStatement->duration_type ?? '' }}">
@@ -237,6 +239,7 @@ $tableId = 'kt_table_1';
         </x-slot>
 
         <x-slot name="js">
+		
             <script>
                 let inAddOrEditModal = false;
                 let canRefreshPercentages = false;
@@ -1741,6 +1744,114 @@ $tableId = 'kt_table_1';
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
+												
+												 am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("monthly_net_cash_chartdiv", am4charts.XYChart);
+        // Increase contrast by taking evey second color
+        chart.colors.step = 2;
+        // Add data
+        var chartData = $('#monthly_data_monthly_net_cash').data('total')
+        chartData.forEach(function(objVal) {
+            // console.log(objVal.date);
+            // console.log(objVal);
+            initialDate = getDateFormatted(new Date(objVal.date));
+            if (initialDate.split('-').length == 4) {
+                year = initialDate.split('-')[1];
+                month = initialDate.split('-')[2]
+                date = initialDate.split('-')[3];
+            } else {
+                year = initialDate.split('-')[0];
+                month = initialDate.split('-')[1]
+                date = initialDate.split('-')[2];
+            }
+            objVal.date = parseInt(year) + '-' + month + '-' + date;
+
+
+        });
+
+        chart.data = chartData;
+        chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+        // Create axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.minGridDistance = 50;
+
+        // Create series
+        function createAxisAndSeries(field, name, opposite, bullet) {
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            if (chart.yAxes.indexOf(valueAxis) != 0) {
+                valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
+            }
+
+            var series = chart.series.push(new am4charts.LineSeries());
+            series.dataFields.valueY = field;
+            series.dataFields.dateX = "date";
+            series.strokeWidth = 2;
+            series.yAxis = valueAxis;
+            series.name = name;
+            series.tooltipText = "{name}: [bold]{valueY}[/]";
+            series.tensionX = 0.8;
+            series.showOnInit = true;
+
+            var interfaceColors = new am4core.InterfaceColorSet();
+
+            switch (bullet) {
+                case "triangle":
+                    var bullet = series.bullets.push(new am4charts.Bullet());
+                    bullet.width = 12;
+                    bullet.height = 12;
+                    bullet.horizontalCenter = "middle";
+                    bullet.verticalCenter = "middle";
+
+                    var triangle = bullet.createChild(am4core.Triangle);
+                    triangle.stroke = interfaceColors.getFor("background");
+                    triangle.strokeWidth = 2;
+                    triangle.direction = "top";
+                    triangle.width = 12;
+                    triangle.height = 12;
+                    break;
+                case "rectangle":
+                    var bullet = series.bullets.push(new am4charts.Bullet());
+                    bullet.width = 10;
+                    bullet.height = 10;
+                    bullet.horizontalCenter = "middle";
+                    bullet.verticalCenter = "middle";
+
+                    var rectangle = bullet.createChild(am4core.Rectangle);
+                    rectangle.stroke = interfaceColors.getFor("background");
+                    rectangle.strokeWidth = 2;
+                    rectangle.width = 10;
+                    rectangle.height = 10;
+                    break;
+                default:
+                    var bullet = series.bullets.push(new am4charts.CircleBullet());
+                    bullet.circle.stroke = interfaceColors.getFor("background");
+                    bullet.circle.strokeWidth = 2;
+                    break;
+            }
+
+            valueAxis.renderer.line.strokeOpacity = 1;
+            valueAxis.renderer.line.strokeWidth = 2;
+            valueAxis.renderer.line.stroke = series.stroke;
+            valueAxis.renderer.labels.template.fill = series.stroke;
+            valueAxis.renderer.opposite = opposite;
+        }
+        $.each(chart.data[0], function(key, val) {
+            if (key != 'date') {
+                createAxisAndSeries(key, key, true, "circle");
+            }
+        });
+
+
+
+        // Add legend
+        chart.legend = new am4charts.Legend();
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+		
                                                 const currentTable = $('.main-table-class').DataTable();
                                                 currentTable.column(1).visible(false);
                                                 $('.kt-portlet__foot').addClass('d-none')
@@ -2460,6 +2571,8 @@ $tableId = 'kt_table_1';
                 };
 
             </script>
+			
+			
 
             <script>
                 function triggerBlurForSalesRevenueInAllDate() {

@@ -2653,3 +2653,27 @@ function getTotalOfSalesRevenueFor(int $incomeStatementId, string $subItemType, 
 	$totalOfSalesRevenue = $mainRowSalesRevenue->withMainRowsPivotFor($incomeStatementId, $subItemType)->first()->pivot->total;
 	return $totalOfSalesRevenue ? $totalOfRow / $totalOfSalesRevenue * 100 : 0;
 }
+function sortMonthsByItsNames(array $array): array
+{
+	$formatted = [];
+	$months = [
+		1 => 'January',
+		2 => 'February',
+		3 => 'March',
+		4 => 'April',
+		5 => 'May',
+		6 => 'June',
+		7 => 'July',
+		8 => 'August',
+		9 => 'September',
+		10 => 'October',
+		11 => 'November',
+		12 => 'December'
+	];
+
+	for ($i = 1; $i <= 12; $i++) {
+		$month = $months[$i];
+		$formatted[$month] = $array[$month] ?? 0;
+	}
+	return $formatted;
+}

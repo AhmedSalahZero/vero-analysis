@@ -513,12 +513,12 @@ $totalOfDepreactionAndAmortization = 0;
 
                                             <td class="text-center">
                                                 @php
-                                                $currentSalesRevenuePercentage = $total_of_sales_revenue ? number_format($item / $total_of_sales_revenue * 100 , 2) : 0;
-                                                $totalOfSalesRevenuePercentage += $currentSalesRevenuePercentage
+												
+                                                $currentSalesRevenuePercentage = $total_of_sales_revenue ? $item / $total_of_sales_revenue * 100  : 0;
+                                                
+												$totalOfSalesRevenuePercentage += $currentSalesRevenuePercentage
                                                 @endphp
-                                                {{
-                                                                 $currentSalesRevenuePercentage . ' %'
-                                                                }}</td>
+                                                {{number_format($currentSalesRevenuePercentage,2) . ' %'}}</td>
                                             @endif
 
                                         </tr>
@@ -527,8 +527,6 @@ $totalOfDepreactionAndAmortization = 0;
 
                                         <tr class="table-active text-center">
                                             <td>{{__('Total')}}</td>
-                                            {{-- <td class="hidden"></td> --}}
-
                                             <td>{{number_format($totalForAll['value'])}}</td>
                                             <td>100 %</td>
                                             @if($singleType == __('Sales Revenue'))

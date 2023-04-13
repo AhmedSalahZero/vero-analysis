@@ -410,7 +410,7 @@ $tableId = 'kt_table_1';
                             return currentSubItemName == lastPercentageSubItem || currentSubItemName == lastCostOfUnitSubItem;
 
                         }
-
+						
                         $(document).on('change', '.is-sub-row input:not([type="checkbox"]):not(.collection_rate_input)', function(e) {
                             let grossProfitId = domElements.growthProfitId;
                             let costOfGoodsId = domElements.costOfGoodsId;
@@ -421,27 +421,27 @@ $tableId = 'kt_table_1';
                             let marketExpensesId = domElements.marketExpensesId;
                             let salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId;
                             let generalExpensesId = domElements.generalExpensesId;
-
                             let parentModelId = this.getAttribute('data-parent-model-id');
                             let date = this.getAttribute('data-date');
                             if (date && parentModelId && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
                                 updateParentMainRowTotal(parentModelId, date);
                             }
                             if ((parentModelId == salesRevenueId || parentModelId == costOfGoodsId) && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
-
                                 updateGrowthRateForSalesRevenue(date);
                                 updateTotalForRow(currentRow);
                                 updateGrossProfit(date);
                                 if (parentModelId == salesRevenueId && canRefreshPercentages) {
 									
                                     let items = refreshPercentagesThatDependsOnSalesRevenueValue(date, this)
-									items.forEach(itemObject=>{
-										var key = Object.keys(itemObject)[0]
-										var item = itemObject[key]
-										  item.dispatchEvent(new Event(key, {
-                                  		      'bubbles': true
-                                    		}))
-									})
+									// items.forEach(itemObject=>{
+									// 	var key = Object.keys(itemObject)[0]
+									// 	var item = itemObject[key]
+									// 	
+									// 	
+									// 	  item.dispatchEvent(new Event(key, {
+                                  	// 	      'bubbles': true
+                                    // 		}))
+									// })
 										
                                 }
 
@@ -464,9 +464,81 @@ $tableId = 'kt_table_1';
 
                             }
                         });
+						
+						function recalculatePercentagesOrCostOfUnit(tdElement,firstDate,financialStatementAbleItemId,corporateTaxesId,is_cost_of_unit,earningBeforeTaxesId,salesRevenueRowId,is_percentage){
+									var inputs = []
+                            		var isFinancialExpense = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-financial-expense') : tdElement.getAttribute('data-is-financial-expense')
+									var value = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense)
+									var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]');
+                                	input.value = value;
+									inputs.push(input)
+									var reportType = vars.subItemType;
+                                    if (financialStatementAbleItemId != corporateTaxesId) {
+                                        currentVal = is_cost_of_unit ? tdElement.closest('tr').getAttribute('data-cost-of-unit-value') : tdElement.closest('tr').getAttribute('data-percentage-value')
+                                    }
+                                    var percentage_or_cost_of_unit_of_array = is_cost_of_unit ? tdElement.closest('tr').getAttribute('data-is-cost-of-unit-of') : tdElement.closest('tr').getAttribute('data-is-percentage-of');
 
+                                    if (!Array.isArray(percentage_or_cost_of_unit_of_array)) {
+                                        percentage_or_cost_of_unit_of_array = percentage_or_cost_of_unit_of_array ? percentage_or_cost_of_unit_of_array.replace(/\[|\]/g, '').split(',') : [];
+                                    }
+                                    var salesRevenueRowId = domElements.salesRevenueId;
+                                    if (percentage_or_cost_of_unit_of_array && percentage_or_cost_of_unit_of_array.length) {
+                                        var loopDates;
+                                        loopDates = inAddOrEditModal ? dates : [firstDate];
+                                        if (reportType == 'modified') {
+                                            loopDates = getDatesLargerThanDate(firstDate, dates)
+                                        }
+                                        var total = 0;
+                                        var percentageElementId = financialStatementAbleItemId == corporateTaxesId ? earningBeforeTaxesId : salesRevenueRowId;
+                                        loopDates.forEach((currentDate) => {
+                                            total = 0;
+                                            percentage_or_cost_of_unit_of_array.forEach(function(subItemName) {
+
+                                                var valOfCurrentSubItem = 0;
+                                                if (financialStatementAbleItemId == corporateTaxesId) {
+                                                    valOfCurrentSubItem = parseFloat(document.querySelector('input[data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value);
+                                                    if (valOfCurrentSubItem < 0) {
+                                                        valOfCurrentSubItem = 0;
+                                                    }
+                                                } else {
+                                                    subItemName = subItemName.replace(/["]+/g, '').trim()
+                                                    var subItemTd = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]')
+
+                                                    valOfCurrentSubItem = subItemTd ? subItemTd.value : 0;
+                                                }
+                                                total += parseFloat(valOfCurrentSubItem);
+
+                                            });
+                                            if (is_cost_of_unit) {
+
+                                                currentVal = inAddOrEditModal ? currentVal : parseFloat(tdElement.getAttribute('data-cost-of-unit-value'));
+                                                currentValue = total ? currentVal * total : 0;
+
+
+                                            } else if (is_percentage) {
+
+                                                currentVal = inAddOrEditModal ? currentVal : parseFloat(tdElement.getAttribute('data-percentage-value'));
+                                                currentValue = total ? currentVal / 100 * total : 0;
+
+                                            }
+                                            if (reportType != 'modified' || reportType == 'modified' && !isActualDate(currentDate)) {
+                                                tdElement.closest('tr').querySelector('td.editable-date.date-' + currentDate).innerHTML = number_format(currentValue, 2);
+                                                var input = tdElement.closest('tr').querySelector('input[data-date][data-date="' + currentDate + '"]')
+                                                input.value = currentValue
+                                                inputs.push(input)
+
+                                            } else {}
+                                        })
+										
+                                        return inputs
+                                    }
+						}
                         const refreshPercentagesThatDependsOnSalesRevenueValue = (date, currentInputThatChanged) => {
 							let items = []
+							
+							
+								
+							
 							
 							
 							
@@ -474,17 +546,29 @@ $tableId = 'kt_table_1';
                                 document.querySelectorAll('tr[data-is-cost-of-unit="true"]' ).forEach((tr) => {
 									var input =  tr.querySelector('input[data-date="'+ date +'"]')
 									var td = tr.querySelector('td.date-'+date)
+									var financialStatementAbleItemId= td.closest('tr').getAttribute('data-financial-statement-able-item-id')
+									var inputs = recalculatePercentagesOrCostOfUnit(td,date,financialStatementAbleItemId,domElements.corporateTaxesId,true,domElements.earningBeforeTaxesId,domElements.salesRevenueId,false)
+									for(var inputItem of inputs){
+										 inputItem.dispatchEvent(new Event('change', {
+                               			 'bubbles': true
+                            			}))
+									}
 									var item = {} 
 									if(deleteModalIsOpen){
-										item = {change:input}
+								//		item = {change:input}
+								//	item = {
+								//				blur:td 
+								//			}
 									}
 									else{
-										item = {
-												blur:td 
-											}
+									//	item = {
+									//			blur:td 
+									//		}
+									
+									
 									
 									}
-								   items.push(item)
+							//	   items.push(item)
 								  
                                 });
                             } else {
@@ -492,17 +576,27 @@ $tableId = 'kt_table_1';
                                 document.querySelectorAll('tr[data-is-percentage="true"]').forEach((tr) => {
                                   var input =  tr.querySelector('input[data-date="'+ date +'"]')
 									var td = tr.querySelector('td.date-'+date)
-									var item = {} 
-									if(deleteModalIsOpen){
-										item = {change:input}
-									}
-									else{
-										item = {
-												blur:td 
-											}
 									
+									var financialStatementAbleItemId= td.closest('tr').getAttribute('data-financial-statement-able-item-id')
+									var inputs = recalculatePercentagesOrCostOfUnit(td,date,financialStatementAbleItemId,domElements.corporateTaxesId,false,domElements.earningBeforeTaxesId,domElements.salesRevenueId,true)
+					
+									for(var inputItem of inputs){
+										 inputItem.dispatchEvent(new Event('change', {
+                               			 'bubbles': true
+                            			}))
 									}
-								   items.push(item)
+									
+							//		var item = {} 
+							//		if(deleteModalIsOpen){
+							//			item = {change:input}
+							//		}
+							//		else{
+							//			item = {
+							//					blur:td 
+							//				}
+							//		
+							//		}
+							//	   items.push(item)
 								  
 								 
                                 });
@@ -511,35 +605,6 @@ $tableId = 'kt_table_1';
                             }
 							
 							return items 
-			
-
-                        }
-						
-						
-						
-						const refreshPercentagesThatDependsOnSalesRevenueValue2 = (date) => {
-							let items = []
-							
-							
-							
-                                document.querySelectorAll('tr[data-is-cost-of-unit="true"]' ).forEach((tr) => {
-									var input =  tr.querySelector('input[data-date="'+ date +'"]')
-								   items.push(input)
-								  
-                                });
-								
-                                document.querySelectorAll('tr[data-is-percentage="true"]').forEach((tr) => {
-                                  var input =  tr.querySelector('input[data-date="'+ date +'"]')
-								   items.push(input)
-								  
-								 
-                                });
-								
-								
-								return items
-								
-                             
-                      
 			
 
                         }
@@ -986,7 +1051,7 @@ $tableId = 'kt_table_1';
 
                         }
 
-                        function updateEditableInputs(tdElement) {
+                        function updateEditableInputs(tdElement) { //updateInputs
                             var inputs = []
                             let reportType = vars.subItemType;
                             let financialStatementAbleItemId = tdElement.closest('tr').getAttribute('data-financial-statement-able-item-id');
@@ -1047,65 +1112,8 @@ $tableId = 'kt_table_1';
                                     }
                                 }
                                 if (is_percentage_or_fixed && is_percentage || is_percentage_or_fixed && is_cost_of_unit) {
-                                    if (financialStatementAbleItemId != corporateTaxesId) {
-                                        currentVal = is_cost_of_unit ? tdElement.closest('tr').getAttribute('data-cost-of-unit-value') : tdElement.closest('tr').getAttribute('data-percentage-value')
-                                    }
-                                    var percentage_or_cost_of_unit_of_array = is_cost_of_unit ? tdElement.closest('tr').getAttribute('data-is-cost-of-unit-of') : tdElement.closest('tr').getAttribute('data-is-percentage-of');
-
-                                    if (!Array.isArray(percentage_or_cost_of_unit_of_array)) {
-                                        percentage_or_cost_of_unit_of_array = percentage_or_cost_of_unit_of_array ? percentage_or_cost_of_unit_of_array.replace(/\[|\]/g, '').split(',') : [];
-                                    }
-                                    var salesRevenueRowId = domElements.salesRevenueId;
-                                    if (percentage_or_cost_of_unit_of_array && percentage_or_cost_of_unit_of_array.length) {
-                                        var loopDates;
-                                        loopDates = inAddOrEditModal ? dates : [firstDate];
-                                        if (reportType == 'modified') {
-                                            loopDates = getDatesLargerThanDate(firstDate, dates)
-                                        }
-                                        var total = 0;
-                                        var percentageElementId = financialStatementAbleItemId == corporateTaxesId ? earningBeforeTaxesId : salesRevenueRowId;
-                                        loopDates.forEach((currentDate) => {
-                                            total = 0;
-                                            percentage_or_cost_of_unit_of_array.forEach(function(subItemName) {
-
-                                                var valOfCurrentSubItem = 0;
-                                                if (financialStatementAbleItemId == corporateTaxesId) {
-                                                    valOfCurrentSubItem = parseFloat(document.querySelector('input[data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]').value);
-                                                    if (valOfCurrentSubItem < 0) {
-                                                        valOfCurrentSubItem = 0;
-                                                    }
-                                                } else {
-                                                    subItemName = subItemName.replace(/["]+/g, '').trim()
-                                                    var subItemTd = document.querySelector('tr[data-sub-item-name="' + subItemName + '"] input[type="hidden"][data-parent-model-id="' + percentageElementId + '"][data-date="' + currentDate + '"]')
-
-                                                    valOfCurrentSubItem = subItemTd ? subItemTd.value : 0;
-                                                }
-                                                total += parseFloat(valOfCurrentSubItem);
-
-                                            });
-                                            if (is_cost_of_unit) {
-
-                                                currentVal = inAddOrEditModal ? currentVal : parseFloat(tdElement.getAttribute('data-cost-of-unit-value'));
-                                                currentValue = total ? currentVal * total : 0;
-
-
-                                            } else if (is_percentage) {
-
-                                                currentVal = inAddOrEditModal ? currentVal : parseFloat(tdElement.getAttribute('data-percentage-value'));
-                                                currentValue = total ? currentVal / 100 * total : 0;
-
-                                            }
-                                            if (reportType != 'modified' || reportType == 'modified' && !isActualDate(currentDate)) {
-                                                tdElement.closest('tr').querySelector('td.editable-date.date-' + currentDate).innerHTML = number_format(currentValue, 2);
-                                                var input = tdElement.closest('tr').querySelector('input[data-date][data-date="' + currentDate + '"]')
-                                                input.value = currentValue
-                                                inputs.push(input)
-
-                                            } else {}
-                                        })
-										
-                                        return inputs
-                                    }
+									
+                                  return recalculatePercentagesOrCostOfUnit(tdElement,firstDate,financialStatementAbleItemId,corporateTaxesId,is_cost_of_unit,earningBeforeTaxesId,salesRevenueRowId,is_percentage)
 
                                 } else {
                                     var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
@@ -2342,27 +2350,7 @@ $tableId = 'kt_table_1';
                                                 $('.has-collection-policy-class:checked').trigger('change')
                                                 $('.only-one-checked:checked').trigger('change')
                                                 $('.collection_rate_input').trigger('change')
-												
-												
-												
-												
-												
-												
-											//	console.log('start')
-											//	var start   = performance.now()
-											//	for(date of dates){
-											//		
-											//	var inputs = refreshPercentagesThatDependsOnSalesRevenueValue2(date)
-											//	for(var input of inputs){
-											//	
-											//	input.dispatchEvent(new Event('change',{
-											//		bubbles:true
-											//	}))	
-											//	}
-											//	}
-											//	var end = (performance.now() ) 
-											//	console.log('end')
-											//	console.log((end - start)/1000)
+
 
 
                                                 // handle data for intervals 
@@ -3365,14 +3353,6 @@ $tableId = 'kt_table_1';
 					
 					`;
                 }
-				function getSalesRevenueModal(editModal , pivot = null , id){
-					
-					
-					return `
-					
-					
-					`;
-				}
 
                 function getCollectionPolicyHtml(editMode, pivot = null, id) {
                     let valueOfCustom = [];
