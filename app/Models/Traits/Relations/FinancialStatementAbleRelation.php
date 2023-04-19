@@ -43,7 +43,7 @@ trait FinancialStatementAbleRelation
 		)
 			// ->wherePivot('financial_statement_able_item_id', $financialStatementAbleItemId)
 			// ->wherePivot('sub_item_type', $subItemType)
-			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'has_collection_policy', 'collection_policy_type', 'collection_policy_value', 'is_quantity', 'can_be_quantity', 'actual_dates', 'percentage_or_fixed', 'can_be_percentage_or_fixed', 'repeating_fixed_value', 'percentage_value', 'cost_of_unit_value', 'is_cost_of_unit_of', 'is_financial_expense', 'is_financial_income']);
+			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'has_collection_policy', 'collection_policy_type', 'collection_policy_value', 'is_quantity', 'can_be_quantity', 'actual_dates', 'percentage_or_fixed', 'can_be_percentage_or_fixed', 'repeating_fixed_value', 'percentage_value', 'cost_of_unit_value', 'is_cost_of_unit_of', 'is_financial_expense', 'is_financial_income', 'is_percentage_of']);
 	}
 	public function withSubItemsFor(int $financialStatementAbleItemId, string $subItemType = '', string $subItemName = ''): BelongsToMany
 	{

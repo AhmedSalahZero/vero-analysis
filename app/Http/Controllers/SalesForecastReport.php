@@ -85,6 +85,7 @@ class SalesForecastReport
 			$end_date = $this->dateCalc($start_date, 11, 'Y-m-t');
 
 			// Creating Array For View
+
 			$sales_forecast["start_date"] = $start_date;
 			$sales_forecast["end_date"] =   $end_date;
 			$sales_forecast["previous_year"] = $previous_year;

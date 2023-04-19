@@ -98,7 +98,7 @@ $tableId = 'kt_table_1';
     <input type="hidden" id="financial-income-or-expenses-id" value="{{ \App\Models\FinancialStatementItem::FINANCIAL_INCOME_OR_EXPENSE_ID }}">
     <input type="hidden" id="earning-before-taxes-id" value="{{ \App\Models\FinancialStatementItem::EARNING_BEFORE_TAXES_ID }}">
     <input type="hidden" id="corporate-taxes-id" value="{{ \App\Models\FinancialStatementItem::CORPORATE_TAXES_ID }}">
-    <input type="hidden" id="net-profit-id" value="{{ \App\Models\FinancialStatementItem::NEXT_PROFIT_ID }}">
+    <input type="hidden" id="net-profit-id" value="{{ \App\Models\FinancialStatementItem::NET_PROFIT_ID }}">
     <input type="hidden" id="sales-rate-maps" value="{{ json_encode(\App\Models\FinancialStatementItem::salesRateMap()) }}">
     <script>
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;

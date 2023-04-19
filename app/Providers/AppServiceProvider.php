@@ -42,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
 
 	public function boot(Request $request)
 	{
+		// $incomeStatement = IncomeStatement::find(119);
+		// $incomeStatement->refreshCalculationFor('forecast');
+		// $incomeStatement->refreshCalculationFor('actual');
+		// $incomeStatement->refreshCalculationFor('adjusted');
+		// $incomeStatement->refreshCalculationFor('modified');
 		$Language = new stdClass();
 		$Language->id = 2;
 		$Language->name = 'Arabic';

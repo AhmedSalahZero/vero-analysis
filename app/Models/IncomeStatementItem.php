@@ -40,13 +40,33 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 	const EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID = 20;
 	const CORPORATE_TAXES_ID = 21;
 	const CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID = 22;
-	const NEXT_PROFIT_ID = 23;
+	const NET_PROFIT_ID = 23;
 	const NET_PROFIT_PERCENTAGE_OF_SALES_ID = 24;
 
 	protected $guarded = [
 		'id'
 	];
+	public static function isMainWithSubItems(Collection $allMainItems, int $incomeStatementItemId)
+	{
 
+		$hasSubItems = false;
+		foreach ($allMainItems as $mainItem) {
+			if ($mainItem->id == $incomeStatementItemId && $mainItem->has_sub_items) {
+				$hasSubItems = true;
+			}
+		}
+		return $hasSubItems;
+	}
+	public static function isMainWithoutSubItems(collection $allMainItems, int $incomeStatementItemId, bool $isPercentageOfSales)
+	{
+		$hasNotSubItems = false;
+		foreach ($allMainItems as $mainItem) {
+			if ($mainItem->id == $incomeStatementItemId && !$mainItem->has_sub_items && !$isPercentageOfSales) {
+				$hasNotSubItems = true;
+			}
+		}
+		return $hasNotSubItems;
+	}
 	public static function rateFieldsIds(): array
 	{
 		return [
@@ -64,7 +84,15 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 			self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 		];
 	}
-
+	public static function getEquationFor(int $incomeStatementItemId)
+	{
+		$incomeStatementItem = IncomeStatementItem::find($incomeStatementItemId);
+		return $incomeStatementItem->equation;
+	}
+	public static function isPercentageOfSalesRevenue(int $incomeStatementItemId): bool
+	{
+		return in_array($incomeStatementItemId, self::percentageOfSalesRows());
+	}
 	public static function percentageOfSalesRows(): array
 	{
 		return [
@@ -94,7 +122,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 			self::FINANCIAL_INCOME_OR_EXPENSE_ID => self::FINANCIAL_INCOME_OR_EXPENSE_PERCENTAGE_OF_SALES_ID,
 			self::EARNING_BEFORE_TAXES_ID => self::EARNING_BEFORE_TAXES_PERCENTAGE_OF_SALES_ID,
 			self::CORPORATE_TAXES_ID => self::CORPORATE_TAXES_PERCENTAGE_OF_SALES_ID,
-			self::NEXT_PROFIT_ID => self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
+			self::NET_PROFIT_ID => self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 		];
 	}
 
@@ -280,7 +308,7 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 	// 			, 'is_sales_rate' => true
 	// 		],
 	// 		'Net Profit' => [
-	// 			'id' => self::NEXT_PROFIT_ID,
+	// 			'id' => self::NET_PROFIT_ID,
 	// 			'hasSubItems' => false,
 	// 			'has_depreciation_or_amortization' => false,
 	// 			'depends_on' => [$corporateTaxesID, $earningBeforeTaxesId],

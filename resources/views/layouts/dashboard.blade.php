@@ -54,16 +54,21 @@
             let stringToReplaceAr = "[(] {{ __('Quantity') }} [)]$"
             let regEn = new RegExp(stringToReplaceEn, "g")
             let regAr = new RegExp(stringToReplaceAr, "g")
-            return str.replace(regEn, '').replace(regAr, '').trim()
+            return str.replace ? str.replace(regEn, '').replace(regAr, '').trim() : str 
 
         }
 
         function isQuantitySubItem(str) {
             return str.endsWith("{{ quantityIdentifier }}") || str.endsWith("{{ __(quantityIdentifier) }}")
         }
+		function isLastKey(date,dates){
+			let index = dates.length;
+			index = index-1;
+			return date == dates[index]
+		}
 
         function convertStringToClass(str) {
-            return str.replace(/[ !\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
+            return str.replace ? str.replace(/[ !\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, ''):str;
         }
 
         // window['maxOptions'] = 10 ;

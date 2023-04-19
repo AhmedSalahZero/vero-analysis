@@ -188,7 +188,7 @@ $tableId = 'kt_table_1';
     <input type="hidden" id="financial-income-or-expenses-id" value="{{ \App\Models\IncomeStatementItem::FINANCIAL_INCOME_OR_EXPENSE_ID }}">
     <input type="hidden" id="earning-before-taxes-id" value="{{ \App\Models\IncomeStatementItem::EARNING_BEFORE_TAXES_ID }}">
     <input type="hidden" id="corporate-taxes-id" value="{{ \App\Models\IncomeStatementItem::CORPORATE_TAXES_ID }}">
-    <input type="hidden" id="net-profit-id" value="{{ \App\Models\IncomeStatementItem::NEXT_PROFIT_ID }}">
+    <input type="hidden" id="net-profit-id" value="{{ \App\Models\IncomeStatementItem::NET_PROFIT_ID }}">
     <input type="hidden" id="sales-rate-maps" value="{{ json_encode(\App\Models\IncomeStatementItem::salesRateMap()) }}">
     <script>
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
@@ -465,7 +465,7 @@ $tableId = 'kt_table_1';
                             }
                         });
 						
-						function recalculatePercentagesOrCostOfUnit(tdElement,firstDate,financialStatementAbleItemId,corporateTaxesId,is_cost_of_unit,earningBeforeTaxesId,salesRevenueRowId,is_percentage){
+						function recalculatePercentagesOrCostOfUnit(tdElement,firstDate,financialStatementAbleItemId,corporateTaxesId,is_cost_of_unit,earningBeforeTaxesId,salesRevenueRowId,is_percentage,currentVal){
 									var inputs = []
                             		var isFinancialExpense = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-financial-expense') : tdElement.getAttribute('data-is-financial-expense')
 									var value = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense)
@@ -481,7 +481,6 @@ $tableId = 'kt_table_1';
                                     if (!Array.isArray(percentage_or_cost_of_unit_of_array)) {
                                         percentage_or_cost_of_unit_of_array = percentage_or_cost_of_unit_of_array ? percentage_or_cost_of_unit_of_array.replace(/\[|\]/g, '').split(',') : [];
                                     }
-                                    var salesRevenueRowId = domElements.salesRevenueId;
                                     if (percentage_or_cost_of_unit_of_array && percentage_or_cost_of_unit_of_array.length) {
                                         var loopDates;
                                         loopDates = inAddOrEditModal ? dates : [firstDate];
@@ -535,19 +534,12 @@ $tableId = 'kt_table_1';
 						}
                         const refreshPercentagesThatDependsOnSalesRevenueValue = (date, currentInputThatChanged) => {
 							let items = []
-							
-							
-								
-							
-							
-							
-							
                             if (!!parseInt(currentInputThatChanged.getAttribute('data-is-quantity'))) {
                                 document.querySelectorAll('tr[data-is-cost-of-unit="true"]' ).forEach((tr) => {
 									var input =  tr.querySelector('input[data-date="'+ date +'"]')
 									var td = tr.querySelector('td.date-'+date)
 									var financialStatementAbleItemId= td.closest('tr').getAttribute('data-financial-statement-able-item-id')
-									var inputs = recalculatePercentagesOrCostOfUnit(td,date,financialStatementAbleItemId,domElements.corporateTaxesId,true,domElements.earningBeforeTaxesId,domElements.salesRevenueId,false)
+									var inputs = recalculatePercentagesOrCostOfUnit(td,date,financialStatementAbleItemId,domElements.corporateTaxesId,true,domElements.earningBeforeTaxesId,domElements.salesRevenueId,false,parseFloat(currentInputThatChanged.value))
 									for(var inputItem of inputs){
 										 inputItem.dispatchEvent(new Event('change', {
                                			 'bubbles': true
@@ -578,7 +570,7 @@ $tableId = 'kt_table_1';
 									var td = tr.querySelector('td.date-'+date)
 									
 									var financialStatementAbleItemId= td.closest('tr').getAttribute('data-financial-statement-able-item-id')
-									var inputs = recalculatePercentagesOrCostOfUnit(td,date,financialStatementAbleItemId,domElements.corporateTaxesId,false,domElements.earningBeforeTaxesId,domElements.salesRevenueId,true)
+									var inputs = recalculatePercentagesOrCostOfUnit(td,date,financialStatementAbleItemId,domElements.corporateTaxesId,false,domElements.earningBeforeTaxesId,domElements.salesRevenueId,true,parseFloat(currentInputThatChanged.value))
 					
 									for(var inputItem of inputs){
 										 inputItem.dispatchEvent(new Event('change', {
@@ -696,10 +688,7 @@ $tableId = 'kt_table_1';
                             let earningBeforeInterstTaxesDepreciationAmortizationAtDate = earningBeforeInterestTaxesAtDate + totalDepreciationsAtDate;
                             earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('td.date-' + date).innerHTML = number_format(earningBeforeInterstTaxesDepreciationAmortizationAtDate);
                             var input = earningBeforeInterestTaxesDepreciationAmortizationRow.querySelector('input[data-date="' + date + '"]')
-
                             input.value = earningBeforeInterstTaxesDepreciationAmortizationAtDate
-		
-
                             input.dispatchEvent(new Event('change', {
                                 'bubbles': true
                             }));
@@ -965,7 +954,16 @@ $tableId = 'kt_table_1';
                                     'bubbles': true
                                 }))
                             }
-                            $('.main-table-class').DataTable().columns.adjust()
+							if(modalIsOpenInAddOrEdit||deleteModalIsOpen){
+								if(isLastKey(date,dates)){
+                        	    	$('.main-table-class').DataTable().columns.adjust()
+								}
+								
+							}
+							else{
+                        	    	$('.main-table-class').DataTable().columns.adjust()
+								
+							}
 
                         });
 
@@ -979,7 +977,7 @@ $tableId = 'kt_table_1';
                                 let previousTotalSalesRevenueValue = parseFloat(document.querySelector('.is-main-with-sub-items[data-model-id="' + salesRevenueId + '"] ' + 'input[data-date="' + previousDate + '"]').value);
                                 var salesRevenueGrowthRate = 0;
                                 if (previousTotalSalesRevenueValue) {
-                                    salesRevenueGrowthRate = currentTotalSalesRevenueValue ? ((currentTotalSalesRevenueValue - previousTotalSalesRevenueValue) / previousTotalSalesRevenueValue) * 100 : 0;
+                                    salesRevenueGrowthRate = previousTotalSalesRevenueValue ? ((currentTotalSalesRevenueValue - previousTotalSalesRevenueValue) / previousTotalSalesRevenueValue) * 100 : 0;
                                 }
                                 var input = document.querySelector('.main-with-no-child[data-model-id="' + salesGrowthRateId + '"] ' + 'input[data-date="' + currentDate + '"]');
                                 if (input) {
@@ -1058,6 +1056,7 @@ $tableId = 'kt_table_1';
                             let corporateTaxesId = domElements.corporateTaxesId;
                             let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
                             let salesRevenueId = domElements.salesRevenueId;
+							let salesRevenueRowId =salesRevenueId ;
                             let isFinancialExpense = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-financial-expense') : tdElement.getAttribute('data-is-financial-expense')
                             let firstDateString = $(tdElement).attr("class").split(/\s+/).filter(function(classItem) {
                                 return classItem.startsWith('date-');
@@ -1113,7 +1112,7 @@ $tableId = 'kt_table_1';
                                 }
                                 if (is_percentage_or_fixed && is_percentage || is_percentage_or_fixed && is_cost_of_unit) {
 									
-                                  return recalculatePercentagesOrCostOfUnit(tdElement,firstDate,financialStatementAbleItemId,corporateTaxesId,is_cost_of_unit,earningBeforeTaxesId,salesRevenueRowId,is_percentage)
+                                  return recalculatePercentagesOrCostOfUnit(tdElement,firstDate,financialStatementAbleItemId,corporateTaxesId,is_cost_of_unit,earningBeforeTaxesId,salesRevenueId,is_percentage,currentVal)
 
                                 } else {
                                     var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
@@ -1812,7 +1811,7 @@ $tableId = 'kt_table_1';
 																<input type="hidden" value="1" name="in_delete_modal" >
 																<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 																<input type="hidden" name="income_statement_id" value="{{$incomeStatement->id}}">
-																<input type="hidden" name="is_financial_income" value="${data.pivot.is_financial_income}">
+																<input type="hidden" name="is_financial_income" value="${data.pivot.is_financial_income }">
 																<input type="hidden" name="is_financial_expense" value="${data.pivot.is_financial_expense}">
 																<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 																<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
@@ -1868,7 +1867,7 @@ $tableId = 'kt_table_1';
                                                         totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
 
                                                         var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-is-cost-of-unit="${data.pivot ? data.pivot.is_cost_of_unit_of : 0}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0 ))}" >
-														<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  value="${data.pivot ? data.pivot.is_financial_income :0}" >
+														<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  value="${data.pivot && data.pivot.is_financial_income!= null? data.pivot.is_financial_income :0}" >
 														
 														 `;
                                                         $(dateDt).after(hiddenInput);
@@ -2211,15 +2210,14 @@ $tableId = 'kt_table_1';
                                                 const reportType = vars.subItemType;
                                                 $('.editable-text').attr('contenteditable', false)
 
-                                                //                  if (reportType == 'adjusted' || reportType == 'actual' || reportType == 'modified') {
-                                                //
-                                                //                      if ($(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row`).length) {
-                                                //                          $(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row td.editable-date`).trigger('blur')
-                                                //                      } else {
-                                                //                          $(`.maintable-1-row-class${domElements.costOfGoodsId}.is-sub-row td.editable-date`).trigger('blur')
-                                                //                      }
-                                                //
-                                                //                  }
+//                                                                  if (reportType == 'adjusted' || reportType == 'actual' || reportType == 'modified') {
+//                                                                      if ($(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row`).length) {
+//                                                                          $(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row input[data-date]`).trigger('change')
+//                                                                      } else {
+//                                                                          $(`.maintable-1-row-class${domElements.costOfGoodsId}.is-sub-row input[data-date]`).trigger('change')
+//                                                                      }
+//                                                
+//                                                                  }
 
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 $('tr[data-percentage-or-fixed="percentage"] td.editable,tr[data-percentage-or-fixed="cost_of_unit"] td.editable').attr('contenteditable', false).attr('title', '');

@@ -162,7 +162,7 @@ $tableId = 'kt_table_1';
     <input type="hidden" id="financial-balance-or-expenses-id" value="{{ \App\Models\CashFlowStatementItem::FINANCIAL_INCOME_OR_EXPENSE_ID }}">
     <input type="hidden" id="earning-before-taxes-id" value="{{ \App\Models\CashFlowStatementItem::EARNING_BEFORE_TAXES_ID }}">
     <input type="hidden" id="corporate-taxes-id" value="{{ \App\Models\CashFlowStatementItem::CORPORATE_TAXES_ID }}">
-    <input type="hidden" id="net-profit-id" value="{{ \App\Models\CashFlowStatementItem::NEXT_PROFIT_ID }}">
+    <input type="hidden" id="net-profit-id" value="{{ \App\Models\CashFlowStatementItem::NET_PROFIT_ID }}">
     --}}
     <script>
         // let sales_rates_maps = document.getElementById('sales-rate-maps').value;

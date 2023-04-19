@@ -165,10 +165,14 @@ class IncomeStatementController extends Controller
 		$isFinancialIncome = (bool)$request->get('is_financial_income');
 		$incomeStatement->storeReport($request);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
+
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
 		foreach ($subItemTypesToDetach as $subItemType) {
 			foreach ($subItemsNames as $subItemName) {
 				$incomeStatementItem->withSubItemsFor($incomeStatementId, $subItemType, $subItemName)->detach($incomeStatementId);
+			}
+			if ($subItemType != $request->get('sub_item_type')) {
+				$incomeStatement->refreshCalculationFor($subItemType);
 			}
 		}
 

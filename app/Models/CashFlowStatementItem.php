@@ -212,7 +212,7 @@ class  CashFlowStatementItem extends Model implements IFinancialStatementAbleIte
 	// 			, 'is_sales_rate' => true
 	// 		],
 	// 		'Net Profit' => [
-	// 			'id' => self::NEXT_PROFIT_ID,
+	// 			'id' => self::NET_PROFIT_ID,
 	// 			'hasSubItems' => false,
 	// 			'has_depreciation_or_amortization' => false,
 	// 			'depends_on' => [$corporateTaxesID, $earningBeforeTaxesId],

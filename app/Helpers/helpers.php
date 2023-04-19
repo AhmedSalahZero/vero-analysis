@@ -2677,3 +2677,28 @@ function sortMonthsByItsNames(array $array): array
 	}
 	return $formatted;
 }
+function stringArrayToArray(string $str)
+{
+	if (!$str) {
+		return [];
+	}
+	return 	eval('return ' . $str . ';');
+}
+
+function replaceArr($mainIdsWithItsValues, $equation)
+{
+	$number = preg_replace('/[0-9]+/', ',', $equation);
+	$numberExploded = explode(',', $number);
+	$signs = array_filter($numberExploded, function ($n) {
+		return $n;
+	});
+	$signs = array_values($signs);
+	$result = '';
+	$index = 0;
+	array_map(function ($n) use (&$result, &$index, $signs) {
+		$sign = $signs[$index] ?? '';
+		$result .= $n . $sign;
+		$index++;
+	}, $mainIdsWithItsValues);
+	return $result;
+}
