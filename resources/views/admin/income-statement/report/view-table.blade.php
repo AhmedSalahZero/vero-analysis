@@ -3,11 +3,15 @@ $tableId = 'kt_table_1';
 @endphp
 
 <style>
-    .basis-100 {
+  .basis-100 {
         flex-basis: 100%;
     }
-
-
+	.checkboxes-for-quantity{
+		display:flex;
+	}
+	.checkboxes-for-quantity > * {
+		margin-right:20px;
+	}
 
     .pl-25 {
         padding-left: 17px;
@@ -59,8 +63,6 @@ $tableId = 'kt_table_1';
         flex: 1;
         width: 100% !important;
     }
-
-
     .flex-checkboxes>div:not(.modal-footer) {
         width: 100%;
         width: 100% !important;
@@ -373,9 +375,13 @@ $tableId = 'kt_table_1';
 
                             }
                             $(this).closest('.collection-policy').find('.collection_rate_total_class').val(number_format(total, 2) + ' %')
-
-
                         })
+						
+						$(document).on('change','.can-trigger-quantity-modal',function(){
+							
+							$(this).closest('.quantity-section').find('.modal-for-quantity').modal('show')
+						})
+
 
                         $(document).on('change', '.only-one-checked', function() {
                             const parent = $(this).closest('.only-one-checked-parent')
@@ -1711,14 +1717,11 @@ $tableId = 'kt_table_1';
 
                                                     var quantity = '';
                                                     if (data.pivot && data.pivot.can_be_quantity) {
-                                                        let checkedQuantity = '';
+                                            //            let checkedQuantity = '';
                                                         if (data.pivot.is_quantity) {
-                                                            checkedQuantity = ' checked ';
+                                              //              checkedQuantity = ' checked ';
                                                         }
-                                                        quantity = `
-   				         					<label>{{ __('Is Quantity ? ') }}</label>
-                            
-                           				 <input ${checkedQuantity} class="" type="checkbox" value="1" name="is_quantity"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
+                                                      
                                                     }
                                                     if (data.pivot && data.pivot.can_be_depreciation) {
                                                         let checkedDepreciation = '';
@@ -1769,10 +1772,7 @@ $tableId = 'kt_table_1';
 															
 														${Depreciation}
 														</div>
-														
-														<div class="margin-left-auto">
-														${quantity}
-														</div>
+														${getSalesRevenueModal(true ,data.pivot,data.pivot.financial_statement_able_item_id)}
 														</div>
 														
 														${has_percentage_or_fixed_sub_items}
@@ -2083,17 +2083,17 @@ $tableId = 'kt_table_1';
 															`;
                                                         }
 
-                                                        let quantityCheckbox = '';
-
-                                                        quantityCheckbox = `<div class="form-check mt-2">
-															<label class="form-check-label"  style="margin-top:3px" >
-																{{ __('Add Quantity') }}
-															</label>
-
-															<input class="" type="checkbox" value="1" name="sub_items[0][is_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
-															<input class="" type="hidden" value="1" name="sub_items[0][can_be_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
+                                               //         let quantityCheckbox = '';
+//
+                                               //         quantityCheckbox = `<div class="form-check mt-2">
+												//			<label class="form-check-label"  style="margin-top:3px" >
+												//				{{ __('Add Quantity') }}
+												//			</label>
+//
+												//			<input class="" type="checkbox" value="1" name="sub_items[0][is_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
+												//			<input class="" type="hidden" value="1" name="sub_items[0][can_be_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
 															
-															`;
+											//				`;
                                                         var increaseNameWidth = null;
                                                         if (data.has_percentage_or_fixed_sub_items) {
                                                             $(row).addClass('has-percentage-or-fixed-sub-items').attr('data-financial-statement-able-item-id', incomeStatementItemId)
@@ -2124,16 +2124,16 @@ $tableId = 'kt_table_1';
 															 `;
                                                         } else {
                                                             if (data.id == domElements.financialIncomeOrExpensesId) {
-                                                                quantityCheckbox = ''
+                                                               // quantityCheckbox = ''
                                                                 increaseNameWidth = true
                                                             }
-                                                            nameAndDepreciationIfExist = ` <div class="append-names mt-2" data-id="${data.id}">
+                                                             nameAndDepreciationIfExist = ` <div class="append-names mt-2" data-id="${data.id}">
 
 															<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center border-bottom-popup" data-id="${data.id}" data-index="0">
 																<div style="display:flex;align-items:center;width:100%;justify-content:space-between; ">
 																<div class="${increaseNameWidth ? 'width-66' : ''}"><label class="form-label">{{ __('Name') }}</label>
 																<input name="sub_items[0][name]" type="text" value="" class="form-control trim-when-key-up" required></div>
-																` + quantityCheckbox + `</div>` +
+																` + `` + `</div>` +
                                                                 `
 																` + has_percentage_or_fixed_sub_items + `
 															</div> ` + '' + `
@@ -2166,6 +2166,7 @@ $tableId = 'kt_table_1';
             <input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" name="how_many_items" type="number" value="1">
           
            ${nameAndDepreciationIfExist}
+		   ${data.id == domElements.salesRevenueId ? getSalesRevenueModal(false , null , data.id):''}
 		   ${getFinancialIncomeOrExpenseCheckBoxes(false ,null, data.id)}
 		  ${getCollectionPolicyHtml(false,null,data.id)}
 		</div>
@@ -3355,6 +3356,91 @@ $tableId = 'kt_table_1';
 					
 					`;
                 }
+				
+				function getSalesRevenueModal(editModal , pivot = null , id){
+					let thsForHeader = '<th class="text-white"> {{ __("Name") }}</th>';
+					let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
+					let tdForBodyValue = '<td>{{ __("Value") }}</td>';
+					let tdForBodyQuantity = '<td>{{ __("Quantity") }}</td>';
+					let tdForBodyPrice = '<td>{{ __("Price") }}</td>';
+					for(date of dates){
+						thsForHeader += '<th class="'+ thdClass +'" data-date="'+ date +'">'+ date +'</th>'
+						tdForBodyValue += '<td data-type="value" contenteditable="true" data-date="'+ date +'">'+ 0 +'</td>'
+						tdForBodyQuantity += '<td data-type="quantity" contenteditable="true" data-date="'+ date +'">'+ 0 +'</td>'
+						tdForBodyPrice += '<td data-type="price" contenteditable="true" data-date="'+ date +'">'+ 0 +'</td>'
+					}
+					
+					
+					return `
+					<div class="quantity-section ">
+						<div class="checkboxes-for-quantity only-one-checkbox-parent">
+							<div class="quantity-checkbox-div">
+							<label >{{ __('Value') }}</label>
+								<input type="checkbox" value="value" disabled style="width:16px;height:16px;" name="sub_items[0][is_value]" checked>
+							</div>
+							<div class="quantity-checkbox-div">
+								<label >{{ __('Quantity') }}</label>
+								<input class="only-one-checkbox can-trigger-quantity-modal" type="checkbox" value="quantity"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]">
+							</div>
+							<div class="quantity-checkbox-div">
+								<label >{{ __('Price') }}</label>
+								<input class="only-one-checkbox can-trigger-quantity-modal" type="checkbox" value="price"  style="width:16px;height:16px;" name="sub_items[0][is_price]">
+							</div>
+						</div>
+						
+						
+						<div class="modal fade modal-for-quantity"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl " style="overflow-x:scroll" role="document">
+    <div class="modal-content" style="overflow-x:scroll">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Values And Quantities</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped-  table-hover table-checkable position-relative dataTable no-footer dtr-inline">
+			<thead>
+				<tr class="header-tr">
+					${thsForHeader}
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					${tdForBodyValue}
+				</tr>
+				<tr>
+					${tdForBodyQuantity}
+				</tr>
+				
+				<tr class="price">
+					${tdForBodyPrice}
+				</tr>
+				
+				<tr class="auto-quantity">
+					${tdForBodyQuantity}
+				</tr>
+				
+				
+			</tbody>
+		</table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+					</div>
+					
+					
+					
+					
+					`;
+				}
+
 
                 function getCollectionPolicyHtml(editMode, pivot = null, id) {
                     let valueOfCustom = [];
