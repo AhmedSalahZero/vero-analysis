@@ -2209,15 +2209,19 @@ $tableId = 'kt_table_1';
                                                 getLastSubItemOfEachMainRow()
                                                 const reportType = vars.subItemType;
                                                 $('.editable-text').attr('contenteditable', false)
+											//	let start = performance.now()
 
-//                                                                  if (reportType == 'adjusted' || reportType == 'actual' || reportType == 'modified') {
-//                                                                      if ($(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row`).length) {
-//                                                                          $(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row input[data-date]`).trigger('change')
-//                                                                      } else {
-//                                                                          $(`.maintable-1-row-class${domElements.costOfGoodsId}.is-sub-row input[data-date]`).trigger('change')
-//                                                                      }
-//                                                
-//                                                                  }
+                                                                  //if (reportType == 'adjusted' || reportType == 'actual' || reportType == 'modified' || reportType =='forecast') {
+                                                                  //    if ($(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row`).length) {
+                                                                  //        $(`.maintable-1-row-class${domElements.salesRevenueId}.is-sub-row input[data-date]`).trigger('change')
+                                                                  //    } else {
+                                                                  //        $(`.maintable-1-row-class${domElements.costOfGoodsId}.is-sub-row input[data-date]`).trigger('change')
+                                                                  //    }
+                                                //
+                                                                  //}
+																  //let end = performance.now()
+																  //let result = (end - start ) / 1000 
+																  //console.log(result)
 
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 $('tr[data-percentage-or-fixed="percentage"] td.editable,tr[data-percentage-or-fixed="cost_of_unit"] td.editable').attr('contenteditable', false).attr('title', '');
