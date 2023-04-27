@@ -340,7 +340,7 @@ $currentReportType = Request()->segment(5)
                                     <div>
                                         @if($mainItemName == __('Sales Revenue'))
                                         @php
-                                        $currentSalesRevenueValue = isset($chartItems[$mainItemName]) && isQuantitySubItem(array_values($chartItems[$mainItemName])[0]) ?'quantity':'value' ;
+                                        $currentSalesRevenueValue = isset($chartItems[$mainItemName]) && isset(array_values($chartItems[$mainItemName])[0]) && isQuantitySubItem(array_values($chartItems[$mainItemName])[0]) ?'quantity':'value' ;
 
                                         @endphp
 

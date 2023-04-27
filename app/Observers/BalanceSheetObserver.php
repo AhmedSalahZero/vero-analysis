@@ -8,5 +8,6 @@ class BalanceSheetObserver
 {
 	public function deleting(BalanceSheet $balanceSheet)
 	{
+		$balanceSheet->mainRows()->detach();
 	}
 }

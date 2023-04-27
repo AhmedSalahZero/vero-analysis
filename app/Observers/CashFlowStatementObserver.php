@@ -8,5 +8,6 @@ class CashFlowStatementObserver
 {
 	public function deleting(CashFlowStatement $cashFlowStatement)
 	{
+		$cashFlowStatement->mainRows()->detach();
 	}
 }

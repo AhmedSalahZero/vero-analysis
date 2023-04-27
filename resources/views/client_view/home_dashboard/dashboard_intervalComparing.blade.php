@@ -208,7 +208,9 @@
                                 </tr>
                             @endslot
                             @slot('table_body')
+							
                                 @php $total = array_sum(array_column($data,'Sales Value')) @endphp 
+								
                                 @foreach ($data as $key => $item)
                                 <tr>
                                     <th>{{$key+1}}</th>
@@ -383,7 +385,6 @@
                 chart.legend = new am4charts.Legend();
                 chart.legend.position = "right";
                 chart.legend.scrollable = true;
-
             }); // end am4core.ready()
         </script>
     @endforeach

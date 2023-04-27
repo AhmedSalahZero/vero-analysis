@@ -2702,3 +2702,7 @@ function replaceArr($mainIdsWithItsValues, $equation)
 	}, $mainIdsWithItsValues);
 	return $result;
 }
+function isActualDateInModifiedOrAdjusted($date, $subItemType)
+{
+	return ($subItemType == 'adjusted' || $subItemType == 'modified') && isActualDate($date);
+}

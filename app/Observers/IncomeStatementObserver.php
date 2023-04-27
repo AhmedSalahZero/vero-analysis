@@ -8,5 +8,6 @@ class IncomeStatementObserver
 {
 	public function deleting(IncomeStatement $incomeStatement)
 	{
+		$incomeStatement->mainRows()->detach();
 	}
 }

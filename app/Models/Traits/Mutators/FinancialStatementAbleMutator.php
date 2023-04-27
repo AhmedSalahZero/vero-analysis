@@ -322,7 +322,7 @@ trait FinancialStatementAbleMutator
 		}
 		return [$subItemType];
 	}
-	public function updateCostOfUnitAndPercentagesOfSubItems(Collection $subItemsForCurrentIncomeStatementItem, Collection $allMainItems, array $dates, string $subItemType): void
+	public function updateCostOfUnitAndPercentagesOfSubItems(Collection $subItemsForCurrentIncomeStatementItem, array $dates, string $subItemType): void
 	{
 		$salesRevenueId = IncomeStatementItem::SALES_REVENUE_ID;
 		$salesRevenuesSubItemsArray = $this->withSubItemsFor($salesRevenueId, $subItemType)->get()->keyBy(function ($salesRevenueSubItem) {
@@ -365,7 +365,11 @@ trait FinancialStatementAbleMutator
 						$loopPercentageValueOfSalesRevenue = $salesRevenuesSubItemsArray[$percentageOf][$date] ?? 0;
 						$totalPercentageOfValue += $loopPercentageValueOfSalesRevenue;
 					}
-					$values[$financialStatementAbleItemId][$subItemName][$date] = $percentageValue * $totalPercentageOfValue;
+					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
+						$values[$financialStatementAbleItemId][$subItemName][$date] = $payload->{$date} ?: 0;
+					} else {
+						$values[$financialStatementAbleItemId][$subItemName][$date] = $percentageValue * $totalPercentageOfValue;
+					}
 				}
 				$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
 					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName])
@@ -378,7 +382,11 @@ trait FinancialStatementAbleMutator
 					foreach ($costOfUnitsOf as $costOfUnitOf) {
 						$totalCostOfUnitValue += $salesRevenuesSubItemsArray[$costOfUnitOf][$date] ?? 0;
 					}
-					$values[$financialStatementAbleItemId][$subItemName][$date] = $costOfUnitValue * $totalCostOfUnitValue;
+					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
+						$values[$financialStatementAbleItemId][$subItemName][$date] = $payload->{$date} ?: 0;
+					} else {
+						$values[$financialStatementAbleItemId][$subItemName][$date] = $costOfUnitValue * $totalCostOfUnitValue;
+					}
 				}
 				$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
 					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName])
@@ -397,7 +405,7 @@ trait FinancialStatementAbleMutator
 		foreach ($allMainItems as $mainItem) {
 			$incomeStatementItemId = $mainItem->id;
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
-			$this->updateCostOfUnitAndPercentagesOfSubItems($oldSubItemsForCurrentMainItem, $allMainItems, $dates, $subItemType);
+			$this->updateCostOfUnitAndPercentagesOfSubItems($oldSubItemsForCurrentMainItem, $dates, $subItemType);
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
@@ -615,10 +623,21 @@ trait FinancialStatementAbleMutator
 
 				// for corporate taxes sub items 
 				// update sub items of corporate taxes [needs to be here] 
-
-
 				$valueForCurrentCorporateTaxesSubItem = $earningBeforeInterestTaxesAtDate * $corporateTaxesPercentage;
-				$valuesForCorporateTaxesAtDate[$date] = $earningBeforeInterestTaxesAtDate < 0 ? 0 : $valueForCurrentCorporateTaxesSubItem;
+				if (isActualDateInModifiedOrAdjusted($date, $subItemType) || $subItemType == 'actual') {
+					// dd($this, $incomeStatementItemId, $subItemType);
+					$pivotForCorporateTaxes = $this->withSubItemsFor($corporateTaxesID, $subItemType, 'Corporate Taxes')->first();
+					// dd($pivotForCorporateTaxes->pivot);
+					$pivotForCorporateTaxes = $pivotForCorporateTaxes ? $pivotForCorporateTaxes->pivot : null;
+					if (!$pivotForCorporateTaxes) {
+						$valuesForCorporateTaxesAtDate[$date] = 0;
+					} else {
+						$pivotPayloadForCorporateTaxes = $pivotForCorporateTaxes->payload ? json_decode($pivotForCorporateTaxes->payload) : null;
+						$valuesForCorporateTaxesAtDate[$date] = $pivotPayloadForCorporateTaxes && $pivotPayloadForCorporateTaxes->{$date} ? $pivotPayloadForCorporateTaxes->{$date} : 0;
+					}
+				} else {
+					$valuesForCorporateTaxesAtDate[$date] = $earningBeforeInterestTaxesAtDate < 0 ? 0 : $valueForCurrentCorporateTaxesSubItem;
+				}
 			}
 		}
 		// elseif ($incomeStatementItemId === $corporateTaxesID) {
