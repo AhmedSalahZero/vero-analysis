@@ -70,6 +70,7 @@ class IncomeStatementController extends Controller
 
 	public function storeReport(Request $request)
 	{
+		// dd($request->all());
 
 		$this->incomeStatementRepository->storeReport($request);
 		return response()->json([

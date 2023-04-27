@@ -220,22 +220,25 @@ trait FinancialStatementAbleMutator
 		$financialStatementAble = (new static)::find($request->input('financial_statement_able_id'));
 		$financialStatementAbleItemId = $request->input('financial_statement_able_item_id');
 		$cashFlowStatement = new CashFlowStatement();
-
+		$subItemsValues = (array)$request->get('value');
 		$subItemType = $request->get('sub_item_type');
+		$insertSubItems = $this->getInsertToSubItemFields($subItemType);
 		if (!$request->has('new_sub_item_name')) {
 			foreach ((array)$request->sub_items as $index => $options) {
 				if (isset($options['name']) && $options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
-					$insertSubItems = $this->getInsertToSubItemFields($subItemType);
 					foreach ($insertSubItems as $subType) {
-						if (isset($options['is_quantity']) && $options['is_quantity'] && get_class($this) != CashFlowStatement::class) {
+						if (isQuantity($options) && get_class($this) != CashFlowStatement::class) {
 							foreach ([true, false] as $isQuantityRepeating) {
+								$payload = $isQuantityRepeating ? $options['quantity'] : $options['val'];
+								$name = $isQuantityRepeating ? $options['name'] . quantityIdentifier : $options['name'];
+								$subItemsValues[$financialStatementAble->id][$financialStatementAbleItemId][$name] = $payload;
 								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
 							}
 						} else {
-							if (get_class($this) == CashFlowStatement::class) {
-								$isFinancialIncome = isset($options['is_financial_income']) && $options['is_financial_income'];
-								//		logger(['income_statement_item_id', $financialStatementAbleItemId, $isFinancialIncome, $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])]);
-							}
+							// if (get_class($this) == CashFlowStatement::class) {
+							// 	$isFinancialIncome = isset($options['is_financial_income']) && $options['is_financial_income'];
+							// 	//		logger(['income_statement_item_id', $financialStatementAbleItemId, $isFinancialIncome, $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])]);
+							// }
 							// $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])
 							$financialStatementAbleItemOrCashFlowStatementItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income']);
 							$financialStatementAble->withSubItemsFor($financialStatementAbleItemOrCashFlowStatementItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemOrCashFlowStatementItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options));
@@ -245,8 +248,7 @@ trait FinancialStatementAbleMutator
 			}
 		}
 
-
-		foreach ((array)$request->get('value') as $financialStatementAbleId => $financialStatementAbleItems) {
+		foreach ($subItemsValues as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId);
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $values) {
 				foreach ($values as $sub_item_origin_name => $payload) {
@@ -308,6 +310,11 @@ trait FinancialStatementAbleMutator
 					'sub_item_type' => $subItemType
 				], false);
 				$financialStatementAble->updateTotalRowsWithoutSubItemsForAdjusted($financialStatementAbleItemId, $subItemType);
+			}
+		}
+		if (get_class($this) == IncomeStatement::class) {
+			foreach ($insertSubItems as $insertSubItem) {
+				$financialStatementAble->refreshCalculationFor($insertSubItem);
 			}
 		}
 		return $financialStatementAble;
