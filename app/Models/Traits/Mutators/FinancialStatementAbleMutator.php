@@ -48,12 +48,20 @@ trait FinancialStatementAbleMutator
 	{
 		if ($subItemType == 'forecast' || $subItemType == 'actual') {
 			$pivotForForecast = $this->withMainRowsFor($financialStatementAbleItemId, 'forecast')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+			$payloadForMainRow = $this->withMainRowsFor($financialStatementAbleItemId, 'modified')->first() ;
+			$payloadForMainRow =  $payloadForMainRow && $payloadForMainRow->pivot ? (array) json_decode($payloadForMainRow->pivot->payload) : null;
+			
+			if($payloadForMainRow){
+				$pivotForForecast = $this->withMainRowsFor($financialStatementAbleItemId, 'modified')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+			}
 			$pivotForActual = $this->withMainRowsFor($financialStatementAbleItemId, 'actual')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 			// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
 			$actualDates = [];
 			$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
+			
+			
 			// and here
 
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
@@ -67,16 +75,24 @@ trait FinancialStatementAbleMutator
 
 
 
+		
+			
+			// if(!$payloadForMainRow 
+			// || !twoArrayIsEqualValues($pivotForModified,$payloadForMainRow)
+			// ){
+			
+				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
+				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
+					'payload' => json_encode($pivotForModified),
+					'total' => in_array($financialStatementAbleItemId, ($this->getMainItemTableClassName())::percentageOfSalesRows()) ? getTotalOfSalesRevenueFor($this->id, 'adjusted', $financialStatementAbleItemId) : array_sum($pivotForModified),
+					'company_id' => \getCurrentCompanyId(),
+					'creator_id' => Auth::id(),
+					'sub_item_type' => 'modified'
 
-			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
-			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
-				'payload' => json_encode($pivotForModified),
-				'total' => in_array($financialStatementAbleItemId, ($this->getMainItemTableClassName())::percentageOfSalesRows()) ? getTotalOfSalesRevenueFor($this->id, 'adjusted', $financialStatementAbleItemId) : array_sum($pivotForModified),
-				'company_id' => \getCurrentCompanyId(),
-				'creator_id' => Auth::id(),
-				'sub_item_type' => 'modified'
-
-			], false);
+				], false);
+			
+			// }
+			
 		}
 	}
 
@@ -84,6 +100,11 @@ trait FinancialStatementAbleMutator
 	{
 		if ($subItemType == 'forecast' || $subItemType == 'actual') {
 			$pivotForForecast = $this->withMainRowsFor($financialStatementAbleItemId, 'forecast')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+			$payloadForMainRow = $this->withMainRowsFor($financialStatementAbleItemId, 'modified')->first() ;
+			$payloadForMainRow =  $payloadForMainRow && $payloadForMainRow->pivot ? (array) json_decode($payloadForMainRow->pivot->payload) : null;
+			if($payloadForMainRow){
+				$pivotForForecast = $this->withMainRowsFor($financialStatementAbleItemId, 'modified')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+			}
 			$pivotForActual = $this->withMainRowsFor($financialStatementAbleItemId, 'actual')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
@@ -102,22 +123,34 @@ trait FinancialStatementAbleMutator
 				'sub_item_type' => 'adjusted'
 			], false);
 
+			
+			// if(!$payloadForMainRow 
+			// || !twoArrayIsEqualValues($pivotForModified,$payloadForMainRow)
+			// ){
+				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
+				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
+					'payload' => json_encode($pivotForModified),
+					'company_id' => \getCurrentCompanyId(),
+					'creator_id' => Auth::id(),
+					'total' => array_sum($pivotForModified),
+					'sub_item_type' => 'modified'
+				], false);
+				
+			// }
 
-			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
-			$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
-				'payload' => json_encode($pivotForModified),
-				'company_id' => \getCurrentCompanyId(),
-				'creator_id' => Auth::id(),
-				'total' => array_sum($pivotForModified),
-				'sub_item_type' => 'modified'
-			], false);
 		}
 	}
 
 	public function updatePivotForAdjustedSubItems(int $financialStatementAbleItemId, string $sub_item_origin_name): void
 	{
 		$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'forecast', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+		$payloadForSubRow = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->first() ;
+		$payloadForSubRow =  $payloadForSubRow && $payloadForSubRow->pivot ? (array) json_decode($payloadForSubRow->pivot->payload) : null;
+		if($payloadForSubRow){
+			$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+		}
 		$pivotForActual = $this->withSubItemsFor($financialStatementAbleItemId, 'actual', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+		
 		$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 		$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 		// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
@@ -128,10 +161,17 @@ trait FinancialStatementAbleMutator
 			'actual_dates' => json_encode($actualDates)
 		]);
 		// for modified also ??
-		$this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
-			'payload' => json_encode($pivotForModified),
-			'actual_dates' => json_encode($actualDates)
-		]);
+		
+		
+		// if(!$payloadForSubRow 
+		// || !twoArrayIsEqualValues($pivotForModified,$payloadForSubRow)
+		// ){
+			
+			$this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
+				'payload' => json_encode($pivotForModified),
+				'actual_dates' => json_encode($actualDates)
+			]);
+		// }
 	}
 
 	public function syncPivotFor(int $financialStatementAbleItemId, string $sub_item_type, string $sub_item_origin_name)
@@ -243,11 +283,6 @@ trait FinancialStatementAbleMutator
 								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
 							}
 						} else {
-							// if (get_class($this) == CashFlowStatement::class) {
-							// 	$isFinancialIncome = isset($options['is_financial_income']) && $options['is_financial_income'];
-							// 	//		logger(['income_statement_item_id', $financialStatementAbleItemId, $isFinancialIncome, $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])]);
-							// }
-							// $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income'])
 							$financialStatementAbleItemOrCashFlowStatementItemId = get_class($this) != CashFlowStatement::class ? $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income']);
 							$financialStatementAble->withSubItemsFor($financialStatementAbleItemOrCashFlowStatementItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemOrCashFlowStatementItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options));
 						}

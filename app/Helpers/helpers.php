@@ -3037,3 +3037,20 @@ function getTypesForValues():array
 		
 	];
 }
+function twoArrayIsEqualValues(array $firstItems , array $secondItems){
+	if(count($firstItems) != count($secondItems)){
+		return false ;
+	}
+	foreach($firstItems as $date =>$val){
+		$secondVal = $secondItems[$date] ?? 0;
+		if($secondVal == 0 ){
+			if($val !=0){
+				return false ;
+			} 
+		}
+		elseif(!(abs(($val-$secondVal)/$secondVal) < 0.00001)){
+			return false ;
+		}
+	}
+	return true ;
+}
