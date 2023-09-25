@@ -133,9 +133,9 @@
                     </tr>
                     @endslot
                     @slot('table_body')
+					
                     @foreach ($allFormattedWithOthers as $key => $item)
 
-                    {{-- @dd($customers_natures) --}}
                     <tr>
                         <th>{{$key+1}}</th>
                         <th style="white-space: normal !important">{{$item->customer_name }}</th>

@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ActualTemplateExport;
 use App\Exports\FinancialStatementExport;
 use App\Http\Requests\FinancialStatementRequest;
+use App\Imports\ActualIncomeStatementImport;
 use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\FinancialStatementItem;
+use App\Models\IncomeStatement;
+use App\Models\Log;
 use App\Models\Repositories\FinancialStatementRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FinancialStatementController extends Controller
 {
@@ -25,6 +30,7 @@ class FinancialStatementController extends Controller
 
 	public function view()
 	{
+		Log::storeNewLogRecord('enterSection',null,__('Income Statement Planning'));
 		return view('admin.financial-statement.view', FinancialStatement::getViewVars());
 	}
 	public function create()
@@ -42,7 +48,9 @@ class FinancialStatementController extends Controller
 
 	public function paginate(Request $request)
 	{
-		return $this->financialStatementRepository->paginate($request);
+		$data = $this->financialStatementRepository->paginate($request) ;
+
+		return $data ;
 	}
 	public function paginateReport(Request $request, Company $company, FinancialStatement $financialStatement)
 	{
@@ -216,5 +224,18 @@ class FinancialStatementController extends Controller
 			}
 		}
 		return $formattedData;
+	}
+	
+	public function downloadExcelTemplateForActual(Company $company, Request $request,IncomeStatement $incomeStatement)
+	{
+		$actualTemplateExport = new ActualTemplateExport($incomeStatement);
+		return Excel::download($actualTemplateExport, __('Actual Template For'). ' ' . $incomeStatement->getName() .'.xlsx');
+		
+	}
+	public function importExcelTemplateForActual(Company $company , Request $request , IncomeStatement $incomeStatement)
+	{
+		Excel::import(new ActualIncomeStatementImport($company,$incomeStatement) , Request()->file('excel_file'));
+		return redirect()->back()->with('success',__('Actual Report Has Been Uploaded Successfully'));
+		
 	}
 }

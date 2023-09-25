@@ -4,7 +4,8 @@
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{{ asset('custom/axios.js') }}"></script>
+
 <script>
     setInterval(() => {
         let company_id = "{{ $company->id }}"

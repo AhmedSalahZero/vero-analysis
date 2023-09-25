@@ -111,7 +111,7 @@ var FormRepeater = function() {
     }
 
     var demo4 = function() {
-        
+       
         $('#m_repeater_4').repeater({            
             initEmpty: false,
               isFirstItemUndeletable: true,
@@ -120,7 +120,8 @@ var FormRepeater = function() {
             },
              
             show: function() {
-                $(this).slideDown();                               
+                $(this).slideDown();      
+				$('input.trigger-change-repeater').trigger('change')                         
             },
 
             hide: function(deleteElement) {
@@ -137,6 +138,8 @@ var FormRepeater = function() {
                    
                                deleteElement();
                               $('select.main-service-item').trigger('change');
+				$('input.trigger-change-repeater').trigger('change')                         
+							  
                     });
                 }         
                 }
@@ -153,7 +156,9 @@ var FormRepeater = function() {
             },
              
             show: function() {
-                $(this).slideDown();                               
+                $(this).slideDown();                 
+				$('input.trigger-change-repeater').trigger('change')                         
+				              
             },
 
             hide: function(deleteElement) {
@@ -161,6 +166,7 @@ var FormRepeater = function() {
                         $(this).slideUp(deleteElement,function(){
                    
                                deleteElement();
+							   
                             //   $('select.main-service-item').trigger('change');
                     });
                 }
@@ -173,6 +179,8 @@ var FormRepeater = function() {
                     });
                 }
                 }
+				$('input.trigger-change-repeater').trigger('change')                         
+				
                 
             }
         });

@@ -4,6 +4,7 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('content')
+
 <div class="row">
     <div class="col-12">
         <!--begin::Portlet-->
@@ -18,7 +19,7 @@
         </div>
             <!--begin::Form-->
             <?php $user_row = isset($user) ? $user : old(); ?>
-
+				
             <form class="kt-form kt-form--label-right" method="POST" action= {{isset($user) ? route('user.update',$user): route('user.store')}} enctype="multipart/form-data">
                 @csrf
                 {{isset($user) ?  method_field('PUT'): ""}}
@@ -106,14 +107,27 @@
                             </div>
                             <div class="col-6">
                                 <label>{{__('Role')}} </label>
-                                <select name="role" class="form-control kt-selectpicker"  >
+                                <select id="role-select-id" name="role" class="form-control kt-selectpicker"  >
                                     <option value="">{{__('Select')}}</option>
+									@if(Auth()->user()->isCompanyAdmin() || Auth()->user()->isUser() )
+	                                    <option selected  value="user">{{__("User")}}</option>
+									@else 
                                     <option {{ (isset($user) && $user->hasRole('super-admin')) ? 'selected' : ''}}  value="super-admin">{{__("Super Admin")}}</option>
+                                    <option {{ (isset($user) && $user->hasRole('company-admin')) ? 'selected' : ''}}  value="company-admin">{{__("Company Admin")}}</option>
                                     <option {{ (isset($user) && $user->hasRole('Admin') )? 'selected' : ''}}  value="Admin">{{__("Admin")}}</option>
-
+                                    <option {{ (isset($user) && $user->hasRole('user') )? 'selected' : ''}}  value="Admin">{{__("User")}}</option>
+									@endif 
+									
                                 </select>
 
                             </div>
+							<div class="col-6 max-users-div mt-3">
+								   <label>{{__('Max Users Allowed')}} <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text">#</span></div>
+                                    <input type="text" name="max_users" value="{{$user_row['max_users'] ?? 10 }}" class="form-control" placeholder="{{__('Max Users Allowed')}}" aria-describedby="basic-addon1">
+                                </div>
+							</div>
                         </div>
                     </div>
                 </div>
@@ -132,4 +146,17 @@
     <script src="{{url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
     <!--end::Page Scripts -->
+	<script>
+	$(function(){
+		$(document).on('change','#role-select-id',function(){
+			const value = $(this).val();
+			if(value == 'company-admin'){
+				$('.max-users-div').fadeIn(500)
+			}else{
+				$('.max-users-div').fadeOut(500)
+			}
+		});
+		$('#role-select-id').trigger('change')
+	})
+	</script>
 @endsection

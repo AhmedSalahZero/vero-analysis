@@ -22,10 +22,12 @@ use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
 use App\Models\ProductSeasonality;
 use App\Models\QuantityProductSeasonality;
+use App\Models\SalesGathering;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
 use App\Models\User;
+use App\Services\Caching\CashingService;
 use App\Traits\Intervals;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,6 +37,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Str;
 
 const MAX_RANKING = 5;
@@ -45,7 +48,8 @@ const INVOICES = 'Invoices';
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
 {
-	return preg_replace('/(?<!\ )[A-Z]/', ' $0', $string);;
+	return preg_replace('/(?<!\ )[A-Z]/', ' $0', $string);
+	;
 }
 
 function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
@@ -56,29 +60,29 @@ function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $comp
 
 function getHavingConditionForDeadReactivated($year)
 {
-	return " having max(case when Year = " . $year . " then 1 else 0 end ) = 1
-	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 0
-	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0
+	return ' having max(case when Year = ' . $year . ' then 1 else 0 end ) = 1
+	and max(case when Year = ' . ($year - 1) . '  then 1 else 0 end ) = 0
+	and max(case when Year = ' . ($year - 2) . ' then 1 else 0 end ) = 0
 	and
-	( max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 1 or
+	( max(case when Year = ' . ($year - 3) . ' then 1 else 0 end ) = 1 or
 
-	(max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0
-	and max(case when Year = " . ($year - 4) . " then 1 else 0 end ) = 1)
+	(max(case when Year = ' . ($year - 3) . ' then 1 else 0 end ) = 0
+	and max(case when Year = ' . ($year - 4) . ' then 1 else 0 end ) = 1)
 
 	)
 
 
-	order by total_sales desc ; ";
+	order by total_sales desc ; ';
 }
 
 function getHavingConditionForDeadRepeating($year)
 {
-	return " having max(case when Year = " . $year . " then 1 else 0 end ) = 1
-	and max(case when Year = " . ($year - 1) . "  then 1 else 0 end ) = 1
-	and max(case when Year = " . ($year - 2) . " then 1 else 0 end ) = 0
-	and max(case when Year = " . ($year - 3) . " then 1 else 0 end ) = 0
-	and max(case when Year = " . ($year - 4) . " then 1 else 0 end ) = 1
-	order by total_sales desc ; ";
+	return ' having max(case when Year = ' . $year . ' then 1 else 0 end ) = 1
+	and max(case when Year = ' . ($year - 1) . '  then 1 else 0 end ) = 1
+	and max(case when Year = ' . ($year - 2) . ' then 1 else 0 end ) = 0
+	and max(case when Year = ' . ($year - 3) . ' then 1 else 0 end ) = 0
+	and max(case when Year = ' . ($year - 4) . ' then 1 else 0 end ) = 1
+	order by total_sales desc ; ';
 }
 function getYearsFromInterval($start, $end)
 {
@@ -90,13 +94,13 @@ function getYearsFromInterval($start, $end)
 
 function array_unique_value(array $array, string $key)
 {
-
 	$uniqueItems = [];
 	foreach ($array as $arr) {
 		foreach ($arr as $ar) {
 			$uniqueItems[$ar[$key]] = $ar;
 		}
 	}
+
 	return $uniqueItems;
 }
 function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
@@ -106,7 +110,6 @@ function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, 
 
 function getPeriods($interval)
 {
-
 	if ($interval == 'monthly') {
 		return  [
 			1 => [1],
@@ -125,7 +128,6 @@ function getPeriods($interval)
 	}
 
 	if ($interval == 'quarterly') {
-
 		return [
 			3 => [1, 2, 3], 6 => [4, 5, 6], 9 => [7, 8, 9], 12 => [10, 11, 12]
 		];
@@ -142,44 +144,7 @@ function getPeriods($interval)
 		];
 	}
 }
-function getPeriodsForStartMonths($interval)
-{
 
-	if ($interval == 'monthly') {
-		return  [
-			1 => [1],
-			2 => [2],
-			3 => [3],
-			4 => [4],
-			5 => [5],
-			6 => [6],
-			7 => [7],
-			8 => [8],
-			9 => [9],
-			10 => [10],
-			11 => [11],
-			12 => [12],
-		];
-	}
-
-	if ($interval == 'quarterly') {
-
-		return [
-			1 => [1, 2, 3], 4 => [4, 5, 6], 7 => [7, 8, 9], 10 => [10, 11, 12]
-		];
-	}
-	if ($interval == 'semi-annually') {
-		return [
-			1 => [1, 2, 3, 4, 5, 6], 7 => [7, 8, 9, 10, 11, 12]
-		];
-	}
-
-	if ($interval == 'annually') {
-		return [
-			1 => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-		];
-	}
-}
 function getLongestArray($array)
 {
 	$result = [];
@@ -205,10 +170,11 @@ function arrayCountAllLongest(array $array)
 }
 function flatten(array $array)
 {
-	$return = array();
+	$return = [];
 	array_walk_recursive($array, function ($a) use (&$return) {
 		$return[] = $a;
 	});
+
 	return $return;
 }
 function countTotalForBranch(array $array): int
@@ -267,6 +233,7 @@ if (!function_exists('company')) {
 	{
 		if (Auth::check()) {
 			$company = Company::find($company_id);
+
 			return  $company;
 		}
 	}
@@ -276,6 +243,7 @@ if (!function_exists('exportableFields')) {
 	{
 		if (Auth::check()) {
 			$fields = CustomizedFieldsExportation::where('model_name', $model)->where('company_id', $company_id)->first();
+
 			return  $fields;
 		}
 	}
@@ -286,12 +254,12 @@ if (!function_exists('strip_strings')) {
 	{
 		$removeHtml =  strip_tags($sentence);
 
-		return str_replace(['&amp;', '&nbsp;', 'nbsp;'],  '', $removeHtml);
+		return str_replace(['&amp;', '&nbsp;', 'nbsp;'], '', $removeHtml);
 	}
 }
 
 if (!function_exists('dateFormating')) {
-	function dateFormating($date, $formate = "d-m-Y")
+	function dateFormating($date, $formate = 'd-m-Y')
 	{
 		return date($formate, strtotime($date));
 	}
@@ -301,12 +269,12 @@ if (!function_exists('routeName')) {
 	{
 		$route_array = explode('.', $route);
 		$route = $route_array[0];
+
 		return $route;
 	}
 }
-function getOrderMaxForBranch(string $branchName,  array $data)
+function getOrderMaxForBranch(string $branchName, array $data)
 {
-
 	$arr_data = $data;
 
 	uasort($arr_data, function ($a, $b) {
@@ -343,6 +311,7 @@ function array_sort_multi_levels(&$array)
 		if ($sumA == $sumB) {
 			return 0;
 		}
+
 		return ($sumA > $sumB) ? -1 : 1;
 	});
 }
@@ -356,6 +325,7 @@ function getMaxNthFromArray()
 			$max = $arg;
 		}
 	}
+
 	return $max;
 }
 // caching
@@ -366,11 +336,11 @@ function getCompanyTagName(Company $company)
 }
 function getExportableFields($companyId = null): array
 {
-
 	$company  = Company::find($companyId ?: Request()->segment(2));
 	if ($company) {
 		return (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 	}
+
 	return [];
 }
 function getExportableFieldsKeysAsValues($companyId)
@@ -391,7 +361,10 @@ function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId, str
 {
 	return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
 }
-
+function getBreakdownCacheNameForCompanyAndDatesAndType(Company $companyId,string $start_date , string $endDate, string $type)
+{
+	return 'breakdown_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
+}
 
 function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
@@ -399,7 +372,7 @@ function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, s
 }
 
 
-//
+
 function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
 {
 	return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year;
@@ -407,7 +380,7 @@ function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, stri
 
 function getRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
-	return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_'  . $type;
+	return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
 }
 
 function getActiveCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
@@ -417,7 +390,7 @@ function getActiveCustomersCacheNameForCompanyInYear(Company $companyId, string 
 
 function getActiveCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
-	return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_'  . $type;
+	return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
 }
 
 
@@ -428,7 +401,7 @@ function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId
 }
 function getStopReactivatedCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
-	return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_'  . $type;
+	return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
 }
 function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
 {
@@ -437,7 +410,7 @@ function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId
 
 function getDeadReactiveCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
-	return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_'  . $type;
+	return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
 }
 // getStopRepeatingCacheNameForCompanyInYearForType
 // getDeadReactiveCacheNameForCompanyInYearForType
@@ -483,7 +456,7 @@ function getIntervalYearsFormCompanyCacheNameForCompany(Company $companyId)
 }
 function formatChartNameForDom($chartName)
 {
-	return str_replace(["/", ' '], '-', $chartName);
+	return str_replace(['/', ' '], '-', $chartName);
 }
 
 
@@ -492,68 +465,66 @@ function formatChartNameForDom($chartName)
 
 function sortReportForTotals(&$report_data)
 {
-	(uasort(
-		$report_data,
-		function ($a, $b) use (&$report_data) {
-			if (isset($b['Total']) && isset($a['Total'])) {
+	(
+		uasort(
+			$report_data,
+			function ($a, $b) use (&$report_data) {
+				if (isset($b['Total'], $a['Total'])) {
+					$a = array_sum($a['Total']);
+					$b = array_sum($b['Total']);
 
+					if ($a == $b) {
+						return 0;
+					}
 
-				$a = array_sum($a['Total']);
-				$b = array_sum($b['Total']);
-
-				if ($a == $b) {
-					return 0;
+					return ($a > $b) ? -1 : 1;
 				}
-				return ($a > $b) ? -1 : 1;
-			}
 
-			if (!is_multi_array($a) &&  is_multi_array($b)) {
-				return 1;
-			}
+				if (!is_multi_array($a) &&  is_multi_array($b)) {
+					return 1;
+				}
 
-			if (is_multi_array($a) &&  !is_multi_array($b)) {
+				if (is_multi_array($a) &&  !is_multi_array($b)) {
+					return -1;
+				}
+
+				if (isset($a['Total']) && !isset($b['Total'])) {
+					return -1;
+				}
+
+				if (!isset($a['Total']) && isset($b['Total'])) {
+					return 1;
+				}
+
+
+
 				return -1;
 			}
-
-			if (isset($a['Total']) && !isset($b['Total'])) {
-				return -1;
-			}
-
-			if (!isset($a['Total']) && isset($b['Total'])) {
-				return 1;
-			}
-
-
-
-			return -1;
-		}
-
-	)
+		)
 	);
 }
 
 function sortSubItems(&$sales_channel_channels_data)
 {
-
-	(uasort(
-		$sales_channel_channels_data,
-		function ($a, $b) {
-
-			if (isset($a['Sales Values']) && isset($b['Sales Values'])) {
-
-				$a = array_sum($a['Sales Values']);
-				$b = array_sum($b['Sales Values']);
+	(
+		uasort(
+			$sales_channel_channels_data,
+			function ($a, $b) {
+				if (isset($a['Sales Values'], $b['Sales Values'])) {
+					$a = array_sum($a['Sales Values']);
+					$b = array_sum($b['Sales Values']);
 
 
-				if ($a == $b) {
-					return 0;
+					if ($a == $b) {
+						return 0;
+					}
+
+					return ($a > $b) ? -1 : 1;
 				}
-				return ($a > $b) ? -1 : 1;
-			}
-			return;
-		}
 
-	)
+				return;
+			}
+		)
 	);
 }
 function sortTwoDimensionalArr(array &$arr)
@@ -562,6 +533,7 @@ function sortTwoDimensionalArr(array &$arr)
 		if ($a == $b) {
 			return 0;
 		}
+
 		return ($a > $b) ? -1 : 1;
 	});
 }
@@ -571,6 +543,7 @@ function sortOneDimensionalArr(array &$arr)
 		if ($a == $b) {
 			return 0;
 		}
+
 		return ($a > $b) ? -1 : 1;
 	});
 }
@@ -581,6 +554,7 @@ function sortTwoDimensionalBaseOnKey(array &$arr, $key)
 		if ($a[$key] == $b[$key]) {
 			return 0;
 		}
+
 		return ($a[$key] > $b[$key]) ? -1 : 1;
 	});
 }
@@ -591,6 +565,7 @@ function sortTwoDimensionalExcept(array &$arr, array $exceptKeys)
 			if ($arr[$key1] == $arr[$key2]) {
 				return 0;
 			}
+
 			return $arr[$key1] > $arr[$key2] ? -1 : 1;
 		} elseif (!in_array($key1, $exceptKeys) && in_array($key2, $exceptKeys)) {
 			return -1;
@@ -605,9 +580,9 @@ function sortTwoDimensionalExcept(array &$arr, array $exceptKeys)
 function getTypeFor($type, $companyId, $formatted = false, $date = false, $start_date = null, $end_date = null)
 {
 	if ($formatted) {
-		// 2022-03-22 
+		// 2022-03-22
 		// start 01-01-2021
-		// end 01-01-2022 
+		// end 01-01-2022
 
 
 		return  DB::table('sales_gathering')->where('company_id', $companyId)
@@ -620,11 +595,11 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
 			->groupBy($type)
 			->distinct()
 			->select($type)
-			->orderByRaw('sum(net_sales_value) desc')
+			// ->orderByRaw('sum(net_sales_value) desc')
 			// ->orderBy($type)
-			->get()->pluck($type, $type)->toArray();;
+			->get()->pluck($type, $type)->toArray();
+			;
 	} else {
-
 		$data = DB::table('sales_gathering')->where('company_id', $companyId)
 			->when($date && $start_date, function (Builder $builder) use ($start_date) {
 				$builder->where('date', '>=', $start_date);
@@ -634,18 +609,20 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
 			})
 			->groupBy($type)
 			->select($type)
-			->orderByRaw('sum(net_sales_value) desc')
+			// ->orderByRaw('sum(net_sales_value) desc')
 			->distinct()
 			->get()->pluck($type)->toArray();
 
 		$data = array_filter($data, function ($item) {
 			return $item;
 		});
+
 		return $data;
 	}
 }
 function getNumberOfProductsItems($companyId)
 {
+	// dd(ProductSeasonality::where('company_id', $companyId)->get());
 	return ProductSeasonality::where('company_id', $companyId)->count();
 }
 function canShowNewItemsProducts($companyId)
@@ -675,7 +652,6 @@ function deleteNewProductAllocationBaseForForecast($companyId)
 
 function getLargestArrayDates(array $array)
 {
-
 	if (count($array) == count($array, COUNT_RECURSIVE)) {
 		$dates = [];
 		foreach ($array as $date => $val) {
@@ -690,9 +666,11 @@ function getLargestArrayDates(array $array)
 				return $dates;
 			}
 		}
+
 		return $dates;
 	} else {
 		$largestArray = getLargestArray($array);
+
 		return getLargestArrayDates($largestArray);
 	}
 }
@@ -704,6 +682,7 @@ function getLargestArray($array)
 			$largestArr = $arr;
 		}
 	}
+
 	return $largestArr;
 }
 function getDateBetween(array $dates)
@@ -711,7 +690,6 @@ function getDateBetween(array $dates)
 	$smallest = null;
 	$largest = null;
 	if (count($dates)) {
-
 		foreach ($dates as $type => $date) {
 			if (is_array($date)) {
 				foreach ($date as $d => $k) {
@@ -767,7 +745,7 @@ function generateIdForExcelRow(int $companyId)
 
 function getTotalUploadCacheKey($company_id, $jobId)
 {
-	return 'total_uploaded_for_company_' . $company_id  . 'for_job_' . $jobId;
+	return 'total_uploaded_for_company_' . $company_id . 'for_job_' . $jobId;
 }
 
 function getShowCompletedTestMessageCacheKey($companyId)
@@ -781,12 +759,13 @@ function getShowCompletedTestMessageCacheKey($companyId)
 function is_multi_array($arr)
 {
 	rsort($arr);
+
 	return isset($arr[0]) && is_array($arr[0]);
 }
 
 function maxOptionsForOneSelector(): int
 {
-	// return 2 ; 
+	// return 2 ;
 	return 12;
 }
 
@@ -799,7 +778,6 @@ function isCustomerExceptionalCase($type, $name_of_selector_label)
 
 function isCustomerExceptionalForProducts($type, $name_of_selector_label)
 {
-
 	$conditionTwo = ($type == 'product_or_service' && ($name_of_selector_label == 'Customers Against Products' ||  $name_of_selector_label == 'Products'));
 
 	return $conditionTwo;
@@ -807,7 +785,6 @@ function isCustomerExceptionalForProducts($type, $name_of_selector_label)
 
 function isCustomerExceptionalForProductsItems($type, $name_of_selector_label)
 {
-
 	$conditionTwo = ($type == 'product_item' && ($name_of_selector_label == 'Customers Against Products Items' ||  $name_of_selector_label == 'Product Items'));
 
 	return $conditionTwo;
@@ -815,31 +792,31 @@ function isCustomerExceptionalForProductsItems($type, $name_of_selector_label)
 
 function orderTotalsForRanking(array &$array)
 {
-	(uasort(
-		$array,
-		function ($a, $b) {
+	(
+		uasort(
+			$array,
+			function ($a, $b) {
+				if (isset($a['total'], $b['total'])) {
+					$a = ($a['total']);
 
-			if (isset($a['total']) && isset($b['total'])) {
-
-				$a = ($a['total']);
-
-				$b = ($b['total']);
+					$b = ($b['total']);
 
 
-				if ($a == $b) {
-					return 0;
+					if ($a == $b) {
+						return 0;
+					}
+
+					return ($a > $b) ? -1 : 1;
 				}
-				return ($a > $b) ? -1 : 1;
+
+				return;
 			}
-			return;
-		}
-
-	)
+		)
 	);
-
-
-		// $data[$branchName][$rankNumber] ?? []
 	;
+
+
+	// $data[$branchName][$rankNumber] ?? []
 }
 
 
@@ -855,13 +832,14 @@ function failAllocationMessage($allocation_type)
 }
 function hasProductsItems($company)
 {
-
 	$productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = ' . $company->id . ' and product_item is not null'));
+
 	return $productItems[0]->has_product_item ?? 0;
 }
 function hasAtLeastOneOfType($company, $type)
 {
 	$productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = ' . $company->id . ' and ' . $type . ' is not null'));
+
 	return $productItems[0]->has_product_item ?? 0;
 }
 function count_array_values(array $array)
@@ -870,11 +848,13 @@ function count_array_values(array $array)
 	foreach ($array as $arr) {
 		$counter += count($arr);
 	}
+
 	return $counter;
 }
-function countExistingTypeFor($type,  $company)
+function countExistingTypeFor($type, $company)
 {
 	$productItems = DB::select(DB::raw('select count(*) as has_product_item from sales_gathering where company_id = ' . $company->id . ' and ' . $type . ' is not null'));
+
 	return $productItems[0]->has_product_item ?? 0;
 }
 
@@ -941,6 +921,7 @@ function sumBasedOnQuarterNumber($array, array $quarters, $total)
 			$result += $val;
 		}
 	}
+
 	return $result ? number_format($result / $total  * 100, 2) . ' % ' : '-';
 }
 
@@ -957,10 +938,11 @@ function getAllColumnsTypesForCaching($companyId)
 	$cacheablesFields = [
 		'country', 'branch', 'sales_person', 'customer_name', 'business_sector', 'zone', 'sales_channel', 'category', 'product_or_service', 'product_item'
 	];
+
 	return array_intersect($exportables, $cacheablesFields);
 }
 
-function getCustomerNature(string $customerName, array $allDataArray)
+function getCustomerNature(?string $customerName, array $allDataArray)
 {
 	unset($allDataArray['totals']);
 	foreach ($allDataArray as $key => $array) {
@@ -972,6 +954,7 @@ function getCustomerNature(string $customerName, array $allDataArray)
 			}
 		}
 	}
+
 	return '';
 }
 
@@ -979,7 +962,6 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers, $custom
 {
 	$dataFormatted = [];
 	foreach ($allFormattedWithOthers as $customerObject) {
-
 		$userType = getCustomerNature($customerObject->customer_name, $customerNature);
 
 		isset($dataFormatted[$userType]) ? $dataFormatted[$userType] = [
@@ -992,41 +974,43 @@ function getSummaryCustomerDashboardForEachType($allFormattedWithOthers, $custom
 			];
 	}
 	$dataFormatted = array_filter($dataFormatted);
+
 	return array_sort_type($dataFormatted);
 }
 function array_sort_type($array)
 {
-	(uasort(
-		$array,
-		function ($firstElement, $secondElement) {
-			if (isset($firstElement['sales']) && isset($secondElement['sales'])) {
+	(
+		uasort(
+			$array,
+			function ($firstElement, $secondElement) {
+				if (isset($firstElement['sales'], $secondElement['sales'])) {
+					$firstElement = $firstElement['sales'];
 
-				$firstElement = $firstElement['sales'];
+					$secondElement = $secondElement['sales'];
+					if ($firstElement == $secondElement) {
+						return 0;
+					}
 
-				$secondElement = $secondElement['sales'];
-				if ($firstElement == $secondElement) {
-					return 0;
+					return ($firstElement > $secondElement) ? -1 : 1;
 				}
-				return ($firstElement > $secondElement) ? -1 : 1;
-			}
-			return;
-		}
 
-	)
+				return;
+			}
+		)
 	);
 
 	return $array;
 }
 
-function sum_array_of_std_objects(array $array,  string $key)
+function sum_array_of_std_objects(array $array, string $key)
 {
-
 	$totalSum =  0;
 	foreach ($array as $arr) {
 		foreach ($arr as $ar) {
 			$totalSum += $ar->{$key} ?? 0;
 		}
 	}
+
 	return $totalSum;
 }
 function getIterableItems($array)
@@ -1040,6 +1024,7 @@ function getIterableItems($array)
 		}
 	}
 	sortTwoDimensionalArr($iterables);
+
 	return $iterables;
 }
 
@@ -1051,6 +1036,7 @@ function getTotalForSingleType($array, $key)
 			$totals += $ar->{$key};
 		}
 	}
+
 	return $totals;
 }
 function countTotalForSingleType($array)
@@ -1061,11 +1047,11 @@ function countTotalForSingleType($array)
 			$totals += 1;
 		}
 	}
+
 	return $totals;
 }
 function calcTotalsForTotalsActiveItems(array $array, $key)
 {
-
 	$totals = 0;
 	foreach ($array as $arr) {
 		foreach ($arr as $ar) {
@@ -1074,6 +1060,7 @@ function calcTotalsForTotalsActiveItems(array $array, $key)
 			}
 		}
 	}
+
 	return $totals;
 }
 
@@ -1087,13 +1074,13 @@ function countTotalsForTotalsActiveItems(array $array, $key)
 			}
 		}
 	}
+
 	return $totals;
 }
 
 
 function getTotalForThisTypeExceptDead(array $array, $iterableSingleItem, $key)
 {
-
 	$total = 0;
 	foreach ($array as $index => $arrayOfValues) {
 		if (!in_array($index, ['Dead', 'Stop'])) {
@@ -1104,12 +1091,12 @@ function getTotalForThisTypeExceptDead(array $array, $iterableSingleItem, $key)
 			}
 		}
 	}
+
 	return $total;
 }
 
 function getTotalForThisType(array $array, $iterableSingleItem, $key)
 {
-
 	$total = 0;
 	foreach ($array as $arrayOfValues) {
 		$items =  $arrayOfValues[$iterableSingleItem] ?? [];
@@ -1117,6 +1104,7 @@ function getTotalForThisType(array $array, $iterableSingleItem, $key)
 			$total += $item->{$key};
 		}
 	}
+
 	return $total;
 }
 function array_fill_keys_with_values(array $arr)
@@ -1125,11 +1113,11 @@ function array_fill_keys_with_values(array $arr)
 	foreach ($arr as $a) {
 		$newArray[$a] = $a;
 	}
+
 	return $newArray;
 }
 function countTotalForThisType(array $array, $iterableSingleItem)
 {
-
 	$total = 0;
 	foreach ($array as $arrayOfValues) {
 		$items =  $arrayOfValues[$iterableSingleItem] ?? [];
@@ -1137,6 +1125,7 @@ function countTotalForThisType(array $array, $iterableSingleItem)
 			$total += 1;
 		}
 	}
+
 	return $total;
 }
 
@@ -1146,6 +1135,7 @@ function sum_array_of_std_objectsForSubType(array $array, $key)
 	foreach ($array as $arr) {
 		$sum += $arr->{$key};
 	}
+
 	return $sum;
 }
 
@@ -1155,6 +1145,7 @@ function count_array_of_std_objects(array $array)
 	foreach ($array as $arr) {
 		$counter += 1;
 	}
+
 	return $counter;
 }
 
@@ -1183,11 +1174,13 @@ function formatInvoiceForEachInterval(array $array, $selectedType)
 	$finalResult['invoice_count'] = $result['invoice_number'] ?? 0;
 	$finalResult['product_item_avg_count'] = $result['invoice_number'] ? round($result['product_item'] / $result['invoice_number']) : 0;
 	$finalResult['avg_invoice_value'] = $result['invoice_number'] ? number_format($resultForSales / $result['invoice_number'], 0) : 0;
+
 	return $finalResult;
 }
 function getFieldsForTakeawayForType(string $type)
 {
 	$commonFields = ['customer_name' => __('Customers Count'), 'category' => __('Categories Count'), 'product_or_service' => __('Products/Service Count'), 'product_item' => __('Products Item Count'), 'sales_person' => __('Salesperson Count'), 'branch' => __('Branch Count'), 'invoice_count' => __('Invoices Count'), 'product_item_avg_count' => __('Avg Products Item Per Invoice'), 'avg_invoice_value' => __('Avg Invoice Values')];
+
 	return [
 		'business_sector' => array_merge($commonFields, []),
 		'category' => array_merge(Arr::except($commonFields, ['category']), [
@@ -1222,26 +1215,29 @@ function getFieldsForTakeawayForType(string $type)
 }
 function orderStdClassBy($stdObjArray, $orderKey, $direction = 'desc')
 {
-	(uasort(
-		$stdObjArray,
-		function ($a, $b) {
-			if (isset($a->total_sales_value) && isset($b->total_sales_value)) {
+	(
+		uasort(
+			$stdObjArray,
+			function ($a, $b) {
+				if (isset($a->total_sales_value, $b->total_sales_value)) {
+					$a = $a->total_sales_value;
+					;
 
-				$a = $a->total_sales_value;;
-
-				$b = $b->total_sales_value;
+					$b = $b->total_sales_value;
 
 
-				if ($a == $b) {
-					return 0;
+					if ($a == $b) {
+						return 0;
+					}
+
+					return ($a > $b) ? -1 : 1;
 				}
-				return ($a > $b) ? -1 : 1;
-			}
-			return;
-		}
 
-	)
+				return;
+			}
+		)
 	);
+
 	return $stdObjArray;
 }
 
@@ -1256,7 +1252,6 @@ function hasTopAndBottom($type)
 
 function forecastHasBeenChanged($sales_forecast, array $newData)
 {
-
 	if (is_null($sales_forecast)) {
 		return true;
 	}
@@ -1268,6 +1263,7 @@ function forecastHasBeenChanged($sales_forecast, array $newData)
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -1305,14 +1301,15 @@ function formatExistingFormNewAllocation($newAllocation)
 				$sums[$branchName] = ($sums[$branchName] ?? 0) + ($values['actual_value'] ?? 0);
 			}
 		}
+
 		return $sums;
 	}
+
 	return [];
 }
 
 function formatDateVariable($dates, $start_date, $end_date)
 {
-
 	if (!$dates) {
 		return [];
 	}
@@ -1341,6 +1338,7 @@ function formatDateVariable($dates, $start_date, $end_date)
 			$filteredDates[] = $dateWithoutFormatting;
 		}
 	}
+
 	return count($filteredDates) ? $filteredDates : $dates;
 }
 
@@ -1348,10 +1346,8 @@ function getTotalsOfTotal($reportArray)
 {
 	$totalForEachItem = [];
 	foreach ($reportArray  as $itemName => $data) {
-
 		// sortSubItems($data);
 		foreach ($data as $reportKey => $valueArr) {
-
 			if ($reportKey != 'Growth Rate %' && $reportKey != 'Total' && $itemName != 'Total' && $itemName != 'Growth Rate %') {
 				$totalForEachItem[$itemName][$reportKey] = 0;
 
@@ -1365,8 +1361,6 @@ function getTotalsOfTotal($reportArray)
 	$newArray = [];
 
 	foreach ($totalForEachItem as $key => $arr) {
-
-
 		uasort($arr, function ($a, $b) {
 			$a = ($a);
 			$b = ($b);
@@ -1374,11 +1368,13 @@ function getTotalsOfTotal($reportArray)
 			if ($a == $b) {
 				return 0;
 			}
+
 			return ($a > $b) ? -1 : 1;
 		});
 
 		$newArray[$key] = $arr;
 	}
+
 	return $newArray;
 	// return $totalForEachItem ;
 }
@@ -1398,6 +1394,7 @@ function getLopeItemsFromEachReport($firstReport, $secondReport)
 			$first[$itemName] = $itemName;
 		}
 	}
+
 	return array_unique(array_merge($second, $first));
 
 	// return $data ;
@@ -1409,6 +1406,7 @@ function getMainItemsNameFromEachInterval($firstReport, $secondReport)
 
 	$firstReportProductsItems = array_keys($firstReport);
 	$secondReportProductsItems = array_keys($secondReport);
+
 	return array_unique(array_merge($secondReportProductsItems, $firstReportProductsItems));
 }
 function array_sort_products(&$secondReport)
@@ -1421,6 +1419,7 @@ function array_sort_products(&$secondReport)
 		if ($a == $b) {
 			return 0;
 		}
+
 		return ($a > $b) ? -1 : 1;
 	});
 }
@@ -1480,7 +1479,7 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
 		$report_data = getTotalsOfTotal($report_data);
 		$secondReportData['report_data'] = getTotalsOfTotal($secondReportDataResult['report_data']);
 		$secondItemsName = getLopeItemsFromEachReport($report_data, $secondReportData['report_data']);
-		$secondReportData['report_data']  = addFirstReportKeysToSendReport($secondItemsName,  $secondReportData['report_data']);
+		$secondReportData['report_data']  = addFirstReportKeysToSendReport($secondItemsName, $secondReportData['report_data']);
 		$mainItems = getMainItemsNameFromEachInterval($report_data, $secondReportData['report_data']);
 
 		return view('client_view.reports.sales_gathering_analysis.second_comparing_analysis', compact('company', 'view_name', 'firstReportData', 'Items_names', 'dates', 'report_data', 'secondReportData', 'secondItemsName', 'mainItems', 'type'));
@@ -1496,6 +1495,7 @@ function addFirstReportKeysToSendReport($keys, $secondReport)
 			!isset($array[$newKey]) ? $secondReport[$key][$newKey] = 0 : '';
 		}
 	}
+
 	return $secondReport;
 }
 function sortResultData($arr)
@@ -1508,9 +1508,9 @@ function getCurrentCompany()
 	$companyIdentifier = Request()->segment(2);
 	return Company::find($companyIdentifier);
 }
-function getCurrentCompanyId(): int
+function getCurrentCompanyId(): ?int
 {
-	return Request()->segment(2) ?? 31;
+	return Request()->segment(2) ?? null;
 }
 function getCurrentDateForFormDate($fieldName, $format = 'm/d/Y')
 {
@@ -1549,7 +1549,7 @@ function getModelNamespace()
 	return '\App\Models\\';
 }
 
-function generateDatesBetweenTwoDates(Carbon $start_date, Carbon $end_date, $method = 'addMonth', $format = 'Y-m-d', $indexedArray = true, $indexFormat = "Y-m-d")
+function generateDatesBetweenTwoDates(Carbon $start_date, Carbon $end_date, $method = 'addMonth', $format = 'Y-m-d', $indexedArray = true, $indexFormat = 'Y-m-d')
 {
 	$dates = [];
 
@@ -1560,6 +1560,7 @@ function generateDatesBetweenTwoDates(Carbon $start_date, Carbon $end_date, $met
 			$dates[$date->format($indexFormat)] = $date->format($format);
 		}
 	}
+
 	return $dates;
 }
 function formatDateFromString(string $date): string
@@ -1567,6 +1568,7 @@ function formatDateFromString(string $date): string
 	if ($date) {
 		return \Carbon\Carbon::make($date)->format(defaultUserDateFormat());
 	}
+
 	return __('N/A');
 }
 function formatDateWithoutDayFromString(string $date): string
@@ -1574,6 +1576,7 @@ function formatDateWithoutDayFromString(string $date): string
 	if ($date) {
 		return \Carbon\Carbon::make($date)->format('M-Y');
 	}
+
 	return __('N/A');
 }
 
@@ -1585,7 +1588,6 @@ function defaultUserDateFormat()
 
 function formatReportDataForDashBoard(string $incomeStatementDurationType, string $incomeStatementStartDate, $data, $start_date, $end_date)
 {
-
 	$dates = generateDatesBetweenTwoDates(Carbon::make($start_date), Carbon::make($end_date), 'addMonth');
 
 	$newData = [];
@@ -1599,7 +1601,6 @@ function formatReportDataForDashBoard(string $incomeStatementDurationType, strin
 			)->get()->pluck('pivot'), $date, $dates);
 		}
 		if (isset($mainItemName)) {
-			// withSubItemsFor($mainItem->pivot->financial_statement_able_id,$subItemType)
 			$newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->withSubItemsFor(
 				$mainItem->pivot->financial_statement_able_id,
 				$mainItem->pivot->sub_item_type
@@ -1607,6 +1608,7 @@ function formatReportDataForDashBoard(string $incomeStatementDurationType, strin
 			$newData[$mainItemName]['name'] = $mainItemName;
 		}
 	}
+
 	return $newData;
 }
 function getSubItemsFormatted($data, $dates, string $incomeStatementStartDate, string $incomeStatementDurationType): array
@@ -1621,11 +1623,11 @@ function getSubItemsFormatted($data, $dates, string $incomeStatementStartDate, s
 			$subItems[$subItemName] = 0;
 		}
 	}
+
 	return $subItems;
 }
 function yearInArray(string $date, array $dates)
 {
-
 	$year = explode('-', $date)[0];
 	foreach ($dates as $newDate) {
 		if (explode('-', $newDate)[0] == $year) {
@@ -1633,6 +1635,7 @@ function yearInArray(string $date, array $dates)
 		}
 		//  ;
 	}
+
 	return false;
 }
 function yearAndMonthInArray(string $date, array $dates)
@@ -1645,6 +1648,7 @@ function yearAndMonthInArray(string $date, array $dates)
 		}
 		//  ;
 	}
+
 	return false;
 }
 function array_sum_conditional($data, $dates, $incomeStatementStartDate, $incomeStatementDurationType)
@@ -1654,7 +1658,6 @@ function array_sum_conditional($data, $dates, $incomeStatementStartDate, $income
 	$total = 0;
 	foreach ($data as $date => $value) {
 		if ($incomeStatementDurationType == 'annually') {
-
 			if (yearInArray($date, $dates)) {
 				$total += $value;
 			}
@@ -1672,6 +1675,7 @@ function inDurationDate(string $date, $dates, $incomeStatementDurationType)
 	if ($incomeStatementDurationType == 'annually') {
 		return yearInArray($date, $dates);
 	}
+
 	return yearAndMonthInArray($date, $dates);
 }
 function getTotalInPivotDate(string $incomeStatementDurationType, string $incomeStatementStartDate, $pivot, $date, $dates): array
@@ -1686,9 +1690,8 @@ function getTotalInPivotDate(string $incomeStatementDurationType, string $income
 	// 2023
 	if (inDurationDate($date, $dates, $incomeStatementDurationType)) {
 		foreach ($pivot as $data) {
-
 			if (!isQuantitySubItem($data->sub_item_name)) {
-				$formattedDate = explode('-', $date)[0] . '-' .  explode('-', $date)[1] . '-' . sprintf("%02d", $incomeStatementStartDate->day);
+				$formattedDate = explode('-', $date)[0] . '-' . explode('-', $date)[1] . '-' . sprintf('%02d', $incomeStatementStartDate->day);
 				$payload = $data->payload ? (array)json_decode($data->payload) : null;
 				if ($payload && isset($payload[$formattedDate]) && $payload[$formattedDate]) {
 					$totalWithDepreciation += $payload[$formattedDate];
@@ -1724,7 +1727,6 @@ function get_total_for_group_by_key(array $data, string $key): array
 	$totalWithDepreciation = 0;
 	$totalDepreciation = 0;
 	foreach ($data as $obj) {
-
 		if ($obj['name'] == $key) {
 			$totalWithDepreciation += array_sum(array_column($obj['data'], 'total_with_depreciation'));
 			$totalDepreciation += array_sum(array_column($obj['data'], 'total_depreciation'));
@@ -1747,6 +1749,7 @@ function format_for_chart($array)
 			];
 		}
 	}
+
 	return $formattedData;
 }
 function getIncomeStatementForCompany(int $companyId): Collection
@@ -1782,6 +1785,7 @@ function getYearsFromDate(array $data)
 			$years[$year] = $year;
 		}
 	}
+
 	return $years;
 }
 function getDataOfYear($data, $year): array
@@ -1792,15 +1796,16 @@ function getDataOfYear($data, $year): array
 			$dataOfYear[] = $currentValue;
 		}
 	}
+
 	return $dataOfYear;
 }
 function sum_each_key($array)
 {
-
 	$sumForEachItem = [];
 	foreach ($array as $key => $values) {
 		$sumForEachItem[$key] = array_sum($values);
 	}
+
 	return $sumForEachItem;
 }
 
@@ -1808,6 +1813,7 @@ function secondIntervalGreaterThanFirst(string $firstIntervalDates, string $seco
 {
 	$secondSegmentOfFirstDate = explode('/', $firstIntervalDates)[1];
 	$secondSegmentOfSecondDate = explode('/', $secondIntervalDates)[1];
+
 	return Carbon::make($secondSegmentOfFirstDate)->greaterThan($secondSegmentOfSecondDate);
 }
 function getIntervalFromString(string $str): string
@@ -1826,11 +1832,13 @@ function sum_all_keys(array $items)
 			$total += $itemValue;
 		}
 	}
+
 	return $total;
 }
 function getIntervals(array $items)
 {
 	$firstItem = array_key_first($items);
+
 	return count($items[$firstItem]) ? array_keys($items[$firstItem]) : [];
 }
 function getSubItemsNames($items)
@@ -1838,10 +1846,10 @@ function getSubItemsNames($items)
 	$subItems = [];
 	foreach ($items as $intervalName => $item) {
 		foreach ($item as $key => $val) {
-
 			$subItems[$key][$intervalName] = $val;
 		}
 	}
+
 	return $subItems;
 }
 function getMonthOfDate(string $date)
@@ -1857,39 +1865,38 @@ function addLastMonthOfInterval(array $dates, string $quarterName, string $endMo
 	$endMonthOfQuarterMonth = getMainMonthsForInterval($quarterName)[$endMonthOfDate];
 	$formattedDate = $endYearOfDate . '-' . $endMonthOfQuarterMonth . '-' . '01';
 	$dates[$formattedDate] = Carbon::make($formattedDate)->format('M\'Y');
+
 	return $dates;
 }
 function getMainMonthsForInterval(string $quarterName): array
 {
-
 	return [
 		'quarterly' => [
-			"01" => "03",
-			"02" => "03",
-			"04" => "06",
-			"05" => "06",
-			"07" => "09",
-			'08' => "09",
-			"10" => "12",
-			"11" => "12"
+			'01' => '03',
+			'02' => '03',
+			'04' => '06',
+			'05' => '06',
+			'07' => '09',
+			'08' => '09',
+			'10' => '12',
+			'11' => '12'
 		],
 		'semi-annually' => [
-			"01" => "06",
-			"02" => "06",
-			"03" => "06",
-			"04" => "06",
-			"05" => "06",
-			"07" => "12",
-			"08" => "12",
-			"09" => "12",
-			"10" => "12",
-			"11" => "12"
+			'01' => '06',
+			'02' => '06',
+			'03' => '06',
+			'04' => '06',
+			'05' => '06',
+			'07' => '12',
+			'08' => '12',
+			'09' => '12',
+			'10' => '12',
+			'11' => '12'
 		]
 	][$quarterName];
 }
 function formatDateIntervalFor(array $dates, string $quarterName)
 {
-
 	if (!in_array($quarterName, ['quarterly', 'semi-annually'])) {
 		throw new Exception(__('Not Support Quarterly Name , Only Quarterly Or Semi Annually Allowed'));
 	}
@@ -1900,6 +1907,7 @@ function formatDateIntervalFor(array $dates, string $quarterName)
 	if (!in_array($endMonthOfDates, $mainMonthsOfInterval)) {
 		$dates = addLastMonthOfInterval($dates, $quarterName, $endMonthOfDates, $endYearOfDates);
 	}
+
 	return removeAdditionalMonthsOfInterval($dates, $quarterName, $mainMonthsOfInterval);
 }
 function removeAdditionalMonthsOfInterval(array $dates, string $quarterName, array $mainMonthsOfInterval)
@@ -1910,6 +1918,7 @@ function removeAdditionalMonthsOfInterval(array $dates, string $quarterName, arr
 			$newDates[$date] = $dateFormatted;
 		}
 	}
+
 	return $newDates;
 }
 function getArrayValuesFromIndex(array $array, int $index)
@@ -1920,6 +1929,7 @@ function getArrayValuesFromIndex(array $array, int $index)
 			$newArray[$currentItemIndex] = $item;
 		}
 	}
+
 	return $newArray;
 }
 function getIntervalForSelect(string $intervalName)
@@ -1930,10 +1940,13 @@ function getIntervalForSelect(string $intervalName)
 		if ($intervalArray['value'] != $intervalName) {
 			$index++;
 		}
+
 		break;
 	}
+
 	return getArrayValuesFromIndex($intervalsFormattedForSelect, $index);
 }
+
 function getDurationIntervalTypesForSelect(): array
 {
 	return [
@@ -1955,6 +1968,34 @@ function getDurationIntervalTypesForSelect(): array
 		],
 	];
 }
+
+
+function getPaymentTerms(): array
+{
+	return [
+		[
+			'value' => 'customize',
+			'title' => __('Customize')
+		],
+		[
+			'value' => 'cash',
+			'title' => __('Cash')
+		],
+		[
+			'value' => 'quarterly',
+			'title' => __('Quarterly')
+		],
+		[
+			'value' => 'semi-annually',
+			'title' => __('Semi Annually')
+		],
+		[
+			'value' => 'annually',
+			'title' => __('Annually')
+		],
+	];
+}
+
 function generateNameForFinancialStatementRelations(string $financialStatementName, $relationObject)
 {
 	if ($relationObject instanceof IncomeStatement) {
@@ -1966,6 +2007,7 @@ function generateNameForFinancialStatementRelations(string $financialStatementNa
 	if ($relationObject instanceof BalanceSheet) {
 		return $financialStatementName . ' Balance Sheet';
 	}
+
 	throw new \Exception('Can Not Generate Name For ' . $financialStatementName . ' Only Allowed [ Income Statement , Cash Flow And Balance Sheet ] Objects');
 }
 function getLastSegmentFromString(string $string, string $separator = '\\')
@@ -1975,11 +2017,13 @@ function getLastSegmentFromString(string $string, string $separator = '\\')
 	if (!$countExplodedStringSegments) {
 		throw new Exception('Invalid String Or Separator');
 	}
+
 	return $explodedString[$countExplodedStringSegments - 1];
 }
 function getReportNameFromRouteName(string $routeName): string
 {
 	$explodedRouteName = explode('.', $routeName);
+
 	return $explodedRouteName[count($explodedRouteName) - 2];
 }
 function getDeleteSubItemsFor(string $subItem): array
@@ -1989,6 +2033,7 @@ function getDeleteSubItemsFor(string $subItem): array
 	} elseif ($subItem == 'actual') {
 		return getAllFinancialAbleTypes(['forecast']);
 	}
+
 	return [$subItem];
 }
 function getAllFinancialAbleTypes(array $exclude = []): array
@@ -2000,6 +2045,7 @@ function getAllFinancialAbleTypes(array $exclude = []): array
 			$types[] = $type;
 		}
 	}
+
 	return $types;
 }
 function getAllFinancialAbleTypesFormattedForDashboard()
@@ -2020,11 +2066,13 @@ function getDatedOf(array $first, array $second): array
 	$dates = array_merge($firstArrayDates, $secondArrayDates);
 	$dates = array_unique($dates);
 	sort($dates);
+
 	return $dates;
 }
 function combineNoneZeroValuesBasedOnComingDates(array $first, array $second, array &$actualDates): array
 {
 	$combined = [];
+
 	$dates = getDatedOf($first, $second);
 	foreach ($dates as $date) {
 		$isActualValue =  isActualDate($date);
@@ -2035,6 +2083,7 @@ function combineNoneZeroValuesBasedOnComingDates(array $first, array $second, ar
 			$actualDates[] = $date;
 		}
 	}
+
 	return $combined;
 }
 
@@ -2059,6 +2108,7 @@ function formatOptionsForSelect(Collection $items, $idFun = 'getId', $valueFun =
 			'title' => $item->$valueFun(),
 		];
 	}
+
 	return $formattedData;
 }
 
@@ -2105,19 +2155,21 @@ function orderArrayByItemsKeys(array $array): array
 	return $array;
 }
 
-function  checkIfArrayAllIsAllPositive(array $array)
+function checkIfArrayAllIsAllPositive(array $array)
 {
 	$positiveNumbers = array_filter($array, function ($val) {
 		return $val > 0;
 	});
+
 	return count($positiveNumbers) == count($array);
 }
 
-function  checkIfArrayAllIsAllNegative(array $array)
+function checkIfArrayAllIsAllNegative(array $array)
 {
 	$negativeNumbers = array_filter($array, function ($val) {
 		return $val <= 0;
 	});
+
 	return count($negativeNumbers) == count($array);
 }
 
@@ -2142,7 +2194,6 @@ function calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, 
 	$discountFactor = [];
 	$npv = [];
 	foreach ($yearsAndFreeCash as $year => $freshCash) {
-
 		$discountFactor[$year] = pow(1  +  $percentage, $year);
 		$npv[$year] = $freshCash / $discountFactor[$year];
 	}
@@ -2153,7 +2204,6 @@ function calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, 
 	$npv_sum = array_sum($npv) + $cash_and_loans;
 
 	if ($numberOfIteration == 750000) {
-
 		return $calculatedPercentage;
 	}
 	// need to make $npv_sum = 0 by changing  $percentage  to get irr
@@ -2161,14 +2211,15 @@ function calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, 
 		while ((!($npv_sum <= $net_present_value * 0.000001))) {
 			if ($npv_sum > 0) {
 				$irr = $percentage  + 0.00001;
+
 				return calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, $net_present_value, $irr, ++$numberOfIteration);
 			}
 		}
 	} elseif ($net_present_value < 0) {
-
 		while ((!($npv_sum >= $net_present_value * -0.000001))) {
 			if ($npv_sum < 0) {
 				$irr = $percentage - 0.00001;
+
 				return calculateIrr($annual_free_cash_array, $discount_rate, $cash_and_loans, $net_present_value, $irr, ++$numberOfIteration);
 			}
 		}
@@ -2182,22 +2233,26 @@ function getIndexesLargerThanOrEqualIndex(array $items, string $item): array
 	$newItems = array_filter($items, function ($item) use ($items, $index) {
 		return array_search($item, $items) >= $index;
 	});
+
 	return count($newItems) ? $newItems : (array)$item;
 }
 function isActualDate(string $dateString): bool
 {
 	$year = explode('-', $dateString)[0];
 	$month = explode('-', $dateString)[1];
+
 	$now = now()->format('Y-m-d');
 	$currentYear = explode('-', $now)[0];
 	$currentMonth = explode('-', $now)[1];
 	$date = Carbon::make(Carbon::createFromDate($year, $month, 1)->format('Y-m-d'));
 	$currentDate = Carbon::make(Carbon::createFromDate($currentYear, $currentMonth, 1)->format('Y-m-d'));
+
 	return $currentDate->greaterThan($date);
 }
 function blackTableTd(): bool
 {
 	$arrayOfSegments = Request()->segments();
+
 	return in_array('SalesGathering', $arrayOfSegments) || in_array('dashboard', $arrayOfSegments);
 }
 function getPercentageColor($val): string
@@ -2207,6 +2262,7 @@ function getPercentageColor($val): string
 	} elseif ($val < 0) {
 		return 'red ';
 	}
+
 	return '';
 }
 
@@ -2231,11 +2287,11 @@ function getPercentageColorOfSubTypes($val, $type): string
 function convertStringToClass(string $str): string
 {
 	$reg = " /^[\d]+|[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\~\{\|\}\^ ]/ ";
+
 	return preg_replace($reg, '-', $str);
 }
 function secondReportIsFirstInArray(string $firstReportType, string $secondReportType)
 {
-
 	return $firstReportType != 'forecast' && $secondReportType != 'modified' && $secondReportType != 'actual';
 }
 function getFirstSegmentInString(string $str, string $separator): string
@@ -2261,16 +2317,17 @@ function getTotalPerYears(array $array)
 			$totalPerYears[$year] = $valArr['total_with_depreciation'];
 		}
 	}
+
 	return $totalPerYears;
 }
 function getPreviousDate(?array $array, ?string $date, $datesExistsAsKeys = true)
 {
-
 	$searched = array_search($date, $datesExistsAsKeys ? array_keys($array) : $array);
 	$arrayPlusOne = $datesExistsAsKeys ? @array_keys($array)[$searched - 1] : @($array)[$searched - 1];
 	if ($searched !== null &&  isset($arrayPlusOne)) {
 		return $datesExistsAsKeys ? array_keys($array)[$searched - 1] : ($array)[$searched - 1];
 	}
+
 	return null;
 }
 
@@ -2283,18 +2340,18 @@ function formatDataForChart(array $data): array
 	$salesRevenueData = $data['Sales Revenue'];
 	$totalPerYears = getTotalPerYears($salesRevenueData['data']);
 	foreach ($salesRevenueData['data'] as $date => $reportValueArr) {
-
 		$previousDate = getPreviousDate($salesRevenueData['data'], $date);
-		$previousMonthSales = $previousDate  ? $salesRevenueData['data'][$previousDate]['total_with_depreciation'] : 0;
+		$previousMonthSales = $previousDate ? $salesRevenueData['data'][$previousDate]['total_with_depreciation'] : 0;
 		$year = explode('-', $date)[0];
 		$currentYearTotal = $totalPerYears[$year] ?? 0;
 		$formattedReport[] = [
 			'Sales Values' => $monthSales = $reportValueArr['total_with_depreciation'] ?? 0,
 			'date' => Carbon::make($date)->format('d-M-Y'),
 			'Month Sales %' => $currentYearTotal ? number_format($monthSales / $currentYearTotal * 100, 2) : 0,
-			'Growth Rate %' => $previousDate && $previousMonthSales ?  number_format(($monthSales - $previousMonthSales)  / $previousMonthSales * 100, 2) : 0
+			'Growth Rate %' => $previousDate && $previousMonthSales ? number_format(($monthSales - $previousMonthSales)  / $previousMonthSales * 100, 2) : 0
 		];
 	}
+
 	return $formattedReport;
 }
 function getArrayWhereIndexLessThanOrEqual($formattedData, $index)
@@ -2305,6 +2362,7 @@ function getArrayWhereIndexLessThanOrEqual($formattedData, $index)
 			$data[] = $formattedData[$i];
 		}
 	}
+
 	return $data;
 }
 function array_sum_key(array $array, $key)
@@ -2313,6 +2371,7 @@ function array_sum_key(array $array, $key)
 	foreach ($array as $index => $arr) {
 		$total += $arr[$key];
 	}
+
 	return $total;
 }
 function getMonthlyChartCumulative(array $formattedData): array
@@ -2324,6 +2383,7 @@ function getMonthlyChartCumulative(array $formattedData): array
 			'price' => array_sum_key(getArrayWhereIndexLessThanOrEqual($formattedData, $index), 'Sales Values')
 		];
 	}
+
 	return $result;
 }
 function extractMainItemsAndSubItemsFrom(array $array): array
@@ -2338,11 +2398,13 @@ function extractMainItemsAndSubItemsFrom(array $array): array
 			}
 		}
 	}
+
 	return $mainItemsAndSubitems;
 }
 function getFirstKeyReportType($arrayOfData): array
 {
 	$key = array_key_first($arrayOfData);
+
 	return [
 		'key' => $key,
 		'reportType' => explode('#', $key)[0]
@@ -2356,6 +2418,7 @@ function getSecondKeyReportType($arrayOfData, $firstReportKey): array
 			$key = $index;
 		}
 	}
+
 	return [
 		'key' => $key,
 		'reportType' => explode('#', $key)[0]
@@ -2367,6 +2430,7 @@ function strEndsWith($string, $endString)
 	if ($len == 0) {
 		return true;
 	}
+
 	return substr($string, -$len) === $endString;
 }
 function sumAllKeysOfData(array $array, array $keysToSum, string $date)
@@ -2379,6 +2443,7 @@ function sumAllKeysOfData(array $array, array $keysToSum, string $date)
 			$total += $values[$date] ?? 0;
 		}
 	}
+
 	return $total;
 }
 function sumAllExceptQuantityOfData(array $array, string $date)
@@ -2389,6 +2454,7 @@ function sumAllExceptQuantityOfData(array $array, string $date)
 		$total += $values[$date] ?? 0;
 		//	}
 	}
+
 	return $total;
 }
 function getChartsData($chartItems, $dates, $arrayOfData, $mainItemName)
@@ -2415,7 +2481,7 @@ function getChartsData($chartItems, $dates, $arrayOfData, $mainItemName)
 		$data['twoLinesChart'][$mainItemName][$date][$firstReportType] = $firstTypeAccumulated;
 		$data['twoLinesChart'][$mainItemName][$date][$secondReportType] = $secondTypeAccumulated;
 		$data['twoLinesChart'][$mainItemName][$date]['variance'] = $data['twoLinesChart'][$mainItemName][$date][$secondReportType] - $data['twoLinesChart'][$mainItemName][$date][$firstReportType];
-		$data['twoLinesChart'][$mainItemName][$date]['var %'] = $data['twoLinesChart'][$mainItemName][$date][$firstReportType] ? $data['twoLinesChart'][$mainItemName][$date]['variance'] / $data['twoLinesChart'][$mainItemName][$date][$firstReportType]  * 100  : 0;
+		$data['twoLinesChart'][$mainItemName][$date]['var %'] = $data['twoLinesChart'][$mainItemName][$date][$firstReportType] ? $data['twoLinesChart'][$mainItemName][$date]['variance'] / $data['twoLinesChart'][$mainItemName][$date][$firstReportType]  * 100 : 0;
 	}
 	// donut chart
 
@@ -2423,6 +2489,7 @@ function getChartsData($chartItems, $dates, $arrayOfData, $mainItemName)
 		$data['donutChart'][$mainItemName][$firstReportType][$subItemName] = isset($arrayOfData[$firstReportTypeKey][$subItemName]) ? array_sum($arrayOfData[$firstReportTypeKey][$subItemName]) : 0;
 		$data['donutChart'][$mainItemName][$secondReportType][$subItemName] = isset($arrayOfData[$secondReportTypeKey][$subItemName]) ? array_sum($arrayOfData[$secondReportTypeKey][$subItemName]) : 0;
 	}
+
 	return $data;
 }
 function formatDataForBarChart(array $subItemValues, $firstReportType, $secondReportType)
@@ -2431,6 +2498,7 @@ function formatDataForBarChart(array $subItemValues, $firstReportType, $secondRe
 	foreach ($subItemValues as $date => $values) {
 		$formattedData[] = ['category' => explode('-', $date)[1] . '-' . explode('-', $date)[0], 'first' => $values[$firstReportType], 'second' => $values[$secondReportType], 'third' => $values['variance']];
 	}
+
 	return $formattedData;
 }
 function formatDataFromTwoLinesChart(array $subItemValues)
@@ -2439,6 +2507,7 @@ function formatDataFromTwoLinesChart(array $subItemValues)
 	foreach ($subItemValues as $date => $values) {
 		$formattedData[] = ['date' => $date, 'Variance' => $values['variance'], 'Var %' => $values['var %']];
 	}
+
 	return $formattedData;
 }
 function formatDataFromTwoLinesChart2(array $subItemValues)
@@ -2447,14 +2516,13 @@ function formatDataFromTwoLinesChart2(array $subItemValues)
 	foreach ($subItemValues as $date => $values) {
 		$formattedData[] = ['date' => $date, 'Accumulated Variance' => number_format($values['variance'], 2), 'Accumulated Var %' => number_format($values['var %'], 2)];
 	}
+
 	return $formattedData;
 }
 function removeFirstKeyAndMergeOthers(array $array)
 {
-
 	$newArray = [];
 	foreach ($array as $mainTypeName => $values) {
-
 		if ($newArray) {
 			foreach ($newArray as $key => $value) {
 				if ($key != 'donutChart') {
@@ -2469,6 +2537,7 @@ function removeFirstKeyAndMergeOthers(array $array)
 			$newArray = $values;
 		}
 	}
+
 	return $newArray;
 }
 function getSubItemsForMainItemName($incomeStatement, int $financialStatementAbleItemId, string $reportType)
@@ -2477,14 +2546,16 @@ function getSubItemsForMainItemName($incomeStatement, int $financialStatementAbl
 	$subItems = array_filter($subItems, function ($subItem) {
 		return !isQuantitySubItem($subItem);
 	});
+
 	return array_values($subItems);
 }
 function addAllSubItemForMainItemsArray(array $mainItems, $incomeStatement, $reportType)
 {
 	$data = [];
 	foreach ($mainItems as $mainItemId => $mainItemName) {
-		$data[$mainItemName] = mainItemHasSubItems($incomeStatement, $mainItemId) ?  getSubItemsForMainItemName($incomeStatement, $mainItemId, $reportType) : [$mainItemName];
+		$data[$mainItemName] = mainItemHasSubItems($incomeStatement, $mainItemId) ? getSubItemsForMainItemName($incomeStatement, $mainItemId, $reportType) : [$mainItemName];
 	}
+
 	return $data;
 }
 function mainItemHasSubItems($incomeStatement, int $mainItemId): bool
@@ -2500,18 +2571,16 @@ function formatForPieChart(array $array): array
 			$formattedData[$subItemName] = $value;
 		}
 	}
+
 	return $formattedData;
 }
 function hideExportField($fieldName): bool
 {
 	$hidden  = ['local_or_export', 'sub_category', 'return_reason', 'quantity_status', 'quantity_bonus'];
+
 	return in_array($fieldName, $hidden);
 }
 
-function preventUserFromForeCast()
-{
-	return [12, 13, 14, 15, 16, 22, 21, 20, 18];
-}
 function formatDataForDonutChart(array $array)
 {
 	$formattedData = [];
@@ -2521,6 +2590,7 @@ function formatDataForDonutChart(array $array)
 			'value' => $value
 		];
 	}
+
 	return $formattedData;
 }
 function isQuantitySubItem($subItemName): bool
@@ -2536,9 +2606,7 @@ function getTotalForQuantityAndValues(array $items, bool $is_sales_revenue, bool
 		'value' => 0
 	];
 	foreach ($items as $subItemName => $value) {
-
 		if ($totalForAllItems || $subItemName == $currentSubItemName) {
-
 			if (isQuantitySubItem($subItemName) && $is_sales_revenue) {
 				$totals['quantity'] += $value;
 			} else {
@@ -2552,6 +2620,7 @@ function getTotalForQuantityAndValues(array $items, bool $is_sales_revenue, bool
 function hasQuantityRow(array $subItemsName, string $mainRowName): bool
 {
 	$subItems = array_keys($subItemsName);
+
 	return in_array($mainRowName . quantityIdentifier, $subItems) || in_array($mainRowName . __(quantityIdentifier), $subItems);
 }
 function formatSubItemsNamesForQuantity(string $subItemName): array
@@ -2559,8 +2628,9 @@ function formatSubItemsNamesForQuantity(string $subItemName): array
 	$subItems = [];
 	$subItemNameTrimmedFromQuantityIdentifier = removeStringFromEnd($subItemName, quantityIdentifier);
 	$subItemNameWithQuantityIdentifier = appendStringTo($subItemNameTrimmedFromQuantityIdentifier, quantityIdentifier);
-	$subItems[] = $subItemNameTrimmedFromQuantityIdentifier;
-	$subItems[] = $subItemNameWithQuantityIdentifier;
+	$subItems['value'] = $subItemNameTrimmedFromQuantityIdentifier;
+	$subItems['quantity'] = $subItemNameWithQuantityIdentifier;
+
 	return $subItems;
 }
 function removeStringFromEnd(string $haystack, string $needle): string
@@ -2569,81 +2639,18 @@ function removeStringFromEnd(string $haystack, string $needle): string
 	if (substr($haystack, -$needle_length) === $needle) {
 		return substr($haystack, 0, -$needle_length);
 	}
+
 	return $haystack;
 }
 function appendStringTo(string $str, string $append): string
 {
 	return $str . $append;
 }
-function formatRatesWithDueDays(array $ratesAndDueDays): array
-{
-	$result = [];
-	foreach ($ratesAndDueDays['due_in_days'] ?? [] as $index => $dueDay) {
-		$rate = $ratesAndDueDays['rate'][$index] ?? 0;
-		if ($rate) {
-			if (isset($result[$dueDay])) {
-				$result[$dueDay] += $rate;
-			} else {
-				$result[$dueDay] = $rate;
-			}
-		}
-	}
-	return $result;
-}
-function applyCollectionPolicy($hasCollectionPolicy, ?string $collectionPolicyType, $collectionPolicyValue, array $dateValue)
-{
-	$collections = [];
-	if (!$hasCollectionPolicy) {
-		// reset Collection Policy
-		foreach ($dateValue as $date => $value) {
-			$collections[$date] = 0;
-		}
-	} elseif ($collectionPolicyType == 'customize') {
 
-		$ratesWithDueDays = formatRatesWithDueDays($collectionPolicyValue);
-		foreach ($dateValue as $currentDate => $target) {
-			foreach ($ratesWithDueDays as $dueDay => $rate) {
-				$rate =  $rate / 100;
-				$actualMonthsNumbers = $dueDay < 30 ? 0 : round((($dueDay) / 30));
-				$date = (Carbon::make($currentDate))->addMonths($actualMonthsNumbers);
-				$month = $date->format('m');
-				$year = $date->format('Y');
-				$day = $date->format('d');
-				$fullDate = $year  . '-' . $month . '-' . $day;
-				$collections[$fullDate] = ($target * $rate) + ($collections[$fullDate] ?? 0);
-			}
-		}
-	} elseif ($collectionPolicyType == 'system_default' && is_string($collectionPolicyValue)) {
-		$collections = sumForInterval($dateValue, $collectionPolicyValue);
-	}
-	return $collections;
-}
 
-function sumForInterval(array $dateValues, string $intervalName)
-{
-	$result = [];
-	$periodInterval = getPeriodsForStartMonths($intervalName);
-	foreach ($dateValues as $currentDate => $value) {
-		$dateObject = Carbon::make($currentDate);
-		$year = $dateObject->format('Y');
-		$month = $dateObject->format('m');
-		$day = $dateObject->format('d');
-		$sumMonth = sprintf("%02d", getSumMonth($month, $periodInterval));
-		$resultDate = $year  . '-' . $sumMonth . '-' . $day;
 
-		$result[$resultDate] = isset($result[$resultDate]) ? $result[$resultDate] + $value  : $value;
-	}
-	return $result;
-}
-function getSumMonth($month, $mapMonths)
-{
 
-	foreach ($mapMonths as $sumMonth => $sumMonths) {
-		if (in_array($month, $sumMonths)) {
-			return $sumMonth;
-		}
-	}
-}
+
 function getTotalOfSalesRevenueFor(int $incomeStatementId, string $subItemType, int $percentageOfSalesRowId): float
 {
 	$mainRowId = array_flip(IncomeStatementItem::salesRateMap())[$percentageOfSalesRowId];
@@ -2651,6 +2658,7 @@ function getTotalOfSalesRevenueFor(int $incomeStatementId, string $subItemType, 
 	$mainRowSalesRevenue = IncomeStatementItem::find(IncomeStatementItem::SALES_REVENUE_ID);
 	$totalOfRow = $mainRow->withMainRowsPivotFor($incomeStatementId, $subItemType)->first()->pivot->total;
 	$totalOfSalesRevenue = $mainRowSalesRevenue->withMainRowsPivotFor($incomeStatementId, $subItemType)->first()->pivot->total;
+
 	return $totalOfSalesRevenue ? $totalOfRow / $totalOfSalesRevenue * 100 : 0;
 }
 function sortMonthsByItsNames(array $array): array
@@ -2675,6 +2683,7 @@ function sortMonthsByItsNames(array $array): array
 		$month = $months[$i];
 		$formatted[$month] = $array[$month] ?? 0;
 	}
+
 	return $formatted;
 }
 function stringArrayToArray(string $str)
@@ -2682,6 +2691,7 @@ function stringArrayToArray(string $str)
 	if (!$str) {
 		return [];
 	}
+
 	return 	eval('return ' . $str . ';');
 }
 
@@ -2700,10 +2710,9 @@ function replaceArr($mainIdsWithItsValues, $equation)
 		$result .= $n . $sign;
 		$index++;
 	}, $mainIdsWithItsValues);
-	return $result;
+	return str_replace('--','+',$result);
 }
 if (!function_exists('isActualDateInModifiedOrAdjusted')) {
-
 	function isActualDateInModifiedOrAdjusted($date, $subItemType)
 	{
 		return ($subItemType == 'adjusted' || $subItemType == 'modified') && isActualDate($date);
@@ -2711,5 +2720,320 @@ if (!function_exists('isActualDateInModifiedOrAdjusted')) {
 }
 function isQuantity(array $options): bool
 {
-	return isset($options['is_quantity']) && $options['is_quantity'];
+	return isset($options['is_quantity']) && $options['is_quantity'] != 'value';
+}
+function convertJsonToArray(?string $json):array
+{
+	return $json ? (array)json_decode($json) : [];
+}
+
+function preventUserFromForeCast()
+{
+	return [
+
+		'tamer@terra-egypt.com',
+		'ehab@terra-egypt.com',
+		'sales@terra-egypt.com',
+		'hesham.tawfik@lesdames.org',
+		'yasser.fouad@lesdames.org',
+		'mmahrous@gi-cg.com',
+		'mkhalefa@gi-cg.com',
+		'oelbakry@gi-cg.com',
+		'mabdallah@jobmastergroup.com'
+	];
+}
+function getPermissions():array
+{
+	$permissions =  [
+		[
+			'name'=>'view home'
+		],
+		[
+			'name'=>'view dashboard',
+		],
+		[
+			'name'=>'view data gathering'
+		],
+		[
+			'name'=>'view sales data',
+		],
+		[
+			'name'=>'upload sales gathering data',
+		],
+		[
+			'name'=>'export sales gathering data',
+		],
+
+		[
+			'name'=>'delete sales gathering data'
+		],
+		[
+			'name'=>'view financial statement',
+		],
+		[
+			'name'=>'view sales dashboard',
+		],
+		[
+			'name'=>'view breakdown dashboard'
+		],
+		[
+			'name'=>'view customer dashboard'
+		],
+		[
+			'name'=>'view sales person dashboard'
+		],
+		[
+			'name'=>'view discount dashboard'
+		],
+		[
+			'name'=>'view interval comparing dashboard'
+		],
+		[
+			'name'=>'view income statement dashboard'
+		],
+		[
+			'name'=>'view forecast income statement dashboard'
+		],
+		[
+			'name'=>'view actual income statement dashboard'
+		],
+		[
+			'name'=>'view adjusted income statement dashboard'
+		],
+		[
+			'name'=>'view modified income statement dashboard'
+		],
+		[
+			'name'=>'view income statement comparing dashboard'
+		],
+		[
+			'name'=>'view income statement variance dashboard'
+		],
+		[
+			'name'=>'view sales analysis report'
+		],
+
+		[
+			'name'=>'view sales forecast value base'
+		],
+		[
+			'name'=>'view sales forecast quantity base'
+		],
+		[
+			'name'=>'view sales forecast fact sheet',
+		],
+		[
+			'name'=>'view sales breakdown analysis report'
+		],
+		[
+			'name'=>'view sales trend analysis'
+		],
+		[
+			'name'=>'view sales report',
+		],
+		[
+			'name'=>'create financial statement',
+		],
+		[
+			'name'=>'edit financial statement',
+		],
+		[
+			'name'=>'delete financial statement',
+		],
+	];
+
+	foreach (Arr::except(reportNames(), ['product items', 'products / service'])  as $reportName) {
+		$permissions[] = [
+			'name'=>generateReportName($reportName)
+		];
+	}
+
+	foreach (['forecast', 'actual', 'adjusted', 'modified'] as $reportType) {
+		foreach (['income statement', 'balance sheet', 'cash flow statement'] as $statementName) {
+			$permissions[] = [
+				'name'=>'edit ' . $reportType . ' ' . $statementName
+			];
+		}
+	}
+
+	return $permissions;
+}
+function generateReportName($reportName)
+{
+	if ($reportName === 'product items') {
+		$reportName ='products items';
+	}
+	if ($reportName =='products / service') {
+		$reportName ='products / services';
+	}
+
+	return 'view ' . $reportName . ' report';
+}
+function reportNames()
+{
+	return  [
+		'zone'=>'zone', // here
+		'sales channel'=>'sales channel',
+		'customers'=>'customers',
+		'business sector'=>'business sector',
+		'branch'=>'branch',
+		'category'=>'category', // here
+		'principle'=>'principle',
+		'products / services'=>'products / services', //here
+		'products / service'=>'products / service', //here
+		'products items'=>'products items', // here
+		'product items'=>'product items', // here
+		'average prices'=>'average prices', // here
+		'sales persons'=>'sales persons',
+		'discount'=>'discount',
+		'invoice'=>'invoice',
+		'country'=>'country',
+		'service provider'=>'service provider', // here
+
+	];
+}
+function searchWordInstr(array $words, string $sentence)
+{
+	$foundWords = [];
+	foreach ($words as $word) {
+		if (strpos($sentence, $word) !== false || strpos($sentence, ucwords($word)) !== false
+		|| strpos($sentence, Str::plural($word)) !== false
+		|| strpos($sentence, Str::plural(ucwords($word))) !== false
+
+
+		) {
+			$foundWords[]=$word;
+		}
+	}
+
+	return $foundWords;
+}
+function getColorForIndexes($firstValue, $secondValue, $elementIndex)
+{
+	if (($elementIndex == 0 ||$elementIndex==2 ||$elementIndex==6|| $elementIndex==7||$elementIndex==9||$elementIndex==11) &&  ($secondValue >= $firstValue)) {
+		return 'green !important';
+	} elseif ($elementIndex == 0 ||$elementIndex==2 ||$elementIndex==6|| $elementIndex==7||$elementIndex==9||$elementIndex==11) {
+		return 'red !important';
+	}
+
+	if (($elementIndex == 1 ||$elementIndex==3 ||$elementIndex==4|| $elementIndex==5||$elementIndex==8||$elementIndex==10) &&  ($secondValue < $firstValue)) {
+		return 'green !important';
+	} elseif ($elementIndex == 1 ||$elementIndex==3 ||$elementIndex==4|| $elementIndex==5||$elementIndex==8||$elementIndex==10) {
+		return 'red !important';
+	}
+}
+function checkIfAllDates(array $dates):array
+{
+	$validDates = [];
+	// dd($dates);
+	foreach ($dates as $date) {
+		if (DateTime::createFromFormat('Y-m', $date) !== false) {
+			$validDates[] =$date;
+		}
+	}
+
+	return $validDates;
+}
+
+function number_unformat($number, $force_number = true, $dec_point = '.', $thousands_sep = ',')
+{
+	if ($force_number) {
+		$number = preg_replace('/^[^\d]+/', '', $number);
+	} elseif (preg_match('/^[^\d]+/', $number)) {
+		return false;
+	}
+	$type = (strpos($number, $dec_point) === false) ? 'int' : 'float';
+	$number = str_replace([$dec_point, $thousands_sep], ['.', ''], $number);
+	settype($number, $type);
+
+	return $number;
+}
+function hasUploadData($company_id)
+{
+	return SalesGathering::where('company_id', $company_id)->first() != null;
+}
+function getEndYearBasedOnDataUploaded(Company $company,int $minusFromYear = 0)
+{
+	$cashingService = new CashingService($company);
+	$endYear = $cashingService->getIntervalYearsFormCompany()['end_year'];
+	$endYear = $endYear ?: now()->format('Y');
+	$endYear = $endYear - $minusFromYear;
+	return [
+		'jan'=>$endYear . '-' . '01' . '-' . '01',
+		'dec'=>$endYear . '-' . '12' . '-' .'31'
+	];
+}
+function isPercentageOrRate(string $name)
+{
+	return 
+	str_contains($name,__('Sales Growth Rate') )||
+	str_contains($name,__('[ % Of Sales ]') )
+	;
+}
+function getNameFromNumber(int $num) {
+    $numeric = ($num - 1) % 26;
+    $letter = chr(65 + $numeric);
+    $num2 = intval(($num - 1) / 26);
+    if ($num2 > 0) {
+        return getNameFromNumber($num2) . $letter;
+    } else {
+        return $letter;
+    }
+	
+}
+function validateDate($date, $format = 'Y-m-d'){
+	return $d = DateTime::createFromFormat($format, $date);
+    // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+    return $d && $d->format($format) === $date;;
+}
+function formatDateForView($date)
+{
+	return Carbon::make($date)->format('M\'Y');
+}
+function getTypesForValues():array 
+{
+	return [
+		'fixed_monthly_repeating_amount'=>[
+			'title'=>__('Fixed Monthly Repeating Amount'),
+			'value'=>'fixed_monthly_repeating_amount',
+			'data-how-many-items'=>1
+		],
+		'varying_amount'=>[
+			'title'=>__('Varying Amount'),
+			'value'=>'varying_amount',
+			'data-how-many-items'=>1
+		],
+		'fixed_percentage_of_sales'=>[
+			'title'=>__('Fixed Percentage Of Sales'),
+			'value'=>'fixed_percentage_of_sales',
+			'data-how-many-items'=>1
+		],
+		'varying_percentage_of_sales'=>[
+			'title'=>__('Varying Percentage Of Sales'),
+			'value'=>'varying_percentage_of_sales',
+			'data-how-many-items'=>1
+		],
+		'fixed_cost_per_unit'=>[
+			'title'=>__('Fixed Cost Per Unit'),
+			'value'=>'fixed_cost_per_unit',
+			'data-how-many-items'=>1
+		],
+		'varying_cost_per_unit'=>[
+			'title'=>__('Varying Cost Per Unit'),
+			'value'=>'varying_cost_per_unit',
+			'data-how-many-items'=>1
+		],
+		'intervally_repeating_amount'=>[
+			'title'=>__('Intervally Repeating Amount'),
+			'value'=>'intervally_repeating_amount',
+			'data-how-many-items'=>1
+		],
+		'one_time_expense'=>[
+			'title'=>__('One Time Expense'),
+			'value'=>'one_time_expense',
+			'data-how-many-items'=>1
+		],
+		
+		
+	];
 }

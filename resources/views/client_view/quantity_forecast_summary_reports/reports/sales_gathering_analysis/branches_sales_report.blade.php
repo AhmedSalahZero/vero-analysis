@@ -143,7 +143,7 @@
                     @slot('table_body')
                     <?php 
                               (uasort($final_report_data, function($a, $b) {
-                                return ($a['Sales Values'] < $b['Sales Values']);
+                                return (int)($a['Sales Values'] < $b['Sales Values']);
 
 }));
 

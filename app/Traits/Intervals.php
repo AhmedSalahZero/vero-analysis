@@ -181,8 +181,11 @@ trait Intervals
                 $levels == 'multi' ?  $data_intervals[$interval][$key][$date] = $total_per_interval
                     : $data_intervals[$interval][$date] = $total_per_interval;
                 $total_per_interval = 0;
-            } elseif (isset($values[$date])) {
-                $total_per_interval += $values[$date] ?? 0;
+            } elseif (isset($values[$date]) && is_numeric($values[$date])) {
+            
+             
+                    $total_per_interval += $values[$date] ?? 0;
+             
             }
         });
     

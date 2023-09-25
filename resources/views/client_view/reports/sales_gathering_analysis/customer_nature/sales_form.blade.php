@@ -25,7 +25,7 @@
                             <label>{{__('Choose Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" required name="date" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" required name="date" max="{{date('Y-m-d')}}" value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div> 

@@ -11,7 +11,6 @@
     <div class="col-md-12">
 
 
-
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($type == 'sales_discount') {{  route('salesBreakdown.salesDiscounts.analysis.result',$company)}}@elseif ($type == 'comparing') {{route('comparing',$company)}} @else{{  route('salesBreakdown.analysis.result',$company)  }} @endif   enctype="multipart/form-data">
             @csrf
@@ -26,7 +25,7 @@
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="start_date" required value="2020-01-01"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="start_date" required value="{{ getEndYearBasedOnDataUploaded($company)['jan'] }}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -34,7 +33,7 @@
                             <label>{{__('End Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date" required  value="{{date('Y-m-d')}}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="end_date" required  value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>

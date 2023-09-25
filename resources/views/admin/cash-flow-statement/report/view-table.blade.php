@@ -58,12 +58,26 @@ $tableId = 'kt_table_1';
 
     }
 
-    .main-with-no-child {
-        background-color: rgb(238, 238, 238) !important;
+    .main-with-no-child,
+	.main-with-no-child td ,
+	.main-with-no-child th
+	 {
+        background-color: #046187 !important;
+		color:white !important;
         font-weight: bold;
     }
-
+ .is-sub-row td.sub-numeric-bg,
     .is-sub-row td.sub-text-bg {
+        border: 1.5px solid white !important;
+        background-color: #0e96cd !important;
+        color: white !important;
+
+
+        background-color: #E2EFFE !important;
+        color: black !important
+    }
+    .is-sub-row td.sub-text-bg {
+		
         background-color: #aedbed !important;
         color: black !important;
 
@@ -80,6 +94,9 @@ $tableId = 'kt_table_1';
     tr[data-financial-statement-able-item-id="{{ \App\Models\CashFlowStatementItem::NET_CASH_PROFIT_ID }}"] td.sub-numeric-bg {
         background-color: #046187 !important;
         color: white !important;
+		
+		background-color:#E2EFFE !important;
+		color:black !important
 
     }
 
@@ -168,6 +185,7 @@ $tableId = 'kt_table_1';
         // let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         // const sales_rate_maps = JSON.parse(sales_rates_maps);
         // let inUpdateSalesRevenueToUpdateAllLevelsBelow = false;
+		let globalTable = null ;
         const dependsRelation = @json($dependsRelation);
         const domElements = {
             cashInId: document.getElementById('cash-in-id').value
@@ -245,6 +263,34 @@ $tableId = 'kt_table_1';
                 let canRefreshPercentages = false;
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
+						
+						window.addEventListener('scroll', function() {
+                            const top = window.scrollY > 140 ? window.scrollY : 140;
+
+                            $('.arrow-nav').css('top', top + 'px')
+                        })
+                        if ($('.kt-portlet__body').length) {
+
+                            $('.kt-portlet__body').append(`
+						<i class="cursor-pointer text-dark arrow-nav  arrow-left fa fa-arrow-left"></i>
+						<i class="cursor-pointer text-dark arrow-nav arrow-right fa  fa-arrow-right"></i>
+						`)
+
+
+                            $(document).on('click', '.arrow-nav', function() {
+                                const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
+                                const scrollByUnit = 50
+                                if (this.classList.contains('arrow-right')) {
+                                    document.querySelector('.dataTables_scrollBody').scrollLeft += scrollByUnit
+
+                                } else {
+                                    document.querySelector('.dataTables_scrollBody').scrollLeft -= scrollByUnit
+
+                                }
+                            })
+
+                        }
+						
                         $(document).on('change', '.is-sub-row input', function(e) {
                             let grossProfitId = domElements.growthProfitId;
                             let costOfGoodsId = domElements.costOfGoodsId;
@@ -372,8 +418,8 @@ $tableId = 'kt_table_1';
                             let cashOutId = domElements.cashOutId;
                             let netCashProfitId = domElements.netCashProfitId;
                             let netCashProfitRow = document.querySelector('.main-with-no-child[data-model-id="' + netCashProfitId + '"]');
-                            let cashInValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + cashInId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
-                            let cashOutValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + cashOutId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value;
+                            let cashInValueAtDate =  document.querySelector('.is-main-with-sub-items[data-model-id="' + cashInId + '"] ' + 'td.date-' + date) && document.querySelector('.is-main-with-sub-items[data-model-id="' + cashInId + '"] ' + 'td.date-' + date).parentElement ?  document.querySelector('.is-main-with-sub-items[data-model-id="' + cashInId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value : 0;
+                            let cashOutValueAtDate = document.querySelector('.is-main-with-sub-items[data-model-id="' + cashOutId + '"] ' + 'td.date-' + date) &&document.querySelector('.is-main-with-sub-items[data-model-id="' + cashOutId + '"] ' + 'td.date-' + date).parentElement ? document.querySelector('.is-main-with-sub-items[data-model-id="' + cashOutId + '"] ' + 'td.date-' + date).parentElement.querySelector('input[data-date="' + date + '"]').value:0;
                             netCashProfitAtDate = cashInValueAtDate - cashOutValueAtDate;
                             netCashProfitRow.querySelector('td.date-' + date).innerHTML = number_format(netCashProfitAtDate);
                             var input = netCashProfitRow.querySelector('input[data-date="' + date + '"]')
@@ -414,7 +460,7 @@ $tableId = 'kt_table_1';
 
                         function getRowForSubItemsTr(tableId, dates, cashFlowStatementId, cashFlowStatementItemId, subItemName, isDepreciationOrAmortization, isQuantity, canBePercentageOrFixed, fixedOrPercentage, isPercentage, isRepeatingFixed, isNoneRepeatingFixed, valuesOfDates, canTriggerChange, isPercentageOf) {
                             let row = `<tr  data-financial-statement-able-item-id="${cashFlowStatementItemId}" class="d-none edit-info-row add-sub maintable-1-row-class${cashFlowStatementItemId} is-sub-row even" data-sub-item-name="${subItemName}" data-is-trigger-change="${canTriggerChange}" data-can-be-percentage-or-fixed="${canBePercentageOrFixed}" data-percentage-or-fixed="${fixedOrPercentage}" data-is-percentage="${isPercentage}" data-is-percentage-of="${isPercentageOf}"  data-is-repeating-fixed="${isRepeatingFixed}" data-is-none-repeating-fixed="${isNoneRepeatingFixed}">
-																<td class="red reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
+																<td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 0px; position: sticky;"></td>
 																<td class="cursor-pointer sub-text-bg dtfc-fixed-left" style="left: 70.25px; position: sticky;">
 												<div class="d-flex align-items-center justify-content-between">
 													<a data-is-subitem="1" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${isDepreciationOrAmortization}" data-cash-flow-statement-id="${cashFlowStatementId}" data-target="#edit-sub-modal${cashFlowStatementItemId}${subItemName}"> <i class="fa fa-pen-alt"></i> </a> <a class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${cashFlowStatementId}${subItemName}">
@@ -652,7 +698,7 @@ $tableId = 'kt_table_1';
                                 }
                             }
 
-                            $('.main-table-class').DataTable().columns.adjust();
+                            globalTable.columns.adjust();
 
                             // let tdElement = this;
                             // let changedInputs = updateEditableInputs(tdElement)
@@ -870,7 +916,7 @@ $tableId = 'kt_table_1';
                                 return inputs
 
                             }
-                            $('.main-table-class').DataTable().columns.adjust();
+                            globalTable.columns.adjust();
 
                         }
 
@@ -936,13 +982,13 @@ $tableId = 'kt_table_1';
                             subRows.toggleClass('d-none');
                             if (subRows.hasClass('d-none')) {
                                 parentRow.find('td.trigger-child-row-1').html('+');
-                                $('.main-table-class').DataTable().columns.adjust();
+                                globalTable.columns.adjust();
                             } else if (!subRows.length) {
                                 // if parent row has no sub rows then remove + or - 
                                 parentRow.find('td.trigger-child-row-1').html('×');
                             } else {
                                 parentRow.find('td.trigger-child-row-1').html('-');
-                                $('.main-table-class').DataTable().columns.adjust();
+                                globalTable.columns.adjust();
 
                             }
 
@@ -1087,6 +1133,9 @@ $tableId = 'kt_table_1';
                                             , 'paging': false
                                             , "fixedColumns": {
                                                 left: getFixedColumnNumbers()
+                                            },
+											"fixedHeader": {
+                                                headerOffset: 60
                                             }
                                             , "serverSide": true
                                             , "responsive": false
@@ -1095,7 +1144,7 @@ $tableId = 'kt_table_1';
                                             , columnDefs: [{
                                                 targets: 0
                                                 , defaultContent: 'salah'
-                                                , className: 'red reset-table-width'
+                                                , className: 'red reset-table-width text-nowrap'
                                             }]
                                             , buttons: [{
                                                     "attr": {
@@ -1106,6 +1155,17 @@ $tableId = 'kt_table_1';
                                                     , 'className': 'btn btn-bold btn-secondary filter-table-btn  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away'
                                                     , "action": function() {
                                                         window.location.href = "{{ route('dashboard.breakdown.cashFlowStatement',[$company->id,$reportType,$cashFlowStatement->id]) }}"
+                                                    }
+                                                },
+												{
+                                                    "attr": {
+                                                        'data-table-id': tableId.replace('#', ''),
+                                                        // 'id':'test'
+                                                    }
+                                                    , "text": '<i class="fa fa-pen-alt  " style="color:#366cf3;"></i>' + '{{ __("Cash Opening Balances") }}'
+                                                    , 'className': 'btn btn-bold btn-secondary filter-table-btn ml-2  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away'
+                                                    , "action": function() {
+                                                        window.location.href = "{{ route('admin.show-cash-and-banks',[$company->id,$cashFlowStatement->id,$reportType]) }}"
                                                     }
                                                 },
 
@@ -1323,7 +1383,7 @@ $tableId = 'kt_table_1';
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $cashFlowStatement->id }}">
 														<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
 														<label>{{ __('name') }}</label>
-														<input name="new_sub_item_name"  class="form-control   only-greater-than-zero-allowed mb-2" type="text" value="${data.pivot.sub_item_name}">
+														<input name="new_sub_item_name"  class="form-control    mb-2" type="text" value="${data.pivot.sub_item_name}">
 														${Depreciation}
 														${quantity}
 														${has_percentage_or_fixed_sub_items}
@@ -1744,6 +1804,7 @@ $tableId = 'kt_table_1';
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
+												globalTable = $('.main-table-class').DataTable()
 												
 												 am4core.useTheme(am4themes_animated);
         // Themes end
@@ -1905,20 +1966,19 @@ $tableId = 'kt_table_1';
                                                     })
                                                 }
                                                 if (reportType == 'modified') {
-                                                    const table = $('.main-table-class').DataTable();
+                                                    const table = globalTable;
                                                     table.column(1).visible(false);
                                                     document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
                                                         td.setAttribute('contenteditable', false);
                                                     })
                                                     actualDates.forEach(function(actualDate) {
-                                                        // $('.dataTables_scrollHead .main-table-class th.header-th[data-date="' + actualDate + '"]').append('<span> <br> {{ __("(Actual)") }} </span>');
                                                         document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
                                                             td.setAttribute('contenteditable', false);
                                                         })
                                                     })
                                                 }
 
-                                                $('.main-table-class').DataTable().columns.adjust();
+                                                globalTable.columns.adjust();
                                                 canRefreshPercentages = true;
                                             }
 
@@ -1993,7 +2053,7 @@ $tableId = 'kt_table_1';
                                         , success: function(res) {
                                             submitBtn.attr('disabled', false);
 
-                                            $('.main-table-class').DataTable().ajax.reload(null, false)
+                                            globalTable.ajax.reload(null, false)
                                             if (res.status) {
                                                 Swal.fire({
                                                     icon: 'success'
@@ -2101,7 +2161,7 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
-                                        $('.main-table-class').DataTable().ajax.reload(null, false)
+                                        globalTable.ajax.reload(null, false)
                                         if (res.status) {
 
                                             Swal.fire({
@@ -2162,7 +2222,7 @@ $tableId = 'kt_table_1';
                                     , success: function(res) {
                                         $(this).prop('disabled', false);
 
-                                        $('.main-table-class').DataTable().ajax.reload(null, false)
+                                        globalTable.ajax.reload(null, false)
                                         if (res.status) {
 
                                             Swal.fire({
@@ -2223,7 +2283,7 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
-                                        $('.main-table-class').DataTable().ajax.reload(null, false)
+                                        globalTable.ajax.reload(null, false)
                                         if (res.status) {
                                             if (redirectTo) {
                                                 window.location.href = redirectTo;
@@ -2320,7 +2380,7 @@ $tableId = 'kt_table_1';
                 }
 
                 function formatDatesForInterval(intervalName) {
-                    const table = $('.main-table-class').DataTable();
+                    const table = globalTable;
 
                     const noCols = $('#cols-counter').data('value');
                     table.columns([...Array(noCols).keys()], false).visible(true);
@@ -2466,14 +2526,14 @@ $tableId = 'kt_table_1';
                                         var tBodyLength = $('tbody tr').length
                                         for (rowId = 1; rowId <= tBodyLength; rowId++) {
                                             currentRow = $('tbody tr:nth-of-type(' + rowId + ')');
-                                            var searchRowValue = -1;
+                                            var searchRowValue = null;
                                             if (totalOfVisisableDates[rowId] && totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay] && totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay]['value']) {
                                                 searchRowValue = totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay]['value'];
                                             }
 
 
 
-                                            if (searchRowValue >= 0) {
+                                            if (searchRowValue != null) {
                                                 var val = parseFloat($('tbody tr:nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + removeMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + removeMonth + '-' + currentDay + '"]').val());
                                                 val = val ? val : 0;
                                                 totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay]['value'] += val;
@@ -2503,7 +2563,7 @@ $tableId = 'kt_table_1';
                                                         val2 = val2 ? val2 : 0;
 
 
-                                                        val = val1 + val1;
+                                                        val = val1 + val2;
 
                                                         totalOfVisisableDates[rowId] = {
                                                             [loopYear + '-' + loopMonth + '-' + currentDay]: {

@@ -3,7 +3,7 @@
 <x-styles.commons></x-styles.commons>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Financial Statement') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Income Statement Planning / Actual') }}</x-main-form-title>
 @endsection
 @section('content')
 <div class="row">
@@ -19,14 +19,30 @@
 
                 <div class="kt-portlet__body">
 
-                    <h2 for="" class="d-bloxk mb-4">{{ __('Financial Statement Information') }}</h2>
+                    <h2 for="" class="d-bloxk mb-4">{{ __('Information:') }}</h2>
 
 
 
                     <div class="form-group row">
 
                         <div class="col-md-3 mb-4">
-                            <label>{{ __('Name') }} </label>
+                            <label class="form-label font-weight-bold">{{ __('Type') }} </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group">
+                                    <label style="font-size:18px;margin-right:25px;" for="forecast">{{ __('Forecast & Actual') }}</label>
+                                    <input style="width:20px;height:16px;margin-right:20px;position:initial !important" id="forecast" value="forecast" class="form-check-input financial-statement-type" type="radio" name="type" checked>
+
+                                    <label style="font-size:18px;margin-right:25px;" for="actual">{{ __('Actual') }}</label>
+                                    <input style="width:20px;height:16px;position:initial !important" id="actual" value="actual" class="form-check-input financial-statement-type" type="radio" name="type">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3 mb-4">
+                            <label class="form-label font-weight-bold">{{ __('Name') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group">
                                     <input id="name" type="text" required class="form-control" name="name" value="{{ isset($model) ? $model->getName() : old('name') }}">
@@ -35,25 +51,27 @@
                         </div>
 
 
+                        <div class="col-md-2 mb-4">
+                            <x-form.select :options="$durationTypes" :add-new="false" :label="__('Duration Type')" class="select2-select   " data-filter-type="{{ $type }}" :all="false" name="duration_type" id="{{$type.'_'.'duration_type' }}" :selected-value="isset($model) ? $model->getDurationType() : 0"></x-form.select>
+                        </div>
 
-                        <div class="col-md-3 mb-4">
-                            <label>{{ __('Duration') }} </label>
+
+                        <div class="col-md-2 mb-4">
+                            <label class="form-label font-weight-bold">{{ __('Duration') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group">
-                                    <input id="duration" type="number" class="form-control only-greater-than-zero-allowed" name="duration" value="{{ isset($model) ? $model->getDuration() : old('duration') }}" step="1">
-                                </div>
+                                    <input title="{{ __('Allowed Duration 24') }}" id="duration" type="number" class="form-control only-greater-than-zero-allowed" name="duration" value="{{ isset($model) ? $model->getDuration() : old('duration') }}" step="1">
+								</div>
+                                  <label id="allowed-duration" class="form-label"> Allowed Duration 24 </label>
                             </div>
                         </div>
 
 
-                        <div class="col-md-3 mb-4">
 
-                            <x-form.select :options="$durationTypes" :add-new="false" :label="__('Duration Type')" class="select2-select   " data-filter-type="{{ $type }}" :all="false" name="duration_type" id="{{$type.'_'.'duration_type' }}" :selected-value="isset($model) ? $model->getDurationType() : 0"></x-form.select>
-                        </div>
 
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
 
-                            <x-form.label :class="'label'" :id="'test-id'">{{ __('Start From') }}</x-form.label>
+                            <x-form.label :class="'label form-label font-weight-bold'" :id="'test-id'">{{ __('Start From') }}</x-form.label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <input type="text" name="start_from" class="form-control" value="{{ isset($model) ? $model->getStartFrom() : getCurrentDateForFormDate('date') }}" id="kt_datepicker_3" />
@@ -67,25 +85,9 @@
                         </div>
 
 
-                        <div class="col-md-3 mb-4">
-                            <label>{{ __('Type') }} </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group">
-                                    <label style="font-size:18px;margin-right:25px;" for="forecast">{{ __('Forecast & Actual') }}</label>
-                                    <input style="width:20px;height:16px;margin-right:20px;position:initial !important" id="forecast" value="forecast" class="form-check-input" type="checkbox" name="type">
-
-                                    <label style="font-size:18px;margin-right:25px;" for="actual">{{ __('Actual') }}</label>
-                                    <input style="width:20px;height:16px;position:initial !important" id="actual" value="actual" class="form-check-input" type="checkbox" name="type">
-
-                                </div>
-
-                            </div>
-                            {{-- <div class="kt-input-icon">
-                                <div class="input-group">
-                                    
-                                </div>
-
-                            </div> --}}
+                        <div class="col-lg-12 kt-align-right">
+                            <button type="submit" class="btn active-style save-form">{{ __('Create') }}</button>
+                            {{-- <button type="reset" class="btn btn-secondary">{{__('Cancel')}}</button> --}}
                         </div>
 
 
@@ -102,7 +104,7 @@
                 </div>
             </div>
 
-            <x-create :btn-text="__('Create')" />
+            {{-- <x-create :btn-text="__('Create')" /> --}}
 
 
 
@@ -137,6 +139,78 @@
 @endsection
 @section('js')
 <x-js.commons></x-js.commons>
+
+<script>
+$(document).on('change','.financial-statement-type',function(){
+	validateDuration();
+})
+$(document).on('change','select[name="duration_type"]',function(){
+	validateDuration();
+})
+$(document).on('change','#duration',function(){
+	validateDuration();
+})
+function validateDuration()
+{
+	let type = $('input[name="type"]:checked').val();
+	let durationType = $('select[name="duration_type"]').val();
+	let duration = $('#duration').val();
+	let isValid = true ; 
+	let allowedDuration = 24 ;
+	if(type == 'forecast' && durationType == 'monthly'){
+		allowedDuration = 24 ;  
+		isValid = duration <= allowedDuration;
+	}
+	if(type == 'forecast' && durationType == 'quarterly'){
+		allowedDuration = 8;
+		isValid = duration <= allowedDuration  
+	}
+	if(type == 'forecast' && durationType == 'semi-annually'){
+		allowedDuration = 4 
+		isValid = duration <= allowedDuration  
+	}
+	if(type == 'forecast' && durationType == 'annually'){
+		allowedDuration = 2 ;
+		isValid = duration <= allowedDuration  
+	}
+	if(type == 'actual' && durationType == 'monthly'){
+		allowedDuration = 36 ;  
+		isValid = duration <= allowedDuration;
+	}
+	if(type == 'actual' && durationType == 'quarterly'){
+		allowedDuration = 12 
+		isValid = duration <= allowedDuration;  
+	}
+	if(type == 'actual' && durationType == 'semi-annually'){
+		allowedDuration = 6 ;
+		isValid = duration <= allowedDuration  
+	}
+	if(type == 'actual' && durationType == 'annually'){
+		allowedDuration =3 
+		isValid = duration <= allowedDuration 
+	}
+	let allowedDurationText = "{{ __('Allowed Duration') }}";
+	
+	$('#allowed-duration').html(allowedDurationText + '  '+ allowedDuration)
+	
+	if(!isValid){
+		Swal.fire({
+                        icon: 'error'
+                        , title: 'Invalid Duration. Allowed [ ' +allowedDuration + ' ]'
+                    , })
+					
+		$('#duration').val(allowedDuration).trigger('change');
+		
+	}
+	
+	
+}
+
+$(function(){
+	$('.financial-statement-type').trigger('change')
+	
+})
+</script>
 
 <script>
     $(document).on('click', '.save-form', function(e) {

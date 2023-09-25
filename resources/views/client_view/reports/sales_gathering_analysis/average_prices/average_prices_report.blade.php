@@ -1,6 +1,37 @@
 @extends('layouts.dashboard')
 @section('css')
 <style>
+
+.DataTables_Table_0_filter{
+	float:left;
+}
+.dt-buttons button {
+	color:#366cf3 !important;
+	border-color:#366cf3 !important;
+}
+.dataTables_wrapper > .row > div.col-sm-6:first-of-type {
+	flex-basis:20% !important;
+}
+.dataTables_wrapper > .row label{
+	margin-bottom:0 !important;
+	padding-bottom:0 !important ;
+}
+.kt-portlet__head-title,
+.fa-layer-group
+{
+	color:#366cf3 !important;
+	border-bottom:2px solid  #366cf3;
+	padding-bottom:.5rem !important;
+}
+
+ th:first-of-type,
+ td:first-of-type
+{
+	width:400px !important;
+	min-width:400px !important;
+	max-width:400px !important;
+	white-space:normal !important;
+}
     table {
         white-space: nowrap;
         table-layout: auto;
@@ -35,8 +66,11 @@
     .table-active .dtfc-fixed-right {
         background-color: #086691 !important;
         color: white !important;
+		
 
     }
+	
+	
 
 </style>
 {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
@@ -60,22 +94,7 @@
 </div>
 
 <div class="kt-portlet kt-portlet--tabs">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                {{-- <li class="nav-item">
-                        <a class="nav-link " data-toggle="tab" href="#kt_apps_contacts_view_tab_1" role="tab">
-                            <i class="flaticon-line-graph"></i> &nbsp; Charts
-                        </a>
-                    </li> --}}
-                <li class="nav-item ">
-                    <a class="nav-link active" data-toggle="tab" href="#kt_apps_contacts_view_tab_2" role="tab">
-                        <i class="flaticon2-checking"></i>Reports Table
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+  
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
@@ -104,7 +123,10 @@
 @endforeach
 </div> --}}
 <!--End:: Tab  EGP FX Rate Table -->
-
+{{-- {{ dd() }} --}}
+@php
+	$view_name = str_replace('Items',' Products Items',$view_name);
+@endphp
 <!--Begin:: Tab USD FX Rate Table -->
 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
     <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
@@ -151,7 +173,7 @@
             @foreach ($dates as $date)
             <td class="text-center">
                 {{ number_format($channel_section['Avg. Prices'][$date] ?? 0  , 2  )  }}
-                <span><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
+                <span class="color-{{ getPercentageColor($channel_section['Growth Rate %'][$date]??0) }}"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
             </td>
             @endforeach
         </tr>

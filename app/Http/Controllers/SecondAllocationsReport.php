@@ -89,7 +89,7 @@ class SecondAllocationsReport
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  =getNumberOfProductsItems($company->id) ;
      if ( ($request->isMethod('POST')
-            || (! $allocations_setting->add_new_items) )){
+            || (! $allocations_setting->add_new_items) ) && !$hasNewProductsItems){
     //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
 
             foreach ((array )$request->allocation_base_data as $product => $data) {

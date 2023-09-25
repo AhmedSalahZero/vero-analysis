@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ExportData;
 use App\Models\Company;
+use App\Models\Log;
 use App\Models\SalesGathering;
 use App\Models\TablesField;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ class SalesGatheringController extends Controller
     public function index(Company $company)
     {
         // dd('x');
+		Log::storeNewLogRecord('enterSection',null,__('Data Gathering'));
+
         
         // $salesGatherings = SalesGathering::company()->orderBy('date','desc')->get;
         $salesGatherings = SalesGathering::company()->orderBy('date','desc')->paginate(50);

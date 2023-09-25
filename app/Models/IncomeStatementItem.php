@@ -84,9 +84,14 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 			self::NET_PROFIT_PERCENTAGE_OF_SALES_ID,
 		];
 	}
-	public static function getEquationFor(int $incomeStatementItemId)
+	public static function getEquationFor($financialStatementAble, int $incomeStatementItemId)
 	{
 		$incomeStatementItem = IncomeStatementItem::find($incomeStatementItemId);
+		if ($financialStatementAble->type == 'CashFlowStatement') {
+			$incomeStatementItem = CashFlowStatementItem::find($incomeStatementItemId);
+		} elseif ($financialStatementAble->type == 'BalanceSheet') {
+			$incomeStatementItem = BalanceSheetItem::find($incomeStatementItemId);
+		}
 		return $incomeStatementItem->equation;
 	}
 	public static function isPercentageOfSalesRevenue(int $incomeStatementItemId): bool

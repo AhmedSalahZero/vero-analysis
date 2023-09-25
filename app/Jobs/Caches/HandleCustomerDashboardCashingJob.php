@@ -28,7 +28,7 @@ class HandleCustomerDashboardCashingJob implements ShouldQueue
     public function handle()
     {
                 $cachingService = new CashingService($this->company);
-                  $cachingService->refreshCustomerDashboardCashing();
+                $cachingService->refreshCustomerDashboardCashing();
     }
 
 

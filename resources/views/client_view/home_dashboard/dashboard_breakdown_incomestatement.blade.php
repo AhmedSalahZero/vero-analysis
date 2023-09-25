@@ -120,7 +120,7 @@ $totalOfDepreactionAndAmortization = 0;
                 <div class="col-md-1">
                     <label> </label>
                     <div class="kt-input-icon">
-                        <button type="submit" class="btn active-style">{{ __('Submit') }}</button>
+                        <button type="submit" class="btn active-style">{{ __('Run') }}</button>
                     </div>
                 </div>
             </div>
@@ -140,8 +140,11 @@ $totalOfDepreactionAndAmortization = 0;
         </div>
         <div class="kt-portlet__body  kt-portlet__body--fit">
             <div class="row row-no-padding row-col-separator-xl">
-
+{{-- {{ dd($types) }} --}}
                 @foreach ($types as $singleType=>$type )
+				@if ($singleType == 'Corporate Taxes')
+					@continue
+				@endif
                 @php
                 $color = 'primary';
                 $currentIndex = array_search($singleType,array_keys($types)) ;
@@ -184,6 +187,7 @@ $totalOfDepreactionAndAmortization = 0;
                                 @php
                                 $total_of_main_with_rows_with_depreciation[$singleType] = $total_of_each_group_with_depreciation ;
                                 $total_of_main_with_rows_depreciation[$singleType] = $total_of_each_group_depreciation ;
+								
                                 @endphp
 
                         </div>
@@ -271,20 +275,19 @@ $totalOfDepreactionAndAmortization = 0;
         </div>
         <div class="kt-portlet__body  kt-portlet__body--fit">
             <div class="row row-no-padding row-col-separator-xl">
-
-                @foreach ([5=>'Gross Profit',13=>'Earning Before Interest Taxes Depreciation Amortization - EBITDA',15=>'Earning Before Interest Taxes - EBIT',19=>'Earning Before Taxes - EBT',23=>'Net Profit'] as $idOfItem=>$mainWithoutSubItemsName )
+                @foreach ([5=>'Gross Profit <br> &nbsp;',13=>'Earning Before Interest Taxes <br> Depreciation Amortization - EBITDA',15=>'Earning Before Interest Taxes - EBIT <br> &nbsp;',19=>'Earning Before Taxes - EBT',21=>__('Corporate Taxes'),23=>'Net Profit'] as $idOfItem=>$mainWithoutSubItemsName )
                 @php
                 $color = 'primary';
                 @endphp
 
 
-                <div @if( $idOfItem==13 ) class="col-md-8" @else class="col-md-4" @endif>
+                <div @if( $idOfItem==13 ) class="col-md-4" @else class="col-md-4" @endif>
                     <!--begin::Total Profit-->
                     <div class="kt-widget24 text-center">
                         <div class="kt-widget24__details">
                             <div class="kt-widget24__info w-100">
                                 <h4 class="kt-widget24__title font-size justify-content-between">
-                                    <span style="font-size:1.75rem !important;">{{ __( ucwords(str_replace('_',' ',$mainWithoutSubItemsName))) }}</span>
+                                    <span style="font-size:1.75rem !important;text-align:left!important;color;black!important; ">{!! __( ucwords(str_replace('_',' ',$mainWithoutSubItemsName))) !!}</span>
                                 </h4>
                             </div>
                         </div>
@@ -341,8 +344,19 @@ $totalOfDepreactionAndAmortization = 0;
                         $generalExpensesWithDepreciation = $total_of_main_with_rows_with_depreciation['Finance Income/(Expenses)'] ?? 0 ;
                         $totalOfSub = $earningBeforeIntresetAndTaxes + $generalExpensesWithDepreciation;
                         $earningBeforeTaxes =$totalOfSub ;
-                        @endphp
+                          $total_of_main_with_rows_with_depreciation['Corporate Taxes'] = $earningBeforeTaxes < 0 ? 0 : $earningBeforeTaxes * $corporateTaxesPercentage/100 ;
+						@endphp
                         @endif
+						
+
+                        @if($idOfItem == 21)
+                        @php
+                        $corportatTaxes = $total_of_main_with_rows_with_depreciation['Corporate Taxes'] ?? 0 ;
+                        $totalOfSub =  $corportatTaxes ;
+
+
+                        @endphp
+                        @endif					
 
 
                         @if($idOfItem == 23)
@@ -406,7 +420,7 @@ $totalOfDepreactionAndAmortization = 0;
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
+                    <h3 class="kt-portlet__head-title head-title text-primary" style="font-size:1.75rem !important">
                         {{ __(ucwords(str_replace('_',' ',$type)).' Breakdown Analysis') }}
                     </h3>
                 </div>
@@ -507,7 +521,7 @@ $totalOfDepreactionAndAmortization = 0;
                                             <td class="text-center">{{number_format($item)}}</td>
                                             <td class="text-center">{{$totalForAll['value'] ? number_format($item / $totalForAll['value'] * 100,2)  . ' %' : 0}}</td>
                                             @if($singleType == __('Sales Revenue'))
-                                            <td>{{ hasQuantityRow($reports_data[$type]['sub_items'],$key) ?  number_format($totalForSub['quantity']) : '-' }}</td>
+                                            <td class="text-center">{{ hasQuantityRow($reports_data[$type]['sub_items'],$key) ?  number_format($totalForSub['quantity']) : '-' }}</td>
                                             @endif
                                             @if($singleType != __('Sales Revenue'))
 
@@ -534,7 +548,7 @@ $totalOfDepreactionAndAmortization = 0;
                                             @endif
 
                                             @if($singleType != __('Sales Revenue'))
-                                            <td>{{ isset($totalOfSalesRevenuePercentage) ? $totalOfSalesRevenuePercentage . ' %':0 }}</td>
+                                            <td>{{ isset($totalOfSalesRevenuePercentage) ? number_format($totalOfSalesRevenuePercentage,2) . ' %':0 }}</td>
                                             @endif
                                         </tr>
                                         @endslot
@@ -978,7 +992,8 @@ $totalOfDepreactionAndAmortization = 0;
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{{ asset('custom/axios.js') }}"></script>
+
 <script>
     $(function() {
         const incomeStatementElement = document.querySelector('#income_statement_select_id');

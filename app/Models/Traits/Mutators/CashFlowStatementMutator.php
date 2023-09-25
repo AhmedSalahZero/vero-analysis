@@ -2,15 +2,18 @@
 
 namespace App\Models\Traits\Mutators;
 
-use App\Models\CashFlowStatement;
+
 use App\Models\CashFlowStatementItem;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
+use App\ReadyFunctions\CollectionPolicyService;
 use Illuminate\Http\Request;
 
 trait CashFlowStatementMutator
 {
+
 	use FinancialStatementAbleMutator;
+
 	public function getCashFlowStatementItemIdFromIncomeStatementItemId(int $incomeStatementItemId, bool $isFinancialIncome = false)
 	{
 		if ($incomeStatementItemId === IncomeStatementItem::SALES_REVENUE_ID || $isFinancialIncome) {
@@ -50,7 +53,14 @@ trait CashFlowStatementMutator
 					$cashFlowStatementItemId = $this->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementItemId, isset($subItemOptions['is_financial_income']));
 
 					$subItemName = $subItemOptions['name'];
-					$values[$cashFlowStatementId][$cashFlowStatementItemId][$subItemName] = applyCollectionPolicy(isset($subItemOptions['collection_policy']['has_collection_policy']) && (bool)$subItemOptions['collection_policy']['has_collection_policy'], $subItemOptions['collection_policy']['type']['name'] ?? '', $subItemOptions['collection_policy']['type']['value'] ?? '', $request->value[$incomeStatementId][$incomeStatementItemId][$subItemName]);
+					$collectionPolicyType = $subItemOptions['collection_policy']['type']['name']??null ;
+					
+					if(is_array($request->value[$incomeStatementId][$incomeStatementItemId][$subItemName])){
+						$values[$cashFlowStatementId][$cashFlowStatementItemId][$subItemName] = (new CollectionPolicyService())->applyCollectionPolicy(isset($subItemOptions['collection_policy']['has_collection_policy']) && (bool)$subItemOptions['collection_policy']['has_collection_policy'], $collectionPolicyType , $subItemOptions['collection_policy']['type'][$collectionPolicyType]['value'] ?? '', $request->value[$incomeStatementId][$incomeStatementItemId][$subItemName]);
+					}else{
+						$values[$cashFlowStatementId][$cashFlowStatementItemId][$subItemName] = [];
+						
+					}
 				}
 			}
 		}
@@ -65,7 +75,12 @@ trait CashFlowStatementMutator
 					foreach ($subItemsNamesAndValues as $subItemName => $dateValue) {
 						$cashFlowStatementItemId = $this->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementItemId, $request->get('is_financial_income')[$incomeStatementId][$incomeStatementItemId][$subItemName] ?? false);
 						$collection_policy = $this->subItemCollectionPolicy($incomeStatementId, $incomeStatementItemId, $subItemType, $subItemName);
-						$values[$cashFlowStatementId][$cashFlowStatementItemId][$subItemName] = applyCollectionPolicy($collection_policy['has_collection_policy'], $collection_policy['collection_policy_type'], $collection_policy['collection_policy_value'], $dateValue);
+						if(is_array($dateValue)){
+							$values[$cashFlowStatementId][$cashFlowStatementItemId][$subItemName] = (new CollectionPolicyService())->applyCollectionPolicy($collection_policy['has_collection_policy'], $collection_policy['collection_policy_type'], $collection_policy['collection_policy_value'], $dateValue);
+						}
+						else{
+							$values[$cashFlowStatementId][$cashFlowStatementItemId][$subItemName] = [];
+						}
 					}
 				}
 			}
@@ -110,9 +125,11 @@ trait CashFlowStatementMutator
 	}
 	public function formatDataFromIncomeStatement(Request $request): array
 	{
+
 		$cashFlowStatementId = $request->get('cash_flow_statement_id');
 		$incomeStatementId = $request->get('income_statement_id');
 		$values = $this->formatSubItems($request);
+
 		$mainRowValuesWithTotal = $this->formatTotalForMainItem($values);
 		$isFinancialIncome = false;
 		if (is_array($request->get('is_financial_income'))) {

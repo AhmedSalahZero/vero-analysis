@@ -314,4 +314,36 @@ class  CashFlowStatementItem extends Model implements IFinancialStatementAbleIte
 	{
 		return getChartsData($chartItems, $dates, $arrayOfData, $mainItemName);
 	}
+	
+	public function getId(){
+		return $this->id ;
+	}
+	public function getName()
+	{
+		return $this->pivot->sub_item_name ;
+	}
+	public function getBalanceAmount()
+	{
+		return $this->pivot->payload ? array_sum((array)json_decode($this->pivot->payload)) :0 ;
+	}
+	public function getReceivableValueAtDate(string $date)
+	{
+		if(!$this->pivot->payload){
+			return 0 ;
+		}
+		$payload = (array) json_decode($this->pivot->payload) ;
+		return $payload[$date] ?? 0;
+	}
+	public function getType()
+	{
+		return $this->pivot->receivable_or_payment ;
+	}
+	// protected static function booted()
+	// {
+	// 	static::addGlobalScope(function (Builder $builder) {
+	// 		$builder->where('type', 'CashFlowStatement');
+	// 		->orderBy('ordered','asc');
+	// 	});
+	// }
+	
 }

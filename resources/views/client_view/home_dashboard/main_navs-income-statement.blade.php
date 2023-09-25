@@ -1,17 +1,8 @@
+@php
+	$user = Auth()->user();
+@endphp
 <ul class="kt-menu__nav ">
-    {{-- <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{ route('dashboard', $company) }}"
-    class="kt-menu__link
-    @if($active == 'sales_dashboard')
-    active-button
-    @endif
-
-    "><span class="kt-menu__link-text 
-                     @if($active == 'sales_dashboard')
-                active-text
-                    @endif 
-                
-                ">{{ __('Sales Dashboard') }}</span></a>
-    </li> --}}
+	@if($user->can('view income statement dashboard') && $user->can('view forecast income statement dashboard'))
     <li class="kt-menu__item  kt-menu__item 
         
         @if($active == 'breadkdown_dashboard')
@@ -24,10 +15,11 @@
                 active-text
                     @endif 
 
-                "> Income Statement Dashboard</span></a>
+                "> {{ __('Income Statement Dashboard') }}</span></a>
     </li>
+	@endif 
 
-
+	@if($user->can('view income statement dashboard') && $user->can('view income statement variance dashboard'))
     <li class="kt-menu__item  kt-menu__item 
 	@if($active == 'various_incomestatement_dashboard')
 	
@@ -44,8 +36,9 @@
 			  @endif 
 			  ">{{__("Variance Comparing")}}</span></a>
     </li>
+	@endif 
 
-
+	@if($user->can('view income statement dashboard') && $user->can('view income statement comparing dashboard'))
     <li class="kt-menu__item  kt-menu__item 
           @if($active == 'interval_dashboard')
                    active-button
@@ -61,6 +54,7 @@
                     @endif 
                     ">{{__("Income Statement Comparing")}}</span></a>
     </li>
+	@endif 
 
 
 </ul>

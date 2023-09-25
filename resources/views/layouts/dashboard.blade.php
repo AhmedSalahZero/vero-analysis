@@ -13,7 +13,71 @@
     <title>VERO ANALYSIS</title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{{-- <style>
 
+.kt-portlet .kt-portlet__body{
+	padding:25px !important;
+}
+</style> --}}
+
+<style>
+#add-row{
+	border-color:green;
+	background-color:green;
+	color:white;
+}
+.tooltip-inner{
+	text-align:left !important;
+}
+.font-1-5{
+	font-size:1.5rem !important;
+}
+</style>
+@if(in_array('Result',Request()->segments()) && in_array('SalesGathering',Request()->segments()))
+<style>
+
+tr td:first-of-type{
+	white-space:normal !important ;
+}
+</style>
+@endif 
+<style>
+.max-w-classes
+{
+	width:350px !important;
+	min-width:350px !important;
+	max-width:350px !important;
+	white-space:normal !important;
+}
+</style>
+	{{-- {{ dd() }} --}}
+@if(!in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index')
+<style>
+
+.table-active th:first-of-type,
+.group-color td:first-of-type
+{
+	width:350px !important;
+	min-width:350px !important;
+	max-width:350px !important;
+	white-space:normal !important;
+}
+</style>
+@endif 
+
+<style>
+.table-title{
+	color:red;
+	
+}
+.edit-modal-icon{
+
+	color:#046187 !important;
+}
+.fas.fa-trash-alt{
+	color:#ea1b1b !important;
+}
+</style>
 
     {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
@@ -54,21 +118,22 @@
             let stringToReplaceAr = "[(] {{ __('Quantity') }} [)]$"
             let regEn = new RegExp(stringToReplaceEn, "g")
             let regAr = new RegExp(stringToReplaceAr, "g")
-            return str.replace ? str.replace(regEn, '').replace(regAr, '').trim() : str 
+            return str.replace ? str.replace(regEn, '').replace(regAr, '').trim() : str
 
         }
 
         function isQuantitySubItem(str) {
             return str.endsWith("{{ quantityIdentifier }}") || str.endsWith("{{ __(quantityIdentifier) }}")
         }
-		function isLastKey(date,dates){
-			let index = dates.length;
-			index = index-1;
-			return date == dates[index]
-		}
+
+        function isLastKey(date, dates) {
+            let index = dates.length;
+            index = index - 1;
+            return date == dates[index]
+        }
 
         function convertStringToClass(str) {
-            return str.replace ? str.replace(/[ !\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, ''):str;
+            return str.replace ? str.replace(/[ !\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '') : str;
         }
 
         // window['maxOptions'] = 10 ;
@@ -111,7 +176,7 @@
                 });
                 $(this).data('max-options', maxOption);
 
-                $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']');
+                $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[{{ __("Max:") }}' + maxOption + ']');
 
             })
 
@@ -124,7 +189,7 @@
                 });
                 $(this).data('max-options', maxOption);
 
-                $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Maxium:' + maxOption + ']');
+                $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[Max:' + maxOption + ']');
 
             })
 
@@ -178,15 +243,27 @@
     <link href="{{url('assets/css/demo4/style.bundle.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url('assets/css/custom.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
-
     <!--end::Global Theme Styles -->
     <style>
+	
+	.bg-green{
+		background-color:green;
+	}
+	.border-green{
+		border-color:green;
+	}
+	
+	.bg-red{
+		background-color:red;
+	}
+	.border-red {
+		background-color:green ;
+	}
         .arrow-nav {
             font-size: 18px;
             color: white !important;
-            background-color: #0B8576;
-            border-radius: 20px;
-            padding: 4px;
+            background-color: #074FA4 !important;
+            padding: 20px 9px;
             position: absolute;
             top: 140px;
         }
@@ -219,11 +296,37 @@
 
     </style>
 
-    <style>
+    {{-- <style>
         table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.dtfc-fixed-right):not(.active-style) {
             color: black !important;
             font-weight: bold !important;
         }
+	
+
+    </style> --}}
+
+	@if( !in_array('financial-statement',Request()->segments()) )
+	<style>
+		label{
+			font-weight:700 !important ; 
+			font-size:1rem !important;
+			color:#646c9a !important;  
+		}
+	</style>
+	@endif 
+	   <style>
+	   
+	.flex-center{
+		display:flex;
+		align-items:center;
+		justify-content:center;
+		height:100%;
+	}
+        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style) {
+            color: black !important;
+            font-weight: bold !important;
+        }
+	
 
     </style>
 
@@ -518,6 +621,8 @@
         }
 
     </style>
+	
+	
 
     <script>
         function array_sum(array) {
@@ -541,7 +646,10 @@
 
 <!-- begin::Body -->
 <body data-lang="{{app()->getLocale()}}" data-base-url="{{\Illuminate\Support\Facades\URL::to('/')}}" data-current-company-id="{{ $company->id ?? 0  }}" data-token="{{ csrf_token() }}" style="background-image: url({{url('assets/media/demos/demo4/header.jpg')}}); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
-    {{-- <div style="width: 100%;
+    @php
+		$user = Auth()->user();
+	@endphp
+	{{-- <div style="width: 100%;
 	height: 100%;
 	position: fixed;
 
@@ -644,7 +752,6 @@
     <!-- end:: Page -->
 
     <script src="/custom/sweetalert.js"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
 
     <!-- begin::Global Config(global config for global JS sciprts) -->
@@ -676,10 +783,13 @@
     <script src="{{url('assets/vendors/general/jquery/dist/jquery.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/popper.js/dist/umd/popper.js')}}" type="text/javascript"></script>
 
-    <script src="{{url('assets/vendors/general/bootstrap/dist/js/bootstrap.min.js')}}" type="text/javascript"></script>
+    <script src="{{url('assets/vendors/general/bootstrap/dist/js/bootstrap.bundle.js')}}" type="text/javascript"></script>
+    {{-- <script src="{{url('assets/vendors/general/bootstrap/dist/js/bootstrap.js')}}" type="text/javascript"></script> --}}
+    {{-- <script src="{{url('assets/vendors/general/bootstrap/dist/js/bootstrap.min.js')}}" type="text/javascript"></script> --}}
     <script src="{{url('assets/vendors/general/js-cookie/src/js.cookie.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/moment/min/moment.min.js')}}" type="text/javascript"></script>
-    <script src="{{url('assets/vendors/general/perfect-scrollbar/dist/perfect-scrollbar.js')}}" type="text/javascript"></script>
+    {{-- <script src="{{url('assets/vendors/general/perfect-scrollbar/dist/perfect-scrollbar.min.js')}}" type="text/javascript"></script> --}}
+    {{-- <script src="{{url('assets/vendors/general/perfect-scrollbar/dist/perfect-scrollbar.js')}}" type="text/javascript"></script> --}}
     <script src="{{url('assets/vendors/general/sticky-js/dist/sticky.min.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/wnumb/wNumb.js')}}" type="text/javascript"></script>
 
@@ -692,7 +802,7 @@
     <script src="{{url('assets/vendors/general/bootstrap-timepicker/js/bootstrap-timepicker.min.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/bootstrap-daterangepicker/daterangepicker.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/bootstrap-switch/dist/js/bootstrap-switch.js')}}" type="text/javascript"></script>
-
+	
     <script>
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
@@ -829,7 +939,7 @@
                         $(this).selectpicker("refresh");
                     }
                 }
-                $(this).closest('div[class*="col-md"]').find('.max-options-span').html('[Selected:' + labelMaxSelection + ']');
+                $(this).closest('div[class*="col-md"]').find('.max-options-span').html('[{{ __("Selected:") }}' + labelMaxSelection + ']');
 
             });
         });
@@ -882,8 +992,27 @@
     </script>
 
     @endif
+	
+	
+
+	  @if(isset($errors) &&$errors&& count($errors))
+				    <script>
+        toastr.error('{{ session()->get("errors")->first() }}')
+
+    </script>
+
+    @endif
 
     <script>
+        function isNumeric(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
+        function hasAttribute(attr) {
+            return typeof attr !== 'undefined' && attr !== false;
+        }
+		  
+
         function exportToExcel(xlsx) {
 
 
@@ -1072,7 +1201,14 @@
 
     </script>
     @endif
+	
+	<script>
+	
+	
+	</script>
+<script src="{{ asset('global.js') }}"></script>
 
+@stack('js_end')
 </body>
 
 <!-- end::Body -->

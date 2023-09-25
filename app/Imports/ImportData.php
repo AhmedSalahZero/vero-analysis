@@ -89,13 +89,7 @@ class ImportData implements
         
     }
     
-    // public function model(array $row)
-    // {
-    //     $model_name = 'App\\Models\\' . $this->model;
-    //     $data = $this->dataCustomizationImport($row);
-        
-    //     return new $model_name($data);
-    // }
+   
     public function batchSize(): int
     {
         return 1000;

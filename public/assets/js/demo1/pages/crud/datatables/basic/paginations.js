@@ -50,6 +50,38 @@ var KTDatatablesBasicPaginations = (function () {
             buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
+	
+	
+	var initTableWithNoPaginationNoFixedRight = function () {
+        var table = $(".kt_table_with_no_pagination_no_fixed_right");
+        // table.fixedHeader.adjust();
+        // begin first table
+        table.DataTable({
+            // responsive:true ,
+            deferRender: true,
+            scrollY: true,
+            scrollX: true,
+            search: true,
+            pageLength: 100,
+            scrollCollapse: true,
+            fixedHeader: {
+                header: true,
+                headerOffset: 59,
+            },
+
+            paging: false,
+            fixedColumns: {
+                left: 1,
+            },
+            paging: false,
+            ordering: false,
+            dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+			<'row'<'col-sm-12'tr>>
+			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
+        });
+    };
 
     var initTableWithNoPaginationNoCollapse = function () {
         var table = $(".kt_table_with_no_pagination_no_collapse");
@@ -185,6 +217,7 @@ var KTDatatablesBasicPaginations = (function () {
             initTableWithNoPaginationNoScrollNoSearch();
             initTableWithNoPaginationNoScrollNoInfo();
             initTableWithNoPaginationNoScrollWithoutPdf();
+            initTableWithNoPaginationNoFixedRight();
         },
     };
 })();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
 use App\Models\Company;
+use App\Models\Log;
 use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -13,6 +14,8 @@ class salesReport
     use GeneralFunctions;
     public function index(Company $company)
     {
+		Log::storeNewLogRecord('enterSection',null,__('Sales Report'));
+		
         return view('client_view.reports.sales_gathering_analysis.sales_report.sales_form', compact('company'));
     }
     public function result(Request $request, Company $company,$result='view')
@@ -30,14 +33,12 @@ class salesReport
             'end_date' => date('d-M-Y',strtotime($request->end_date))
         ];
         $data = [];
-        $first = microtime(true) ;
 
         $main_data = SalesGathering::company()
                                     ->whereBetween('date', [$request->start_date, $request->end_date])
                                     // ->limit(10)
                                     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%Y") as year,net_sales_value')->orderBy('date')
                                     ->get();
-          $first = \microtime(true);
           
         if ($request->report_type == 'comparing') {
             $data = $main_data->groupBy('year')->map(function($year){

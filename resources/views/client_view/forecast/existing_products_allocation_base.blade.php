@@ -62,7 +62,7 @@
                 @php
                 sortTwoDimensionalArr($sales_targets_values);
                 @endphp
-                {{-- @dd($sales_targets_values) --}}
+              
                 @foreach ($sales_targets_values as $base_vame => $target)
                 <?php $percentages[$base_vame] = $total_new_items_targets == 0 ? 0 : ($target / $total_new_items_targets) * 100; ?>
                 <tr>

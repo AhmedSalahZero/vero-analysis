@@ -1,4 +1,8 @@
+@php
+	$user = Auth()->user();
+@endphp
 <ul class="kt-menu__nav ">
+		@if($user->can('view sales dashboard'))
         <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{ route('dashboard', $company) }}"
                 class="kt-menu__link 
                 @if($active == 'sales_dashboard')
@@ -12,6 +16,9 @@
                 
                 ">{{ __('Sales Dashboard') }}</span></a>
         </li>
+		@endif 
+		
+		@if($user->can('view breakdown dashboard'))
         <li class="kt-menu__item  kt-menu__item 
         
         @if($active == 'breadkdown_dashboard')
@@ -25,9 +32,10 @@
                 active-text
                     @endif 
 
-                ">Breakdown Dashboard</span></a>
+                ">{{ __('Breakdown Dashboard') }}</span></a>
         </li>
-        @if(canViewCustomersDashboard($exportables))
+		@endif 
+        @if($user->can('view customer dashboard')&&canViewCustomersDashboard($exportables))
         <li class="kt-menu__item  kt-menu__item 
         @if($active == 'customer_dashboard')
                 active-button
@@ -37,7 +45,7 @@
                 class="kt-menu__link "><span class="kt-menu__link-text">{{__("Customers Dashboard")}}</span></a>
         </li>
         @endif
-         @if(in_array('Sales Person',$exportables))
+         @if($user->can('view sales person dashboard')&&in_array('Sales Person',$exportables))
         <li class="kt-menu__item  kt-menu__item 
         
            @if($active == 'sales_person_dashboard')
@@ -54,7 +62,7 @@
                 ">{{__("Sales Person Dashboard")}}</span></a>
         </li>
         @endif
-        @if(in_array('Cash Discount' , $exportables) || in_array('Special Discount' , $exportables) || in_array('Quantity Discount' , $exportables) || in_array('Other Discounts' , $exportables)  )
+        @if( $user->can('view discount dashboard')  && (in_array('Cash Discount' , $exportables) || in_array('Special Discount' , $exportables) || in_array('Quantity Discount' , $exportables) || in_array('Other Discounts' , $exportables)) )
         <li class="kt-menu__item  kt-menu__item 
         
          @if($active == 'discount_dashboard')
@@ -71,6 +79,7 @@
                 ">{{__("Sales Discount Dashboard")}}</span></a>
         </li>
         @endif 
+		@if($user->can('view interval comparing dashboard'))
         <li class="kt-menu__item  kt-menu__item 
           @if($active == 'interval_dashboard')
                    active-button
@@ -90,4 +99,5 @@
                     ">{{__("Interval Comparing Dashboard")}}</span></a>
         </li>
 
+		@endif
     </ul>

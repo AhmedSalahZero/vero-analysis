@@ -95,7 +95,7 @@ class  FinancialStatement extends Model implements IBaseModel, IHaveAllRelations
 	}
 	public static function getPageTitle(): string
 	{
-		return __('Financial Statement');
+		return __('Income Statement Planning / Actual');
 	}
 
 	public function getAllRelationsNames(): array

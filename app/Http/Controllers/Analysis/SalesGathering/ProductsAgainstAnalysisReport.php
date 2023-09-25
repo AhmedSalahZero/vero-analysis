@@ -32,6 +32,9 @@ class ProductsAgainstAnalysisReport
 		} elseif (request()->route()->named('products.customers.analysis')) {
 			$type  = 'customer_name';
 			$view_name = 'Products Against Customers Trend Analysis';
+		}elseif (request()->route()->named('products.countries.analysis')) {
+			$type  = 'country';
+			$view_name = 'Products Against Countries Trend Analysis';
 		}
 		// dd('q');
 		// elseif (request()->route()->named('products.categories.analysis')) {
@@ -384,73 +387,71 @@ class ProductsAgainstAnalysisReport
 		}
 		return $final_data;
 	}
-	// public function ProductsSalesAnalysisIndex(Company $company)
-	// {
-	//     // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
-	//     $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
-	//     return view('client_view.reports.sales_gathering_analysis.products_sales_form', compact('company', 'selected_fields'));
-	// }
+	public function ProductsSalesAnalysisIndex(Company $company)
+    {
+        // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
+        $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
+        return view('client_view.reports.sales_gathering_analysis.product_sales_form', compact('company', 'selected_fields'));
+    }
+	
 
 
-	// public function ProductsSalesAnalysisResult(Request $request, Company $company)
-	// {
-	//     $dimension = $request->report_type;
+	public function ProductsSalesAnalysisResult(Request $request, Company $company , $array = false )
+	{
+	
+		$dimension = $request->report_type;
 
-	//     $report_data =[];
-	//     $growth_rate_data =[];
-	//     $products = is_array(json_decode(($request->products[0]))) ? json_decode(($request->products[0])) :$request->products ;
+        $report_data =[];
+        $growth_rate_data =[];
+        $branches = is_array(json_decode(($request->branches[0]))) ? json_decode(($request->branches[0])) :$request->branches ;
 
-	//     foreach ($products as  $category) {
+        foreach ($branches as  $branch) {
 
-	//         $sales_gatherings = SalesGathering::company()
-	//                 ->where('category',$category)
-	//                 ->whereBetween('date', [$request->start_date, $request->end_date])
-	//                 ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,category')
-	//                 ->get()
-	//                 ->toArray();
+                $branches_data =collect(DB::select(DB::raw("
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,product_or_service
+                FROM sales_gathering
+                WHERE ( company_id = '".$company->id."'AND product_or_service = '".$branch."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                ORDER BY id "
+                )))->groupBy('gr_date')->map(function($item){
+                    return $item->sum('net_sales_value');
+                })->toArray();
 
-	//         $products_per_month = [];
-	//         $products_data = [];
+            $interval_data_per_item = [];
+            $years = [];
+            if (count($branches_data)>0) {
+              
+                array_walk($branches_data, function ($val, $date) use (&$years) {
+                    $years[] = date('Y', strtotime($date));
+                });
+                $years = array_unique($years);
+                $report_data[$branch] = $branches_data;
+                $interval_data_per_item[$branch] = $branches_data;
+                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+
+                $report_data[$branch] = $interval_data['data_intervals'][$request->interval][$branch] ?? [];
+                $growth_rate_data[$branch] = $this->growthRate($report_data[$branch]);
+            }
+        }
+
+        $total_branches = $this->finalTotal($report_data);
+        $total_branches_growth_rates =  $this->growthRate($total_branches);
+        $final_report_data = [];
+        $branches_names =[];
+        foreach ($branches as  $branch) {
+            $final_report_data[$branch]['Sales Values'] = ($report_data[$branch]??[]);
+            $final_report_data[$branch]['Growth Rate %'] = ($growth_rate_data[$branch]??[]);
+            $branches_names[] = (str_replace( ' ','_', $branch));
+        }
 
 
-	//         $dt = Carbon::parse($sales_gatherings[0]['date']);
-	//         $month = $dt->endOfMonth()->format('d-m-Y');
+        if($array)
+        {
+            return $report_data;
+        }
 
+        return view('client_view.reports.sales_gathering_analysis.product_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches'));
 
-
-	//         foreach ($sales_gatherings as $key => $row) {
-
-	//             $dt = Carbon::parse($row['date']);
-	//             $current_month = $dt->endOfMonth()->format('d-m-Y');
-	//             if($current_month == $month){
-	//                 $products_per_month[$current_month][] = $row['net_sales_value'];
-
-	//             }else{
-	//                 $month = $current_month;
-	//                 $products_per_month[$current_month][] = $row['net_sales_value'];
-	//             }
-
-	//             $products_data[$month] = array_sum($products_per_month[$month]);
-	//         }
-
-	//         $report_data[$category] = $products_data;
-	//         $growth_rate_data[$category] = $this->growthRate($products_data);
-
-	//     }
-
-	//     $total_products = $this->finalTotal($report_data);
-	//     $total_products_growth_rates =  $this->growthRate($total_products);
-	//     $final_report_data = [];
-	//     $products_names =[];
-	//     foreach ($products as  $category) {
-	//         $final_report_data[$category]['Sales Values'] = $report_data[$category];
-	//         $final_report_data[$category]['Growth Rate %'] = $growth_rate_data[$category];
-	//         $products_names[] = (str_replace( ' ','_', $category));
-	//     }
-
-	//     return view('client_view.reports.sales_gathering_analysis.products_sales_report',compact('company','products_names','total_products_growth_rates','final_report_data','total_products'));
-
-	// }
+	}
 
 
 

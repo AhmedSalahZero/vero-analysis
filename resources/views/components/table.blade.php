@@ -5,9 +5,8 @@
                 <span class="kt-portlet__head-icon">
                     <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                 </span>
-
                 <h3 class="kt-portlet__head-title">
-                    {{ $tableTitle }}
+                    {{ $tableTitle }} 
                 </h3>
             </div>
             {{-- Export --}}
@@ -31,4 +30,3 @@
         <!--end: Datatable -->
     </div>
 </div>
-

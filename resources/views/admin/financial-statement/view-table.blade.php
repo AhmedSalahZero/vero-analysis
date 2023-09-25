@@ -19,6 +19,28 @@ $tableId = 'kt_table_1';
     }
 
 </style>
+@php
+	$user = auth()->user();
+@endphp
+<div id="section-permissions" 
+
+data-can-edit-forecast-income-statement="{{ $user->can('edit forecast income statement') }}"
+data-can-edit-actual-income-statement="{{ $user->can('edit actual income statement') }}"
+data-can-edit-adjusted-income-statement="{{ $user->can('edit adjusted income statement') }}"
+data-can-edit-modified-income-statement="{{ $user->can('edit modified income statement') }}"
+data-can-edit-forecast-balance-sheet="{{ $user->can('edit forecast balance sheet') }}"
+data-can-edit-actual-balance-sheet="{{ $user->can('edit actual balance sheet') }}"
+data-can-edit-adjusted-balance-sheet="{{ $user->can('edit adjusted balance sheet') }}"
+data-can-edit-modified-balance-sheet="{{ $user->can('edit modified balance sheet') }}"
+data-can-edit-forecast-cash-flow-statement="{{ $user->can('edit forecast cash flow statement') }}"
+data-can-edit-actual-cash-flow-statement="{{ $user->can('edit actual cash flow statement') }}"
+data-can-edit-adjusted-cash-flow-statement="{{ $user->can('edit adjusted cash flow statement') }}"
+data-can-edit-modified-cash-flow-statement="{{ $user->can('edit modified cash flow statement') }}"
+data-can-edit-financial-statement="{{ $user->can('edit financial statement') }}"
+data-can-delete-financial-statement="{{ $user->can('delete financial statement') }}"
+
+
+></div>
 <div class="table-custom-container position-relative  ">
 
     <x-tables.basic-view class="position-relative  main-table-class" id="{{ $tableId }}">
@@ -73,9 +95,9 @@ $tableId = 'kt_table_1';
                 <th class="view-table-th" class="header-th">
                     {{ __('Income Statement') }}
                 </th>
-                <th class="view-table-th" class="header-th">
+                {{-- <th class="view-table-th" class="header-th">
                     {{ __('Balance Sheet') }}
-                </th>
+                </th> --}}
                 <th class="view-table-th" class="header-th">
                     {{ __('Cash Flow Statement') }}
                 </th>
@@ -122,10 +144,11 @@ $tableId = 'kt_table_1';
                                     , "ordering": false
                                     , "serverSide": false
                                     , "responsive": true
-                                    , "pageLength": 88888
+                                    , "pageLength": 99999999999
                                     , createdRow: function(row, data, dataIndex, cells) {
                                         // $(row).addClass('subtable-1-row-class'+(data[0]));
                                         $(cells).filter(".editable").attr('contenteditable', true).attr('data-is-relation', 1)
+										
                                             .attr('data-db-column-name', 'name').attr('data-relation-name', "serviceCategories")
                                             .attr('data-is-collection-relation', 1).attr('data-collection-item-id', data[1])
                                             .attr('data-model-name', 'RevenueBusinessLine').attr('data-model-id', data[0])
@@ -143,7 +166,7 @@ $tableId = 'kt_table_1';
                                             className: 'trigger-child-row-2'
                                         }
                                         , {
-                                            className: 'editable'
+                                            className: 'editable '
                                         }
                                         , null
                                         , null
@@ -210,7 +233,7 @@ $tableId = 'kt_table_1';
                                                 data: 'name'
                                                 , searchable: false
                                                 , orderable: false
-                                                , className: 'editable'
+                                                , className: 'editable click-to-edit'
                                             },
                                             // {
                                             //     render: function(d, b, row) {
@@ -226,7 +249,7 @@ $tableId = 'kt_table_1';
                                                     return row['duration']
                                                 }
                                                 , data: 'order'
-                                                , className: 'editable text-center'
+                                                , className: 'editable text-center click-to-edit'
                                             },
 
                                             {
@@ -260,7 +283,7 @@ $tableId = 'kt_table_1';
                                                     return '<span class="datepicker-input">' + row['start_from'] + '</span>'
                                                 }
                                                 , orderable: false
-                                                , className: 'text-center date'
+                                                , className: 'text-center date click-to-edit'
                                             }
                                             // , {
                                             //     data: 'creator_name'
@@ -282,26 +305,32 @@ $tableId = 'kt_table_1';
 
 
                                                 render: function(d, b, row) {
-                                                    var actual = `
+													let sectionPermission = $('#section-permissions')
+													let canEditForecastIncomeStatement = +sectionPermission.attr('data-can-edit-forecast-income-statement')
+													let canEditActualIncomeStatement = +sectionPermission.attr('data-can-edit-actual-income-statement')
+													let canEditAdjustedIncomeStatement = +sectionPermission.attr('data-can-edit-adjusted-income-statement')
+													let canEditModifiedIncomeStatement = +sectionPermission.attr('data-can-edit-modified-income-statement')
+												
+                                                    var actual = canEditActualIncomeStatement ? `
 			<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/actual-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Actual Income Statement Report') }}">
 				
 				{{ __('Actual') }}
 				
                         </a>
-						`;
+						`:'';
 
-                                                    var adjusted = `
+                                                    var adjusted = canEditAdjustedIncomeStatement ? `
 					<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/adjusted-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff !important;margin-right:10px;" title="{{ __('View Adjusted Income Statement Report') }}">{{ __('Adjusted') }}</a>
-						`;
+						`:'';
 
-                                                    var modified = `
+                                                    var modified = canEditModifiedIncomeStatement ? `
 							<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/modified-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Modified Income Statement Report') }}">{{ __('Modified') }}</a>
-						`;
+						`:'';
 
                                                     if (row.type == 'actual') {
                                                         return actual;
                                                     }
-                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/forecast-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Income Statement Report') }}">{{ __('Forecast') }}</a>`
+                                                    var forecast = canEditForecastIncomeStatement ?`<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.income_statement_id}/forecast-report"  data-id="${row.income_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Income Statement Report') }}">{{ __('Forecast') }}</a>`:''
 
                                                     if (row.can_view_income_statement_actual_report) {
                                                         return forecast + actual + ' <br> <br>' + adjusted + modified;
@@ -309,16 +338,55 @@ $tableId = 'kt_table_1';
                                                         return forecast;
                                                     }
 
-
-
-
-                                                    // <a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.financial_statement_able_id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">
-                                                    //   <i class="la la-trash icon-lg"></i>
-                                                    // </a>
-
                                                     ;
                                                 }
                                             }
+                         //                   , {
+                         //                       data: 'id'
+                         //                       , searchable: false
+                         //                       , orderable: false
+                         //                       , className: "text-left",
+
+
+                        //                        render: function(d, b, row) {
+		//											let sectionPermission = $('#section-permissions')
+		//											
+		//												
+		//											let canEditForecastBalanceSheet = +sectionPermission.attr('data-can-edit-forecast-balance-sheet')
+		//											let canEditActualBalanceSheet = +sectionPermission.attr('data-can-edit-actual-balance-sheet')
+		//											let canEditAdjustedBalanceSheet = +sectionPermission.attr('data-can-edit-adjusted-balance-sheet')
+		//											let canEditModifiedBalanceSheet = +sectionPermission.attr('data-can-edit-modified-balance-sheet')
+		//											
+		//										
+		//											
+        //                                            var actual = canEditActualBalanceSheet ? `
+		//											<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/balance-sheet/${row.balance_sheet_id}/actual-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Actual Balance Sheet Report') }}">
+		//		
+		//												{{ __('Actual') }}
+		//												
+		//														</a>
+		//														`:'';
+//
+        //                                            var adjusted = canEditAdjustedBalanceSheet ?`
+		//														<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/balance-sheet/${row.balance_sheet_id}/adjusted-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff !important;margin-right:10px;" title="{{ __('View Adjusted Balance Sheet Report') }}">{{ __('Adjusted') }}</a>
+		//				`:'';
+//
+        //                                            var modified = canEditModifiedBalanceSheet?`
+		//					<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.balance_sheet_id}/modified-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Modified Balance Sheet Report') }}">{{ __('Modified') }}</a>
+		//				`:'';
+//
+        //                                            if (row.type == 'actual') {
+        //                                                return actual;
+        //                                            }
+        //                                            var forecast = canEditForecastBalanceSheet ? `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/balance-sheet/${row.balance_sheet_id}/forecast-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Balance Sheet Report') }}">{{ __('Forecast') }}</a>`:''
+//
+        //                                            if (row.can_view_balance_sheet_actual_report) {
+        //                                                return forecast + actual + ' <br> <br>' + adjusted + modified;
+        //                                            } else {
+        //                                                return forecast;
+        //                                            }
+        //                                        }
+        //                                    }
                                             , {
                                                 data: 'id'
                                                 , searchable: false
@@ -327,62 +395,33 @@ $tableId = 'kt_table_1';
 
 
                                                 render: function(d, b, row) {
-                                                    var actual = `
-			<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/balance-sheet/${row.balance_sheet_id}/actual-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Actual Balance Sheet Report') }}">
-				
-				{{ __('Actual') }}
-				
-                        </a>
-						`;
-
-                                                    var adjusted = `
-					<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/balance-sheet/${row.balance_sheet_id}/adjusted-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff !important;margin-right:10px;" title="{{ __('View Adjusted Balance Sheet Report') }}">{{ __('Adjusted') }}</a>
-						`;
-
-                                                    var modified = `
-							<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/income-statement/${row.balance_sheet_id}/modified-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Modified Balance Sheet Report') }}">{{ __('Modified') }}</a>
-						`;
-
-                                                    if (row.type == 'actual') {
-                                                        return actual;
-                                                    }
-                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/balance-sheet/${row.balance_sheet_id}/forecast-report"  data-id="${row.balance_sheet_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Balance Sheet Report') }}">{{ __('Forecast') }}</a>`
-
-                                                    if (row.can_view_balance_sheet_actual_report) {
-                                                        return forecast + actual + ' <br> <br>' + adjusted + modified;
-                                                    } else {
-                                                        return forecast;
-                                                    }
-                                                }
-                                            }
-                                            , {
-                                                data: 'id'
-                                                , searchable: false
-                                                , orderable: false
-                                                , className: "text-left",
-
-
-                                                render: function(d, b, row) {
-                                                    var actual = `
+													let sectionPermission = $('#section-permissions')
+														let canEditForecastCashFlowStatement = +sectionPermission.attr('data-can-edit-forecast-cash-flow-statement')
+													let canEditActualCashFlowStatement = +sectionPermission.attr('data-can-edit-actual-cash-flow-statement')
+													let canEditAdjustedCashFlowStatement = +sectionPermission.attr('data-can-edit-adjusted-cash-flow-statement')
+													let canEditModifiedCashFlowStatement = +sectionPermission.attr('data-can-edit-modified-cash-flow-statement')
+													
+													
+                                                    var actual = canEditActualCashFlowStatement?`
 			<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/actual-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Actual Cash Flow Statement Report') }}">
 				
 				{{ __('Actual') }}
 				
                         </a>
-						`;
+						`:'';
 
-                                                    var adjusted = `
+                                                    var adjusted = canEditAdjustedCashFlowStatement?`
 					<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/adjusted-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff !important;margin-right:10px;" title="{{ __('View Adjusted Cash Flow Statement Report') }}">{{ __('Adjusted') }}</a>
-						`;
+						`:'';
 
-                                                    var modified = `
+                                                    var modified = canEditModifiedCashFlowStatement ?`
 							<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/modified-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:#087A7B !important;color:#fff !important" title="{{ __('Edit Modified Cash Flow Statement Report') }}">{{ __('Modified') }}</a>
-						`;
+						`:'';
 
                                                     if (row.type == 'actual') {
                                                         return actual;
                                                     }
-                                                    var forecast = `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/forecast-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Cash Flow Statement Report') }}">{{ __('Forecast') }}</a>`
+                                                    var forecast = canEditForecastCashFlowStatement?`<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/cash-flow-statement/${row.cash_flow_statement_id}/forecast-report"  data-id="${row.cash_flow_statement_id}" data-model-name="{{$modelName}}" class="btn cursor-pointer  btn-sm" style="background-color:rgb(37,150,190) !important;color:#fff ;margin-right:10px;" title="{{ __('Edit Forecast Cash Flow Statement Report') }}">{{ __('Forecast') }}</a>`:''
 
                                                     if (row.can_view_cash_flow_statement_actual_report) {
                                                         return forecast + actual + ' <br> <br>' + adjusted + modified;
@@ -400,21 +439,19 @@ $tableId = 'kt_table_1';
 
 
                                                 render: function(d, b, row) {
-                                                    return `
-     
-
-                        <a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/financial-statement/${row.id}/report"  data-id="${row.id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Financial Statement Report') }}">
+														let sectionPermission = $('#section-permissions')
+														let canEditFinancialStatement = +sectionPermission.attr('data-can-edit-financial-statement')
+														canEditFinancialStatement = false;
+														let canDeleteFinancialStatement = +sectionPermission.attr('data-can-delete-financial-statement')
+													
+													let editFinancialStatement = canEditFinancialStatement ? `<a href="/` + $('body').data('lang') + '/' + $('body').data('current-company-id') + `/financial-statement/${row.id}/report"  data-id="${row.id}" data-model-name="{{$modelName}}" class="btn btn-sm cursor-pointer btn-clean btn-icon btn-icon-md" title="{{ __('Edit Financial Statement Report') }}">
                           <i class="la la-money icon-lg"></i>
-                        </a>
-
-						<a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">
+                        </a>`:'';
+													let deleteFinancialStatement = canDeleteFinancialStatement ? `<a data-model-name="{{$modelName}}" data-table-id="${tableId.replace('#','')}" data-record-id="${row.id}"   class="btn btn-sm btn-clean delete-record-btn btn-icon btn-icon-md" title="{{ __('Delete') }}">
                           <i class="la la-trash icon-lg"></i>
-                        </a>
-                          
-
-                     
-
-                        `
+                        </a>` :''
+						return editFinancialStatement + deleteFinancialStatement;
+                                           
 
                                                     ;
                                                 }
@@ -456,6 +493,8 @@ $tableId = 'kt_table_1';
                                         , createdRow: function(row, data, dataIndex, cells) {
                                             $(row).addClass('edit-info-row').attr('data-model-id', data.id).attr('data-model-name', '{{ $modelName }}');
                                             $(cells).filter(".editable").attr('contenteditable', true);
+											$(cells).filter('.click-to-edit').attr('title','Click to Edit')
+											
 
 
 

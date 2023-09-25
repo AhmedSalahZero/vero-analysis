@@ -123,7 +123,8 @@ class FinancialStatementRepository implements IBaseRepository
 		$allFilterDataCounter = $filterData->count();
 
 		$datePerPage = $filterData->skip(Request('start'))->take(Request('length'))->get()->each(function (FinancialStatement $financialStatement, $index) {
-
+			
+			// $financialStatement = $financialStatement->load(['incomeStatement.subItems','balanceSheet.subItems','cashFlowStatement.subItems']);
 			$financialStatement->creator_name = $financialStatement->getCreatorName();
 			$financialStatement->cash_flow_statement_id = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->id : 0;
 			$financialStatement->balance_sheet_id = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->id : 0;
@@ -134,7 +135,7 @@ class FinancialStatementRepository implements IBaseRepository
 			$financialStatement->can_view_income_statement_actual_report = $financialStatement->incomeStatement ? $financialStatement->incomeStatement->canViewActualReport() : false;
 
 			$financialStatement->can_view_balance_sheet_actual_report = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->canViewActualReport() : false;
-
+			
 			$financialStatement->can_view_cash_flow_statement_actual_report = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->canViewActualReport() : false;
 			$financialStatement->duration_type_select = $this->formatSelectFor($financialStatement->duration_type);
 			$financialStatement->can_edit_duration_type = $financialStatement->canEditDurationType();
@@ -151,6 +152,7 @@ class FinancialStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $financialStatement);
+		//dd($filterData);
 
 		$allFilterDataCounter = $filterData->count();
 
@@ -200,6 +202,7 @@ class FinancialStatementRepository implements IBaseRepository
 
 		return FinancialStatementItem::with(['subItems' => function ($builder) use ($financialStatement) {
 			$builder->where('financial_statement_id', $financialStatement->id);
+			//		->where('is_quantity', 0)
 		}])->whereHas('financialStatements', function (Builder $builder) use ($financialStatement) {
 			$builder->where('financial_statements.id', $financialStatement->id);
 		})

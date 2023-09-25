@@ -8,6 +8,7 @@ use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownDataWithQuantity;
 use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
+use App\Models\Log;
 use App\Models\QuantityCategory;
 use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityModifiedTarget;
@@ -43,6 +44,8 @@ class QuantitySalesForecastReport
 			$end_date = now()->endOfYear()->format('Y-m-d'); // 31/12/2023
 
 			if ($request->isMethod('GET')) {
+				Log::storeNewLogRecord('enterSection',null,__('Sales Forecast Quantity Base'));
+				
 				$request['start_date'] = $start_date;
 				$request['end_date'] = $end_date;
 			} elseif ($request->isMethod('POST')) {
@@ -58,6 +61,12 @@ class QuantitySalesForecastReport
 			$end_date_for_report = ($start_year - 1) . '-01-01';
 			$request['end_date'] = $start_date;
 			$salesReport = (new salesReport)->result($request, $company, 'array');
+		
+			if(!count($salesReport['total_full_data'])){
+				return redirect()->route('salesGathering.index',[
+					'company'=>$company->id
+				])->with('fail',__('Please at least upload pervious Year Sales Data'));
+			}
 			$request['type'] = 'product_item';
 
 			$product_item_breakdown_data_previous_3_year = (new SalesBreakdownDataWithQuantity)->salesBreakdownAnalysisResult($request, $company, 'array', 3);
@@ -86,7 +95,7 @@ class QuantitySalesForecastReport
 			// Previous Year Seasonality
 			$previous_year_seasonality = $salesReport['report_data'][$start_year - 1]['Month Sales %'] ?? [];
 			$previous_year_seasonality = $this->sorting($previous_year_seasonality);
-
+			
 			// Last 3 Years Seasonality
 			$last_3_years_seasonality = $salesReport['total_full_data'] ?? [];
 			$last_3_years_seasonality = $this->sorting($last_3_years_seasonality);

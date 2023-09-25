@@ -30,7 +30,13 @@ class CategoriesAgainstAnalysisReport
         }elseif (request()->route()->named('categories.products.analysis')) {
             $type  = 'product_or_service';
             $view_name = 'Categories Against Products / Services Trend Analysis' ;
-        } elseif (request()->route()->named('categories.Items.analysis')) {
+        } 
+		elseif (request()->route()->named('categories.countries.analysis')) {
+            $type  = 'country';
+            $view_name = 'Categories Against Countries Trend Analysis' ;
+        } 
+		
+		elseif (request()->route()->named('categories.Items.analysis')) {
             $type  = 'product_item';
             $view_name = 'Categories Against Products Items Trend Analysis' ;
         }elseif (request()->route()->named('categories.salesPersons.analysis')) {
@@ -50,12 +56,14 @@ class CategoriesAgainstAnalysisReport
             $type  = 'averagePrices';
             $view_name = 'Categories Products / Services Average Prices' ;
         }
+		
 
         elseif (request()->route()->named('customers.categories.analysis')) {
-            // by salah
             $type  = 'category';
             $view_name = Customers_Against_Categories_Trend_Analysis ;
         }
+		
+		
 
         elseif (request()->route()->named('customers.products.analysis')) {
             // by salah

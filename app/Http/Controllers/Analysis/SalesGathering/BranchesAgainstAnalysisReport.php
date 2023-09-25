@@ -48,6 +48,9 @@ class BranchesAgainstAnalysisReport
         }elseif (request()->route()->named('branches.salesChannels.analysis')) {
             $type  = 'sales_channel';
             $view_name = 'Branches Against Sales Channels Trend Analysis' ;
+        }elseif (request()->route()->named('branches.countries.analysis')) {
+            $type  = 'country';
+            $view_name = 'Branches Against Countries Trend Analysis' ;
         }
         $name_of_selector_label = str_replace(['Branches Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.branches_analysis_form', compact('company','name_of_selector_label','type','view_name'));

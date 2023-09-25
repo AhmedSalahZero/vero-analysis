@@ -29,7 +29,6 @@ class HandleCustomerNatureCashingJob implements ShouldQueue
 
 	public function handle()
 	{
-		//       Cache::forever(getCanReloadUploadPageCachingForCompany($this->company->id) , 1);
 		$cachingService = new CashingService($this->company);
 		$cachingService->refreshCustomerNatureCashing();
 	}

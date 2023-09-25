@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerNatureCashingJob;
 use App\Jobs\Caches\RemoveIntervalYearCashingJob;
@@ -41,6 +42,7 @@ class StartCashingCommand extends Command
              dispatch((new RemoveIntervalYearCashingJob($company)));
              dispatch((new HandleCustomerDashboardCashingJob($company)));
              dispatch((new HandleCustomerNatureCashingJob($company)));
+             dispatch((new HandleBreakdownDashboardCashingJob($company)));
         }
     }
 }

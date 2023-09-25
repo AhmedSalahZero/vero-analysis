@@ -20,6 +20,7 @@ class ZoneAgainstAnalysisReport
 	use GeneralFunctions;
 	public function index(Company $company)
 	{
+
 		if (request()->route()->named('zone.salesChannels.analysis')) {
 			$type = 'sales_channel';
 			$view_name = 'Zones Against Sales Channels Trend Analysis';
@@ -50,7 +51,17 @@ class ZoneAgainstAnalysisReport
 		} elseif (request()->route()->named('zone.branches.analysis')) {
 			$type  = 'branch';
 			$view_name = 'Zones Against Branches Trend Analysis';
-		} elseif (request()->route()->named('zone.products.averagePrices')) {
+		}
+		elseif (request()->route()->named('zone.countries.analysis')) {
+			$type  = 'country';
+			$view_name = 'Zones Against Countries Trend Analysis';
+		}
+		// elseif (request()->route()->named('salesChannels.countries.analysis')) {
+		// 	$type  = 'country';
+		// 	$view_name = 'Sales Channel Against Countries Trend Analysis';
+		// }
+		
+		 elseif (request()->route()->named('zone.products.averagePrices')) {
 			$type  = 'averagePrices';
 			$view_name = 'Zones Products / Services Average Prices';
 		} elseif (request()->route()->named('branch.products.averagePrices')) {

@@ -21,6 +21,7 @@ class Table extends Component
     public $exportTableHref;
     public $tableClass;
     public $truncateHref;
+	
 
     public function __construct($tableTitle=null,$href='#',$class=null,$importHref='#',$exportHref='#',$exportTableHref='#',$firstButtonName='New Record',$icon='plus',$tableClass='kt_table_1',$truncateHref='#')
     {

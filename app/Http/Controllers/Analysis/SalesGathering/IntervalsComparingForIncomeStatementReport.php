@@ -91,22 +91,14 @@ class IntervalsComparingForIncomeStatementReport
 
 		$start_date  = $intervalDates['start_date'];
 		$end_date  = $intervalDates['end_date'];
-		$type = $request->type;
-		$view_name = $request->view_name;
 
 
-
-
-		$dates = [
-			'start_date' => date('d-M-Y', strtotime($start_date)),
-			'end_date' => date('d-M-Y', strtotime($end_date)),
-		];
+	
 
 		// First_interval
 		$request['start_date'] = $start_date;
 		$request['end_date'] = $end_date;
 		$firstIntervalDates = generateDatesBetweenTwoDates(Carbon::make($start_date), Carbon::make($end_date));
-		$result_for_interval_one = [];
 
 		// Second_interval
 
@@ -131,6 +123,7 @@ class IntervalsComparingForIncomeStatementReport
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
 		$secondIntervalDates = $firstIntervalDates;
 		$report_result = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, $mainItemName, true);
+		// dd($report_result);
 		$report_result_for_charts = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, $mainItemName, false);
 		$charts = [];
 		$charts = IncomeStatementItem::_generateChartsData($firstIntervalDates, $chartItems, $report_result_for_charts, $mainItemName);

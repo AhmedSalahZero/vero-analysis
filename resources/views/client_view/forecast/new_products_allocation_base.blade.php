@@ -84,6 +84,7 @@
                                     @else
                                         <td> {{ $item }} </td>
                                     @endif
+									{{-- {{ dd($product_seasonality) }} --}}
                                     @foreach ($product_seasonality as $index2=>$product)
                                         <?php
                                             if($allocations_base_row === null){

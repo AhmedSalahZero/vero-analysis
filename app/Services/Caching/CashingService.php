@@ -2,6 +2,7 @@
 namespace App\Services\Caching;
 
 use App\Models\Company;
+use App\Services\Caching\BreakdownCashing;
 use App\Services\Caching\CustomerDashboardCashing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +47,7 @@ class CashingService
                 {
                         (new CustomerDashboardCashing($this->company , $year))->cacheAll();
                         (new CustomerNatureCashing($this->company , $year))->cacheAll();
+                        (new BreakdownCashing($this->company , $year,$endYear))->cacheAll();
                 }
             }
     }
@@ -61,6 +63,7 @@ class CashingService
                 {
                         (new CustomerDashboardCashing($this->company , $year))->deleteAll();
                         (new CustomerNatureCashing($this->company , $year))->deleteAll();
+                        (new BreakdownCashing($this->company , $year,$years['end_year']))->deleteAll();
                 }
             }
     }
@@ -121,6 +124,29 @@ class CashingService
                         $customerNatureCashing->deleteAll();
                         $customerNatureCashing->cacheAll();   
                     }
+                }
+            }
+        
+    }
+	
+	public function refreshBreakdownDashboardCashing()
+    {
+        // remove then reAdd 
+          // add the following code in class for generic items
+        
+        $years = $this->getIntervalYearsFormCompany(); 
+        $exportables = getExportableFields($this->company->id);
+         
+            $startYear = $years['start_year'] ; 
+            $endYear = $years['end_year'] ; 
+            
+            if($startYear && $endYear){
+                for($year = $startYear ; $year <= $endYear ; $year++)
+                {
+                        $breakdownDashboardCashing = (new BreakdownCashing($this->company , $year,$endYear)); 
+                        $breakdownDashboardCashing->deleteAll();
+                        $breakdownDashboardCashing->cacheAll();   
+                    
                 }
             }
         

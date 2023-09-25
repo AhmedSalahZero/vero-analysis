@@ -20,7 +20,7 @@
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
+            <h3 class="kt-portlet__head-title head-title text-primary font-1-5">
                 {{ __('Dashboard Results') }}
             </h3>
         </div>
@@ -180,7 +180,7 @@
                         <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title head-title text-primary " style="text-transform: capitalize">
+                                <h3 class="kt-portlet__head-title head-title text-primary font-1-5" style="text-transform: capitalize">
                                     <b>{{ (ucfirst(str_replace('_',' ' ,$theType))) . ' Sales Interval Comparing Analysis ' }}</b>
                                 </h3>
                         </div>
@@ -200,10 +200,10 @@
                         <x-table  :tableClass="'kt_table_with_no_pagination_no_scroll_no_search'">
                             @slot('table_header')
                                 <tr class="table-active text-center">
-                                    <th>#</th>
-                                    <th>{{ __('Product Items')}}</th>
-                                    <th>{{ __('Sales Values') }}</th>
-                                    <th>{{ __('Percentages %') }}</th>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">{{ __('Item')}}</th>
+                                    <th class="text-center">{{ __('Sales Values') }}</th>
+                                    <th class="text-center">{{ __('%') }}</th>
 
                                 </tr>
                             @endslot
@@ -276,7 +276,7 @@
                         <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title head-title text-primary" style="text-transform: capitalize">
+                                <h3 class="kt-portlet__head-title head-title text-primary font-1-5" style="text-transform: capitalize">
                                     <b>{{ (ucfirst(str_replace('_',' ' ,$theType))) . ' Sales Interval Comparing Analysis ' }}</b>
                                 </h3>
                         </div>

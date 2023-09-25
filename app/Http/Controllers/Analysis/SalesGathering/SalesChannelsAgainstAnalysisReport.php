@@ -53,16 +53,22 @@ class SalesChannelsAgainstAnalysisReport
             $view_name = 'Sales Channels Products / Services Average Prices' ;
         }elseif (request()->route()->named('salesChannels.Items.averagePrices')) {
             $type  = 'averagePricesProductItems';
-            $view_name = 'Sales ChannelsItems Average Prices' ;
+            $view_name = 'Sales Channels Items Average Prices' ;
         }
+			elseif (request()->route()->named('salesChannels.countries.analysis')) {
+			$type  = 'country';
+			$view_name = 'Sales Channel Against Countries Trend Analysis';
+		}
+		
 
         $name_of_selector_label = str_replace(['Sales Channels Against ' ,' Trend Analysis'],'',$view_name);
-
         if ($type == 'averagePrices') {
             $name_of_selector_label = 'Products / Services';
         } elseif($type  == 'averagePricesProductItems') {
             $name_of_selector_label = 'Products Items';
-        }
+        }elseif($type == 'country'){
+            $name_of_selector_label = 'Countries';
+		}
 
         // $name_of_selector_label = ($type == 'averagePrices') ? 'Products / Services' : str_replace(['Sales Channels Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.salesChannels_analysis_form', compact('company','name_of_selector_label','type','view_name'));

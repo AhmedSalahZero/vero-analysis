@@ -271,10 +271,10 @@
                                     <?php $sum_totals = array_sum($sales_forecast['last_3_years_seasonality'] ?? []); ?>
                                     @foreach ($sales_forecast['last_3_years_seasonality'] ?? [] as $month => $total)
                                         <td class="text-center">
-                                            {{ number_format(($total / $sum_totals) * 100 ?? 0, 2) . ' %' }}
+                                            {{ $sum_totals ? number_format(($total / $sum_totals) * 100 , 2) . ' %' : 0 }}
                                         </td>
                                         <input type="hidden" name="last_3_years_seasonality[{{ $month }}]"
-                                            value="{{ ($total / $sum_totals) * 100 ?? 0 }}">
+                                            value="{{ $sum_totals ? ($total / $sum_totals) * 100  : 0 }}">
                                     @endforeach
                                 </tr>
                             @endslot

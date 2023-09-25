@@ -10,9 +10,12 @@
     <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 @section('sub-header')
-    {{$section->name[lang()]}}
+    {{__($section->name[lang()])}}
 @endsection
 @section('content')
+@php
+	$user = auth()->user();
+@endphp
 <div class="col-md-12">
 
     <!--begin:: Widgets/Tasks -->
@@ -38,19 +41,22 @@
                             ($subSection->name['en'] == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0) )) || 
                             ($subSection->name['en'] == INVOICES && (count(array_intersect(['Document Type','Document Number'],$viewing_names)) > 0) )
                         ||(false !== $found = array_search(\Str::singular($name),       $viewing_names) || $subSection->name['en'] == "Average Prices" ))
-
+								{{-- {{ dd($subSection->name) }} --}}
+								@if($user->canViewReport(generateReportName($subSection->name['en'])) || $subSection->name['en']=='One Dimension'||$subSection->name['en']=='Two Dimension' ||$subSection->name['en']=='Interval Comparing'  )
                                 <li class="nav-item">
 
-                                    <a class="nav-link {{$section_key == 0 ? 'active' : ''}}" data-toggle="tab" href="#kt_widget2_tab1_content_{{$subSection->id}}" role="tab">
+                                    <a class="nav-link {{$section_key == 0 ? 'active' : ''}}" onclick="return false" data-toggle="tab" href="#kt_widget2_tab1_content_{{$subSection->id}}" role="tab">
                                         <i
                                         class="kt-menu__ver-arrow {{ $subSection->icon }}"></i><span class="kt-menu__link-text">
-                                            {{$subSection->name[lang()]}}
+                                            {{__($subSection->name[lang()])}}
+											
+											{{-- {{ $subSection->name['en'] }} --}}
                                             </span>
 
 
                                     </a>
                                 </li>
-                            {{-- @endif --}}
+								@endif 
                            <?php $section_key++; ?>
                         @endif
                     @endforeach
@@ -84,8 +90,9 @@
                             <div class="kt-widget2">
                                 <div class="row">
                                     
-
+{{-- {{ logger() }} --}}
                                     @foreach ($mainSubSection->subSections as $sub_section)
+
 
               
                                         @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); @endphp 
@@ -94,14 +101,20 @@
                                                     $name_of_section ='Products / Services';
                                                 @endphp
                                                 @endif 
+												
+												
 
                                         @if ($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" )
+										
                                             @if ($name_of_section == "Products / Services")
                                                 @php  $name_of_section = "Product Or Service Names" @endphp
                                             @elseif($name_of_section == "Products Items")
                                                 @php  $name_of_section = "Product Items" @endphp
                                             @endif
                                             {{-- @dd($name_of_section) --}}
+											
+											
+											
 
                                             {{-- @if($sub_section->name['en'] == '') --}}
                                             @if ( ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
@@ -122,15 +135,11 @@
                                             )
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) )
+												{{-- {{ dd($name_of_section , str_contains($name_of_section,"Sales Analysis")) }} --}}
                            
-
-
-                                                @if($name_of_section == 'customers')
-
-                                                @endif 
-                                                @if($sub_section->name['en'] == 'Products Against Zones')
-                                                @endif 
-
+						
+												{{-- @endif --}}
+												{{-- @if($user->canViewReport($sub_section->name['en'])) --}}
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">
@@ -138,9 +147,11 @@
                                                         @php 
                                                             $route = isset($sub_section->route) && $sub_section->route !== null ? explode('.', $sub_section->route) : null;
                                                         @endphp 
+														
                                                         <div class="kt-widget2__info">
                                                             <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
-                                                                {{$sub_section->name[lang()]}}
+																{{ __($sub_section->name[lang()]) }}
+																
                                                             </a>
 
                                                         </div>
@@ -149,12 +160,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
+												{{-- @endif  --}}
                                             @endif
                                         @elseif ($mainSubSection->name['en'] == "Average Prices" )
                                             @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Average Prices Per ")+19  );
 
                                             @endphp 
                                             @if (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names) )
+												@if($user->canViewReport($sub_section->name['en']))
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">
@@ -164,7 +177,7 @@
                                                         @endphp 
                                                         <div class="kt-widget2__info">
                                                             <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
-                                                                {{$sub_section->name[lang()]}}
+                                                                {{__($sub_section->name[lang()])}}
                                                             </a>
 
                                                         </div>
@@ -173,6 +186,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+												@endif 
                                             @endif
                                         @elseif ( $section->name['en'] == 'Sales Breakdown Analysis Report')
 
@@ -254,7 +268,7 @@
 
                                                    
                                                         )
-
+														@if($user->canViewReport($sub_section->name['en']))
                                                         <div class="col-md-4">
                                                             <div class="kt-widget2__item kt-widget2__item--primary">
                                                                 <div class="kt-widget2__checkbox">
@@ -267,7 +281,7 @@
                                                                 <div class="kt-widget2__info">
                                                                     <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
                                                                       
-                                                                        {{$sub_section->name[lang()]}}  
+                                                                        {{ __($sub_section->name[lang()]) }}  
                                                                     </a>
 
                                                                 </div>
@@ -276,6 +290,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+														@endif 
                                                     @endif
                                                 @endif
                                                 @php  !isset($name_of_first_section) ?: $name_of_first_section = null   ; @endphp 

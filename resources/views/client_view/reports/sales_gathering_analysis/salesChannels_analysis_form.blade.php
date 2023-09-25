@@ -8,6 +8,8 @@
 @endsection
 @section('content')
 <div class="row">
+{{-- {{ dd() }} --}}
+
     <div class="col-md-12">
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($name_of_selector_label=='Sales Discount' ) {{ route('salesChannels.salesDiscount.analysis.result', $company) }} @elseif ($type=='averagePrices' || ($type=='averagePricesProductItems' ) ) {{ route('averagePrices.result', $company) }} @else {{route('salesChannels.analysis.result', $company) }} @endif enctype="multipart/form-data">
@@ -72,13 +74,24 @@
                         @endif
 
                     </div>
+					
+					{{-- {{dd()}} --}}
 
                     <div class="form-group row">
+					{{-- {{ dd($type) }} --}}
+					@if(isset(get_defined_vars()['__data']['type']) && get_defined_vars()['__data']['type'] !='averagePrices' &&get_defined_vars()['__data']['type']!='averagePricesProductItems')
+					 <div class="col-md-4  first-interval">
+						<label></label>
+                            <div class="flex-center "><label class="first-interval">{{ __('First Interval') }}</label></div>
+                        
+                        </div>
+						@endif 
+
                         <div class="col-md-4">
                             <label>{{ __('Start Date') }}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" required name="start_date" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                    <input type="date" required value="{{ getEndYearBasedOnDataUploaded($company)['jan'] }}" name="start_date" class="form-control trigger-update-select-js" placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -86,7 +99,7 @@
                             <label>{{ __('End Date') }}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date" required value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                    <input type="date" name="end_date" required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -151,6 +164,7 @@
                         </div>
 
                         @endif
+						{{-- {{ dd($name_of_selector_label) }} --}}
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">

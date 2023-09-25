@@ -11,6 +11,7 @@
     <div class="col-md-12">
 
 
+{{ dd($view_name) }}
 
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($name_of_selector_label=='Sales Discount' ) {{ route('products.salesDiscount.analysis.result', $company) }} @elseif ($type=='averagePricesProductItems' ) {{ route('averagePrices.result', $company) }} @else {{ route('products.analysis.result', $company)  }} @endif enctype="multipart/form-data">
@@ -81,7 +82,6 @@
                     @else
                     <input type="hidden" name="data_type" id="data_type" {{$data_type_selector}} value="value">
                     @endif
-
                     @if($view_name != 'Products Against Products Items Trend Analysis' && $name_of_selector_label != 'name_of_selector_label' && $type != 'product_item' )
                     @php
                     $cols = 3 ;
@@ -93,6 +93,14 @@
                     @endif
 
                     <div class="form-group row">
+					@if(!in_array('ProductsProductsItemsAveragePricesView',Request()->segments()))
+					 <div class="col-md-{{ $cols }}  first-interval">
+						<label></label>
+                            <div class="flex-center "><label class="first-interval">{{ __('First Interval') }}</label></div>
+                        
+                        </div>
+						@endif
+
                         <div class="col-md-{{ $cols }}">
                             <label>{{ __('Start Date') }}</label>
                             <div class="kt-input-icon">

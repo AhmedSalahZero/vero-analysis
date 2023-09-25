@@ -6,6 +6,26 @@
 
 {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
 <style>
+#DataTables_Table_1_filter{
+	display:inline-block !important;
+	
+}
+.DataTables_Table_0_filter{
+	float:left;
+}
+.dt-buttons button {
+	color:#366cf3 !important;
+	border-color:#366cf3 !important;
+}
+.dataTables_wrapper > .row > div.col-sm-6:first-of-type {
+	flex-basis:20% !important;
+}
+.dataTables_wrapper > .row label{
+	margin-bottom:0 !important;
+	padding-bottom:0 !important ;
+}
+
+
     table {
         white-space: nowrap;
     }
@@ -75,7 +95,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
 
 
 
-<x-table :tableTitle="__('Sales Values Table')" :tableClass="'kt_table_with_no_pagination'">
+<x-table :tableTitle="__('Sales Values Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
     @slot('table_header')
     <tr class="table-active text-center">
         @php $main_type_name = ucwords(str_replace('_', ' ', $type)); @endphp
@@ -235,7 +255,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
 
 
 
-<x-table :tableTitle="__('Counts Table')" :tableClass="'kt_table_with_no_pagination'">
+<x-table :tableTitle="__('Counts Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
     @slot('table_header')
     <tr class="table-active text-center">
         <?php $main_type_name = ucwords(str_replace('_', ' ', $type)); ?>

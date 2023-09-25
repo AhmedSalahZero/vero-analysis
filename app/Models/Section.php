@@ -48,6 +48,10 @@ class Section extends Model
     {
         return $query->where('sub_of',0)->where('section_side','admin')->where('trash',0);
     }
+	public function scopeMainCompanyAdminSections($query)
+    {
+        return $query->where('sub_of',0)->where('section_side','company-admin')->where('trash',0);
+    }
     public function parent()
     {
         return $this->belongsTo(Section::class, 'sub_of', 'id');

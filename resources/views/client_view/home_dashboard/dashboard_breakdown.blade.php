@@ -19,6 +19,12 @@
 <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
 <style>
+.max-w-300{
+	max-width:300px !important;
+	width:300px !important;
+	min-width:300px !important;
+	white-space:normal !important;
+}
     table {
         white-space: nowrap;
     }
@@ -93,7 +99,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
+            <h3 class="kt-portlet__head-title head-title text-primary font-1-5">
                 {{ __('Dashboard Results') }}
             </h3>
         </div>
@@ -135,7 +141,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title head-title text-primary">
+                <h3 class="kt-portlet__head-title head-title text-primary font-1-5">
 
                 </h3>
             </div>
@@ -154,7 +160,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             <div class="kt-widget24__info w-100">
                                 <h4 class="kt-widget24__title font-size justify-content-between">
 
-                                    <span>{{ __('Top '. ucwords(str_replace('_',' ',$type))) }}</span>
+                                    <span>{{ __('Top') . ' ' .  __(ucwords(str_replace('_',' ',$type)))  }}</span>
                                     <p>
 
                                         <button type="button" class="btn text-white btn-small btn-{{ $color }}" data-toggle="modal" data-target="#modal_for_{{ convertStringToClass($type) }}">
@@ -322,7 +328,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title head-title text-primary">
+                <h3 class="kt-portlet__head-title head-title text-primary font-1-5">
                     {{ __(ucwords(str_replace('_',' ',$type)).' Breakdown Analysis') }}
                 </h3>
             </div>
@@ -404,12 +410,12 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             @slot('table_header')
                             <tr class="table-active text-center">
                                 {{-- <th>#</th> --}}
-                                <th>{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
-                                <th>{{ __('Sales Values') }}</th>
-                                <th>{{ __('Percentages %') }}</th>
+                                <th  class="text-center max-w-300">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
+                                <th class="text-center">{{ __('Sales Values') }}</th>
+                                <th class="text-center">{{ __('%') }}</th>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
-                                <th>{{ __('Count') }}</th>
-                                <th>{{ __('Count %') }}</th>
+                                <th class="text-center">{{ __('Count') }}</th>
+                                <th class="text-center">{{ __('Count %') }}</th>
                                 @endif
                             </tr>
                             @endslot
@@ -422,7 +428,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             <tr>
 
                                 {{-- <th>{{($key??0)+1}}</th> --}}
-                                <td>{{$item['item']?? '-'}}</td>
+                                <td class=" max-w-300">{{$item['item']?? '-'}}</td>
                                 <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
                                 <td class="text-center">{{$total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'}}</td>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
@@ -565,7 +571,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                 let topTypeName = $('#top_for_' + type).val();
                 let topTypeSalesValue = $('#value_for_' + type).val();
 
-                // alert(topTypeName);
+                
                 $(this).find('#selected_type_name').html(topTypeName);
 
                 $(this).find('#total_sales_value').html(topTypeSalesValue);
@@ -607,10 +613,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
     });
 
-    // $(document).on('click' , '#recalc_modal' , function(e){
-    //     e.preventDefault();
-    //     $('#modal_for_'+ "{{ $type }}").trigger('show.bs.modal')
-    // })
+
 
 </script>
 

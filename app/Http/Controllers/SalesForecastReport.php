@@ -8,6 +8,7 @@ use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
+use App\Models\Log;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
@@ -31,7 +32,6 @@ class SalesForecastReport
 	}
 	public function result(Company $company, Request $request)
 	{
-
 		$sales_forecast = SalesForecast::company()->first();
 		$has_product_item = $this->fields($company);
 
@@ -40,6 +40,8 @@ class SalesForecastReport
 			$end_date = now()->endOfYear()->format('Y-m-d');
 
 			if ($request->isMethod('GET')) {
+		Log::storeNewLogRecord('enterSection',null,__('Sales Forecast Value Base'));
+				
 				$request['start_date'] = $start_date;
 				$request['end_date'] = $end_date;
 			} elseif ($request->isMethod('POST')) {
@@ -55,6 +57,12 @@ class SalesForecastReport
 			$end_date_for_report = ($start_year - 1) . '-12-01';
 			$request['end_date'] = $start_date;
 			$salesReport = (new salesReport)->result($request, $company, 'array');
+			if(!count($salesReport['total_full_data'])){
+				return redirect()->route('salesGatheringImport',[
+					'company'=>$company->id
+				])->with('fail',__('Please at least upload pervious Year Sales Data'));
+			}
+			
 			// Pervious Year Sales
 			$previous_1_year_sales = array_sum($salesReport['report_data'][$start_year - 1]['Sales Values'] ?? []);
 			$previous_2_years_sales = array_sum($salesReport['report_data'][$start_year - 2]['Sales Values'] ?? []);
@@ -113,13 +121,29 @@ class SalesForecastReport
 
 
 		$sales_forecast['previous_year_seasonality'] = $this->sorting($sales_forecast['previous_year_seasonality']);
-		$sales_forecast['previous_year_seasonality'] = ($sales_forecast['previous_year_seasonality'] ?? []);
+		$previousYearSeasonality = ($sales_forecast['previous_year_seasonality'] ?? []) ;
+		
+		$sales_forecast['previous_year_seasonality'] = $this->sortDates($previousYearSeasonality);
+// 		dd($sales_forecast['previous_year_seasonality']);
+$sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
+// 		dd();
 		$sales_forecast['last_3_years_seasonality'] = $this->sorting($sales_forecast['last_3_years_seasonality']);
 		$sales_forecast['last_3_years_seasonality'] = sortMonthsByItsNames($sales_forecast['last_3_years_seasonality']);
+// 		dd($sales_forecast['last_3_years_seasonality']);
 		return view(
 			'client_view.forecast.sales_forecast',
 			compact('company', 'sales_forecast', 'has_product_item')
 		);
+	}
+	
+	public function sortDates(array &$items){
+	    
+	     uksort($items, function ($a, $b) use(&$items) {
+	    
+        return \DateTime::createFromFormat('d-m-Y', $a) <=> \DateTime::createFromFormat('d-m-Y', $b);
+});
+// dd($items);
+	    
 	}
 
 	public function save(Company $company, Request $request, $noReturn = false)

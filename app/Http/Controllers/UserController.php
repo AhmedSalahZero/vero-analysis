@@ -4,150 +4,181 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Traits\ImageSave;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Support\Facades\Hash;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Validation\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
-    public function freeSubscription(Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $this->validate($request,[
+	public function freeSubscription(Request $request)
+	{
+		if ($request->isMethod('POST')) {
+			$this->validate($request, [
 
-                'name' => ['required', 'string', 'max:255'],
-                'company_name' => 'required',
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'avatar' =>  'required' ,
-                'company_avatar' =>  'required' ,
-                'password' => ['required', 'string', 'min:8', 'confirmed'],
-            ]);
+				'name' => ['required', 'string', 'max:255'],
+				'company_name' => 'required',
+				'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+				'avatar' =>  'required',
+				'company_avatar' =>  'required',
+				'password' => ['required', 'string', 'min:8', 'confirmed'],
+			]);
 
-            $request['password'] = Hash::make($request->password);
+			$request['password'] = Hash::make($request->password);
 
-            $dt = Carbon::parse(date('Y-m-d'));
-            $expiration_date = $dt->addDays(30)->format('Y-m-d');
+			$dt = Carbon::parse(date('Y-m-d'));
+			$expiration_date = $dt->addDays(30)->format('Y-m-d');
 
-            $user = User::create($request->except('avatar'));
-            $user->subscription = "free_trial";
-            $user->expiration_date = $expiration_date;
-            $user->save();
+			$user = User::create($request->except('avatar'));
+			$user->subscription = 'free_trial';
+			$user->expiration_date = $expiration_date;
+			$user->save();
 
-            ImageSave::saveIfExist('avatar',$user);
+			ImageSave::saveIfExist('avatar', $user);
 
-            $companySection = Company::create(['name' => $request->company_name]);
-            ImageSave::saveIfExist('company_avatar',$companySection);
+			$companySection = Company::create(['name' => $request->company_name]);
+			ImageSave::saveIfExist('company_avatar', $companySection);
 
-            $user->companies()->attach($companySection->id);
+			$user->companies()->attach($companySection->id);
 
-            Auth::login($user, $remember = true);
+			Auth::login($user, $remember = true);
 
-            return redirect()->route('home');
+			return redirect()->route('home');
+		} else {
+			return view('free_subscription.form');
+		}
+	}
 
-        }else{
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index()
+	{
+		$users = collect([]);
 
-            return view('free_subscription.form');
-        }
+		if (Auth()->user()->isCompanyAdmin()) {
+			$users = User::where(function ($q) {
+				$q->where('id', Auth()->user()->id)->orWhere('created_by', Auth()->user()->id);
+			})->get();
+		} else {
+			$users = User::with('roles')->get();
+		}
 
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $users = User::with('roles')->get();
-        return view('super_admin_view.users.index',compact('users') );
-    }
+		return view('super_admin_view.users.index', compact('users'));
+	}
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $companies = Company::all();
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function create()
+	{
+		$companies = Company::all();
 
-        return view('super_admin_view.users.form',compact('companies'));
-    }
+		return view('super_admin_view.users.form', compact('companies'));
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $request['password'] = Hash::make($request->password);
-        $request['subscription'] = 'subscripted';
-        $user = User::create($request->except('avatar','companies'));
-        $user->companies()->attach($request->companies);
-        $user->assignRole($request->role);
-        ImageSave::saveIfExist('image',$user);
-        return redirect()->back();
-    }
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store(Request $request)
+	{
+		$user = Auth()->user();
+		$request->validate([
+			'email'=>'unique:users,email'
+		]);
+		if (!$user->canStoreMoreUser()) {
+			return redirect()->back()->with('fail', __('You Exceed Your Max Users [ ' . $user->max_users . ' ]'));
+		}
+		$request['password'] = Hash::make($request->password);
+		$request['subscription'] = 'subscripted';
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+		$user = User::create(
+			array_merge(
+				$request->except('avatar', 'companies'),
+				['created_by'=>Auth()->user()->id]
+			),
+		);
+		$user->companies()->attach($request->companies);
+		$user->assignRole($request->role);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        $companies = Company::all();
+		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
+		$permissions = getPermissions();
+		foreach ($permissions as $permission) {
+			$user->givePermissionTo($permission);
+		}
 
-        return view('super_admin_view.users.form',compact('companies','user'));
-    }
+		ImageSave::saveIfExist('image', $user);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        // $request['password'] = Hash::make($request->password);
-        $user->update($request->except('avatar','companies'));
-        $user->companies()->sync($request->companies);
-        @count($user->roles) == 0 ?: $user->removeRole($user->roles[0]->name) ;
+		return redirect()->back();
+	}
 
-        $user->assignRole($request->role);
-        ImageSave::saveIfExist('avatar',$user);
-        return redirect()->back();
-    }
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show($id)
+	{
 
+	}
 
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function edit(User $user)
+	{
+		$companies = Company::all();
 
+		return view('super_admin_view.users.form', compact('companies', 'user'));
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  int  $id
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update(Request $request, User $user)
+	{
+		// $request['password'] = Hash::make($request->password);
+		$user->update($request->except('avatar', 'companies'));
+		$user->companies()->sync($request->companies);
+		@count($user->roles) == 0 ?: $user->removeRole($user->roles[0]->name);
+
+		$user->assignRole($request->role);
+		ImageSave::saveIfExist('avatar', $user);
+
+		return redirect()->back();
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy($id)
+	{
+
+	}
 }

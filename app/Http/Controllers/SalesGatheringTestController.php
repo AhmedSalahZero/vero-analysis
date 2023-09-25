@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ImportData;
+use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerNatureCashingJob;
 use App\Jobs\Caches\RemoveIntervalYearCashingJob;
@@ -55,6 +56,7 @@ class SalesGatheringTestController extends Controller
 
 		if (request()->method()  == 'GET') {
 			$cacheKeys = CachingCompany::where('company_id', $company_id)->get();
+
 			$salesGatherings = [];
 			foreach ($cacheKeys as $cacheKey) {
 				$salesGatherings = array_merge(Cache::get($cacheKey->key_name) ?: [], $salesGatherings);
@@ -129,9 +131,10 @@ class SalesGatheringTestController extends Controller
 		SalesGatheringTestJob::withChain([
 			new RemoveIntervalYearCashingJob($company),
 			new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id),
+			new RemoveCachingCompaniesData($company->id),
 			new HandleCustomerDashboardCashingJob($company),
 			new HandleCustomerNatureCashingJob($company),
-			new RemoveCachingCompaniesData($company->id)
+			new HandleBreakdownDashboardCashingJob($company),
 		])->dispatch($company->id);
 
 		// remove old cashing for these company 

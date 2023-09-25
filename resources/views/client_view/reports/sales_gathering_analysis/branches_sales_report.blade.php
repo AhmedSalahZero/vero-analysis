@@ -72,16 +72,8 @@
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#kt_apps_contacts_view_tab_1" role="tab">
-                        <i class="flaticon-line-graph"></i> &nbsp; Charts
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link " data-toggle="tab" href="#kt_apps_contacts_view_tab_2" role="tab">
-                        <i class="flaticon2-checking"></i>Reports Table
-                    </a>
-                </li>
+             
+			
 
 
 
@@ -92,6 +84,7 @@
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab  EGP FX Rate Table -->
+			 @if(config('app.showTrendCharts'))
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_1" role="tabpanel">
                 <?php
                     array_push($branches_names, 'Total');
@@ -116,10 +109,11 @@
                 </div>
                 @endforeach
             </div>
+			@endif
             <!--End:: Tab  EGP FX Rate Table -->
 
             <!--Begin:: Tab USD FX Rate Table -->
-            <div class="tab-pane" id="kt_apps_contacts_view_tab_2" role="tabpanel">
+            <div class="tab-pane @if(!config('app.showTrendCharts')) active @endif" id="kt_apps_contacts_view_tab_2" role="tabpanel">
 
 
 
@@ -143,7 +137,7 @@
                     @slot('table_body')
                     <?php 
                               (uasort($final_report_data, function($a, $b) {
-                                return ($a['Sales Values'] < $b['Sales Values']);
+                                return (int)($a['Sales Values'] < $b['Sales Values']);
 
 }));
 
@@ -357,10 +351,8 @@
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
-    // {{-- 
-
-</script> --}}
+<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> 
+@if(config('app.showTrendCharts'))
 @foreach ($branches_names as $name_of_zone)
 <script>
     am4core.ready(function() {
@@ -463,4 +455,5 @@
 
 </script>
 @endforeach
+@endif
 @endsection

@@ -54,6 +54,7 @@ class IncomeStatementRepository implements IBaseRepository
 	public function store(Request $request): IBaseModel
 	{
 		$incomeStatement = App(IncomeStatement::class);
+
 		$incomeStatement = $incomeStatement
 			->storeMainSection($request)->storeMainItems($request);
 		return $incomeStatement;
@@ -68,6 +69,9 @@ class IncomeStatementRepository implements IBaseRepository
 		$request['dates'] = $dates;
 		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
 		$request['income_statement_id'] = $incomeStatement->id;
+
+		//		dd($request->all());
+
 		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
 		// dd($cashFlowStatementDataFormatted);
 		$request['financial_statement_able_id'] = $cashFlowStatement->id;
@@ -77,8 +81,8 @@ class IncomeStatementRepository implements IBaseRepository
 		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
 		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
 		$request['valueMainRowWithoutSubItems'] = [];
-		// dd($request['financialStatementAbleItemName']);
-		// dd($request->all());
+
+
 
 		$cashFlowStatement->storeReport($request);
 		return $incomeStatement;
@@ -115,7 +119,9 @@ class IncomeStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $incomeStatement);
+
 		$subItemType = $request->get('sub_item_type');
+		// dd($subItemType);
 		$allFilterDataCounter = $filterData->count();
 
 		$dataWithRelations = collect([]);
@@ -128,14 +134,35 @@ class IncomeStatementRepository implements IBaseRepository
 
 			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id, $subItemType);
 			$dataWithRelations->add($incomeStatementItem);
-			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($dataWithRelations, $incomeStatementItem) {
+			$quantitiesFor = [];
+			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($incomeStatement, $subItemType, $dataWithRelations, $incomeStatementItem, &$quantitiesFor) {
+
 				$subItem->isSubItem = true; // isSubRow
 				if ($incomeStatementItem->has_depreciation_or_amortization) {
 					$subItem->pivot->can_be_depreciation = true;
 				}
-				$dataWithRelations->add($subItem);
+				$isQuantity = $subItem->pivot && $subItem->pivot->is_quantity;
+				// if ($isQuantity) {
+				// 	dump(1);
+				// 	$quantitiesFor[removeStringFromEnd($subItem->pivot->sub_item_name, quantityIdentifier)] = convertJsonToArray($subItem->pivot->payload);
+				// }
+
+				if (!$isQuantity) {
+					$quantityRow = $incomeStatementItem->getSubItems($incomeStatement->id, $subItemType, $subItem->pivot->sub_item_name . quantityIdentifier)->first();
+
+					if ($quantityRow) {
+						// dd($quantityRow, $quantityRow->payload);
+						$subItem->pivot->quantityPivot = $quantityRow->pivot->payload ? convertJsonToArray($quantityRow->pivot->payload) : [];
+					}
+					$dataWithRelations->add($subItem);
+				}
+				if($isQuantity&&$subItemType !='forecast'){
+					$dataWithRelations->add($subItem);
+				}
+				
 			});
 		});
+		// dd($dataWithRelations);
 		return [
 			'data' => $dataWithRelations,
 			"draw" => (int)Request('draw'),

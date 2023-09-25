@@ -15,6 +15,7 @@
     </style>
 @endsection
 @section('content')
+{{-- {{ dd('e') }} --}}
     <form action="{{ route('allocations', $company) }}" method="POST">
         @csrf
 

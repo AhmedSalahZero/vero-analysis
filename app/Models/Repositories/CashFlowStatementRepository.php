@@ -54,6 +54,7 @@ class CashFlowStatementRepository implements IBaseRepository
 	public function store(Request $request): IBaseModel
 	{
 		$cashFlowStatement = App(CashFlowStatement::class);
+
 		$cashFlowStatement = $cashFlowStatement
 			->storeMainSection($request)->storeMainItems($request);
 		return $cashFlowStatement;

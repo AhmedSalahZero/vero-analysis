@@ -40,7 +40,7 @@
     <div class="kt-portlet">
         <div class="kt-portlet__body ">
 
-            <x-table :tableTitle="__($allocation_base.' Against New Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+            <x-table :tableTitle="__($allocation_base.' Against New Product Items Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                 @slot('table_header')
                 <tr class="table-active text-center">
                     <th>{{ __($allocation_base .' / Months') }}</th>
@@ -65,7 +65,7 @@
                                         ?>
                     <td class="text-center {{$class_name}}"> {{ number_format($value[$date] ?? 0) }} </td>
                     @endforeach
-                    <td class="{{$class_name}}">{{number_format(array_sum($value))}}</td>
+                    <td style="color:white !important;background-color:#086691 !important" class="{{$class_name}}">{{number_format(array_sum($value))}}</td>
                 </tr>
                 @endforeach
                 @endslot
@@ -82,19 +82,19 @@
 
     @else
     @php
-    // dd(get_defined_vars());
+	
     $allocation_base = '';
-    @endphp
+    
+	@endphp
 
     @endif
-    {{-- @dd() --}}
 
     {{-- Existing Products  --}}
     @if(hasProductsItems($company))
 
     <div class="kt-portlet">
         <div class="kt-portlet__body ">
-            <x-table :tableTitle="__($allocation_base.' Against Existing Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+            <x-table :tableTitle="__($allocation_base.' Against Existing Product Items Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                 @slot('table_header')
                 <tr class="table-active text-center">
                     <th>{{ __($allocation_base .' / Months') }}</th>
@@ -124,7 +124,7 @@
                                     ?>
                     <td class="text-center {{$class_name}}"> {{ number_format($value[$date] ?? 0) }} </td>
                     @endforeach
-                    <td class="{{$class_name}}">{{number_format(array_sum($value))}}</td>
+                    <td style="color:white !important;background-color:#086691 !important" class="{{$class_name}}">{{number_format(array_sum($value))}}</td>
                 </tr>
                 @endforeach
 
@@ -145,7 +145,7 @@
                         arsort($total_products_items);
                         $total_products_items['Total'] = $total;
                     ?>
-            <x-table :tableTitle="__('Total '.$allocation_base.' Monthly Sales Target Table')" :tableClass="'kt_table_with_no_pagination'">
+            <x-table :tableTitle="__('Total '.$allocation_base.' Monthly Sales Target Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                 @slot('table_header')
                 <tr class="table-active text-center">
                     <th>{{ __($allocation_base .' / Months') }}</th>
@@ -171,7 +171,7 @@
                     <?php $total_value = ($existing_product_data_with_dates[$base_name][$date]??0) + ($value[$date]??0) ?>
                     <td class="text-center {{$class_name}}"> {{ number_format($total_value ?? 0) }} </td>
                     @endforeach
-                    <td class="{{$class_name}}">{{number_format(array_sum($value))}}</td>
+                    <td style="color:white !important;background-color:#086691 !important" class="{{$class_name}}">{{number_format(array_sum($value))}}</td>
                 </tr>
                 @endforeach
                 @endslot

@@ -12,6 +12,7 @@ use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
+use App\Models\Log;
 use App\Models\SalesGathering;
 use App\Models\Section;
 use App\Services\Caching\CashingService;
@@ -20,6 +21,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
@@ -57,10 +59,13 @@ class HomeController extends Controller
 
 	public function dashboard(Request $request, Company $company)
 	{
-		$start_date = date('2021-01-01');
-		$end_date   = date('2021-12-31');
+		$initialDates = getEndYearBasedOnDataUploaded($company) ;
+		
+		$start_date = $initialDates['jan'];
+		$end_date   = $initialDates['dec'];
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Dashboard'));
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
@@ -309,18 +314,24 @@ class HomeController extends Controller
 	}
 	public function dashboardBreakdownAnalysis(Request $request, Company $company)
 	{
-		$start_date = date('2021-01-01');
-		$end_date   = date('2021-12-31');
+		// dd('d');
+		
+		$initialDates = getEndYearBasedOnDataUploaded($company);
+		$start_date = $initialDates['jan'];
+		$end_date   = $initialDates['dec'];
+		
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Breakdown Dashboard'));
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
 			$start_date = $request['start_date'];
 			$end_date = $request['end_date'];
 		}
-
+		
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+		
 		$db_names = array_keys($exportableFields);
 
 		$types =  [
@@ -334,17 +345,28 @@ class HomeController extends Controller
 			'service_provider_name' => 'warning',
 			'service_provider_type' => 'danger',
 			'service_provider_birth_year' => 'success',
+			'country'=>'warning'
 		];
 		$reports_data = [];
 		$top_data = [];
-
-
+		$breakdown_data = [];
 		foreach ($types as  $type => $color) {
 			if (false !== $found = array_search($type, $db_names)) {
 				$request['type'] = $type;
-
-				$breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
-
+				// salesBreakdownAnalysisResult
+				// dd($request->get('report_type'));
+				// $breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
+				
+				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
+				if (!Cache::has($cacheKeyName)) {
+					$breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
+					Cache::forever($cacheKeyName, $breakdown_data);
+				} else {
+					$breakdown_data = Cache::get($cacheKeyName);
+				}
+				// dd($breakdown_data);
+				// $breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
+				
 				if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 					$first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key) {
 						return [$data['Sales Value']];
@@ -386,6 +408,8 @@ class HomeController extends Controller
 		$end_date   =  $incomeStatement ? $incomeStatement->getFirstAndEndDate()['end_date'] : date('2022-12-31');
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Income Statement Dashboard'));
+			
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
@@ -417,13 +441,13 @@ class HomeController extends Controller
 			$incomeStatement = optional();
 			$breakdown_data   = [];
 		}
+		// dd($breakdown_data);
 		$formattedDataForChart = formatDataForChart($breakdown_data);
 		$monthlyChartCumulative = getMonthlyChartCumulative($formattedDataForChart);
 		$types = array_unique(array_keys($breakdown_data));
 		$types = \array_fill_keys_with_values($types);
-
-		// $incomeStatement = $request->get('incomeStatement')
 		$reports_data = $breakdown_data;
+		$corporateTaxesPercentage =$incomeStatement && $incomeStatement->getSubItems(0, $reportType) ? $incomeStatement->getSubItems(0, $reportType)->where('id',IncomeStatementItem::CORPORATE_TAXES_ID)->first()->pivot->percentage_value : 0;
 		return view('client_view.home_dashboard.dashboard_breakdown_incomestatement', compact(
 			'company',
 			'formattedDataForChart',
@@ -433,68 +457,15 @@ class HomeController extends Controller
 			'types',
 			'top_data',
 			'start_date',
-			'end_date'
+			'end_date',
+			'corporateTaxesPercentage',
 			// ,'fullReport','topes'
 		));
 	}
 
 
 
-	// public function dashboardBreakdownAnalysis(Request $request,Company $company)
-	// {
-	//     $start_date = date('2021-01-01');
-	//     $end_date   = date('2021-12-31');
-
-	//     if ($request->isMethod('GET')) {
-	//         $request['start_date'] =$start_date;
-	//         $request['end_date'] =$end_date;
-	//     }elseif ($request->isMethod('POST')){
-	//         $start_date = $request['start_date'] ;
-	//         $end_date = $request['end_date'] ;
-	//     }
-
-	//     $exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
-	//     $db_names = array_keys($exportableFields);
-
-	//     $types =  [
-	//             'zone'=>'brand',
-	//             'sales_channel'=>'warning',
-	//             'branch'=>'danger',
-	//             'category'=>'success',
-	//             'product_or_service'=>'brand',
-	//             'product_item'=>'warning',
-	//             'business_sector'=>'brand',
-	//             'service_provider_name'=>'warning',
-	//             'service_provider_type'=>'danger',
-	//             'service_provider_birth_year'=>'success',
-	//             ];
-	//             $reports_data =[];
-	//             $top_data =[];
-
-	//     foreach ($types as  $type => $color) {
-	//         if (false !== $found = array_search($type,$db_names)) {
-	//             $request['type'] = $type;
-	//             $breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
-
-	//             if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
-	//                 $first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key)   {
-	//                     return [$data['Sales Value']];
-	//                 })->toArray();
-	//                 $first_item = ($first_item??[]);
-	//                 $top_data[$type] = array_shift($first_item);
-
-	//             }else{
-
-	//                 $top_data[$type] = $breakdown_data[0] ?? '-';
-	//             }
-	//             $reports_data[$type] = $breakdown_data;
-	//         }else{
-	//             unset($types[$type]);
-	//         }
-	//     }
-
-	//     return view('client_view.home_dashboard.dashboard_breakdown',compact('company','reports_data','types','top_data','start_date','end_date'));
-	// }
+	
 
 	public function dashboardCustomers(Request $request, Company $company)
 	{
@@ -508,6 +479,8 @@ class HomeController extends Controller
 		}
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Customer Dashboard'));
+
 			$request['date'] = $date;
 		} elseif ($request->isMethod('POST')) {
 			$date = $request['date'];
@@ -527,10 +500,13 @@ class HomeController extends Controller
 	}
 	public function dashboardSalesPerson(Request $request, Company $company)
 	{
-		$start_date = date('2021-01-01');
-		$end_date   = date('2021-12-31');
+		$initialDates = getEndYearBasedOnDataUploaded($company);
+		$start_date = $initialDates['jan'];
+		$end_date   = $initialDates['dec'];
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Sales Person Dashboard'));
+
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
@@ -545,10 +521,13 @@ class HomeController extends Controller
 	}
 	public function dashboardSalesDiscount(Request $request, Company $company)
 	{
-		$start_date = date('2021-01-01');
-		$end_date   = date('2021-12-31');
+		$initialDates = getEndYearBasedOnDataUploaded($company);
+		$start_date = $initialDates['jan'];
+		$end_date   = $initialDates['dec'];
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Sales Discount Dashboard'));
+			
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
@@ -566,12 +545,14 @@ class HomeController extends Controller
 	}
 	public function dashboardIntervalComparing(Request $request, Company $company)
 	{
-		$start_date_0 = date('2021-01-01');
-		$end_date_0   = date('2021-12-31');
-		$start_date_1 = date('2020-01-01');
-		$end_date_1   = date('2020-12-31');
-		// $start_date_2 = date('2019-01-01');
-		// $end_date_2   = date('2019-12-31');
+		$initialDates = getEndYearBasedOnDataUploaded($company);
+		$start_date_0 = $initialDates['jan'];
+		$end_date_0   = $initialDates['dec'];
+		
+		$initialDates = getEndYearBasedOnDataUploaded($company,1);
+		$start_date_1 = $initialDates['jan'];
+		$end_date_1   = $initialDates['dec'];
+
 
 		$allTypes =  [
 			'zone' => 'brand',
@@ -584,7 +565,8 @@ class HomeController extends Controller
 			'service_provider_name' => 'warning',
 			'service_provider_type' => 'danger',
 			'service_provider_birth_year' => 'success',
-			'customer_name' => 'success'
+			'customer_name' => 'success',
+			'country'=>'warning'
 		];
 
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
@@ -601,6 +583,8 @@ class HomeController extends Controller
 
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Interval Comparing Dashboard'));
+			
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[0] ?? 0;
 			$secondKey = $keys[1] ?? 0;
@@ -655,6 +639,7 @@ class HomeController extends Controller
 
 	public function dashboardIncomeStatementIntervalComparing(Request $request, Company $company)
 	{
+		$canRefreshDates = false ; 
 		$firstReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
 		$secondReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
 
@@ -674,10 +659,19 @@ class HomeController extends Controller
 		if ($secondIncomeStatementId) {
 			$secondIncomeStatement = IncomeStatement::find($secondIncomeStatementId);
 		}
-		$start_date_0 = $firstIncomeStatement ? $firstIncomeStatement->getFirstAndEndDate()['start_date'] : date('2021-01-01');
-		$end_date_0   = $firstIncomeStatement ? $firstIncomeStatement->getFirstAndEndDate()['end_date'] : date('2021-12-31');
-		$start_date_1 = $secondIncomeStatement ? $secondIncomeStatement->getFirstAndEndDate()['start_date'] : date('2020-01-01');
-		$end_date_1   = $secondIncomeStatement ? $secondIncomeStatement->getFirstAndEndDate()['end_date'] : date('2020-12-31');
+		$initialDates = getEndYearBasedOnDataUploaded($company);
+		$start_date_0 = $initialDates['jan'];
+		$end_date_0   = $initialDates['dec'];
+		
+		$initialDates = getEndYearBasedOnDataUploaded($company,1);
+		$start_date_1 = $initialDates['jan'];
+		$end_date_1   = $initialDates['dec'];
+
+		$start_date_0 = $firstIncomeStatement ? $firstIncomeStatement->getFirstAndEndDate()['start_date'] : $start_date_0;
+		$end_date_0   = $firstIncomeStatement ? $firstIncomeStatement->getFirstAndEndDate()['end_date'] : $end_date_0;
+		$start_date_1 = $secondIncomeStatement ? $secondIncomeStatement->getFirstAndEndDate()['start_date'] : $start_date_1;
+		$end_date_1   = $secondIncomeStatement ? $secondIncomeStatement->getFirstAndEndDate()['end_date'] : $end_date_1;
+		
 		$secondIncomeStatement = $secondIncomeStatement ?: optional(null);
 		$allTypes = IncomeStatementItem::formattedViewForDashboard();
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
@@ -692,6 +686,9 @@ class HomeController extends Controller
 		$selectAllOptions = false;
 
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Income Statement Comparing'));
+			
+			$canRefreshDates = true ;
 			$selectAllOptions = true;
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[1] ?? 0;
@@ -711,7 +708,7 @@ class HomeController extends Controller
 
 		} elseif ($request->isMethod('POST')) {
 
-
+			$canRefreshDates = false ;
 			$start_date_0  = $request['start_date_one'];
 			$end_date_0  = $request['end_date_one'];
 			$start_date_1  = $request['start_date_two'];
@@ -767,10 +764,11 @@ class HomeController extends Controller
 			'intervalDates',
 			'selectAllOptions',
 			// 'start_date_2', 'end_date_2',
-
+			
 			'permittedTypes',
 			'selectedTypes',
-			'intervalComparing'
+			'intervalComparing',
+			'canRefreshDates',
 		));
 	}
 
@@ -778,7 +776,7 @@ class HomeController extends Controller
 
 	public function dashboardIncomeStatementVariousComparing(Request $request, Company $company)
 	{
-
+		$canRefreshDates = false ; 
 		$reportType = $request->get('report_type') ?: 'forecast-actual';
 		$firstComparingType =  explode('-', $reportType)[0];
 		$secondComparingType = explode('-', $reportType)[1];
@@ -790,26 +788,42 @@ class HomeController extends Controller
 		if (!(count($incomeStatements) >= 1)) {
 			return redirect()->back()->with('fail', __('You Must Have At Least One Income Statements'));
 		}
-		$incomeStatement = $incomeStatements[0];
-		$incomeStatementId = $request->get('income_statement_id');
+		$incomeStatement = $incomeStatements[count($incomeStatements)-1];
+		$incomeStatementId = $request->get('income_statement_id') ;
+		if(!$incomeStatementId){
+			$request['income_statement_id'] = IncomeStatement::where('company_id', $company->id)->latest()->first()->id ?? null ;
+		}
 		if ($incomeStatementId) {
 			$incomeStatement =     IncomeStatement::find($incomeStatementId);
 		}
+		
 		$start_date = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['start_date'] : date('2021-01-01');
 		$end_date   = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['end_date'] : date('2021-12-31');
+// dd($end_date);
+		if(! Carbon::make($end_date)){
+			return redirect()->back()->with('fail', __('Please Enter End Date'));
+		}
+		if(! Carbon::make($start_date) ){
+			return redirect()->back()->with('fail', __('Please Enter Start Date Date'));
+		}
 		$allTypes = IncomeStatementItem::formattedViewForDashboard();
 
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 		$db_names = array_keys($exportableFields);
-
+		
 		$permittedTypes = [];
 		foreach ($allTypes as  $id => $name) {
 			$permittedTypes[$id] = ($name);
 		}
-		$selectedTypes = (array)$request->types;
+		// dd($permittedTypes);
+		$selectedTypes = count((array)$request->types) ? (array)$request->types : array_keys($permittedTypes);
+		
 		$intervalComparing = [];
 		$requestMethod = $request->method();
 		if ($request->isMethod('GET')) {
+			Log::storeNewLogRecord('enterSection',null,__('Variance Dashboard'));
+			
+			$canRefreshDates = true ; 
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[1] ?? 0;
 			$secondKey = $keys[2] ?? 0;
@@ -818,8 +832,7 @@ class HomeController extends Controller
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
 		} elseif ($request->isMethod('POST')) {
-
-
+			$canRefreshDates = false  ; 
 			$start_date  = $request['start_date'];
 			$end_date  = $request['end_date'];
 			// $start_date_2  = $request['start_date_three'];
@@ -838,12 +851,13 @@ class HomeController extends Controller
 		$charts = [];
 		$dates = [];
 		$chartHasBeenFound = false;
-		$chartItems = (array)$request->get('chart_items') ?: addAllSubItemForMainItemsArray($allTypes, $incomeStatement, request()->segments()[4]);
+		$chartItems = count((array)$request->get('chart_items')) ? (array)$request->get('chart_items') : addAllSubItemForMainItemsArray($allTypes, $incomeStatement, request()->segments()[4]);
+		// dd($chartItems,addAllSubItemForMainItemsArray($allTypes, $incomeStatement, request()->segments()[4]));
 
-		foreach ((array)$request->types as $typeId) {
+		foreach ($selectedTypes as $typeId) {
 			$request['mainItemId'] = $typeId;
 			$dataOfVarious = (new IntervalsComparingForIncomeStatementReport)->resultVariousComparing($request, $company, $intervalDates, $firstComparingType, $secondComparingType, $chartHasBeenFound, IncomeStatementItem::where('id', $typeId)->first()->name, $chartItems);
-
+			
 			$intervalComparing[IncomeStatementItem::where('id', $typeId)->first()->name] = $dataOfVarious['report'];
 			$charts[IncomeStatementItem::where('id', $typeId)->first()->name] = $dataOfVarious['charts'];
 			if (!$chartHasBeenFound) {
@@ -851,20 +865,20 @@ class HomeController extends Controller
 				$dates = $dataOfVarious['dates'];
 			}
 		}
-
 		$charts = removeFirstKeyAndMergeOthers($charts);
 		$incomeStatementId = $request->get('income_statement_id');
 		if ($incomeStatementId) {
 			$selectedIncomeStatement =     IncomeStatement::find($incomeStatementId);
 		}
-
-
+		
+		
 		$intervals = getIntervals($intervalComparing);
-
-
+		
+		// dd(get_defined_vars());
+		
 		$selectedItems = [
 			'income_statement_id' => $incomeStatementId ?: $incomeStatement->id,
-			'main_items' => (array) $request->types,
+			'main_items' => $selectedTypes,
 			'first_report_type' => $firstComparingType,
 			'start_date' =>  $start_date,
 			'end_date' =>   $end_date,
@@ -874,6 +888,9 @@ class HomeController extends Controller
 		];
 
 		$mainItemsWithItemsSubItems = extractMainItemsAndSubItemsFrom($intervalComparing);
+		// dd($selectedItems,$mainItemsWithItemsSubItems);
+		
+		
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(
 			'chartItems',
 			'reportType',
@@ -894,7 +911,8 @@ class HomeController extends Controller
 
 			'permittedTypes',
 			'selectedTypes',
-			'intervalComparing'
+			'intervalComparing',
+			'canRefreshDates'
 		));
 	}
 	public function getIncomeStatementStartDateAndEndDate(Request $request)

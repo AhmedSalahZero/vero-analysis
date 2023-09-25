@@ -57,24 +57,49 @@ trait FinancialStatementAbleAccessor
 		if (strEndsWith(get_class($this), 'CashFlowStatement')) {
 			return false;
 		}
+		
 		return $this->subItems()->wherePivot('sub_item_type', 'forecast')->count() > 1;
+		// return $this->subItems()->wherePivot('sub_item_type', 'forecast')->count() > 1;
 	}
 	public function getSubItems(int $financialStatementAbleItemId, string $subItemType, string $subItemName = ''): Collection
 	{
 		return $this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->get();
 	}
+	public function lastActualDates(?array $dates)
+	{
+		$lastActualDate = null ;
+		if($dates && count($dates))
+		{
+			foreach($dates as $date){
+				if(isActualDate($date)){
+					$lastActualDate =$date; 
+				}
+			}
+		}
+		return $lastActualDate ; 
+	}
 	public function getFirstAndEndDate(): array
 	{
 		$dates = $this->getIntervalFormatted();
 		$dates = array_keys($dates);
+		$lastActualDate = $this->lastActualDates($dates);
 		$dateLength = count($dates);
 		$interval = [];
 		if ($dateLength) {
+			$endDate = $lastActualDate ?: ($dates[$dateLength - 1]) ;
+			$year = explode('-',$endDate)[0];
+			$month = explode('-',$endDate)[1];
+			$endDate = Carbon::create($year, $month)->lastOfMonth()->format('Y-m-d');
+			// $day = explode('-',$endDate)[1];
+			// dd($endDate);
 			$interval = [
 				'start_date' => ($dates[0]),
-				'end_date' => ($dates[$dateLength - 1])
+				'end_date' =>$endDate 
 			];
+			
+			
 		}
+		// dd($interval);
 		return $interval;
 	}
 }

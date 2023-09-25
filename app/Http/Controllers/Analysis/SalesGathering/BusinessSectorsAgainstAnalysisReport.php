@@ -24,7 +24,12 @@ class BusinessSectorsAgainstAnalysisReport
         } elseif (request()->route()->named('businessSectors.customers.analysis')) {
             $type = 'customer_name';
             $view_name = 'Business Sectors Against Customers Trend Analysis' ;
-        }elseif (request()->route()->named('businessSectors.categories.analysis')) {
+        }
+		elseif (request()->route()->named('businessSectors.countries.analysis')) {
+            $type = 'country';
+            $view_name = 'Business Sectors Against Countries Trend Analysis' ;
+        }
+		elseif (request()->route()->named('businessSectors.categories.analysis')) {
             $type  = 'category';
             $view_name = 'Business Sectors Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessSectors.products.analysis')) {

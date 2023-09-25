@@ -8,6 +8,7 @@ use App\Http\Controllers\CalculatedIrrController;
 use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FilterMainTypeBasedOnDatesController;
 use App\Http\Controllers\FinancialStatementController;
 use App\Http\Controllers\getUploadPercentage;
@@ -85,11 +86,18 @@ Route::middleware([])->group(function () {
 				Route::get('/edit/{role}', 'RolesAndPermissionsController@edit')->name('edit');
 				Route::post('/update/{role}', 'RolesAndPermissionsController@update')->name('update');
 			});
+			Route::group(['prefix' => 'userPermissions/{user}/', 'as' => 'user.permissions.'], function () {
+				Route::get('/index', 'UsersAndPermissionsController@index')->name('index');
+				Route::get('/create', 'UsersAndPermissionsController@create')->name('create');
+				Route::post('/store', 'UsersAndPermissionsController@store')->name('store');
+				Route::get('/edit', 'UsersAndPermissionsController@edit')->name('edit');
+				Route::post('/update', 'UsersAndPermissionsController@update')->name('update');
+			});
 			Route::get('toolTipSectionsFields/{id}', 'ToolTipDataController@sectionFields')->name('section.fields');
-
+			Route::get('logs','LogController@show')->name('admin.show.logs');
 			############ Client View ############
 			Route::get('/', 'HomeController@index')->name('home');
-
+			
 
 			Route::prefix('{company}')->group(function () {
 				Route::post('get-type-based-on-dates', [FilterMainTypeBasedOnDatesController::class, '__invoke'])->name('get.type.based.on.dates');
@@ -118,7 +126,8 @@ Route::middleware([])->group(function () {
 				Route::post('income-statement-report/update', [IncomeStatementController::class, 'updateReport'])->name('admin.update.income.statement.report');
 				Route::post('income-statement-report/delete', [IncomeStatementController::class, 'deleteReport'])->name('admin.destroy.income.statement.report');
 				Route::post('income-statement/storeReport', [IncomeStatementController::class, 'storeReport'])->name('admin.store.income.statement.report');
-				Route::post('export-income-statement-report', 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
+				Route::post('export-income-statement-report-excel', 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
+				Route::post('export-income-statement-report-pdf', 'IncomeStatementController@exportReportAsPdf')->name('admin.export.income.statement.report.pdf');
 				Route::post('get-income-statement-report/{incomeStatement}', 'IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
 
 
@@ -167,6 +176,8 @@ Route::middleware([])->group(function () {
 				Route::get('get-cash-flow-statement', 'CashFlowStatementController@paginate')->name('admin.get.cash.flow.statement');
 				Route::get('cash-flow-statement/{cashFlowStatement}/actual-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.actual.report');
 
+				Route::get('cash-and-banks/{cashFlowStatement}/{reportType}','CashFlowStatementController@createReport')->name('admin.show-cash-and-banks');
+				Route::post('store-cash-and-banks','CashFlowStatementController@storeCashAndBanks')->name('admin.store-cash-and-banks');
 				// actual.report the first segment represent type so do not change it
 				Route::get('cash-flow-statement/{cashFlowStatement}/actual-report', [CashFlowStatementController::class, 'createReport'])->name('admin.create.cash.flow.statement.actual.report');
 
@@ -185,7 +196,9 @@ Route::middleware([])->group(function () {
 				Route::post('get-cash-flow-statement-report/{cashFlowStatement}', 'CashFlowStatementController@paginateReport')->name('admin.get.cash.flow.statement.report');
 
 
-
+				// excel for financial statement 
+				Route::get('download-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'downloadExcelTemplateForActual'])->name('admin.export.excel.template');
+				Route::post('import-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'importExcelTemplateForActual'])->name('admin.import.excel.template');
 				Route::get('update-financial-statement-date', [FinancialStatementController::class, 'updateDate'])->name('admin.update.financial.statement.date');
 				Route::delete('update-financial-statement-duration-type', [FinancialStatementController::class, 'updateDurationType'])->name('admin.update.financial.statement.duration.type');
 				Route::get('financial-statement', [FinancialStatementController::class, 'view'])->name('admin.view.financial.statement');
@@ -205,6 +218,10 @@ Route::middleware([])->group(function () {
 
 
 
+				
+				Route::get('expense-form/create', [ExpenseController::class, 'create'])->name('admin.create.expense');
+				Route::post('expense-form/store', [ExpenseController::class, 'store'])->name('admin.store.expense');
+				
 				Route::post('edit-table-cell', [EditTableCellsController::class, '__invoke'])->name('admin.edit.table.cell');
 
 
@@ -302,8 +319,12 @@ Route::middleware([])->group(function () {
 					// For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
 					$routesDefinition = (new RoutesDefinition);
 					$saleTrendRoutes = $routesDefinition->salesTrendAnalysisRoutes();
+					// dd($saleTrendRoutes);
 					foreach ($saleTrendRoutes as $nameOfMainItem => $info) {
 						if (isset($info['class_path'])) {
+	// 						if($nameOfMainItem == 'Products'){
+	// dd($info['name'] . '.sales.analysis',!isset($info['analysis_view']));							
+	// 						}
 
 							// Not All Reports Contains Analysis Reports
 							!isset($info['analysis_view'])   ?: Route::get('/' . $nameOfMainItem . 'SalesAnalysis/View',  $info['class_path'] . '@' . $info['analysis_view'])->name($info['name'] . '.sales.analysis');
@@ -489,7 +510,7 @@ Route::middleware([])->group(function () {
 
 
 				Route::resource('adjustedCollectionDate', AdjustedCollectionDateController::class);
-
+				
 
 				############ Exportable Fields Selection Routes ############
 				Route::get('fieldsToBeExported/{model}/{view}', 'ExportTable@customizedTableField')->name('table.fields.selection.view');

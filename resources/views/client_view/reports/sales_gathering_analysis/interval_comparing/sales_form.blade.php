@@ -27,7 +27,7 @@
                             <label>{{__('Start Date One')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="start_date_one"  required value="2021-01-01"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="start_date_one"  required value="{{ getEndYearBasedOnDataUploaded($company)['jan'] }}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                             <label>{{__('End Date One')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date_one"   required value="{{date('Y-m-d')}}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="end_date_one"   required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                             <label>{{__('Start Date Two')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="start_date_two"  required value="2020-01-01"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="start_date_two"  required value="{{ getEndYearBasedOnDataUploaded($company,1)['jan'] }}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                             <label>{{__('End Date Two')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date_two"  required  value="2020-12-31" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="end_date_two"  required  value="{{ getEndYearBasedOnDataUploaded($company,1)['dec'] }}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>

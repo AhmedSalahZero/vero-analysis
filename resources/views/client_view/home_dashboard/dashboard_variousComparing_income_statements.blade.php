@@ -63,6 +63,10 @@
     .is-sub-row td.sub-text-bg {
         background-color: #0e96cd !important;
         color: white !important;
+		
+		
+		background-color:#E2EFFE !important;
+		color:black !important
 
     }
 
@@ -102,12 +106,18 @@
     .btn-border-radius {
         border-radius: 10px !important;
     }
+	.table-bordered th, .table-bordered td {
+		border:1px solid white !important;
+	}
 
     .is-sub-row td.sub-numeric-bg,
     .is-sub-row td.sub-text-bg {
-        background-color: #a4d2e4 !important;
+        background-color: #E2EFFE !important;
         color: black !important;
+		
+		
     }
+	
 
     .card-title:not(.collapsed) {
         background-color: #046187 !important;
@@ -305,8 +315,8 @@ $currentReportType = Request()->segment(5)
 </div>
 </div> --}}
 
-
-<x-submitting />
+<x-run />
+{{-- <x-submitting /> --}}
 </div>
 </div>
 
@@ -341,7 +351,6 @@ $currentReportType = Request()->segment(5)
                                         @if($mainItemName == __('Sales Revenue'))
                                         @php
                                         $currentSalesRevenueValue = isset($chartItems[$mainItemName]) && isset(array_values($chartItems[$mainItemName])[0]) && isQuantitySubItem(array_values($chartItems[$mainItemName])[0]) ?'quantity':'value' ;
-
                                         @endphp
 
                                         <input type="hidden" name="sales_revenue_type" value="{{ $currentSalesRevenueValue  }}">
@@ -499,28 +508,61 @@ $currentReportType = Request()->segment(5)
                                                                 @endslot
 
                                                                 @slot('table_body')
+																@php
+																	$totalPercentage = 0 ;
+																	$totalPercentageOfRevenue = 0 ;
+																@endphp
 
                                                                 @foreach($charts['donutChart'][$mainItemName][$currentReportItem] ??[] as $subItemName=>$value)
                                                                 @php
                                                                 $total = array_sum($charts['donutChart'][$mainItemName][$currentReportItem]);
                                                                 $totalOfSalesRevenue = isset($charts['donutChart'][__('Sales Revenue')][$currentReportItem]) ? array_sum($charts['donutChart'][__('Sales Revenue')][$currentReportItem]) : 0
                                                                 @endphp
-                                                                <tr>
+                                                                <tr >
                                                                     <td>
                                                                         {{ $subItemName }}
                                                                     </td>
-                                                                    <td>
+                                                                    <td class="text-center">
                                                                         {{ number_format($value)  }}
                                                                     </td>
-                                                                    <td>
-                                                                        {{ number_format($total ? $value / $total * 100 : 0 , 2 ) }} %
+                                                                    <td class="text-center">
+																	@php
+																		$currentPercentage = $total ? $value / $total * 100 : 0  ;
+																		$totalPercentage += $currentPercentage ;
+																	@endphp
+                                                                        {{ number_format( $currentPercentage, 2) }} %
                                                                     </td>
                                                                     @if(__($mainItemName) != __('Sales Revenue'))
-                                                                    <td>
-                                                                        {{ number_format($totalOfSalesRevenue ? $value / $totalOfSalesRevenue *100 :0 , 2) }} %
+                                                                    <td class="text-center">
+																		@php
+																			$percentageOfRevenue =$totalOfSalesRevenue ? $value / $totalOfSalesRevenue *100 :0;
+																			$totalPercentageOfRevenue += $percentageOfRevenue;
+																		@endphp
+                                                                        {{ number_format( $percentageOfRevenue , 2) }} %
                                                                     </td>
+																
                                                                     @endif
                                                                 </tr>
+																@if($loop->last)
+																<tr class="table-active text-center ">
+                                                                    <td>
+	{{ __('Total') }}
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                    {{ number_format($total,0) }}
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                     {{ number_format($totalPercentage , 2 )  }} %
+                                                                    </td>
+                                                                    @if(__($mainItemName) != __('Sales Revenue'))
+                                                                    <td class="text-center">
+																	{{ number_format($totalPercentageOfRevenue,2) }} %
+                                                                    </td>
+																
+                                                                    @endif
+                                                                </tr>
+																@endif 
+																
                                                                 @endforeach
                                                                 @endslot
                                                             </x-table>
@@ -648,7 +690,8 @@ $currentReportType = Request()->segment(5)
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell trigger-expand is-opened" style="cursor:pointer">{{ __('Expand All') }}</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
                                 @foreach ($intervals as $intervalName )
-                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} <br> ({{ getIntervalFromString($intervalName) }})</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ __('% / Revenues') }} </th>
                                 @endforeach
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
@@ -656,20 +699,52 @@ $currentReportType = Request()->segment(5)
                         </thead>
                         <tbody>
 
-
+@php
+$typeIndex = 0 ;
+$currentTotalsOfSalesRevenues = [];
+@endphp 
+{{-- {{dd($intervalComparing)}} --}}
                             @foreach ($intervalComparing as $theType => $intervals)
-
                             <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
                                 <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg sub-closed">+</td>
                                 <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
                                 @php
-                                $currentValue =[ ]
-                                @endphp
+                                $currentValue =[ ];
+                                $subIndex = 0;
+								@endphp
+								
                                 @foreach ($intervals as $intervalName => $data )
+								{{-- {{dd($intervals)}} --}}
                                 @php
                                 $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
-                                @endphp
-                                <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+								if($typeIndex == 0){
+                                $currentTotalsOfSalesRevenues[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
+									
+								}
+                                $totalOfRevenue = sum_all_keys($intervalComparing[$theType][$intervalName])
+								@endphp
+								
+                                <td class="sub-numeric-bg text-nowrap "> {{  number_format( $totalOfRevenue  ) }} </td>
+								<td 
+									@if($subIndex == 1)
+								style="color:{{ getColorForIndexes($currentTotalsOfSalesRevenues[0],$currentTotalsOfSalesRevenues[1],$typeIndex ) }}"
+								@endif 
+								
+								>
+								@if($typeIndex == 0 )
+								-
+								@elseif($currentTotalsOfSalesRevenues[$subIndex])
+								
+								{{number_format($currentValue[$subIndex] /$currentTotalsOfSalesRevenues[$subIndex] * 100,2)}} % 
+								@else
+								
+								0 % 
+								
+								@endif 
+								</td>
+								@php
+								$subIndex++;
+								@endphp
                                 @endforeach
                                 @php
                                 $val = $currentValue[1] - $currentValue[0] ;
@@ -682,6 +757,7 @@ $currentReportType = Request()->segment(5)
                             </tr>
                             @php
                             $currentValue=[];
+					
                             @endphp
 
                             @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
@@ -693,14 +769,39 @@ $currentReportType = Request()->segment(5)
                                 </td>
                                 @php
                                 $currentValues =[];
-                                @endphp
+                                $intervalIndex = 0;
+								$currentPercentageValueArr = [];
+								@endphp
+								
                                 @foreach($intervals as $newIntervalName => $intervalValue)
                                 @php
                                 $salesValue = $values[$newIntervalName] ?? 0;
                                 $currentValues[] = $salesValue ;
                                 @endphp
+								
+								{{-- {{dd($currentTotals , $theType,$typeIndex)}} --}}
                                 <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
-                                @endforeach
+                                @php
+								$currentPercentageValue = !isQuantitySubItem($subItemName) ? ($currentTotalsOfSalesRevenues[$intervalIndex] ? $salesValue / $currentTotalsOfSalesRevenues[$intervalIndex] * 100 : 0) : '-';
+								$currentPercentageValueArr[] = !isQuantitySubItem($subItemName) ? ($currentTotalsOfSalesRevenues[$intervalIndex] ? $salesValue / $currentTotalsOfSalesRevenues[$intervalIndex] * 100 : 0) : '-';
+								
+								
+								@endphp 
+								<td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "
+								@if($intervalIndex == 1)
+								style="color:{{ getColorForIndexes($currentPercentageValueArr[0],$currentPercentageValueArr[1],$typeIndex ) }}"
+								@endif 
+								> 
+								{{-- {{dd($currentTotalsOfSalesRevenues)}} --}}
+								{{
+									
+									is_numeric($currentPercentageValue) ? number_format($currentPercentageValue , 2)  . ' %' : $currentPercentageValue
+								
+								}}  </td>
+                                @php
+								$intervalIndex ++ ;
+								@endphp
+								@endforeach
 
                                 @php
 
@@ -718,7 +819,9 @@ $currentReportType = Request()->segment(5)
 
 
                             </tr>
-
+@php
+$typeIndex++ ;
+@endphp 
                             @endforeach
                         </tbody>
                     </table>
@@ -1165,18 +1268,22 @@ $currentReportType = Request()->segment(5)
         @endforeach
 
 
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="{{ asset('custom/axios.js') }}"></script>
+		@if($canRefreshDates)
         <script>
             $(function() {
                 const incomeStatementElement = document.querySelector('#income_statement_select_id');
                 incomeStatementElement.addEventListener('change', function(e) {
                     e.preventDefault();
+			
                     const income_statement_id = e.target.value
                     const startDateInput = document.querySelector('#start_date_input_id')
                     const endDateInput = document.querySelector('#end_date_input_id')
-                    if (income_statement_id) {
+                    if (income_statement_id ) {
                         startDateInput.setAttribute('disabled', true)
                         endDateInput.setAttribute('disabled', true)
+						$('.save-form').attr('disabled',true)
+						
                         axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
                             params: {
                                 company_id: '{{ getCurrentCompanyId() }}'
@@ -1186,12 +1293,15 @@ $currentReportType = Request()->segment(5)
                             if (res.data && res.data.status) {
                                 startDateInput.value = res.data.dates.start_date
                                 endDateInput.value = res.data.dates.end_date
+							
                             }
                         }).catch(err => {
                             console.log(err)
                         }).finally(ee => {
                             startDateInput.removeAttribute('disabled')
                             endDateInput.removeAttribute('disabled')
+						$('.save-form').attr('disabled',false)
+							
                         })
                     }
                 })
@@ -1200,6 +1310,7 @@ $currentReportType = Request()->segment(5)
             })
 
         </script>
+		@endif 
         <script>
             $(document).on('change', '#value_sales_revenue_id', function() {
                 $('#quantity_sales_revenue_id option').prop('selected', false)
@@ -1217,7 +1328,9 @@ $currentReportType = Request()->segment(5)
                     $('#quantity_sales_revenue_id').prop('disabled', true)
                 }
             })
+			
+			    </script>
 
-        </script>
+        
 
         @endsection

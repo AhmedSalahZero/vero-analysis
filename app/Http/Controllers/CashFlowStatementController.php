@@ -7,6 +7,7 @@ use App\Http\Requests\CashFlowStatementRequest;
 use App\Models\CashFlowStatement;
 use App\Models\CashFlowStatementItem;
 use App\Models\Company;
+use App\Models\ReceivableAndPayment;
 use App\Models\Repositories\CashFlowStatementRepository;
 use App\Models\User;
 use Carbon\Carbon;
@@ -14,7 +15,6 @@ use Illuminate\Http\Request;
 
 class CashFlowStatementController extends Controller
 {
-
 	private CashFlowStatementRepository $cashFlowStatementRepository;
 
 	public function __construct(CashFlowStatementRepository $cashFlowStatementRepository)
@@ -29,14 +29,46 @@ class CashFlowStatementController extends Controller
 	{
 		return view('admin.cash-flow-statement.view', CashFlowStatement::getViewVars());
 	}
+
 	public function create()
 	{
 		return view('admin.cash-flow-statement.create', CashFlowStatement::getViewVars());
 	}
 
-	public function createReport(Company $company, CashFlowStatement $cashFlowStatement)
+	public function createReport(Company $company, CashFlowStatement $cashFlowStatement, $reportType = 'forecast')
 	{
+		// if first time
+		$dates = array_keys($cashFlowStatement->getIntervalFormatted());
+		// dd();
+		// $cashFlowStatement->receivables_and_payments->count()
+		if (env('APP_ENV') == 'local'
+			&& !$cashFlowStatement->entered_receivables_and_payments_table
+			||
+			Request()->route()->getName() == 'admin.show-cash-and-banks'
+		) {
+			$subItemType ='forecast';
+			$receivables_and_payments = $cashFlowStatement
+			->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID, $subItemType)
+			->wherePivot('receivable_or_payment', '!=', null)->get();
+			$receivables = $receivables_and_payments;
+			$payments = $cashFlowStatement
+			->withSubItemsFor(CashFlowStatementItem::CASH_IN_ID, $subItemType)
+			->wherePivot('receivable_or_payment', '!=', null)->get();
+
+			$receivables_and_payments = $payments->concat($receivables);
+			$model = $cashFlowStatement;
+			if (!count($receivables_and_payments)) {
+				$model = null;
+			}
+			$cashFlowStatement->update([
+				'entered_receivables_and_payments_table'=>1
+			]);
+
+			return view('admin.cash-flow-statement.cash-opening-balance.create', ['dates'=>$dates, 'company'=>$company, 'cashFlowStatementId'=>$cashFlowStatement->id, 'receivables_and_payments'=>$receivables_and_payments, 'model'=>$model, 'subItemType'=>$subItemType]);
+		}
+
 		$cashFlowStatement = $cashFlowStatement->financialStatement->cashFlowStatement;
+
 		return view('admin.cash-flow-statement.report.view', CashFlowStatement::getReportViewVars([
 			'financial_statement_able_id' => $cashFlowStatement->id,
 			'cashFlowStatement' => $cashFlowStatement,
@@ -49,16 +81,16 @@ class CashFlowStatementController extends Controller
 	{
 		return $this->cashFlowStatementRepository->paginate($request);
 	}
+
 	public function paginateReport(Request $request, Company $company, CashFlowStatement $cashFlowStatement)
 	{
 		return $this->cashFlowStatementRepository->paginateReport($request, $cashFlowStatement);
 	}
 
-
 	public function store(CashFlowStatementRequest $request)
 	{
-
 		$cashFlowStatement = $this->cashFlowStatementRepository->store($request);
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Income Statement Has Been Stored Successfully'),
@@ -68,7 +100,6 @@ class CashFlowStatementController extends Controller
 
 	public function storeReport(Request $request)
 	{
-
 		$this->cashFlowStatementRepository->storeReport($request);
 
 		return response()->json([
@@ -88,6 +119,7 @@ class CashFlowStatementController extends Controller
 	public function update(Company $company, Request $request, CashFlowStatement $cashFlowStatement)
 	{
 		$this->cashFlowStatementRepository->update($cashFlowStatement, $request);
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Income Statement Has Been Updated Successfully')
@@ -104,7 +136,8 @@ class CashFlowStatementController extends Controller
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
 		$cashFlowStatementItemId = $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementItemId, $isFinancialIncome);
 		$request['financial_statement_able_item_id']  = $incomeStatementItemId;
-		$cashFlowStatement->storeReport($request);;
+		$cashFlowStatement->storeReport($request);
+		;
 		$request['financial_statement_able_item_id']  = $cashFlowStatementItemId;
 		$oldCashFlowStatementItemId = $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($incomeStatementId, (bool)$request->get('was_financial_income'));
 		$oldCashFlowStatementItem = $cashFlowStatement->withMainItemsFor($oldCashFlowStatementItemId)->first();
@@ -118,7 +151,7 @@ class CashFlowStatementController extends Controller
 		}
 
 		foreach ($subItemTypesToDetach as $subItemType) {
-			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
+			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' : $request->input('sub_items.0.percentage_or_fixed');
 			$pivotArr = [
 				'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
 				'financial_statement_able_item_id' =>  $request->get('financial_statement_able_item_id'),
@@ -127,9 +160,9 @@ class CashFlowStatementController extends Controller
 				'collection_policy_type' => $request->input('sub_items.0.collection_policy.type.name'),
 				'collection_policy_value' => $collection_value,
 				'percentage_or_fixed' => $percentageOrFixed,
-				'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ?  $request->input('sub_items.0.repeating_fixed_value') : null,
-				'percentage_value' => $percentageOrFixed == 'percentage' ?  $request->input('sub_items.0.percentage_value') : null,
-				'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ?  $request->input('sub_items.0.cost_of_unit_value') : null,
+				'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ? $request->input('sub_items.0.repeating_fixed_value') : null,
+				'percentage_value' => $percentageOrFixed == 'percentage' ? $request->input('sub_items.0.percentage_value') : null,
+				'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ? $request->input('sub_items.0.cost_of_unit_value') : null,
 				'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
 				'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
 				'is_financial_expense' => $request->input('sub_items.0.is_financial_expense'),
@@ -140,14 +173,16 @@ class CashFlowStatementController extends Controller
 				// 'sub_item_type' => $subItemType
 
 			];
-
-			$oldCashFlowStatementItem
-				->withSubItemsFor($cashFlowStatementId, $subItemType, $request->get('sub_item_name'))
-				->updateExistingPivot(
-					$cashFlowStatementId,
-					$pivotArr
-
-				);
+			if ($oldCashFlowStatementItem) {
+				$oldCashFlowStatementItem
+					->withSubItemsFor($cashFlowStatementId, $subItemType, $request->get('sub_item_name'))
+					->updateExistingPivot(
+						$cashFlowStatementId,
+						$pivotArr
+					);
+			} else {
+				//dd($oldCashFlowStatementItem);
+			}
 		}
 
 
@@ -159,29 +194,33 @@ class CashFlowStatementController extends Controller
 
 	public function deleteReport(Company $company, Request $request)
 	{
-
 		$cashFlowStatementId = $request->get('financial_statement_able_id');
 		$cashFlowStatementItemId = $request->get('financial_statement_able_item_id');
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
 		$subItemsNames = formatSubItemsNamesForQuantity($request->get('sub_item_name'));
 		$cashFlowStatement->storeReport($request);
 		$cashFlowStatementItem = $cashFlowStatement->withMainItemsFor($cashFlowStatementItemId)->first();
+
 		$subItemTypesToDetach = getIndexesLargerThanOrEqualIndex(getAllFinancialAbleTypes(), $request->get('sub_item_type'));
 		foreach ($subItemTypesToDetach as $subItemType) {
 			foreach ($subItemsNames as $subItemName) {
-
-				$cashFlowStatementItem->withSubItemsFor($cashFlowStatementId, $subItemType, $subItemName)->detach($cashFlowStatementId);
+				if ($cashFlowStatementItem) {
+					$cashFlowStatementItem->withSubItemsFor($cashFlowStatementId, $subItemType, $subItemName)->detach($cashFlowStatementId);
+				}
 			}
 		}
+
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Deleted Successfully')
 		]);
 	}
+
 	public function export(Request $request)
 	{
 		return (new CashFlowStatementExport($this->cashFlowStatementRepository->export($request), $request))->download();
 	}
+
 	public function exportReport(Request $request)
 	{
 		$formattedData = $this->formatReportDataForExport($request);
@@ -190,6 +229,7 @@ class CashFlowStatementController extends Controller
 
 		return (new CashFlowStatementExport(collect($formattedData), $request, $cashFlowStatement))->download();
 	}
+
 	protected function combineMainValuesWithItsPercentageRows(array $firstItems, array $secondItems): array
 	{
 		$mergeArray = [];
@@ -212,6 +252,7 @@ class CashFlowStatementController extends Controller
 
 		return $mergeArray;
 	}
+
 	public function formatReportDataForExport(Request $request)
 	{
 		$formattedData = [];
@@ -240,6 +281,165 @@ class CashFlowStatementController extends Controller
 				}
 			}
 		}
+
 		return $formattedData;
+	}
+
+	public function storeCashAndBanks($company, Request $request)
+	{
+		$company = Company::find($company);
+		$cashFlowStatementId = $request->get('cash_flow_statement_id');
+		$subItemType  = $request->get('subItemType');
+		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
+		// dd();
+
+		$cashFlowStatement->update([
+			'cash_and_banks_beginning_balance'=>$request->get('cash_and_banks_beginning_balance')
+		]);
+		// dd($cashFlowStatement);
+		$dates = (array)$request->get('dates');
+		// dd('dates',$dates);
+
+
+		$cashItemId = CashFlowStatementItem::CASH_IN_ID;
+		$cashAndBanksName = 'Cash & Banks Beginning Balance';
+		$lastIndex = count((array)$request->get('opening_receivable')) - 1;
+		// dd($lastIndex);
+
+		$cashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_IN_ID, $subItemType)->wherePivot('receivable_or_payment', '!=', null)->detach();
+		$cashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID, $subItemType)->wherePivot('receivable_or_payment', '!=', null)->detach();
+
+
+		foreach ((array)$request->get('opening_receivable') as $index => $arr) {
+			$payload = [];
+			foreach ($dates as $date) {
+				$payload[$date]=$arr[$date] ?? 0;
+			}
+			$data = [
+				'sub_item_name'=> $name = $arr['receivable_name'],
+				'sub_item_type'=> $subItemType,
+				'created_from'=>$subItemType,
+				'payload'=>json_encode($payload),
+				'is_depreciation_or_amortization'=>0,
+				'has_collection_policy'=>0,
+				'is_quantity'=>0,
+				'can_be_quantity'=>0,
+				'can_be_percentage_or_fixed'=>0,
+				'company_id'=>$company->id,
+				'percentage_or_fixed'=>'non_repeating_fixed',
+				'creator_id'=>auth()->user()->id,
+				'ordered'=>3 ,
+				// 'balance_amount'=>$arr['balance_amount'],
+				// 'payload'=>$payload,
+				// 'cash_flow_statement_id'=>$cashFlowStatementId,
+				'receivable_or_payment'=>'receivable',
+				'created_at'=>now()
+			];
+			// $data = [
+			// 	'name'=> $name = $arr['receivable_name'] ,
+			// 	'balance_amount'=>$arr['balance_amount'],
+			// 	'payload'=>$payload,
+			// 	'cash_flow_statement_id'=>$cashFlowStatementId,
+			// 	'type'=>'payment',
+			// 	'created_at'=>now()
+			// ];
+			// if ($arr['id']) {
+
+				
+				$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->attach($cashItemId, $data);
+
+				if ($index == $lastIndex) {
+					$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $cashAndBanksName)->attach(
+						$cashItemId,
+						array_merge($data, [
+							'sub_item_name'=>$cashAndBanksName,
+							'payload'=>json_encode([$dates[0]=>$request->get('cash_and_banks_beginning_balance')]),
+							'receivable_or_payment'=>'cash_and_banks_beginning_balance',
+							'ordered'=>1 
+						])
+					);
+				}
+
+				
+			// if (false) {
+			// 	if ($index == $lastIndex) {
+
+			// 		$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $cashAndBanksName)->where('receivable_or_payment', '!=', null)->updateExistingPivot($cashItemId, [
+			// 			'payload'=>json_encode([$dates[0]=>$request->get('cash_and_banks_beginning_balance')]),
+			// 			'sub_item_name'=>$cashAndBanksName
+			// 		]);
+			// 	}
+			// 	$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $arr['old_receivable_name'])->where('receivable_or_payment', '!=', null)->updateExistingPivot($cashItemId, [
+			// 		'payload'=>$payload,
+			// 		'sub_item_name'=>$name,
+			// 		'sub_item_type'=>$subItemType,
+			// 	]);
+			// 	// ReceivableAndPayment::where('id',$arr['id'])->update($data);
+			// } 
+			// else {
+			// 	// create
+
+			// 	// ReceivableAndPayment::create($data);
+			// }
+		}
+
+		$cashItemId  = CashFlowStatementItem::CASH_OUT_ID;
+
+		foreach ((array)$request->get('opening_payment') as $index => $arr) {
+			$payload = [];
+			// dd($dates);
+			foreach ($dates as $date) {
+				$payload[$date]=$arr[$date] ?? 0;
+			}
+			// dd($payload,json_encode($payload));
+
+			$data = [
+				'sub_item_name'=> $name = $arr['receivable_name'],
+				'sub_item_type'=> $subItemType,
+				'created_from'=>$subItemType,
+				'payload'=>json_encode($payload),
+				'is_depreciation_or_amortization'=>0,
+				'has_collection_policy'=>0,
+				'is_quantity'=>0,
+				'can_be_quantity'=>0,
+				'ordered'=>4 ,
+				'can_be_percentage_or_fixed'=>0,
+				'company_id'=>$company->id,
+				'percentage_or_fixed'=>'non_repeating_fixed',
+				'creator_id'=>auth()->user()->id,
+				// 'balance_amount'=>$arr['balance_amount'],
+				// 'payload'=>$payload,
+				// 'cash_flow_statement_id'=>$cashFlowStatementId,
+				'receivable_or_payment'=>'payment',
+				'created_at'=>now()
+			];
+			
+			$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->attach($cashItemId, $data);
+			
+			
+			// $data = [
+			// 	'name'=> $name = $arr['receivable_name'] ,
+			// 	'balance_amount'=>$arr['balance_amount'],
+			// 	'payload'=>$payload,
+			// 	'cash_flow_statement_id'=>$cashFlowStatementId,
+			// 	'type'=>'payment',
+			// 	'created_at'=>now()
+			// ];
+			// if (false) {
+			// 	// if ($arr['id']) {
+			// 	// dd($cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->where('receivable_or_payment','!=',null)->first());
+			// 	$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $arr['old_receivable_name'])->where('receivable_or_payment', '!=', null)->updateExistingPivot($cashItemId, [
+			// 		'payload'=>$payload,
+			// 		'sub_item_name'=>$name,
+			// 		'sub_item_type'=>$subItemType,
+			// 	]);
+			// 	// ReceivableAndPayment::where('id',$arr['id'])->update($data);
+			// }
+			//  else {
+			// 	// ReceivableAndPayment::create($data);
+			// }
+		}
+
+		return redirect()->route('admin.create.cash.flow.statement.forecast.report', ['cashFlowStatement'=>$cashFlowStatementId, 'company'=>$company->id]);
 	}
 }

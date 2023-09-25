@@ -26,7 +26,12 @@ class SalesPersonsAgainstAnalysisReport
         } elseif (request()->route()->named('salesPersons.customers.analysis')) {
             $type = 'customer_name';
             $view_name = 'Sales Persons Against Customers Trend Analysis';
-        } elseif (request()->route()->named('salesPersons.salesChannels.analysis')) {
+        }
+		elseif (request()->route()->named('salesPersons.countries.analysis')) {
+            $type = 'country';
+            $view_name = 'Sales Persons Against Countries Trend Analysis';
+        }
+		elseif (request()->route()->named('salesPersons.salesChannels.analysis')) {
             $type  = 'sales_channel';
             $view_name = 'Sales Persons Against Sales Channels Trend Analysis';
         } elseif (request()->route()->named('salesPersons.categories.analysis')) {

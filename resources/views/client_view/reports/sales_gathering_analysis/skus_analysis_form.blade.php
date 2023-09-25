@@ -57,13 +57,23 @@
                         @include('comparing_type_selector')
 
                     </div>
+					
+					{{-- {{ dd(get_defined_vars()) }} --}}
 
                     <div class="form-group row">
+					@if(isset(get_defined_vars()['__data']['type']) && get_defined_vars()['__data']['type'] !='averagePrices')
+					 <div class="col-md-4  first-interval">
+						<label></label>
+                            <div class="flex-center "><label class="first-interval">{{ __('First Interval') }}</label></div>
+                        
+                        </div>
+						@endif
+
                         <div class="col-md-4">
                             <label>{{ __('Start Date') }}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="start_date" required class="form-control trigger-update-select-js" placeholder="Select date" />
+                                    <input type="date" value="{{ getEndYearBasedOnDataUploaded($company)['jan'] }}" name="start_date" required class="form-control trigger-update-select-js" placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -71,7 +81,7 @@
                             <label>{{ __('End Date') }}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date" required value="{{date('Y-m-d')}}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                    <input type="date" name="end_date" required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{ date('Y-m-d') }}" class="form-control trigger-update-select-js" placeholder="Select date" />
                                 </div>
                             </div>
                         </div>

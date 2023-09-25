@@ -13,7 +13,7 @@ class Company extends Model implements HasMedia
 	use
 		//  SoftDeletes,
 		StaticBoot,
-		InteractsWithMedia;
+		InteractsWithMedia ;
 	protected $guarded = [];
 	protected $casts = ['name' => 'array'];
 	public function users()
@@ -48,4 +48,9 @@ class Company extends Model implements HasMedia
 	{
 		return $this->name[App()->getLocale()];
 	}
+	public function logs()
+	{
+		return $this->hasMany(Log::class , 'company_id','id');
+	}
+	
 }

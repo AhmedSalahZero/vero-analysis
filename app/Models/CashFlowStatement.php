@@ -16,7 +16,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations, IExportable, IShareable, IFinancialStatementAble
 {
-	use  CashFlowStatementAccessor, CashFlowStatementMutator, CashFlowStatementRelation, CompanyScope;
+	use CashFlowStatementAccessor,
+		CashFlowStatementMutator,
+		CashFlowStatementRelation,
+		CompanyScope;
 
 
 	protected $guarded = [
@@ -53,8 +56,8 @@ class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations,
 	{
 		static::addGlobalScope(function (Builder $builder) {
 			$builder->where('type', 'CashFlowStatement');
+			// ->orderBy('ordered','asc');
 		});
-		// static::addGlobalScope(new StateCountryScope);
 	}
 
 	public static function getCrudViewName(): string
@@ -114,11 +117,16 @@ class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations,
 
 	public function getAllRelationsNames(): array
 	{
-		return [
-			// 'revenueBusinessLine',
-			// 'serviceCategory','serviceItem','serviceNatureRelation','currency','otherVariableManpowerExpenses',
-			// 'directManpowerExpenses','salesAndMarketingExpenses','otherDirectOperationExpenses','generalExpenses','freelancerExpensePositions',
-			// 'directManpowerExpensePositions','freelancerExpenses','profitability'
-		];
+		return [];
 	}
+	public function receivables_and_payments()
+	{
+		return $this->hasMany(ReceivableAndPayment::class , 'cash_flow_statement_id','id');
+	}
+	public function getCashAndBanksBeginningBalance()
+	{
+		return $this->cash_and_banks_beginning_balance ?:0;
+	}
+	
+
 }

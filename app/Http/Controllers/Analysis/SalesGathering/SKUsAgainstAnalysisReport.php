@@ -31,6 +31,10 @@ class SKUsAgainstAnalysisReport
             $type  = 'sales_channel';
             $view_name = 'Products Items Against Sales Channels Trend Analysis';
         }
+		elseif (request()->route()->named('Items.countries.analysis')) {
+            $type  = 'country';
+            $view_name = 'Products Items Against Countries Trend Analysis';
+        }
         // elseif (request()->route()->named('Items.categories.analysis')) {
         //     $type  = 'category';
         //     $view_name = 'Products Items Against Categories Trend Analysis';
@@ -95,27 +99,7 @@ class SKUsAgainstAnalysisReport
             $interval_data_per_item = [];
             $years = [];
             if (count($branches_data)>0) {
-
-                // $dt = Carbon::parse($sales_gatherings[0]['date']);
-                // $month = $dt->endOfMonth()->format('d-m-Y');
-
-
-
-                // foreach ($sales_gatherings as $key => $row) {
-
-                //     $dt = Carbon::parse($row['date']);
-                //     $current_month = $dt->endOfMonth()->format('d-m-Y');
-                //     if($current_month == $month){
-                //         $branches_per_month[$current_month][] = $row['net_sales_value'];
-
-                //     }else{
-                //         $month = $current_month;
-                //         $branches_per_month[$current_month][] = $row['net_sales_value'];
-                //     }
-
-                //     $branches_data[$month] = array_sum($branches_per_month[$month]);
-                // }
-
+              
                 array_walk($branches_data, function ($val, $date) use (&$years) {
                     $years[] = date('Y', strtotime($date));
                 });

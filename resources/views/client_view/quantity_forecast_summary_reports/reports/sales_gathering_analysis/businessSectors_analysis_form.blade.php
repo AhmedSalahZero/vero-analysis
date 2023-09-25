@@ -77,6 +77,8 @@
                     <input type="hidden" name="data_type" id="data_type" {{$data_type_selector}} value="value">
                     @endif
                     <div class="form-group row">
+					
+
                         <div class="col-md-4">
                             <label>{{ __('Start Date') }}</label>
                             <div class="kt-input-icon">

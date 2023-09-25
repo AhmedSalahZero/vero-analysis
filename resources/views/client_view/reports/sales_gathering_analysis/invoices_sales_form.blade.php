@@ -29,7 +29,7 @@
                             <label>{{__('Select') .' '. __(spaceAfterCapitalLetters(camelize($type)) ) }}  @include('max-option-span') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select  data-live-search="true" data-actions-box="true" data-max-options="{{ maxOptionsForOneSelector() }}" name="branches[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple>
+                                    <select  data-live-search="true" data-actions-box="true" data-max-options="{{ maxOptionsForOneSelector() }}" name="branches[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  multiple required>
                                         {{-- <option value="{{json_encode($branches)}}">{{__('All Branches')}}</option> --}}
                                         @foreach ($selects as $select)
                                             <option value="{{$select}}"> {{__($select)}}</option>
@@ -42,7 +42,7 @@
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="start_date"  required   class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="start_date" value="{{ getEndYearBasedOnDataUploaded($company)['jan'] }}"  required   class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                             <label>{{__('End Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date"  required  value="{{date('Y-m-d')}}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="end_date"  required  value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>

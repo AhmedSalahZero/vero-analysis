@@ -78,6 +78,10 @@ $tableId = 'kt_table_1';
     .is-sub-row td.sub-text-bg {
         background-color: #0e96cd !important;
         color: white !important;
+		
+		
+		background-color:#E2EFFE !important;
+		color:black !important
 
     }
 
@@ -1446,7 +1450,7 @@ $tableId = 'kt_table_1';
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $balanceSheet->id }}">
 														<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
 														<label>{{ __('name') }}</label>
-														<input name="new_sub_item_name"  class="form-control   only-greater-than-zero-allowed mb-2" type="text" value="${data.pivot.sub_item_name}">
+														<input name="new_sub_item_name"  class="form-control    mb-2" type="text" value="${data.pivot.sub_item_name}">
 														${Depreciation}
 														${quantity}
 														${has_percentage_or_fixed_sub_items}
@@ -2540,14 +2544,14 @@ $tableId = 'kt_table_1';
                                         var tBodyLength = $('tbody tr').length
                                         for (rowId = 1; rowId <= tBodyLength; rowId++) {
                                             currentRow = $('tbody tr:nth-of-type(' + rowId + ')');
-                                            var searchRowValue = -1;
+                                            var searchRowValue = null;
                                             if (totalOfVisisableDates[rowId] && totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay] && totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay]['value']) {
                                                 searchRowValue = totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay]['value'];
                                             }
 
 
 
-                                            if (searchRowValue >= 0) {
+                                            if (searchRowValue != null) {
                                                 var val = parseFloat($('tbody tr:nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + removeMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + removeMonth + '-' + currentDay + '"]').val());
                                                 val = val ? val : 0;
                                                 totalOfVisisableDates[rowId][loopYear + '-' + loopMonth + '-' + currentDay]['value'] += val;
@@ -2577,7 +2581,7 @@ $tableId = 'kt_table_1';
                                                         val2 = val2 ? val2 : 0;
 
 
-                                                        val = val1 + val1;
+                                                        val = val1 + val2;
 
                                                         totalOfVisisableDates[rowId] = {
                                                             [loopYear + '-' + loopMonth + '-' + currentDay]: {

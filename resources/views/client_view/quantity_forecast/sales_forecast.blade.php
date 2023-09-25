@@ -243,11 +243,11 @@
                         @slot('table_header')
                         <tr class="table-active text-center">
                             <th>#</th>
-                            <th>{{ __('Product Item')}}</th>
+                            <th class="max-w-classes">{{ __('Product Item')}}</th>
                             <th>{{ __('Sales Values') }}</th>
                             <th>{{ __('Sales %') }}</th>
-                            <th>{{ __('Sales Quantity') }}</th>
-                            <th>{{ __('Average Price') }}</th>
+                            <th>{{ __('Sales Qt') }}</th>
+                            <th>{{ __('Av. Price') }}</th>
 
 
                         </tr>
@@ -259,7 +259,7 @@
                         @foreach ($sales_forecast['previous_year_seasonality'] as $key => $item)
                         <tr>
                             <th>{{$key+1}}</th>
-                            <th>{{$item['item']?? '-'}}</th>
+                            <th class="max-w-classes">{{$item['item']?? '-'}}</th>
                             <input type="hidden" name="previous_year_seasonality[{{$key}}][item]" value="{{($item['item']?? '-')}}">
                             <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
                             <input type="hidden" name="previous_year_seasonality[{{$key}}][Sales Value]" value="{{($item['Sales Value']??0)}}">
@@ -336,11 +336,11 @@
                         @slot('table_header')
                         <tr class="table-active text-center">
                             <th>#</th>
-                            <th>{{ __('Product Item')}}</th>
+                            <th class="max-w-classes">{{ __('Product Item')}}</th>
                             <th>{{ __('Sales Values') }}</th>
                             <th>{{ __('Sales %') }}</th>
-                            <th>{{ __('Sales Quantity') }}</th>
-                            <th>{{ __('Average Price') }}</th>
+                            <th>{{ __('Sales Qt') }}</th>
+                            <th>{{ __('Av. Price') }}</th>
 
 
                         </tr>
@@ -350,7 +350,7 @@
                         @foreach ($sales_forecast['last_3_years_seasonality'] as $key => $item)
                         <tr>
                             <th>{{$key+1}}</th>
-                            <th>{{$item['item']?? '-'}}</th>
+                            <th class="max-w-classes">{{$item['item']?? '-'}}</th>
                             <input type="hidden" name="last_3_years_seasonality[{{$key}}][item]" value="{{($item['item']?? '-')}}">
                             <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
                             <input type="hidden" name="last_3_years_seasonality[{{$key}}][Sales Value]" value="{{($item['Sales Value']??0)}}">

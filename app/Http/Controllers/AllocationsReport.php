@@ -38,6 +38,7 @@ class AllocationsReport
 		$allocations_setting = AllocationSetting::company()->first();
 		$sales_targets = [];
 		if ($request->isMethod('POST')) {
+			
 			$allocation_type = $request->get('allocation_base');
 			if (!$allocation_type) {
 				return redirect()->back();
@@ -48,7 +49,7 @@ class AllocationsReport
 				return redirect()->back()->with('fail', failAllocationMessage($allocation_type));
 			}
 
-
+			
 			$request->validate([
 				'allocation_base' => 'required',
 				'breakdown' => 'sometimes|required',
@@ -91,18 +92,18 @@ class AllocationsReport
 
 	public function NewProductsAllocationBase(Request $request, Company $company)
 	{
-
-
 		$sales_forecast = SalesForecast::company()->first();
 		$allocations_setting = AllocationSetting::company()->first();
 		$allocation_base = $allocations_setting->allocation_base;
 		$hasNewProductsItems  = getNumberOfProductsItems($company->id);
-		if (($request->isMethod('POST')
-			|| (!$allocations_setting->add_new_items)
+		
+		if (($request->isMethod('POST')|| (!$allocations_setting->add_new_items) 
 			// || (! $hasNewProductsItems 
 			// && ! $allocations_setting->number_of_items
 			// )
-		)) {
+		) && !$hasNewProductsItems) {
+	// dd((array)$request->allocation_base_data);
+			// dd((array)$request->allocation_base_data);
 			foreach ((array)$request->allocation_base_data as $product => $data) {
 				$total = array_sum($this->finalTotal($data));
 
@@ -117,7 +118,6 @@ class AllocationsReport
 				'percentages_total.required' => 'Total Percentages Must be 100%'
 			]);
 			$allocation_base_data = $request->allocation_base_data;
-
 			Cache::forever(getCacheKeyForFirstAllocationReport($company->id), ['allocation_base_data' => $allocation_base_data, 'new_allocation_base_items' => $request->new_allocation_base_items]);
 			foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
 				foreach ($item_data as $base => $value) {
@@ -129,7 +129,8 @@ class AllocationsReport
 					}
 				}
 			}
-
+			#TODO:create now 
+			// dd($allocation_base,$allocation_base_data);
 			NewProductAllocationBase::updateOrCreate(
 				['company_id' => $company->id],
 				[
@@ -151,7 +152,7 @@ class AllocationsReport
 			->get()
 			->pluck($allocation_base)
 			->toArray();
-		$allocation_bases_items = array_fill_keys($allocation_bases_items, 'existing');
+			$allocation_bases_items = array_fill_keys($allocation_bases_items, 'existing');
 		if ($allocations_setting->add_new_items == 1) {
 			for ($item = 0; $item < $allocations_setting->number_of_items; $item++) {
 				$allocation_bases_items['new_item_' . $item] = 'new';
@@ -196,6 +197,7 @@ class AllocationsReport
 		}
 		$existing_allocations_base = ExistingProductAllocationBase::company()->first();
 		$allocations_base_row = NewProductAllocationBase::company()->first();
+		
 		$sales_forecast = SalesForecast::company()->first();
 		$product_seasonality = ProductSeasonality::company()->get();
 
@@ -204,7 +206,9 @@ class AllocationsReport
 		// Fetching Data of base elements associated with their percentages from all products
 		$sales_targets_values = [];
 		// $percentages = [];
+		// dd($allocations_base_row);
 		$allocations = $allocations_base_row->allocation_base_data ?? [];
+		// dd('all',$allocations);
 		foreach ($allocations as $product_item_name => $item_data) {
 			$product = $product_seasonality->where('name', $product_item_name)->first();
 			$sales_target_value = ($product->sales_target_value ?? 0);

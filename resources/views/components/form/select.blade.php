@@ -28,7 +28,9 @@ $isSelect2 = false ;
 $basicClasses = $isSelect2 ? "form-control mb-1 select select2-select" :"form-control mb-1 select ";
 @endphp
 
-<select @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}">
+<select
+
+ @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}">
     @if($all)
     <option value="">{{ __('All') }}</option>
     @endif

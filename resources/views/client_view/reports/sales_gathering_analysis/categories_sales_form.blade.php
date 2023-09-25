@@ -4,7 +4,7 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('sub-header')
-    {{__('Sales Channel Sales Analysis')}}
+    {{__('Categories Sales Analysis')}}
 @endsection
 @section('content')
 <div class="row">
@@ -43,7 +43,7 @@
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="start_date"  required class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="start_date" value="{{ getEndYearBasedOnDataUploaded($company)['jan'] }}"  required class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                             <label>{{__('End Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date" required value="{{date('Y-m-d')}}"  max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
+                                    <input type="date" name="end_date" required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}"  max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
                                 </div>
                             </div>
                         </div>

@@ -22,6 +22,7 @@ class RoutesDefinition
                     'sub_items' => [
                         'SalesChannels' => 'salesChannels',
                         'Customers' => 'customers',
+                        'Countries' => 'countries',
                         'Categories' => 'categories',
                         'Products' => 'products',
                         'Principles' => 'principles',
@@ -50,6 +51,7 @@ class RoutesDefinition
                     'sub_items' => [
                         'Zones' => 'zones',
                         'Customers' => 'customers',
+                        'Countries' => 'countries',
                         'Categories' => 'categories',
                         'Products' => 'products',
                         'Principles' => 'principles',
@@ -78,6 +80,7 @@ class RoutesDefinition
                     'sub_items' => [
                         'Zones' => 'zones',
                         'Customers' => 'customers',
+                        'Countries' => 'countries',
                         'SalesChannels' => 'salesChannels',
                         'Products' => 'products',
                         'ProductsItems' => 'Items',
@@ -97,6 +100,8 @@ class RoutesDefinition
                     'name' =>  'products',
                     'class_path' => 'Analysis\SalesGathering\ProductsAgainstAnalysisReport',
                     'against_view'  => 'index',
+					'analysis_view'=>'ProductsSalesAnalysisIndex',
+					'analysis_result'=>'ProductsSalesAnalysisResult',
                     'against_result'  => 'result',
                     'discount_result'  => 'resultForSalesDiscount',
                     'sub_items' => [
@@ -108,6 +113,8 @@ class RoutesDefinition
                         'BusinessSectors' => 'businessSectors',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
+                        'Countries' => 'countries',
+						
                     ],
                     'avg_items' => [
                         'ProductsItems' => 'Items',
@@ -132,6 +139,8 @@ class RoutesDefinition
                         'BusinessSectors' => 'businessSectors',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
+                        'Countries' => 'countries',
+						
                         
                     ],
                     'has_discount' => true,
@@ -157,6 +166,8 @@ class RoutesDefinition
                         'SalesPersons' => 'salesPersons',
                         'BusinessSectors' => 'businessSectors',
                         'SalesDiscount' => 'salesDiscount',
+                        'Countries' => 'countries',
+						
                     ],
                       'avg_items' => [
                         'Products' => 'products',
@@ -185,6 +196,8 @@ class RoutesDefinition
                         'SalesPersons' => 'salesPersons',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
+                        'Countries' => 'countries',
+						
                     ],
                     'avg_items' => [
                         'Products' => 'products',
@@ -198,6 +211,7 @@ class RoutesDefinition
                     'name' =>  'salesPersons',
                     'class_path' => 'Analysis\SalesGathering\SalesPersonsAgainstAnalysisReport',
                     'against_view'  => 'index',
+					'analysis_view'=>true,
                     'against_result'  => 'result',
                     'discount_result'  => 'resultForSalesDiscount',
                     'sub_items' => [
@@ -210,6 +224,8 @@ class RoutesDefinition
                         'BusinessSectors' => 'businessSectors',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
+                        'Countries' => 'countries',
+						
                     ],
                     'has_discount' => true,
                     'has_break_down' => true,

@@ -35,6 +35,11 @@
     .is-sub-row td.sub-text-bg {
         background-color: #0e96cd !important;
         color: white !important;
+		
+		
+		background-color:#E2EFFE !important;
+		color:black !important
+		
 
     }
 
@@ -247,7 +252,7 @@
 
             </div>
 
-            <x-submitting />
+            <x-run />
         </form>
     </div>
 </div>
@@ -388,18 +393,22 @@
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ asset('custom/axios.js') }}"></script>
+	@if($canRefreshDates)
     <script>
         $(function() {
             const incomeStatementElement = document.querySelector('#income_statement_first_id');
             incomeStatementElement.addEventListener('change', function(e) {
                 e.preventDefault();
+	
                 const income_statement_id = e.target.value
                 const startDateInput = document.querySelector('#start_date_one_input_id')
                 const endDateInput = document.querySelector('#end_date_one_input_id')
-                if (income_statement_id) {
+                if (income_statement_id ) {
                     startDateInput.setAttribute('disabled', true)
                     endDateInput.setAttribute('disabled', true)
+						$('.save-form').attr('disabled',true)
+					
                     axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
                         params: {
                             company_id: '{{ getCurrentCompanyId() }}'
@@ -409,12 +418,14 @@
                         if (res.data && res.data.status) {
                             startDateInput.value = res.data.dates.start_date
                             endDateInput.value = res.data.dates.end_date
+						
                         }
                     }).catch(err => {
                         console.log(err)
                     }).finally(ee => {
                         startDateInput.removeAttribute('disabled')
                         endDateInput.removeAttribute('disabled')
+							$('.save-form').attr('disabled',false)
                     })
                 }
             })
@@ -429,6 +440,7 @@
                 if (income_statement_id) {
                     startDateInput.setAttribute('disabled', true)
                     endDateInput.setAttribute('disabled', true)
+						$('.save-form').attr('disabled',true)
                     axios.get('/getStartDateAndEndDateOfIncomeStatementForCompany', {
                         params: {
                             company_id: '{{ getCurrentCompanyId() }}'
@@ -444,12 +456,13 @@
                     }).finally(ee => {
                         startDateInput.removeAttribute('disabled')
                         endDateInput.removeAttribute('disabled')
+							$('.save-form').attr('disabled',false)
                     })
                 }
             })
             incomeStatementSecondElement.dispatchEvent(new Event('change'))
 
         })
-
     </script>
+	@endif 
     @endsection
