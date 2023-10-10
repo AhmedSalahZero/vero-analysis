@@ -89,14 +89,12 @@
                     ->first(); @endphp
                     @php
                     use Illuminate\Support\Facades\Cache;
-                    $canViewPleaseReviewMessage = ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id)) && ! (bool)Cache::get(getCanReloadUploadPageCachingForCompany($company->id));
+                    $canViewPleaseReviewMessage = !hasFailedRow($company->id)&&hasCachingCompany($company->id) && ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id)) && ! (bool)Cache::get(getCanReloadUploadPageCachingForCompany($company->id) );
                     @endphp
                     @if($canViewPleaseReviewMessage)
                     <h4 id="please-review-and-click-save" class="text-center alert alert-info " style="text-transform:capitalize;justify-content:center">{{ __('Please review And Click Save') }}</h4>
                     @endif
                     @if ($active_job)
-
-
                     <div class="kt-section__content uploading_div">
                         <label class="text-success text-xl-center"> <b> {{ __('Uploading') }}</b> <span class="required">*</span></label>
                         <div class="progress">
@@ -116,7 +114,7 @@
             @csrf
             @method('DELETE')
 
-            <x-table :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',$company)" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,'SalesGatheringTest'])">
+            <x-table :lastUploadFailedHref="hasFailedRow($company->id)?route('last.upload.failed',$company->id):'#'" :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',$company)" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,'SalesGatheringTest'])">
 
                 @slot('table_header')
 
@@ -196,9 +194,7 @@
                                 <span class="kt-option__head">
 
                                 </span>
-                                {{-- <span class="kt-option__body">
-                                            {{ __('This Section Will Be Added In The Client Side') }}
-                            </span> --}}
+                              
                             </span>
                         </label>
                     </td>
@@ -360,7 +356,14 @@
 
 </script>
 @endif
-
+@if(hasFailedRow($company->id))
+<script>
+Swal.fire({
+	title:"{{ __('Last Upload Failed ! .. Please Review Last Upload Failed Rows Below') }}",
+	icon:'error'
+})
+</script>
+@endif 
 <script>
     $('#select_all').change(function(e) {
         if ($(this).prop("checked")) {

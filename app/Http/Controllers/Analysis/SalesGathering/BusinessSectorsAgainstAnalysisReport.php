@@ -157,7 +157,7 @@ class BusinessSectorsAgainstAnalysisReport
                     $years = array_unique($years);
 
                     $report_data[$businessSectorName][$businessSector][$name_of_report_item] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data[$businessSectorName][$businessSector], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$businessSectorName][$businessSector], $years, $request->interval);
                     $report_data[$businessSectorName][$businessSector] = $interval_data['data_intervals'][$request->interval] ?? [];
 
                     $report_data[$businessSectorName]['Total']  = $this->finalTotal([($report_data[$businessSectorName]['Total']  ?? []) ,($report_data[$businessSectorName][$businessSector][$name_of_report_item]??[]) ]);
@@ -186,7 +186,7 @@ class BusinessSectorsAgainstAnalysisReport
                     $years = array_unique($years);
 
                     $report_data_quantity[$businessSectorName][$businessSector][$name_of_report_item] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data_quantity[$businessSectorName][$businessSector], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$businessSectorName][$businessSector], $years, $request->interval);
                     $report_data_quantity[$businessSectorName][$businessSector] = $interval_data['data_intervals'][$request->interval] ?? [];
 
                     $report_data_quantity[$businessSectorName]['Total']  = $this->finalTotal([($report_data_quantity[$businessSectorName]['Total']  ?? []) ,($report_data_quantity[$businessSectorName][$businessSector][$name_of_report_item]??[]) ]);
@@ -284,7 +284,7 @@ class BusinessSectorsAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
-         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        //  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
          $Items_names = $businessSectors_names ;
          $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'business_sector' );
 
@@ -371,7 +371,7 @@ class BusinessSectorsAgainstAnalysisReport
 
 
 
-                    $interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
                     $sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -379,7 +379,7 @@ class BusinessSectorsAgainstAnalysisReport
 
 
                     $final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-                    $interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
                     $final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -414,7 +414,7 @@ class BusinessSectorsAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
- $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+//  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $type_name = 'Business Sectors';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 
@@ -448,7 +448,7 @@ class BusinessSectorsAgainstAnalysisReport
             $years = array_unique($years);
             $report_data[$businessSector] = $businessSectors_data;
             $interval_data_per_item[$businessSector] = $businessSectors_data;
-            $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+            $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
             $report_data[$businessSector] = $interval_data['data_intervals'][$request->interval][$businessSector] ?? [];
             $growth_rate_data[$businessSector] = $this->growthRate($report_data[$businessSector]);
@@ -471,8 +471,12 @@ class BusinessSectorsAgainstAnalysisReport
         {
             return $report_data ;
         }
+		
+		$dates = array_keys($total_businessSectors ?? []); 
+		
+		
 
-        return view('client_view.reports.sales_gathering_analysis.businessSectors_sales_report',compact('company','businessSectors_names','total_businessSectors_growth_rates','final_report_data','total_businessSectors'));
+        return view('client_view.reports.sales_gathering_analysis.businessSectors_sales_report',compact('company','businessSectors_names','total_businessSectors_growth_rates','final_report_data','total_businessSectors','dates'));
 
     }
     public function growthRate($data)

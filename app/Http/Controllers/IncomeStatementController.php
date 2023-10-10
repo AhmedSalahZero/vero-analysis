@@ -43,7 +43,6 @@ class IncomeStatementController extends Controller
 	public function createReport(Company $company, IncomeStatement $incomeStatement)
 	{
 		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		
 		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars([
 			'financial_statement_able_id' => $incomeStatement->id,
 			'incomeStatement' => $incomeStatement,

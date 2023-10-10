@@ -472,10 +472,10 @@ class HomeController extends Controller
 
 		$cashingService = new CashingService($company);
 		$years = $cashingService->getIntervalYearsFormCompany();
-		if ($request->isMethod('GET') && $years['end_year']) {
-			$date   = date($years['end_year'] . '-12-31');
+		if ($request->isMethod('GET') && $years['full_end_date']) {
+			$date   = $years['full_end_date'];
 		} else {
-			$date = date('2021-12-31');
+			$date = $years['full_end_date'];
 		}
 
 		if ($request->isMethod('GET')) {

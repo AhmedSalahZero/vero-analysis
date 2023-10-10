@@ -143,19 +143,19 @@ class SummaryController extends Controller
         $second_allocation_total_sales_targets = [];
         if (isset($second_allocation_setting_base)) {
             $second_allocation_total_sales_targets = (new SecondAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
-            // dd($second_allocation_total_sales_targets);
+			// dd($second_allocation_total_sales_targets);
             $base = $second_allocation_setting_base->allocation_base;
             arsort($second_allocation_total_sales_targets);
-            // dd($second_allocation_total_sales_targets);
-            // dd($second_allocation_total_sales_targets);
             $name = $base.'_sales_targets';
             $reports_data[$name] = $this->breakdownData($second_allocation_total_sales_targets);
-            
+            // dd($reports_data);
             $types[$name] = 'danger';
             
             $top_data[$name] = $reports_data[$name][0] ?? '-';
         
         }
+		
+		// dd('report_data',$reports_data);
         // dd($reports_data);
         return view('client_view.forecast_summary_reports.breakdown_dashboard', compact(
                 'company',
@@ -167,20 +167,13 @@ class SummaryController extends Controller
 
     public function breakdownData($data)
     {
-        //  if($x != 6)
-        // {
-        // dd($data);
-            
-        // }
-    //  (sort($data));
-    //  dd($data);
         $result = collect($data)->flatMap(function($values,$name){
+
             return [[
                 "item" => $name ,
                 "Sales Value" => array_sum($values),
             ]];
         })->toArray();
-        
        
         return $result;
     }

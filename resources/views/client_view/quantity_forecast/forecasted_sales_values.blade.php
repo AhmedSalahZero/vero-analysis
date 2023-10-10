@@ -94,7 +94,7 @@
                                     @foreach ($forecasted_sales_date as $key => $item)
                                     <tr>
                                         <th>{{$key+1}}</th>
-                                        <th>{{$item['item']?? '-'}}</th>
+                                        <th class="max-w-classes">{{$item['item']?? '-'}}</th>
                                         <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
                                             <input type="hidden" class="sales_value"  value="{{($item['Sales Value']??0)}}">
                                         <td class="text-center">{{number_format($item['Sales %']??0,2)}} %</td>
@@ -171,7 +171,7 @@
                                     <tr class="table-active text-center">
                                         <th>#</th>
                                         <th>{{ __('Product Item')}}</th>
-                                        <th>{{ __('Sales Values') }}</th>
+                                        <th class="max-w-class">{{ __('Sales Values') }}</th>
                                         <th>{{ __('Sales %') }}</th>
                                         <th>{{ __('Sales Quantity') }}</th>
                                         <th>{{ __('Average Price') }}</th>
@@ -188,7 +188,7 @@
                                     @foreach ($forecasted_sales_date as $key => $item)
                                     <tr>
                                         <th>{{$key+1}}</th>
-                                        <th>{{$item['item']?? '-'}}</th>
+                                        <th class="max-w-classes">{{$item['item']?? '-'}}</th>
                                         <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
                                         <td class="text-center">{{number_format($item['Sales %']??0,2)}} %</td>
                                         <td class="text-center">{{number_format($item['Sales Quantity']??0)}}</td>

@@ -38,6 +38,8 @@
     <div class="kt-portlet__body  kt-portlet__body--fit">
         <div class="row row-no-padding row-col-separator-xl">
             {{-- Quarters --}}
+			{{-- {{ dd(Request()->route()->getName()) }} --}}
+			{{-- {{ dd($quarters) }} --}}
             @foreach ($quarters as $quarter_name => $quarter)
             <div class="col-md-{{ $quarter_name == 'Total' ? '4' : '2' }} col-lg-{{ $quarter_name == 'Total' ? '4' : '2' }} col-xl-{{ $quarter_name == 'Total' ? '4' : '2' }}">
 
@@ -51,6 +53,7 @@
 
                         </div>
                     </div>
+					{{-- {{ dd($quarter) }} --}}
                     <div class="kt-widget24__details">
                         <span class="kt-widget24__stats kt-font-{{ $quarter['color_class'] }}">
                             {{ number_format($quarter['value'] ?? 0) }}
@@ -135,6 +138,7 @@
                     </div>
                     <div class="kt-widget24__details">
                         <span class="kt-widget24__stats kt-font-info">
+						{{-- {{ dd($existing_products_targets_data) }} --}}
                             {{ number_format($existing_products_targets_data['value'] ?? 0) .' [ ' .number_format($existing_products_targets_data['percentage'] ?? 2) .' % ]' }}
                         </span>
                     </div>

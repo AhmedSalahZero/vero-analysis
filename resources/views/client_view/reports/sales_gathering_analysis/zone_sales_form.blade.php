@@ -20,26 +20,7 @@
 
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-4">
-                            <label>{{__('Select Zones')}} 
-                            
-                            
-                            @include('max-option-span')
-
-
-                            
-                            </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select data-max-options="{{ maxOptionsForOneSelector() }}" data-live-search="true" data-actions-box="true" name="zones[]"   class="form-control  select2-select form-select kt-bootstrap-select kt_bootstrap_select" required  multiple>
-                                        {{-- <option value="{{json_encode($zones)}}">{{__('All Zones')}}</option> --}}
-                                        @foreach ($zones as $zone)
-                                            <option value="{{$zone}}"> {{__($zone)}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                       
                         <div class="col-md-2">
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
@@ -56,6 +37,29 @@
                                 </div>
                             </div>
                         </div>
+						
+						
+						 <div class="col-md-4">
+                            <label>{{__('Select Zones')}} 
+                            
+                            
+                            @include('max-option-span')
+
+
+                            
+                            </label>
+                            <div class="kt-input-icon">
+                                <div id="append-main-select" class="input-group date">
+                                    <select data-max-options="{{ maxOptionsForOneSelector() }}" data-live-search="true" data-actions-box="true" name="zones[]"   class="form-control  select2-select form-select kt-bootstrap-select kt_bootstrap_select" required  multiple>
+                                        {{-- <option value="{{json_encode($zones)}}">{{__('All Zones')}}</option> --}}
+                                        @foreach ($zones as $zone)
+                                            <option value="{{$zone}}"> {{__($zone)}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						
                         <div class="col-md-2">
                             <label>{{__('Select Interval')}} </label>
                             <div class="kt-input-icon">
@@ -112,5 +116,61 @@
 
     {{-- <script src="{{url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')}}" type="text/javascript"></script> --}}
 
+<script>
+    $(document).on('change', '[name="start_date"],[name="end_date"]', function() {
+
+        clearTimeout(wto);
+        wto = setTimeout(() => {
+            var branches = ['all'];
+            var type_of_data = "zone";
+            var getColumnName = 'zone';
+            var appendToSelector = '#append-main-select';
+            getAnotherSelectValues(branches, type_of_data, getColumnName, appendToSelector);
+        }, getNumberOfMillSeconds())
+
+
+
+    })
+
+    $(function() {
+        $('[name="start_date"]').trigger('change');
+    })
+
+    function getAnotherSelectValues(branches, type_of_data, getColumnName, appendToSelector) {
+        if (branches.length) {
+            $.ajax({
+                type: 'POST'
+                , data: {
+                    'main_data': branches
+                    , 'main_field': getColumnName
+                    , 'field': type_of_data
+                    , 'start_date': $('input[name="start_date"]').val()
+                    , 'end_date': $('input[name="end_date"]').val()
+                }
+                , url: "{{ route('get.zones.data',$company) }}"
+                , dataType: 'json'
+                , accepts: 'application/json'
+
+            }).done(function(data) {
+                var data_type = 'multiple';
+
+                row = '<select data-live-search="true" data-actions-box="true" name="zones[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" required ' + data_type + '  >\n';
+
+
+                $.each(data, function(key, val) {
+                    row += '<option value*="' + val + '">' + val + '</option>\n';
+
+                });
+                row += '</select>';
+
+                $(appendToSelector).html('');
+                $(appendToSelector).append(row);
+                reinitializeSelect2();
+            });
+        }
+
+    }
+
+</script>
     <!--end::Page Scripts -->
 @endsection

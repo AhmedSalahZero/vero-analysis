@@ -75,8 +75,12 @@
                     @slot('table_header')
                     <tr class="table-active">
                         <th>{{ __('Zone') }}</th>
-                        @foreach ($total_zones as $date => $total)
+                        @foreach ($dates as $date )
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
+						   @if($loop->last)
+                        <th>{{ __("Total") }}</th>
+
+                        @endif
                         @endforeach
                     </tr>
                     @endslot
@@ -85,15 +89,17 @@
                     <?php $chart_data = []; ?>
 
                     <tr class="group-color  text-lg-left  ">
-                        <td colspan="{{ count($total_zones) + 1 }}"><b class="white-text">{{ __($zone_name) }}</b>
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($zone_name) }}</b>
                         </td>
-                        @foreach ($total_zones as $date => $total)
+                        @foreach ($dates as $date )
                         <td class="hidden"> </td>
                         @endforeach
+                        <td class="hidden"> </td>
+						
                     </tr>
                     <tr>
                         <th>{{ __('Sales Values') }}</th>
-                        @foreach ($total_zones as $date => $total)
+                        @foreach ($dates as $date )
                         <?php
                                         $chart_data[] = [
                                             'date' => date('d-M-Y', strtotime($date)),
@@ -102,22 +108,50 @@
                                         ]; ?>
                         <td class="text-center">
                             {{ number_format($zoone_data['Sales Values'][$date] ?? 0) }}</td>
+							
+							 @if($loop->last)
+                        <td class="text-center">
+                            @php $totalForZone[$zone_name] = ($totalForSingleZone = array_sum($zoone_data['Sales Values']) ?? 0) @endphp
+                            {{ number_format($totalForSingleZone) }}
+                        </td>
+                        @endif
 
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Growth Rate %') }}</th>
-                        @foreach ($total_zones as $date => $total)
+                        @foreach ($dates as $date)
                         <td class="text-center">
                             {{ number_format($zoone_data['Growth Rate %'][$date] ?? 0, 2) . ' %' }}</td>
-                        @endforeach
+                          @if($loop->last)
+                        <td class="text-center">
+                        </td>
+
+                        @endif
+						@endforeach
+						
                     </tr>
                     <input type="hidden" id="{{ str_replace(' ', '_', $zone_name) }}_data" data-total="{{ json_encode($chart_data) }}">
                     @endforeach
+					
+                    <?php $sumOfTotalsOfZoneSales = 0 ?>
+					
                     <tr>
                         <th class="active-style text-center">{{ __('TOTAL') }}</th>
-                        @foreach ($total_zones as $date => $total)
-                        <td class="text-center active-style">{{ number_format($total ?? 0) }}</td>
+                        @foreach ($dates as $date )
+						@php
+							$currentTotal = $total_zones[$date] ?? 0 ;
+							
+						@endphp
+                        <td class="text-center active-style">{{ number_format($currentTotal ?? 0) }}</td>
+						  <?php $sumOfTotalsOfZoneSales += ($total_zones[$date] ?? 0) ?>
+
+                        @if($loop->last)
+                        <td class="text-center active-style">
+                            {{ number_format($sumOfTotalsOfZoneSales ?? 0) }}
+                        </td>
+
+                        @endif
                         @endforeach
                     </tr>
 
@@ -132,6 +166,13 @@
                                         'Sales GR %' => number_format($total ?? 0, 2),
                                     ]; ?>
                         <td class="text-center active-style">{{ number_format($total ?? 0, 2) . ' %' }}</td>
+						
+						 @if($loop->last)
+                        <td class="text-center active-style">
+                        </td>
+
+                        @endif
+						
                         @endforeach
                     </tr>
 
@@ -146,8 +187,13 @@
                         <th>{{ __('Zone') }}</th>
 
 
-                        @foreach ($total_zones as $date => $total)
+                        @foreach ($dates as $date )
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
+						
+                        @if($loop->last)
+                        <th>{{ __("Total") }}</th>
+
+                        @endif
                         @endforeach
                     </tr>
                     @endslot
@@ -155,22 +201,35 @@
                     <?php $chart_data = []; ?>
                     @foreach ($final_report_data as $zone_name => $zoone_data)
                     <tr class="group-color  text-lg-left  ">
-                        <td colspan="{{ count($total_zones) + 1 }}"><b class="white-text">{{ __($zone_name) }}</b></td>
-                        @foreach ($total_zones as $date => $total)
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($zone_name) }}</b></td>
+                        @foreach ($dates as $date )
                         <td class="hidden"> </td>
+						 @if($loop->last)
+                        <td class="hidden"> </td>
+                        @endif
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Percent %') }}</th>
-                        @foreach ($total_zones as $date => $total)
+                        @foreach ($dates as $date )
+						
                         <?php
-                                        $percentage = $total == 0 ? 0 : number_format(((($zoone_data['Sales Values'][$date] ?? 0) / ($total ?? 0)*100)), 2);
+						$currentTotal = $total_zones[$date] ?? 0 ;
+						
+                                        $percentage = $currentTotal == 0 ? 0 : number_format(((($zoone_data['Sales Values'][$date] ?? 0) / ($currentTotal ?? 0)*100)), 2);
                                         $chart_data[$date][$zone_name] = [$zone_name . ' %' => $percentage, ];
                                         ?>
 
                         <td class="text-center">
                             {{ $percentage . ' %' }}
                         </td>
+						
+						@if($loop->last)
+                        <td class="text-center">
+                            {{ $sumOfTotalsOfZoneSales ? number_format((($totalForZone[$zone_name] / $sumOfTotalsOfZoneSales) * 100  ) , 2) . ' %': 0   }}
+                        </td>
+                        @endif
+						
                         @endforeach
                     </tr>
 

@@ -22,6 +22,7 @@ use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
@@ -37,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
 	 *
 	 * @return void
 	 */
+	
+	 
 	public function register()
 	{
 		if ($this->app->isLocal()) {
@@ -44,10 +47,14 @@ class AppServiceProvider extends ServiceProvider
 		}
 		// 
 	}
-
-
+	
+	
 	public function boot()
 	{
+		// $date = '24/01/2023';
+		// dd(Carbon::make($date));
+		// dd(Cache::get(generateCacheKeyForValidationRow(48)));
+		
 		require_once storage_path('dompdf/vendor/autoload.php');
 		
 		// $company = Company::find(44);

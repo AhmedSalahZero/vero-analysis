@@ -21,6 +21,13 @@
             position: sticky;
             top: 0;
         }
+		table.dataTable tbody tr>.dtfc-fixed-right,
+    table.dataTable tbody tr>.dtfc-fixed-left {
+        right: 0 !important;
+        background-color: #086691 !important;
+        color: white;
+    }
+	
 
     </style>
 @endsection
@@ -34,7 +41,7 @@
             <div class="kt-portlet">
                 <div class="kt-portlet__body ">
 
-                    <x-table :tableTitle="__($allocation_base.' Against New Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+                    <x-table :tableTitle="__($allocation_base.' Against New Product Items Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                         @slot('table_header')
                             <tr class="table-active text-center">
                                 <th>{{ __($allocation_base .' / Months') }}</th>
@@ -88,7 +95,7 @@
 
         <div class="kt-portlet">
             <div class="kt-portlet__body ">
-                <x-table :tableTitle="__($allocation_base.' Against Existing Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+                <x-table :tableTitle="__($allocation_base.' Against Existing Product Items Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                     @slot('table_header')
                         <tr class="table-active text-center">
                             <th>{{ __($allocation_base .' / Months') }}</th>

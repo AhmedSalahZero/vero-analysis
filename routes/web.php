@@ -198,6 +198,9 @@ Route::middleware([])->group(function () {
 
 				// excel for financial statement 
 				Route::get('download-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'downloadExcelTemplateForActual'])->name('admin.export.excel.template');
+				// Route::get('download-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'showLastUploadFailed'])->name('last.upload.failed');
+				Route::any('salesGatheringImport/last-upload-failed', 'SalesGatheringTestController@lastUploadFailed')->name('last.upload.failed');
+				
 				Route::post('import-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'importExcelTemplateForActual'])->name('admin.import.excel.template');
 				Route::get('update-financial-statement-date', [FinancialStatementController::class, 'updateDate'])->name('admin.update.financial.statement.date');
 				Route::delete('update-financial-statement-duration-type', [FinancialStatementController::class, 'updateDurationType'])->name('admin.update.financial.statement.duration.type');

@@ -72,8 +72,12 @@
                     @slot('table_header')
                     <tr class="table-active">
                         <th>{{ __('Country') }}</th>
-                        @foreach ($total_countries as $date => $total)
+                        @foreach ($dates as $date )
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
+						  @if($loop->last)
+                        <th>{{ __("Total") }}</th>
+
+                        @endif
                         @endforeach
                     </tr>
                     @endslot
@@ -82,15 +86,17 @@
                     <?php $chart_data = []; ?>
 
                     <tr class="group-color  text-lg-left  ">
-                        <td colspan="{{ count($total_countries) + 1 }}"><b class="white-text">{{ __($zone_name) }}</b>
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($zone_name) }}</b>
                         </td>
-                        @foreach ($total_countries as $date => $total)
+                        @foreach ($dates as $date )
                         <td class="hidden"> </td>
                         @endforeach
+                        <td class="hidden"> </td>
+						
                     </tr>
                     <tr>
                         <th>{{ __('Sales Values') }}</th>
-                        @foreach ($total_countries as $date => $total)
+                        @foreach ($dates as $date )
                         <?php
                                         $chart_data[] = [
                                             'date' => date('d-M-Y', strtotime($date)),
@@ -99,36 +105,72 @@
                                         ]; ?>
                         <td class="text-center">
                             {{ number_format($zoone_data['Sales Values'][$date] ?? 0) }}</td>
-
+							
+							  @if($loop->last)
+                        <td class="text-center">
+                            @php $totalForCountry[$zone_name] = ($totalForSingleCountry = array_sum($zoone_data['Sales Values']) ?? 0) @endphp
+                            {{ number_format($totalForSingleCountry) }}
+                        </td>
+                        @endif
+						
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Growth Rate %') }}</th>
-                        @foreach ($total_countries as $date => $total)
+                        @foreach ($dates as $date )
                         <td class="text-center">
                             {{ number_format($zoone_data['Growth Rate %'][$date] ?? 0, 2) . ' %' }}</td>
+							
+							   @if($loop->last)
+                        <td class="text-center">
+                        </td>
+
+                        @endif
                         @endforeach
                     </tr>
                     <input type="hidden" id="{{ str_replace(' ', '_', $zone_name) }}_data" data-total="{{ json_encode($chart_data) }}">
                     @endforeach
+                   
+				   <?php $sumOfTotalsOfCountrySales = 0 ?>
+
                     <tr>
                         <th class="active-style text-center">{{ __('TOTAL') }}</th>
-                        @foreach ($total_countries as $date => $total)
-                        <td class="text-center active-style">{{ number_format($total ?? 0) }}</td>
+                        @foreach ($dates as $date )
+                        <td class="text-center active-style">{{ number_format($total_countries[$date] ?? 0) }}</td>
+                        <?php $sumOfTotalsOfCountrySales += ($total_countries[$date] ?? 0) ?>
+
+                        @if($loop->last)
+                        <td class="text-center active-style">
+                            {{ number_format($sumOfTotalsOfCountrySales ?? 0) }}
+                        </td>
+
+                        @endif
                         @endforeach
                     </tr>
+					
 
                     <tr>
                         <th class="active-style text-center">{{ __('GROWTH RATE %') }}</th>
                         <?php $chart_data = []; ?>
-                        @foreach ($total_countries_growth_rates as $date => $total)
+                        @foreach ($dates as $date )
+						@php
+							$currentTotalGrowthRate = $total_countries_growth_rates[$date] ?? 0 ;
+							
+						@endphp
                         <?php
                                     $chart_data[] = [
                                         'date' => date('d-M-Y', strtotime($date)),
                                         'Total Sales Values' => number_format($total_countries[$date] ?? 0),
-                                        'Sales GR %' => number_format($total ?? 0, 2),
+                                        'Sales GR %' => number_format($currentTotalGrowthRate ?? 0, 2),
                                     ]; ?>
-                        <td class="text-center active-style">{{ number_format($total ?? 0, 2) . ' %' }}</td>
+                        <td class="text-center active-style">{{ number_format($currentTotalGrowthRate ?? 0, 2) . ' %' }}</td>
+						
+						 @if($loop->last)
+                        <td class="text-center active-style">
+                        </td>
+
+                        @endif
+						
                         @endforeach
                     </tr>
 
@@ -143,8 +185,12 @@
                         <th>{{ __('Country') }}</th>
 
 
-                        @foreach ($total_countries as $date => $total)
+                        @foreach ($dates as $date)
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
+						  @if($loop->last)
+                        <th>{{ __("Total") }}</th>
+
+                        @endif
                         @endforeach
                     </tr>
                     @endslot
@@ -152,22 +198,34 @@
                     <?php $chart_data = []; ?>
                     @foreach ($final_report_data as $zone_name => $zoone_data)
                     <tr class="group-color  text-lg-left  ">
-                        <td colspan="{{ count($total_countries) + 1 }}"><b class="white-text">{{ __($zone_name) }}</b></td>
-                        @foreach ($total_countries as $date => $total)
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($zone_name) }}</b></td>
+                        @foreach ($dates as $date)
                         <td class="hidden"> </td>
+						 @if($loop->last)
+                        <td class="hidden"> </td>
+                        @endif
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Percent %') }}</th>
-                        @foreach ($total_countries as $date => $total)
+                        @foreach ($dates as $date => $total)
                         <?php
-                                        $percentage = $total == 0 ? 0 : number_format((($zoone_data['Sales Values'][$date] ?? 0) / ($total ?? 0)*100), 2);
+									$currentTotal = $total_countries[$date]??0;
+									
+                                        $percentage = $currentTotal == 0 ? 0 : number_format((($zoone_data['Sales Values'][$date] ?? 0) / ($currentTotal ?? 0)*100), 2);
                                         $chart_data[$date][$zone_name] = [$zone_name . ' %' => $percentage, ];
                                         ?>
 
                         <td class="text-center">
                             {{ $percentage . ' %' }}
                         </td>
+						
+						     @if($loop->last)
+                        <td class="text-center">
+                            {{ $sumOfTotalsOfCountrySales ? number_format((($totalForCountry[$zone_name] / $sumOfTotalsOfCountrySales) * 100  ) , 2) . ' %': 0   }}
+                        </td>
+                        @endif
+						
                         @endforeach
                     </tr>
 

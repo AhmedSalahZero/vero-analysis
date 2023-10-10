@@ -42,7 +42,18 @@ class UserController extends Controller
 			ImageSave::saveIfExist('company_avatar', $companySection);
 
 			$user->companies()->attach($companySection->id);
+			
+			
+			$user->assignRole('user');
 
+		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
+		$permissions = getPermissions();
+		foreach ($permissions as $permission) {
+			if($permission !='view sales forecast quantity base'){
+				$user->givePermissionTo($permission);
+			}
+		}
 			Auth::login($user, $remember = true);
 
 			return redirect()->route('home');

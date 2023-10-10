@@ -97,11 +97,11 @@ class AllocationsReport
 		$allocation_base = $allocations_setting->allocation_base;
 		$hasNewProductsItems  = getNumberOfProductsItems($company->id);
 		
-		if (($request->isMethod('POST')|| (!$allocations_setting->add_new_items) 
+		if (($request->isMethod('POST')|| (!$allocations_setting->add_new_items && !$hasNewProductsItems) 
 			// || (! $hasNewProductsItems 
 			// && ! $allocations_setting->number_of_items
 			// )
-		) && !$hasNewProductsItems) {
+		) ) {
 	// dd((array)$request->allocation_base_data);
 			// dd((array)$request->allocation_base_data);
 			foreach ((array)$request->allocation_base_data as $product => $data) {
@@ -433,6 +433,7 @@ class AllocationsReport
 				unset($existing_product_data['Total']);
 				return $existing_product_data;
 			}
+			// dd('first',$total_sales_targets);
 			return $total_sales_targets;
 		}
 	}

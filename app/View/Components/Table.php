@@ -21,9 +21,10 @@ class Table extends Component
     public $exportTableHref;
     public $tableClass;
     public $truncateHref;
+    public $lastUploadFailedHref;
 	
 
-    public function __construct($tableTitle=null,$href='#',$class=null,$importHref='#',$exportHref='#',$exportTableHref='#',$firstButtonName='New Record',$icon='plus',$tableClass='kt_table_1',$truncateHref='#')
+    public function __construct($tableTitle=null,$href='#',$class=null,$importHref='#',$exportHref='#',$exportTableHref='#',$firstButtonName='New Record',$icon='plus',$tableClass='kt_table_1',$truncateHref='#',$lastUploadFailedHref='#')
     {
         $this->tableTitle           = $tableTitle;
         $this->href                 = $href;
@@ -35,6 +36,7 @@ class Table extends Component
         $this->tableClass           = $tableClass;
         $this->exportTableHref      = $exportTableHref;
         $this->truncateHref             = $truncateHref;
+        $this->lastUploadFailedHref             = $lastUploadFailedHref;
     }
 
     /**

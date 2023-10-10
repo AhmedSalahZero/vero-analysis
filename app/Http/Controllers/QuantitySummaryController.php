@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
+use App\Models\Company;
 use App\Models\QuantityAllocationSetting;
 use App\Models\QuantityCollectionSetting;
-use App\Models\Company;
 use App\Models\QuantityExistingProductAllocationBase;
 use App\Models\QuantityModifiedTarget;
 use App\Models\QuantityNewProductAllocationBase;
@@ -17,21 +17,37 @@ use Illuminate\Support\Facades\Cache;
 
 class QuantitySummaryController extends Controller
 {
+	public function getTotalSalesTarget()
+	{
+		
+	}
     public function forecastReport(Request $request, Company $company)
     {
         // Forecast
         $sales_forecast = QuantitySalesForecast::company()->first();
         // Company Sales Target
-        $detailed_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'detailed_company_sales_target');
-
-
+		
+        $detailed_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company, $request,'detailed_company_sales_target');
+		// salah 
+		// dd($detailed_company_sales_target);
+		// $detailed_company_sales_target = $this->getTotalSalesTarget()
+// dd($detailed_company_sales_target);
         // Calculation of Total Company Sales Target In Quarters
+		// dd($detailed_company_sales_target['total']);
         $total = $total = array_sum($detailed_company_sales_target['total']);
-        $quarters = $this->companySalesTargetsQuarters($sales_forecast, $detailed_company_sales_target['total'], $total);
+		// dd($total);
+		// dd($sales_forecast ,$detailed_company_sales_target,$total );
+		// dd($detailed_company_sales_target['total']);
+        $quarters = $this->companySalesTargetsQuarters($detailed_company_sales_target['total']);
+		// dd($quarters);
+		
+		// dd($quarters);
+		// dd($quarters);
         //  Total Company Sales Target Data For Chart
         $chart_data = $this->totalCompanySalesTargetsChartData($detailed_company_sales_target['total'], $total);
-        $new_products_targets_data['value'] = array_sum($detailed_company_sales_target['new']);
-        $existing_products_targets_data['value'] = array_sum($detailed_company_sales_target['existing']);
+        $new_products_targets_data['value'] = array_sum($detailed_company_sales_target['totalNew']);
+		// dd($this->findTotal($detailed_company_sales_target['existing']));
+        $existing_products_targets_data['value'] = array_sum($detailed_company_sales_target['totalExisting']);
         $new_products_targets_data['percentage'] = $total == 0 ? 0 : (($new_products_targets_data['value'] / $total) * 100);
         $existing_products_targets_data['percentage'] = $total == 0 ? 0 : (($existing_products_targets_data['value'] / $total) * 100);
 
@@ -45,16 +61,31 @@ class QuantitySummaryController extends Controller
         ));
     }
 
-    public function companySalesTargetsQuarters($sales_forecast, $total_company_sales_target)
+    public function companySalesTargetsQuarters( $total_company_sales_target)
     {
         $quarters = [
-            'Quarter One' => 0,
-            'Quarter Two' => 0,
-            'Quarter Three' => 0,
-            'Quarter Four' => 0,
+            'Quarter One' => [
+				'value'=> 0 ,
+				'color_class'=>'warning'
+			],
+            'Quarter Two' => [
+				'value'=>0,
+				'color_class'=>'danger'
+			],
+            'Quarter Three' => [
+				'value'=>0,
+				'color_class'=>'success'
+			],
+            'Quarter Four' => [
+				'value'=>0,
+				'color_class'=>'dark'
+			],
         ];
+		
         $counter = 1;
         $total_quarter = 0;
+		// dd($total_company_sales_target);
+		// dd($total_company_sales_target);
         foreach ($total_company_sales_target as $date => $value) {
             $total_quarter += $value;
             if ($counter == 3) {

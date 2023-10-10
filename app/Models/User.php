@@ -87,9 +87,7 @@ class User extends Authenticatable implements HasMedia
 	
 		$canViewReport = false ;
 		$user = Auth()->user() ; 
-		// dd(reportNames(),$reportName);
 		$reports  = searchWordInstr(reportNames(),$reportName);
-		// dd($reports);
 		foreach($reports as $report){
 			$canViewReport = $user->can(generateReportName($report));
 			if(!$canViewReport){

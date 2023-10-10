@@ -17,6 +17,10 @@ class Log extends Model
 	{
 		$user = $user ?: Auth()->user();
 		$message = Log::generateLogMessage($type,$sectionName);
+		if(is_null(getCurrentCompanyId()) || !is_numeric(getCurrentCompanyId())){
+			return null;
+		}
+		
 		$lastRecordFromTheSameActivity = Log::where('company_id',getCurrentCompanyId())->where('activity',$message)->where('user_id',$user->id)->latest()->first();
 		$lastRecordForAllActivities = Log::where('company_id',getCurrentCompanyId())->where('user_id',$user->id)->latest()->first();
 		if(!$lastRecordForAllActivities || !$lastRecordFromTheSameActivity || ($lastRecordFromTheSameActivity->id != $lastRecordForAllActivities->id )){

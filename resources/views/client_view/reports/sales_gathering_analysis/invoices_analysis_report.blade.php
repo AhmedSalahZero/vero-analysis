@@ -27,14 +27,7 @@
 }
 
 
-th:first-of-type,
- td:first-of-type
-{
-	width:400px !important;
-	min-width:400px !important;
-	max-width:400px !important;
-	white-space:normal !important;
-}
+
     table {
         white-space: nowrap;
         table-layout: auto;
@@ -113,7 +106,7 @@ th:first-of-type,
                 <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
                     <tr class="table-active text-center">
-                        <th class="text-center absorbing-column">{{ __(spaceAfterCapitalLetters(camelize($type))) }}</th>
+                        <th class="text-center absorbing-column max-w-classes">{{ __(spaceAfterCapitalLetters(camelize($type))) }}</th>
                         @php
                         $colsSpans = arrayCountAllLongest($sumForEachInterval) + 1 ;
                         @endphp
@@ -139,7 +132,7 @@ th:first-of-type,
                     $totalCountInvoiceNumber = 0 ;
                     @endphp
                     <tr class="group-color ">
-                        <td colspan="{{ $colsSpans }}" class=" bg-white text-black" style="cursor: pointer;" onclick="toggleRow('{{ $idd }}')">
+                        <td colspan="{{ $colsSpans }}" class=" bg-white text-black max-w-classes" style="cursor: pointer;" onclick="toggleRow('{{ $idd }}')">
                             <i class="row_icon{{ $idd }} flaticon2-up text-black"></i>
                             <b>
                                 {{ __($zone_name) }}

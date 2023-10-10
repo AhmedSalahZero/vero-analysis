@@ -15,12 +15,20 @@
 
         }
 
+table.dataTable tbody tr>.dtfc-fixed-right,
+    table.dataTable tbody tr>.dtfc-fixed-left {
+        right: 0 !important;
+        background-color: #086691 !important;
+        color: white;
+    }
+	
     </style>
 @endsection
 @section('content')
     <form action="{{ route('second.existing.products.allocations.quantity', $company) }}" method="POST">
         @csrf
-@if(canShowNewItemsProducts($company->id))
+		{{-- {{ dd($total_monthly_targets) }} --}}
+@if(canShowNewItemsProducts($company->id) && count($total_monthly_targets['new']))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">

@@ -53,6 +53,7 @@ class SalesGatheringTestJob implements ShouldQueue
             $chunks = \array_chunk($cacheGroup ,1000);
             foreach($chunks as $chunk)
             {
+				$chunk = \replace_all_spacial_character_in_array_values($chunk);
                 DB::table('sales_gathering')->insert($chunk);
                 $key = getTotalUploadCacheKey($this->company_id , $cachingCompany->job_id) ;
                 $oldTotalUploaded = cache::get($key) ?:0 ;
@@ -65,36 +66,8 @@ class SalesGatheringTestJob implements ShouldQueue
         
     }
 
-    
-    // public function handle()
+    // public function failed( $event,  $exception): void
     // {
-    //     $invoices_data = DB::table('sales_gathering_tests')->where('company_id', $this->company_id)->orderBy('id')->get();
-    //     $invoices_data = ($invoices_data->chunk(1000));
-    //     foreach ($invoices_data as $invoices) {
-    //         foreach ($invoices as $invoice) {
-
-
-    //             $invoice = collect($invoice);
-    //             $invoice_to_be_inserted = $invoice->toArray();
-    //             unset($invoice_to_be_inserted['id']);
-
-    //             $validator = Validator::make($invoice_to_be_inserted, []);
-
-    //             if ($validator->fails()) {
-    //                 DB::table('sales_gathering_tests')
-    //                     ->where('id', $invoice['id'])
-    //                     ->update(['validation' => $validator->errors()->all()]);
-    //             } else {
-                
-    //                 unset($invoice_to_be_inserted["validation"]);
-                
-    //                 DB::table('sales_gathering')->insert($invoice_to_be_inserted);
-                
-    //                 DB::delete('delete from sales_gathering_tests where id = ?', [$invoice['id']]);
-                
-    //             }
-    //         }
-    //     }
-        
+	// 	logger([$event,$exception,Request()->segments()]);
     // }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @section('css')
-
+{{-- {{ dd($final_report_data) }} --}}
 {{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
 <style>
     table {
@@ -120,7 +120,7 @@
                     @slot('table_header')
                     <tr class="table-active">
                         <th>{{ __('Product') }}</th>
-                        @foreach ($total_branches as $date => $total)
+                        @foreach ($dates as $date )
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
                         @if($loop->last)
                         <th>{{ __("Total") }}</th>
@@ -143,16 +143,18 @@
 
                     <?php $chart_data = []; ?>
                     <tr class="group-color  text-lg-left  ">
-                        <td colspan="{{ count($total_branches) + 2 }}"><b class="white-text">
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">
                                 {{ __($zone_name) }}</b>
                         </td>
-                        @foreach ($total_branches as $date => $total)
+                        @foreach ($dates as $date )
+						
                         <td class="hidden"> </td>
-                        @endforeach
+						@endforeach
+                        <td class="hidden"> </td>
                     </tr>
                     <tr>
                         <th>{{ __('Sales Values') }}</th>
-                        @foreach ($total_branches as $date => $total)
+                        @foreach ($dates as $date )
                         <?php
                                         $chart_data[] = [
                                             'date' => date('d-M-Y', strtotime($date)),
@@ -174,7 +176,7 @@
                     </tr>
                     <tr>
                         <th>{{ __('Growth Rate %') }}</th>
-                        @foreach ($total_branches as $date => $total)
+                        @foreach ($dates as $date )
                         <td class="text-center">
                             {{ number_format($zoone_data['Growth Rate %'][$date] ?? 0, 2) . ' %' }}</td>
 
@@ -194,9 +196,12 @@
 
                     <tr>
                         <th class="active-style text-center">{{ __('TOTAL') }}</th>
-                        @foreach ($total_branches as $date => $total)
-                        <td class="text-center active-style">{{ number_format($total ?? 0) }}</td>
-                        <?php $sumOfTotalsOfBranchSales += $total ?>
+                        @foreach ($dates as $date )
+						@php
+							$currentTotal = $total_branches[$date] ?? 0 ; 
+						@endphp
+                        <td class="text-center active-style">{{ number_format($currentTotal ?? 0) }}</td>
+                        <?php $sumOfTotalsOfBranchSales += $currentTotal ?>
 
                         @if($loop->last)
                         <td class="text-center active-style">
@@ -211,14 +216,18 @@
                         <th class="active-style text-center">{{ __('GROWTH RATE %') }}</th>
                         <?php $chart_data = []; ?>
 
-                        @foreach ($total_branches_growth_rates as $date => $total)
+                        @foreach ($dates as $date )
+						@php
+							$currentGrowthTotal = $total_branches_growth_rates[$date] ?? 0 ;
+						@endphp
+						
                         <?php
                                     $chart_data[] = [
                                         'date' => date('d-M-Y', strtotime($date)),
                                         'Total Sales Values' => number_format($total_branches[$date] ?? 0),
-                                        'Sales GR %' => number_format($total ?? 0, 2),
+                                        'Sales GR %' => number_format($currentGrowthTotal ?? 0, 2),
                                     ]; ?>
-                        <td class="text-center active-style">{{ number_format($total ?? 0, 2) . ' %' }}</td>
+                        <td class="text-center active-style">{{ number_format($currentGrowthTotal ?? 0, 2) . ' %' }}</td>
 
 
 
@@ -244,7 +253,7 @@
                         <th>{{ __('Branch') }}</th>
 
 
-                        @foreach ($total_branches as $date => $total)
+                        @foreach ($dates as $date)
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
 
 
@@ -264,8 +273,8 @@
                     <?php $chart_data = []; ?>
                     @foreach ($final_report_data as $zone_name => $zoone_data)
                     <tr class="group-color  text-lg-left  ">
-                        <td colspan="{{ count($total_branches) + 2 }}"><b class="white-text">{{ __($zone_name) }}</b></td>
-                        @foreach ($total_branches as $date => $total)
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($zone_name) }}</b></td>
+                        @foreach ($dates as $date )
                         <td class="hidden"> </td>
                         @if($loop->last)
                         <td class="hidden"> </td>
@@ -274,9 +283,12 @@
                     </tr>
                     <tr>
                         <th>{{ __('Percent %') }}</th>
-                        @foreach ($total_branches as $date => $total)
+                        @foreach ($dates as $date )
+						@php
+							$currentTotal = $total_branches[$date] ??0;
+						@endphp
                         <?php
-                                        $percentage = $total == 0 ? 0 : number_format((($zoone_data['Sales Values'][$date] ?? 0) / ($total ?? 0)*100), 2);
+                                        $percentage = $currentTotal == 0 ? 0 : number_format((($zoone_data['Sales Values'][$date] ?? 0) / ($currentTotal ?? 0)*100), 2);
                                         $chart_data[$date][$zone_name] = [$zone_name . ' %' => $percentage, ];
                                         ?>
 
@@ -310,8 +322,11 @@
 
                     <tr>
                         <th class="active-style text-center">{{ __('TOTAL %') }}</th>
-                        @foreach ($total_branches as $date => $total)
-                        <td class="text-center active-style"> {{ $sumOfTotalsOfBranchSales && $total ? number_format(   ($total / $sumOfTotalsOfBranchSales)*100  ,  2) : 0 }} % </td>
+                        @foreach ($dates as $date )
+						@php
+							$currentTotal = $total_branches[$date] ?? 0 ;
+						@endphp
+                        <td class="text-center active-style"> {{ $sumOfTotalsOfBranchSales && $currentTotal ? number_format(   ($currentTotal / $sumOfTotalsOfBranchSales)*100  ,  2) : 0 }} % </td>
 
                         @if($loop->last)
                         <td class="text-center active-style">

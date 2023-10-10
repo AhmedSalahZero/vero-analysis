@@ -31,8 +31,19 @@
                                         let clonedField = $('input[name="start_date"]').closest('.row').clone(true);
 										
                                         $(clonedField).find('input').each(function(index , inputField){
+											if($(inputField).attr('type') == 'date'){
+												var currentValue = $(inputField).attr('value') ;
+												if(currentValue){
+													var year = currentValue.split('-')[0] - 1 ;
+													var month =currentValue.split('-')[1];
+													var day =currentValue.split('-')[2];
+													
+												$(inputField).attr('value', year + '-'+month+'-'+day);
+													
+												}
+												
+											}	
                                             $(inputField).attr('name',$(inputField).attr('name') + '_second'); 
-											
                                         })
 										  $(clonedField).find('label.first-interval').each(function(index , inputField){
                                             $(inputField).html("{{ __('Second Interval') }}"); 
@@ -51,6 +62,7 @@
 											
 											    	$('label.first-interval').closest('div.first-interval').removeClass('d-none').addClass('d-block')
                                         $('label.second-interval').closest('div.first-interval').removeClass('d-none').addClass('d-block')
+										$('input[type="date"]').trigger('change')
                                    
                                         }
                                     }

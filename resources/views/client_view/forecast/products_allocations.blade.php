@@ -119,7 +119,7 @@
 
 
 
-            <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination'">
+            <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                 @slot('table_header')
                 <tr class="table-active text-center">
                     <th>{{ __('Product '.$name.' Name') }}</th>

@@ -58,6 +58,35 @@ trait Intervals
         }
         return ['data_intervals' => $data_intervals, 'years_intervals_months' => $years_intervals_months, 'data_totals' => $data_totals, 'settings' => ['total' => $report_with_total, 'percentage' => $report_with_percentages, 'show_header_totals' => $show_header_totals]];
     }
+	
+	
+	public static function intervalsWithoutDouble(string $limitDate,$data, $years, $requested_interval , $levels = 'multi',$type_of_interval = 'intervals_summation', $report_with_total = true, $report_with_percentages = true, $show_header_totals = true)
+    {
+        $first_index = array_key_first($data);
+        $years_intervals_months['monthly'] =  (isset($data[$first_index]) && (count($data[$first_index]) > 0)) ? array_keys($data[$first_index]) : [];
+        $data_intervals['monthly'] = $levels == 'multi' ? $data : $data[$first_index];
+
+
+        $data_totals = [];
+
+        if (@count($data) > 0) {
+			
+            $years_intervals_months = self::intervalsDatesWithLimitMonths($years_intervals_months, $years ,$requested_interval,$limitDate);
+            foreach ($data as $key => $values) {
+                $intervalType = is_array($type_of_interval) ? $type_of_interval[$key] : 'intervals_summation';
+                // 3 - Intervals Summation
+                    foreach ($years_intervals_months as $interval => $monthes) {
+                        $data_intervals[$interval] = self::intervalsSummation($monthes, $values, $data_intervals, $interval, $key, $levels);
+						
+                        $data_intervals[$interval] = self::sortingData($levels, $data_intervals, $interval, $key);
+                        $levels == 'multi' ? $data_totals[$interval] = GeneralFunctions::finalTotal($data_intervals[$interval]) : '';
+                    }
+				
+            }
+        }
+        return ['data_intervals' => $data_intervals, 'years_intervals_months' => $years_intervals_months, 'data_totals' => $data_totals, 'settings' => ['total' => $report_with_total, 'percentage' => $report_with_percentages, 'show_header_totals' => $show_header_totals]];
+    }
+	
     public static function intervalsWithSubArrays($data, $years, $requested_interval,$levels = 'multi', $type_of_interval = 'intervals_summation', $report_with_total = true, $report_with_percentages = true, $show_header_totals = true)
     {
         $intervals = [];
@@ -191,6 +220,8 @@ trait Intervals
     
         return $data_intervals[$interval];
     }
+
+	
     // To Calculate The intervals Dates
     public static function intervalsDates($years_intervals_months, $years,$requested_interval='monthly')
     {
@@ -220,6 +251,56 @@ trait Intervals
             }
         return $years_intervals_months;
     }
+	
+	public static function intervalsDatesWithLimitMonths($years_intervals_months, $years,$requested_interval,string $limitDates)
+    {
+
+        // $years = (new DurationYears)->years($years['start_date'], 0, $years['duration'], 'years_only');
+
+        //Creating Tree Arrays For Each Interval
+        // $intervals_names = ['monthly'];
+
+        $intervals = [
+            'monthly'  => ['01-01', '01-02', '01-03', '01-04', '01-05', '01-06', '01-07', '01-08', '01-09', '01-10', '01-11', '01-12'],
+            'quarterly' => ['01-03', '01-06', '01-09', '01-12'],
+            'semi-annually' => ['01-06', '01-12'],
+            'annually'  => ['01-12']
+        ];
+		$limitMonth = explode('-',$limitDates)[1];
+		$limitYear = explode('-',$limitDates)[0];
+		$last_loop_intervals = [
+			'monthly'=>getMonthsLessThanOrEqual($limitMonth,$intervals['monthly']),
+			'quarterly'=>getMonthsForQuarterly($limitMonth,$intervals['quarterly']),
+			'semi-annually'=>getMonthsForSemiAnnually($limitMonth,$intervals['semi-annually']),
+			'annually'=>getMonthsForAnnually($limitMonth),
+		];
+		
+		
+		
+		
+		
+
+
+            $counter = 0;
+			$allIntervals = [];
+            foreach ($years as $year) {
+				if($year == $limitYear){
+					$allIntervals = $last_loop_intervals[$requested_interval] ?? $last_loop_intervals['annually'];
+				}
+				else{
+					$allIntervals = $intervals[$requested_interval] ?? $intervals['annually'];
+				}
+                foreach ($allIntervals as $interval_name => $month) {
+                    $new_month = $month . '-' . $year;
+                    $dt = Carbon::parse($new_month);
+                    $new_month = $dt->endOfMonth()->format('d-m-Y');
+                    $years_intervals_months[$requested_interval][$counter] = $new_month;
+                    $counter++;
+                }
+            }
+        return $years_intervals_months;
+    }
+	
     // Sorting
     public static function sortingData($levels, $data_intervals, $interval, $key)
     {

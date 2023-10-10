@@ -102,19 +102,20 @@ $user = auth()->user();
 
                     <div class="" style="width:100%;overflow:scroll">
 
-
                         <div id="m_repeater_{{ $index+4 }}" class="cash-and-banks-repeater">
                             <div class="form-group  m-form__group row  ">
                                 <div data-repeater-list="opening_{{ $namePrefix }}" class="col-lg-12">
-                                    @if(isset($receivables_and_payments) && $receivables_and_payments->count() )
+                                    @if(isset($receivables_and_payments) && ($namePrefix == 'receivable' && $hasReceivables || $namePrefix == 'payment' && $hasPayments) )
                                     @foreach($receivables_and_payments as $receivable_and_payment)
-									{{-- {{ dd($receivable_and_payment->getType() , $namePrefix) }} --}}
 									@if($receivable_and_payment->getType() == $namePrefix )
 										@include('admin.cash-flow-statement.cash-opening-balance.repeater' , [
 										'receivable_and_payment'=>$receivable_and_payment,
 										'namePrefix'=>$namePrefix
 										])
 									@endif 
+									@php
+										unset($receivable_and_payment);
+									@endphp
                                     @endforeach
                                     @else
                                     @include('admin.cash-flow-statement.cash-opening-balance.repeater' , [
@@ -200,6 +201,7 @@ $user = auth()->user();
 	//})
 </script>
 @endsection
+
 @push('js_end')
 
 <script>

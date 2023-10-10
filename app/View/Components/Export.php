@@ -19,8 +19,9 @@ class Export extends Component
     public $exportHref;
     public $exportTableHref;
     public $truncateHref;
+    public $lastUploadFailedHref;
 
-    public function __construct($href='#',$class=null,$importHref='#',$exportHref='#', $exportTableHref ='#',$firstButtonName='New Record',$icon='plus',$truncateHref='#')
+    public function __construct($href='#',$class=null,$importHref='#',$exportHref='#', $exportTableHref ='#',$firstButtonName='New Record',$icon='plus',$truncateHref='#',$lastUploadFailedHref='#')
     {
 
         $this->href                 = $href;
@@ -31,6 +32,7 @@ class Export extends Component
         $this->exportHref           = $exportHref;
         $this->exportTableHref      = $exportTableHref;
         $this->truncateHref         = $truncateHref;
+        $this->lastUploadFailedHref         = $lastUploadFailedHref ;
 
     }
 

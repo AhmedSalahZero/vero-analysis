@@ -47,6 +47,7 @@ $(document).on('change','.only-percentage-allowed-between-minus-plus-hundred',fu
 $(document).on('change','.only-percentage-allowed',function(e){
     if($(this).hasClass('only-percentage-allowed') && ! isPercentageNumber($(this).val()))
     {
+		console.log($(this).val())
         let lang = $('body').data('lang');
         title = "Oops..." ;
         message = "Please Enter Valid Percentage" ;

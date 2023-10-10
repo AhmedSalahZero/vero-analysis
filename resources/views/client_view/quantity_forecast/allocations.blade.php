@@ -19,13 +19,13 @@
         @csrf
 
         <div class="kt-portlet">
-            <div class="kt-portlet__head">
+            {{-- <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
                         {{ __('Sales Annual Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($sales_forecast->sales_target) }}
                     </h3>
                 </div>
-            </div>
+            </div> --}}
             <div class="kt-portlet__body">
                 <div class="row">
                     <div class="col-md-12">

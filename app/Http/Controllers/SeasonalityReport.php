@@ -54,6 +54,7 @@ class SeasonalityReport
 
             $request['start_date']  = ($sales_forecast->previous_year - 2) . '-01-01';
             $request['end_date']    = $sales_forecast->previous_year . '-12-31';
+			
             $products_data = collect(DB::select(DB::raw("
                         SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type ."
                         FROM sales_gathering

@@ -16,6 +16,7 @@
 @endsection
 @section('content')
     <form action="{{ route('products.seasonality.quantity', $company) }}" method="POST">
+	{{ dd('e') }}
         @csrf
         <div class="kt-portlet">
             <div class="kt-portlet__head">

@@ -19,7 +19,12 @@
 	padding:25px !important;
 }
 </style> --}}
-
+<style>
+thead th {
+	text-align:center !important;
+	
+}
+</style>
 <style>
 #add-row{
 	border-color:green;
@@ -50,12 +55,27 @@ tr td:first-of-type{
 	white-space:normal !important;
 }
 </style>
-	{{-- {{ dd() }} --}}
-@if(!in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index')
+@if(in_array('TwoDimensionalBreakdown',Request()->segments()))
+<style>
+.kt_table_with_no_pagination  td {
+		width:110px !important;
+	min-width:110px !important;
+	max-width:110px !important;
+	white-space:normal !important;
+}
+</style>
+
+@endif 
+
+@if(!in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index' && !in_array('ForecastedSalesValues',Request()->segments()))
 <style>
 
 .table-active th:first-of-type,
-.group-color td:first-of-type
+.group-color th:first-of-type,
+.group-color td:first-of-type,
+.kt_table_with_no_pagination th:first-of-type,
+.kt_table_with_no_pagination_no_fixed_right  th:first-of-type
+.kt_table_with_no_pagination_no_fixed_right  td:first-of-type
 {
 	width:350px !important;
 	min-width:350px !important;
@@ -169,6 +189,7 @@ tr td:first-of-type{
 
             $(document).find('select.select2-select').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
+			
                 $(this).selectpicker({
                     maxOptions: maxOption,
                     //   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
@@ -1115,8 +1136,17 @@ tr td:first-of-type{
 
 
 
-
     @if(isset($company) && $company->id)
+	{{-- {{ dd(cacheHas(generateCacheFailedName($company->id , auth()->user()->id ))) }} --}}
+	@if(cacheHas(generateCacheFailedName($company->id , auth()->user()->id )))
+	<script>
+	Swal.fire({
+		  title: "{{ __('Error While Importing Excel File') }}"
+                , text: "{{ CacheGetAndRemove(generateCacheFailedName($company->id , auth()->user()->id )) }}"
+                , icon: 'error'
+	});
+	</script>
+	@endif 
     <script>
         $(document).on('click', '.delete-record-btn', function(e) {
             e.preventDefault();

@@ -21,6 +21,12 @@
             position: sticky;
             top: 0;
         }
+.dtfc-fixed-left,
+.dtfc-fixed-right
+{
+	background-color:#086691 !important;
+	color:white !important;
+}
 
     </style>
 @endsection
@@ -116,7 +122,7 @@
 
 
 
-                <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination'">
+                <x-table :tableTitle="__('Existing Product '.$name.' Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                     @slot('table_header')
                         <tr class="table-active text-center">
                             <th>{{ __('Product '.$name.' Name') }}</th>
@@ -131,7 +137,7 @@
                         $totals_per_month = [];
 
                         ?>
-
+{{-- {{ dd($existing_products_targets) }} --}}
                         {{-- @dd() --}}
                         @foreach ($existing_products_targets as $item => $product_data)
                             <?php $total_existing_targets = 0; ?>

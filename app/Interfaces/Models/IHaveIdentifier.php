@@ -2,6 +2,6 @@
 namespace App\Interfaces\Models ; 
 interface IHaveIdentifier
 {
-    public function getIdentifier():int|string;
+    public function getIdentifier():int;
 
 }

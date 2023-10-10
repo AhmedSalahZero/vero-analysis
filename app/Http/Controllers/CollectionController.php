@@ -89,6 +89,7 @@ class CollectionController extends Controller
 		$collection = [];
 		if ($collection_settings->collection_base == 'general_collection_policy') {
 			$total_company_sales_target = (new SalesForecastReport)->productsAllocations($company, $request, 'total_company_sales_target');
+			// dd('d',$total_company_sales_target);
 			$collection_data = $collection_settings->general_collection;
 
 			$collection = $this->collectionCalculation($total_company_sales_target, $collection_data);

@@ -11,6 +11,7 @@ use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
 use App\Http\Controllers\ExportTable;
 use App\Models\AllocationSetting;
 use App\Models\BalanceSheet;
+use App\Models\CachingCompany;
 use App\Models\CashFlowStatement;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
@@ -28,6 +29,7 @@ use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
 use App\Models\User;
 use App\Services\Caching\CashingService;
+use App\Services\IntervalSummationOperations;
 use App\Traits\Intervals;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -1508,7 +1510,7 @@ function getCurrentCompany()
 	$companyIdentifier = Request()->segment(2);
 	return Company::find($companyIdentifier);
 }
-function getCurrentCompanyId(): ?int
+function getCurrentCompanyId()
 {
 	return Request()->segment(2) ?? null;
 }
@@ -1970,8 +1972,29 @@ function getDurationIntervalTypesForSelect(): array
 }
 
 
+
+function getDurationIntervalTypesForSelectExceptMonthly(): array
+{
+	return [
+	
+		[
+			'value' => 'quarterly',
+			'title' => __('Quarterly')
+		],
+		[
+			'value' => 'semi-annually',
+			'title' => __('Semi Annually')
+		],
+		[
+			'value' => 'annually',
+			'title' => __('Annually')
+		],
+	];
+}
+
 function getPaymentTerms(): array
 {
+	
 	return [
 		[
 			'value' => 'customize',
@@ -2955,12 +2978,16 @@ function hasUploadData($company_id)
 function getEndYearBasedOnDataUploaded(Company $company,int $minusFromYear = 0)
 {
 	$cashingService = new CashingService($company);
-	$endYear = $cashingService->getIntervalYearsFormCompany()['end_year'];
+	// dd($cashingService->getIntervalYearsFormCompany());
+	$dates = $cashingService->getIntervalYearsFormCompany() ;
+	
+	$endYear = $dates['end_year'];
 	$endYear = $endYear ?: now()->format('Y');
 	$endYear = $endYear - $minusFromYear;
+	// dd($dates);
 	return [
 		'jan'=>$endYear . '-' . '01' . '-' . '01',
-		'dec'=>$endYear . '-' . '12' . '-' .'31'
+		'dec'=>isset($dates['full_end_date']) ? Carbon::make($dates['full_end_date'])->subYears($minusFromYear)->format('Y-m-d') :$endYear . '-' . '12' . '-' . '31',
 	];
 }
 function isPercentageOrRate(string $name)
@@ -2996,43 +3023,41 @@ function getTypesForValues():array
 		'fixed_monthly_repeating_amount'=>[
 			'title'=>__('Fixed Monthly Repeating Amount'),
 			'value'=>'fixed_monthly_repeating_amount',
-			'data-how-many-items'=>1
 		],
 		'varying_amount'=>[
 			'title'=>__('Varying Amount'),
 			'value'=>'varying_amount',
-			'data-how-many-items'=>1
 		],
 		'fixed_percentage_of_sales'=>[
 			'title'=>__('Fixed Percentage Of Sales'),
 			'value'=>'fixed_percentage_of_sales',
-			'data-how-many-items'=>1
 		],
 		'varying_percentage_of_sales'=>[
 			'title'=>__('Varying Percentage Of Sales'),
 			'value'=>'varying_percentage_of_sales',
-			'data-how-many-items'=>1
 		],
 		'fixed_cost_per_unit'=>[
 			'title'=>__('Fixed Cost Per Unit'),
 			'value'=>'fixed_cost_per_unit',
-			'data-how-many-items'=>1
 		],
 		'varying_cost_per_unit'=>[
 			'title'=>__('Varying Cost Per Unit'),
 			'value'=>'varying_cost_per_unit',
-			'data-how-many-items'=>1
 		],
 		'intervally_repeating_amount'=>[
 			'title'=>__('Intervally Repeating Amount'),
 			'value'=>'intervally_repeating_amount',
-			'data-how-many-items'=>1
 		],
 		'one_time_expense'=>[
 			'title'=>__('One Time Expense'),
 			'value'=>'one_time_expense',
-			'data-how-many-items'=>1
 		],
+		'expense_per_employee'=>[
+			'title'=>__('Expense Per Employee'),
+			'value'=>'expense_per_employee',
+		],
+		
+		
 		
 		
 	];
@@ -3053,4 +3078,488 @@ function twoArrayIsEqualValues(array $firstItems , array $secondItems){
 		}
 	}
 	return true ;
+}
+function array_first($array)
+{
+	return Arr::first($array,null , []);
+}
+function array_sum_at_date($items , $date)
+{
+	// dd($items , $date);
+	$total = 0 ;
+	// dd($items);
+	foreach($items as$keys=> $vals){
+		foreach($vals as $key => $val){
+			
+			if($key == $date)
+			{
+				$total += $val ;
+			}
+		}
+	}
+	// dd($total);
+	return $total ;
+}
+function get_total_with_preserve_key($items)
+{
+	
+	$result = [];
+	if(!count($items)){
+		return [];
+	}
+	// dd($items);
+	// dd($items);
+	foreach(array_keys(Arr::first($items)) as $date){
+		foreach($items as $key => $values){
+			$currentValue = $values[$date] ?? 0 ; 
+			$result[$key] = isset($result[$key]) ? $result[$key] + $currentValue : $currentValue ; 
+		}
+	}
+	return $result;
+	
+}
+
+function getRevenueStreamTypes(): array
+{
+	return [
+		[
+			'value' => 'service',
+			'title' => __('Service')
+		],
+		[
+			'value' => 'trading',
+			'title' => __('Trading')
+		],
+		[
+			'value' => 'manufacturing',
+			'title' => __('Manufacturing')
+		]
+	];
+}
+
+function getPaymentIntervals(): array
+{
+	$elements = [];
+	for($i = 2  ; $i<=12 ; $i++ ){
+		$elements[]=[
+			'value' => $i,
+			'title' => __('Every' ).' ' . $i  . ' ' . __('Months')
+		];
+	}
+	return $elements ;
+}
+function replaceSingleQuote($string)
+{
+	return str_replace("'","\'",$string) ;
+}
+function replace_all_spacial_character_in_array_values(array $items)
+{
+	
+	$newItems = [];
+	foreach($items as $key => $value){
+			$newItems[$key]=$value ? str_replace(array('"', "'","\\"), ' ', $value) : $value;
+	}
+	return $newItems ;
+} 
+// function dateLessThanOrEqual(string $date , string $endDate){
+// 	if(!$date || !$endDate ){
+// 		return true ;
+// 	}
+// 	return Carbon::make($date)->lessThanOrEqualTo(Carbon::make($endDate))  ;
+// }
+
+function getNextDate(?array $array, ?string $date, $datesExistsAsKeys = true)
+{
+
+	$searched = array_search($date, $datesExistsAsKeys ? array_keys($array) : $array);
+	$arrayPlusOne = $datesExistsAsKeys ? @array_keys($array)[$searched +1] : @($array)[$searched +1];
+	if ($searched !== null &&  isset($arrayPlusOne)) {
+		return $datesExistsAsKeys ? array_keys($array)[$searched +1] : ($array)[$searched +1];
+	}
+	return null;
+}
+function replaceDateWithLastDateInMonth(string $date)
+{
+	// dd($date);
+	$yearOfEndDate = explode('-',$date)[0];
+	$monthOfEndDate = explode('-',$date)[1];
+	return  Carbon::create($yearOfEndDate, $monthOfEndDate)->lastOfMonth()->format('Y-m-d');
+}
+function replaceReportDateLastDateWithEndEndDate(array $report_data , string $end_date,string $interval):array {
+	
+	$dates = [];
+	$newResult = [];
+	$end_date_formatted = Carbon::make($end_date)->format('d-m-Y');
+	// dd($report_data);
+	// foreach($report_data as $name => $report_elements){
+	// 	if($name == 'Total'  || $name == 'Growth Rate %'){
+	// 		// dd($report_elements);
+	// 		dump('before',$report_elements);
+	// 			$newResult[$name] = sumIntervals($report_elements,$interval);
+	// 			dd('after',$newResult);
+	// 	}else{
+	// 		continue;
+	// 	}
+	// }
+	// dd('end');
+	
+	// foreach($report_data as $name=>$report_elements){
+	// 	if($name =='Total' || $name == 'Growth Rate %'){
+	// 		// $newResult[$name] = $report_elements ;
+	// 		foreach($report_elements as $date => $value){
+	// 			$nextDate = getNextDate($report_elements  , $date);
+	// 						$nextDate = $nextDate ? Carbon::make($nextDate)->format('Y-m-d') : null ;
+	// 						if($nextDate && Carbon::make($end_date)->greaterThan(Carbon::make($date)) && Carbon::make($end_date)->lessThanOrEqualTo($nextDate)){
+								
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+	// 							// dd($currentEnd);
+	// 							$newResult[$name][$date] = $value ;
+	// 							if(!in_array($date,$dates)){
+	// 								$dates[$date] = $date;
+	// 							}  
+	// 							// dump(getNextDate($salesOrGrowthValues  , $date));
+	// 							$newResult[$name][$currentEnd] = $report_elements[getNextDate($report_elements  , $date)] ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							} 
+								
+	// 						}
+	// 						elseif($nextDate && Carbon::make($date)->greaterThan(Carbon::make($end_date)) ){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+								
+	// 							$newResult[$name][$currentEnd] = $value ;
+								
+	// 							// dd($newResult , $name , $currentEnd , $value);
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							}  
+								
+	// 						}
+	// 						elseif(! $nextDate  ){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+								
+	// 							$newResult[$name][$currentEnd] = $value ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							}  
+	// 						}
+	// 						else{
+	// 							if(!in_array($date,$dates) && (Carbon::make($end_date)->greaterThanOrEqualTo(Carbon::make($date)))){
+	// 								$dates[$date] = $date;
+	// 							}  
+	// 							$newResult[$name][$date] = $value ;  								
+	// 						}
+							
+							
+	// 		}
+	// 		continue ; 
+	// 	}
+	// 			foreach($report_elements as $typeName => $salesAndGrowths){
+	// 				if($typeName =='Total' || $typeName == 'Growth Rate %'){
+	// 					// dd($salesAndGrowths);
+						
+	// 					foreach($salesAndGrowths as $date => $value){
+	// 						$nextDate = getNextDate($salesAndGrowths  , $date);
+	// 						$nextDate = $nextDate ? Carbon::make($nextDate)->format('Y-m-d') : null ; 
+	// 						if($nextDate && Carbon::make($end_date)->greaterThan($date) && Carbon::make($end_date)->lessThanOrEqualTo($nextDate)){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+	// 							// dd($currentEnd);
+								
+	// 							$newResult[$name][$typeName][$date] = $value ;
+	// 							if(!in_array($date,$dates)){
+	// 								$dates[$date] = $date;
+	// 							}  
+	// 							// dump(getNextDate($salesOrGrowthValues  , $date));
+	// 							$newResult[$name][$typeName][$currentEnd] = $salesAndGrowths[getNextDate($salesAndGrowths  , $date)] ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							} 
+	// 						}
+	// 						elseif($nextDate && Carbon::make($date)->greaterThan(Carbon::make($end_date)) ){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+	// 							$newResult[$name][$typeName][$currentEnd] = $value  ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							} 
+	// 							break ;
+								
+	// 						}
+	// 						elseif(!$nextDate){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+								
+	// 							$newResult[$name][$typeName][$currentEnd] = $value ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] =$currentEnd;
+	// 							}  
+	// 						}
+	// 						else{
+	// 							if(!in_array($date,$dates) && (Carbon::make($end_date)->greaterThanOrEqualTo(Carbon::make($date)))){
+	// 								$dates[$date] = $date;
+	// 							}  
+	// 							$newResult[$name][$typeName][$date] = $value ;  
+	// 						}
+	// 					}
+						
+						
+						
+						
+	// 					// $newResult[$name][$typeName] = $salesAndGrowths ;
+	// 					continue ; 
+	// 				}
+	// 				foreach($salesAndGrowths as $salesOrGrowthName => $salesOrGrowthValues){
+						
+	// 					foreach($salesOrGrowthValues as $date => $value){
+	// 						$nextDate = getNextDate($salesOrGrowthValues  , $date);
+	// 						$nextDate = $nextDate ? Carbon::make($nextDate)->format('Y-m-d') : null ; 
+	// 						// dd($date , $end_date);
+	// 						// dd($nextDate);
+	// 						// dd($end_date);
+	// 						if($nextDate && Carbon::make($end_date)->greaterThan($date) && Carbon::make($end_date)->lessThanOrEqualTo($nextDate)){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+	// 							// dd($currentEnd);
+								
+	// 							$newResult[$name][$typeName][$salesOrGrowthName][$date] = $value ;
+	// 							if(!in_array($date,$dates)){
+	// 								$dates[$date] = $date;
+	// 							}  
+	// 							// dump(getNextDate($salesOrGrowthValues  , $date));
+	// 							$newResult[$name][$typeName][$salesOrGrowthName][$currentEnd] = $salesOrGrowthValues[getNextDate($salesOrGrowthValues  , $date)] ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							}  
+	// 							break;  
+	// 						}
+							
+	// 						elseif($nextDate && Carbon::make($date)->greaterThan(Carbon::make($end_date)) ){
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+	// 							$newResult[$name][$typeName][$salesOrGrowthName][$currentEnd] = $value ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] = $currentEnd;
+	// 							} 
+								
+	// 						}
+	// 						elseif(! $nextDate ){
+								
+	// 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
+								
+	// 							$newResult[$name][$typeName][$salesOrGrowthName][$currentEnd] = $value ;
+	// 							if(!in_array($currentEnd , $dates)){
+	// 								$dates[$currentEnd] =$currentEnd;
+	// 							}  
+	// 						}
+	// 						else{
+	// 							if(!in_array($date,$dates) && (Carbon::make($end_date)->greaterThanOrEqualTo($date))){
+	// 								$dates[$date] = $date;
+	// 							}  
+	// 							$newResult[$name][$typeName][$salesOrGrowthName][$date] = $value ;  
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// }
+	sortArr($dates);
+	$dates = dateInInterval($dates , $interval );
+	return [
+		'dates'=>$dates , 
+		'result'=>$newResult 
+	] ; 
+}
+
+
+ function sortArr(&$arr)
+{
+	usort($arr, function ($a, $b) {
+		return strtotime($a) - strtotime($b);
+	});
+}
+function sumIntervals(array $dateValues, string $intervalName ){
+	return (new IntervalSummationOperations())->sumForInterval( $dateValues, $intervalName);
+}
+function getMonthsLessThanOrEqual($limitMonth , $months){
+	$result = [];
+	foreach($months as $month){
+		$currentMonthNumber = explode('-',$month)[1];
+		if($currentMonthNumber <= $limitMonth ){
+			$result[] = '01-'.$currentMonthNumber;
+		}
+	}
+	return $result ;
+}
+function getMonthsForQuarterly($limitMonth,$quarters){
+	if($limitMonth <=3 ){
+		return ['01-'.$limitMonth];
+	}
+	if($limitMonth <=6 ){
+		return [$quarters[0],'01-'.$limitMonth];
+	}
+	if($limitMonth <=9 ){
+		return [$quarters[0],$quarters[1],'01-'.$limitMonth];
+	}
+	if($limitMonth <=12 ){
+		return [$quarters[0],$quarters[1],$quarters[2],'01-'.$limitMonth];
+	}
+	
+}
+
+
+function getMonthsForSemiAnnually($limitMonth,$quarters){
+	if($limitMonth <=6 ){
+		return ['01-'.$limitMonth];
+	}
+	if($limitMonth <=12 ){
+		return [$quarters[0],'01-'.$limitMonth];
+	}
+	
+}
+function getMonthsForAnnually($limitMonth){
+	return ['01-'.$limitMonth];
+}
+function getAllocationsBases()
+{
+	return [];
+}
+
+function getConditionalToSelect()
+{
+	return
+		[
+			[
+				'title' => __('Greater Than'),
+				'value' => 'greater-than'
+			],
+			[
+				'title' => __('Greater Than Or Equal'),
+				'value' => 'greater-than-or-equal'
+			],
+			[
+				'title' => __('Less Than'),
+				'value' => 'less-than'
+			],
+			[
+				'title' => __('Less Than Or Equal'),
+				'value' => 'less-than-or-equal'
+			],
+			[
+				'title'=>__('Between & Equal'),
+				'value'=>'between-and-equal'
+			],
+			[
+				'title'=>__('Between'),
+				'value'=>'between'
+			],
+			[
+				'title'=>__('Equal'),
+				'value'=>'equal'
+			]
+
+		];
+}
+
+function dueInDays()
+{
+	return [
+		[
+			'value'=>0 ,
+			'title'=>0
+		],
+		[
+			'value'=>15 ,
+			'title'=>15
+		],
+		[
+			'value'=>30,
+			'title'=>30
+		],
+		[
+			'value'=>60,
+			'title'=>60
+		],
+		[
+			'value'=>90 ,
+			'title'=>90
+		],
+		[
+			'value'=> 120 ,
+			'title'=>120
+		],
+		[
+			'value'=>150,
+			'title'=>150
+		],
+		[
+			'value'=> 180 ,
+			'title'=>180
+		]
+
+	];
+}
+ function formatRatesWithDueDays(array $ratesAndDueDays): array
+	{
+		$result = [];
+		foreach ($ratesAndDueDays['due_in_days'] ?? [] as $index => $dueDay) {
+			$rate = $ratesAndDueDays['rate'][$index] ?? 0;
+			if ($rate) {
+				if (isset($result[$dueDay])) {
+					$result[$dueDay] += $rate;
+				} else {
+					$result[$dueDay] = $rate;
+				}
+			}
+		}
+
+		return $result;
+	}
+CONST PERCENTAGE_DECIMALS = 2 ;
+function cacheHas($key){
+	return Cache::has($key);
+}
+function 	generateCacheFailedName($companyId , $userId ){
+	return 'failed_company_'.$companyId.'user_id'.$userId . 'failed_job';
+}
+function CacheGetAndRemove($key){
+	$message = Cache::get($key) ;
+	Cache::forget($key);
+	return $message;
+}
+function hasCachingCompany($companyId){
+	return CachingCompany::where('company_id',$companyId)->count();
+}
+function generateCacheKeyForValidationRow($company_id)
+{
+	return 'validation_rows' . $company_id;
+}
+function arrayMergeTwoDimArray(...$args)
+{
+	$mergedArray = [];
+	foreach($args as $index=>$array){
+		foreach($array as $key=>$values){
+				$mergedArray[$key] = $values;
+		}
+	}
+	return $mergedArray ;
+}
+function hasFailedRow($companyId){
+	$cache=Cache::get(generateCacheKeyForValidationRow($companyId));
+	return $cache && count($cache); 
+}
+function convertIdsToNames(array $elements){
+	$newItems = [];
+	foreach($elements as $element){
+		$newItems[] =snakeToCamel($element); 
+	}
+	return $newItems ;
+}
+function snakeToCamel($input)
+{
+    return ucfirst(str_replace(' ', ' ', ucwords(str_replace('_', ' ', $input))));
+}
+function sumDueDayWithPayment($paymentRate, $dueDays)
+{
+	$items = [];
+	// dd($dueDays);
+	foreach($dueDays as $index=>$dueDay){
+		$currentPaymentRate = $paymentRate[$index]??0 ;
+		$items[$dueDay] = isset($items[$dueDay]) ? $items[$dueDay] + $currentPaymentRate : $currentPaymentRate;
+	}
+	return $items;
 }

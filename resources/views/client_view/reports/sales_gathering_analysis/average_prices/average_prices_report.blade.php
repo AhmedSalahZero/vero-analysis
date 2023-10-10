@@ -24,14 +24,7 @@
 	padding-bottom:.5rem !important;
 }
 
- th:first-of-type,
- td:first-of-type
-{
-	width:400px !important;
-	min-width:400px !important;
-	max-width:400px !important;
-	white-space:normal !important;
-}
+
     table {
         white-space: nowrap;
         table-layout: auto;
@@ -129,10 +122,10 @@
 @endphp
 <!--Begin:: Tab USD FX Rate Table -->
 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
-    <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
+    <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
         @slot('table_header')
         <tr class="table-active text-center">
-            <th class="text-center absorbing-column">{{ __($type) }}</th>
+            <th class="text-center absorbing-column max-w-classes">{{ __($type) }}</th>
             @foreach ($dates as $date)
             <th>{{ date('d-M-Y', strtotime($date)) }}</th>
             @endforeach
@@ -149,7 +142,7 @@
 
 
         <tr class="group-color ">
-            <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
+            <td class="white-text max-w-classes" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
                 <i class="row_icon{{ $id }} flaticon2-down white-text"></i>
                 <b>{{ __($sales_channel_name) }}</b>
             </td>

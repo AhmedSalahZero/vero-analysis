@@ -57,7 +57,7 @@
 
 <!--begin: Datatable -->
 
-<x-table :tableClass="'kt_table_with_no_pagination '">
+<x-table :tableClass="'kt_table_with_no_pagination_no_fixed_right '">
     @slot('table_header')
     <tr class="table-active text-center">
         <?php $main_type_name = ucwords(str_replace('_', ' ', $main_type));  ?>

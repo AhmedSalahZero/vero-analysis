@@ -18,6 +18,7 @@
         @slot('table_body')
             @foreach ($companies as $item)
             {{-- @dd($item) --}}
+			{{-- {{ dd($item) }} --}}
                 <tr class="text-center">
                     <td>
                         <img class="index-img" width="100" height="100" src="{{ $item->getFirstMediaUrl() }}" alt="image">

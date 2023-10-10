@@ -79,14 +79,9 @@ class SKUsAgainstAnalysisReport
         $branches = is_array(json_decode(($request->branches[0]))) ? json_decode(($request->branches[0])) :$request->branches ;
 
         foreach ($branches as  $branch) {
-
-            // $branches_data = SalesGathering::company()
-            //     ->where('branch', $branch)
-            //     ->whereBetween('date', [$request->start_date, $request->end_date])
-            //     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,branch')
-            //     ->get()->groupBy('gr_date')->map(function($item){
-            //         return $item->sum('net_sales_value');
-            //     })->toArray();
+			$branch  = replaceSingleQuote($branch);
+			
+		
                 $branches_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,product_item
                 FROM sales_gathering
@@ -106,7 +101,7 @@ class SKUsAgainstAnalysisReport
                 $years = array_unique($years);
                 $report_data[$branch] = $branches_data;
                 $interval_data_per_item[$branch] = $branches_data;
-                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+                $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
                 $report_data[$branch] = $interval_data['data_intervals'][$request->interval][$branch] ?? [];
                 $growth_rate_data[$branch] = $this->growthRate($report_data[$branch]);
@@ -128,8 +123,9 @@ class SKUsAgainstAnalysisReport
         {
             return $report_data;
         }
-
-        return view('client_view.reports.sales_gathering_analysis.products_items_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches'));
+		$dates = array_keys($total_branches ?? []); 
+		
+        return view('client_view.reports.sales_gathering_analysis.products_items_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));
 
     }
 
@@ -157,7 +153,8 @@ class SKUsAgainstAnalysisReport
         $type = $request->type;
         $view_name = $request->view_name;
         foreach ($mainData as  $main_row) {
-                $main_row = str_replace("'" , "''",$main_row);
+                // $main_row = str_replace("'" , "''",$main_row);
+				$main_row  = replaceSingleQuote($main_row);
             $mainData_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,product_item," . $type ."
                 FROM sales_gathering
@@ -182,7 +179,7 @@ class SKUsAgainstAnalysisReport
                     $years = array_unique($years);
 
                     $report_data[$main_row][$sales_channel]['Sales Values'] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data[$main_row][$sales_channel], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$main_row][$sales_channel], $years, $request->interval);
                     $report_data[$main_row][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
                     $report_data[$main_row]['Total']  = $this->finalTotal([($report_data[$main_row]['Total']  ?? []) ,($report_data[$main_row][$sales_channel]['Sales Values']??[]) ]);
@@ -201,7 +198,7 @@ class SKUsAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
-        $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        // $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'product_item' );
 
         if($report_view instanceof View)
@@ -251,7 +248,7 @@ class SKUsAgainstAnalysisReport
 
 
         foreach ($mainData as  $zone) {
-
+			$zone  = replaceSingleQuote($zone);
             $sales =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , sales_value ," . $fields ." product_item
                 FROM sales_gathering
@@ -291,7 +288,7 @@ class SKUsAgainstAnalysisReport
 
 
 
-                    $interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
                     $sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -299,7 +296,7 @@ class SKUsAgainstAnalysisReport
 
 
                     $final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-                    $interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
                     $final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -333,7 +330,7 @@ class SKUsAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
- $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+//  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $type_name = 'Products Items';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 
@@ -488,6 +485,7 @@ class SKUsAgainstAnalysisReport
         // gr_date Get last date of month
         foreach ($mainData as  $main_row) {
             $previous_date =$start_date;
+			$main_row  = replaceSingleQuote($main_row);
             foreach ($interval_dates as $key => $date) {
 
 
@@ -594,6 +592,7 @@ class SKUsAgainstAnalysisReport
 
         foreach ($mainData as  $main_row) {
 
+			$main_row  = replaceSingleQuote($main_row);
 
 
             $mainData_data =collect(DB::select(DB::raw("
@@ -751,6 +750,8 @@ class SKUsAgainstAnalysisReport
 
 
         foreach ($mainData as  $main_row) {
+			$main_row  = replaceSingleQuote($main_row);
+			
             $previous_date =$start_date;
             foreach ($interval_dates as $key => $date) {
 

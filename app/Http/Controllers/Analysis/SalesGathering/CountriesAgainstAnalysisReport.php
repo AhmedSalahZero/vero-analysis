@@ -150,7 +150,7 @@ class CountriesAgainstAnalysisReport
 					$years = array_unique($years);
 
 					$report_data[$main_row][$sales_channel][$name_of_report_item] = $data_per_main_item;
-					$interval_data = Intervals::intervals($report_data[$main_row][$sales_channel], $years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$main_row][$sales_channel], $years, $request->interval);
 
 					$report_data[$main_row][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
@@ -176,7 +176,7 @@ class CountriesAgainstAnalysisReport
 						$years_quantity = array_unique($years_quantity);
 
 						$report_data_quantity[$main_row][$sales_channel][$name_of_report_item] = $data_per_main_item;
-						$interval_data = Intervals::intervals($report_data_quantity[$main_row][$sales_channel], $years_quantity, $request->interval);
+						$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$main_row][$sales_channel], $years_quantity, $request->interval);
 						$report_data_quantity[$main_row][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 						$report_data_quantity[$main_row]['Total']  = $this->finalTotal([($report_data_quantity[$main_row]['Total']  ?? []), ($report_data_quantity[$main_row][$sales_channel][$name_of_report_item] ?? [])]);
@@ -243,7 +243,7 @@ class CountriesAgainstAnalysisReport
 		$report_data['Total'] = $final_report_total;
 		$report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
 		$dates = array_keys($report_data['Total']);
-		$dates = formatDateVariable($dates, $request->start_date, $request->end_date);
+		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 		if ($result == 'view') {
 			return view('client_view.reports.sales_gathering_analysis.countries_analysis_report', compact('company', 'name_of_report_item', 'view_name', 'countries_names', 'dates', 'report_data',));
 		} else {
@@ -314,7 +314,7 @@ class CountriesAgainstAnalysisReport
 
 
 
-					$interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
 					$sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -322,7 +322,7 @@ class CountriesAgainstAnalysisReport
 
 
 					$final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-					$interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
 					$final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -353,7 +353,7 @@ class CountriesAgainstAnalysisReport
 		$report_data = $final_report_data;
 
 		$dates = array_keys($report_data['Total']);
-		$dates = formatDateVariable($dates, $request->start_date, $request->end_date);
+		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 		$type_name = 'Countries';
 		return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report', compact('company', 'view_name', 'zones_names', 'dates', 'report_data', 'type_name'));
 	}
@@ -387,7 +387,7 @@ class CountriesAgainstAnalysisReport
 				$years = array_unique($years);
 				$report_data[$main_row] = $countries_data;
 				$interval_data_per_item[$main_row] = $countries_data;
-				$interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+				$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
 				$report_data[$main_row] = $interval_data['data_intervals'][$request->interval][$main_row] ?? [];
 				$growth_rate_data[$main_row] = $this->growthRate($report_data[$main_row]);
@@ -403,8 +403,11 @@ class CountriesAgainstAnalysisReport
 			$final_report_data[$main_row]['Growth Rate %'] = ($growth_rate_data[$main_row] ?? []);
 			$countries_names[] = (str_replace(' ', '_', $main_row));
 		}
+		
+		$dates = array_keys( $total_countries ?? []); 
+		
 
-		return view('client_view.reports.sales_gathering_analysis.countries_sales_report', compact('company', 'countries_names', 'total_countries_growth_rates', 'final_report_data', 'total_countries'));
+		return view('client_view.reports.sales_gathering_analysis.countries_sales_report', compact('company', 'countries_names', 'total_countries_growth_rates', 'final_report_data', 'total_countries','dates'));
 	}
 	public function growthRate($data)
 	{

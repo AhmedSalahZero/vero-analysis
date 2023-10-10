@@ -100,6 +100,23 @@
                                     </div>
                                 </div>
                                 @endcan
+								
+								
+								   <br>
+
+@if(auth()->user()->isSuperAdmin())
+                                <div class="kt-list-timeline__items">
+                                    <div class="kt-list-timeline__item">
+                                        <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
+                                        <span class="kt-list-timeline__text">
+                                            <h4> {{ __("Expenses") }} </h4>
+                                        </span>
+
+                                        <span class="kt-list-timeline__time disable"> <a href="{{ route('admin.create.expense',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
+                                    </div>
+                                </div>
+								@endif
+								
                             </div>
                         </div>
 
@@ -107,7 +124,7 @@
                 </div>
             </div>
             <div class="kt-widget6__action kt-align-left">
-                <a href="#" onclick="return false;" id="skip" class="btn btn-outline-info"><b>{{ __('Skip') }}</b></a>
+                <a href="#" onclick="return false;" id="skip" class="btn btn-outline-info"><b>{{ __('Go To Sales Analysis') }}</b></a>
             </div>
         </div>
     </div>

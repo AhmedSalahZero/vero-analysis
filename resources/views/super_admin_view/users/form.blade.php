@@ -115,7 +115,7 @@
                                     <option {{ (isset($user) && $user->hasRole('super-admin')) ? 'selected' : ''}}  value="super-admin">{{__("Super Admin")}}</option>
                                     <option {{ (isset($user) && $user->hasRole('company-admin')) ? 'selected' : ''}}  value="company-admin">{{__("Company Admin")}}</option>
                                     <option {{ (isset($user) && $user->hasRole('Admin') )? 'selected' : ''}}  value="Admin">{{__("Admin")}}</option>
-                                    <option {{ (isset($user) && $user->hasRole('user') )? 'selected' : ''}}  value="Admin">{{__("User")}}</option>
+                                    <option {{ (isset($user) && $user->hasRole('user') )? 'selected' : ''}}  value="user">{{__("User")}}</option>
 									@endif 
 									
                                 </select>

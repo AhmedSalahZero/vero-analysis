@@ -26,15 +26,21 @@ class CashingService
 
         else{
             $years  = DB::select(DB::raw(
-            "select min(date_format(date , '%Y')) start_date ,max(date_format(date , '%Y')) end_date from sales_gathering  where company_id = " . $this->company->id 
+            "select min(date_format(date , '%Y')) start_date ,max(date_format(date , '%Y')) end_date , max(date) full_end_date from sales_gathering  where company_id = " . $this->company->id 
         )) ;
+		
         Cache::forever($IntervalYearsFormCompanyCacheNameForCompany , $years);
 
         }
-        return  [
+		$elements = [
             'start_year'=>$years[0]->start_date,
-            'end_year'=>$years[0]->end_date
-        ]  ; 
+            'end_year'=>$years[0]->end_date,
+        ];
+		if(isset($years[0]->full_end_date)){
+			$elements['full_end_date'] =$years[0]->full_end_date ; 
+		}
+		
+        return  $elements  ; 
     }
     
     public function cacheAll()

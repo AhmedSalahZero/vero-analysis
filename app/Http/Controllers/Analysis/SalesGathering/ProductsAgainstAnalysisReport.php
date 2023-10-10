@@ -139,7 +139,7 @@ class ProductsAgainstAnalysisReport
 					$years = array_unique($years);
 
 					$report_data[$main_row][$sales_channel][$name_of_report_item] = $data_per_main_item;
-					$interval_data = Intervals::intervals($report_data[$main_row][$sales_channel], $years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$main_row][$sales_channel], $years, $request->interval);
 					$report_data[$main_row][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 					$report_data[$main_row]['Total']  = $this->finalTotal([($report_data[$main_row]['Total']  ?? []), ($report_data[$main_row][$sales_channel][$name_of_report_item] ?? [])]);
@@ -162,7 +162,7 @@ class ProductsAgainstAnalysisReport
 						$years_quantity = array_unique($years_quantity);
 
 						$report_data_quantity[$main_row][$sales_channel][$name_of_report_item] = $data_per_main_item;
-						$interval_data = Intervals::intervals($report_data_quantity[$main_row][$sales_channel], $years_quantity, $request->interval);
+						$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$main_row][$sales_channel], $years_quantity, $request->interval);
 						$report_data_quantity[$main_row][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 						$report_data_quantity[$main_row]['Total']  = $this->finalTotal([($report_data_quantity[$main_row]['Total']  ?? []), ($report_data_quantity[$main_row][$sales_channel][$name_of_report_item] ?? [])]);
@@ -233,7 +233,7 @@ class ProductsAgainstAnalysisReport
 		$report_data['Total'] = $final_report_total;
 		$report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
 		$dates = array_keys($report_data['Total']);
-		$dates = formatDateVariable($dates, $request->start_date, $request->end_date);
+		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 
 
 
@@ -323,7 +323,7 @@ class ProductsAgainstAnalysisReport
 
 
 
-					$interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
 					$sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -331,7 +331,7 @@ class ProductsAgainstAnalysisReport
 
 
 					$final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-					$interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
 					$final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -362,7 +362,7 @@ class ProductsAgainstAnalysisReport
 		$report_data = $final_report_data;
 
 		$dates = array_keys($report_data['Total']);
-		$dates = formatDateVariable($dates, $request->start_date, $request->end_date);
+		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 
 		$type_name = 'Products / Services';
 		return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report', compact('company', 'view_name', 'zones_names', 'dates', 'report_data', 'type_name'));
@@ -426,7 +426,7 @@ class ProductsAgainstAnalysisReport
                 $years = array_unique($years);
                 $report_data[$branch] = $branches_data;
                 $interval_data_per_item[$branch] = $branches_data;
-                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+                $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
                 $report_data[$branch] = $interval_data['data_intervals'][$request->interval][$branch] ?? [];
                 $growth_rate_data[$branch] = $this->growthRate($report_data[$branch]);
@@ -448,8 +448,12 @@ class ProductsAgainstAnalysisReport
         {
             return $report_data;
         }
-
-        return view('client_view.reports.sales_gathering_analysis.product_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches'));
+		// dd($branches_data   , $total_branches);
+		$dates = array_keys( $total_branches ?? []); 
+		// dd($final_report_data,$dates);
+		
+		
+        return view('client_view.reports.sales_gathering_analysis.product_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));
 
 	}
 

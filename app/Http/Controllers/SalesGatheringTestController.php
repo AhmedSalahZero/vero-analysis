@@ -99,14 +99,17 @@ class SalesGatheringTestController extends Controller
 					'status'  => 'test_table',
 				]);
 			}
-
-			$fileUpload = new  ImportData($company_id, request()->format, 'SalesGatheringTest', $salesGathering_fields, $active_job->id);
-			Excel::queueImport($fileUpload, request()->file('excel_file'))->chain([
-				new NotifyUserOfCompletedImport(request()->user(), $active_job->id),
-				new ShowCompletedMessageForSuccessJob($company_id, $active_job->id)
-			]);
+			$validationCacheKey = generateCacheKeyForValidationRow($company_id);
+			Cache::forget($validationCacheKey);
+			
+			$fileUpload = new  ImportData($company_id, request()->format, 'SalesGatheringTest', $salesGathering_fields, $active_job->id,auth()->user()->id);
+				Excel::queueImport($fileUpload, request()->file('excel_file'))->chain([
+					new NotifyUserOfCompletedImport(request()->user(), $active_job->id,$company_id),
+					new ShowCompletedMessageForSuccessJob($company_id, $active_job->id)
+				]);
+				
+				
 			// dd($fileUpload->getRowCount());
-
 
 
 
@@ -126,6 +129,9 @@ class SalesGatheringTestController extends Controller
 				'status'  => 'save_to_table',
 			]);
 		}
+		
+		$validationCacheKey = generateCacheKeyForValidationRow($company->id);
+		Cache::forget($validationCacheKey);
 		Cache::forget(getShowCompletedTestMessageCacheKey($company->id));
 
 		SalesGatheringTestJob::withChain([
@@ -176,5 +182,15 @@ class SalesGatheringTestController extends Controller
 			->where('status', 'test_table')
 			->where('model_name', 'SalesGatheringTest')->first();
 		return ($row === null) ? 0 :  1;
+	}
+	public function lastUploadFailed($companyId){
+		$rows = Cache::get(generateCacheKeyForValidationRow($companyId));
+		$headers = exportableFields($companyId,'SalesGathering')->fields ;
+		$headers = convertIdsToNames($headers);
+		ksort($rows);
+		return view('client_view.sales_gathering.failed',[
+			'rows'=>$rows,
+			'headers'=>$headers
+		]);
 	}
 }

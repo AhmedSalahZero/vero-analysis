@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\QuantityAllocationSetting;
 use App\Models\QuantityCollectionSetting;
-use App\Models\Company;
 use App\Models\QuantityExistingProductAllocationBase;
 use App\Models\QuantityNewProductAllocationBase;
 use App\Models\QuantitySalesForecast;
@@ -18,36 +18,36 @@ class QuantityCollectionController extends Controller
     use GeneralFunctions;
     public function collectionSettings(Request $request, Company $company)
     {
-        $first_allocation_setting_base = QuantityAllocationSetting::company()->first()->allocation_base ?? null;
+		$first_allocation_setting_base = QuantityAllocationSetting::company()->first()->allocation_base ?? null;
         $second_allocation_setting_base = QuantitySecondAllocationSetting::company()->first()->allocation_base ?? null;
         // Saving Data
         if ($request->isMethod('POST')) {
-            $total = [];
+			$total = [];
             $validation['collection_base'] = 'required';
-
+			
             if ($request->collection_base == 'general_collection_policy') {
-
-                $total_percentage = array_sum(array_column($request->general_collection,'rate'));
+				
+				$total_percentage = array_sum(array_column($request->general_collection,'rate'));
                 $validation['total_rate.general_collection_policy'] = $total_percentage != 100 ? 'required' : '' ;
             } elseif($request->collection_base == $first_allocation_setting_base) {
-
-
-                foreach ($request->first_allocation_collection as $base => $values) {
-                    $total[$base] = array_sum(array_column($values,'rate'));
+				
+				
+				foreach ($request->first_allocation_collection as $base => $values) {
+					$total[$base] = array_sum(array_column($values,'rate'));
                     $validation['total_rate.'.$base] =  ($total[$base] != 100 ) ? 'required' :  ''  ;
                 }
             }elseif($request->collection_base == $second_allocation_setting_base) {
-
-                foreach ($request->second_allocation_collection as $base => $values) {
+				
+				foreach ($request->second_allocation_collection as $base => $values) {
                     $total[$base] = array_sum(array_column($values,'rate'));
                     $validation['total_rate.'.$base] =   ($total[$base] != 100 ) ? 'required' :  '' ;
                 }
             }
-
-
+			
+			
             $request->validate(@$validation,[
-                'total_rate.*.required' => 'Total Percentages Must be 100%',
-
+				'total_rate.*.required' => 'Total Percentages Must be 100%',
+				
             ]);
             QuantityCollectionSetting::updateOrCreate(
                 ['company_id' => $company->id],
@@ -80,17 +80,17 @@ class QuantityCollectionController extends Controller
 
     public function collectionReport(Request $request, Company $company,$result ='view')
     {
-            // dd(get_defined_vars());
-        //
         $collection_settings= QuantityCollectionSetting::company()->first() ;
         $first_allocation_setting_base = QuantityAllocationSetting::company()->first()->allocation_base?? null;
         $second_allocation_setting_base = QuantitySecondAllocationSetting::company()->first()->allocation_base?? null;
 
         $collection = [];
+		// dd($collection_settings,);
+		// dd($first_allocation_setting_base);
+		// $collection_settings->collection_base = $first_allocation_setting_base;
         if ($collection_settings->collection_base == 'general_collection_policy') {
             $total_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company,$request,'total_company_sales_target');
             $collection_data = $collection_settings->general_collection;
-
             $collection = $this->collectionCalculation($total_company_sales_target,$collection_data);
 
 
@@ -157,8 +157,6 @@ class QuantityCollectionController extends Controller
                 $month = $date->format('m');
 
                 $year = $date->format('Y');
-// dd();
-                // dd( $main_date = date('d-m-Y',strtotime('01-'.)));
                 $main_date = $date ;
 
                 $fullDate = '01-'.$month.'-'.$year ;

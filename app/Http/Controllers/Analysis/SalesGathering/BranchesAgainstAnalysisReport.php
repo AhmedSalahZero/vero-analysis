@@ -107,7 +107,7 @@ class BranchesAgainstAnalysisReport
                     $years = array_unique($years);
 
                     $report_data[$branchName][$branch]['Sales Values'] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data[$branchName][$branch], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$branchName][$branch], $years, $request->interval);
                     $report_data[$branchName][$branch] = $interval_data['data_intervals'][$request->interval] ?? [];
 
                     $report_data[$branchName]['Total']  = $this->finalTotal([($report_data[$branchName]['Total']  ?? []) ,($report_data[$branchName][$branch]['Sales Values']??[]) ]);
@@ -127,7 +127,8 @@ class BranchesAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
-         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+		
+        //  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
 
 
          
@@ -216,7 +217,7 @@ class BranchesAgainstAnalysisReport
 
 
 
-                    $interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
                     $sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -224,7 +225,7 @@ class BranchesAgainstAnalysisReport
 
 
                     $final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-                    $interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
                     $final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -259,7 +260,7 @@ class BranchesAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
- $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+//  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $type_name = 'Branches';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 
@@ -270,6 +271,7 @@ class BranchesAgainstAnalysisReport
 
         $report_data =[];
         $growth_rate_data =[];
+		$endDate = $request->get('end_date');
         $branches = is_array(json_decode(($request->branches[0]))) ? json_decode(($request->branches[0])) :$request->branches ;
 
         foreach ($branches as  $branch) {
@@ -281,6 +283,7 @@ class BranchesAgainstAnalysisReport
             //     ->get()->groupBy('gr_date')->map(function($item){
             //         return $item->sum('net_sales_value');
             //     })->toArray();
+			
                 $branches_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,branch
                 FROM sales_gathering
@@ -289,44 +292,26 @@ class BranchesAgainstAnalysisReport
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');
                 })->toArray();
-
+// dd($branches_data);
             $interval_data_per_item = [];
             $years = [];
             if (count($branches_data)>0) {
 
-                // $dt = Carbon::parse($sales_gatherings[0]['date']);
-                // $month = $dt->endOfMonth()->format('d-m-Y');
-
-
-
-                // foreach ($sales_gatherings as $key => $row) {
-
-                //     $dt = Carbon::parse($row['date']);
-                //     $current_month = $dt->endOfMonth()->format('d-m-Y');
-                //     if($current_month == $month){
-                //         $branches_per_month[$current_month][] = $row['net_sales_value'];
-
-                //     }else{
-                //         $month = $current_month;
-                //         $branches_per_month[$current_month][] = $row['net_sales_value'];
-                //     }
-
-                //     $branches_data[$month] = array_sum($branches_per_month[$month]);
-                // }
-
+               
                 array_walk($branches_data, function ($val, $date) use (&$years) {
                     $years[] = date('Y', strtotime($date));
                 });
                 $years = array_unique($years);
                 $report_data[$branch] = $branches_data;
                 $interval_data_per_item[$branch] = $branches_data;
-                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
-
+                $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
+				
                 $report_data[$branch] = $interval_data['data_intervals'][$request->interval][$branch] ?? [];
                 $growth_rate_data[$branch] = $this->growthRate($report_data[$branch]);
+				// dd(get_defined_vars());
             }
         }
-
+// dd($report_data);
         $total_branches = $this->finalTotal($report_data);
         $total_branches_growth_rates =  $this->growthRate($total_branches);
         $final_report_data = [];
@@ -342,8 +327,10 @@ class BranchesAgainstAnalysisReport
         {
             return $report_data;
         }
-
-        return view('client_view.reports.sales_gathering_analysis.branches_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches'));
+		
+		$dates = array_keys($total_branches ?? []); 
+	
+        return view('client_view.reports.sales_gathering_analysis.branches_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));
 
     }
     public function growthRate($data)

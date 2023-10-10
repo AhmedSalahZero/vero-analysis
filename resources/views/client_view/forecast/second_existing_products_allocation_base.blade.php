@@ -27,7 +27,7 @@
 @section('content')
     <form action="{{ route('second.existing.products.allocations', $company) }}" method="POST">
         @csrf
-@if(canShowNewItemsProducts($company->id))
+@if(canShowNewItemsProducts($company->id) && count($sales_targets_values))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
@@ -39,7 +39,7 @@
             </div>
             <div class="kt-portlet__body">
 
-                <x-table :tableTitle="__('New Product Items Table')" :tableClass="'kt_table_with_no_pagination'">
+                <x-table :tableTitle="__('New Product Items Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                     @slot('table_header')
                         <tr class="table-active text-center">
                             <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
@@ -162,7 +162,7 @@
                         </i></i>{{ $errors->first('percentages_total') }}</h4>
                 @endif
 
-                <x-table :tableTitle="__($item.' Sales Target Values Table')" :tableClass="'kt_table_with_no_pagination'">
+                <x-table :tableTitle="__($item.' Sales Target Values Table')" :tableClass="'kt_table_with_no_pagination_no_fixed_right'">
                     @slot('table_header')
                         <tr class="table-active text-center">
                             <th>{{ __($item . ' Name') }}</th>

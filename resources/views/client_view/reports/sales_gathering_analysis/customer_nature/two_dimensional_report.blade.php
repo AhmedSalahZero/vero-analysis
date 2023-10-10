@@ -87,8 +87,6 @@
 
 <!--Sales Values Table -->
 @php
-// dd();
-$startTime = microtime(true);
 $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $customersNaturesDead));
 
 @endphp
@@ -99,7 +97,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
     @slot('table_header')
     <tr class="table-active text-center">
         @php $main_type_name = ucwords(str_replace('_', ' ', $type)); @endphp
-        <th>{{ __($main_type_name) . ' / ' . __('Customers Natures') }}</th>
+        <th class="max-w-classes">{{ __($main_type_name) . ' / ' . __('Customers Natures') }}</th>
         @foreach ($customersNaturesActive as $reportType=>$reportDataArray)
         <th>{{ __($reportType) }}</th>
         <th>{{ __('% / '.$main_type_name) }}</th>
@@ -122,7 +120,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
     {{-- @dd($getIterableTimes) --}}
     @foreach($getIterableTimes as $mainTypeItem=>$totalPerType)
     <tr>
-        <th> {{ __($mainTypeItem) }} </th>
+        <th class="max-w-classes">  {{ __($mainTypeItem) }} </th>
         @php
         $totalForActiveRaw = 0 ;
         @endphp
@@ -134,7 +132,7 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
         $totalForActiveRaw += $value ;
         @endphp
 
-        <td class="text-center"> {{ number_format($value) }}</td>
+        <td class="text-center "> {{ number_format($value) }}</td>
         <td class="text-center">
             <span class="active-text-color "><b> {{ number_format($percentage_per_value, 1).' % ' }}</b></span>
         </td>

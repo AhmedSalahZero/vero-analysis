@@ -4,6 +4,9 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('content')
+
+
+
 <div class="row">
     <div class="col-lg-12">
         <!--begin::Portlet-->
@@ -20,7 +23,7 @@
             <?php $roles_row = isset($roles) ? $roles : old(); ?>
             <form class="kt-form kt-form--label-right" method="POST" action= {{isset($role) ? route('roles.permissions.update',[$scope,$role]): route('roles.permissions.store',$scope)}} enctype="multipart/form-data">
                 @csrf
-                {{isset($role) ?  method_field('PUT'): ""}}
+                {{isset($role) ?  method_field('POST'): ""}}
                 <div class="kt-portlet">
                     <div class="kt-portlet__body">
                         <div class="form-group row section">
@@ -68,8 +71,28 @@
                                     </div>
                                 </div>
                             </div>
+							 @foreach (getPermissions() as $permissionArray)
+                                    <div class="form-group kt-checkbox-list">
+                                        <div class="row col-md-12">
+                                            <label class="col-3 col-form-label text-left text-capitalize"><b> {{$permissionArray['name']}} </b></label>
+                                            <div class="col-9">
+                                                <div class="kt-checkbox-inline d-flex justify-content-between">
+                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success " cheched="">
+                                                        <input type="checkbox" class="view" value="1" name="permissions[{{$permissionArray['name']}}]"
+                                                        {{ isset($role)&&$role->hasPermissionTo($permissionArray['name']) ? 'checked' : ''}}
+                                                        > {{ $permissionArray['name'] }}
+                                                        <span></span>
+                                                    </label>
+                                                    
+                                                </div>
 
-                            @foreach ($sections as $item)
+                                            </div>
+                                        </div>
+                                    </div>
+                        
+                            @endforeach
+							
+                            {{-- @foreach ($sections as $item)
                                 <?php $route_name = $item->route_name ; ?>
                                 @if ($item->route !== null)
                                     <div class="form-group kt-checkbox-list">
@@ -107,7 +130,7 @@
                                         </div>
                                     </div>
                                 @endif
-                            @endforeach
+                            @endforeach --}}
                         </div>
                     </div>
                 </div>

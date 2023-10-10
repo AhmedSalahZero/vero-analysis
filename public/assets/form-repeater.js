@@ -121,7 +121,9 @@ var FormRepeater = function() {
              
             show: function() {
                 $(this).slideDown();      
-				$('input.trigger-change-repeater').trigger('change')                         
+				$('input.trigger-change-repeater').trigger('change')     
+				
+					
             },
 
             hide: function(deleteElement) {
@@ -138,7 +140,7 @@ var FormRepeater = function() {
                    
                                deleteElement();
                               $('select.main-service-item').trigger('change');
-				$('input.trigger-change-repeater').trigger('change')                         
+							$('input.trigger-change-repeater').trigger('change')                         
 							  
                     });
                 }         
@@ -218,6 +220,10 @@ var FormRepeater = function() {
                              }
         });
     }
+	
+	
+	
+	
     return {
         // public functions
         init: function() {

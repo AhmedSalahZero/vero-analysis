@@ -583,6 +583,7 @@ class QuantitySalesForecastReport
 
 	public function productsSeasonality(Company $company, Request $request)
 	{
+		dd('from 1');
 		$product_seasonality = QuantityProductSeasonality::company()->get();
 		$sales_forecast = QuantitySalesForecast::company()->first();
 		if ($request->isMethod('POST')) {
@@ -831,7 +832,12 @@ class QuantitySalesForecastReport
 			));
 		}
 	}
+	
 
+	
+
+	
+	
 	public function productsAllocations(Company $company, Request $request, $result = 'view', $noReturn = false)
 	{
 		$has_product_item = $this->fields($company);
@@ -844,6 +850,7 @@ class QuantitySalesForecastReport
 		}
 		$sales_forecast = QuantitySalesForecast::company()->first();
 		$products_seasonality = QuantityProductSeasonality::company()->get();
+		// dd($products_seasonality);
 		$year = date('Y', strtotime($sales_forecast->start_date));
 		// dd($sales_forecast,$products_seasonality);
 
@@ -903,7 +910,6 @@ class QuantitySalesForecastReport
 		//     $year
 
 		// );
-
 		$existing_products_seasonalities['Totals'] = [];
 		// array_sum($existing_products_seasonalities);
 		$new_products_totals = $this->finalTotal($new_products_seasonalities);
@@ -915,10 +921,11 @@ class QuantitySalesForecastReport
 		// }
 		//end
 
+		$existing_products_targets = [];
 
 
 
-		if (($result == 'view') || ($result == 'total_sales_target') || ($result == 'total_sales_target_data')) {
+		if ($result == 'total_company_sales_target'||($result == 'view') || ($result == 'total_sales_target') || ($result == 'total_sales_target_data') || $result=='detailed_company_sales_target') {
 			// $modified_targets = QuantityModifiedTarget::company()->first();
 
 
@@ -973,8 +980,7 @@ class QuantitySalesForecastReport
 			$product_item_breakdown_data_items = array_combine(array_column($product_item_breakdown_data, 'item'), array_column($product_item_breakdown_data, 'Sales Quantity'));
 
 			$modified_seasonality = QuantityModifiedSeasonality::company()->first();
-
-
+			// existing_products_targets
 
 			$others_sales_values = SalesGathering::company()
 				->whereNotNull('product_item')
@@ -990,7 +996,7 @@ class QuantitySalesForecastReport
 				}
 			});
 			$products_items_monthly_percentage =  (new QuantitySeasonalityReport)->productsItemsData($request, $company, $sales_forecast, $product_item_breakdown_data_items, $type);
-
+// dd($products_items_monthly_percentage);
 			if ($modified_seasonality === null || count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? [])))) {
 
 				if ($modified_seasonality === null) {
@@ -1017,7 +1023,7 @@ class QuantitySalesForecastReport
 
 			$totals_per_month = [];
 
-			$existing_products_targets = [];
+			
 			// dd();
 
 			foreach ($product_item_breakdown_data as $key => $product_data) {
@@ -1057,8 +1063,8 @@ class QuantitySalesForecastReport
 					$total_existing_targets += $result_per_month;
 				}
 			}
-
-
+			// dd('existing',$existing_products_targets);
+// 
 			if ($result ==  'total_sales_target') {
 
 				unset($existing_products_seasonalities['Totals']);
@@ -1087,6 +1093,28 @@ class QuantitySalesForecastReport
 			if ($noReturn) {
 				return;
 			}
+			if($result == 'detailed_company_sales_target'){
+				// dd($existing_products_targets);
+			
+				unset($existing_products_targets['Totals']);
+				$total_company_sales_target = $this->finalTotal([$new_products_totals, $existing_products_targets]);
+				// dd($total_company_sales_target );
+				// dd('total_existing',$this->finalTotal($existing_products_targets));
+				return [
+					'existing' => $existing_products_targets,
+					'new' => $new_products_totals,
+					'total' => $total_company_sales_target,
+					'totalExisting'=>$this->finalTotal($existing_products_targets),
+					'totalNew'=>$this->finalTotal($new_products_totals)
+				];
+				
+			}
+			if($result == 'total_company_sales_target'){
+					unset($existing_products_targets['Totals']);
+					
+					
+			return $this->finalTotal([$new_products_totals, $existing_products_targets]);
+			}
 			return view('client_view.quantity_forecast.products_allocations', compact(
 				'company',
 				'monthly_dates',
@@ -1106,18 +1134,20 @@ class QuantitySalesForecastReport
 				'totals_per_month'
 			));
 		} elseif ($result == 'total_company_sales_target') {
-			unset($existing_products_seasonalities['Totals']);
-			return $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);
-		} elseif ($result == 'detailed_company_sales_target') {
+			// unset($existing_products_seasonalities['Totals']);
+			// return $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);
+		}
+		 elseif ($result == 'detailed_company_sales_target') {
+			// dd('detailw',$existing_products_targets);
+// dd($new_products_totals , $existing_products_seasonalities);
+			// unset($existing_products_seasonalities['Totals']);
 
-			unset($existing_products_seasonalities['Totals']);
-
-			$total_company_sales_target = $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);
-			return [
-				'existing' => $existing_products_seasonalities,
-				'new' => $new_products_totals,
-				'total' => $total_company_sales_target
-			];
+			// $total_company_sales_target = $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);
+			// return [
+			// 	'existing' => $existing_products_seasonalities,
+			// 	'new' => $new_products_totals,
+			// 	'total' => $total_company_sales_target
+			// ];
 		} else {
 			unset($existing_products_seasonalities['Totals']);
 			$total_monthly_targets =  $this->finalTotal([$existing_products_seasonalities]);

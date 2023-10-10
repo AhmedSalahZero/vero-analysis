@@ -3,6 +3,10 @@ $tableId = 'kt_table_1';
 @endphp
 
 <style>
+	html body table tr.edit-info-row[data-sub-item-name][data-percentage-value][data-is-quantity="1"] td
+	{
+		background-color:antiquewhite  !important;
+	}
     .max-w-actions {
         width: 55px !important;
         max-width: 55px !important;
@@ -217,7 +221,7 @@ $tableId = 'kt_table_1';
 
 </style>
 @csrf
-
+<input type="hidden" id="is-actual-table" value="{{ (int) in_array('actual-report',Request()->segments()) }}">
 <input type="hidden" id="editable-by-btn" value="1">
 @if(in_array($reportType,['adjusted']))
 <input type="hidden" id="fixed-column-number" value="2">
@@ -274,9 +278,10 @@ $tableId = 'kt_table_1';
     <script>
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         const sales_rate_maps = JSON.parse(sales_rates_maps);
-		let opens = [];
+        let opens = [];
         let globalTable = null;
         let canRedrawWitdth = false;
+		let canSendAjaxRequest = true ;
         let inEditMode = false;
         let lastInputValue = 0;
         let numberOfConsole = 0
@@ -352,8 +357,8 @@ $tableId = 'kt_table_1';
 
         <x-slot name="headerTr">
             <input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
-            <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;"  id="pdf_only" name="opens" >
-            <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;"  id="export_type" name="dynamic_rows_shown" >
+            <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;" id="pdf_only" name="opens">
+            <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;" id="export_type" name="dynamic_rows_shown">
             <tr class="header-tr " data-model-name="{{ $modelName }}">
                 <th class="view-table-th header-th trigger-child-row-1 expand-all is-open-parent text-nowrap">
                     {{ __('Expand') }}
@@ -528,6 +533,7 @@ $tableId = 'kt_table_1';
                                 if (!checkedItems.includes('quantity')) {
                                     autocaulationItem = 'quantity'
                                 }
+											
                                 let thirdCheckboxTr = salesRevenueModalTdData[inEditMode][subItemName][autocaulationItem]
 
                                 let trs = firstCheckboxTr + secondCheckboxTr + thirdCheckboxTr
@@ -539,14 +545,34 @@ $tableId = 'kt_table_1';
 
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body').empty().append(trs)
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type input').prop('readonly', true)
+								
+								var checkedItemsAsString = '';
+								checkedItems.forEach(function(element,index){
+									if(index){
+									checkedItemsAsString +=('_'+ element) ; 
+									}else{
+									checkedItemsAsString +=( element) ; 
+									}
+								})	
+								const name = "sub_items["+ currentIndex +"][is_value_quantity_price]" ;
+								const selector = '[name="'+name+'"]';
+								$(selector).val(checkedItemsAsString);			
+								
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type i.repeat-row').remove();
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('id', 'modal-for-quantity-' + currentIndex)
-
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('data-id', 'modal-for-quantity-' + currentIndex)
+								// to update total 
+								$('.append-sales-revenue-modal-table-body tr td:nth-of-type(2) input.hidden-for-popup:first-of-type').trigger('blur')
+								
+								//$('.hidden-for-popup').trigger('blur')
                                 $('.modal-for-quantity').addClass('d-none').addClass('fade').removeClass('d-block')
                                 $('.modal-for-quantity[data-index="' + currentIndex + '"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
                             } else {
                                 console.warn('only two checkboxes allowed')
+								
+								const name = "sub_items["+ currentIndex +"][is_value_quantity_price]" ;
+								const selector = '[name="'+name+'"]';
+								$(selector).val('value');
                             }
 
                         })
@@ -1432,6 +1458,12 @@ $tableId = 'kt_table_1';
                         })
                         $(document).on('click', '.edit-modal-icon', function() {
                             inEditMode = true
+							const target = $(this).parent().attr('data-target');
+							if(target){
+							 $(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
+							}
+								
+							
                         })
                         $(document).on('change', '.has-collection-policy-class', function() {
                             const hasCollectionPolicy = this.checked
@@ -1444,6 +1476,9 @@ $tableId = 'kt_table_1';
                             } else {
                                 collectionPolicyContent.addClass('d-none')
                             }
+							
+							
+						
                         })
 
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
@@ -1486,16 +1521,16 @@ $tableId = 'kt_table_1';
                             if (subRows.hasClass('d-none')) {
                                 parentRow.find('td.trigger-child-row-1').removeClass('is-open').addClass('is-close').html('+');
                                 // closed [remove] 
-								
-//								    let opens = JSON.parse($('#pdf_only').val());
-									var closedId = parentRow.attr('data-financial-statement-able-item-id')
-									const index = opens.indexOf(closedId);
-//
-								 opens.splice(index, 1);
-								 console.log('opens after remove',opens)
-//
-//                         
-//                                $('#pdf_only').val(opens)
+
+                                //								    let opens = JSON.parse($('#pdf_only').val());
+                                var closedId = parentRow.attr('data-financial-statement-able-item-id')
+                                const index = opens.indexOf(closedId);
+                                //
+                                opens.splice(index, 1);
+                                console.log('opens after remove', opens)
+                                //
+                                //                         
+                                //                                $('#pdf_only').val(opens)
 
                                 if (canRedrawWitdth) {
                                     globalTable.columns.adjust();
@@ -1506,10 +1541,10 @@ $tableId = 'kt_table_1';
                                 parentRow.find('td.trigger-child-row-1').html('×');
                             } else {
                                 parentRow.find('td.trigger-child-row-1').addClass('is-open').removeClass('is-close').html('-');
-    //                            let opens = JSON.parse($('#pdf_only').val());
-                                 opens.push(parentRow.attr('data-financial-statement-able-item-id'));
-								 
-  //                              $('#pdf_only').val(opens)
+                                //                            let opens = JSON.parse($('#pdf_only').val());
+                                opens.push(parentRow.attr('data-financial-statement-able-item-id'));
+
+                                //                              $('#pdf_only').val(opens)
 
                                 if (canRedrawWitdth) {
                                     globalTable.columns.adjust();
@@ -1663,7 +1698,7 @@ $tableId = 'kt_table_1';
 
                                     })
 
-
+                                    const isActualTable = +$('#is-actual-table').val();
 
                                     // begin first table
                                     table.DataTable({
@@ -1710,7 +1745,7 @@ $tableId = 'kt_table_1';
                                                         // 'id':'test'
                                                     }
                                                     , "text": '<svg style="margin-right:10px;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect id="bound" x="0" y="0" width="24" height="24"/><path d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z" id="Path-103" fill="#000000" fill-rule="nonzero" opacity="0.3"/><rect id="Rectangle" fill="#000000" opacity="0.3" transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) " x="11" y="2" width="2" height="12" rx="1"/><path d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z" id="Path-104" fill="#000000" fill-rule="nonzero" transform="translate(12.000000, 2.500000) scale(1, -1) translate(-12.000000, -2.500000) "/></g></svg>' + '{{ __("Upload Actual Template") }}'
-                                                    , 'className': 'btn btn-bold btn-secondary ml-2 filter-table-btn  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away import-modal-class'
+                                                    , 'className': isActualTable ? 'btn btn-bold btn-secondary ml-2 filter-table-btn  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away import-modal-class' : 'd-none'
 
                                                 }
                                                 , {
@@ -1719,7 +1754,7 @@ $tableId = 'kt_table_1';
                                                         // 'id':'test'
                                                     }
                                                     , "text": '<span style="margin-right:10px;position:relative" class="svg-icon kt-svg-icon svg-icon-2x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo8/dist/../src/media/svg/icons/Files/Import.svg--><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24"/><rect fill="#000000" opacity="0.3" transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) " x="11" y="1" width="2" height="12" rx="1"/><path d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"/><path d="M14.2928932,10.2928932 C14.6834175,9.90236893 15.3165825,9.90236893 15.7071068,10.2928932 C16.0976311,10.6834175 16.0976311,11.3165825 15.7071068,11.7071068 L12.7071068,14.7071068 C12.3165825,15.0976311 11.6834175,15.0976311 11.2928932,14.7071068 L8.29289322,11.7071068 C7.90236893,11.3165825 7.90236893,10.6834175 8.29289322,10.2928932 C8.68341751,9.90236893 9.31658249,9.90236893 9.70710678,10.2928932 L12,12.5857864 L14.2928932,10.2928932 Z" fill="#000000" fill-rule="nonzero"/></g></svg></span>' + '{{ __("Download Actual Template") }}'
-                                                    , 'className': 'btn btn-bold btn-secondary ml-2 filter-table-btn  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away'
+                                                    , 'className': isActualTable ? 'btn btn-bold btn-secondary ml-2 filter-table-btn  flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away' : 'd-none'
                                                     , "action": function() {
                                                         window.location.href = "{{ route('admin.export.excel.template',['company'=>$company->id,'incomeStatement'=>$incomeStatement->id]) }}"
                                                     }
@@ -1751,7 +1786,7 @@ $tableId = 'kt_table_1';
                                                     , 'className': 'btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius ml-2 do-not-close-when-click-away'
                                                     , "action": function() {
                                                         let form = $('form#store-report-form-id');
-														$('#export_type').val(0);
+                                                        $('#export_type').val(0);
                                                         let oldFormAction = form.attr('action');
                                                         let exportFormAction = "{{ route('admin.export.income.statement.report',$company->id) }}";
                                                         form.attr('action', exportFormAction);
@@ -1768,8 +1803,8 @@ $tableId = 'kt_table_1';
                                                     , "action": function() {
                                                         let form = $('form#store-report-form-id');
                                                         let oldFormAction = form.attr('action');
-														$('#export_type').val(1);
-														$('#pdf_only').val(JSON.stringify(opens))
+                                                        $('#export_type').val(1);
+                                                        $('#pdf_only').val(JSON.stringify(opens))
                                                         let exportFormAction = "{{ route('admin.export.income.statement.report.pdf',$company->id) }}";
                                                         form.attr('action', exportFormAction);
                                                         form.submit();
@@ -2171,6 +2206,7 @@ $tableId = 'kt_table_1';
                                                     $(row).attr('data-percentage-value', data.pivot && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value || 0 : 0)
                                                     $(row).attr('data-cost-of-unit-value', data.pivot && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value || 0 : 0)
                                                     $(row).attr('data-is-financial-expense', data.pivot && data.pivot.is_financial_expense == '1' ? 1 : 0)
+                                                    $(row).attr('data-is-quantity', data.pivot && data.pivot.is_quantity == '1' ? 1 : 0)
                                                     $(row).attr('data-is-financial-income', data.pivot && data.pivot.is_financial_income == '1' ? 1 : 0)
 
                                                     if (data.pivot.can_be_percentage_or_fixed) {
@@ -2677,6 +2713,8 @@ $tableId = 'kt_table_1';
 
 
 
+                                                
+
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
@@ -2772,7 +2810,12 @@ $tableId = 'kt_table_1';
                                 if (hasError) {
                                     return;
                                 }
+							
                                 $(this).prop('disabled', true)
+								if(!canSendAjaxRequest){
+									return ;
+								}
+								canSendAjaxRequest = false ; 
                                 const salesRevenueId = domElements.salesRevenueId
                                 const financeIncomeOrExpensesId = domElements.financialIncomeOrExpensesId
                                 const salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId
@@ -2832,9 +2875,9 @@ $tableId = 'kt_table_1';
                                             inAddOrEditModal = false
                                             var updateElement = updateCurrentRow ? triggerBlurForEditableTd(date) : document.querySelector('.maintable-1-row-class' + updateRowId + '[data-sub-item-name="' + updateSubItem + '"] td.date-' + date)
                                             if (updateElement) {
-                                                updateElement.dispatchEvent(new Event('blur', {
-                                                    'bubbles': true
-                                                }))
+                                                // updateElement.dispatchEvent(new Event('blur', {
+                                                //     'bubbles': true
+                                                // }))
                                             }
                                         }
 
@@ -2856,6 +2899,7 @@ $tableId = 'kt_table_1';
                                         , processData: false
                                         , success: function(res) {
                                             submitBtn.attr('disabled', false);
+											canSendAjaxRequest = true ;
                                             globalTable.ajax.reload(null, false)
                                             if (res.status) {
                                                 Swal.fire({
@@ -2873,6 +2917,7 @@ $tableId = 'kt_table_1';
                                         }
                                         , error: function(res) {
                                             submitBtn.attr('disabled', false);
+											canSendAjaxRequest = true ;
                                             let message = '';
                                             if (res.responseJSON && res.responseJSON.message) {
                                                 message = res.responseJSON.message;
@@ -3040,15 +3085,12 @@ $tableId = 'kt_table_1';
                                             editableDateTd.innerHTML = 0
                                             editableDateTd.setAttribute('data-percentage-value', 0)
                                             editableDateTd.setAttribute('data-cost-of-unit-value', 0)
-                                            //  editableDateTd.dispatchEvent(new Event('blur'));
                                         })
                                         document.querySelectorAll('tr.maintable-1-row-class' + id + '[data-sub-item-name="' + subName + '"] input[data-date]').forEach((editableDateInput) => {
                                             editableDateInput.value = 0
-                                            //editableDateTd.setAttribute('data-percentage-value', 0)
-                                            //editableDateTd.setAttribute('data-cost-of-unit-value', 0)
-                                            editableDateInput.dispatchEvent(new Event('change', {
-                                                'bubbles': true
-                                            }));
+                                            //editableDateInput.dispatchEvent(new Event('change', {
+                                            //    'bubbles': true
+                                            //}));
                                         })
                                     }
 
@@ -3057,7 +3099,7 @@ $tableId = 'kt_table_1';
                                         editableDateTd.innerHTML = 0
                                         editableDateTd.setAttribute('data-percentage-value', 0)
                                         editableDateTd.setAttribute('data-cost-of-unit-value', 0)
-                                        editableDateTd.dispatchEvent(new Event('blur'));
+                                        //editableDateTd.dispatchEvent(new Event('blur'));
                                     })
                                 }
 
@@ -3712,12 +3754,13 @@ $tableId = 'kt_table_1';
                     let datesFormatted = "{{ json_encode(($incomeStatement->getIntervalFormatted())) }}"
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
                     let subItemName = editModal && pivot && pivot.payload ? pivot.sub_item_name : 'new';
+                    let currentValueForValueOrQuantityOrPrice = editModal && pivot && pivot.payload && pivot.payload.is_value_quantity_price ? pivot.payload.is_value_quantity_price : 'value';
                     datesFormatted = JSON.parse(datesFormatted.replace(/(&quot\;)/g, "\""))
-                    let thsForHeader = '<th class="text-white"> {{ __("Item") }}</th>';
+                    let thsForHeader = '<th class="text-white"> {{ __("Item") }} <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;" class="value_quantity_price-id" value="'+ currentValueForValueOrQuantityOrPrice +'" name="sub_items[0][is_value_quantity_price]"> </th>';
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
                     let tdForBodyQuantity = '<td>{{ __("Quantity") }}</td>';
-                    let tdForBodyPrice = '<td>{{ __("Price") }}</td>';
+                    let tdForBodyPrice = '<td>{{ __("Price") }} </td>';
 
                     for (date of dates) {
                         var salesQuantityAtDate = editModal && salesRevenueQuantityDateValues[date] ? salesRevenueQuantityDateValues[date] : 0;
@@ -3726,6 +3769,7 @@ $tableId = 'kt_table_1';
                         valueAtDate = parseFloat(valueAtDate)
                         var priceAtDate = editModal && salesQuantityAtDate ? valueAtDate / salesQuantityAtDate : 0;
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
+						
                         tdForBodyValue += `<td class="" data-type="value"  data-date="${date}">
 							<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
 							<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
@@ -3733,6 +3777,7 @@ $tableId = 'kt_table_1';
 							
 						  </td> `
                         tdForBodyQuantity += `<td class="" data-type="quantity"  data-date="${date}"> 
+						
 						<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
 						<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
@@ -3767,6 +3812,7 @@ $tableId = 'kt_table_1';
                     tdForBodyQuantity = '<tr data-equation="value / price" data-number-format="0" class="quantity" data-type="quantity">' + tdForBodyQuantity + '</tr>'
                     tdForBodyValue += `<td class="" data-type="value"> <input readonly type="text" class="form-control pr-0 total-for-value" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
 					<i style="visibility:hidden" class="fa fa-ellipsis-h " ></i>
+					
 					</td>`
                     tdForBodyValue = '<tr data-equation="quantity * price" data-number-format="0" class="value" data-type="value">' + tdForBodyValue + '</tr>'
                     editModal = editModal ? 1 : 0;
@@ -3792,15 +3838,15 @@ $tableId = 'kt_table_1';
 						<div class="checkboxes-for-quantity only-two-checkbox-parent mt-4">
 							<div class="quantity-checkbox-div">
 							<label >{{ __('Value') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" checked>
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? 'checked' : ''}>
 							</div>
 							<div class="quantity-checkbox-div">
 								<label >{{ __('Quantity') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="quantity"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]">
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="quantity"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal &&  pivot.is_value_quantity_price&& editModal && pivot.is_value_quantity_price.includes('quantity') ? 'checked' : ''}>
 							</div>
 							<div class="quantity-checkbox-div">
 								<label >{{ __('Price') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal}" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="price"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]">
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal}" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="price"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('price') ? 'checked' : ''}>
 							</div>
 						</div>
 						

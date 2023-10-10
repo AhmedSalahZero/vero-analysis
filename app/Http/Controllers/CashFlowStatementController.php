@@ -42,20 +42,23 @@ class CashFlowStatementController extends Controller
 		// dd();
 		// $cashFlowStatement->receivables_and_payments->count()
 		if (env('APP_ENV') == 'local'
-			&& !$cashFlowStatement->entered_receivables_and_payments_table
+			// && !$cashFlowStatement->entered_receivables_and_payments_table
 			||
 			Request()->route()->getName() == 'admin.show-cash-and-banks'
 		) {
 			$subItemType ='forecast';
 			$receivables_and_payments = $cashFlowStatement
 			->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID, $subItemType)
-			->wherePivot('receivable_or_payment', '!=', null)->get();
-			$receivables = $receivables_and_payments;
-			$payments = $cashFlowStatement
+			->wherePivot('receivable_or_payment',  'payment')->get();
+			
+			$payments = $receivables_and_payments;
+			$receivables = $cashFlowStatement
 			->withSubItemsFor(CashFlowStatementItem::CASH_IN_ID, $subItemType)
-			->wherePivot('receivable_or_payment', '!=', null)->get();
-
+			->wherePivot('receivable_or_payment', 'receivable')->get();
+			$hasPayments = (bool)count($payments);
+			$hasReceivables = (bool)count($receivables);
 			$receivables_and_payments = $payments->concat($receivables);
+			
 			$model = $cashFlowStatement;
 			if (!count($receivables_and_payments)) {
 				$model = null;
@@ -63,8 +66,8 @@ class CashFlowStatementController extends Controller
 			$cashFlowStatement->update([
 				'entered_receivables_and_payments_table'=>1
 			]);
-
-			return view('admin.cash-flow-statement.cash-opening-balance.create', ['dates'=>$dates, 'company'=>$company, 'cashFlowStatementId'=>$cashFlowStatement->id, 'receivables_and_payments'=>$receivables_and_payments, 'model'=>$model, 'subItemType'=>$subItemType]);
+// dd($hasPayments , $hasReceivables);
+			return view('admin.cash-flow-statement.cash-opening-balance.create', ['dates'=>$dates, 'company'=>$company, 'cashFlowStatementId'=>$cashFlowStatement->id, 'receivables_and_payments'=>$receivables_and_payments, 'model'=>$model, 'subItemType'=>$subItemType,'hasPayments'=>$hasPayments,'hasReceivables'=>$hasReceivables]);
 		}
 
 		$cashFlowStatement = $cashFlowStatement->financialStatement->cashFlowStatement;
@@ -345,8 +348,9 @@ class CashFlowStatementController extends Controller
 			// ];
 			// if ($arr['id']) {
 
-				
-				$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->attach($cashItemId, $data);
+				if($name){
+					$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->attach($cashItemId, $data);
+				}
 
 				if ($index == $lastIndex) {
 					$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $cashAndBanksName)->attach(
@@ -413,8 +417,9 @@ class CashFlowStatementController extends Controller
 				'receivable_or_payment'=>'payment',
 				'created_at'=>now()
 			];
-			
-			$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->attach($cashItemId, $data);
+			if($name){
+				$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->attach($cashItemId, $data);
+			}
 			
 			
 			// $data = [

@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\QuantitySalesForecastReport;
-use App\Models\QuantityAllocationSetting;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
+use App\Models\Product;
+use App\Models\QuantityAllocationSetting;
 use App\Models\QuantityExistingProductAllocationBase;
 use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityModifiedTarget;
 use App\Models\QuantityNewProductAllocationBase;
-use App\Models\Product;
 use App\Models\QuantityProductSeasonality;
 use App\Models\QuantitySalesForecast;
 use App\Models\SalesGathering;
@@ -381,6 +381,7 @@ class QuantityAllocationsReport
         $year = date('Y', strtotime($sales_forecast->start_date));
         $allocation_data = [];
         $allocation_data_total = [];
+		// dd($products_seasonality,$allocation_data_per_allocation_base);
         if (count($products_seasonality) > 0) {
             foreach ($allocation_data_per_allocation_base as $base_item => $products_data) {
                 foreach ($products_data as $product_name => $product_data) {
@@ -411,6 +412,7 @@ class QuantityAllocationsReport
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
         if ($result == 'view') {
+			// dd($products_seasonality,$existing_product_data);
             return view('client_view.quantity_forecast.new_product_seasonality', compact(
                 'new_products_allocations',
                 'allocation_data_total',
@@ -421,6 +423,8 @@ class QuantityAllocationsReport
             ));
         }
          else {
+			// dd($allocation_data_total);
+			return $existing_product_data ;
 
 
             $total_sales_targets = [];

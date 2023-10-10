@@ -88,8 +88,12 @@ class SecondAllocationsReport
         $allocations_setting = SecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  =getNumberOfProductsItems($company->id) ;
-     if ( ($request->isMethod('POST')
-            || (! $allocations_setting->add_new_items) ) && !$hasNewProductsItems){
+		if (($request->isMethod('POST')|| (!$allocations_setting->add_new_items && !$hasNewProductsItems) 
+			// || (! $hasNewProductsItems 
+			// && ! $allocations_setting->number_of_items
+			// )
+		) ) 
+     {
     //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
 
             foreach ((array )$request->allocation_base_data as $product => $data) {
@@ -171,6 +175,7 @@ class SecondAllocationsReport
 
     public function existingProductsAllocationBase(Request $request, Company $company)
     {
+		#:fixed me		
         $allocations_setting = SecondAllocationSetting::company()->first();
 
         $allocation_base = $allocations_setting->allocation_base;
@@ -347,6 +352,7 @@ class SecondAllocationsReport
         })->toArray() : [];
 
         $allocation_data_per_allocation_base = [];
+		// allocation_data_total
 
         foreach ($allocation_base_data as $product_name => $base_items) {
             $row = $products_seasonality->where('name', $product_name)->first();
@@ -379,6 +385,7 @@ class SecondAllocationsReport
         $year = date('Y', strtotime($sales_forecast->start_date));
         $allocation_data = [];
         $allocation_data_total = [];
+		
         if (count($products_seasonality) > 0) {
             foreach ($allocation_data_per_allocation_base as $base_item => $products_data) {
                 foreach ($products_data as $product_name => $product_data) {
@@ -400,12 +407,13 @@ class SecondAllocationsReport
 
                 }
             }
-
-            foreach ($allocation_data as $base => $data) {
-                foreach($data as $item=>$arr) // this foreach add by me
-                {
-                    $allocation_data_total[$base][$item] = $this->finalTotal($data);
-                }
+// dd();
+foreach ($allocation_data as $base => $data) {
+	foreach($data as $item=>$arr) // this foreach add by me
+	{
+		$allocation_data_total[$base][$item] = $this->finalTotal($data);
+	}
+	// dd('d',$allocation_data_total);
 
 
 
@@ -414,14 +422,31 @@ class SecondAllocationsReport
             arsort($allocation_data_total);
             $allocation_data_total['Total'] = $this->finalTotal($allocation_data);
         }
+		
+		// $total = $allocation_data_total['Total']??[]; 
+		// unset($allocation_data_total['Total']);
+		// $allocation_data_total['Total'] = $total;
+		// foreach($allocation_data_total as $key => $values){
+		// 	if($key != 'Total'){
+		// 		$allocation_data_total[$key] = $allocation_data[$key];
+		// 	}
+		// }
+		// $allocation_data_total['Total'] = $total ;
+		// dd($allocation_data_total);
+		
+		// dd($allocation_data_total);
+		// dd('e',$allocation_data,$allocation_data_total);
         // Existing
 
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
+		// dd($allocation_data);
+		// DD($allocation_data);
         if ($result == 'view') {
             return view('client_view.forecast.second_new_product_seasonality', compact(
                 'new_products_allocations',
                 'allocation_data_total',
+				'allocation_data',
                 'products_seasonality',
                 'company',
                 'existing_product_data',
@@ -431,6 +456,7 @@ class SecondAllocationsReport
 
             /* by salah */
             $total_sales_targets = [];
+			
             foreach ($allocation_data_total as $base => $base_data) {
                 foreach ($base_data as $item => $values) {
                     if(\is_array($values))
@@ -460,7 +486,7 @@ class SecondAllocationsReport
             //     }
             // }
 
-            unset($total_sales_targets['Total']);
+            // unset($total_sales_targets['Total']);
 
              if(!$total_sales_targets)
             {
@@ -468,7 +494,13 @@ class SecondAllocationsReport
                 return $existing_product_data ;
 
             }
-            return $total_sales_targets;
+			// dd($total_sales_targets);
+			// dd($total_sales_targets);
+			// $total_sales_targets['Total'] = $this->finalTotal($total_sales_targets);
+			// 
+			// dd('d',$total_sales_targets);
+			return get_total_with_preserve_key($total_sales_targets);
+            // return $total_sales_targets;
         }
     }
 

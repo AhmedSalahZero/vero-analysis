@@ -132,7 +132,7 @@
 
                         <td class="text-center white-text">{{$firstTotal ? number_format(    ($secondTotal - $firstTotal) / $firstTotal *100    , 2 ) . ' %' : __('NA')  }} </td>
                     </tr>
-                    @foreach ($secondReportData['report_data'][$mainItemName] as $secondItemName=>$vall )
+                    @foreach ($secondReportData['report_data'][$mainItemName]??[] as $secondItemName=>$vall )
 
                     {{-- @foreach ($secondItemsName as $secondItemName  ) --}}
 

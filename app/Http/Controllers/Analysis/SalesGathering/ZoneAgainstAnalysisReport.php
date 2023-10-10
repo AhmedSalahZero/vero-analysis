@@ -108,7 +108,7 @@ class ZoneAgainstAnalysisReport
 		$name_of_report_item  = ($result == 'view') ? 'Sales Values' : 'Avg. Prices';
 		foreach ($zones as  $zone) {
 			if ($result == 'view') {
-
+				
 				$zones_data = collect(DB::select(DB::raw(
 					"
                         SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,zone," . $type . "
@@ -167,7 +167,7 @@ class ZoneAgainstAnalysisReport
 					$years = array_unique($years);
 
 					$report_data[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
-					$interval_data = Intervals::intervals($report_data[$zone][$sales_channel], $years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$zone][$sales_channel], $years, $request->interval);
 					$report_data[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 					$report_data[$zone]['Total']  = $this->finalTotal([($report_data[$zone]['Total']  ?? []), ($report_data[$zone][$sales_channel][$name_of_report_item] ?? [])]);
@@ -193,7 +193,7 @@ class ZoneAgainstAnalysisReport
 						$years = array_unique($years);
 
 						$report_data_quantity[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
-						$interval_data = Intervals::intervals($report_data_quantity[$zone][$sales_channel], $years, $request->interval);
+						$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$zone][$sales_channel], $years, $request->interval);
 						$report_data_quantity[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 						$report_data_quantity[$zone]['Total']  = $this->finalTotal([($report_data_quantity[$zone]['Total']  ?? []), ($report_data_quantity[$zone][$sales_channel][$name_of_report_item] ?? [])]);
@@ -258,7 +258,7 @@ class ZoneAgainstAnalysisReport
 		$report_data['Total'] = $final_report_total;
 		$report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
 		$dates = array_keys($report_data['Total']);
-		$dates = formatDateVariable($dates, $request->start_date, $request->end_date);
+		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 		$Items_names = $zones_names;
 		$report_view = getComparingReportForAnalysis($request, $report_data, $secondReport, $company, $dates, $view_name, $Items_names, 'zone');
 
@@ -380,7 +380,7 @@ class ZoneAgainstAnalysisReport
 
 					// $sales_values_per_zone[$zone] = $zones_sales_values;
 
-					$interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
 					$sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -388,7 +388,7 @@ class ZoneAgainstAnalysisReport
 
 
 					$final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-					$interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
 					$final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -423,7 +423,7 @@ class ZoneAgainstAnalysisReport
 
 		$dates = array_keys($report_data['Total']);
 
-		$dates = formatDateVariable($dates, $request->start_date, $request->end_date);
+		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 
 		$type_name = 'Zones';
 
@@ -464,7 +464,7 @@ class ZoneAgainstAnalysisReport
 				$years = array_unique($years);
 				$report_data[$zone] = $zones_data;
 				$interval_data_per_item[$zone] = $zones_data;
-				$interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+				$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
 				$report_data[$zone] = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 				$growth_rate_data[$zone] = $this->growthRate($report_data[$zone]);
@@ -481,8 +481,11 @@ class ZoneAgainstAnalysisReport
 			$final_report_data[$zone]['Growth Rate %'] = ($growth_rate_data[$zone] ?? []);
 			$zones_names[] = (str_replace(' ', '_', $zone));
 		}
+		
+		$dates = array_keys( $total_zones ?? []); 
+		
 
-		return view('client_view.reports.sales_gathering_analysis.zone_sales_report', compact('company', 'zones_names', 'total_zones_growth_rates', 'final_report_data', 'total_zones'));
+		return view('client_view.reports.sales_gathering_analysis.zone_sales_report', compact('company', 'zones_names', 'total_zones_growth_rates', 'final_report_data', 'total_zones','dates'));
 	}
 	public function growthRate($data)
 	{
@@ -504,6 +507,7 @@ class ZoneAgainstAnalysisReport
 		}
 		return $final_data;
 	}
+	
 	// Ajax
 	public function ZonesData(Request $request, Company $company)
 	{

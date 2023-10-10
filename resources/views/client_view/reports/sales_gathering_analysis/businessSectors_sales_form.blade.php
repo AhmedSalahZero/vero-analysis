@@ -22,24 +22,7 @@
 
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-4">
-                            <label>{{__('Select Business Sectors')}} 
-                            
-                            
-                            @include('max-option-span')
-                            
-                            </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" data-max-options="{{ maxOptionsForOneSelector() }}"  name="businessSectors[]"  required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select select2-select"  multiple>
-                                        {{-- <option value="{{json_encode($businessSectors)}}">{{__('All Business Sectors')}}</option> --}}
-                                        @foreach ($businessSectors as $business_sector)
-                                            <option value="{{$business_sector}}"> {{__($business_sector)}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="col-md-2">
                             <label>{{__('Start Date')}}</label>
                             <div class="kt-input-icon">
@@ -56,6 +39,27 @@
                                 </div>
                             </div>
                         </div>
+						
+						<div class="col-md-4">
+                            <label>{{__('Select Business Sectors')}} 
+                            
+                            
+                            @include('max-option-span')
+                            
+                            </label>
+                            <div class="kt-input-icon">
+                                <div id="append-main-select" class="input-group date">
+                                    <select data-live-search="true" data-actions-box="true" data-max-options="{{ maxOptionsForOneSelector() }}"  name="businessSectors[]"  required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select select2-select"  multiple>
+                                        {{-- <option value="{{json_encode($businessSectors)}}">{{__('All Business Sectors')}}</option> --}}
+                                        @foreach ($businessSectors as $business_sector)
+                                            <option value="{{$business_sector}}"> {{__($business_sector)}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						
+						
                         <div class="col-md-2">
                             <label>{{__('Select Interval')}} </label>
                             <div class="kt-input-icon">
@@ -112,6 +116,63 @@
     <script src="{{url('assets/vendors/general/jquery.repeater/src/repeater.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')}}" type="text/javascript"></script>
     {{-- <script src="{{url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')}}" type="text/javascript"></script> --}}
+
+<script>
+    $(document).on('change', '[name="start_date"],[name="end_date"]', function() {
+
+        clearTimeout(wto);
+        wto = setTimeout(() => {
+            var branches = ['all'];
+            var type_of_data = "business_sector";
+            var getColumnName = 'business_sector';
+            var appendToSelector = '#append-main-select';
+            getAnotherSelectValues(branches, type_of_data, getColumnName, appendToSelector);
+        }, getNumberOfMillSeconds())
+
+
+
+    })
+
+    $(function() {
+        $('[name="start_date"]').trigger('change');
+    })
+
+    function getAnotherSelectValues(branches, type_of_data, getColumnName, appendToSelector) {
+        if (branches.length) {
+            $.ajax({
+                type: 'POST'
+                , data: {
+                    'main_data': branches
+                    , 'main_field': getColumnName
+                    , 'field': type_of_data
+                    , 'start_date': $('input[name="start_date"]').val()
+                    , 'end_date': $('input[name="end_date"]').val()
+                }
+                , url: "{{ route('get.zones.data',$company) }}"
+                , dataType: 'json'
+                , accepts: 'application/json'
+
+            }).done(function(data) {
+                var data_type = 'multiple';
+
+                row = '<select data-live-search="true" data-actions-box="true" name="businessSectors[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" required ' + data_type + '  >\n';
+
+
+                $.each(data, function(key, val) {
+                    row += '<option value*="' + val + '">' + val + '</option>\n';
+
+                });
+                row += '</select>';
+
+                $(appendToSelector).html('');
+                $(appendToSelector).append(row);
+                reinitializeSelect2();
+            });
+        }
+
+    }
+
+</script>
 
     <!--end::Page Scripts -->
 @endsection

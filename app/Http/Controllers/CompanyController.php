@@ -41,9 +41,6 @@ class CompanyController extends Controller
         toastr()->success('Created Successfully');
         $companySection = Company::create($request->except('image'));
         ImageSave::saveIfExist('image',$companySection);
-
-
-
         return redirect()->back();
     }
     public function adminCompany(Request $request,$company_id)

@@ -163,7 +163,7 @@ class CategoriesAgainstAnalysisReport
                     });
                     $years = array_unique($years);
                     $report_data[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data[$zone][$sales_channel], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$zone][$sales_channel], $years, $request->interval);
                     $report_data[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
                     $report_data[$zone]['Total']  = $this->finalTotal([($report_data[$zone]['Total']  ?? []) ,($report_data[$zone][$sales_channel][$name_of_report_item]??[]) ]);
                     $report_data[$zone][$sales_channel]['Growth Rate %'] = $this->growthRate(($report_data[$zone][$sales_channel][$name_of_report_item] ?? []));
@@ -186,7 +186,7 @@ class CategoriesAgainstAnalysisReport
                     $years = array_unique($years);
 
                     $report_data_quantity[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data_quantity[$zone][$sales_channel], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$zone][$sales_channel], $years, $request->interval);
                     $report_data_quantity[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
                     $report_data_quantity[$zone]['Total']  = $this->finalTotal([($report_data_quantity[$zone]['Total']  ?? []) ,($report_data_quantity[$zone][$sales_channel][$name_of_report_item]??[]) ]);
@@ -271,7 +271,7 @@ class CategoriesAgainstAnalysisReport
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
-         $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        //  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $Items_names = $categories_names ;
          $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'category' );
         if($report_view instanceof View)
@@ -357,7 +357,7 @@ class CategoriesAgainstAnalysisReport
 
 
 
-                    $interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
                     $sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -365,7 +365,7 @@ class CategoriesAgainstAnalysisReport
 
 
                     $final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-                    $interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
                     $final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -440,7 +440,7 @@ class CategoriesAgainstAnalysisReport
                 $years = array_unique($years);
                 $report_data[$category] = $categories_data;
                 $interval_data_per_item[$category] = $categories_data;
-                $interval_data = Intervals::intervals($interval_data_per_item, $years, $request->interval);
+                $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
                 $report_data[$category] = $interval_data['data_intervals'][$request->interval][$category] ?? [];
                 $growth_rate_data[$category] = $this->growthRate($report_data[$category]);
@@ -459,8 +459,10 @@ class CategoriesAgainstAnalysisReport
             $final_report_data[$category]['Growth Rate %'] = ($growth_rate_data[$category]??[]);
             $categories_names[] = (str_replace( ' ','_', $category));
         }
-
-        return view('client_view.reports.sales_gathering_analysis.categories_sales_report',compact('company','categories_names','total_categories_growth_rates','final_report_data','total_categories'));
+		// dd(get_defined_vars());
+		$dates = array_keys($total_categories ?? []); 
+		// dd($total_categories , $categories_data);
+        return view('client_view.reports.sales_gathering_analysis.categories_sales_report',compact('company','categories_names','total_categories_growth_rates','final_report_data','total_categories','dates'));
 
     }
     public function growthRate($data)

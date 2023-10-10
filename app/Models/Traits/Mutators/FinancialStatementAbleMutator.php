@@ -141,7 +141,7 @@ trait FinancialStatementAbleMutator
 		}
 	}
 
-	public function updatePivotForAdjustedSubItems(int $financialStatementAbleItemId, string $sub_item_origin_name): void
+	public function updatePivotForAdjustedSubItems(int $financialStatementAbleItemId, string $sub_item_origin_name,?string $isValueQuantityPrice): void
 	{
 		$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'forecast', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 		$payloadForSubRow = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->first() ;
@@ -156,10 +156,15 @@ trait FinancialStatementAbleMutator
 		// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
 		$actualDates = [];
 		$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
-		$this->withSubItemsFor($financialStatementAbleItemId, 'adjusted', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
+		// dd(get_defined_vars());
+		$dataArr =  [
 			'payload' => json_encode($pivotForModified),
-			'actual_dates' => json_encode($actualDates)
-		]);
+			'actual_dates' => json_encode($actualDates),
+		];
+		if($isValueQuantityPrice){
+			$dataArr['is_value_quantity_price'] = $isValueQuantityPrice ; 
+		}
+		$this->withSubItemsFor($financialStatementAbleItemId, 'adjusted', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId,$dataArr);
 		// for modified also ??
 		
 		
@@ -167,18 +172,23 @@ trait FinancialStatementAbleMutator
 		// || !twoArrayIsEqualValues($pivotForModified,$payloadForSubRow)
 		// ){
 			
-			$this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
+			
+			$dataArr = [
 				'payload' => json_encode($pivotForModified),
-				'actual_dates' => json_encode($actualDates)
-			]);
+				'actual_dates' => json_encode($actualDates),
+			];
+			if($isValueQuantityPrice){
+				$dataArr['is_value_quantity_price'] = $isValueQuantityPrice;
+			}
+			$this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, $dataArr);
 		// }
 	}
 
-	public function syncPivotFor(int $financialStatementAbleItemId, string $sub_item_type, string $sub_item_origin_name)
+	public function syncPivotFor(int $financialStatementAbleItemId, string $sub_item_type, string $sub_item_origin_name,?string $isValueQuantityPrice)
 	{
 		if ($sub_item_type == 'forecast' || $sub_item_type == 'actual') {
 			// for adjusted and modified for now
-			$this->updatePivotForAdjustedSubItems($financialStatementAbleItemId, $sub_item_origin_name);
+			$this->updatePivotForAdjustedSubItems($financialStatementAbleItemId, $sub_item_origin_name,$isValueQuantityPrice);
 		}
 	}
 
@@ -219,7 +229,7 @@ trait FinancialStatementAbleMutator
 		} elseif (isset($options['collection_policy']['type'][$collectionPolicyType]['value'])) {
 			$collection_value = $options['collection_policy']['type'][$collectionPolicyType]['value'];
 		}
-
+// dd()
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
@@ -232,6 +242,7 @@ trait FinancialStatementAbleMutator
 			'collection_policy_value' => $collection_value,
 			'is_quantity' => $isQuantityRepeating,
 			'can_be_quantity' => $options['can_be_quantity'] ?? false,
+			'is_value_quantity_price' => $options['is_value_quantity_price'] ?? 'value',
 			'percentage_or_fixed' => $percentageOrFixed,
 			'can_be_percentage_or_fixed' => $options['can_be_percentage_or_fixed'] ?? false,
 			'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null,
@@ -247,6 +258,8 @@ trait FinancialStatementAbleMutator
 
 	public function storeReport(Request $request)
 	{
+		// dd($request->all());
+		
 		
 		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
@@ -279,6 +292,7 @@ trait FinancialStatementAbleMutator
 								$val = $options['val'] ?? 0;
 								$payload = $isQuantityRepeating ? $quantityVal : $val;
 								$name = $isQuantityRepeating ? $options['name'] . quantityIdentifier : $options['name'];
+								
 								$subItemsValues[$financialStatementAble->id][$financialStatementAbleItemId][$name] = $payload;
 								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
 							}
@@ -296,12 +310,13 @@ trait FinancialStatementAbleMutator
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $values) {
 				foreach ($values as $sub_item_origin_name => $payload) {
 					$subItemAlreadyExist = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->exists();
+					
 
 					if ($financialStatementAbleItemId == IncomeStatementItem::SALES_REVENUE_ID && $request->get('in_add_or_edit_modal')) {
 						$subItemsNames = formatSubItemsNamesForQuantity($sub_item_origin_name);
 						$payloadForValue = $request->sub_items[0]['val'] ?? [];
 						$payloadForQuantity = $request->sub_items[0]['quantity'] ?? [];
-
+						$isValueQuantityPrice = $request->sub_items[0]['is_value_quantity_price'] ?? 'value';
 						if ($request->sub_item_name == $sub_item_origin_name) {
 							$hadQuantityRow = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['quantity'])->count();
 							$isCheckedAsQuantity = isQuantity((array)$request->sub_items[0]);
@@ -314,9 +329,12 @@ trait FinancialStatementAbleMutator
 							if (!$hadQuantityRow && $isCheckedAsQuantity) {
 								foreach (getAllFinancialAbleTypes() as $currentSubItemType) {
 									$pivotForNewQuantity = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['value'])->first()->pivot->toArray();
+								//		dd($request->get('sub_items'));
+								//	$xyz = 'qqq';
 									$pivotForNewQuantity = array_merge($pivotForNewQuantity, [
 										'is_quantity' => 1,
 										'can_be_quantity' => 1,
+										'is_value_quantity_price' => $isValueQuantityPrice ,
 										'sub_item_type' => $currentSubItemType,
 										'created_from' => $subItemType,
 										'payload' => json_encode($payloadForQuantity),
@@ -336,20 +354,26 @@ trait FinancialStatementAbleMutator
 									$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $currentSubItemType, $subItemsNames['quantity'])->detach();
 								}
 							} else {
-								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['quantity'])->updateExistingPivot($financialStatementAbleItemId, [
+								// dd(get_defined_vars());
+								$payloadData = [
 									'payload' => json_encode($payloadForQuantity),
-								]);
+									'is_value_quantity_price'=>$isValueQuantityPrice
+								];
+								
+								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['quantity'])->updateExistingPivot($financialStatementAbleItemId, $payloadData);
 							}
 						}
 					}
 
 					if ($subItemAlreadyExist) {
+						// dd(get_defined_vars());
 						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
 							'payload' => json_encode($payload),
-							// 'percentage_value'=>77
+							// 'is_value_quantity_price'=>$isValueQuantityPrice
 						]);
 					}
-					$financialStatementAble->syncPivotFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name);
+					// dd($sub_item_origin_name,get_defined_vars());
+					$financialStatementAble->syncPivotFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name,null);
 				}
 			}
 		}
@@ -484,7 +508,7 @@ trait FinancialStatementAbleMutator
 					}
 				}
 				$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
-					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName])
+					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName]),
 				]);
 			}
 		}
@@ -518,6 +542,7 @@ trait FinancialStatementAbleMutator
 						'collection_policy_value' => $pivot->collection_policy_value,
 						'is_quantity' => $pivot->is_quantity,
 						'can_be_quantity' => $pivot->can_be_quantity,
+						'is_value_quantity_price'=>$pivot->is_value_quantity_price,
 						'actual_dates' => $pivot->actual_dates,
 						'is_depreciation_or_amortization' => $pivot->is_depreciation_or_amortization,
 						'percentage_or_fixed' => $pivot->percentage_or_fixed,

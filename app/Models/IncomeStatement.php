@@ -120,4 +120,12 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 			// 'directManpowerExpensePositions','freelancerExpenses','profitability'
 		];
 	}
+	// public function fixed_monthly_repeating_amount()
+	// {
+	// 	return $this->hasMany(Expense::class , 'model_id','id')->where('mode_name','IncomeStatement');
+	// }
+	public function generateRelationDynamically(string $relationName){
+		
+		return $this->hasMany(Expense::class , 'model_id','id')->where('model_name','IncomeStatement')->where('relation_name',$relationName);
+	}
 }

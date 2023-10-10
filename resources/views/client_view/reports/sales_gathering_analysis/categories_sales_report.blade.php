@@ -72,8 +72,12 @@
                     @slot('table_header')
                     <tr class="table-active">
                         <th>{{ __('Categories') }}</th>
-                        @foreach ($total_categories as $date => $total)
+                        @foreach ($dates as $date )
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
+						 @if($loop->last)
+                        <th>{{ __("Total") }}</th>
+
+                        @endif
                         @endforeach
                     </tr>
                     @endslot
@@ -82,15 +86,20 @@
                     <?php $chart_data = []; ?>
 
                     <tr class="group-color  table-active text-lg-left  ">
-                        <td colspan="{{ count($total_categories) + 1 }}"><b class="white-text">{{ __($category_name) }}</b>
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($category_name) }}</b>
                         </td>
-                        @foreach ($total_categories as $date => $total)
+                        @foreach ($dates as $date )
                         <td class="hidden"> </td>
+						
+						@if($loop->last)
+	                        <td class="hidden"> </td>
+							@endif 
+							
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Sales Values') }}</th>
-                        @foreach ($total_categories as $date => $total)
+                        @foreach ($dates as $date )
                         <?php
                                         $chart_data[] = [
                                             'date' => date('d-M-Y', strtotime($date)),
@@ -99,36 +108,61 @@
                                         ]; ?>
                         <td class="text-center">
                             {{ number_format($zoone_data['Sales Values'][$date] ?? 0) }}</td>
+							
+							
+							 @if($loop->last)
+                        <td class="text-center">
+                            @php $totalForCategory[$category_name] = ($totalForSingleCategory = array_sum($zoone_data['Sales Values']) ?? 0) @endphp
+                            {{ number_format($totalForSingleCategory) }}
+                        </td>
+                        @endif
 
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Growth Rate %') }}</th>
-                        @foreach ($total_categories as $date => $total)
+                        @foreach ($dates as $date)
                         <td class="text-center">
                             {{ number_format($zoone_data['Growth Rate %'][$date] ?? 0, 2) . ' %' }}</td>
+							@if($loop->last)
+							<td class="text-center"></td>
+							@endif 
                         @endforeach
                     </tr>
                     <input type="hidden" id="{{ str_replace(' ', '_', $category_name) }}_data" data-total="{{ json_encode($chart_data) }}">
                     @endforeach
-                    <tr class="table-active">
+                     <?php $sumOfTotalsOfCategorySales = 0 ?>
+                    <tr>
                         <th class="active-style text-center">{{ __('TOTAL') }}</th>
-                        @foreach ($total_categories as $date => $total)
-                        <td class="text-center">{{ number_format($total ?? 0) }}</td>
+                        @foreach ($dates as $date )
+                        <td class="text-center active-style">{{ number_format($total_categories[$date] ?? 0) }}</td>
+						<?php $sumOfTotalsOfCategorySales += ($total_categories[$date] ?? 0) ?>
+						   @if($loop->last)
+                        <td class="text-center active-style">
+                            {{ number_format($sumOfTotalsOfCategorySales ?? 0) }}
+                        </td>
+
+                        @endif
+						
                         @endforeach
                     </tr>
 
                     <tr class="table-active">
                         <th class="active-style text-center">{{ __('Growth Rate %') }}</th>
                         <?php $chart_data = []; ?>
-                        @foreach ($total_categories_growth_rates as $date => $total)
+                        @foreach ($dates as $date )
                         <?php
                                     $chart_data[] = [
                                         'date' => date('d-M-Y', strtotime($date)),
                                         'Total Sales Values' => number_format($total_categories[$date] ?? 0),
-                                        'Sales GR %' => number_format($total ?? 0, 2),
+                                        'Sales GR %' => number_format($total_categories_growth_rates[$date] ?? 0, 2),
                                     ]; ?>
-                        <td class="text-center active-style">{{ number_format($total ?? 0, 2) . ' %' }}</td>
+                        <td class="text-center active-style">{{ number_format($total_categories_growth_rates[$date] ?? 0, 2) . ' %' }}</td>
+						@if($loop->last)
+                        <td class="text-center active-style">
+                        </td>
+
+                        @endif
                         @endforeach
                     </tr>
 
@@ -143,8 +177,14 @@
                         <th>{{ __('Categories') }}</th>
 
 
-                        @foreach ($total_categories as $date => $total)
+                        @foreach ($dates as $date)
                         <th>{{ date('d-M-Y', strtotime($date)) }}</th>
+						
+						@if($loop->last)
+                        <th>{{ __("Total") }}</th>
+                        @endif
+						
+						
                         @endforeach
                     </tr>
                     @endslot
@@ -152,22 +192,37 @@
                     <?php $chart_data = []; ?>
                     @foreach ($final_report_data as $category_name => $zoone_data)
                     <tr class="group-color  table-active text-lg-left  ">
-                        <td colspan="{{ count($total_categories) + 1 }}"><b class="white-text">{{ __($category_name) }}</b></td>
-                        @foreach ($total_categories as $date => $total)
+                        <td colspan="{{ count($dates) + 2 }}"><b class="white-text">{{ __($category_name) }}</b></td>
+                        @foreach ($dates as $date )
                         <td class="hidden"> </td>
+						
+						@if($loop->last)
+                        <td class="hidden"> </td>
+                        @endif
+						
                         @endforeach
                     </tr>
                     <tr>
                         <th>{{ __('Percent %') }}</th>
-                        @foreach ($total_categories as $date => $total)
+                        @foreach ($dates as $date )
+						@php
+							$currentTotal = $total_categories[$date] ?? 0;
+						@endphp
                         <?php
-                                        $percentage = $total == 0 ? 0 : number_format((($zoone_data['Sales Values'][$date] ?? 0) / ($total ?? 0)*100), 2);
+                                        $percentage = $currentTotal == 0 ? 0 : number_format((($zoone_data['Sales Values'][$date] ?? 0) / ($currentTotal ?? 0)*100), 2);
                                         $chart_data[$date][$category_name] = [$category_name . ' %' => $percentage, ];
                                         ?>
 
                         <td class="text-center">
                             {{ $percentage . ' %' }}
                         </td>
+						
+						 @if($loop->last)
+                        <td class="text-center">
+                            {{ $sumOfTotalsOfCategorySales ? number_format((($totalForCategory[$category_name] / $sumOfTotalsOfCategorySales) * 100  ) , 2) . ' %': 0   }}
+                        </td>
+                        @endif
+						
                         @endforeach
                     </tr>
 

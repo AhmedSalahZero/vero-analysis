@@ -3,10 +3,9 @@
                                             <div class="position-absolute d-none js-append-into" style="z-index:2">
                                                 <ul class="list-unstyled " style="
 											background: white;
-											box-shadow: 0 0 1px rgba(0,0,0,0.4);
-											padding: 2rem 4rem;
-												padding-left: 4rem;
-											padding-left: 15px;
+    										box-shadow: 0 0 1px rgb(0 0 0 / 40%);
+    										padding: 2rem 15px;
+    										width: 200px;
   
   																">
                                                     <li></li>

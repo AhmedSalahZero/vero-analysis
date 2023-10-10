@@ -8,6 +8,7 @@ use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -125,6 +126,9 @@ class InvoicesAgainstAnalysisReport
         $type = $request->type;
         $view_name = $request->view_name;
         $branches = $this->formatTypesAsString($branches);
+
+        
+        // dd($branches);
        $queryResult =  collect(DB::select("select ". $type.",((product_item)) as product_items, ((document_number)) as invoice_number  , Year , Month , net_sales_value
             from sales_gathering
             where document_type in ('INV' , 'inv' , 'invoice','INVOICE','فاتوره') and company_id = ". $company->id ."  
@@ -160,14 +164,7 @@ class InvoicesAgainstAnalysisReport
                  $reportSalesValues  = (new BusinessSectorsAgainstAnalysisReport())->BusinessSectorsSalesAnalysisResult($request , $company , true);
             }
 
-            // if($type == 'customer_name')
-            // {
-            //      $reportSalesValues  =getCustomerSalesAnalysisData($request , $company);
-            // }
-            // if($type  == 'sales_person')
-            // {
-            //      $reportSalesValues  = getSalesPersonsSalesAnalysisData($request , $company );
-            // }
+           
             if(! $reportSalesValues)
             {
                  $reportSalesValues  =getTypeSalesAnalysisData($request , $company , $type);
@@ -424,6 +421,8 @@ class InvoicesAgainstAnalysisReport
         // }
         // return $final_data;
     }
+	
+
 
 
 }

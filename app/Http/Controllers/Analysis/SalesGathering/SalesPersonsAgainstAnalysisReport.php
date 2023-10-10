@@ -99,7 +99,7 @@ class SalesPersonsAgainstAnalysisReport
                     $years = array_unique($years);
 
                     $report_data[$main_row][$sales_channel]['Sales Values'] = $data_per_main_item;
-                    $interval_data = Intervals::intervals($report_data[$main_row][$sales_channel], $years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$main_row][$sales_channel], $years, $request->interval);
                     $report_data[$main_row][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
 
                     $report_data[$main_row]['Total']  = $this->finalTotal([($report_data[$main_row]['Total']  ?? []) ,($report_data[$main_row][$sales_channel]['Sales Values']??[]) ]);
@@ -123,7 +123,7 @@ class SalesPersonsAgainstAnalysisReport
         $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
         
-        $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        // $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
 
          $Items_names = $salesPersons_names ;
          $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'sales_person' );
@@ -210,7 +210,7 @@ class SalesPersonsAgainstAnalysisReport
 
 
 
-                    $interval_data = Intervals::intervals($sales_values_per_zone, $sales_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 
                     $sales_values[$zone]  = $interval_data['data_intervals'][$request->interval][$zone] ?? [];
 
@@ -218,7 +218,7 @@ class SalesPersonsAgainstAnalysisReport
 
 
                     $final_report_data[$zone][$sales_discount_field]['Values'] = $zones_discount;
-                    $interval_data = Intervals::intervals($final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$zone][$sales_discount_field], $discount_years, $request->interval);
                     $final_report_data[$zone][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
 
 
@@ -253,7 +253,7 @@ class SalesPersonsAgainstAnalysisReport
         $report_data = $final_report_data;
 
         $dates = array_keys($report_data['Total']);
-        $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        // $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
        
 
  

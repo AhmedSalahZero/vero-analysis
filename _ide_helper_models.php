@@ -81,6 +81,8 @@ namespace App\Models{
  * @property int $company_id
  * @property int|null $creator_id
  * @property int|null $financial_statement_id
+ * @property string|null $cash_and_banks_beginning_balance
+ * @property string|null $entered_receivables_and_payments_table
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\FinancialStatement|null $FinancialStatement
@@ -96,18 +98,19 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet onlyCurrentCompany(?int $companyId = null)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereCashAndBanksBeginningBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereDuration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereDurationType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereEnteredReceivablesAndPaymentsTable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereFinancialStatementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereStartFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheet withAllRelations(?int $companyId = null)
  */
 	class BalanceSheet extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable, \App\Interfaces\Models\Interfaces\IFinancialStatementAble {}
 }
@@ -126,6 +129,10 @@ namespace App\Models{
  * @property int $is_sales_rate
  * @property int $for_interval_comparing
  * @property mixed|null $depends_on auto-calculated
+ * @property string|null $equation
+ * @property int $has_auto_depreciation
+ * @property int $is_auto_depreciation_for
+ * @property int|null $is_accumulated
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BalanceSheet[] $financialStatementAbles
@@ -139,12 +146,16 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereDependsOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereEquation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereForIntervalComparing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasAutoDepreciation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasDepreciationOrAmortization($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasPercentageOrFixedSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereHasSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereIsAccumulated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereIsAutoDepreciationFor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereIsMainForAllCalculations($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereIsSalesRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceSheetItem whereName($value)
@@ -185,6 +196,8 @@ namespace App\Models{
  * @property int $company_id
  * @property int|null $creator_id
  * @property int|null $financial_statement_id
+ * @property string|null $cash_and_banks_beginning_balance
+ * @property string|null $entered_receivables_and_payments_table
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\FinancialStatement|null $FinancialStatement
@@ -194,24 +207,27 @@ namespace App\Models{
  * @property-read int|null $main_items_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatementItem[] $mainRows
  * @property-read int|null $main_rows_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ReceivableAndPayment[] $receivables_and_payments
+ * @property-read int|null $receivables_and_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatementItem[] $subItems
  * @property-read int|null $sub_items_count
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement onlyCurrentCompany(?int $companyId = null)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereCashAndBanksBeginningBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereDuration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereDurationType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereEnteredReceivablesAndPaymentsTable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereFinancialStatementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereStartFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatement withAllRelations(?int $companyId = null)
  */
 	class CashFlowStatement extends \Eloquent implements \App\Interfaces\Models\IBaseModel, \App\Interfaces\Models\IHaveAllRelations, \App\Interfaces\Models\IExportable, \App\Interfaces\Models\IShareable, \App\Interfaces\Models\Interfaces\IFinancialStatementAble {}
 }
@@ -230,6 +246,10 @@ namespace App\Models{
  * @property int $is_sales_rate
  * @property int $for_interval_comparing
  * @property mixed|null $depends_on auto-calculated
+ * @property string|null $equation
+ * @property int $has_auto_depreciation
+ * @property int $is_auto_depreciation_for
+ * @property int|null $is_accumulated
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CashFlowStatement[] $financialStatementAbles
@@ -243,12 +263,16 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereDependsOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereEquation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereForIntervalComparing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasAutoDepreciation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasDepreciationOrAmortization($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasPercentageOrFixedSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereHasSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereIsAccumulated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereIsAutoDepreciationFor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereIsMainForAllCalculations($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereIsSalesRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlowStatementItem whereName($value)
@@ -332,6 +356,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read mixed $branches_with_sections
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Log[] $logs
+ * @property-read int|null $logs_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|\Spatie\MediaLibrary\MediaCollections\Models\Media[] $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Company[] $subCompanies
@@ -430,6 +456,60 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Expense
+ *
+ * @property int $id
+ * @property string|null $name
+ * @property string|null $category_name
+ * @property string|null $start_date
+ * @property string|null $interval
+ * @property string|null $monthly_cost_of_unit
+ * @property string|null $revenue_stream_type
+ * @property string|null $monthly_amount
+ * @property string|null $month_percentage
+ * @property string|null $payment_terms
+ * @property string|null $vat_rate
+ * @property string|null $withhold_tax_rate
+ * @property string|null $increase_rate
+ * @property string|null $increase_interval
+ * @property array|null $payload
+ * @property int $model_id
+ * @property string|null $model_name
+ * @property string|null $relation_name
+ * @property int $company_id
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Company $company
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereCategoryName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereIncreaseInterval($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereIncreaseRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereInterval($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereModelName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereMonthPercentage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereMonthlyAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereMonthlyCostOfUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense wherePaymentTerms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereRelationName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereRevenueStreamType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereVatRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense whereWithholdTaxRate($value)
+ */
+	class Expense extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\FinancialStatement
  *
  * @property int $id
@@ -478,16 +558,6 @@ namespace App\Models{
 /**
  * App\Models\FinancialStatementItem
  *
- * @property int $id
- * @property string $name
- * @property int $has_sub_items
- * @property int $has_depreciation_or_amortization
- * @property int $is_main_for_all_calculations
- * @property int $is_sales_rate
- * @property int $for_interval_comparing
- * @property mixed|null $depends_on auto-calculated
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatement[] $financialStatements
  * @property-read int|null $financial_statements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialStatement[] $mainRowsPivot
@@ -497,16 +567,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem query()
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereDependsOn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereForIntervalComparing($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereHasDepreciationOrAmortization($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereHasSubItems($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereIsMainForAllCalculations($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereIsSalesRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialStatementItem whereUpdatedAt($value)
  */
 	class FinancialStatementItem extends \Eloquent {}
 }
@@ -524,6 +584,8 @@ namespace App\Models{
  * @property int $company_id
  * @property int|null $creator_id
  * @property int|null $financial_statement_id
+ * @property string|null $cash_and_banks_beginning_balance
+ * @property string|null $entered_receivables_and_payments_table
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\FinancialStatement|null $FinancialStatement
@@ -539,11 +601,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement onlyCurrentCompany(?int $companyId = null)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereCashAndBanksBeginningBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereDuration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereDurationType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereEnteredReceivablesAndPaymentsTable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereFinancialStatementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatement whereName($value)
@@ -568,6 +632,10 @@ namespace App\Models{
  * @property int $is_sales_rate
  * @property int $for_interval_comparing
  * @property mixed|null $depends_on auto-calculated
+ * @property string|null $equation
+ * @property int $has_auto_depreciation
+ * @property int $is_auto_depreciation_for
+ * @property int|null $is_accumulated
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\IncomeStatement[] $financialStatementAbles
@@ -581,12 +649,16 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereDependsOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereEquation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereFinancialStatementAbleType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereForIntervalComparing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasAutoDepreciation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasDepreciationOrAmortization($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasPercentageOrFixedSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereHasSubItems($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereIsAccumulated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereIsAutoDepreciationFor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereIsMainForAllCalculations($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereIsSalesRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereName($value)
@@ -737,6 +809,31 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Log
+ *
+ * @property int $id
+ * @property string $activity
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property int $user_id
+ * @property string|null $company_id
+ * @property-read \App\Models\Company|null $company
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Log newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Log newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Log query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Log whereActivity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Log whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Log whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Log whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Log whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Log whereUserId($value)
+ */
+	class Log extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\ModifiedSeasonality
  *
  * @property int $id
@@ -841,7 +938,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \App\Models\Category|null $category
+ * @property-read \App\Models\Category $category
  * @method static \Illuminate\Database\Eloquent\Builder|Product company()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
@@ -876,7 +973,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \App\Models\Category|null $category
+ * @property-read \App\Models\Category $category
  * @property-read \App\Models\Product|null $product
  * @method static \Illuminate\Database\Eloquent\Builder|ProductSeasonality company()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductSeasonality newModelQuery()
@@ -902,10 +999,32 @@ namespace App\Models{
 /**
  * App\Models\QuantityAllocationSetting
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $allocation_base
+ * @property string|null $breakdown
+ * @property int $add_new_items
+ * @property int $number_of_items
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereAddNewItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereAllocationBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereBreakdown($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereNumberOfItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityAllocationSetting whereUpdatedBy($value)
  */
 	class QuantityAllocationSetting extends \Eloquent {}
 }
@@ -914,12 +1033,30 @@ namespace App\Models{
 /**
  * App\Models\QuantityCategory
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string|null $name
+ * @property string $type
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\QuantityProduct[] $products
  * @property-read int|null $products_count
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCategory whereUpdatedBy($value)
  */
 	class QuantityCategory extends \Eloquent {}
 }
@@ -928,10 +1065,28 @@ namespace App\Models{
 /**
  * App\Models\QuantityCollectionSetting
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $collection_base
+ * @property array|null $general_collection
+ * @property array|null $first_allocation_collection
+ * @property array|null $second_allocation_collection
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereCollectionBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereFirstAllocationCollection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereGeneralCollection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereSecondAllocationCollection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityCollectionSetting whereUpdatedAt($value)
  */
 	class QuantityCollectionSetting extends \Eloquent {}
 }
@@ -940,10 +1095,34 @@ namespace App\Models{
 /**
  * App\Models\QuantityExistingProductAllocationBase
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $allocation_base
+ * @property array|null $existing_products_target
+ * @property string|null $total_existing_target
+ * @property int $use_modified_targets
+ * @property array $allocation_base_percentages
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereAllocationBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereAllocationBasePercentages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereExistingProductsTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereTotalExistingTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityExistingProductAllocationBase whereUseModifiedTargets($value)
  */
 	class QuantityExistingProductAllocationBase extends \Eloquent {}
 }
@@ -952,10 +1131,28 @@ namespace App\Models{
 /**
  * App\Models\QuantityModifiedSeasonality
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property int $number_of_products
+ * @property int $use_modified_seasonality
+ * @property array|null $original_seasonality
+ * @property array|null $modified_seasonality
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereModifiedSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereNumberOfProducts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereOriginalSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedSeasonality whereUseModifiedSeasonality($value)
  */
 	class QuantityModifiedSeasonality extends \Eloquent {}
 }
@@ -964,10 +1161,28 @@ namespace App\Models{
 /**
  * App\Models\QuantityModifiedTarget
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property array $sales_targets_percentages
+ * @property int $use_modified_targets
+ * @property array|null $others_target
+ * @property array|null $products_modified_targets
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereOthersTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereProductsModifiedTargets($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereSalesTargetsPercentages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityModifiedTarget whereUseModifiedTargets($value)
  */
 	class QuantityModifiedTarget extends \Eloquent {}
 }
@@ -976,10 +1191,30 @@ namespace App\Models{
 /**
  * App\Models\QuantityNewProductAllocationBase
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $allocation_base
+ * @property array|null $new_allocation_bases_names
+ * @property array|null $allocation_base_data
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereAllocationBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereAllocationBaseData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereNewAllocationBasesNames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityNewProductAllocationBase whereUpdatedBy($value)
  */
 	class QuantityNewProductAllocationBase extends \Eloquent {}
 }
@@ -988,11 +1223,31 @@ namespace App\Models{
 /**
  * App\Models\QuantityProduct
  *
- * @property-read \App\Models\QuantityCategory|null $category
+ * @property int $id
+ * @property int|null $company_id
+ * @property string|null $name
+ * @property string $type
+ * @property int $category_id
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Models\QuantityCategory $category
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProduct whereUpdatedBy($value)
  */
 	class QuantityProduct extends \Eloquent {}
 }
@@ -1001,12 +1256,36 @@ namespace App\Models{
 /**
  * App\Models\QuantityProductSeasonality
  *
- * @property-read \App\Models\QuantityCategory|null $category
+ * @property int $id
+ * @property int|null $company_id
+ * @property string|null $name
+ * @property int|null $product_id
+ * @property int $category_id
+ * @property string|null $sales_target_value
+ * @property string|null $sales_target_quantity
+ * @property string|null $seasonality
+ * @property array|null $seasonality_data
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Models\QuantityCategory $category
  * @property-read \App\Models\QuantityProduct|null $product
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereSalesTargetQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereSalesTargetValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereSeasonalityData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantityProductSeasonality whereUpdatedAt($value)
  */
 	class QuantityProductSeasonality extends \Eloquent {}
 }
@@ -1015,10 +1294,62 @@ namespace App\Models{
 /**
  * App\Models\QuantitySalesForecast
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string|null $start_date
+ * @property string|null $end_date
+ * @property int|null $previous_year
+ * @property string|null $previous_1_year_sales
+ * @property string|null $previous_year_gr
+ * @property string|null $average_last_3_years
+ * @property array|null $others_products_previous_year
+ * @property array|null $others_products_previous_3_year
+ * @property array|null $previous_year_seasonality
+ * @property array|null $last_3_years_seasonality
+ * @property array|null $forecasted_sales
+ * @property string|null $target_base
+ * @property string|null $prices_increase_rate
+ * @property string|null $other_products_growth_rate
+ * @property string|null $quantity_growth_rate
+ * @property int $add_new_products
+ * @property int|null $number_of_products
+ * @property string|null $seasonality
+ * @property mixed|null $new_seasonality
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereAddNewProducts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereAverageLast3Years($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereForecastedSales($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereLast3YearsSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereNewSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereNumberOfProducts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereOtherProductsGrowthRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereOthersProductsPrevious3Year($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereOthersProductsPreviousYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast wherePrevious1YearSales($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast wherePreviousYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast wherePreviousYearGr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast wherePreviousYearSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast wherePricesIncreaseRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereQuantityGrowthRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereTargetBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySalesForecast whereUpdatedBy($value)
  */
 	class QuantitySalesForecast extends \Eloquent {}
 }
@@ -1027,10 +1358,32 @@ namespace App\Models{
 /**
  * App\Models\QuantitySecondAllocationSetting
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $allocation_base
+ * @property string|null $breakdown
+ * @property int $add_new_items
+ * @property int $number_of_items
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereAddNewItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereAllocationBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereBreakdown($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereNumberOfItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondAllocationSetting whereUpdatedBy($value)
  */
 	class QuantitySecondAllocationSetting extends \Eloquent {}
 }
@@ -1039,10 +1392,34 @@ namespace App\Models{
 /**
  * App\Models\QuantitySecondExistingProductAllocationBase
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $allocation_base
+ * @property array|null $existing_products_target
+ * @property string|null $total_existing_target
+ * @property int $use_modified_targets
+ * @property array $allocation_base_percentages
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereAllocationBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereAllocationBasePercentages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereExistingProductsTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereTotalExistingTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondExistingProductAllocationBase whereUseModifiedTargets($value)
  */
 	class QuantitySecondExistingProductAllocationBase extends \Eloquent {}
 }
@@ -1051,22 +1428,116 @@ namespace App\Models{
 /**
  * App\Models\QuantitySecondNewProductAllocationBase
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string $allocation_base
+ * @property array|null $new_allocation_bases_names
+ * @property array|null $allocation_base_data
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase company()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase query()
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereAllocationBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereAllocationBaseData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereNewAllocationBasesNames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|QuantitySecondNewProductAllocationBase whereUpdatedBy($value)
  */
 	class QuantitySecondNewProductAllocationBase extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * App\Models\ReceivableAndPayment
+ *
+ * @property int $id
+ * @property string|null $name
+ * @property string $balance_amount
+ * @property array|null $payload
+ * @property int $cash_flow_statement_id
+ * @property string|null $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\CashFlowStatement $cashFlowStatement
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereBalanceAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereCashFlowStatementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ReceivableAndPayment whereUpdatedAt($value)
+ */
+	class ReceivableAndPayment extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\SalesForecast
  *
+ * @property int $id
+ * @property int|null $company_id
+ * @property string|null $start_date
+ * @property string|null $end_date
+ * @property int|null $previous_year
+ * @property string|null $previous_1_year_sales
+ * @property string|null $previous_year_gr
+ * @property string|null $average_last_3_years
+ * @property array|null $previous_year_seasonality
+ * @property array|null $last_3_years_seasonality
+ * @property string|null $target_base
+ * @property string|null $sales_target
+ * @property string|null $new_start
+ * @property string|null $growth_rate
+ * @property int $add_new_products
+ * @property int|null $number_of_products
+ * @property string|null $seasonality
+ * @property array|null $new_seasonality
+ * @property string|null $updated_by
+ * @property string|null $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast company()
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereAddNewProducts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereAverageLast3Years($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereGrowthRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereLast3YearsSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereNewSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereNewStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereNumberOfProducts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePrevious1YearSales($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePreviousYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePreviousYearGr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast wherePreviousYearSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereSalesTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereSeasonality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereTargetBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SalesForecast whereUpdatedBy($value)
  */
 	class SalesForecast extends \Eloquent {}
 }
@@ -1379,10 +1850,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read string $route_name
- * @property-read Section|null $parent
+ * @property-read Section $parent
  * @property-read \Illuminate\Database\Eloquent\Collection|Section[] $subSections
  * @property-read int|null $sub_sections_count
  * @method static \Illuminate\Database\Eloquent\Builder|Section mainClientSideSections()
+ * @method static \Illuminate\Database\Eloquent\Builder|Section mainCompanyAdminSections()
  * @method static \Illuminate\Database\Eloquent\Builder|Section mainSections()
  * @method static \Illuminate\Database\Eloquent\Builder|Section mainSuperAdminSections()
  * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
@@ -1478,6 +1950,7 @@ namespace App\Models{
  * @property string $password
  * @property string|null $subscription
  * @property string|null $expiration_date
+ * @property string|null $max_users
  * @property int|null $acceptance_of_privacy_policy
  * @property string|null $remember_token
  * @property int|null $created_by
@@ -1487,6 +1960,8 @@ namespace App\Models{
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Company[] $companies
  * @property-read int|null $companies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Log[] $logs
+ * @property-read int|null $logs_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|\Spatie\MediaLibrary\MediaCollections\Models\Media[] $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
@@ -1495,6 +1970,8 @@ namespace App\Models{
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|User[] $usersCreatedBy
+ * @property-read int|null $users_created_by_count
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
@@ -1508,6 +1985,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereExpirationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMaxUsers($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)

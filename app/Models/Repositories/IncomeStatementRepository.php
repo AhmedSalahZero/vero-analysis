@@ -119,7 +119,7 @@ class IncomeStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $incomeStatement);
-
+// dd($filterData->get() );
 		$subItemType = $request->get('sub_item_type');
 		// dd($subItemType);
 		$allFilterDataCounter = $filterData->count();

@@ -6,7 +6,7 @@
 
         <!-- begin:: Brand -->
         <div class="kt-header__brand   kt-grid__item" id="kt_header_brand">
-            <a class="kt-header__brand-logo" href="#">
+            <a class="kt-header__brand-logo" href="{{ route('home') }}">
                 <img alt="Logo" src="{{ url('assets/media/logos/logo_va.png') }}" class="kt-header__brand-logo-default" />
                 <img alt="Logo" src="{{ url('assets/media/logos/vero analysis blue logo.png') }}" width="25%" class="kt-header__brand-logo-sticky" />
             </a>

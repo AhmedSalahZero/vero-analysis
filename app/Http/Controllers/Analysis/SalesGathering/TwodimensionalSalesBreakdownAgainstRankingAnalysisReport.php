@@ -19,7 +19,12 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
             $type = 'product_item';
             $view_name = 'Branches Vs Product Items Ranking'  ;
         }
-        return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_ranking_form', compact('company', 'view_name','type','main_type'));
+		$dates = getEndYearBasedOnDataUploaded($company);
+		$start_date =$dates['jan'];
+		$end_date=$dates['dec'];
+		 
+		
+        return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_ranking_form', compact('company', 'view_name','type','main_type','start_date','end_date'));
     }
     public function result(Request $request, Company $company)
     {
@@ -159,4 +164,3 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
     //     }
     // }
 }
-

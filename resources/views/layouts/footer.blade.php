@@ -4,7 +4,7 @@
         <div class="kt-container ">
             <div class="kt-footer__wrapper">
                 <div class="kt-footer__logo">
-                    <a class="kt-header__brand-logo" href="demo4/index&amp;demo=demo2.html">
+                    <a class="kt-header__brand-logo" href="{{ route('home') }}">
                         <img alt="Logo" src="{{url('assets/media/logos/logo_va.png')}}" class="kt-header__brand-logo-sticky footer-logo">
                     </a>
                     <div class="kt-footer__copyright">{{date('Y')}}&nbsp;&copy;&nbsp;

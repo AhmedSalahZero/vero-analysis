@@ -13,6 +13,12 @@
             white-space: nowrap;
             font-size:12px !important;
         }
+		 table.dataTable tbody tr>.dtfc-fixed-right,
+    table.dataTable tbody tr>.dtfc-fixed-left {
+        right: 0 !important;
+        background-color: #086691 !important;
+        color: white;
+    }
 
     </style>
 @endsection
@@ -21,8 +27,8 @@
         @csrf
 
 {{-- @dd(get_defined_vars()) --}}
-
-@if((canShowNewItemsProducts($company->id)))
+{{-- {{ dd() }} --}}
+@if((canShowNewItemsProducts($company->id)) &&  count($sales_targets_values))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">

@@ -53,6 +53,14 @@
                     {{ __('Upload Data') }}
                 </a>
             @endif
+			
+			   @if (isset($lastUploadFailedHref) && $lastUploadFailedHref != '#')
+                <a href={{$lastUploadFailedHref}} class="btn  btn-danger btn-icon-sm {{$class}}">
+                    <i class="fas fa-file-import"></i>
+                    {{ __('Last Upload Failed Rows') }}
+                </a>
+            @endif
+			
             @if ($exportHref != '#')
                 <a href={{$exportHref}} class="btn  active-style btn-icon-sm {{$class}}">
                     <i class="fas fa-file-export"></i>

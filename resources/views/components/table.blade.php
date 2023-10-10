@@ -10,7 +10,7 @@
                 </h3>
             </div>
             {{-- Export --}}
-            <x-export :class="$class" :href="$href" :importHref="$importHref" :exportHref="$exportHref" :exportTableHref="$exportTableHref" :icon="$icon" :firstButtonName="$firstButtonName" :truncateHref="$truncateHref"/>
+            <x-export :lastUploadFailedHref="$lastUploadFailedHref" :class="$class" :href="$href" :importHref="$importHref" :exportHref="$exportHref" :exportTableHref="$exportTableHref" :icon="$icon" :firstButtonName="$firstButtonName" :truncateHref="$truncateHref"/>
 
         </div>
     @endif
