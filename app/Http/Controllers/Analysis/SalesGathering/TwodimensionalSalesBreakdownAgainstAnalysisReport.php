@@ -60,6 +60,28 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'business_sector';
             $view_name = 'Category Versus Business Sectors' ;
         }
+		
+		
+		//
+		
+		elseif (request()->route()->named('Items.vs.businessUnits.view')) {
+            $main_type = 'product_item';
+            $type = 'business_unit';
+            $view_name = 'Products Items Versus Business Units' ;
+        }elseif (request()->route()->named('products.vs.businessUnits.view')) {
+            $main_type = 'product_or_service';
+            $type = 'business_unit';
+            $view_name = 'Products Versus Business Units' ;
+        }
+        
+        elseif (request()->route()->named('categories.vs.businessUnits.view')) {
+            $main_type = 'category';
+            $type = 'business_unit';
+            $view_name = 'Category Versus Business Units' ;
+        }
+		
+		//
+		
          elseif (request()->route()->named('categories.vs.branches.view')) {
             $main_type = 'category';
             $type = 'branch';
@@ -105,6 +127,14 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $main_type = 'business_sector';
             $type = 'sales_channel';
             $view_name = 'Business Sectors Versus Sales Channels' ;
+        }elseif (request()->route()->named('businessUnits.vs.salesChannels.view')) {
+            $main_type = 'business_unit';
+            $type = 'sales_channel';
+            $view_name = 'Business Units Versus Sales Channels' ;
+        }elseif (request()->route()->named('businessUnits.vs.salesChannels.view')) {
+            $main_type = 'business_unit';
+            $type = 'sales_channel';
+            $view_name = 'Business Units Versus Sales Channels' ;
         }elseif (request()->route()->named('customers.vs.salesChannels.view')) {
             $main_type = 'customer_name';
             $type = 'sales_channel';
@@ -117,11 +147,16 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $main_type = 'country';
             $type = 'business_sector';
             $view_name = 'Countries Versus Business Sectors' ;
+        }elseif (request()->route()->named('countries.vs.businessUnits.view')) {
+            $main_type = 'country';
+            $type = 'business_unit';
+            $view_name = 'Countries Versus Business Units' ;
         }elseif (request()->route()->named('countries.vs.Items.view')) {
             $main_type = 'country';
             $type = 'product_item';
             $view_name = 'Countries Versus Products Items' ;
         }
+		
         // dd($view_name);
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
     }
@@ -277,4 +312,3 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
         }
     }
 }
-

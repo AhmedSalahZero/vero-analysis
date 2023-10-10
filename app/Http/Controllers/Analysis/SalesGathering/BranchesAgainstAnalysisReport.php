@@ -45,7 +45,12 @@ class BranchesAgainstAnalysisReport
         }elseif (request()->route()->named('branches.businessSectors.analysis')) {
             $type  = 'business_sector';
             $view_name = 'Branches Against Business Sectors Trend Analysis' ;
-        }elseif (request()->route()->named('branches.salesChannels.analysis')) {
+        }
+		elseif (request()->route()->named('branches.businessUnits.analysis')) {
+            $type  = 'business_unit';
+            $view_name = 'Branches Against Business Units Trend Analysis' ;
+        }
+		elseif (request()->route()->named('branches.salesChannels.analysis')) {
             $type  = 'sales_channel';
             $view_name = 'Branches Against Sales Channels Trend Analysis' ;
         }elseif (request()->route()->named('branches.countries.analysis')) {

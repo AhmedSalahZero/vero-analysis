@@ -47,6 +47,9 @@ class CountriesAgainstAnalysisReport
 		} elseif (request()->route()->named('country.businessSectors.analysis')) {
 			$type  = 'business_sector';
 			$view_name = 'Countries Against Business Sectors Trend Analysis';
+		}elseif (request()->route()->named('country.businessUnits.analysis')) {
+			$type  = 'business_unit';
+			$view_name = 'Countries Against Business Units Trend Analysis';
 		} elseif (request()->route()->named('country.branches.analysis')) {
 			$type  = 'branch';
 			$view_name = 'Countries Against Branches Trend Analysis';

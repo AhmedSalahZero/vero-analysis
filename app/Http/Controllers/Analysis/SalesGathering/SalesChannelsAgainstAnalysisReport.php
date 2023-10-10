@@ -45,6 +45,9 @@ class SalesChannelsAgainstAnalysisReport
         }elseif (request()->route()->named('salesChannels.businessSectors.analysis')) {
             $type  = 'business_sector';
             $view_name = 'Sales Channels Against Business Sectors Trend Analysis' ;
+        }elseif (request()->route()->named('salesChannels.businessUnits.analysis')) {
+            $type  = 'business_unit';
+            $view_name = 'Sales Channels Against Business Units Trend Analysis' ;
         }elseif (request()->route()->named('salesChannels.branches.analysis')) {
             $type  = 'branch';
             $view_name = 'Sales Channels Against Branches Trend Analysis' ;

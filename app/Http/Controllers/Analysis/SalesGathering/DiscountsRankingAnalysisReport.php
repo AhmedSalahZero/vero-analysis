@@ -40,6 +40,10 @@ class DiscountsRankingAnalysisReport
             $main_type = 'business_sector';
             $type = 'discounts';
             $view_name = 'Business Sectors Versus Discounts' ;
+        }elseif (request()->route()->named('businessUnits.vs.discounts.view')) {
+            $main_type = 'business_unit';
+            $type = 'discounts';
+            $view_name = 'Business Units Versus Discounts' ;
         }
         elseif (request()->route()->named('branches.vs.discounts.view')) {
             $main_type = 'branch';
@@ -162,4 +166,3 @@ class DiscountsRankingAnalysisReport
 
     }
 }
-

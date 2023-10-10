@@ -35,16 +35,6 @@ class SKUsAgainstAnalysisReport
             $type  = 'country';
             $view_name = 'Products Items Against Countries Trend Analysis';
         }
-        // elseif (request()->route()->named('Items.categories.analysis')) {
-        //     $type  = 'category';
-        //     $view_name = 'Products Items Against Categories Trend Analysis';
-        // } elseif (request()->route()->named('Items.principles.analysis')) {
-        //     $type  = 'principle';
-        //     $view_name = 'Products Items Against Principles Trend Analysis';
-        // } elseif (request()->route()->named('Items.products.analysis')) {
-        //     $type  = 'product_or_service';
-        //     $view_name = 'Products Items Against Products Trend Analysis';
-        // }
         elseif (request()->route()->named('Items.salesPersons.analysis')) {
             $type  = 'sales_person';
             $view_name = 'Products Items Against Sales Persons Trend Analysis';
@@ -54,6 +44,9 @@ class SKUsAgainstAnalysisReport
         } elseif (request()->route()->named('Items.businessSectors.analysis')) {
             $type  = 'business_sector';
             $view_name = 'Products Items Against Business Sectors Trend Analysis';
+        } elseif (request()->route()->named('Items.businessUnits.analysis')) {
+            $type  = 'business_unit';
+            $view_name = 'Products Items Against Business Units Trend Analysis';
         } elseif (request()->route()->named('Items.branches.analysis')) {
             $type  = 'branch';
             $view_name = 'Products Items Against Branches Trend Analysis';

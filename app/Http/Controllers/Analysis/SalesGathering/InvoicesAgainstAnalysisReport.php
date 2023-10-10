@@ -40,10 +40,15 @@ class InvoicesAgainstAnalysisReport
         }
 
 
-         if(Request()->route()->named('invoices.businessSectors.analysis'))
+		if(Request()->route()->named('invoices.businessSectors.analysis'))
         {
             $type = 'business_sector';
             $view_name = 'Invoices Against Business Sectors Analysis';
+        }
+		if(Request()->route()->named('invoices.businessUnits.analysis'))
+        {
+            $type = 'business_unit';
+            $view_name = 'Invoices Against Business Units Analysis';
         }
         
          if(Request()->route()->named('invoices.customers.analysis'))
@@ -61,55 +66,7 @@ class InvoicesAgainstAnalysisReport
              $type = 'sales_person';
             $view_name = 'Invoices Against Sales Persons Analysis';
         }
-        // 
-        // if (request()->route()->named('categories.zones.analysis')) {
-        //     $type = 'zone';
-        //     $view_name = 'Categories Against Zones Trend Analysis' ;
-        // } elseif (request()->route()->named('categories.customers.analysis')) {
-        //     $type = 'customer_name';
-        //     $view_name = 'Categories Against Customers Trend Analysis' ;
-        // }elseif (request()->route()->named('categories.salesChannels.analysis')) {
-        //     $type  = 'sales_channel';
-        //     $view_name = 'Categories Against Sales Channels Trend Analysis' ;
-        // }elseif (request()->route()->named('categories.products.analysis')) {
-        //     $type  = 'product_or_service';
-        //     $view_name = 'Categories Against Products / Services Trend Analysis' ;
-        // } elseif (request()->route()->named('categories.Items.analysis')) {
-        //     $type  = 'product_item';
-        //     $view_name = 'Categories Against Products Items Trend Analysis' ;
-        // }elseif (request()->route()->named('categories.salesPersons.analysis')) {
-        //     $type  = 'sales_person';
-        //     $view_name = 'Categories Against Sales Persons Trend Analysis' ;
-        // }elseif (request()->route()->named('categories.salesDiscount.analysis')) {
-        //     $type  = 'quantity_discount';
-        //     $view_name = 'Categories Against Sales Discount Trend Analysis' ;
-        // }elseif (request()->route()->named('categories.businessSectors.analysis')) {
-        //     $type  = 'business_sector';
-        //     $view_name = 'Categories Against Business Sectors Trend Analysis' ;
-        // }elseif (request()->route()->named('categories.branches.analysis')) {
-        //     $type  = 'branch';
-        //     $view_name = 'Categories Against Branches Trend Analysis' ;
-        // }
-        // elseif (request()->route()->named('categories.products.averagePrices')) {
-        //     $type  = 'averagePrices';
-        //     $view_name = 'Categories Products / Services Average Prices' ;
-        // }
-
-        // elseif (request()->route()->named('customers.categories.analysis')) {
-        //     // by salah
-        //     $type  = 'category';
-        //     $view_name = Customers_Against_Categories_Trend_Analysis ;
-        // }
-
-        // elseif (request()->route()->named('customers.products.analysis')) {
-        //     $type  = 'product_or_service';
-        //     $view_name = Customers_Against_Products_Trend_Analysis ;
-        // }
-
-        //  elseif (request()->route()->named('customers.Items.analysis')) {
-        //     $type  = 'product_item';
-        //     $view_name = Customers_Against_Products_ITEMS_Trend_Analysis ;
-        // }
+      
         
         $name_of_selector_label = str_replace(['Categories Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.invoices_sales_form', compact('company','name_of_selector_label','type','view_name'));
@@ -143,6 +100,7 @@ class InvoicesAgainstAnalysisReport
             $reportSalesValues = [];
             $request['sales_channels'] = $request->branches ;
             $request['businessSectors'] = $request->branches ;
+            $request['businessUnits'] = $request->branches ;
                 $request['zones'] = $request->branches ;
             
             if($type == 'sales_channel')
@@ -162,6 +120,11 @@ class InvoicesAgainstAnalysisReport
             if($type == 'business_sector')
             {
                  $reportSalesValues  = (new BusinessSectorsAgainstAnalysisReport())->BusinessSectorsSalesAnalysisResult($request , $company , true);
+            }
+			
+			if($type == 'business_unit')
+            {
+                 $reportSalesValues  = (new BusinessUnitsAgainstAnalysisReport())->BusinessUnitsSalesAnalysisResult($request , $company , true);
             }
 
            

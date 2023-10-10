@@ -94,11 +94,11 @@
                                 </div>
                             @endif
 
-                            @if (false !== $found = array_search('customer_code',$db_names))
+                            @if (false !== $found = array_search('business_unit',$db_names))
                                 <div class="form-group  col-md-6">
-                                    <label>{{__($exportableFields['customer_code'])}}</label>
+                                    <label>{{__($exportableFields['business_unit'])}}</label>
                                     <div class="kt-input-icon">
-                                        <input type="text" name="customer_code" value="{{$salesGatheringTest->customer_code}}" class="form-control" placeholder="{{__($exportableFields['customer_code'])}}">
+                                        <input type="text" name="business_unit" value="{{$salesGatheringTest->business_unit}}" class="form-control" placeholder="{{__($exportableFields['business_unit'])}}">
                                     </div>
                                 </div>
                             @endif

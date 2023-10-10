@@ -28,6 +28,9 @@ class AveragePricesReport
 		} elseif ($request->type_of_report == "businessSectors_products_avg") {
 			$full_report_data = (new BusinessSectorsAgainstAnalysisReport)->result($request, $company, 'array');
 			$type = 'Business Sectors / Products';
+		}elseif ($request->type_of_report == "businessUnits_products_avg") {
+			$full_report_data = (new BusinessUnitsAgainstAnalysisReport)->result($request, $company, 'array');
+			$type = 'Business Units / Products';
 		} elseif ($request->type_of_report == "products_Items_avg") {
 			$full_report_data = (new ProductsAgainstAnalysisReport)->result($request, $company, 'array');
 			$type = 'Product Items';
@@ -41,6 +44,9 @@ class AveragePricesReport
 		} elseif ($request->type_of_report == "businessSectors_Items_avg") {
 			$full_report_data = (new BusinessSectorsAgainstAnalysisReport)->result($request, $company, 'array');
 			$type = 'Business Sectors / Products Items';
+		}elseif ($request->type_of_report == "businessUnits_Items_avg") {
+			$full_report_data = (new BusinessUnitsAgainstAnalysisReport)->result($request, $company, 'array');
+			$type = 'Business Units / Products Items';
 		} elseif ($request->type_of_report == "countries_products_avg") {
 			$full_report_data = (new CountriesAgainstAnalysisReport)->result($request, $company, 'array');
 			$type = 'Countries / Products';

@@ -12,206 +12,208 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CategoriesAgainstAnalysisReport
+class BusinessUnitsAgainstAnalysisReport
 {
     use GeneralFunctions;
     public function index(Company $company)
     {
 
-        if (request()->route()->named('categories.zones.analysis')) {
+        if (request()->route()->named('businessUnits.zones.analysis')) {
             $type = 'zone';
-            $view_name = 'Categories Against Zones Trend Analysis' ;
-        } elseif (request()->route()->named('categories.customers.analysis')) {
+            $view_name = 'Business Units Against Zones Trend Analysis' ;
+        } elseif (request()->route()->named('businessUnits.customers.analysis')) {
             $type = 'customer_name';
-            $view_name = 'Categories Against Customers Trend Analysis' ;
-        }elseif (request()->route()->named('categories.salesChannels.analysis')) {
-            $type  = 'sales_channel';
-            $view_name = 'Categories Against Sales Channels Trend Analysis' ;
-        }elseif (request()->route()->named('categories.products.analysis')) {
-            $type  = 'product_or_service';
-            $view_name = 'Categories Against Products / Services Trend Analysis' ;
-        } 
-		elseif (request()->route()->named('categories.countries.analysis')) {
-            $type  = 'country';
-            $view_name = 'Categories Against Countries Trend Analysis' ;
-        } 
-		
-		elseif (request()->route()->named('categories.Items.analysis')) {
-            $type  = 'product_item';
-            $view_name = 'Categories Against Products Items Trend Analysis' ;
-        }elseif (request()->route()->named('categories.salesPersons.analysis')) {
-            $type  = 'sales_person';
-            $view_name = 'Categories Against Sales Persons Trend Analysis' ;
-        }elseif (request()->route()->named('categories.salesDiscount.analysis')) {
-            $type  = 'quantity_discount';
-            $view_name = 'Categories Against Sales Discount Trend Analysis' ;
-        }elseif (request()->route()->named('categories.businessSectors.analysis')) {
-            $type  = 'business_sector';
-            $view_name = 'Categories Against Business Sectors Trend Analysis' ;
-        }elseif (request()->route()->named('categories.businessUnits.analysis')) {
-            $type  = 'business_unit';
-            $view_name = 'Categories Against Business Units Trend Analysis' ;
-        }elseif (request()->route()->named('categories.branches.analysis')) {
-            $type  = 'branch';
-            $view_name = 'Categories Against Branches Trend Analysis' ;
+            $view_name = 'Business Units Against Customers Trend Analysis' ;
         }
-        elseif (request()->route()->named('categories.products.averagePrices')) {
-            $type  = 'averagePrices';
-            $view_name = 'Categories Products / Services Average Prices' ;
+		elseif (request()->route()->named('businessUnits.countries.analysis')) {
+            $type = 'country';
+            $view_name = 'Business Units Against Countries Trend Analysis' ;
         }
-		
-
-        elseif (request()->route()->named('customers.categories.analysis')) {
+		elseif (request()->route()->named('businessUnits.categories.analysis')) {
             $type  = 'category';
-            $view_name = Customers_Against_Categories_Trend_Analysis ;
-        }
-		
-		
-
-        elseif (request()->route()->named('customers.products.analysis')) {
-            // by salah
+            $view_name = 'Business Units Against Categories Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.products.analysis')) {
             $type  = 'product_or_service';
-            $view_name = Customers_Against_Products_Trend_Analysis ;
+            $view_name = 'Business Units Against Products / Services Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.principles.analysis')) {
+            $type  = 'principle';
+            $view_name = 'Business Units Against Principles Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.Items.analysis')) {
+            $type  = 'product_item';
+            $view_name = 'Business Units Against Products Items Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.salesPersons.analysis')) {
+            $type  = 'sales_person';
+            $view_name = 'Business Units Against Sales Persons Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.salesDiscount.analysis')) {
+            $type  = 'quantity_discount';
+            $view_name = 'Business Units Against Sales Discount Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.branches.analysis')) {
+            $type  = 'branch';
+            $view_name = 'Business Units Against Branches Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.salesChannels.analysis')) {
+            $type  = 'sales_channel';
+            $view_name = 'Business Units Against Sales Channels Trend Analysis' ;
+        }elseif (request()->route()->named('businessUnits.products.averagePrices')) {
+            $type  = 'averagePrices';
+            $view_name = 'Business Units Products / Services Average Prices' ;
+        }
+        elseif (request()->route()->named('businessUnits.Items.averagePrices')) {
+            $type  = 'averagePricesProductItems';
+            $view_name = 'Business Units Items Average Prices' ;
         }
 
-         elseif (request()->route()->named('customers.Items.analysis')) {
-            // by salah
-            $type  = 'product_item';
-            $view_name = Customers_Against_Products_ITEMS_Trend_Analysis ;
+        $name_of_selector_label = str_replace(['Business Units Against ' ,' Trend Analysis'],'',$view_name);
+
+        if ($type == 'averagePrices') {
+            $name_of_selector_label = 'Products / Services';
+        } elseif($type  == 'averagePricesProductItems') {
+            $name_of_selector_label = 'Products Items';
         }
-        
-        $name_of_selector_label = str_replace(['Categories Against ' ,' Trend Analysis'],'',$view_name);
-        return view('client_view.reports.sales_gathering_analysis.categories_analysis_form', compact('company','name_of_selector_label','type','view_name'));
+        // $name_of_selector_label = ($type == 'averagePrices') ? 'Products / Services' : str_replace(['Business Units Against ' ,' Trend Analysis'],'',$view_name);
+        return view('client_view.reports.sales_gathering_analysis.businessUnits_analysis_form', compact('company','name_of_selector_label','type','view_name'));
     }
-    public function CategoriesSalesAnalysisIndex(Company $company)
+    public function BusinessUnitsSalesAnalysisIndex(Company $company)
     {
         // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
         $selected_fields = (new ExportTable)->customizedTableField($company, 'InventoryStatement', 'selected_fields');
-        return view('client_view.reports.sales_gathering_analysis.categories_sales_form', compact('company', 'selected_fields'));
+        return view('client_view.reports.sales_gathering_analysis.businessUnits_sales_form', compact('company', 'selected_fields'));
     }
     public function result(Request $request, Company $company,$result='view' , $secondReport = true )
     {
+        // dd($request->all());
+        
+
         $report_data =[];
         $report_data_quantity =[];
         $growth_rate_data =[];
         $final_report_total =[];
-        $categories_names = [];
-        $zones = is_array(json_decode(($request->categoriesData[0]))) ? json_decode(($request->categoriesData[0])) :$request->categoriesData ;
+        $businessUnits_names = [];
+		
+        $businessUnits = is_array(json_decode(($request->businessUnits[0]))) ? json_decode(($request->businessUnits[0])) :$request->businessUnits ;
+        // dd($businessUnits);
         $type = $request->type;
         $view_name = $request->view_name;
-        $name_of_report_item  = ($result=='view') ? 'Sales Values' : 'Avg. Prices';
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
-        foreach ($zones as  $zone) {
-
+        $name_of_report_item  = ($result=='view') ? 'Sales Values' : 'Avg. Prices';
+        foreach ($businessUnits as  $businessUnitName) {
             if ($result == 'view') {
-                $mainField = 'category';
-                if(($type == 'category' && $view_name ==Customers_Against_Categories_Trend_Analysis) 
-                || ($type == 'product_or_service' && $view_name == Customers_Against_Products_Trend_Analysis)
-                || ($type == 'product_item' && $view_name == Customers_Against_Products_ITEMS_Trend_Analysis)
-                
-                )
-                {
-                    $mainField = 'customer_name';
-                }
-                
-                $zones_data =collect(DB::select(DB::raw("
-                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,category," . $type ."
+                $businessUnits_data =collect(DB::select(DB::raw("
+                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,business_unit," . $type ."
                     FROM sales_gathering
-                    WHERE ( company_id = '".$company->id."'AND ". $mainField ."  = '".$zone."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                    WHERE ( company_id = '".$company->id."'AND business_unit = '".$businessUnitName."' AND date between '".$request->start_date."' and '".$request->end_date."')
                     ORDER BY id "
                     )))->groupBy($type)->map(function($item)use($data_type){
                         return $item->groupBy('gr_date')->map(function($sub_item)use($data_type){
-                        
+
                             return $sub_item->sum($data_type);
                         });
                     })->toArray();
             }else{
-                $zones_data = DB::table('sales_gathering')
+                $businessUnits_data = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
-                    ->where('category', $zone)
+                    ->where('business_unit', $businessUnitName)
                     ->whereNotNull($type)
                     ->whereBetween('date', [$request->start_date, $request->end_date])
                     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date ,
-                    (IFNULL('.$data_type.',0) ) as '.$data_type.' ,category,' . $type)
+                    (IFNULL('.$data_type.',0) ) as '.$data_type.' ,business_unit,' . $type)
                     ->get()
                     ->groupBy($type)->map(function($item)use($data_type){
                         return $item->groupBy('gr_date')->map(function($sub_item)use($data_type){
-                            return $sub_item->sum($data_type);
+                            return  $sub_item->sum($data_type);
                         });
                     })->toArray();
 
-                     $zones_data_quantity = DB::table('sales_gathering')
-                    ->where('company_id',$company->id)
-                    ->where('category', $zone)
-                    ->whereNotNull($type)
-                    ->whereBetween('date', [$request->start_date, $request->end_date])
-                    ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date ,
-                    (IFNULL('.$data_type.',0)  ) as '.$data_type.' ,IFNULL(quantity_bonus,0) quantity_bonus , IFNULL(quantity,0) quantity,category,' . $type)
-                    ->get()
-                    ->groupBy($type)->map(function($item)use($data_type){
-                        return $item->groupBy('gr_date')->map(function($sub_item)use($data_type){
-                            return ($sub_item->sum('quantity_bonus') + $sub_item->sum('quantity') ) ;
-                        });
-                    })->toArray();
-
-                }
-            foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
-
-                $years = [];
-                $data_per_main_item = $zones_data[$sales_channel]??[];
-                if (count(($data_per_main_item))>0 ) {
-                    // Data & Growth Rate Per Sales Channel
-                    array_walk($data_per_main_item, function ($val, $date) use (&$years) {
-                        $years[] = date('Y', strtotime($date));
-                    });
-                    $years = array_unique($years);
-                    $report_data[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
-                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$zone][$sales_channel], $years, $request->interval);
-                    $report_data[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
-                    $report_data[$zone]['Total']  = $this->finalTotal([($report_data[$zone]['Total']  ?? []) ,($report_data[$zone][$sales_channel][$name_of_report_item]??[]) ]);
-                    $report_data[$zone][$sales_channel]['Growth Rate %'] = $this->growthRate(($report_data[$zone][$sales_channel][$name_of_report_item] ?? []));
-
-                }
             }
 
-            if($result == 'array'){
-                
-                 foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
+             $businessUnits_data_quantity = DB::table('sales_gathering')
+                    ->where('company_id',$company->id)
+                    ->where('business_unit', $businessUnitName)
+                    ->whereNotNull($type)
+                    ->whereBetween('date', [$request->start_date, $request->end_date])
+                    ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date ,
+                    (IFNULL('.$data_type.',0) ) as '.$data_type.' ,IFNULL(quantity_bonus,0) quantity_bonus , IFNULL(quantity,0) quantity,business_unit,' . $type)
+                    ->get()
+                    ->groupBy($type)->map(function($item)use($data_type){
+                        return $item->groupBy('gr_date')->map(function($sub_item)use($data_type){
+                            return ($sub_item->sum('quantity_bonus') + $sub_item->sum('quantity') );
+                        });
+                    })->toArray();
+            
+              
+               
+
+
+
+            foreach (($request->sales_channels??[]) as $businessUnit_key => $businessUnit) {
 
                 $years = [];
 
-                $data_per_main_item = $zones_data_quantity[$sales_channel]??[];
+                $data_per_main_item = $businessUnits_data[$businessUnit]??[];
                 if (count(($data_per_main_item))>0 ) {
+
                     // Data & Growth Rate Per Sales Channel
                     array_walk($data_per_main_item, function ($val, $date) use (&$years) {
                         $years[] = date('Y', strtotime($date));
                     });
                     $years = array_unique($years);
 
-                    $report_data_quantity[$zone][$sales_channel][$name_of_report_item] = $data_per_main_item;
-                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$zone][$sales_channel], $years, $request->interval);
-                    $report_data_quantity[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
+                    $report_data[$businessUnitName][$businessUnit][$name_of_report_item] = $data_per_main_item;
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$businessUnitName][$businessUnit], $years, $request->interval);
+                    $report_data[$businessUnitName][$businessUnit] = $interval_data['data_intervals'][$request->interval] ?? [];
 
-                    $report_data_quantity[$zone]['Total']  = $this->finalTotal([($report_data_quantity[$zone]['Total']  ?? []) ,($report_data_quantity[$zone][$sales_channel][$name_of_report_item]??[]) ]);
-                    $report_data_quantity[$zone][$sales_channel]['Growth Rate %'] = $this->growthRate(($report_data_quantity[$zone][$sales_channel][$name_of_report_item] ?? []));
+                    $report_data[$businessUnitName]['Total']  = $this->finalTotal([($report_data[$businessUnitName]['Total']  ?? []) ,($report_data[$businessUnitName][$businessUnit][$name_of_report_item]??[]) ]);
+                    $report_data[$businessUnitName][$businessUnit]['Growth Rate %'] = $this->growthRate(($report_data[$businessUnitName][$businessUnit][$name_of_report_item] ?? []));
 
-                }
+
+
+                
+            }
             }
 
 
+            if($result =='array'){
+            
+                 foreach (($request->sales_channels??[]) as $businessUnit_key => $businessUnit) {
 
-            foreach($report_data as $reportType=>$dates){
-                       // Baby 20
+                $years = [];
+
+                $data_per_main_item = $businessUnits_data_quantity[$businessUnit]??[];
+                if (count(($data_per_main_item))>0 ) {
+
+                    // Data & Growth Rate Per Sales Channel
+                    array_walk($data_per_main_item, function ($val, $date) use (&$years) {
+                        $years[] = date('Y', strtotime($date));
+                    });
+                    $years = array_unique($years);
+
+                    $report_data_quantity[$businessUnitName][$businessUnit][$name_of_report_item] = $data_per_main_item;
+                    $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data_quantity[$businessUnitName][$businessUnit], $years, $request->interval);
+                    $report_data_quantity[$businessUnitName][$businessUnit] = $interval_data['data_intervals'][$request->interval] ?? [];
+
+                    $report_data_quantity[$businessUnitName]['Total']  = $this->finalTotal([($report_data_quantity[$businessUnitName]['Total']  ?? []) ,($report_data_quantity[$businessUnitName][$businessUnit][$name_of_report_item]??[]) ]);
+                    $report_data_quantity[$businessUnitName][$businessUnit]['Growth Rate %'] = $this->growthRate(($report_data_quantity[$businessUnitName][$businessUnit][$name_of_report_item] ?? []));
+
+
+
                 
-                if($zone  == $reportType )
-                {
-                    foreach($dates as $dateName=>$items){
+            }
+                 }
+
+
+
+                  foreach($report_data as $reportType=>$dates){
+                                // Baby 20
+
+                      if($reportType == $businessUnitName)
+                      {
+                         foreach($dates as $dateName=>$items){
                     if($dateName != 'Total')
                     {
                                                 //Avg. Prices
                     foreach($items as $itemKey=> $values){
                         if($itemKey == 'Avg. Prices'){
                             foreach($values as $datee => $dateVal){
+                                // dd( $report_data[$reportType][$dateName][$itemKey][$datee] );
                             $report_data[$reportType][$dateName][$itemKey][$datee] =  
                             $report_data_quantity[$reportType][$dateName][$itemKey][$datee] ?
                             $report_data[$reportType][$dateName][$itemKey][$datee] / $report_data_quantity[$reportType][$dateName][$itemKey][$datee]
@@ -230,10 +232,14 @@ class CategoriesAgainstAnalysisReport
 
                         elseif($itemKey == 'Growth Rate %'){
                             foreach($values as $datee => $dateVal){
+                                // dd($report_data[$reportType]);
                                 $report_data[$reportType][$dateName]['Avg. Prices'][$datee];
                                 $keys = array_flip(array_keys($report_data[$reportType][$dateName]['Avg. Prices']));
+                                // dd($report_data[$reportType][$dateName]['Avg. Prices']);
                                 $values = array_values($report_data[$reportType][$dateName]['Avg. Prices']);
                                 $previousValue = isset($values[$keys[$datee]-1]) ? $values[$keys[$datee]-1] : 0 ;
+                          
+                            
                                 $report_data[$reportType][$dateName][$itemKey][$datee] =  $previousValue ? (($report_data[$reportType][$dateName]['Avg. Prices'][$datee] - $previousValue  )/ $previousValue)*100 : 0;
                           
                             }
@@ -246,41 +252,48 @@ class CategoriesAgainstAnalysisReport
                     }
                 
                 }
-                }
-                             
+                   
+                      }
 
                              
-                
+               
             }
             
+
             
-                
+            
             }
 
+
+            
             // Total & Growth Rate Per Zone
-            $final_report_total = $this->finalTotal( [($report_data[$zone]['Total']??[]) , ($final_report_total??[]) ]);
-            $report_data[$zone]['Growth Rate %'] =  $this->growthRate(($report_data[$zone]['Total']??[]));
-            $categories_names[] = (str_replace( ' ','_', $zone));
+            $final_report_total = $this->finalTotal( [($report_data[$businessUnitName]['Total']??[]) , ($final_report_total??[]) ]);
+            $report_data[$businessUnitName]['Growth Rate %'] =  $this->growthRate(($report_data[$businessUnitName]['Total']??[]));
+            $businessUnits_names[] = (str_replace( ' ','_', $businessUnitName));
+            }
 
-        }
-          foreach($report_data as $r=>$d){
+
+
+              foreach($report_data as $r=>$d){
             unset($report_data[$r]['Totals']);
         }
-
         
-        // Total Zones & Growth Rate
+
+        // Total Sales Channel & Growth Rate
 
 
         $report_data['Total'] = $final_report_total;
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
         //  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
-        $Items_names = $categories_names ;
-         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'category' );
+         $Items_names = $businessUnits_names ;
+         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'business_unit' );
+
         if($report_view instanceof View)
         {
             return $report_view ; 
         }
+
         if($request->report_type =='comparing')
         {
              return [
@@ -289,16 +302,14 @@ class CategoriesAgainstAnalysisReport
                  'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
              ];
         }
-        
-        if ($result=='view') {
-            
-            return view('client_view.reports.sales_gathering_analysis.categories_analysis_report',compact('company','name_of_report_item','view_name','categories_names','dates','report_data'));
+        if ($result =='view') {
+            return view('client_view.reports.sales_gathering_analysis.businessUnits_analysis_report',compact('company','name_of_report_item','view_name','businessUnits_names','dates','report_data',));
         }else {
-            return [ 'report_data'=>$report_data,'view_name'=>$view_name,'names'=> $categories_names];
+            return [ 'report_data'=>$report_data,'view_name'=>$view_name,'names'=> $businessUnits_names];
         }
 
-
     }
+
     public function resultForSalesDiscount(Request $request, Company $company)
     {
 
@@ -308,10 +319,11 @@ class CategoriesAgainstAnalysisReport
         $zones_names = [];
         $sales_values = [];
         $sales_years = [];
-        $zones = is_array(json_decode(($request->categoriesData[0]))) ? json_decode(($request->categoriesData[0])) :$request->categoriesData ;
-
+        $zones = is_array(json_decode(($request->businessUnits[0]))) ? json_decode(($request->businessUnits[0])) :$request->businessUnits ;
         $type = $request->type;
         $view_name = $request->view_name;
+        $zones_discount = [];
+
 
         $fields ='';
         foreach ($request->sales_discounts_fields as $sales_discount_field_key => $sales_discount_field) {
@@ -322,9 +334,9 @@ class CategoriesAgainstAnalysisReport
         foreach ($zones as  $zone) {
 
             $sales =collect(DB::select(DB::raw("
-                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , sales_value ," . $fields ." category
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , sales_value ," . $fields ." business_unit
                 FROM sales_gathering
-                WHERE ( company_id = '".$company->id."'AND category = '".$zone."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                WHERE ( company_id = '".$company->id."'AND business_unit = '".$zone."' AND date between '".$request->start_date."' and '".$request->end_date."')
                 ORDER BY id"
             )))->groupBy('gr_date');
             $sales_values_per_zone[$zone] = $sales->map(function($sub_item){
@@ -385,13 +397,15 @@ class CategoriesAgainstAnalysisReport
                     $final_report_data[$zone][$sales_discount_field]['Perc.% / Sales'] = $this->operationAmongTwoArrays(($final_report_data[$zone][$sales_discount_field]['Values']??[]), ($sales_values[$zone]??[]));
 
 
+
+
                 }
             }
             $zones_names[] = (str_replace( ' ','_', $zone));
         }
 
         $sales_values = $this->finalTotal([$sales_values??[]]);
-        $total = $final_report_data['Total'] ?? [];
+        $total = $final_report_data['Total'];
         unset($final_report_data['Total']);
         $final_report_data['Total'] = $total;
         $final_report_data['Discount % / Total Sales'] = $this->operationAmongTwoArrays($final_report_data['Total'],$sales_values);
@@ -400,72 +414,71 @@ class CategoriesAgainstAnalysisReport
 
         $report_data = $final_report_data;
 
-        $dates = array_keys(($report_data['Total']??[]));
-
-        $type_name = 'Categories';
+        $dates = array_keys($report_data['Total']);
+//  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
+        $type_name = 'Business Units';
         return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
 
     }
 
-
-    public function CategoriesSalesAnalysisResult(Request $request, Company $company)
+    public function BusinessUnitsSalesAnalysisResult(Request $request, Company $company , $array = false )
     {
         $dimension = $request->report_type;
 
         $report_data =[];
         $growth_rate_data =[];
-        $categories = is_array(json_decode(($request->categories[0]))) ? json_decode(($request->categories[0])) :$request->categories ;
+		// dd($request->all());
+        $businessUnits = is_array(json_decode(($request->businessUnits[0]))) ? json_decode(($request->businessUnits[0])) :$request->businessUnits ;
 
-        foreach ($categories as  $category) {
+        foreach ($businessUnits as  $businessUnit) {
 
-            $categories_data = [];
-
-
-
-            $categories_data =collect(DB::select(DB::raw("
-                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,category
+            $businessUnits_data =collect(DB::select(DB::raw("
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,business_unit
                 FROM sales_gathering
-                WHERE ( company_id = '".$company->id."'AND category = '".$category."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                WHERE ( company_id = '".$company->id."'AND business_unit = '".$businessUnit."' AND date between '".$request->start_date."' and '".$request->end_date."')
                 ORDER BY id "
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');
                 })->toArray();
 
-
             $interval_data_per_item = [];
             $years = [];
-            if (count($categories_data)>0) {
 
-                // Data & Growth Rate Per Sales Channel
-                array_walk($categories_data, function ($val, $date) use (&$years) {
-                    $years[] = date('Y', strtotime($date));
-                });
-                $years = array_unique($years);
-                $report_data[$category] = $categories_data;
-                $interval_data_per_item[$category] = $categories_data;
-                $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
+            array_walk($businessUnits_data, function ($val, $date) use (&$years) {
+                $years[] = date('Y', strtotime($date));
+            });
+            $years = array_unique($years);
+            $report_data[$businessUnit] = $businessUnits_data;
+            $interval_data_per_item[$businessUnit] = $businessUnits_data;
+            $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
 
-                $report_data[$category] = $interval_data['data_intervals'][$request->interval][$category] ?? [];
-                $growth_rate_data[$category] = $this->growthRate($report_data[$category]);
+            $report_data[$businessUnit] = $interval_data['data_intervals'][$request->interval][$businessUnit] ?? [];
+            $growth_rate_data[$businessUnit] = $this->growthRate($report_data[$businessUnit]);
 
 
 
-            }
         }
 
-        $total_categories = $this->finalTotal($report_data);
-        $total_categories_growth_rates =  $this->growthRate($total_categories);
+        $total_businessUnits = $this->finalTotal($report_data);
+        $total_businessUnits_growth_rates =  $this->growthRate($total_businessUnits);
         $final_report_data = [];
-        $categories_names =[];
-        foreach ($categories as  $category) {
-            $final_report_data[$category]['Sales Values'] = ($report_data[$category]??[]);
-            $final_report_data[$category]['Growth Rate %'] = ($growth_rate_data[$category]??[]);
-            $categories_names[] = (str_replace( ' ','_', $category));
+        $businessUnits_names =[];
+        foreach ($businessUnits as  $businessUnit) {
+            $final_report_data[$businessUnit]['Sales Values'] = $report_data[$businessUnit];
+            $final_report_data[$businessUnit]['Growth Rate %'] = $growth_rate_data[$businessUnit];
+            $businessUnits_names[] = (str_replace( ' ','_', $businessUnit));
         }
-		// dd(get_defined_vars());
-		$dates = array_keys($total_categories ?? []); 
-		// dd($total_categories , $categories_data);
-        return view('client_view.reports.sales_gathering_analysis.categories_sales_report',compact('company','categories_names','total_categories_growth_rates','final_report_data','total_categories','dates'));
+
+        if($array)
+        {
+            return $report_data ;
+        }
+		
+		$dates = array_keys($total_businessUnits ?? []); 
+		
+		
+
+        return view('client_view.reports.sales_gathering_analysis.businessUnits_sales_report',compact('company','businessUnits_names','total_businessUnits_growth_rates','final_report_data','total_businessUnits','dates'));
 
     }
     public function growthRate($data)

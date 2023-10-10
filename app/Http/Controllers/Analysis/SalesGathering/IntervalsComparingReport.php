@@ -30,6 +30,10 @@ class IntervalsComparingReport
             $type = 'business_sector';
             $view_name = 'Business Sectors Sales Interval Comparing Analysis' ;
 
+        }elseif (request()->route()->named('intervalComparing.businessUnits.analysis')) {
+            $type = 'business_unit';
+            $view_name = 'Business Units Sales Interval Comparing Analysis' ;
+
         } elseif (request()->route()->named('intervalComparing.branches.analysis')) {
             $type = 'branch';
             $view_name = 'Branches Sales Interval Comparing Analysis' ;

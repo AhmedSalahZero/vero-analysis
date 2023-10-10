@@ -28,7 +28,7 @@ class RoutesDefinition
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                     ],
@@ -57,7 +57,7 @@ class RoutesDefinition
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                     ],
@@ -85,7 +85,7 @@ class RoutesDefinition
                         'Products' => 'products',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                     ],
@@ -110,7 +110,7 @@ class RoutesDefinition
                         'SalesChannels' => 'salesChannels',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
@@ -136,7 +136,7 @@ class RoutesDefinition
                         'Customers' => 'customers',
                         'SalesChannels' => 'salesChannels',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
@@ -164,7 +164,7 @@ class RoutesDefinition
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
 						
@@ -206,6 +206,39 @@ class RoutesDefinition
                     'has_discount' => true,
                     'has_break_down' => true,
                 ],
+				
+				
+				'BusinessUnits' => [
+                    'name' =>  'businessUnits',
+                    'class_path' => 'Analysis\SalesGathering\BusinessUnitsAgainstAnalysisReport',
+                    'analysis_view' => 'BusinessUnitsSalesAnalysisIndex',
+                    'analysis_result' => 'BusinessUnitsSalesAnalysisResult',
+                    'against_view'  => 'index',
+                    'against_result'  => 'result',
+                    'discount_result'  => 'resultForSalesDiscount',
+                    'sub_items' => [
+                        'zones' => 'zones',
+                        'SalesChannels' => 'salesChannels',
+						'BusinessSectors' => 'businessSectors',
+                        'Customers' => 'customers',
+                        'Categories' => 'categories',
+                        'Products' => 'products',
+                        'Principles' => 'principles',
+                        'ProductsItems' => 'Items',
+                        'SalesPersons' => 'salesPersons',
+                        'Branches' => 'branches',
+                        'SalesDiscount' => 'salesDiscount',
+                        'Countries' => 'countries',
+						
+                    ],
+                    'avg_items' => [
+                        'Products' => 'products',
+                        'ProductsItems' => 'Items',
+                    ],
+                    'has_discount' => true,
+                    'has_break_down' => true,
+                ],
+				
                 // 8 => Sales Persons
                 'SalesPersons' => [
                     'name' =>  'salesPersons',
@@ -221,7 +254,7 @@ class RoutesDefinition
                         'Principles' => 'principles',
                         'Products' => 'products',
                         'ProductItems' => 'Items',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
@@ -273,7 +306,7 @@ class RoutesDefinition
                                      'SalesPersons' => 'salesPersons',
                     'SalesChannels' => 'salesChannels',
                     'Zones' => 'zones',
-                     'BusinessSectors' => 'businessSectors',
+                     'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                      'Branches' => 'branches',
                      'Customers' => 'customers',
                        'ProductsItems' => 'Items',
@@ -325,7 +358,7 @@ class RoutesDefinition
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
-                        'BusinessSectors' => 'businessSectors',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                     ],
@@ -357,7 +390,20 @@ class RoutesDefinition
                 'sub_items' => [
                     'SalesChannels' => 'salesChannels',
                 ]
+				
             ],
+			
+			
+			'BusinessUnits' => [
+                'name' =>  'businessUnits',
+                'is_provider' => false,
+                'sub_items' => [
+                    'SalesChannels' => 'salesChannels',
+                ]
+				
+            ],
+			
+			
             // 2 => Sales Channels
             'SalesChannels' => [
                 'name' =>  'salesChannels',
@@ -373,7 +419,7 @@ class RoutesDefinition
                 'sub_items' => [
                     'Zones' => 'zones',
                     'SalesChannels' => 'salesChannels',
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                 'branches' => 'branches',
                 ]
             ],
@@ -384,7 +430,7 @@ class RoutesDefinition
                 'sub_items' => [
                     'Zones' => 'zones',
                     'SalesChannels' => 'salesChannels',
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'Branches'=>'branches'
                 ]
             ],
@@ -395,7 +441,7 @@ class RoutesDefinition
                 'sub_items' => [
                     'Zones' => 'zones',
                     'SalesChannels' => 'salesChannels',
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'Branches' => 'branches',
                 ]
             ],
@@ -406,7 +452,7 @@ class RoutesDefinition
                 'sub_items' => [
                     'Zones' => 'zones',
                     'SalesChannels' => 'salesChannels',
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                 ]
             ],
             // 7 => Branches
@@ -423,7 +469,7 @@ class RoutesDefinition
                 'name' =>  'serviceProviders',
                 'is_provider' => true,
                 'sub_items' => [
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'Branches' => 'branches',
                     'SalesChannels' => 'salesChannels',
                     'Products' => 'products',
@@ -434,7 +480,7 @@ class RoutesDefinition
                 'name' =>  'serviceProvidersType',
                 'is_provider' => true,
                 'sub_items' => [
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'Branches' => 'branches',
                     'SalesChannels' => 'salesChannels',
                     'Products' => 'products',
@@ -445,7 +491,7 @@ class RoutesDefinition
                 'name' =>  'serviceProvidersBirthYear',
                 'is_provider' => true,
                 'sub_items' => [
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'Branches' => 'branches',
                     'SalesChannels' => 'salesChannels',
                     'Products' => 'products',
@@ -457,7 +503,7 @@ class RoutesDefinition
                 'is_provider' => false,
                 'sub_items' => [
                     'SalesChannels' => 'salesChannels',
-                    'BusinessSectors' => 'businessSectors',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'ProductsItems' => 'Items',
                 ]
             ],

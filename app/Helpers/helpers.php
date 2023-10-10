@@ -2899,6 +2899,7 @@ function reportNames()
 		'sales channel'=>'sales channel',
 		'customers'=>'customers',
 		'business sector'=>'business sector',
+		'business unit'=>'business unit',
 		'branch'=>'branch',
 		'category'=>'category', // here
 		'principle'=>'principle',

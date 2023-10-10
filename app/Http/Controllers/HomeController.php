@@ -342,10 +342,11 @@ class HomeController extends Controller
 			'product_or_service' => 'brand',
 			'product_item' => 'warning',
 			'business_sector' => 'brand',
+			'business_unit' => 'success',
 			'service_provider_name' => 'warning',
 			'service_provider_type' => 'danger',
 			'service_provider_birth_year' => 'success',
-			'country'=>'warning'
+			'country'=>'danger'
 		];
 		$reports_data = [];
 		$top_data = [];

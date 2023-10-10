@@ -56,6 +56,9 @@ class ProductsAgainstAnalysisReport
 		} elseif (request()->route()->named('products.businessSectors.analysis')) {
 			$type  = 'business_sector';
 			$view_name = 'Products Against Business Sectors Trend Analysis';
+		}elseif (request()->route()->named('products.businessUnits.analysis')) {
+			$type  = 'business_unit';
+			$view_name = 'Products Against Business Units Trend Analysis';
 		} elseif (request()->route()->named('products.branches.analysis')) {
 			$type  = 'branch';
 			$view_name = 'Products Against Branches Trend Analysis';

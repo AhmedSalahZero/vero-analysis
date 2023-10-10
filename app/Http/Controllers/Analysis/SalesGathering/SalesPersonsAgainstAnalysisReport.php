@@ -52,6 +52,9 @@ class SalesPersonsAgainstAnalysisReport
         } elseif (request()->route()->named('salesPersons.businessSectors.analysis')) {
             $type  = 'business_sector';
             $view_name = 'Sales Persons Against Business Sectors Trend Analysis';
+        }elseif (request()->route()->named('salesPersons.businessUnits.analysis')) {
+            $type  = 'business_unit';
+            $view_name = 'Sales Persons Against Business Units Trend Analysis';
         } elseif (request()->route()->named('salesPersons.branches.analysis')) {
             $type  = 'branch';
             $view_name = 'Sales Persons Against Branches Trend Analysis';

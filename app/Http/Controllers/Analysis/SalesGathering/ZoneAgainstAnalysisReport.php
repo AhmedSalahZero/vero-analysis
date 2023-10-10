@@ -48,7 +48,16 @@ class ZoneAgainstAnalysisReport
 		} elseif (request()->route()->named('zone.businessSectors.analysis')) {
 			$type  = 'business_sector';
 			$view_name = 'Zones Against Business Sectors Trend Analysis';
-		} elseif (request()->route()->named('zone.branches.analysis')) {
+		}elseif (request()->route()->named('zone.businessUnits.analysis')) {
+			$type  = 'business_unit';
+			$view_name = 'Zones Against Business Units Trend Analysis';
+		}
+		elseif (request()->route()->named('zone.businessUnits.analysis')) {
+			$type  = 'business_unit';
+			$view_name = 'Zones Against Business Units Trend Analysis';
+		} 
+		elseif (request()->route()->named('zone.branches.analysis')) {
+		
 			$type  = 'branch';
 			$view_name = 'Zones Against Branches Trend Analysis';
 		}

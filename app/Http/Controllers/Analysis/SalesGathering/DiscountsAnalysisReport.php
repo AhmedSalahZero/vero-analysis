@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 
 use App\Models\Company;
 use App\Models\SalesGathering;
-use Illuminate\Http\Request;
 use App\Traits\GeneralFunctions;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DiscountsAnalysisReport
@@ -41,6 +41,11 @@ class DiscountsAnalysisReport
             $main_type = 'business_sector';
             $type = 'discounts';
             $view_name = 'Business Sectors Versus Discounts' ;
+        }
+		elseif (request()->route()->named('businessUnits.vs.discounts.view')) {
+            $main_type = 'business_unit';
+            $type = 'discounts';
+            $view_name = 'Business Units Versus Discounts' ;
         }
         elseif (request()->route()->named('branches.vs.discounts.view')) {
             $main_type = 'branch';
@@ -163,4 +168,3 @@ class DiscountsAnalysisReport
 
     }
 }
-

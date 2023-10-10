@@ -121,6 +121,9 @@ class CustomersNaturesAnalysisReport
 		} elseif (request()->route()->named('businessSectors.vs.customersNatures')) {
 			$type = 'business_sector';
 			$view_name = 'Business Sectors Versus Customers Natures Analysis';
+		}elseif (request()->route()->named('businessUnits.vs.customersNatures')) {
+			$type = 'business_unit';
+			$view_name = 'Business Units Versus Customers Natures Analysis';
 		} elseif (request()->route()->named('branches.vs.customersNatures')) {
 			$type = 'branch';
 			$view_name = 'Branches Versus Customers Natures Analysis';

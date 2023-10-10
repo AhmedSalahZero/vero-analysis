@@ -30,6 +30,9 @@ class SalesBreakdownAgainstAnalysisReport
 		} elseif (request()->route()->named('salesBreakdown.businessSectors.analysis')) {
 			$type = 'business_sector';
 			$view_name = 'Business Sectors Sales Breakdown Analysis';
+		} elseif (request()->route()->named('salesBreakdown.businessUnits.analysis')) {
+			$type = 'business_unit';
+			$view_name = 'Business Units Sales Breakdown Analysis';
 		} elseif (request()->route()->named('salesBreakdown.branches.analysis')) {
 			$type = 'branch';
 			$view_name = 'Branches Sales Breakdown Analysis';

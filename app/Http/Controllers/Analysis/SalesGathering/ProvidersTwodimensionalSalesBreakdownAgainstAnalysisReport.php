@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 
 use App\Models\Company;
 use App\Models\SalesGathering;
-use Illuminate\Http\Request;
 use App\Traits\GeneralFunctions;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
@@ -36,6 +36,10 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'service_provider_type';
             $main_type = 'business_sector';
             $view_name = 'Service Provider Type Versus Business Sectors' ;
+        }elseif(request()->route()->named('serviceProvidersType.vs.businessUnits.view')) {
+            $type = 'service_provider_type';
+            $main_type = 'business_unit';
+            $view_name = 'Service Provider Type Versus Business Units' ;
         }elseif (request()->route()->named('serviceProvidersType.vs.branches.view')) {
             $type = 'service_provider_type';
             $main_type = 'branch';
@@ -262,4 +266,3 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
         }
     }
 }
-
