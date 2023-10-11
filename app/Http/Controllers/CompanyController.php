@@ -16,7 +16,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::all();
+        $companies = Company::orderBy('id','desc')->get();
+		
         return view('super_admin_view.companies.index',compact('companies'));
     }
 

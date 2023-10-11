@@ -8,6 +8,7 @@ use App\Models\IncomeStatementItem;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use League\Glide\Manipulators\Contrast;
 
 trait FinancialStatementAbleMutator
 {
@@ -260,12 +261,18 @@ trait FinancialStatementAbleMutator
 	{
 		// dd($request->all());
 		
-		
+				
 		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
-				'sub_items.*.name' => 'required'
+				'sub_items.*.name' => 'required',
+				'sub_items.*.collection_policy'=>'required|array',
+				'sub_items.*.collection_policy.type'=>'required|array',
+				'sub_items.*.collection_policy.type.name'=>'required'
 			], [
-				'sub_items.*.name.required' => __('Please Enter SubItem Name')
+				'sub_items.*.name.required' => __('Please Enter SubItem Name'),
+				'sub_items.*.collection_policy.required'=>__('Please Enter Collection / Payment Policy'),
+				'sub_items.*.collection_policy.type.required'=>__('Please Enter Collection / Payment Policy'),
+				'sub_items.*.collection_policy.type.name.required'=>__('Please Enter Collection / Payment Policy'),
 			]);
 			if (is_object($validator) && $validator->fails()) {
 				return response()->json([
@@ -286,13 +293,17 @@ trait FinancialStatementAbleMutator
 			foreach ((array)$request->sub_items as $index => $options) {
 				if (isset($options['name']) && $options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
 					foreach ($insertSubItems as $subType) {
-						if (isQuantity($options) && get_class($this) != CashFlowStatement::class) {
+						$isQuantity = isQuantity($options) ;
+						$isValue = isset($options['val']);
+						if (($isQuantity || $isValue) && get_class($this) != CashFlowStatement::class) {
 							foreach ([true, false] as $isQuantityRepeating) {
+								if(!$isQuantity && $isValue && $isQuantityRepeating){
+									continue;
+								}
 								$quantityVal = $options['quantity'] ?? 0;
 								$val = $options['val'] ?? 0;
 								$payload = $isQuantityRepeating ? $quantityVal : $val;
 								$name = $isQuantityRepeating ? $options['name'] . quantityIdentifier : $options['name'];
-								
 								$subItemsValues[$financialStatementAble->id][$financialStatementAbleItemId][$name] = $payload;
 								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
 							}
@@ -329,8 +340,7 @@ trait FinancialStatementAbleMutator
 							if (!$hadQuantityRow && $isCheckedAsQuantity) {
 								foreach (getAllFinancialAbleTypes() as $currentSubItemType) {
 									$pivotForNewQuantity = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['value'])->first()->pivot->toArray();
-								//		dd($request->get('sub_items'));
-								//	$xyz = 'qqq';
+								
 									$pivotForNewQuantity = array_merge($pivotForNewQuantity, [
 										'is_quantity' => 1,
 										'can_be_quantity' => 1,

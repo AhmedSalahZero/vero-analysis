@@ -70,10 +70,22 @@ class AppServiceProvider extends ServiceProvider
 		// Gate::before(function($user){
 		// 	return true ;
 		// });
-		
+		// foreach([1,2,3] as $number){
+		// 	if($number == 1){
+		// 		 try{
+		// 			Permission::findByName('abc');
+		// 		 }
+		// 		 catch(\Exception $e){
+		// 			logger('inside exceptio');
+		// 		 }
+		// 	}else{
+		// 		logger('from else');
+		// 	}
+			
+		// }
 		// Zones Sales Breakdown Analysis 
 	
-		
+		// dd($x);
 		// dd(searchWordInstr(['products / service'],'( Products / Service ) Average Prices Per Category'));
 
 		if(false){
@@ -81,10 +93,14 @@ class AppServiceProvider extends ServiceProvider
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 			$permissions = getPermissions();
 			foreach($permissions as $permission){
-			
-				$permission = Permission::create($permission);
-				foreach(User::all() as $user){
-					$user->givePermissionTo($permission);
+				try{
+					Permission::findByName($permission['name']);
+				}
+				catch(\Exception $e){
+					$permission = Permission::create($permission);
+					foreach(User::all() as $user){
+						$user->givePermissionTo($permission);
+					}
 				}
 			}	
 		}

@@ -515,12 +515,17 @@ $tableId = 'kt_table_1';
                             $(this).closest('.quantity-section').find('[data-index]').attr('data-index', currentIndex)
 
                             let currentCheckedItem = $(this).parent().parent().find('input[name="sub_items[' + currentIndex + '][is_quantity]"]:checked')
-
-                            if (currentCheckedItem.length == 2) {
+                            if (currentCheckedItem.length >= 1) {
                                 let firstCheckboxValue = currentCheckedItem[0].value
+								
+								if(currentCheckedItem.length == 1 &&  firstCheckboxValue!='value'){
+									console.warn('one checkbox checked but not value')
+									return ;
+								}
                                 let firstCheckboxTr = salesRevenueModalTdData[inEditMode][subItemName][firstCheckboxValue]
-                                let secondCheckboxValue = currentCheckedItem[1].value
-                                let secondCheckboxTr = salesRevenueModalTdData[inEditMode][subItemName][secondCheckboxValue]
+                                let secondCheckboxValue = currentCheckedItem[1] ? currentCheckedItem[1].value : null
+                                let secondCheckboxTr = secondCheckboxValue ? salesRevenueModalTdData[inEditMode][subItemName][secondCheckboxValue]:null
+							
 
                                 let checkedItems = [firstCheckboxValue, secondCheckboxValue]
                                 let autocaulationItemValue = null;
@@ -535,7 +540,11 @@ $tableId = 'kt_table_1';
                                 }
 											
                                 let thirdCheckboxTr = salesRevenueModalTdData[inEditMode][subItemName][autocaulationItem]
-
+								const onlyValueChecked = currentCheckedItem.length == 1;
+								if(onlyValueChecked) //only value allowed
+								{
+									thirdCheckboxTr = '';
+								}
                                 let trs = firstCheckboxTr + secondCheckboxTr + thirdCheckboxTr
                                 let quantitySection = $(this).closest('.quantity-section')
 
@@ -544,7 +553,10 @@ $tableId = 'kt_table_1';
                                 trs = trs.replaceAll('modal-for-quantity-0', 'modal-for-quantity-' + currentIndex)
 
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body').empty().append(trs)
+								if(!onlyValueChecked){
+									
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type input').prop('readonly', true)
+								}
 								
 								var checkedItemsAsString = '';
 								checkedItems.forEach(function(element,index){
@@ -557,8 +569,10 @@ $tableId = 'kt_table_1';
 								const name = "sub_items["+ currentIndex +"][is_value_quantity_price]" ;
 								const selector = '[name="'+name+'"]';
 								$(selector).val(checkedItemsAsString);			
+								if(!onlyValueChecked){
 								
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type i.repeat-row').remove();
+								}
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('id', 'modal-for-quantity-' + currentIndex)
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('data-id', 'modal-for-quantity-' + currentIndex)
 								// to update total 
@@ -1165,12 +1179,20 @@ $tableId = 'kt_table_1';
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
                             const tbody = this.parentElement.parentElement.parentElement
+                            
                             const currentIndex = $(this).closest('[data-index]').attr('data-index')
                             const unformattedValue = this.parentElement.querySelector('input[type="text"]').value
                             const numericValue = filterNumericUserInput(unformattedValue, false)
 
                             $(parentElement).find('input[data-date="' + date + '"]').val(numericValue)
-                            const autoCalculationRow = $(tbody).find('tr:last-of-type')
+							const onlyValueChecked = $(tbody).find('tr').length == 1 ;
+							console.log(onlyValueChecked);
+							if(onlyValueChecked){
+								recalculateTotalForSalesRevenuePopup();
+								return ;
+							}
+							const autoCalculationRow = $(tbody).find('tr:last-of-type')
+							
                             let equation = autoCalculationRow.attr('data-equation')
                             let numberFormatDigit = autoCalculationRow.attr('data-number-format')
                             const numberFormatDigits = autoCalculationRow.attr('data-number-format')
@@ -3838,7 +3860,7 @@ $tableId = 'kt_table_1';
 						<div class="checkboxes-for-quantity only-two-checkbox-parent mt-4">
 							<div class="quantity-checkbox-div">
 							<label >{{ __('Value') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? 'checked' : ''}>
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? '' : ''}>
 							</div>
 							<div class="quantity-checkbox-div">
 								<label >{{ __('Quantity') }}</label>

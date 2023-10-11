@@ -56,19 +56,20 @@ class User extends Authenticatable implements HasMedia
     }
 	public function getRoleName()
 	{
-		return Auth()->user()->roles->first()->name;
+		return $this->roles->first()->name;
 	}
+	
 	public function isSuperAdmin()
 	{
-		return Auth()->user() && Auth()->user()->roles->first()->name == 'super-admin';;
+		return auth()->check() && $this->roles->first()->name == 'super-admin';;
 	}
 	public function isCompanyAdmin():bool 
 	{
-		return Auth()->user() && Auth()->user()->roles->first()->name == 'company-admin';
+		return auth()->check() && $this->roles->first()->name == 'company-admin';
 	}
 	public function isUser():bool 
 	{
-		return Auth()->user() && Auth()->user()->roles->first()->name == 'user';
+		return auth()->check() && $this->roles->first()->name == 'user';
 	}
 	public function usersCreatedBy()
 	{
