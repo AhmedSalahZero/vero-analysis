@@ -38,21 +38,21 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Sales Gathering') }}
+                        {{ camelToTitle($modelName) }}
                     </h3>
                 </div>
             </div>
         </div>
 
-
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action={{ route('salesGatheringImport', $company) }} enctype="multipart/form-data">
+        <form class="kt-form kt-form--label-right" method="POST" action={{ route('salesGatheringImport', ['company'=>$company->id , 'model'=>$modelName]) }} enctype="multipart/form-data">
+{{-- {{ dd($modelName) }} --}}
             @csrf
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __('Sales Gathering Import') }}
+                            {{ camelToTitle($modelName) . ' ' . __('Import') }}
                         </h3>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                             <label>{{ __('Import File') }} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <input required type="file" name="excel_file" class="form-control" placeholder="{{ __('Import File') }}">
-                                <x-tool-tip title="{{ __('Kash Vero') }}" />
+                                <x-tool-tip title="{{ __('Vero Analysis') }}" />
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -75,21 +75,23 @@
                                     <option value="Y-m-d">{{ __('Year-Month-Day') }}</option>
                                     <option value="Y-d-m">{{ __('Year-Day-Month') }}</option>
                                 </select>
-                                <x-tool-tip title="{{ __('Kash Vero') }}" />
+                                <x-tool-tip title="{{ __('Vero Analysis') }}" />
                             </div>
                         </div>
                     </div>
                     <?php $active_job = App\Models\ActiveJob::where('company_id', $company->id)
                             ->where('status', 'test_table')
                             ->where('model_name', 'SalesGatheringTest')
+							->where('model',$modelName)
                             ->first(); ?>
                     @php $active_job_for_saving = App\Models\ActiveJob::where('company_id', $company->id)
                     ->where('status', 'save_to_table')
                     ->where('model_name', 'SalesGatheringTest')
+					->where('model',$modelName)
                     ->first(); @endphp
                     @php
                     use Illuminate\Support\Facades\Cache;
-                    $canViewPleaseReviewMessage = !hasFailedRow($company->id)&&hasCachingCompany($company->id) && ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id)) && ! (bool)Cache::get(getCanReloadUploadPageCachingForCompany($company->id) );
+                    $canViewPleaseReviewMessage = !hasFailedRow($company->id,$modelName)&&hasCachingCompany($company->id,$modelName) && ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id,$modelName)) && ! (bool)Cache::get(getCanReloadUploadPageCachingForCompany($company->id,$modelName) );
                     @endphp
                     @if($canViewPleaseReviewMessage)
                     <h4 id="please-review-and-click-save" class="text-center alert alert-info " style="text-transform:capitalize;justify-content:center">{{ __('Please review And Click Save') }}</h4>
@@ -109,12 +111,11 @@
 
         </form>
         <!--end::Form-->
-        <form action="{{ route('deleteMultiRowsFromCaching', [$company]) }}" method="POST">
-            {{-- <form action="{{ route('multipleRowsDelete', [$company, 'SalesGatheringTest']) }}" method="POST"> --}}
+        <form action="{{ route('deleteMultiRowsFromCaching', ['company'=>$company , 'modelName'=>$modelName]) }}" method="POST">
             @csrf
             @method('DELETE')
 
-            <x-table :lastUploadFailedHref="hasFailedRow($company->id)?route('last.upload.failed',$company->id):'#'" :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',$company)" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,'SalesGatheringTest'])">
+            <x-table :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',['company'=>$company->id , 'modelName'=>$modelName])" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
 
                 @slot('table_header')
 
@@ -262,7 +263,7 @@
                 , data: {
                     'id': "{{ $active_job->id }}"
                 }
-                , url: "{{ route('active.job', $company) }}"
+                , url: "{{ route('active.job', ['modelName'=>$modelName , 'company'=>$company->id]) }}"
                 , dataType: 'json'
                 , accepts: 'application/json'
             }).done(function(data) {
@@ -289,7 +290,7 @@
         setInterval(function() {
             $.ajax({
                 type: 'post'
-                , url: "/get-uploading-percentage/" + "{{$company->id}}"
+                , url: "/get-uploading-percentage/" + "{{$company->id}}"+"/"+"{{ $modelName }}"
                 , data: {
                     '_token': "{{csrf_token()}}"
                 , },
@@ -308,13 +309,7 @@
                             , timer: 1500
                         }).then(function() {
                             window.location.href = "{{ route('dashboard',getCurrentCompanyId()) }}"
-                            //               axios.get('/removeCashForCanReloadPageAndShowCompleteMessage', {
-                            //                   params: {
-                            //                       company_id
-                            //                   }
-                            //               }).then(() => {
-                            //
-                            //               })
+                       
                         })
 
 
@@ -328,35 +323,11 @@
             });
         }, 5000)
     })
-    //     var row = '1';
-    //     $(document).ready(function() {
-
-    //         setInterval(function() {
-
-    //             $.ajax({
-    //                 type: 'GET',
-    //                 data: {
-    //                     'id': "{{ $active_job_for_saving->id }}"
-    //                 },
-    //                 url: '{{ route('active.job', $company) }}',
-    //                 dataType: 'json',
-    //                 accepts: 'application/json'
-    //             }).done(function(data) {
-
-    //                 if (data == '0' && row == '1') {
-    //                     $('.uploading_div_for_saving_data').fadeOut(300);
-    //                     location.reload();
-    //                 }
-    //                 row = data;
-    //             });
-    //         }, 3000);
-
-    //     });
-    // 
+  
 
 </script>
 @endif
-@if(hasFailedRow($company->id))
+@if(hasFailedRow($company->id,$modelName))
 <script>
 Swal.fire({
 	title:"{{ __('Last Upload Failed ! .. Please Review Last Upload Failed Rows Below') }}",

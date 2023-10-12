@@ -16,21 +16,26 @@ class SalesGatheringController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Company $company)
+    public function index(Company $company , string $uploadType='SalesGathering')
     {
-        // dd('x');
-		Log::storeNewLogRecord('enterSection',null,__('Data Gathering'));
+		$modelName = $uploadType;
+		$uploadingArr = getUploadParamsFromType($uploadType);
+		$fullModelPath = $uploadingArr['fullModel'];
+		 $mainDateOrderBy = $uploadingArr['orderByDateField'];
+		 $uploadPermissionName = $uploadingArr['uploadPermissionName'];
+		 $exportPermissionName = $uploadingArr['exportPermissionName'];
+		 $deletePermissionName = $uploadingArr['deletePermissionName'];
+		Log::storeNewLogRecord('enterSection',null,__('Data Gathering [ '. $uploadType . ' ]' ));
 
-        
         // $salesGatherings = SalesGathering::company()->orderBy('date','desc')->get;
-        $salesGatherings = SalesGathering::company()->orderBy('date','desc')->paginate(50);
-        $exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
-
-
-    
+        $salesGatherings = $fullModelPath::company()->orderBy($mainDateOrderBy,'desc')->paginate(50);
+        $exportableFields  = (new ExportTable)->customizedTableField($company, $uploadType, 'selected_fields');
         $viewing_names = array_values($exportableFields);
         $db_names = array_keys($exportableFields);
-        return view('client_view.sales_gathering.index', compact('salesGatherings','company','viewing_names','db_names'));
+		// $uploadText = '';
+		
+		// dd($exportableFields,$uploadType);		
+        return view('client_view.sales_gathering.index', compact('salesGatherings','company','viewing_names','db_names','uploadPermissionName','exportPermissionName','deletePermissionName','modelName'));
     }
 
 
@@ -107,23 +112,26 @@ class SalesGatheringController extends Controller
      */
     public function destroy(Company $company, SalesGathering $salesGathering)
     {
+		// dd('delete');
         toastr()->error('Deleted Successfully');
         $salesGathering->delete();
         return redirect()->back();
     }
-    public function export(Company $company)
+    public function export(Company $company,string $modelName)
     {
-        $exportableFields = exportableFields($company->id,'SalesGathering');
+		$uploadParams = getUploadParamsFromType($modelName);
+        $exportableFields = exportableFields($company->id,$modelName);
         // If there are no exportable fields were found return with a warning msg
         if ($exportableFields === null) {
             toastr()->warning('Please choose exportable fields first');
             return redirect()->back() ;
         }
         // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
-        $selected_fields = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
+        $selected_fields = (new ExportTable)->customizedTableField($company, $modelName, 'selected_fields');
         // Array Contains Only the name of fields
         $exportable_fields = array_keys($selected_fields);
-        $salesGathering = SalesGathering::where('company_id',$company->id)->get();
+		
+        $salesGathering = $uploadParams['fullModel']::where('company_id',$company->id)->get();
         // Customizing the collection to be exported
         $salesGathering = collect($salesGathering)->map(function ($invoice)use($exportable_fields){
             $data = [];
@@ -140,7 +148,7 @@ class SalesGatheringController extends Controller
             return $data;
         });
 
-        return (new ExportData($company->id,array_values($selected_fields),$salesGathering))->download('SalesGatherings.xlsx');
+        return (new ExportData($company->id,array_values($selected_fields),$salesGathering))->download($modelName.'.xlsx');
 
     }
 }

@@ -19,17 +19,18 @@ class ShowCompletedMessageForSuccessJob implements ShouldQueue
 	 *
 	 * @return void
 	 */
-	private $jobId, $companyId;
+	private $jobId, $companyId,$modelName;
 
-	public function __construct($companyId, $jobId)
+	public function __construct($companyId, $jobId,$modelName)
 	{
 		$this->companyId = $companyId;
 		$this->jobId = $jobId;
+		$this->modelName = $modelName;
 	}
 
 	public function handle()
 	{
 
-		Cache::forever(\getShowCompletedTestMessageCacheKey($this->companyId), 1);
+		Cache::forever(\getShowCompletedTestMessageCacheKey($this->companyId,$this->modelName), 1);
 	}
 }

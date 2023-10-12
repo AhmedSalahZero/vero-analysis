@@ -57,6 +57,7 @@ class ImportData implements
 	private $companyId;
 
 	private $batch;
+	private $uploadModelName;
 
 	private $errorMessage='';
 
@@ -65,7 +66,7 @@ class ImportData implements
 	private $userId='';
 	// private $rows = 0 ;
 
-	public function __construct($company_id, $format, $model, $modelFields, $jobId, $userId)
+	public function __construct($company_id, $format, $model, $modelFields, $jobId, $userId,$uploadModelName)
 	{
 		Self::$company_id = $company_id;
 		Self::$static_model = $model;
@@ -75,7 +76,7 @@ class ImportData implements
 		$this->companyId = $company_id;
 		$this->job_id = $jobId;
 		$this->userId = $userId;
-
+		$this->uploadModelName = $uploadModelName;
 		// $this->batch = $batch;
 	}
 	/**
@@ -103,7 +104,7 @@ class ImportData implements
 				$validationRow = $data['validations'];
 		
 					DB::table('caching_company')->where('job_id', $this->job_id)->delete();
-					$cachingKey = generateCacheKeyForValidationRow($this->companyId);
+					$cachingKey = generateCacheKeyForValidationRow($this->companyId,$this->uploadModelName);
 					$validationRows = $validationRow;
 					if (Cache::has($cachingKey)) {
 						$validationRows = arrayMergeTwoDimArray($validationRows,Cache::get($cachingKey, []));
@@ -120,7 +121,8 @@ class ImportData implements
 			DB::table('caching_company')->insert([
 				'key_name'=>$key,
 				'company_id'=>$this->companyId,
-				'job_id'=>$this->job_id
+				'job_id'=>$this->job_id,
+				'model'=>$this->uploadModelName
 			]);
 			
 		}
@@ -170,7 +172,7 @@ class ImportData implements
 		
 		$invalidDates = [];
 		$allValidations =[ ];
-		if(in_array($key , ['Date'  , __('Date')])){
+		if(in_array($key , ['Date'  , __('Date') , 'Estimated',__('Estimated')])){
 			$dateValidation = $this->dateFormatting($value);
 				if (is_null($dateValidation)) {
 					$allValidations[$key] =  [
@@ -230,7 +232,7 @@ class ImportData implements
 				$data[$field_name] = $row_name;
 			} else {
 				if (isset($row_with_no_spaces[$row_name])) {
-					if (str_contains($field_name, 'date')) {
+					if (str_contains($field_name, 'date') || str_contains($field_name,'estimated')) {
 						$data[$field_name] = $this->dateFormatting($row_with_no_spaces[$row_name]);
 					} else {
 						$item = str_replace('\\', '', $row_with_no_spaces[$row_name]);
@@ -252,9 +254,9 @@ class ImportData implements
 
 		return [
 			ImportFailed::class => function (ImportFailed $event) use ($error) {
-				ActiveJob::where('id', $this->job_id)->delete();
-				CachingCompany::where('job_id', $this->job_id)->delete();
-				$key = generateCacheFailedName($this->companyId, $this->userId);
+				ActiveJob::where('id', $this->job_id)->where('model',$this->uploadModelName)->delete();
+				CachingCompany::where('job_id', $this->job_id)->where('model',$this->uploadModelName)->delete();
+				$key = generateCacheFailedName($this->companyId, $this->userId,$this->uploadModelName);
 				$err = __('Excel Import Failed') . ' ' . $error;
 				Cache::forever($key, $err);
 			},

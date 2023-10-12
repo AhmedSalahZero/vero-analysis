@@ -91,6 +91,7 @@ class CategoriesAgainstAnalysisReport
     }
     public function result(Request $request, Company $company,$result='view' , $secondReport = true )
     {
+		
         $report_data =[];
         $report_data_quantity =[];
         $growth_rate_data =[];

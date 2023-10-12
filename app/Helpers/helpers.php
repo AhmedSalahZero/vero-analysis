@@ -3,6 +3,7 @@
 use App\Http\Controllers\Analysis\SalesGathering\BranchesAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\BusinessSectorsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\CategoriesAgainstAnalysisReport;
+use App\Http\Controllers\Analysis\SalesGathering\ExportAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\ProductsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesChannelsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesPersonsAgainstAnalysisReport;
@@ -47,6 +48,10 @@ const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Tr
 const Customers_Against_Categories_Trend_Analysis = 'Customers Against Categories Trend Analysis';
 const Customers_Against_Products_ITEMS_Trend_Analysis = 'Customers Against Products Items Trend Analysis';
 const INVOICES = 'Invoices';
+const uploadExportAnalysisData ='upload export analysis data';
+const exportExportAnalysisData ='export export analysis data';
+const deleteExportAnalysisData ='delete export analysis data';
+const viewExportAnalysisData ='view export analysis data';
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
 {
@@ -622,6 +627,49 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
 		return $data;
 	}
 }
+function getExportFor($type, $companyId, $formatted = false, $date = false, $start_date = null, $end_date = null)
+{
+	if ($formatted) {
+		// 2022-03-22
+		// start 01-01-2021
+		// end 01-01-2022
+
+
+		return  DB::table('export_analysis')->where('company_id', $companyId)
+			->when($date && $start_date, function (Builder $builder) use ($start_date) {
+				$builder->where('purchase_order_date', '>=', $start_date);
+			})
+			->when($date && $end_date, function (Builder $builder) use ($end_date) {
+				$builder->where('purchase_order_date', '<=', $end_date);
+			})
+			->groupBy($type)
+			->distinct()
+			->select($type)
+			// ->orderByRaw('sum(net_sales_value) desc')
+			// ->orderBy($type)
+			->get()->pluck($type, $type)->toArray();
+			;
+	} else {
+		$data = DB::table('export_analysis')->where('company_id', $companyId)
+			->when($date && $start_date, function (Builder $builder) use ($start_date) {
+				$builder->where('purchase_order_date', '>=', $start_date);
+			})
+			->when($date && $end_date, function (Builder $builder) use ($end_date) {
+				$builder->where('purchase_order_date', '<=', $end_date);
+			})
+			->groupBy($type)
+			->select($type)
+			// ->orderByRaw('sum(net_sales_value) desc')
+			->distinct()
+			->get()->pluck($type)->toArray();
+
+		$data = array_filter($data, function ($item) {
+			return $item;
+		});
+
+		return $data;
+	}
+}
 function getNumberOfProductsItems($companyId)
 {
 	// dd(ProductSeasonality::where('company_id', $companyId)->get());
@@ -745,14 +793,14 @@ function generateIdForExcelRow(int $companyId)
 	return uniqid('company_' . $companyId) . Str::random(9) . $companyId . uniqid();
 }
 
-function getTotalUploadCacheKey($company_id, $jobId)
+function getTotalUploadCacheKey($company_id, $jobId , string $modelName)
 {
-	return 'total_uploaded_for_company_' . $company_id . 'for_job_' . $jobId;
+	return 'total_uploaded_for_company_' . $company_id . 'for_job_' . $jobId .'for_model'. $modelName;
 }
 
-function getShowCompletedTestMessageCacheKey($companyId)
+function getShowCompletedTestMessageCacheKey($companyId,$modelName)
 {
-	return 'show_complete_test_phase_' . $companyId;
+	return 'show_complete_test_phase_' . $companyId.$modelName;
 }
 
 
@@ -1435,9 +1483,9 @@ function sum_all_array_values($array)
 	return $total;
 }
 
-function getCanReloadUploadPageCachingForCompany($companyId)
+function getCanReloadUploadPageCachingForCompany($companyId,$modelName)
 {
-	return 'can_reload_caching_page_for_company_' . $companyId;
+	return 'can_reload_caching_page_for_company_' . $companyId.$modelName;
 }
 
 function getComparingReportForAnalysis($request, $report_data, $secondReport, $company, $dates, $view_name, $Items_names, $modelType)
@@ -1472,9 +1520,16 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
 		} elseif ($modelType == 'sales_person') {
 			$secondReportDataResult = (new SalesPersonsAgainstAnalysisReport())->result($request, $company, false);
 			$type = __('Business Sector');
-		} else {
+		} 
+		elseif(isset((new ExportTable)->customizedTableField($company, 'ExportAnalysis', 'selected_fields')[$modelType]))
+		{
+			$secondReportDataResult = (new ExportAgainstAnalysisReport())->result($request, $company,'view', false);
+			$type = __($modelType);
+		}else{
 			dd('not supported type');
+			
 		}
+		
 
 		$secondReportData = $secondReportDataResult['report_data'] ?? [];
 		$secondReportData['full_date'] = $secondReportDataResult['full_date'] ?? [];
@@ -2781,14 +2836,29 @@ function getPermissions():array
 			'name'=>'view sales data',
 		],
 		[
+			'name'=>viewExportAnalysisData,
+		],
+		[
 			'name'=>'upload sales gathering data',
+		],
+		[
+			// 
+			'name'=>uploadExportAnalysisData,
 		],
 		[
 			'name'=>'export sales gathering data',
 		],
+		
+		[
+			// 
+			'name'=>exportExportAnalysisData,
+		],
 
 		[
 			'name'=>'delete sales gathering data'
+		],
+		[
+			'name'=>deleteExportAnalysisData
 		],
 		[
 			'name'=>'view financial statement',
@@ -2850,6 +2920,9 @@ function getPermissions():array
 		],
 		[
 			'name'=>'view sales trend analysis'
+		],
+		[
+			'name'=>'view export analysis report'
 		],
 		[
 			'name'=>'view sales report',
@@ -3514,20 +3587,20 @@ CONST PERCENTAGE_DECIMALS = 2 ;
 function cacheHas($key){
 	return Cache::has($key);
 }
-function 	generateCacheFailedName($companyId , $userId ){
-	return 'failed_company_'.$companyId.'user_id'.$userId . 'failed_job';
+function 	generateCacheFailedName($companyId , $userId , $modelName ){
+	return 'failed_company_'.$companyId.'user_id'.$userId . 'failed_job' . $modelName;
 }
 function CacheGetAndRemove($key){
 	$message = Cache::get($key) ;
 	Cache::forget($key);
 	return $message;
 }
-function hasCachingCompany($companyId){
-	return CachingCompany::where('company_id',$companyId)->count();
+function hasCachingCompany($companyId,$modelName){
+	return CachingCompany::where('company_id',$companyId)->where('model',$modelName)->count();
 }
-function generateCacheKeyForValidationRow($company_id)
+function generateCacheKeyForValidationRow($company_id,$modelName)
 {
-	return 'validation_rows' . $company_id;
+	return 'validation_rows'.$modelName . $company_id;
 }
 function arrayMergeTwoDimArray(...$args)
 {
@@ -3539,8 +3612,8 @@ function arrayMergeTwoDimArray(...$args)
 	}
 	return $mergedArray ;
 }
-function hasFailedRow($companyId){
-	$cache=Cache::get(generateCacheKeyForValidationRow($companyId));
+function hasFailedRow($companyId,string $modelName){
+	$cache=Cache::get(generateCacheKeyForValidationRow($companyId,$modelName));
 	return $cache && count($cache); 
 }
 function convertIdsToNames(array $elements){
@@ -3563,4 +3636,80 @@ function sumDueDayWithPayment($paymentRate, $dueDays)
 		$items[$dueDay] = isset($items[$dueDay]) ? $items[$dueDay] + $currentPaymentRate : $currentPaymentRate;
 	}
 	return $items;
+}
+
+// 1- create model with  name [xyz] and this name will the type parameter in all sections
+// 2- create table with name [xyzs]
+// 3- in helpers.php search from getUploadParamsFromType add type params 
+// 4- in tables_field table in db add type with all columns 
+ 
+function getUploadParamsFromType(string $type = null ):array
+{
+	
+	$params  = [
+		'SalesGathering'=>[
+			'fullModel'=>'\App\Models\SalesGathering',
+			'dbName'=>'sales_gathering',
+			'orderByDateField'=>'date',
+			'typePrefixName'=>__('Sales'),
+			'viewPermissionName'=>'view sales data',
+			'uploadPermissionName'=>'upload sales gathering data',
+			'exportPermissionName'=>'export sales gathering data',
+			'deletePermissionName'=>'delete sales gathering data',
+			'importHeaderText'=>__('Sales Gathering Import'),
+		],
+		'ExportAnalysis'=>[
+			'fullModel'=>'\App\Models\ExportAnalysis',
+			'dbName'=>'export_analysis',
+			'typePrefixName'=>__('Export'),
+			'orderByDateField'=>'purchase_order_date',
+			'viewPermissionName'=>viewExportAnalysisData,
+			'uploadPermissionName'=>uploadExportAnalysisData, // important:add this also into permission function names [getPermissions()]
+			'exportPermissionName'=>exportExportAnalysisData,// important:add this also into permission function names[getPermissions()]
+			'deletePermissionName'=>deleteExportAnalysisData,// important:add this also into permission function names[getPermissions()]
+			'importHeaderText'=>__('Export Analysis Import'),
+		]
+	] ;
+	if($type){
+		return $params[$type];
+	}
+	return $params ;
+	
+}
+
+
+function camelToTitle(string $str){
+	return  ucwords(implode(' ',preg_split('/(?=[A-Z])/', $str)));
+;
+}
+function getUploadDataText($typePrefixName){
+	return __("Upload New ". $typePrefixName  ." " . __('Data'));
+}
+function convertArrayToSqlString( $items){
+	if(!is_array($items)){
+		
+		return "'".$items."'";;
+		
+	}
+	$sqlString = "";
+	
+	foreach($items as $item){
+		$sqlString .= "'".$item."',";
+	}
+	return trim($sqlString,',');
+}
+function convertDateToFormatIfDate($strOrDate)
+{
+	$view = '';
+
+	try{
+		if(!Carbon::make($strOrDate)){
+			return $strOrDate;
+		}
+		$view = Carbon::make($strOrDate)->format('d-m-Y');
+	}
+	catch(\Exception $e){
+		$view = $strOrDate ; 
+	}
+	return $view;
 }

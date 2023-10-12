@@ -44,7 +44,7 @@
             </div>
         </div>
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action="{{ route('table.fields.selection.save', [$company,$model, $view]) }}" enctype="multipart/form-data">
+        <form class="kt-form kt-form--label-right" method="POST" action="{{ route('table.fields.selection.save', [$company,$model, $modelName]) }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="model_name" value="{{$model}}">
             <div class="kt-portlet">

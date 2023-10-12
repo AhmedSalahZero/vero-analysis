@@ -198,8 +198,7 @@ Route::middleware([])->group(function () {
 
 				// excel for financial statement 
 				Route::get('download-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'downloadExcelTemplateForActual'])->name('admin.export.excel.template');
-				// Route::get('download-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'showLastUploadFailed'])->name('last.upload.failed');
-				Route::any('salesGatheringImport/last-upload-failed', 'SalesGatheringTestController@lastUploadFailed')->name('last.upload.failed');
+				Route::any('salesGatheringImport/last-upload-failed/{model}', 'SalesGatheringTestController@lastUploadFailed')->name('last.upload.failed');
 				
 				Route::post('import-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'importExcelTemplateForActual'])->name('admin.import.excel.template');
 				Route::get('update-financial-statement-date', [FinancialStatementController::class, 'updateDate'])->name('admin.update.financial.statement.date');
@@ -231,7 +230,7 @@ Route::middleware([])->group(function () {
 				//Ajax
 				Route::post('get/ZoneZonesData/', 'Analysis\SalesGathering\ZoneAgainstAnalysisReport@ZonesData')->name('get.zones.data');
 				Route::get('get/viewData/', 'Analysis\SalesGathering\ZoneAgainstAnalysisReport@dataView')->name('get.view.data');
-				Route::get('checkIfJobFinished', 'SalesGatheringTestController@activeJob')->name('active.job');
+				Route::get('checkIfJobFinished/{modelName}', 'SalesGatheringTestController@activeJob')->name('active.job');
 
 				Route::get('/redirect', 'HomeController@redirectFun')->name('home.redirect');
 				############ Dashboard ############
@@ -259,17 +258,17 @@ Route::middleware([])->group(function () {
 
 
 				############ Import Routs ############
-				Route::any('inventoryStatementImport', 'InventoryStatementTestController@import')->name('inventoryStatementImport');
-				Route::get('inventoryStatement/insertToMainTable', 'InventoryStatementTestController@insertToMainTable')->name('inventoryStatementTest.insertToMainTable');
-				Route::any('salesGatheringImport', 'SalesGatheringTestController@import')->name('salesGatheringImport');
-				Route::get('SalesGathering/insertToMainTable', 'SalesGatheringTestController@insertToMainTable')->name('salesGatheringTest.insertToMainTable');
+				// Route::any('inventoryStatementImport', 'InventoryStatementTestController@import')->name('inventoryStatementImport');
+				// Route::get('inventoryStatement/insertToMainTable', 'InventoryStatementTestController@insertToMainTable')->name('inventoryStatementTest.insertToMainTable');
+				Route::any('salesGatheringImport/{model}', 'SalesGatheringTestController@import')->name('salesGatheringImport');
+				Route::get('SalesGathering/insertToMainTable/{modelName}', 'SalesGatheringTestController@insertToMainTable')->name('salesGatheringTest.insertToMainTable');
 
 
 
 
 				############ Export Routes ############
-				Route::get('inventoryStatement/export', 'InventoryStatementController@export')->name('inventoryStatement.export');
-				Route::get('salesGathering/export', 'SalesGatheringController@export')->name('salesGathering.export');
+				// Route::get('inventoryStatement/export', 'InventoryStatementController@export')->name('inventoryStatement.export');
+				Route::get('salesGathering/export/{model}', 'SalesGatheringController@export')->name('salesGathering.export');
 
 
 
@@ -283,8 +282,10 @@ Route::middleware([])->group(function () {
 
 				############ Sections Resources ############
 
-				Route::resource('inventoryStatement', InventoryStatementController::class);
+				Route::resource('inventoryStatement', 'InventoryStatementController');
 				Route::resource('salesGathering', SalesGatheringController::class);
+				
+				Route::get('uploading/{model}','SalesGatheringController@index')->name('view.uploading');
 
 				############  (TRUNCATE) ############
 				Route::get('Truncate/{model}', 'DeletingClass@truncate')->name('truncate');
@@ -300,6 +301,7 @@ Route::middleware([])->group(function () {
 				});
 				Route::prefix('/SalesGathering')->group(function () {
 					Route::get('SalesTrendAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.trend.analysis');
+					Route::get('SalesExportAnalysis', 'AnalysisReports@exportAnalysisReports')->name('sales.export.analysis');
 					Route::get('SalesBreakdownAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.breakdown.analysis');
 
 					############ Average Prices Post Link ############
@@ -425,6 +427,10 @@ Route::middleware([])->group(function () {
 					Route::get('/CountriesComparing/View', 'Analysis\SalesGathering\IntervalsComparingReport@index')->name('intervalComparing.country.analysis');
 					/////////////////////////////////////////////////////////////////////////
 
+					
+					
+					Route::get('export-analysis-reports/{firstColumn}/{secondColumn}','Analysis\SalesGathering\ExportAgainstAnalysisReport@index')->name('view.export.against.report');
+					Route::post('export-analysis-reports','Analysis\SalesGathering\ExportAgainstAnalysisReport@result')->name('result.export.against.report');
 
 					// Customers Nature
 					Route::post('/CustomersNaturesAnalysis/Result', 'Analysis\SalesGathering\CustomersNaturesAnalysisReport@result')->name('customersNatures.analysis.result');
@@ -519,7 +525,7 @@ Route::middleware([])->group(function () {
 
 				############ Exportable Fields Selection Routes ############
 				Route::get('fieldsToBeExported/{model}/{view}', 'ExportTable@customizedTableField')->name('table.fields.selection.view');
-				Route::post('fieldsToBeExportedSave/{model}/{view}', 'ExportTable@customizedTableFieldSave')->name('table.fields.selection.save');
+				Route::post('fieldsToBeExportedSave/{model}/{modelName}', 'ExportTable@customizedTableFieldSave')->name('table.fields.selection.save');
 			});
 
 
@@ -541,9 +547,9 @@ Route::middleware([])->group(function () {
 	);
 });
 
-Route::delete('deleteMultiRowsFromCaching/{company}', [DeleteMultiRowsFromCaching::class, '__invoke'])->name('deleteMultiRowsFromCaching');
-Route::get('deleteAllRowsFromCaching/{company}', [DeleteAllRowsFromCaching::class, '__invoke'])->name('deleteAllCaches');
-Route::post('get-uploading-percentage/{companyId}', [getUploadPercentage::class, '__invoke']);
+Route::delete('deleteMultiRowsFromCaching/{company}/{modelName}', [DeleteMultiRowsFromCaching::class, '__invoke'])->name('deleteMultiRowsFromCaching');
+Route::get('deleteAllRowsFromCaching/{company}/{modelType}', [DeleteAllRowsFromCaching::class, '__invoke'])->name('deleteAllCaches');
+Route::post('get-uploading-percentage/{companyId}/{modelName}', [getUploadPercentage::class, '__invoke']);
 Route::get('{lang}/remove-company-image/{company}', function ($lang, Company $company) {
 	if ($company->getFirstMedia('default')) {
 		$company->getFirstMedia('default')->delete();
@@ -575,9 +581,4 @@ Route::get('removeSessionForRedirect', function () {
 			'url' => $url
 		]);
 	}
-});
-Route::get('/removeCashForCanReloadPageAndShowCompleteMessage', function (Request $request) {
-	$companyId = $request->get('company_id');
-	//	Cache::forget(getShowCompletedTestMessageCacheKey($companyId));
-	//	Cache::forget(getCanReloadUploadPageCachingForCompany($companyId));
 });

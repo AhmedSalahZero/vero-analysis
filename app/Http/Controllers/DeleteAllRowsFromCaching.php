@@ -18,14 +18,16 @@ class DeleteAllRowsFromCaching extends Controller
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function __invoke(Request $request, Company $company)
+	public function __invoke(Request $request, Company $company,$modelName)
 	{
-		(new CashingService($company))->removeAll();
-		CachingCompany::where('company_id', $company->id)->get()->each(function ($companyCache) {
+		if($modelName == 'SalesGathering'){
+			(new CashingService($company))->removeAll();
+		}
+		CachingCompany::where('company_id', $company->id)->where('model',$modelName)->get()->each(function ($companyCache) {
 			Cache::forget($companyCache->key_name);
 			$companyCache->delete();
 		});
-		Cache::forget(getShowCompletedTestMessageCacheKey($company->id));
+		Cache::forget(getShowCompletedTestMessageCacheKey($company->id,$modelName));
 		return redirect()->back()->with('success', __('All Data Has Been Removed'));
 	}
 }

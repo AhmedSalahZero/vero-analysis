@@ -33,10 +33,12 @@ class SalesGatheringTestJob implements ShouldQueue
      * @return void
      */
     public $company_id;
+    public $modelName;
 
-    public function __construct($company_id)
+    public function __construct($company_id,$modelName)
     {
         $this->company_id = $company_id;
+        $this->modelName = $modelName;
     }
 
     /**
@@ -48,14 +50,17 @@ class SalesGatheringTestJob implements ShouldQueue
 
     public function handle()
     {
-        CachingCompany::where('company_id' , $this->company_id )->get()->each(function($cachingCompany){
+		$uploadParamsForType = getUploadParamsFromType($this->modelName);
+		$modelTableName = $uploadParamsForType['dbName'];
+		
+        CachingCompany::where('company_id' , $this->company_id )->get()->each(function($cachingCompany) use($modelTableName){
             $cacheGroup = Cache::get($cachingCompany->key_name) ?: [];
             $chunks = \array_chunk($cacheGroup ,1000);
             foreach($chunks as $chunk)
             {
 				$chunk = \replace_all_spacial_character_in_array_values($chunk);
-                DB::table('sales_gathering')->insert($chunk);
-                $key = getTotalUploadCacheKey($this->company_id , $cachingCompany->job_id) ;
+                DB::table($modelTableName)->insert($chunk);
+                $key = getTotalUploadCacheKey($this->company_id , $cachingCompany->job_id,$modelTableName) ;
                 $oldTotalUploaded = cache::get($key) ?:0 ;
                 cache::forever( $key , $oldTotalUploaded + count($chunk) );
             }
@@ -65,9 +70,4 @@ class SalesGatheringTestJob implements ShouldQueue
         });
         
     }
-
-    // public function failed( $event,  $exception): void
-    // {
-	// 	logger([$event,$exception,Request()->segments()]);
-    // }
 }

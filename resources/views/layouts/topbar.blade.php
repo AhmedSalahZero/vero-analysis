@@ -85,6 +85,7 @@
                                             <?php
                                                                 $route = isset($subSection->route) && $subSection->route !== null ? explode('.', $subSection->route) : null;
                                                                 ?>
+																
                                             <li class="kt-menu__item " aria-haspopup="true"><a href="{{ @$subSection->route == 'home' ? route(@$subSection->route) : route(@$subSection->route, $company) }}" class="kt-menu__link "><i class="kt-menu__link-icon {{ $subSection->icon }}"></i><span class="kt-menu__link-text wording-nowrap">{{ __($subSection->name[$lang]) }} ___10</span></a>
                                             </li>
                                             @endforeach
@@ -199,6 +200,13 @@
                     @else
 					@if($user->can('view '.strtolower($section->name['en'])))
 					
+					
+					
+					
+					
+					
+					
+					
                     <li class="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" 
 					@if(strtolower($section->name['en']) == 'sales forecast value base' && !hasUploadData($company->id))
 					@elseif(strtolower($section->name['en']) == 'sales forecast quantity base' && !hasUploadData($company->id))
@@ -278,9 +286,25 @@
                                 @else
 
                                 @if($user->can('view '. strtolower($subSection->name['en'])))
-                                <li class="kt-menu__item " aria-haspopup="true">
+                                @if($section->id == 21)
+								@foreach(getUploadParamsFromType() as $elementModelName => $params )
+								@can($params['viewPermissionName'])
+								<li class="kt-menu__item " aria-haspopup="true">
+                                    <a href="{{ route('view.uploading',['company'=>$company->id , 'model'=>$elementModelName]) }}" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text">{{ getUploadDataText($params['typePrefixName']) }} </span></a>
+                                </li>
+								@endcan 
+								@endforeach 
+								@php
+									break;
+								@endphp
+								@else 
+								
+								
+								<li class="kt-menu__item " aria-haspopup="true">
+								
                                     <a href="{{ @$subSection->route == 'home' ? route(@$subSection->route) : route(@$subSection->route, $company) }}" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text">{{ __($subSection->name[$lang]) }} </span></a>
                                 </li>
+								@endif 
                                 @endif
 
                                 @endif

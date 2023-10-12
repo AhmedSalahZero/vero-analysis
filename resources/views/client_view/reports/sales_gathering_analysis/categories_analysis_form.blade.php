@@ -72,8 +72,9 @@
                     ?>
 
                 {{-- @dd($name_of_selector_label) --}}
-
+{{-- {{ dd($type) }} --}}
                 {{-- @dd($type) --}}
+				{{-- {{ dd($type) }} --}}
                 <input type="hidden" name="type" value="{{$type}}">
                 <input type="hidden" name="view_name" value="{{$view_name}}">
                 <div class="kt-portlet__body">

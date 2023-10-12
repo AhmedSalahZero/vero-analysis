@@ -51,9 +51,6 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		// $date = '24/01/2023';
-		// dd(Carbon::make($date));
-		// dd(Cache::get(generateCacheKeyForValidationRow(48)));
 		
 		require_once storage_path('dompdf/vendor/autoload.php');
 		
@@ -88,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
 		// dd($x);
 		// dd(searchWordInstr(['products / service'],'( Products / Service ) Average Prices Per Category'));
 
-		if(false){
+		if(true){
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 			$permissions = getPermissions();
@@ -149,7 +146,11 @@ class AppServiceProvider extends ServiceProvider
 		$currentCompany = Company::find(Request()->segment(2));
 
 		if ($currentCompany) {
-			View::share('exportables', (new ExportTable)->customizedTableField($currentCompany, 'SalesGathering', 'selected_fields'));
+			$excelType ='SalesGathering';
+			if(in_array('uploading',Request()->segments())){
+				$excelType = Request()->segment(4);
+			}
+			View::share('exportables', (new ExportTable)->customizedTableField($currentCompany, $excelType, 'selected_fields'));
 			View::share('company', $currentCompany);
 		}
 

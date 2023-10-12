@@ -21,10 +21,12 @@ class RemoveCachingCompaniesData implements ShouldQueue
      * @return void
      */
     private $companyId ; 
+    private $modelName ; 
     
-    public function __construct(int $companyId)
+    public function __construct(int $companyId,string $modelName)
     {
         $this->companyId = $companyId ;
+        $this->modelName = $modelName;
     }
 
     /**
@@ -34,10 +36,10 @@ class RemoveCachingCompaniesData implements ShouldQueue
      */
     public function handle()
     {
-         CachingCompany::where('company_id' , $this->companyId)->get()->each(function($companyCache){
+         CachingCompany::where('company_id' , $this->companyId)->where('model',$this->modelName)->get()->each(function($companyCache){
             Cache::forget($companyCache->key_name);
             $companyCache->delete();
-            $key = getTotalUploadCacheKey($this->companyId , $companyCache->job_id) ;
+            $key = getTotalUploadCacheKey($this->companyId , $companyCache->job_id , $this->modelName) ;
             Cache::forget($key);
         });
         

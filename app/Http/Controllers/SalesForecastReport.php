@@ -59,7 +59,8 @@ class SalesForecastReport
 			$salesReport = (new salesReport)->result($request, $company, 'array');
 			if(!count($salesReport['total_full_data'])){
 				return redirect()->route('salesGatheringImport',[
-					'company'=>$company->id
+					'company'=>$company->id,
+					'model'=>'SalesGathering'
 				])->with('fail',__('Please at least upload pervious Year Sales Data'));
 			}
 			

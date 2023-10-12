@@ -15,14 +15,14 @@ class DeleteMultiRowsFromCaching extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Company $company , Request $request)
+    public function __invoke(Company $company , Request $request,string $modelName)
     {
          $selectedRows = $request->rows ;
    if($selectedRows && count($selectedRows))
    {
        $totalRemoveItems = 0 ;
     //    $cachesItems = [];
-       $caches = CachingCompany::where('company_id' , $company->id )->get();
+       $caches = CachingCompany::where('company_id' , $company->id )->where('model',$modelName)->get();
        $caches->each(function($cache) use($selectedRows) {
            $reCache = false ; 
            $cachesGroup = Cache::get($cache->key_name) ?: [] ;
@@ -41,8 +41,6 @@ class DeleteMultiRowsFromCaching extends Controller
                
            }
            
-           
-        //    $cachesItems = array_merge(Cache::get($cache->key_name) ?: [] ,$cachesItem );
        });
        return redirect()->back()->with('success',__('Items Has Been Removed Successfully'));
 

@@ -22,22 +22,22 @@ class ExportTable extends Controller
 		$model_name = 'App\\Models\\' . $model;
 		$model_obj = new $model_name;
 		$columns  = Schema::getColumnListing($model_obj->getTable());
-
+		
 		$modelExportableFields = CustomizedFieldsExportation::where('model_name', $model)
-			->where('company_id', $company->id)->first();
+		->where('company_id', $company->id)->first();
 		$selected_fields = ($modelExportableFields !== null) ? $modelExportableFields->fields : [];
 
 		if ($view == 'selected_fields') {
 			return  $this->columnsFiltration($model, $company, $view, $selected_fields);
 		}
 		$columnsWithViewingNames =  $this->columnsFiltration($model, $company, $view, $selected_fields);
-
-		return view('client_view.Exportation.fieldsSelectionToBeExported', compact('columnsWithViewingNames', 'company', 'model', 'view', 'selected_fields'));
+		$modelName = $model;
+		return view('client_view.Exportation.fieldsSelectionToBeExported', compact('columnsWithViewingNames', 'company', 'model', 'view', 'selected_fields','modelName'));
 	}
 	/**
 	 * Saving Chosen Exportable Fields
 	 */
-	public  function customizedTableFieldSave(Request $request, Company $company, $model, $view)
+	public  function customizedTableFieldSave(Request $request, Company $company, $model, $modelName)
 	{
 		$this->validation($request);
 
@@ -57,7 +57,7 @@ class ExportTable extends Controller
 			: CustomizedFieldsExportation::create($request->all());
 
 		$columnsWithViewingNames = $this->columnsFiltration($model, $company, 'selected_fields', $request->fields);
-		session()->put('redirectTo', route('salesGatheringImport', ['company' => $company->id]));
+		session()->put('redirectTo', route('salesGatheringImport', ['company' => $company->id,'model'=>$modelName]));
 
 		return (new HeadersExport($company->id, $columnsWithViewingNames))->download($model . 'Fields.xlsx');
 	}

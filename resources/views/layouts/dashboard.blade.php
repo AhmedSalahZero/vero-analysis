@@ -1137,12 +1137,11 @@ tr td:first-of-type{
 
 
     @if(isset($company) && $company->id)
-	{{-- {{ dd(cacheHas(generateCacheFailedName($company->id , auth()->user()->id ))) }} --}}
-	@if(cacheHas(generateCacheFailedName($company->id , auth()->user()->id )))
+	@if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName )))
 	<script>
 	Swal.fire({
 		  title: "{{ __('Error While Importing Excel File') }}"
-                , text: "{{ CacheGetAndRemove(generateCacheFailedName($company->id , auth()->user()->id )) }}"
+                , text: "{{ CacheGetAndRemove(generateCacheFailedName($company->id , auth()->user()->id,$modelName )) }}"
                 , icon: 'error'
 	});
 	</script>

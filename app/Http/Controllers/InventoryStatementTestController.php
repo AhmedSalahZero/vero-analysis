@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
-use App\Models\InventoryStatementTest;
 use App\Imports\ImportData;
 use App\Jobs\InventoryStatementTestJob;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Company;
+use App\Models\InventoryStatementTest;
 use Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventoryStatementTestController extends Controller
 {
@@ -49,8 +49,9 @@ class InventoryStatementTestController extends Controller
 
 
 
+		//  new  ImportData($company_id, request()->format, 'SalesGatheringTest', $salesGathering_fields, $active_job->id,auth()->user()->id);
 
-            Excel::import(new  ImportData(request()->format,'InventoryStatementTest',$inventoryStatement_fields), request()->file('excel_file'));
+            Excel::import(new  ImportData($company_id,request()->format,'InventoryStatementTest',$inventoryStatement_fields,auth()->user()->id), request()->file('excel_file'));
 
             return redirect()->back();
 

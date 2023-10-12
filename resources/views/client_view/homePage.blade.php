@@ -71,22 +71,27 @@
                         </ul> --}}
                         <div class="kt-portlet__body">
                             <div class="kt-list-timeline">
-							@can('view sales data')
+							@foreach(getUploadParamsFromType() as $elementModelName => $params )
+							@can($params['viewPermissionName'])
                                 <div class="kt-list-timeline__items">
 
                                     <div class="kt-list-timeline__item ">
                                         <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
                                         <span class="kt-list-timeline__text">
-                                            <h4> {{ __("Upload New Sales Data") }} </h4>
+                                            <h4> {{ getUploadDataText($params['typePrefixName']) }} </h4>
                                         </span>
-                                        <span class="kt-list-timeline__time "> <a href="{{route('salesGathering.index',$company)}}" class="btn btn-outline-info"> <b>{{ __('Go') }}</b></a></span>
+                                        <span class="kt-list-timeline__time "> <a href="{{route('view.uploading',['company'=>$company->id , 'model'=>$elementModelName])}}" class="btn btn-outline-info"> <b>{{ __('Go') }}</b></a></span>
                                     </div>
                                 </div>
 								@endcan
+								<br>
+								@endforeach 
+								
+								
+										
 
                                 @can('view financial statement')
 
-                                <br>
 
 
                                 <div class="kt-list-timeline__items">
