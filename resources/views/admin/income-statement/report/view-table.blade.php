@@ -3,10 +3,12 @@ $tableId = 'kt_table_1';
 @endphp
 
 <style>
-	html body table tr.edit-info-row[data-sub-item-name][data-percentage-value][data-is-quantity="1"] td
-	{
-		background-color:antiquewhite  !important;
-	}
+    html body table tr.edit-info-row[data-sub-item-name][data-percentage-value][data-is-quantity="1"] td {
+        background-color: antiquewhite !important;
+    }
+.checkboxes-vat{
+	margin-top:15px;
+}
     .max-w-actions {
         width: 55px !important;
         max-width: 55px !important;
@@ -275,13 +277,14 @@ $tableId = 'kt_table_1';
     <input type="hidden" id="corporate-taxes-id" value="{{ \App\Models\IncomeStatementItem::CORPORATE_TAXES_ID }}">
     <input type="hidden" id="net-profit-id" value="{{ \App\Models\IncomeStatementItem::NET_PROFIT_ID }}">
     <input type="hidden" id="sales-rate-maps" value="{{ json_encode(\App\Models\IncomeStatementItem::salesRateMap()) }}">
+    <input type="hidden" id="vat-rates-maps" value="{{ json_encode(\App\Models\IncomeStatementItem::vatRatesMap()) }}">
     <script>
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         const sales_rate_maps = JSON.parse(sales_rates_maps);
         let opens = [];
         let globalTable = null;
         let canRedrawWitdth = false;
-		let canSendAjaxRequest = true ;
+        let canSendAjaxRequest = true;
         let inEditMode = false;
         let lastInputValue = 0;
         let numberOfConsole = 0
@@ -291,6 +294,8 @@ $tableId = 'kt_table_1';
         let currentDelete = {}
         let deleteModalIsOpen = false
         let salesRevenueModalTdData = {}
+                    const vatRateMaps = JSON.parse(document.getElementById('vat-rates-maps').value);
+		
         //	const performance2 = {
         //		
         //	isLastSublingPercentageOfCostOfUnitOfParent:0,
@@ -456,6 +461,7 @@ $tableId = 'kt_table_1';
                             const rowIndex = this.getAttribute('data-row-index')
                             const parent = $(this).parent()
                             const tr = $(this).closest(parentQuery)
+							
                             const currentVal = filterNumericUserInput(parent.find('input[type="text"]').val(), false)
                             tr.find('input[type="text"]').each(function(i, inputText) {
                                 var date = $(inputText).attr('data-date')
@@ -470,14 +476,21 @@ $tableId = 'kt_table_1';
 
                             if (val) {
                                 $(this).closest('.modal').find('.collection-policy').addClass('d-none').removeClass('d-flex')
-                                $(this).closest('.modal').find('.collection-policy input,.collection-policy select').prop('disabled', true)
+                                $(this).closest('.modal').find('.collection-policy input,.collection-policy select').prop('disabled', true)  
+								$(this).closest('.modal').find('.checkboxes-vat').addClass('d-none').removeClass('d-flex')
+                                $(this).closest('.modal').find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', true)
                             } else {
                                 $(this).closest('.modal').find('.collection-policy').removeClass('d-none').addClass('d-flex')
                                 $(this).closest('.modal').find('.collection-policy input,.collection-policy select').prop('disabled', false)
+								
+								$(this).closest('.modal').find('.checkboxes-vat').removeClass('d-none').addClass('d-flex')
+                                $(this).closest('.modal').find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', false)
                             }
                         })
 
                         $(document).on('change', '.collection_rate_input', function() {
+														
+							
                             let percentage = filterNumericUserInput($(this).val())
                             percentage = parseFloat(percentage)
                             if (percentage > 100) {
@@ -517,15 +530,14 @@ $tableId = 'kt_table_1';
                             let currentCheckedItem = $(this).parent().parent().find('input[name="sub_items[' + currentIndex + '][is_quantity]"]:checked')
                             if (currentCheckedItem.length >= 1) {
                                 let firstCheckboxValue = currentCheckedItem[0].value
-								
-								if(currentCheckedItem.length == 1 &&  firstCheckboxValue!='value'){
-									console.warn('one checkbox checked but not value')
-									return ;
-								}
+
+                                if (currentCheckedItem.length == 1 && firstCheckboxValue != 'value') {
+                                    return;
+                                }
                                 let firstCheckboxTr = salesRevenueModalTdData[inEditMode][subItemName][firstCheckboxValue]
                                 let secondCheckboxValue = currentCheckedItem[1] ? currentCheckedItem[1].value : null
-                                let secondCheckboxTr = secondCheckboxValue ? salesRevenueModalTdData[inEditMode][subItemName][secondCheckboxValue]:null
-							
+                                let secondCheckboxTr = secondCheckboxValue ? salesRevenueModalTdData[inEditMode][subItemName][secondCheckboxValue] : null
+
 
                                 let checkedItems = [firstCheckboxValue, secondCheckboxValue]
                                 let autocaulationItemValue = null;
@@ -538,13 +550,13 @@ $tableId = 'kt_table_1';
                                 if (!checkedItems.includes('quantity')) {
                                     autocaulationItem = 'quantity'
                                 }
-											
+
                                 let thirdCheckboxTr = salesRevenueModalTdData[inEditMode][subItemName][autocaulationItem]
-								const onlyValueChecked = currentCheckedItem.length == 1;
-								if(onlyValueChecked) //only value allowed
-								{
-									thirdCheckboxTr = '';
-								}
+                                const onlyValueChecked = currentCheckedItem.length == 1;
+                                if (onlyValueChecked) //only value allowed
+                                {
+                                    thirdCheckboxTr = '';
+                                }
                                 let trs = firstCheckboxTr + secondCheckboxTr + thirdCheckboxTr
                                 let quantitySection = $(this).closest('.quantity-section')
 
@@ -553,40 +565,39 @@ $tableId = 'kt_table_1';
                                 trs = trs.replaceAll('modal-for-quantity-0', 'modal-for-quantity-' + currentIndex)
 
                                 quantitySection.find('tbody.append-sales-revenue-modal-table-body').empty().append(trs)
-								if(!onlyValueChecked){
-									
-                                quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type input').prop('readonly', true)
-								}
-								
-								var checkedItemsAsString = '';
-								checkedItems.forEach(function(element,index){
-									if(index){
-									checkedItemsAsString +=('_'+ element) ; 
-									}else{
-									checkedItemsAsString +=( element) ; 
-									}
-								})	
-								const name = "sub_items["+ currentIndex +"][is_value_quantity_price]" ;
-								const selector = '[name="'+name+'"]';
-								$(selector).val(checkedItemsAsString);			
-								if(!onlyValueChecked){
-								
-                                quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type i.repeat-row').remove();
-								}
+                                if (!onlyValueChecked) {
+
+                                    quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type input').prop('readonly', true)
+                                }
+
+                                var checkedItemsAsString = '';
+                                checkedItems.forEach(function(element, index) {
+                                    if (index) {
+                                        checkedItemsAsString += ('_' + element);
+                                    } else {
+                                        checkedItemsAsString += (element);
+                                    }
+                                })
+                                const name = "sub_items[" + currentIndex + "][is_value_quantity_price]";
+                                const selector = '[name="' + name + '"]';
+                                $(selector).val(checkedItemsAsString);
+                                if (!onlyValueChecked) {
+
+                                    quantitySection.find('tbody.append-sales-revenue-modal-table-body tr:last-of-type i.repeat-row').remove();
+                                }
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('id', 'modal-for-quantity-' + currentIndex)
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('data-id', 'modal-for-quantity-' + currentIndex)
-								// to update total 
-								$('.append-sales-revenue-modal-table-body tr td:nth-of-type(2) input.hidden-for-popup:first-of-type').trigger('blur')
-								
-								//$('.hidden-for-popup').trigger('blur')
+                                // to update total 
+                                $('.append-sales-revenue-modal-table-body tr td:nth-of-type(2) input.hidden-for-popup:first-of-type').trigger('blur')
+
+                                //$('.hidden-for-popup').trigger('blur')
                                 $('.modal-for-quantity').addClass('d-none').addClass('fade').removeClass('d-block')
                                 $('.modal-for-quantity[data-index="' + currentIndex + '"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
                             } else {
-                                console.warn('only two checkboxes allowed')
-								
-								const name = "sub_items["+ currentIndex +"][is_value_quantity_price]" ;
-								const selector = '[name="'+name+'"]';
-								$(selector).val('value');
+
+                                const name = "sub_items[" + currentIndex + "][is_value_quantity_price]";
+                                const selector = '[name="' + name + '"]';
+                                $(selector).val('value');
                             }
 
                         })
@@ -698,6 +709,7 @@ $tableId = 'kt_table_1';
                             var inputs = []
                             var isFinancialExpense = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-financial-expense') : tdElement.getAttribute('data-is-financial-expense')
                             isFinancialExpense = parseInt(isFinancialExpense);
+							
                             var value = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense)
 
                             var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]');
@@ -759,7 +771,8 @@ $tableId = 'kt_table_1';
 
                                     }
                                     if (reportType != 'modified' || reportType == 'modified' && !isActualDate(currentDate)) {
-                                        tdElement.closest('tr').querySelector('td.editable-date.date-' + currentDate).innerHTML = number_format(currentValue, 2);
+                                       currentValue = 9999
+                                      tdElement.closest('tr').querySelector('td.editable-date.date-' + currentDate).innerHTML = number_format(currentValue, 2);
                                         var input = tdElement.closest('tr').querySelector('input[data-date][data-date="' + currentDate + '"]')
                                         input.value = currentValue
                                         inputs.push(input)
@@ -1179,20 +1192,20 @@ $tableId = 'kt_table_1';
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
                             const tbody = this.parentElement.parentElement.parentElement
-                            
+
                             const currentIndex = $(this).closest('[data-index]').attr('data-index')
                             const unformattedValue = this.parentElement.querySelector('input[type="text"]').value
+							
                             const numericValue = filterNumericUserInput(unformattedValue, false)
 
                             $(parentElement).find('input[data-date="' + date + '"]').val(numericValue)
-							const onlyValueChecked = $(tbody).find('tr').length == 1 ;
-							console.log(onlyValueChecked);
-							if(onlyValueChecked){
-								recalculateTotalForSalesRevenuePopup();
-								return ;
-							}
-							const autoCalculationRow = $(tbody).find('tr:last-of-type')
-							
+                            const onlyValueChecked = $(tbody).find('tr').length == 1;
+                            if (onlyValueChecked) {
+                                recalculateTotalForSalesRevenuePopup();
+                                return;
+                            }
+                            const autoCalculationRow = $(tbody).find('tr:last-of-type')
+
                             let equation = autoCalculationRow.attr('data-equation')
                             let numberFormatDigit = autoCalculationRow.attr('data-number-format')
                             const numberFormatDigits = autoCalculationRow.attr('data-number-format')
@@ -1200,6 +1213,7 @@ $tableId = 'kt_table_1';
                             const firstClassName = equation[0].trim()
                             const mathOperator = equation[1].trim()
                             const secondClassName = equation[2].trim()
+							
                             const firstVal = filterNumericUserInput($(tbody).find('.' + firstClassName + ' input[data-date="' + date + '"]').val(), false)
                             const secondVal = filterNumericUserInput($(tbody).find('.' + secondClassName + ' input[data-date="' + date + '"]').val(), false)
 
@@ -1343,6 +1357,7 @@ $tableId = 'kt_table_1';
                         }
 
                         function triggerBlurForEditableTd(date) {
+							
                             document.querySelector('table.append-table-into-dom tr:first-of-type td.date-' + date).dispatchEvent(new Event('blur', {
                                 'bubbles': true
                             }))
@@ -1364,11 +1379,15 @@ $tableId = 'kt_table_1';
                             var inputs = []
                             let reportType = vars.subItemType;
                             let financialStatementAbleItemId = tdElement.closest('tr').getAttribute('data-financial-statement-able-item-id');
+							let hasVatRate = vatRateMaps[financialStatementAbleItemId].has_vat_rate;
+		                    let canBeDeductable = vatRateMaps[financialStatementAbleItemId].can_be_dedictiable;
                             let corporateTaxesId = domElements.corporateTaxesId;
                             let earningBeforeTaxesId = domElements.earningBeforeTaxesId;
                             let salesRevenueId = domElements.salesRevenueId;
                             let salesRevenueRowId = salesRevenueId;
                             let isFinancialExpense = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-financial-expense') : tdElement.getAttribute('data-is-financial-expense')
+                            let isDeductible = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-is-dedictible') : tdElement.getAttribute('data-is-dedictible')
+                            let vatRate = inEditMode && tdElement.parentElement ? tdElement.parentElement.getAttribute('data-vat-rate') : tdElement.getAttribute('data-vat-rate')
                             let firstDateString = $(tdElement).attr("class").split(/\s+/).filter(function(classItem) {
                                 return classItem.startsWith('date-');
                             })[0];
@@ -1386,12 +1405,14 @@ $tableId = 'kt_table_1';
                                 is_cost_of_unit = is_cost_of_unit == 'true' || is_cost_of_unit == 1
                                 let is_percentage_or_fixed = tdElement.closest('tr').getAttribute('data-can-be-percentage-or-fixed');
                                 is_percentage_or_fixed = is_percentage_or_fixed == 'true' || is_percentage_or_fixed == 1;
-                                let currentVal = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
+								
+                                let currentVal = filterNumericUserInput(tdElement.innerHTML , isFinancialExpense );
+								
+								
 
                                 currentVal = parseFloat(currentVal);
-                                inputs.push(input)
+                             
                                 if (is_percentage_or_fixed && is_repeating_fixed || is_percentage_or_fixed && !is_percentage && !is_cost_of_unit && inAddOrEditModal) {
-
                                     var tdSpecificDateIfExist = inAddOrEditModal ? '' : '.date-' + firstDate
                                     var inputSpecificDateIfExist = inAddOrEditModal ? '' : '[data-date="' + firstDate + '"]';
                                     if (reportType == 'modified' && !inAddOrEditModal) {
@@ -1402,7 +1423,7 @@ $tableId = 'kt_table_1';
                                             inputSpecificDateIfExist = '[data-date="' + loopingDate + '"]';
                                             tdElement.closest('tr').querySelector('td.editable-date' + tdSpecificDateIfExist).innerHTML = number_format(currentVal, 2);
                                             var input = tdElement.closest('tr').querySelector('input[data-date]' + inputSpecificDateIfExist)
-
+											
                                             input.value = currentVal
                                             inputs.push(input)
 
@@ -1429,6 +1450,7 @@ $tableId = 'kt_table_1';
                                     return recalculatePercentagesOrCostOfUnit(tdElement, firstDate, financialStatementAbleItemId, corporateTaxesId, is_cost_of_unit, earningBeforeTaxesId, salesRevenueId, is_percentage, currentVal)
 
                                 } else {
+									
                                     var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                     var input = tdElement.parentElement.querySelector('input[data-date="' + firstDate + '"]')
                                     input.value = val
@@ -1437,7 +1459,9 @@ $tableId = 'kt_table_1';
                                 }
 
 
-                            } else {
+                            } else 
+							{
+								
                                 var val = filterNumericUserInput(tdElement.innerHTML, isFinancialExpense);
                                 var input = tdElement.parentElement.querySelector('input.text-input-hidden')
                                 input.value = val
@@ -1480,12 +1504,12 @@ $tableId = 'kt_table_1';
                         })
                         $(document).on('click', '.edit-modal-icon', function() {
                             inEditMode = true
-							const target = $(this).parent().attr('data-target');
-							if(target){
-							 $(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
-							}
-								
-							
+                            const target = $(this).parent().attr('data-target');
+                            if (target) {
+                                $(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
+                            }
+
+
                         })
                         $(document).on('change', '.has-collection-policy-class', function() {
                             const hasCollectionPolicy = this.checked
@@ -1498,9 +1522,9 @@ $tableId = 'kt_table_1';
                             } else {
                                 collectionPolicyContent.addClass('d-none')
                             }
-							
-							
-						
+
+
+
                         })
 
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
@@ -1542,17 +1566,10 @@ $tableId = 'kt_table_1';
                             subRows.toggleClass('d-none');
                             if (subRows.hasClass('d-none')) {
                                 parentRow.find('td.trigger-child-row-1').removeClass('is-open').addClass('is-close').html('+');
-                                // closed [remove] 
-
-                                //								    let opens = JSON.parse($('#pdf_only').val());
                                 var closedId = parentRow.attr('data-financial-statement-able-item-id')
                                 const index = opens.indexOf(closedId);
                                 //
                                 opens.splice(index, 1);
-                                console.log('opens after remove', opens)
-                                //
-                                //                         
-                                //                                $('#pdf_only').val(opens)
 
                                 if (canRedrawWitdth) {
                                     globalTable.columns.adjust();
@@ -1563,10 +1580,8 @@ $tableId = 'kt_table_1';
                                 parentRow.find('td.trigger-child-row-1').html('×');
                             } else {
                                 parentRow.find('td.trigger-child-row-1').addClass('is-open').removeClass('is-close').html('-');
-                                //                            let opens = JSON.parse($('#pdf_only').val());
                                 opens.push(parentRow.attr('data-financial-statement-able-item-id'));
 
-                                //                              $('#pdf_only').val(opens)
 
                                 if (canRedrawWitdth) {
                                     globalTable.columns.adjust();
@@ -1895,6 +1910,8 @@ $tableId = 'kt_table_1';
                                                     .attr('data-table-id', "{{$tableId}}")
                                                     .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false)
                                                     .attr('data-is-financial-expense', data.isSubItem ? data.pivot.is_financial_expense : false)
+                                                    .attr('data-vat-rate', data.isSubItem ? data.pivot.vat_rate : 0)
+                                                    .attr('data-is-deductible', data.isSubItem ? data.pivot.is_deductible : false)
                                                     .attr('data-is-financial-income', data.isSubItem ? data.pivot.is_financial_income : false)
                                                     .attr('data-percentage-value', data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : -1)
                                                     .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : -1)
@@ -2168,6 +2185,7 @@ $tableId = 'kt_table_1';
 														
 														${has_percentage_or_fixed_sub_items}
 														${subOfSelect}
+														${getVatRate(true ,data.pivot,data )}
 														${getFinancialIncomeOrExpenseCheckBoxes(true ,data.pivot,data.pivot.financial_statement_able_item_id )}
 														${getCollectionPolicyHtml(true,data.pivot,data.pivot.financial_statement_able_item_id)}
 														</div>
@@ -2230,6 +2248,8 @@ $tableId = 'kt_table_1';
                                                     $(row).attr('data-is-financial-expense', data.pivot && data.pivot.is_financial_expense == '1' ? 1 : 0)
                                                     $(row).attr('data-is-quantity', data.pivot && data.pivot.is_quantity == '1' ? 1 : 0)
                                                     $(row).attr('data-is-financial-income', data.pivot && data.pivot.is_financial_income == '1' ? 1 : 0)
+                                                    $(row).attr('data-vat-rate', data.pivot ? data.pivot.vat_rate  : 0)
+                                                    $(row).attr('data-is-deductible', data.pivot ? data.pivot.is_deductible  : 0)
 
                                                     if (data.pivot.can_be_percentage_or_fixed) {
                                                         $(row).attr('data-can-be-percentage-or-fixed', data.pivot.can_be_percentage_or_fixed)
@@ -2351,6 +2371,8 @@ $tableId = 'kt_table_1';
                                                             $(cell).removeClass('editable').removeClass('editable-text').attr('contenteditable', false).attr('title', '')
                                                         });
 
+                                                        // ssss
+
                                                         let has_percentage_or_fixed_sub_items = '';
                                                         if (data.has_percentage_or_fixed_sub_items && reportType != 'actual') {
                                                             sub_items_options = '';
@@ -2372,6 +2394,8 @@ $tableId = 'kt_table_1';
                                                             if (parseInt(data.id) == parseInt(corporateTaxesId.trim())) {
                                                                 hideRepeating = true
                                                             }
+
+
                                                             var repeating = `<div class="form-group custom-divs-class">
 															
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap">
@@ -2476,17 +2500,7 @@ $tableId = 'kt_table_1';
 															`;
                                                         }
 
-                                                        //         let quantityCheckbox = '';
-                                                        //
-                                                        //         quantityCheckbox = `<div class="form-check mt-2">
-                                                        //			<label class="form-check-label"  style="margin-top:3px" >
-                                                        //				{{ __('Add Quantity') }}
-                                                        //			</label>
-                                                        //
-                                                        //			<input class="" type="checkbox" value="1" name="sub_items[0][is_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
-                                                        //			<input class="" type="hidden" value="1" name="sub_items[0][can_be_quantity]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">
 
-                                                        //				`;
                                                         var increaseNameWidth = null;
                                                         if (data.has_percentage_or_fixed_sub_items) {
                                                             $(row).addClass('has-percentage-or-fixed-sub-items').attr('data-financial-statement-able-item-id', incomeStatementItemId)
@@ -2529,7 +2543,9 @@ $tableId = 'kt_table_1';
 																` + `` + `</div>` +
                                                                 `
 																` + has_percentage_or_fixed_sub_items + `
+															
 															${data.id == domElements.salesRevenueId ? getSalesRevenueModal(false , null , data.id):''}
+															${data.id == domElements.salesRevenueId ? getVatRate(false , null , data) : '' }
 															${data.id == domElements.salesRevenueId ? getCollectionPolicyHtml(false,null,data.id):''}
 															</div> ` + '' + `
 														 `;
@@ -2561,7 +2577,7 @@ $tableId = 'kt_table_1';
             <input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" name="how_many_items" type="number" value="1">
           
            ${nameAndDepreciationIfExist}
-		   
+															${data.id != domElements.salesRevenueId ? getVatRate(false , null , data) : '' }
 		   ${getFinancialIncomeOrExpenseCheckBoxes(false ,null, data.id)}
 		  ${data.id != domElements.salesRevenueId ? getCollectionPolicyHtml(false,null,data.id) :'' }
 		</div>
@@ -2735,7 +2751,7 @@ $tableId = 'kt_table_1';
 
 
 
-                                                
+
 
                                                 // handle data for intervals 
                                             }
@@ -2832,12 +2848,12 @@ $tableId = 'kt_table_1';
                                 if (hasError) {
                                     return;
                                 }
-							
+
                                 $(this).prop('disabled', true)
-								if(!canSendAjaxRequest){
-									return ;
-								}
-								canSendAjaxRequest = false ; 
+                                if (!canSendAjaxRequest) {
+                                    return;
+                                }
+                                canSendAjaxRequest = false;
                                 const salesRevenueId = domElements.salesRevenueId
                                 const financeIncomeOrExpensesId = domElements.financialIncomeOrExpensesId
                                 const salesAndDistributionExpensesId = domElements.salesAndDistributionExpensesId
@@ -2921,7 +2937,7 @@ $tableId = 'kt_table_1';
                                         , processData: false
                                         , success: function(res) {
                                             submitBtn.attr('disabled', false);
-											canSendAjaxRequest = true ;
+                                            canSendAjaxRequest = true;
                                             globalTable.ajax.reload(null, false)
                                             if (res.status) {
                                                 Swal.fire({
@@ -2939,7 +2955,7 @@ $tableId = 'kt_table_1';
                                         }
                                         , error: function(res) {
                                             submitBtn.attr('disabled', false);
-											canSendAjaxRequest = true ;
+                                            canSendAjaxRequest = true;
                                             let message = '';
                                             if (res.responseJSON && res.responseJSON.message) {
                                                 message = res.responseJSON.message;
@@ -3618,7 +3634,6 @@ $tableId = 'kt_table_1';
                                             } else {
 
                                                 // old problem
-                                                // var val = parseFloat($('tbody tr:nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + loopMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + loopMonth + '-' + currentDay + '"]').val());
                                                 var val = parseFloat($('tbody tr[class]:not(.header-tr):nth-of-type(' + rowId + ') td.editable-date.date-' + loopYear + '-' + removeMonth + '-' + currentDay).parent().find('input[data-date="' + loopYear + '-' + removeMonth + '-' + currentDay + '"]').val());
                                                 val = val ? val : 0;
 
@@ -3770,6 +3785,36 @@ $tableId = 'kt_table_1';
 					`;
                 }
 
+                function getVatRate(editModel, pivot, data) {
+					if(vars.subItemType != 'forecast'){
+						return 0;
+					}
+
+                    var incomeStatementId = data.isSubItem ? data.pivot.financial_statement_able_id : $('#model-id').val();
+                    var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
+                    var oldVatRate = editModel && pivot.vat_rate ? pivot.vat_rate : 0;
+                    var isDeductable = editModel ? pivot.is_deductible : 0
+                    isDeductable = +isDeductable;
+                    let hasVatRate = vatRateMaps[incomeStatementItemId].has_vat_rate;
+
+                    let canBeDeductable = vatRateMaps[incomeStatementItemId].can_be_dedictiable;
+
+                    var deductableCheckbox = canBeDeductable ? `<label for="dedictiable-for-${incomeStatementId}-element2-${incomeStatementItemId}" class="label" style="margin-right:5px;margin-bottom:0">{{ __('Is Deductible') }}</label>
+																	<input ${isDeductable ? 'checked'  : false } id="dedictiable-for-${incomeStatementId}-element2-${incomeStatementItemId}" class="form-control vat-rate-value " type="checkbox" value="1" name="sub_items[0][is_deductible]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">` : '';
+                    var spacer = editModel ? `<div style="height:20px"></div>` : ''
+                    var vatFields = hasVatRate ? ` ${spacer} <div class="checkboxes-vat">
+																<div class="checkboxes-vat-content d-flex align-items-center"> 
+																	<label for="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}" class="label" style="margin-bottom:0">{{ __('Vat Rate %') }}</label>
+																	<input id="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}"  style="margin-right:10px;width:70px;margin-left:15px;" type="text" class="form-control only-percentage-allowed" value="${oldVatRate}" name="sub_items[0][vat_rate]">
+																		${deductableCheckbox}
+																 </div>
+															</div>` : '';
+
+
+                    return vatFields;
+
+                }
+
                 function getSalesRevenueModal(editModal, pivot = null, id) {
 
                     let salesRevenueQuantityDateValues = pivot && pivot.quantityPivot ? pivot.quantityPivot : {}
@@ -3778,7 +3823,7 @@ $tableId = 'kt_table_1';
                     let subItemName = editModal && pivot && pivot.payload ? pivot.sub_item_name : 'new';
                     let currentValueForValueOrQuantityOrPrice = editModal && pivot && pivot.payload && pivot.payload.is_value_quantity_price ? pivot.payload.is_value_quantity_price : 'value';
                     datesFormatted = JSON.parse(datesFormatted.replace(/(&quot\;)/g, "\""))
-                    let thsForHeader = '<th class="text-white"> {{ __("Item") }} <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;" class="value_quantity_price-id" value="'+ currentValueForValueOrQuantityOrPrice +'" name="sub_items[0][is_value_quantity_price]"> </th>';
+                    let thsForHeader = '<th class="text-white"> {{ __("Item") }} <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;" class="value_quantity_price-id" value="' + currentValueForValueOrQuantityOrPrice + '" name="sub_items[0][is_value_quantity_price]"> </th>';
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
                     let tdForBodyQuantity = '<td>{{ __("Quantity") }}</td>';
@@ -3791,7 +3836,7 @@ $tableId = 'kt_table_1';
                         valueAtDate = parseFloat(valueAtDate)
                         var priceAtDate = editModal && salesQuantityAtDate ? valueAtDate / salesQuantityAtDate : 0;
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
-						
+
                         tdForBodyValue += `<td class="" data-type="value"  data-date="${date}">
 							<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
 							<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 

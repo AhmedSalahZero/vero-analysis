@@ -181,6 +181,7 @@ class ImportData implements
 					];
 				}
 		}
+
 		if(in_array($key , ['Document Type',__('Document Type')])){
 			if (!in_array($value, ['INV', 'inv', 'invoice', 'INVOICE', 'فاتوره'])) {
 				$allValidations[$key] =  [
@@ -190,19 +191,19 @@ class ImportData implements
 			}	
 		}
 		if(in_array($key , ['Quantity' , __('Quantity') , 'Quantity Discount' , __('Quantity Discount') , 'Cash Discount' , __('Cash Discount') , 'Special Discount' , __('Special Discount') , __('Other Discounts') , 'Net Sales Value' , __('Net Sales Value'),'Price Per Unit' , __('Price Per Unit') , __('Sales Value') , __('Sales Value')] )){
-			if (!is_numeric($value)) {
+			if (!is_numeric($value) && !is_null($value) && $value != '') {
 				$allValidations[$key] =  [
 					'message'=>__('Invalid Numeric Value'),
 					'value'=>$value
 				];
 			}
 		}
-		if (is_null($value)) {
-			$allValidations[$key] =  [
-				'value'=>$value,
-				'message'=>__('Empty Values Not Allowed')
-			];
-		}
+		// if (is_null($value)) {
+		// 	$allValidations[$key] =  [
+		// 		'value'=>$value,
+		// 		'message'=>__('Empty Values Not Allowed')
+		// 	];
+		// }
 		return $allValidations;
 		
 		

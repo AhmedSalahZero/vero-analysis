@@ -55,6 +55,7 @@ trait FinancialStatementAccessor
 	{
 		return $this->depends_on;
 	}
+	
 	public function canEditDurationType(): bool
 	{
 		$incomeStatement = $this->incomeStatement;

@@ -136,13 +136,10 @@ trait FinancialStatementAbleMutator
 					'total' => array_sum($pivotForModified),
 					'sub_item_type' => 'modified'
 				], false);
-				
-			// }
-
 		}
 	}
 
-	public function updatePivotForAdjustedSubItems(int $financialStatementAbleItemId, string $sub_item_origin_name,?string $isValueQuantityPrice): void
+	public function updatePivotForAdjustedSubItems(int $financialStatementAbleItemId, string $sub_item_origin_name,?string $isValueQuantityPrice ): void
 	{
 		$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'forecast', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 		$payloadForSubRow = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->first() ;
@@ -154,10 +151,8 @@ trait FinancialStatementAbleMutator
 		
 		$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 		$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
-		// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
 		$actualDates = [];
 		$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
-		// dd(get_defined_vars());
 		$dataArr =  [
 			'payload' => json_encode($pivotForModified),
 			'actual_dates' => json_encode($actualDates),
@@ -166,13 +161,6 @@ trait FinancialStatementAbleMutator
 			$dataArr['is_value_quantity_price'] = $isValueQuantityPrice ; 
 		}
 		$this->withSubItemsFor($financialStatementAbleItemId, 'adjusted', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId,$dataArr);
-		// for modified also ??
-		
-		
-		// if(!$payloadForSubRow 
-		// || !twoArrayIsEqualValues($pivotForModified,$payloadForSubRow)
-		// ){
-			
 			
 			$dataArr = [
 				'payload' => json_encode($pivotForModified),
@@ -182,14 +170,13 @@ trait FinancialStatementAbleMutator
 				$dataArr['is_value_quantity_price'] = $isValueQuantityPrice;
 			}
 			$this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, $dataArr);
-		// }
 	}
 
-	public function syncPivotFor(int $financialStatementAbleItemId, string $sub_item_type, string $sub_item_origin_name,?string $isValueQuantityPrice)
+	public function syncPivotFor(int $financialStatementAbleItemId, string $sub_item_type, string $sub_item_origin_name,?string $isValueQuantityPrice )
 	{
 		if ($sub_item_type == 'forecast' || $sub_item_type == 'actual') {
 			// for adjusted and modified for now
-			$this->updatePivotForAdjustedSubItems($financialStatementAbleItemId, $sub_item_origin_name,$isValueQuantityPrice);
+			$this->updatePivotForAdjustedSubItems($financialStatementAbleItemId, $sub_item_origin_name,$isValueQuantityPrice );
 		}
 	}
 
@@ -230,7 +217,6 @@ trait FinancialStatementAbleMutator
 		} elseif (isset($options['collection_policy']['type'][$collectionPolicyType]['value'])) {
 			$collection_value = $options['collection_policy']['type'][$collectionPolicyType]['value'];
 		}
-// dd()
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
@@ -253,21 +239,21 @@ trait FinancialStatementAbleMutator
 			'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ? $options['cost_of_unit_value'] : null,
 			'is_financial_expense' => isset($options['is_financial_expense']) && $options['is_financial_expense'],
 			'is_financial_income' => isset($options['is_financial_income']) && $options['is_financial_income'],
+			'vat_rate' => $subType =='forecast'&& isset($options['vat_rate'])  ? $options['vat_rate'] : 0,
+			'is_deductible' => $subType =='forecast' && isset($options['is_deductible'])  ? $options['is_deductible'] : 0,
 			'created_at' => now()
 		];
 	}
 
 	public function storeReport(Request $request)
 	{
-		// dd($request->all());
-		
 				
 		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
 				'sub_items.*.name' => 'required',
-				'sub_items.*.collection_policy'=>'required|array',
-				'sub_items.*.collection_policy.type'=>'required|array',
-				'sub_items.*.collection_policy.type.name'=>'required'
+				'sub_items.*.collection_policy'=>'sometimes|required|array',
+				'sub_items.*.collection_policy.type'=>'sometimes|required|array',
+				'sub_items.*.collection_policy.type.name'=>'sometimes|required'
 			], [
 				'sub_items.*.name.required' => __('Please Enter SubItem Name'),
 				'sub_items.*.collection_policy.required'=>__('Please Enter Collection / Payment Policy'),
@@ -284,7 +270,6 @@ trait FinancialStatementAbleMutator
 
 		$financialStatementAble = (new static)::find($request->input('financial_statement_able_id'));
 		$financialStatementAbleItemId = $request->input('financial_statement_able_item_id');
-		// dd($financialStatementAbleItemId);
 		$cashFlowStatement = new CashFlowStatement();
 		$subItemsValues = (array)$request->get('value');
 		$subItemType = $request->get('sub_item_type');
@@ -320,6 +305,8 @@ trait FinancialStatementAbleMutator
 			$financialStatementAble = (new static)::find($financialStatementAbleId);
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $values) {
 				foreach ($values as $sub_item_origin_name => $payload) {
+					
+					
 					$subItemAlreadyExist = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->exists();
 					
 
@@ -364,10 +351,10 @@ trait FinancialStatementAbleMutator
 									$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $currentSubItemType, $subItemsNames['quantity'])->detach();
 								}
 							} else {
-								// dd(get_defined_vars());
 								$payloadData = [
 									'payload' => json_encode($payloadForQuantity),
-									'is_value_quantity_price'=>$isValueQuantityPrice
+									'is_value_quantity_price'=>$isValueQuantityPrice,
+									
 								];
 								
 								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['quantity'])->updateExistingPivot($financialStatementAbleItemId, $payloadData);
@@ -376,17 +363,23 @@ trait FinancialStatementAbleMutator
 					}
 
 					if ($subItemAlreadyExist) {
-						// dd(get_defined_vars());
+						
+						$isDeductible = $request->sub_items[0]['is_deductible'] ?? 0;
+					$vatRate = $request->sub_items[0]['vat_rate'] ?? 0;
+						
+						// update sub items for non sales revenue 
 						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
-							'payload' => json_encode($payload),
-							// 'is_value_quantity_price'=>$isValueQuantityPrice
+							'payload' => json_encode($this->calculatePayloadWithVat($payload ,$subItemType,$isDeductible , $vatRate,$financialStatementAbleItemId )),
+							'is_deductible'=>$isDeductible,
+							'vat_rate'=>$vatRate 
 						]);
 					}
-					// dd($sub_item_origin_name,get_defined_vars());
+					// synv pivot here
 					$financialStatementAble->syncPivotFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name,null);
 				}
 			}
 		}
+		
 
 
 
@@ -456,6 +449,10 @@ trait FinancialStatementAbleMutator
 
 		return [$subItemType];
 	}
+	
+	public function calculateVat($vat){
+		return (1+$vat/100) ;
+	}
 
 	public function updateCostOfUnitAndPercentagesOfSubItems(Collection $subItemsForCurrentIncomeStatementItem, array $dates, string $subItemType): void
 	{
@@ -494,11 +491,21 @@ trait FinancialStatementAbleMutator
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = isset($payload->{$date}) ? $payload->{$date} : 0;
 					} else {
-						$values[$financialStatementAbleItemId][$subItemName][$date] = $percentageValue * $totalPercentageOfValue;
+						$percentageVal = $percentageValue * $totalPercentageOfValue ;
+						if($subItemType == 'forecast' && !$subItem->pivot->is_deductible){
+							$vatValue =  1 ;
+							if($financialStatementAbleItemId != IncomeStatementItem::SALES_REVENUE_ID){
+								$vatValue = $this->calculateVat($subItem->pivot->vat_rate) ;
+							}
+							$percentageVal = $percentageVal* $vatValue;
+						}
+						$values[$financialStatementAbleItemId][$subItemName][$date] = $percentageVal ;
 					}
 				}
 				$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
-					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName])
+					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName]),
+					'is_deductible'=>$subItem->pivot->is_deductible,
+					'vat_rate'=>$subItem->pivot->vat_rate
 				]);
 			} elseif ($isCostOfUnit) {
 				$costOfUnitsOf = stringArrayToArray($subItem->pivot->is_cost_of_unit_of);
@@ -514,11 +521,18 @@ trait FinancialStatementAbleMutator
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = $payload->{$date} ?: 0;
 					} else {
-						$values[$financialStatementAbleItemId][$subItemName][$date] = $costOfUnitValue * $totalCostOfUnitValue;
+						$vatValue = 1 ;
+						if($subItemType == 'forecast' && !$subItem->pivot->is_deductible && $financialStatementAbleItemId != IncomeStatementItem::SALES_REVENUE_ID){
+								$vatValue = $this->calculateVat($subItem->pivot->vat_rate) ;
+							
+						}
+						$values[$financialStatementAbleItemId][$subItemName][$date] = $costOfUnitValue * $totalCostOfUnitValue * $vatValue;
 					}
 				}
 				$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
 					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName]),
+					'is_deductible'=>$subItem->pivot->is_deductible,
+					'vat_rate'=>$subItem->pivot->vat_rate
 				]);
 			}
 		}
@@ -562,7 +576,8 @@ trait FinancialStatementAbleMutator
 						'cost_of_unit_value' => $pivot->cost_of_unit_value ?: 0,
 						'is_financial_expense' => $pivot->is_financial_expense ?: 0,
 						'is_financial_income' => $pivot->is_financial_income ?: 0,
-
+						'is_deductible'=>$pivot->is_deductible,
+						'vat_rate'=>$pivot->vat_rate,
 						'parent' => [
 							'name' => $subItem->name,
 							'has_sub_items' => $subItem->has_sub_items,
@@ -831,5 +846,20 @@ trait FinancialStatementAbleMutator
 		}
 
 		return $values;
+	}
+	public function calculatePayloadWithVat(array $payload , string $subItemType ,bool $isDeductible , float $vatRate , int $financialStatementItemAbleId):array 
+	{
+		if($subItemType != 'forecast'){
+			return $payload ;
+		}
+		if($financialStatementItemAbleId == IncomeStatementItem::SALES_REVENUE_ID){
+			return $payload ;
+		}
+		$newPayload = [];
+		foreach($payload as $date=>$value){
+			#NOTE:calculate vat for sub item not percentage or cost
+			$newPayload[$date] = $isDeductible ? $value : $value * $this->calculateVat($vatRate);
+		}
+		return $newPayload;
 	}
 }

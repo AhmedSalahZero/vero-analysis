@@ -96,6 +96,7 @@ class SalesGatheringTestController extends Controller
 				]);
 			}
 			$validationCacheKey = generateCacheKeyForValidationRow($company_id,$modelName);
+			// dd($validationCacheKey);
 			Cache::forget($validationCacheKey);
 			
 			$fileUpload = new  ImportData($company_id, request()->format, 'SalesGatheringTest', $salesGathering_fields, $active_job->id,auth()->user()->id,$modelName);
