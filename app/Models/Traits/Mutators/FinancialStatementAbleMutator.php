@@ -3,12 +3,16 @@
 namespace App\Models\Traits\Mutators;
 
 use App\Models\CashFlowStatement;
+use App\Models\CashFlowStatementItem;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
+use App\Services\VatCalculation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use League\Glide\Manipulators\Contrast;
+use PHPUnit\Framework\IncompleteTest;
 
 trait FinancialStatementAbleMutator
 {
@@ -223,7 +227,7 @@ trait FinancialStatementAbleMutator
 			'sub_item_type' => $subType,
 			'sub_item_name' => $isQuantityRepeating ? html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']),
 			'created_from' => $subItemType,
-			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? false,
+			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? 0,
 			'has_collection_policy' => $options['collection_policy']['has_collection_policy'] ?? false,
 			'collection_policy_type' => $collectionPolicyType,
 			'collection_policy_value' => $collection_value,
@@ -247,6 +251,12 @@ trait FinancialStatementAbleMutator
 
 	public function storeReport(Request $request)
 	{
+			// if($this instanceof CashFlowStatement){
+			// 	dd($request->all());
+			// }
+			
+			$salesRevenuesForVat = [];
+			$expensesForVat = [];
 				
 		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
@@ -269,11 +279,14 @@ trait FinancialStatementAbleMutator
 		}
 
 		$financialStatementAble = (new static)::find($request->input('financial_statement_able_id'));
+		
+		
 		$financialStatementAbleItemId = $request->input('financial_statement_able_item_id');
 		$cashFlowStatement = new CashFlowStatement();
 		$subItemsValues = (array)$request->get('value');
 		$subItemType = $request->get('sub_item_type');
 		$insertSubItems = $this->getInsertToSubItemFields($subItemType);
+		$vats = [];
 		if (!$request->has('new_sub_item_name')) {
 			foreach ((array)$request->sub_items as $index => $options) {
 				if (isset($options['name']) && $options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
@@ -305,6 +318,21 @@ trait FinancialStatementAbleMutator
 			$financialStatementAble = (new static)::find($financialStatementAbleId);
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $values) {
 				foreach ($values as $sub_item_origin_name => $payload) {
+					$pivotForElement =$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->first()->pivot;
+					
+					
+						// run vat method to calculate vat payment for cash flow statement 
+						$vatRate = $pivotForElement->vat_rate ;
+						$isDeductible = $pivotForElement->is_deductible ;
+						$vats[$financialStatementAbleId][$sub_item_origin_name]=['vat_rate'=>$vatRate,'isDeductible'=>$isDeductible] ;
+						$payloadForSalesRevenue = (array) json_decode($pivotForElement->payload) ;
+						if($financialStatementAbleItemId == IncomeStatementItem::SALES_REVENUE_ID){
+							$salesRevenuesForVat[] = ['vat_rate'=>$vatRate , 'is_deductible'=>$isDeductible , 'values'=>changeDateFormatOfArrTo($payloadForSalesRevenue,'d-m-Y') ];
+						}
+						elseif($isDeductible){
+							$expensesForVat[] = ['vat_rate'=>$vatRate , 'is_deductible'=>$isDeductible , 'values' =>changeDateFormatOfArrTo($payloadForSalesRevenue,'d-m-Y') ];
+						}
+						
 					
 					
 					$subItemAlreadyExist = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->exists();
@@ -338,7 +366,7 @@ trait FinancialStatementAbleMutator
 										'sub_item_name' => $subItemsNames['quantity'],
 										'company_id' => getCurrentCompanyId()
 									]);
-
+									
 									$subItemsValues[$financialStatementAbleId][$financialStatementAbleItemId][$subItemsNames['quantity']] = $payloadForQuantity;
 									$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemsNames['quantity'])->attach(
 										$financialStatementAbleItemId,
@@ -363,18 +391,24 @@ trait FinancialStatementAbleMutator
 					}
 
 					if ($subItemAlreadyExist) {
-						
-						$isDeductible = $request->sub_items[0]['is_deductible'] ?? 0;
-					$vatRate = $request->sub_items[0]['vat_rate'] ?? 0;
-						
-						// update sub items for non sales revenue 
-						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId, [
-							'payload' => json_encode($this->calculatePayloadWithVat($payload ,$subItemType,$isDeductible , $vatRate,$financialStatementAbleItemId )),
+						$inPopup = isset($request->sub_items[0]) && isset($request->sub_items[0]['vat_rate']) && is_numeric($request->sub_items[0]['vat_rate']) && $request->get('sub_item_name') == $sub_item_origin_name ;
+						$isDeductible = $inPopup ? ($request->sub_items[0]['is_deductible']??0) : $pivotForElement->is_deductible;
+						$vatRate = $inPopup ? $request->sub_items[0]['vat_rate'] : $pivotForElement->vat_rate;
+						$vatArr = $request->get('sub_item_name') == $sub_item_origin_name  ? [
 							'is_deductible'=>$isDeductible,
 							'vat_rate'=>$vatRate 
-						]);
+						] : [];
+						
+						
+						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId,array_merge(
+							[
+								'payload' => json_encode($this->calculatePayloadWithVat($payload ,$subItemType,$isDeductible , $vatRate,$financialStatementAbleItemId )),
+							
+							],
+							$vatArr
+						));
 					}
-					// synv pivot here
+					// sync pivot here
 					$financialStatementAble->syncPivotFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name,null);
 				}
 			}
@@ -433,9 +467,50 @@ trait FinancialStatementAbleMutator
 				$financialStatementAble->refreshCalculationFor($insertSubItem);
 			}
 		}
-		$request->merge(['value' => $subItemsValues], $request->except('value'));
+		// $request->merge(['value' => $subItemsValues], $request->except('value'));
+		
+		// if(get_class($this) == IncomeStatement::class){
+		// $vatCalculationService = new VatCalculation();
+		// 	$vatCalculations = $vatCalculationService->__execute($salesRevenuesForVat , [] , $expensesForVat , [] , $financialStatementAble->FinancialStatement->getStartDateFormatted()  , $financialStatementAble->FinancialStatement->getDuration());
+			
+			
+		// 	$vatPayment = $vatCalculations['monthly']['VAT Payment'] ?? [];
+		// 	$vatPayment = changeDateFormatOfArrTo($vatPayment,'Y-m-d');
+		// 	$vatPaymentSubItem = 'VAT Payment' ;
+		// 	$vatCashFlowStatement = $financialStatementAble->FinancialStatement->cashFlowStatement ;
+		// 	$vatPaymentData = [
+		// 		'sub_item_name'=>$vatPaymentSubItem ,
+		// 		'sub_item_type'=>'forecast',
+		// 		'financial_statement_able_id'=>$vatCashFlowStatement->id ,
+		// 		'financial_statement_able_item_id'=>CashFlowStatementItem::CASH_OUT_ID,
+		// 		'ordered'=>5,
+		// 		'created_from'=>'forecast',
+		// 		'payload'=>json_encode($vatPayment  ??[]) , 
+		// 		'company_id'=>\getCurrentCompanyId() ,
+		// 		'creator_id'=>auth()->id()
+		// 	] ;
+		// 	if($vatCashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID,'forecast',$vatPaymentSubItem )->exists())
+		// 	{
+		// 		$vatCashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID,'forecast',$vatPaymentSubItem )->detach();
+		// 	}
+		// 	$vatCashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID,'forecast',$vatPaymentSubItem )->attach(CashFlowStatementItem::CASH_OUT_ID,$vatPaymentData);
+			
+			
+		// }
+		
+		$financialStatementAble->can_view_actual_report = 1 ;
+		$financialStatementAble->save();
+		
 
 		return $financialStatementAble;
+	}
+	protected function formatSalesRevenueForCash(IncomeStatement $incomeStatement,array $salesRevenues){
+		// $salesRevenuesWithoutQuantity = []; 
+		// foreach($salesRevenues as $name => $dateAndValue){
+		// 	if(!isQuantitySubItem($name)){
+		// 		$incomeStatement = $this->withSubItemsFor(1, 'forecast')->get();
+		// 	}
+		// }
 	}
 
 	public function getInsertToSubItemFields(string $subItemType): array
@@ -451,6 +526,10 @@ trait FinancialStatementAbleMutator
 	}
 	
 	public function calculateVat($vat){
+		#FIXME:REMOVE THIS
+		// return 1 ;
+		
+		
 		return (1+$vat/100) ;
 	}
 
@@ -477,7 +556,7 @@ trait FinancialStatementAbleMutator
 				// update sub items of corporate taxes [needs to be here]
 			} elseif ($isPercentage) {
 				$percentageValue  = $subItem->pivot->percentage_value ?: 0;
-				if ($isFinancialExpense) {
+				if ($isFinancialExpense && $percentageValue >0) {
 					$percentageValue = $percentageValue * -1;
 				}
 				$percentageValue = $percentageValue / 100;
@@ -510,7 +589,7 @@ trait FinancialStatementAbleMutator
 			} elseif ($isCostOfUnit) {
 				$costOfUnitsOf = stringArrayToArray($subItem->pivot->is_cost_of_unit_of);
 				$costOfUnitValue = $subItem->pivot->cost_of_unit_value ?: 0;
-				if ($isFinancialExpense) {
+				if ($isFinancialExpense && $costOfUnitValue >0) {
 					$costOfUnitValue = $costOfUnitValue * -1;
 				}
 				foreach ($dates as $date => $formattedDate) {
@@ -522,10 +601,14 @@ trait FinancialStatementAbleMutator
 						$values[$financialStatementAbleItemId][$subItemName][$date] = $payload->{$date} ?: 0;
 					} else {
 						$vatValue = 1 ;
-						if($subItemType == 'forecast' && !$subItem->pivot->is_deductible && $financialStatementAbleItemId != IncomeStatementItem::SALES_REVENUE_ID){
+						
+						if( $subItemType == 'forecast' && !$subItem->pivot->is_deductible && $financialStatementAbleItemId != IncomeStatementItem::SALES_REVENUE_ID){
 								$vatValue = $this->calculateVat($subItem->pivot->vat_rate) ;
-							
 						}
+						// unreachable
+						// if($this instanceof CashFlowStatement && $subItemType =='forecast' ){
+						// 	$vatValue = $this->calculateVat($subItem->pivot->vat_rate) ;
+						// }
 						$values[$financialStatementAbleItemId][$subItemName][$date] = $costOfUnitValue * $totalCostOfUnitValue * $vatValue;
 					}
 				}
@@ -540,7 +623,6 @@ trait FinancialStatementAbleMutator
 
 	public function refreshCalculationFor(string $subItemType)
 	{
-		// $refreshedData = [];
 		// $incomeStatementId = $this->id;
 		$dates = $this->getIntervalFormatted();
 		$allMainItems = $this->mainItems()->get();
@@ -554,7 +636,7 @@ trait FinancialStatementAbleMutator
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
 				$pivot = $subItem->pivot;
-
+				// cache::fore
 				return [
 					'options' => [
 						'name' => $pivot->sub_item_name,
@@ -568,7 +650,7 @@ trait FinancialStatementAbleMutator
 						'can_be_quantity' => $pivot->can_be_quantity,
 						'is_value_quantity_price'=>$pivot->is_value_quantity_price,
 						'actual_dates' => $pivot->actual_dates,
-						'is_depreciation_or_amortization' => $pivot->is_depreciation_or_amortization,
+						'is_depreciation_or_amortization' => $pivot->is_depreciation_or_amortization ?: 0,
 						'percentage_or_fixed' => $pivot->percentage_or_fixed,
 						'can_be_percentage_or_fixed' => $pivot->can_be_percentage_or_fixed,
 						'repeating_fixed_value' => $pivot->repeating_fixed_value,
@@ -849,6 +931,9 @@ trait FinancialStatementAbleMutator
 	}
 	public function calculatePayloadWithVat(array $payload , string $subItemType ,bool $isDeductible , float $vatRate , int $financialStatementItemAbleId):array 
 	{
+		// if($this instanceof CashFlowStatement){
+		// 	dd($payload);
+		// }
 		if($subItemType != 'forecast'){
 			return $payload ;
 		}
@@ -858,7 +943,11 @@ trait FinancialStatementAbleMutator
 		$newPayload = [];
 		foreach($payload as $date=>$value){
 			#NOTE:calculate vat for sub item not percentage or cost
-			$newPayload[$date] = $isDeductible ? $value : $value * $this->calculateVat($vatRate);
+			$vatable = $this instanceof IncomeStatement && !$isDeductible || $this instanceof CashFlowStatement  && CashFlowStatementItem::CASH_IN_ID == $financialStatementItemAbleId || $this instanceof CashFlowStatement  && $isDeductible    ;
+			$newPayload[$date] = $vatable ? $value * $this->calculateVat($vatRate)  : $value ;
+			// if($this instanceof CashFlowStatement){
+			// 	dd($financialStatementItemAbleId,$value,$vatRate,$this->calculateVat($vatRate));
+			// }
 		}
 		return $newPayload;
 	}

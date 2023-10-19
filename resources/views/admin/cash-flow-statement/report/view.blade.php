@@ -1,3 +1,4 @@
+{{-- {{ dd($cashes) }} --}}
 @extends('layouts.dashboard')
 @section('css')
 <x-styles.commons></x-styles.commons>

@@ -124,4 +124,8 @@ public function getAllocationBaseThree()
 	{
 		return array_keys($this->custom_collection_policy ?? [])[$rateIndex] ?? 0 ; 
 	}
+	public function isDeductible()
+	{
+		return $this->is_deductible;
+	}
 }

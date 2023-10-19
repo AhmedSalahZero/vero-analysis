@@ -3713,3 +3713,30 @@ function convertDateToFormatIfDate($strOrDate)
 	}
 	return $view;
 }
+function changeDateFormatOfArrTo(array $dateValue , string $format){
+	$newItems = [];
+	foreach($dateValue as $date=>$value){
+		$newItems[Carbon::make($date)->format($format)] = $value ;
+	}
+	return $newItems ; 
+}
+function removeMinusFromArr(array $items)
+{
+	$result = [];
+	foreach($items as $date=>$value){
+		if($value <0){
+			$value = $value  * -1 ;
+		}
+		$result[$date] = $value ;
+	}
+	return $result;
+}
+function getTotalOf(array $items):array {
+	$total = [];
+	foreach($items as $name=>$dateAndValues){
+		foreach($dateAndValues as $date=>$value){
+			$total[$date] = isset($total[$date]) ? $total[$date]  + $value  : $value ;
+		}
+	}
+	return $total ;
+}

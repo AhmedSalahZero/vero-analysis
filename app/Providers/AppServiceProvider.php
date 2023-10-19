@@ -56,6 +56,9 @@ class AppServiceProvider extends ServiceProvider
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
 		
+		
+		
+		
 		// $company = Company::find(44);
 		/*
 		*/

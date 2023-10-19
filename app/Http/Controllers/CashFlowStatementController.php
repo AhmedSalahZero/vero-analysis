@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CashFlowStatementExport;
+use App\Helpers\HArr;
 use App\Http\Requests\CashFlowStatementRequest;
 use App\Models\CashFlowStatement;
 use App\Models\CashFlowStatementItem;
 use App\Models\Company;
+use App\Models\IncomeStatement;
+use App\Models\IncomeStatementItem;
 use App\Models\ReceivableAndPayment;
 use App\Models\Repositories\CashFlowStatementRepository;
 use App\Models\User;
+use App\ReadyFunctions\CollectionPolicyService;
+use App\Services\VatCalculation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -39,9 +44,8 @@ class CashFlowStatementController extends Controller
 	{
 		// if first time
 		$dates = array_keys($cashFlowStatement->getIntervalFormatted());
-		// dd();
 		// $cashFlowStatement->receivables_and_payments->count()
-		if (env('APP_ENV') == 'local'
+		if (false&& env('APP_ENV') == 'local'
 			// && !$cashFlowStatement->entered_receivables_and_payments_table
 			||
 			Request()->route()->getName() == 'admin.show-cash-and-banks'
@@ -55,6 +59,7 @@ class CashFlowStatementController extends Controller
 			$receivables = $cashFlowStatement
 			->withSubItemsFor(CashFlowStatementItem::CASH_IN_ID, $subItemType)
 			->wherePivot('receivable_or_payment', 'receivable')->get();
+			
 			$hasPayments = (bool)count($payments);
 			$hasReceivables = (bool)count($receivables);
 			$receivables_and_payments = $payments->concat($receivables);
@@ -66,25 +71,146 @@ class CashFlowStatementController extends Controller
 			$cashFlowStatement->update([
 				'entered_receivables_and_payments_table'=>1
 			]);
-// dd($hasPayments , $hasReceivables);
 			return view('admin.cash-flow-statement.cash-opening-balance.create', ['dates'=>$dates, 'company'=>$company, 'cashFlowStatementId'=>$cashFlowStatement->id, 'receivables_and_payments'=>$receivables_and_payments, 'model'=>$model, 'subItemType'=>$subItemType,'hasPayments'=>$hasPayments,'hasReceivables'=>$hasReceivables]);
 		}
 
 		$cashFlowStatement = $cashFlowStatement->financialStatement->cashFlowStatement;
-
+		$incomeStatement = $cashFlowStatement->financialStatement->incomeStatement;
+		$reportType = getReportNameFromRouteName(Request()->route()->getName()) ;
+		$cashes = $this->calculateCashInAndCashOutFromIncomeStatementItems($incomeStatement , $reportType );
 		return view('admin.cash-flow-statement.report.view', CashFlowStatement::getReportViewVars([
 			'financial_statement_able_id' => $cashFlowStatement->id,
 			'cashFlowStatement' => $cashFlowStatement,
 			'cashFlowStatement' => $cashFlowStatement,
-			'reportType' => getReportNameFromRouteName(Request()->route()->getName())
+			'reportType' => $reportType ,
+			'cashes'=>$cashes
 		]));
 	}
+	
+	public function calculateCashInAndCashOutFromIncomeStatementItems(IncomeStatement $incomeStatement  , string $reportType)
+	{
+		$payloadsWithoutVat = [];
+		$payloadsWithVat = [];
+		$salesRevenuesForVat = [];
+		$expensesForVat = [];
+		$collectionPolicies = [];
+		$cashes = [];
+		$cashInKeyName = 'Cash In';
+		$cashOutKeyName = 'Cash Out';
+		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		$dates = $cashFlowStatement->getIntervalFormatted();
+		$receivables = $cashFlowStatement
+		->withSubItemsFor(CashFlowStatementItem::CASH_IN_ID, $reportType)
+		->wherePivot('receivable_or_payment', 'receivable')->get()->pluck('pivot');
+		$payments = $cashFlowStatement
+			->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID, $reportType)
+			->wherePivot('receivable_or_payment',  'payment')->get()->pluck('pivot');
+		$startDate = $incomeStatement->financialStatement->getStartDate();
+		$startDateFormatted = Carbon::make($startDate)->format('Y-m-d');
+		$cashAndBanksBeginningBalance = $cashFlowStatement->cash_and_banks_beginning_balance ?: 0;
+		$cashes[$cashInKeyName]['Cash & Banks Beginning Balance'] = [$startDateFormatted => $cashAndBanksBeginningBalance]; 
+		$mainItems = IncomeStatementItem::where('has_sub_items',1)->where('is_sales_rate',0)->where('id','!=',IncomeStatementItem::CORPORATE_TAXES_ID)->get();
+		foreach($mainItems as $mainItem){
+			$mainItemCanBeDeductible = $mainItem->can_be_dedictiable;
+			
+			$mainItemId = $mainItem->id;
+			$subItemsOfCurrentMainItem = $mainItem->load('subItems')->withSubItemsFor($incomeStatement->id , $reportType)->wherePivot('is_quantity',0)->wherePivot('is_depreciation_or_amortization',0)->get()->pluck('pivot');
+			// dd($subIt	emsOfCurrentMainItem);
+			foreach($subItemsOfCurrentMainItem as $subItemOfCurrentMainItem){
+				$subItemName = $subItemOfCurrentMainItem->sub_item_name ;
+				$subItemVatRate = $subItemOfCurrentMainItem->vat_rate ;
+				$isDeductible = $subItemOfCurrentMainItem->is_deductible ;
+				// dd();
+				$payload = (array)json_decode($subItemOfCurrentMainItem->payload) ;
+				$payload = $subItemOfCurrentMainItem->is_financial_expense ? removeMinusFromArr($payload) : $payload; 
+				// $payloadsWithoutVat[$mainItemId][$subItemName] =  $subItemVatRate  > 0 && $isDeductible ?  $this->removeVatFrom($payload,$subItemVatRate) : $payload ;
+				// $payloadsWithVat[$mainItemId][$subItemName] = $this->calculateVatRate($payloadsWithoutVat[$mainItemId][$subItemName] , $subItemVatRate ) ;
+				// calculate collection policy 
+				$hasCollectionPolicy = $subItemOfCurrentMainItem->has_collection_policy;
+				$collectionPolicyType = $subItemOfCurrentMainItem->collection_policy_type ;
+				$collectionPolicyValue = $subItemOfCurrentMainItem->collection_policy_value;
+				$collectionPolicyValue = $collectionPolicyType == 'customize' ? (array)json_decode($collectionPolicyValue) : $collectionPolicyValue;
+				
+				
+				if($subItemOfCurrentMainItem->financial_statement_able_item_id == IncomeStatementItem::SALES_REVENUE_ID){
+					$collectionPolicies[$mainItemId][$subItemName] = (new CollectionPolicyService())->applyCollectionPolicy($hasCollectionPolicy, $collectionPolicyType, $collectionPolicyValue, $this->calculateVat($payload,$subItemVatRate));
+					$salesRevenuesForVat[] = [
+						'vat_rate'=>$subItemVatRate,
+						'values'=>changeDateFormatOfArrTo($payload,'d-m-Y')
+					];
+				}
+				elseif($mainItemCanBeDeductible && $isDeductible){
+					$collectionPolicies[$mainItemId][$subItemName] = (new CollectionPolicyService())->applyCollectionPolicy($hasCollectionPolicy, $collectionPolicyType, $collectionPolicyValue, $this->calculateVat($payload,$subItemVatRate));
+						$expensesForVat[] = [
+							'vat_rate'=>$subItemVatRate,
+							'values'=>changeDateFormatOfArrTo($payload,'d-m-Y')
+						];
+				}else{
+					$collectionPolicies[$mainItemId][$subItemName] = (new CollectionPolicyService())->applyCollectionPolicy($hasCollectionPolicy, $collectionPolicyType, $collectionPolicyValue, $payload);
+				}
+				if($subItemOfCurrentMainItem->financial_statement_able_item_id == IncomeStatementItem::SALES_REVENUE_ID || $subItemOfCurrentMainItem->is_financial_income){
+					$cashes[$cashInKeyName][$subItemName]=$collectionPolicies[$mainItemId][$subItemName];
+				}else{
+					$cashes[$cashOutKeyName][$subItemName]=$collectionPolicies[$mainItemId][$subItemName];
+				}
+			}
+		}
 
+			foreach($receivables as $receivable){
+				$cashes[$cashInKeyName][$receivable->sub_item_name]=(array) json_decode($receivable->payload);
+			}
+			foreach($payments as $payment){
+				$cashes[$cashOutKeyName][$payment->sub_item_name]=(array) json_decode($payment->payload);
+			}
+			
+			$vatCalculationService = new VatCalculation();
+			$vatCalculations = $vatCalculationService->__execute($salesRevenuesForVat , [] , $expensesForVat , [] , $cashFlowStatement->FinancialStatement->getStartDateFormatted()  ,$cashFlowStatement->FinancialStatement->getDuration());
+			$vatPayment = $vatCalculations['monthly']['VAT Payment'] ?? [];
+			$vatPayment = changeDateFormatOfArrTo($vatPayment,'Y-m-d');
+			$vatPaymentSubItem = 'VAT Payment' ;
+			$cashes[$cashOutKeyName][$vatPaymentSubItem ]=$vatPayment;
+			$this->calculateTotalAndAccumulated($cashes,$cashInKeyName , $cashOutKeyName,$dates);
+			// dd($cashes);
+		return $cashes ;
+	}
+	protected function calculateVat(array $items , float $vatRate ){
+		$result = [];
+		foreach($items as $date=>$value){
+			$result[$date] = $value * (1+($vatRate/100));
+		}
+		return $result; 
+	}
+	protected function calculateTotalAndAccumulated(&$cashes,$cashInKeyName,$cashOutKeyName,$dates)
+	{
+		foreach($cashes as $cashName => $subElements){
+			$cashes[$cashName]['total'] = getTotalOf($subElements);
+		}
+		$cashes['Monthly Net Cash'] = ['total'=>HArr::subtractAtDates([$cashes[$cashInKeyName]['total'] ?? [], $cashes[$cashOutKeyName]['total']??[]  ],array_keys($dates))];
+		$cashes['Accumulated Net Cash'] = ['total'=>HArr::accumulateArray($cashes['Monthly Net Cash']['total']??[])];
+	}
+	protected function calculateVatRate(array $payload , float $vatRate ):array 
+	{
+		$items = [];
+		if($vatRate == 0){
+			return $payload ; 
+		}
+		foreach($payload as $date => $value){
+			$items[$date] = $value * (1+$vatRate/100) ;	
+		}
+		return $items ; 
+	}
+	public function removeVatFrom(array $items , float $vatRate):array {
+		$newItems = [];
+		foreach($items as $date => $value){
+			$newItems[$date] = $value / (1/($vatRate / 100));
+		}
+		return $newItems ; 
+	}
 	public function paginate(Request $request)
 	{
 		return $this->cashFlowStatementRepository->paginate($request);
 	}
-
+	
 	public function paginateReport(Request $request, Company $company, CashFlowStatement $cashFlowStatement)
 	{
 		return $this->cashFlowStatementRepository->paginateReport($request, $cashFlowStatement);
@@ -184,7 +310,6 @@ class CashFlowStatementController extends Controller
 						$pivotArr
 					);
 			} else {
-				//dd($oldCashFlowStatementItem);
 			}
 		}
 
@@ -294,20 +419,16 @@ class CashFlowStatementController extends Controller
 		$cashFlowStatementId = $request->get('cash_flow_statement_id');
 		$subItemType  = $request->get('subItemType');
 		$cashFlowStatement = CashFlowStatement::find($cashFlowStatementId);
-		// dd();
 
 		$cashFlowStatement->update([
 			'cash_and_banks_beginning_balance'=>$request->get('cash_and_banks_beginning_balance')
 		]);
-		// dd($cashFlowStatement);
 		$dates = (array)$request->get('dates');
-		// dd('dates',$dates);
 
 
 		$cashItemId = CashFlowStatementItem::CASH_IN_ID;
 		$cashAndBanksName = 'Cash & Banks Beginning Balance';
 		$lastIndex = count((array)$request->get('opening_receivable')) - 1;
-		// dd($lastIndex);
 
 		$cashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_IN_ID, $subItemType)->wherePivot('receivable_or_payment', '!=', null)->detach();
 		$cashFlowStatement->withSubItemsFor(CashFlowStatementItem::CASH_OUT_ID, $subItemType)->wherePivot('receivable_or_payment', '!=', null)->detach();
@@ -365,37 +486,16 @@ class CashFlowStatementController extends Controller
 				}
 
 				
-			// if (false) {
-			// 	if ($index == $lastIndex) {
-
-			// 		$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $cashAndBanksName)->where('receivable_or_payment', '!=', null)->updateExistingPivot($cashItemId, [
-			// 			'payload'=>json_encode([$dates[0]=>$request->get('cash_and_banks_beginning_balance')]),
-			// 			'sub_item_name'=>$cashAndBanksName
-			// 		]);
-			// 	}
-			// 	$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $arr['old_receivable_name'])->where('receivable_or_payment', '!=', null)->updateExistingPivot($cashItemId, [
-			// 		'payload'=>$payload,
-			// 		'sub_item_name'=>$name,
-			// 		'sub_item_type'=>$subItemType,
-			// 	]);
-			// 	// ReceivableAndPayment::where('id',$arr['id'])->update($data);
-			// } 
-			// else {
-			// 	// create
-
-			// 	// ReceivableAndPayment::create($data);
-			// }
+			
 		}
 
 		$cashItemId  = CashFlowStatementItem::CASH_OUT_ID;
 
 		foreach ((array)$request->get('opening_payment') as $index => $arr) {
 			$payload = [];
-			// dd($dates);
 			foreach ($dates as $date) {
 				$payload[$date]=$arr[$date] ?? 0;
 			}
-			// dd($payload,json_encode($payload));
 
 			$data = [
 				'sub_item_name'=> $name = $arr['receivable_name'],
@@ -422,27 +522,6 @@ class CashFlowStatementController extends Controller
 			}
 			
 			
-			// $data = [
-			// 	'name'=> $name = $arr['receivable_name'] ,
-			// 	'balance_amount'=>$arr['balance_amount'],
-			// 	'payload'=>$payload,
-			// 	'cash_flow_statement_id'=>$cashFlowStatementId,
-			// 	'type'=>'payment',
-			// 	'created_at'=>now()
-			// ];
-			// if (false) {
-			// 	// if ($arr['id']) {
-			// 	// dd($cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $name)->where('receivable_or_payment','!=',null)->first());
-			// 	$cashFlowStatement->withSubItemsFor($cashItemId, $subItemType, $arr['old_receivable_name'])->where('receivable_or_payment', '!=', null)->updateExistingPivot($cashItemId, [
-			// 		'payload'=>$payload,
-			// 		'sub_item_name'=>$name,
-			// 		'sub_item_type'=>$subItemType,
-			// 	]);
-			// 	// ReceivableAndPayment::where('id',$arr['id'])->update($data);
-			// }
-			//  else {
-			// 	// ReceivableAndPayment::create($data);
-			// }
 		}
 
 		return redirect()->route('admin.create.cash.flow.statement.forecast.report', ['cashFlowStatement'=>$cashFlowStatementId, 'company'=>$company->id]);

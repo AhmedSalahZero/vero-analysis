@@ -4,6 +4,10 @@
 @endsection
 @section('sub-header')
 <style>
+.max-w-checkbox{
+	min-width:25px !important;
+	width:25px !important;
+}
 .customize-elements .bootstrap-select{
 	min-width:100px !important;
 	text-align:center !important;
@@ -150,6 +154,7 @@
                             <x-tables.repeater-table-th class="col-md-1" :title="__('Monthly <br> Amount')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th>
@@ -205,6 +210,14 @@
 
                                     </div>
                                 </td>
+								
+								
+								 <td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+								
                                 {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -255,6 +268,9 @@
                             {{-- <x-tables.repeater-table-th class="col-md-1" :title="__('Monthly <br> Amount')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th> --}}
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+							                        <x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
+
+
                             <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
                             @foreach($dates as $fullDate => $dateFormatted)
                             <x-tables.repeater-table-th class="col-md-1" :title="$dateFormatted . ' <br> ' . __('Amount')"></x-tables.repeater-table-th>
@@ -308,7 +324,12 @@
 
                                     </div>
                                 </td>
-
+								
+<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -376,6 +397,12 @@
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Conditional <br> Value B')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+							                            <x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
+
+
+
+
+
                             <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
                             {{-- <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th> --}}
                             {{-- <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
@@ -474,6 +501,13 @@
 
                                     </div>
                                 </td>
+								
+								<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+								
                                 {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -535,6 +569,7 @@
                         {{-- <x-tables.repeater-table-th class="col-md-1" :title="__('Monthly <br> Percentage')" :helperTitle="__('Please insert percentage excluding VAT')"></x-tables.repeater-table-th> --}}
                         <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                         <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+						                            <x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
                         <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
                         @foreach($dates as $fullDate => $dateFormatted)
                         <x-tables.repeater-table-th class="col-md-1" :title="$dateFormatted . ' <br> ' . __('%')"></x-tables.repeater-table-th>
@@ -618,6 +653,13 @@
 
                                 </div>
                             </td>
+							
+							<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+								
                             {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                             <td>
                                 <div class="d-flex align-items-center">
@@ -702,6 +744,7 @@
                     <x-tables.repeater-table-th class="col-md-2" :title="__('Conditional <br> Value B')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+					<x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th>
@@ -805,6 +848,14 @@
 
                             </div>
                         </td>
+						
+						
+								<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+						
                         <td>
                             <div class="d-flex align-items-center">
                                 <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -865,6 +916,7 @@
                     {{-- <x-tables.repeater-table-th class="col-md-1" :title="__('Monthly <br> Percentage')" :helperTitle="__('Please insert percentage excluding VAT')"></x-tables.repeater-table-th> --}}
                     <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+					<x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
                     @foreach($dates as $fullDate => $dateFormatted)
                     <x-tables.repeater-table-th class="col-md-1" :title="$dateFormatted . ' <br> ' . __('Amount')"></x-tables.repeater-table-th>
@@ -950,6 +1002,13 @@
 
                             </div>
                         </td>
+						
+						<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+								
                         {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                         <td>
                             <div class="d-flex align-items-center">
@@ -1028,6 +1087,7 @@
             <x-tables.repeater-table-th class="col-md-1" :title="__('Monthly Cost <br> Per Unit')" :helperTitle="__('Please insert Cost Per Unit excluding VAT')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+			<x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th>
@@ -1098,6 +1158,12 @@
 
                     </div>
                 </td>
+				<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+
                 <td>
                     <div class="d-flex align-items-center">
                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -1151,6 +1217,7 @@
             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> After')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+			<x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th>
@@ -1212,6 +1279,14 @@
 
                     </div>
                 </td>
+				
+				
+<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
+								
                 {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                 <td>
                     <div class="d-flex align-items-center">
@@ -1267,6 +1342,7 @@
             <x-tables.repeater-table-th class="col-md-1" :title="__('Amount')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-2" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+			 <x-tables.repeater-table-th class="col-md-1" :title="__('Is Deductible')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
             {{-- <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th> --}}
             {{-- <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
@@ -1324,6 +1400,12 @@
 
                     </div>
                 </td>
+				
+				<td>
+                                    <div class="d-flex align-items-center">
+                                        <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
+                                    </div>
+                                </td>
                 {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                 <td>
                     <div class="d-flex align-items-center">

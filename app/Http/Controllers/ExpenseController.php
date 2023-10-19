@@ -40,7 +40,7 @@ class ExpenseController
 		foreach((array)$request->get('tableIds') as $tableId){
 			// delete all first 
 			#::delete all
-
+			// dd($request->get($tableId));
 			$model->generateRelationDynamically($tableId)->delete();
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['relation_name']  = $tableId ;

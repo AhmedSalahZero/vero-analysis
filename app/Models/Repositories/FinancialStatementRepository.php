@@ -117,29 +117,31 @@ class FinancialStatementRepository implements IBaseRepository
 	}
 	public function paginate(Request $request): array
 	{
+		$start = microtime(true);
 
 		$filterData = $this->commonScope($request);
 
 		$allFilterDataCounter = $filterData->count();
 
 		$datePerPage = $filterData->skip(Request('start'))->take(Request('length'))->get()->each(function (FinancialStatement $financialStatement, $index) {
-			
-			// $financialStatement = $financialStatement->load(['incomeStatement.subItems','balanceSheet.subItems','cashFlowStatement.subItems']);
+			// dd($financialStatement);
 			$financialStatement->creator_name = $financialStatement->getCreatorName();
 			$financialStatement->cash_flow_statement_id = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->id : 0;
-			$financialStatement->balance_sheet_id = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->id : 0;
+			// $financialStatement->balance_sheet_id = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->id : 0;
 			$financialStatement->income_statement_id = $financialStatement->incomeStatement ? $financialStatement->incomeStatement->id : 0;
 			$financialStatement->created_at_formatted = formatDateFromString($financialStatement->created_at);
 			$financialStatement->updated_at_formatted = formatDateFromString($financialStatement->updated_at);
 			$financialStatement->order = $index + 1;
-			$financialStatement->can_view_income_statement_actual_report = $financialStatement->incomeStatement ? $financialStatement->incomeStatement->canViewActualReport() : false;
+			$financialStatement->can_view_income_statement_actual_report = $financialStatement->incomeStatement ? $financialStatement->incomeStatement->can_view_actual_report : false;
 
-			$financialStatement->can_view_balance_sheet_actual_report = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->canViewActualReport() : false;
+			// $financialStatement->can_view_balance_sheet_actual_report = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->canViewActualReport() : false;
 			
-			$financialStatement->can_view_cash_flow_statement_actual_report = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->canViewActualReport() : false;
+			$financialStatement->can_view_cash_flow_statement_actual_report = false;
+			// $financialStatement->can_view_cash_flow_statement_actual_report = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->canViewActualReport() : false;
 			$financialStatement->duration_type_select = $this->formatSelectFor($financialStatement->duration_type);
 			$financialStatement->can_edit_duration_type = $financialStatement->canEditDurationType();
 		});
+		// dd(microtime(true) - $start);
 		return [
 			'data' => $datePerPage,
 			"draw" => (int)Request('draw'),
@@ -184,7 +186,9 @@ class FinancialStatementRepository implements IBaseRepository
 	}
 	public function commonScope(Request $request): builder
 	{
-		return FinancialStatement::onlyCurrentCompany()->when($request->filled('search_input'), function (Builder $builder) use ($request) {
+		return FinancialStatement::onlyCurrentCompany()
+		->with(['incomeStatement','cashFlowStatement'])
+		->when($request->filled('search_input'), function (Builder $builder) use ($request) {
 
 			$builder
 				->where(function (Builder $builder) use ($request) {

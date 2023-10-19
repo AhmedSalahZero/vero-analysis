@@ -31,6 +31,16 @@ trait FinancialStatementAccessor
 	{
 		return $this->creator->name ?? __('N/A');
 	}
+	public function getStartDate(){
+		return $this->start_from;
+	}
+	public function getStartDateFormatted(){
+		return $this->getStartDate() ? Carbon::make($this->getStartDate())->format('d-m-Y') : null;
+	}
+	public function getDuration()
+	{
+		return $this->duration ;
+	}
 	public function getIntervalFormatted(): array
 	{
 		$method = 'addMonth';
@@ -59,10 +69,11 @@ trait FinancialStatementAccessor
 	public function canEditDurationType(): bool
 	{
 		$incomeStatement = $this->incomeStatement;
-		$balanceSheet = $this->balanceSheet;
-		$cashFlowStatement = $this->cashFlowStatement;
+		return  ! $incomeStatement->can_view_actual_report;
+		// $balanceSheet = $this->balanceSheet;
+		// $cashFlowStatement = $this->cashFlowStatement;
 		
-		$canNotEditDurationType = $incomeStatement->subItems->count() || $balanceSheet->subItems->count() || $cashFlowStatement->subItems->count();
-		return !$canNotEditDurationType;
+		// $canNotEditDurationType = ($incomeStatement&&$incomeStatement->subItems->count()) || ($balanceSheet&&$balanceSheet->subItems->count()) || ($cashFlowStatement&&$cashFlowStatement->subItems->count());
+		// return !$canNotEditDurationType;
 	}
 }

@@ -14,9 +14,9 @@ trait FinancialStatementMutator
 
 	public function storeMainSection(Request $request)
 	{
-
-
-		return FinancialStatement::create($request->except(['_token']));
+		$data = $request->except(['_token']) ;
+		$data = array_merge($data  , ['can_view_actual_report'=>0]);
+		return FinancialStatement::create($data);
 	}
 	public function storeMainItems(Request $request)
 	{

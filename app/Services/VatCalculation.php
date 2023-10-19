@@ -6,6 +6,7 @@ use App\SalesItems\DurationYears;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class VatCalculation
 {
@@ -16,7 +17,6 @@ class VatCalculation
 			$vatAdditions[$date] = $vatRate/100 * $value;
 		}
 		return $vatAdditions;
-		// dd($vatAdditions);
 	}
 	public function __execute(array $salesRevenues  , array $purchases  , array $expenses  , array $fixedAssets , string $studyStartDate , int $duration , bool $isPaidInstallment = false , array $paid_installments = []  , float $balance = 0  , string $vatType = 'credit_balance'  ,$result = 'view')
 	{
@@ -76,7 +76,7 @@ class VatCalculation
 		
         $expensesDates = array_keys($expenses[0]['values']??[]);
         foreach ($expenses as  $expenseArrWithVatRate) {
-            $expenseVatDeduction = $expenseArrWithVatRate['vat_rate'] ?? 0 ;
+			$expenseVatDeduction = $expenseArrWithVatRate['vat_rate'] ?? 0 ;
             $expense = $expenseArrWithVatRate['values'] ?? [];
             $vatDeductions = HArr::sumAtDates([$vatDeductions , $this->calculateVatAdditions($expense , $expenseVatDeduction) ],$expensesDates);
             $vat_taxes_statement['VAT Deduction'] = $vatDeductions;
@@ -84,7 +84,7 @@ class VatCalculation
 		
         $fixedAssetsDates = array_keys($fixedAssets[0]['values']??[]);
         foreach ($fixedAssets as  $fixedAssetArrWithVatRate) {
-            $fixedAssetVatDeduction = $fixedAssetArrWithVatRate['vat_rate'] ?? 0 ;
+			$fixedAssetVatDeduction = $fixedAssetArrWithVatRate['vat_rate'] ?? 0 ;
             $fixedAsset = $fixedAssetArrWithVatRate['values'] ?? [];
             $vatDeductions = HArr::sumAtDates([$vatDeductions , $this->calculateVatAdditions($fixedAsset , $fixedAssetVatDeduction) ],$fixedAssetsDates);
             $vat_taxes_statement['VAT Deduction'] = $vatDeductions;
@@ -96,12 +96,12 @@ class VatCalculation
         $beginning_balance = ($vat_beginning > 0) ? 0 : $vat_beginning;
         $payment = 0;
         $monthly_end_balance = 0;
-        $dates =array_keys(array_collapse($vat_taxes_statement));
+        $dates =array_keys(Arr::collapse($vat_taxes_statement));
         $dates = GeneralFunctions::sortingDatesAsValues($dates);
         
         $taxes_vat_month_count = 1 ;
 		$balanceDate = Carbon::make($studyStartDate)->subMonth()->format('d-m-Y');
-        $vat_start_date = $balanceDate ?? $studyStartDate ;
+        $vat_start_date =$balance   ? $balanceDate :  $studyStartDate ;
         $vat_start_date = date('d-m-Y',strtotime($vat_start_date));
     
         if(($vatType == 'credit_balance') && $isPaidInstallment ) {
@@ -115,17 +115,17 @@ class VatCalculation
  
         $accumulated_opening_balance_payment = 0;
         foreach ($dates as $month_num => $date) {
-            
-            $additions = ( $vat_taxes_statement['VAT Additions'][$date] ?? 0);
+			
+			$additions = ( $vat_taxes_statement['VAT Additions'][$date] ?? 0);
             $deduction = ($vat_taxes_statement['VAT Deduction'][$date]?? 0);
             if ($month_num < $taxes_vat_month_count) {
-                $vat_taxes_statement['VAT Payment'][$date] = 0;
+				$vat_taxes_statement['VAT Payment'][$date] = 0;
             }else{
-                $previous_date = $this->dateCalc($date,-$taxes_vat_month_count);
-             
+				$previous_date = $this->dateCalc($date,-$taxes_vat_month_count);
+				
                 $vat_taxes_statement['VAT Payment'][$date] = ($vat_taxes_statement['Monthly Due Amounts'][$previous_date]??0) < 0 ? 0 :($vat_taxes_statement['Monthly Due Amounts'][$previous_date]??0); 
             }
-             
+			
             $vat_taxes_statement['Opening Credit Balance Payment'][$date] = ($paid_installments[$date]?? 0);
             $payment   = ($vat_taxes_statement['VAT Payment'][$date]?? 0) ;
             $vat_taxes_statement['Monthly Debit Balance'][$date] =( $beginning_balance ?? 0);
@@ -313,7 +313,7 @@ class VatCalculation
     }
 	public static function intervalsDates($years_intervals_months, $startDate , $duration)
     {
-        $years = (new DurationYears)->years($startDate, 0, $duration, 'years_only');
+        $years = self::years($startDate, 0, $duration, 'years_only');
 
         //Creating Tree Arrays For Each Interval
         // $intervals_names = ['monthly'];
@@ -335,5 +335,43 @@ class VatCalculation
             }
         }
         return $years_intervals_months;
+    }
+	public static function years($financial_start_date,$start_from,$duration,$type=null)
+    {
+
+    	//  type = years to return years array for the target section destribution
+        $duration = $duration-1;
+    		$start_date = date("01-m-Y",strtotime(date("Y-m-d", strtotime($financial_start_date)) . " +$start_from  month"));
+	
+    		$start_month = date("m", strtotime($start_date));
+    		// $current_year = date("Y", strtotime($current_date));
+    		$end_date 	= date("Y-m-d",strtotime(date("Y-m-d", strtotime($start_date)) . " +$duration  month"));
+            // Years Between Start And End Date
+            $getRangeYears = range(gmdate('Y', strtotime($start_date)), gmdate('Y', strtotime($end_date)));
+    	if ($type == "years_only") {
+    	    return $getRangeYears ;
+        }
+    	elseif ($type == "years") {
+
+    		$duration_monthes_in_years = [];
+
+    		// If the month is in the duration of the sales plan ; the month value will be 1 else 0 
+    		foreach ($getRangeYears as $key => $year) {
+    			
+    			for ($i=1; $i <= 12 ; $i++) { 
+    				
+    				$current_date = "01-".$i."-".$year;
+    				$current_date= date("d-m-Y",strtotime($current_date));
+    			
+    				if (strtotime($current_date) >= strtotime($start_date) && strtotime($current_date) <= strtotime($end_date)) {
+    					$duration_monthes_in_years[$year][$current_date] = 1;
+    				}else{
+    					$duration_monthes_in_years[$year][$current_date] = 0;
+    				}
+    			}    			
+    		}
+    		return $duration_monthes_in_years;
+    	}
+    	
     }
 }

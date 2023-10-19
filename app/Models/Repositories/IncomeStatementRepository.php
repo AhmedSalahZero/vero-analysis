@@ -64,27 +64,23 @@ class IncomeStatementRepository implements IBaseRepository
 	{
 		$incomeStatement = new IncomeStatement();
 		$incomeStatement = $incomeStatement->storeReport($request);
-		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		$dates = array_keys($incomeStatement->getIntervalFormatted());
-		$request['dates'] = $dates;
-		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
-		$request['income_statement_id'] = $incomeStatement->id;
-
-		//		dd($request->all());
-
-		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
-		// dd($cashFlowStatementDataFormatted);
-		$request['financial_statement_able_id'] = $cashFlowStatement->id;
-		//$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id) : 0;
-		$request['value'] = $cashFlowStatementDataFormatted['value'];
-		$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
-		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
-		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
-		$request['valueMainRowWithoutSubItems'] = [];
+		//$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		//$dates = array_keys($incomeStatement->getIntervalFormatted());
+		//$request['dates'] = $dates;
+		//$request['cash_flow_statement_id'] = $cashFlowStatement->id;
+		//$request['income_statement_id'] = $incomeStatement->id;
+//
+		//$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
+		//$request['financial_statement_able_id'] = $cashFlowStatement->id;
+		//$request['value'] = $cashFlowStatementDataFormatted['value'];
+		//$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
+		//$request['totals'] = $cashFlowStatementDataFormatted['totals'];
+		//$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
+		//$request['valueMainRowWithoutSubItems'] = [];
 
 
 
-		$cashFlowStatement->storeReport($request);
+		//$cashFlowStatement->storeReport($request);
 		return $incomeStatement;
 	}
 
@@ -142,10 +138,7 @@ class IncomeStatementRepository implements IBaseRepository
 					$subItem->pivot->can_be_depreciation = true;
 				}
 				$isQuantity = $subItem->pivot && $subItem->pivot->is_quantity;
-				// if ($isQuantity) {
-				// 	dump(1);
-				// 	$quantitiesFor[removeStringFromEnd($subItem->pivot->sub_item_name, quantityIdentifier)] = convertJsonToArray($subItem->pivot->payload);
-				// }
+				
 
 				if (!$isQuantity) {
 					$quantityRow = $incomeStatementItem->getSubItems($incomeStatement->id, $subItemType, $subItem->pivot->sub_item_name . quantityIdentifier)->first();

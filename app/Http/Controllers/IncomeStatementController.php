@@ -119,7 +119,7 @@ class IncomeStatementController extends Controller
 				->updateExistingPivot($incomeStatementId, [
 					'sub_item_name' => html_entity_decode($request->get('new_sub_item_name')),
 					'financial_statement_able_item_id' => $request->get('sub_of_id') ?: $request->get('financial_statement_able_item_id'),
-					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization'),
+					'is_depreciation_or_amortization' => $request->get('is_depreciation_or_amortization',0),
 					'has_collection_policy' => $request->input('sub_items.0.collection_policy.has_collection_policy'),
 					'collection_policy_type' => $collectionPolicyType,
 					'collection_policy_value' => $collection_value,
@@ -137,20 +137,18 @@ class IncomeStatementController extends Controller
 		$incomeStatement->storeReport($request);
 
 
-		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		$dates = array_keys($incomeStatement->getIntervalFormatted());
-		$request['dates'] = $dates;
-		$request['cash_flow_statement_id'] = $cashFlowStatement->id;
-		$request['income_statement_id'] = $incomeStatement->id;
-		$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
-		//$request['financial_statement_able_id'] = $cashFlowStatement->id;
-		//$request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id) : 0;
-		$request['value'] = $cashFlowStatementDataFormatted['value'];
-		$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
-		$request['totals'] = $cashFlowStatementDataFormatted['totals'];
-		$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
-		$request['valueMainRowWithoutSubItems'] = [];
-		(new CashFlowStatementController(new CashFlowStatementRepository))->updateReport($company, $request);
+		//$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		//$dates = array_keys($incomeStatement->getIntervalFormatted());
+		//$request['dates'] = $dates;
+		//$request['cash_flow_statement_id'] = $cashFlowStatement->id;
+		//$request['income_statement_id'] = $incomeStatement->id;
+		//$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
+		//$request['value'] = $cashFlowStatementDataFormatted['value'];
+		//$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
+		//$request['totals'] = $cashFlowStatementDataFormatted['totals'];
+		//$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
+		//$request['valueMainRowWithoutSubItems'] = [];
+		//(new CashFlowStatementController(new CashFlowStatementRepository))->updateReport($company, $request);
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Updated Successfully')

@@ -106,8 +106,8 @@ class  CashFlowStatement extends Model implements IBaseModel, IHaveAllRelations,
 			'cashFlowStatement' => $options['cashFlowStatement'],
 			'interval' => getIntervalForSelect($options['cashFlowStatement']->getDurationType()),
 			'reportType' => $options['reportType'],
-			'dependsRelation' => getDependsMaps($options['financial_statement_able_id'], new static)
-
+			'dependsRelation' => getDependsMaps($options['financial_statement_able_id'], new static),
+			'cashes'=>$options['cashes']
 		];
 	}
 	public static function getPageTitle(): string

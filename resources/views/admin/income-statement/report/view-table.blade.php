@@ -294,6 +294,7 @@ $tableId = 'kt_table_1';
         let currentDelete = {}
         let deleteModalIsOpen = false
         let salesRevenueModalTdData = {}
+        let nonRepeatingModalTdData = {}
                     const vatRateMaps = JSON.parse(document.getElementById('vat-rates-maps').value);
 		
         //	const performance2 = {
@@ -599,6 +600,55 @@ $tableId = 'kt_table_1';
                                 const selector = '[name="' + name + '"]';
                                 $(selector).val('value');
                             }
+
+                        })
+						
+						 $(document).on('change', '.can-trigger-non-repeating-modal', function() {
+							return false ;
+                            let quantityOrPrice = $(this).val()
+                            let currentIndex = $(this).closest('.how-many-item').attr('data-index')
+                            currentIndex = currentIndex == undefined ? 0 : currentIndex
+                            let inEditMode = +$(this).attr('data-in-edit-mode')
+                            let subItemName = $(this).attr('data-sub-item-name')
+                            $(this).closest('.non-repeating-section').find('[data-index]').attr('data-index', currentIndex)
+
+                            let currentCheckedItem = $(this).parent().parent().find('input[name="sub_items[' + currentIndex + '][percentage_or_fixed]"]:checked')
+                            if (currentCheckedItem.length >= 1) {
+                                let firstCheckboxValue = 'value'
+								
+                                let firstCheckboxTr = nonRepeatingModalTdData[inEditMode][subItemName][firstCheckboxValue];
+
+                                let checkedItems = [firstCheckboxValue]
+                                let autocaulationItemValue = null;
+                              
+                                const onlyValueChecked = currentCheckedItem.length == 1;
+                                if (onlyValueChecked) //only value allowed
+                                {
+                                    thirdCheckboxTr = '';
+                                }
+                                let trs = firstCheckboxTr 
+								
+                                let nonRepeatingSection = $('#modal-for-non-repeating'+currentIndex)
+                                trs = trs.replaceAll('sub_items[0]', 'sub_items[' + currentIndex + ']')
+                                trs = trs.replaceAll('data-index="0"', 'data-index="' + currentIndex + '"')
+                                trs = trs.replaceAll('modal-for-non-repeating-0', 'modal-for-non-repeating-' + currentIndex)
+
+                                nonRepeatingSection.find('tbody.append-non-repeating-modal-table-body').empty().append(trs)
+                                if (!onlyValueChecked) {
+
+                                    nonRepeatingSection.find('tbody.append-non-repeating-modal-table-body tr:last-of-type input').prop('readonly', true)
+                                }
+
+                                nonRepeatingSection.find('.modal-for-non-repeating[data-index="' + currentIndex + '"]').attr('id', 'modal-for-non-repeating-' + currentIndex)
+                                nonRepeatingSection.find('.modal-for-non-repeating[data-index="' + currentIndex + '"]').attr('data-id', 'modal-for-non-repeating-' + currentIndex)
+								
+                                // to update total 
+                                $('.append-non-repeating-modal-table-body tr td:nth-of-type(2) input.hidden-for-popup:first-of-type').trigger('blur')
+
+                                //$('.hidden-for-popup').trigger('blur')
+                                $('.modal-for-non-repeating').addClass('d-none').addClass('fade').removeClass('d-block')
+                                $('.modal-for-non-repeating[data-index="' + currentIndex + '"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
+                            } 
 
                         })
 
@@ -993,7 +1043,7 @@ $tableId = 'kt_table_1';
                                 var canBePercentage = formDataObject['sub_items[' + i + '][can_be_percentage_or_fixed]'];
                                 var isFinancialExpense = formDataObject['sub_items[' + i + '][is_financial_expense]'] == '1';
                                 var isFinancialIncome = formDataObject['sub_items[' + i + '][is_financial_income]'] == '1';
-
+								
                                 var isQuantity = 0;
                                 var percentageOrFixed = formDataObject['sub_items[' + i + '][percentage_or_fixed]'];
                                 var isPercentage = percentageOrFixed == 'percentage';
@@ -1007,7 +1057,9 @@ $tableId = 'kt_table_1';
                                 var valuesOfDates = [];
                                 if (isRepeatingFixed) {
                                     tdValue = formDataObject['sub_items[' + i + '][repeating_fixed_value]'];
+									tdValue = isFinancialExpense && tdValue >  0 ? tdValue * -1 : tdValue ;
                                     value = tdValue;
+									
                                     dates.forEach((date) => {
                                         valuesOfDates.push({
                                             date
@@ -1076,8 +1128,8 @@ $tableId = 'kt_table_1';
                                         }
                                         value = currentValue;
                                         tdValue = currentValue
-                                        if (isFinancialExpense) {
-
+                                        if (isFinancialExpense && value>0) {
+											value = value *-1;
                                         }
                                         valuesOfDates.push({
                                             date
@@ -1972,7 +2024,7 @@ $tableId = 'kt_table_1';
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap ">
 																	<label >{{ __('Non-Repeating Amount') }}</label>
 															
-															<input ${nonRepeatingFixedisChecked} class="can_be_percentage_or_fixed_class non-repeating-fixed" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+															<input data-sub-item-name="${data.pivot.sub_item_name}" data-in-edit-mode="1" ${nonRepeatingFixedisChecked} class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
 															</div>
 															</div>
 															<div class="form-group custom-divs-class">
@@ -2137,16 +2189,16 @@ $tableId = 'kt_table_1';
                                                             checkedDepreciation = ' checked ';
                                                         }
                                                         Depreciation = `
-								<label>{{ __('Is Depreciation Or Amortization ? ') }}</label>
-									
-									<input ${checkedDepreciation} class="" type="checkbox" value="1" name="is_depreciation_or_amortization"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
+																<label>{{ __('Is Depreciation Or Amortization ? ') }}</label>
+										
+															<input ${checkedDepreciation} class="" type="checkbox" value="1" name="is_depreciation_or_amortization"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
                                                     }
 
                                                     $(row).append(
                                                         `
                             
                             
-									<div class="modal fade edit-sub-modal-class" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name) }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+										<div class="modal fade edit-sub-modal-class" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name) }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 											<div class="modal-dialog" role="document">
 												<div class="modal-content modal-xl">
 												<div class="modal-header">
@@ -2180,7 +2232,7 @@ $tableId = 'kt_table_1';
 															
 														${Depreciation}
 														</div>
-														${data.pivot.financial_statement_able_item_id == domElements.salesRevenueId ? getSalesRevenueModal(true ,data.pivot,data.pivot.financial_statement_able_item_id) : ''}
+														${data.pivot.financial_statement_able_item_id == domElements.salesRevenueId ? getSalesRevenueModal(true ,data.pivot,data.pivot.financial_statement_able_item_id) : getNonRepeatingModal(true ,data.pivot,data.pivot.financial_statement_able_item_id)}
 														</div>
 														
 														${has_percentage_or_fixed_sub_items}
@@ -2401,7 +2453,7 @@ $tableId = 'kt_table_1';
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap">
 																	<label >{{ __('Non-Repeating Amount') }}</label>
 															
-															<input class="can_be_percentage_or_fixed_class non-repeating-fixed" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+															<input data-sub-item-name="new" data-in-edit-mode="0"  class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
 															</div>
 															</div>
 															<div class="form-group custom-divs-class">
@@ -2544,7 +2596,7 @@ $tableId = 'kt_table_1';
                                                                 `
 																` + has_percentage_or_fixed_sub_items + `
 															
-															${data.id == domElements.salesRevenueId ? getSalesRevenueModal(false , null , data.id):''}
+															${data.id == domElements.salesRevenueId ? getSalesRevenueModal(false , null , data.id):getNonRepeatingModal(false , null , data.id)}
 															${data.id == domElements.salesRevenueId ? getVatRate(false , null , data) : '' }
 															${data.id == domElements.salesRevenueId ? getCollectionPolicyHtml(false,null,data.id):''}
 															</div> ` + '' + `
@@ -2554,44 +2606,44 @@ $tableId = 'kt_table_1';
 
                                                         $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (data.id)).attr('data-model-id', data.id).attr('data-model-name', '{{ $modelName }}')
                                                             .append(`
-                    <div class="modal fade add-sub-item-modal" id="add-sub-modal${data.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content modal-xl">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Add Sub Item For') }} ${data.name} </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form  data-financial-statement-able-item-id="${data.id}" id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
-            
-            <label class="label ">{{ __('How Many Items ?') }}</label>
-														<input type="hidden" name="in_add_or_edit_modal" value="1">
-			
-			<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
-            <input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
-            <input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
-            <input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
+																								<div class="modal fade add-sub-item-modal" id="add-sub-modal${data.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+																			<div class="modal-dialog" role="document">
+																				<div class="modal-content modal-xl">
+																				<div class="modal-header">
+																					<h5 class="modal-title" id="exampleModalLongTitle">{{ __('Add Sub Item For') }} ${data.name} </h5>
+																					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																					<span aria-hidden="true">&times;</span>
+																					</button>
+																				</div>
+																				<div class="modal-body">
+																					<form  data-financial-statement-able-item-id="${data.id}" id="add-sub-item-form${data.id}" class="submit-sub-item" action="{{ route('admin.store.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
+																						
+																						<label class="label ">{{ __('How Many Items ?') }}</label>
+																																	<input type="hidden" name="in_add_or_edit_modal" value="1">
+																						
+																						<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
+																						<input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
+																						<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
+																						<input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
 
-            <input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" name="how_many_items" type="number" value="1">
-          
-           ${nameAndDepreciationIfExist}
-															${data.id != domElements.salesRevenueId ? getVatRate(false , null , data) : '' }
-		   ${getFinancialIncomeOrExpenseCheckBoxes(false ,null, data.id)}
-		  ${data.id != domElements.salesRevenueId ? getCollectionPolicyHtml(false,null,data.id) :'' }
-		</div>
-        </form>
-      </div>
-      <div class="modal-footer" style="border-top:0 !important">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
-        <button type="button" class="btn btn-primary save-sub-item" data-redirect-to='' data-id="${data.id}">{{ __('Save') }}</button>
-      </div>
-    </div>
-  </div>
-    </div>
+																						<input data-id="${data.id}" class="form-control how-many-class only-greater-than-zero-allowed" name="how_many_items" type="number" value="1">
+																					
+																					${nameAndDepreciationIfExist}
+																																		${data.id != domElements.salesRevenueId ? getVatRate(false , null , data) : '' }
+																					${getFinancialIncomeOrExpenseCheckBoxes(false ,null, data.id)}
+																					${data.id != domElements.salesRevenueId ? getCollectionPolicyHtml(false,null,data.id) :'' }
+																					</div>
+																					</form>
+																				</div>
+																				<div class="modal-footer" style="border-top:0 !important">
+																					<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')  }}</button>
+																					<button type="button" class="btn btn-primary save-sub-item" data-redirect-to='' data-id="${data.id}">{{ __('Save') }}</button>
+																				</div>
+																				</div>
+																			</div>
+																				</div>
 
-                    `)
+																								`)
 
                                                     }
 
@@ -3787,7 +3839,7 @@ $tableId = 'kt_table_1';
 
                 function getVatRate(editModel, pivot, data) {
 					if(vars.subItemType != 'forecast'){
-						return 0;
+						return '';
 					}
 
                     var incomeStatementId = data.isSubItem ? data.pivot.financial_statement_able_id : $('#model-id').val();
@@ -3935,6 +3987,101 @@ $tableId = 'kt_table_1';
 				</tr>
 			</thead>
 			<tbody class="append-sales-revenue-modal-table-body" data-id="${id}" data-index="0">
+				
+			</tbody>
+		</table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary close-inner-modal" >Close</button>
+        <button type="button" class="btn btn-primary close-inner-modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+					</div>
+					
+					
+					
+					
+					`;
+                }
+				
+				
+				
+				
+				   function getNonRepeatingModal(editModal, pivot = null, id) {
+					return '';
+                    let datesFormatted = "{{ json_encode(($incomeStatement->getIntervalFormatted())) }}"
+                    let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
+                    let subItemName = editModal && pivot && pivot.payload ? pivot.sub_item_name : 'new';
+                    datesFormatted = JSON.parse(datesFormatted.replace(/(&quot\;)/g, "\""))
+                    let thsForHeader = '<th class="text-white"> {{ __("Item") }}  </th>';
+                    let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
+                    let tdForBodyValue = '<td>{{ __("Value") }}</td>';
+
+                    for (date of dates) {
+                      
+                        var valueAtDate = editModal && pivotFormatted[date] ? pivotFormatted[date] : 0;
+                        valueAtDate = parseFloat(valueAtDate)
+                        thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
+
+                        tdForBodyValue += `<td class="" data-type="value"  data-date="${date}">
+							<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
+							<input style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
+							<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
+							
+						  </td> `
+                     
+                    }
+                    thsForHeader += "<th class='text-white text-center'>{{ __('Total') }}</th>";
+
+
+                    
+
+
+
+                    tdForBodyValue += `<td class="" data-type="value"> <input readonly type="text" class="form-control pr-0 total-for-value" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
+					<i style="visibility:hidden" class="fa fa-ellipsis-h " ></i>
+					
+					</td>`
+                    tdForBodyValue = '<tr data-number-format="0" class="value" data-type="value">' + tdForBodyValue + '</tr>'
+                    editModal = editModal ? 1 : 0;
+                    if (!nonRepeatingModalTdData[editModal]) {
+                        nonRepeatingModalTdData[editModal] = {
+                            [subItemName]: {
+                                 value: tdForBodyValue
+                            }
+                        }
+                    } else if (!nonRepeatingModalTdData[editModal][subItemName]) {
+                        nonRepeatingModalTdData[editModal][subItemName] = {
+                    
+                             value: tdForBodyValue
+                        }
+                    }
+
+
+                    return `
+					<div class="non-repeating-section ">
+						
+						
+						<div id="modal-for-non-repeating-0" class="modal fade modal-for-non-repeating" data-index="0"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl "  role="document">
+    <div class="modal-content" style="overflow-x:scroll">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Values And Quantities</h5>
+        <button type="button" class="close-inner-modal close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped-  table-hover table-checkable position-relative dataTable no-footer dtr-inline">
+			<thead>
+				<tr class="header-tr">
+					${thsForHeader}
+				</tr>
+			</thead>
+			<tbody class="append-none-repeating-modal-table-body" data-id="${id}" data-index="0">
 				
 			</tbody>
 		</table>
