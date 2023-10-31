@@ -95,6 +95,7 @@ Route::middleware([])->group(function () {
 			});
 			Route::get('toolTipSectionsFields/{id}', 'ToolTipDataController@sectionFields')->name('section.fields');
 			Route::get('logs','LogController@show')->name('admin.show.logs');
+			Route::get('logs/{user}','LogController@showDetail')->name('admin.show.logs.detail');
 			############ Client View ############
 			Route::get('/', 'HomeController@index')->name('home');
 			
@@ -199,7 +200,7 @@ Route::middleware([])->group(function () {
 				// excel for financial statement 
 				Route::get('download-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'downloadExcelTemplateForActual'])->name('admin.export.excel.template');
 				Route::any('salesGatheringImport/last-upload-failed/{model}', 'SalesGatheringTestController@lastUploadFailed')->name('last.upload.failed');
-				
+				// Route::delete('delete-from-gathering','SalesGatheringTestController@deleteFromTo')->name('delete.export.from.to');
 				Route::post('import-excel-template-for-actual/{incomeStatement}',[FinancialStatementController::class , 'importExcelTemplateForActual'])->name('admin.import.excel.template');
 				Route::get('update-financial-statement-date', [FinancialStatementController::class, 'updateDate'])->name('admin.update.financial.statement.date');
 				Route::delete('update-financial-statement-duration-type', [FinancialStatementController::class, 'updateDurationType'])->name('admin.update.financial.statement.duration.type');
@@ -286,7 +287,7 @@ Route::middleware([])->group(function () {
 				Route::resource('salesGathering', SalesGatheringController::class);
 				
 				Route::get('uploading/{model}','SalesGatheringController@index')->name('view.uploading');
-
+				
 				############  (TRUNCATE) ############
 				Route::get('Truncate/{model}', 'DeletingClass@truncate')->name('truncate');
 				Route::delete('DeleteMultipleRows/{model}', 'DeletingClass@multipleRowsDeleting')->name('multipleRowsDelete');
@@ -299,6 +300,15 @@ Route::middleware([])->group(function () {
 					Route::get('/EndBalanceAnalysis/View', 'Analysis\Inventory\EndBalanceAnalysisReport@index')->name('end.balance.analysis');
 					Route::post('/EndBalanceAnalysis/Result', 'Analysis\Inventory\EndBalanceAnalysisReport@result')->name('end.balance.analysis.result');
 				});
+				Route::get('customer-again-analysis', 'CustomerAgingController@index')->name('view.customer.aging.analysis');
+				Route::post('customer-again-analysis', 'CustomerAgingController@result')->name('result.customer.aging.analysis');
+				Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
+				Route::get('money-received/create', 'MoneyReceivedController@create')->name('create.money.receive');
+				Route::get('money-received/get-invoice-numbers/{customer_name}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
+				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
+				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
+				Route::get('/create-item/{model}', 'SalesGatheringTestController@createModel')->name('create.sales.form');
+				Route::post('/create-item/{model}', 'SalesGatheringTestController@storeModel')->name('admin.store.analysis');
 				Route::prefix('/SalesGathering')->group(function () {
 					Route::get('SalesTrendAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.trend.analysis');
 					Route::get('SalesExportAnalysis', 'AnalysisReports@exportAnalysisReports')->name('sales.export.analysis');
@@ -430,6 +440,7 @@ Route::middleware([])->group(function () {
 					
 					
 					Route::get('export-analysis-reports/{firstColumn}/{secondColumn}','Analysis\SalesGathering\ExportAgainstAnalysisReport@index')->name('view.export.against.report');
+					// Route::get('customer-aging-reports/','CustomerAgingController@index')->name('view.customer.aging.analysis');
 					Route::post('export-analysis-reports','Analysis\SalesGathering\ExportAgainstAnalysisReport@result')->name('result.export.against.report');
 
 					// Customers Nature

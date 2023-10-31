@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CachingCompany;
 use App\Models\Company;
+use Artisan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -17,17 +18,23 @@ class DeleteMultiRowsFromCaching extends Controller
      */
     public function __invoke(Company $company , Request $request,string $modelName)
     {
-         $selectedRows = $request->rows ;
-   if($selectedRows && count($selectedRows))
-   {
-       $totalRemoveItems = 0 ;
-    //    $cachesItems = [];
-       $caches = CachingCompany::where('company_id' , $company->id )->where('model',$modelName)->get();
-       $caches->each(function($cache) use($selectedRows) {
-           $reCache = false ; 
-           $cachesGroup = Cache::get($cache->key_name) ?: [] ;
-           foreach($cachesGroup as $index=>$cachesElement){
-               $found = in_array($cachesElement['id'] , $selectedRows);
+         $selectedRows = (array)$request->rows ;
+		 $dateFrom = $request->get('delete_date_from');
+		 $dateTo = $request->get('delete_date_to');
+		 if($selectedRows && count($selectedRows) || ($dateFrom && $dateTo))
+		 {
+			 $caches = CachingCompany::where('company_id' , $company->id )->where('model',$modelName)->get();
+			
+			 $caches->each(function($cache) use($selectedRows,$dateFrom,$dateTo) {
+				 $reCache = false ; 
+				 $cachesGroup = Cache::get($cache->key_name) ?: [] ;
+				 foreach($cachesGroup as $index=>$cachesElement){
+					 $found = dateIsBetween($cachesElement['date'] , $dateFrom , $dateTo);
+					 if(count($selectedRows)){
+						 $found = in_array($cachesElement['id'] , $selectedRows);
+						}else{
+							$found = dateIsBetween($cachesElement['date'] , $dateFrom , $dateTo);
+						}
                if($found)
                {
                    $reCache = true ;
@@ -38,10 +45,16 @@ class DeleteMultiRowsFromCaching extends Controller
            {
                Cache::forget($cache->key_name);
                Cache::forever($cache->key_name , $cachesGroup );
-               
            }
            
        });
+	  
+	   
+	   if($request->ajax()){
+		return response()->json([
+			'status'=>true ,
+		]);
+	   }
        return redirect()->back()->with('success',__('Items Has Been Removed Successfully'));
 
    }

@@ -44,20 +44,38 @@ class ExportTable extends Controller
 		$request['company_id'] = $company->id;
 		$fields = [];
 		$fields = $request['fields'];
-
 		count(array_intersect($fields, ['quantity_discount', 'cash_discount', 'special_discount', 'other_discounts'])) == 0
 			?: $fields[count($fields)] = 'sales_value';
 		$fields[count($fields)] = 'net_sales_value';
+		if('CustomerDueCollectionAnalysis' ==getLastSegmentInRequest()){
+			$fields[] = 'invoice_status';
+			$fields[] = 'collected_amount';
+			$fields[] = 'net_balance';
+			$fields[] = 'invoice_date';
+			$fields[] = 'invoice_number';
+			$fields[] = 'customer_name';
+			$fields[] = 'customer_amount';
+		}
 		$request['fields'] = $fields;
 
 		$modelExportableFields = CustomizedFieldsExportation::where('model_name', $model)
 			->where('company_id', $company->id)->first();
-
-		$modelExportableFields !== null ? $modelExportableFields->update($request->all())
+			
+			
+			$modelExportableFields !== null ? $modelExportableFields->update($request->all())
 			: CustomizedFieldsExportation::create($request->all());
-
-		$columnsWithViewingNames = $this->columnsFiltration($model, $company, 'selected_fields', $request->fields);
-		session()->put('redirectTo', route('salesGatheringImport', ['company' => $company->id,'model'=>$modelName]));
+			
+			$columnsWithViewingNames = $this->columnsFiltration($model, $company, 'selected_fields', $request->fields);
+			if(isset($columnsWithViewingNames['invoice_status'])){
+				unset($columnsWithViewingNames['invoice_status']);
+			}
+			if(isset($columnsWithViewingNames['collected_amount'])){
+				unset($columnsWithViewingNames['collected_amount']);
+			}
+			if(isset($columnsWithViewingNames['net_balance'])){
+				unset($columnsWithViewingNames['net_balance']);
+			}
+			session()->put('redirectTo', route('salesGatheringImport', ['company' => $company->id,'model'=>$modelName]));
 
 		return (new HeadersExport($company->id, $columnsWithViewingNames))->download($model . 'Fields.xlsx');
 	}
@@ -65,31 +83,32 @@ class ExportTable extends Controller
 	/**
 	 * Filtering Fields and returns Exportable Fields
 	 */
-	public function columnsFiltrationForFirstTime($columns)
-	{
-		// Columns That Will Be Excluded
-		$columnsToBeExcluded = [
-			"id",
-			"company_id",
-			"updated_by",
-			"created_by",
-			"created_at",
-			"updated_at",
-			"deleted_at"
-		];
+	// public function columnsFiltrationForFirstTime($columns)
+	// {
+	// 	// Columns That Will Be Excluded
+	// 	$columnsToBeExcluded = [
+	// 		"id",
+	// 		"company_id",
+	// 		'invoice_status',
+	// 		"updated_by",
+	// 		"created_by",
+	// 		"created_at",
+	// 		"updated_at",
+	// 		"deleted_at"
+	// 	];
 
-		// Looping Through Columns Needs To Be Excluded
-		foreach ($columnsToBeExcluded as $columnToBeExcluded) {
-			// Check if the Current column included in the exclusion array To Be unset from the main Array Of Columns
-			if (false !== $found = array_search($columnToBeExcluded, $columns)) {
-				unset($columns[$found]);
-			}
-		}
-		$columnsWithViewingNames = $this->DisplayFieldsNames($columns);
+	// 	// Looping Through Columns Needs To Be Excluded
+	// 	foreach ($columnsToBeExcluded as $columnToBeExcluded) {
+	// 		// Check if the Current column included in the exclusion array To Be unset from the main Array Of Columns
+	// 		if (false !== $found = array_search($columnToBeExcluded, $columns)) {
+	// 			unset($columns[$found]);
+	// 		}
+	// 	}
+	// 	$columnsWithViewingNames = $this->DisplayFieldsNames($columns);
 
 
-		return $columnsWithViewingNames;
-	}
+	// 	return $columnsWithViewingNames;
+	// }
 	public function columnsFiltration($model_name, $company, $view, $selected_fields)
 	{
 		if ($view == 'selected_fields') {

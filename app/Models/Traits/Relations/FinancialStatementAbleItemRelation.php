@@ -32,7 +32,7 @@ trait FinancialStatementAbleItemRelation
 			'financial_statement_able_id'
 		)
 		->orderBy('ordered','asc')
-			->withPivot(['sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'has_collection_policy', 'collection_policy_type', 'collection_policy_value', 'is_quantity', 'can_be_quantity', 'is_value_quantity_price','actual_dates', 'percentage_or_fixed', 'can_be_percentage_or_fixed', 'is_percentage_of', 'is_cost_of_unit_of', 'repeating_fixed_value', 'percentage_value', 'cost_of_unit_value', 'is_financial_expense', 'is_financial_income','is_deductible','vat_rate']);
+			->withPivot(['id','sub_item_name', 'sub_item_type', 'created_from', 'payload', 'is_depreciation_or_amortization', 'has_collection_policy', 'collection_policy_type', 'collection_policy_value', 'is_quantity', 'can_be_quantity', 'is_value_quantity_price','actual_dates', 'percentage_or_fixed', 'can_be_percentage_or_fixed', 'is_percentage_of', 'is_cost_of_unit_of', 'repeating_fixed_value', 'percentage_value', 'cost_of_unit_value', 'is_financial_expense', 'is_financial_income','is_deductible','vat_rate']);
 	}
 	public function withSubItemsFor(int $financialStatementAbleId, string $subItemType = '', string $subItemName = ''): BelongsToMany
 	{

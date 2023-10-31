@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <tr class="table-active text-center">
-                    <th>{{__("Select To Delete")}} </th>
+                    <th class="select-to-delete">{{__("Select To Delete")}} </th>
                     @foreach ($viewing_names as $name)
                         <th>{{ __($name) }}</th>
                     @endforeach

@@ -90,9 +90,12 @@
                                 @foreach ($columnsWithViewingNames as $fieldName => $displayName)
                                 @if(!hideExportField($fieldName , $columnsWithViewingNames))
                                 <?php
-                                            $status_disanbeled_fields = $fieldName == 'net_sales_value' || 
+                                            $status_disanbeled_fields = $fieldName == 'net_sales_value' ||  $fieldName == 'invoice_status' || 
                                                             ($fieldName == 'sales_value'  && count(array_intersect($selected_fields, ['quantity_discount','cash_discount','special_discount','other_discounts'])) == 0 );
-                                        ?>
+															$hiddenFields = ['invoice_status','collected_amount','net_balance'];
+										?>
+										
+										@if(!in_array($fieldName,$hiddenFields))
                                 <div class="col-lg-6">
                                     <label class="kt-option @if ($status_disanbeled_fields) not_allowed_curser @endif">
                                         <span class="kt-option__control ">
@@ -101,7 +104,7 @@
                                                         @if ($status_disanbeled_fields)
                                                             kt-checkbox--disabled
                                                         @endif">
-                                                <input type="checkbox" name="fields[]" value="{{$fieldName}}" @if ($fieldName !='net_sales_value' ) class="fields" @endif @if (((false !==$found=array_search($fieldName,$selected_fields)) || $fieldName=='net_sales_value' ) ) checked @endif @if ($status_disanbeled_fields) disabled="disabled" style="cursor: not-allowed;" @endif id="{{$fieldName}}">
+                                                <input type="checkbox" name="fields[]" value="{{$fieldName}}" @if ($fieldName !='net_sales_value' ) class="fields" @endif @if (((false !==$found=array_search($fieldName,$selected_fields)) || $fieldName=='net_sales_value'||$fieldName=='invoice_status'  ) ) checked @endif @if ($status_disanbeled_fields) disabled="disabled" style="cursor: not-allowed;" @endif id="{{$fieldName}}">
                                                 <span></span>
                                             </label>
 
@@ -136,6 +139,7 @@
                                         </span>
                                     </label>
                                 </div>
+								@endif
                                 @endif
 
                                 @endforeach

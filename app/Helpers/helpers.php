@@ -52,6 +52,12 @@ const uploadExportAnalysisData ='upload export analysis data';
 const exportExportAnalysisData ='export export analysis data';
 const deleteExportAnalysisData ='delete export analysis data';
 const viewExportAnalysisData ='view export analysis data';
+
+const uploadCustomerDueCollectionAnalysisData ='upload customer due collection analysis data';
+const exportCustomerDueCollectionAnalysisData ='export customer due collection analysis data';
+const deleteCustomerDueCollectionAnalysisData ='delete customer due collection analysis data';
+const viewCustomerDueCollectionAnalysisData ='view customer due collection analysis data';
+
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
 {
@@ -350,11 +356,19 @@ function getExportableFields($companyId = null): array
 
 	return [];
 }
+
 function getExportableFieldsKeysAsValues($companyId)
 {
 	return array_keys(getExportableFields($companyId)) ?? [];
 }
-
+function getExportableFieldsForModel($companyId ,$modelName): array
+{
+	$company  = Company::find($companyId ?: Request()->segment(2));
+	if ($company) {
+		return (new ExportTable)->customizedTableField($company, $modelName, 'selected_fields');
+	}
+	return [];
+}
 function canViewCustomersDashboard(array $exportables)
 {
 	return in_array('Customer Name', $exportables) || in_array('Customer Code', $exportables);
@@ -1609,15 +1623,13 @@ function getModelNamespace()
 function generateDatesBetweenTwoDates(Carbon $start_date, Carbon $end_date, $method = 'addMonth', $format = 'Y-m-d', $indexedArray = true, $indexFormat = 'Y-m-d')
 {
 	$dates = [];
-
-	for ($date = $start_date->copy(); $date->lte($end_date); $date->{$method}()) {
+	for ($date = $start_date->copy(); $date->lte($end_date); $date->{$method}()->setTime(0,0)) {
 		if ($indexedArray) {
 			$dates[] = $date->format($format);
 		} else {
 			$dates[$date->format($indexFormat)] = $date->format($format);
 		}
 	}
-
 	return $dates;
 }
 function formatDateFromString(string $date): string
@@ -2860,6 +2872,23 @@ function getPermissions():array
 		[
 			'name'=>deleteExportAnalysisData
 		],
+		
+		[
+			'name'=>viewCustomerDueCollectionAnalysisData
+		],
+		[
+			'name'=>uploadCustomerDueCollectionAnalysisData
+		],
+		[
+			'name'=>exportCustomerDueCollectionAnalysisData
+		],
+		
+		[
+			'name'=>deleteCustomerDueCollectionAnalysisData
+		],
+		
+		
+		
 		[
 			'name'=>'view financial statement',
 		],
@@ -2936,6 +2965,16 @@ function getPermissions():array
 		[
 			'name'=>'delete financial statement',
 		],
+		[
+			'name'=>'view customer aging'
+		],
+		[
+			'name'=>'view weekly cash flow report'
+		],
+		[
+			'name'=>'view money received'
+		],
+		
 	];
 
 	foreach (Arr::except(reportNames(), ['product items', 'products / service'])  as $reportName) {
@@ -3668,6 +3707,17 @@ function getUploadParamsFromType(string $type = null ):array
 			'exportPermissionName'=>exportExportAnalysisData,// important:add this also into permission function names[getPermissions()]
 			'deletePermissionName'=>deleteExportAnalysisData,// important:add this also into permission function names[getPermissions()]
 			'importHeaderText'=>__('Export Analysis Import'),
+		],
+		'CustomerDueCollectionAnalysis'=>[
+			'fullModel'=>'\App\Models\CustomerDueCollectionAnalysis',
+			'dbName'=>'customer_due_collection_analysis',
+			'typePrefixName'=>__('Customer Due Collection'),
+			'orderByDateField'=>'invoice_date',
+			'viewPermissionName'=>viewCustomerDueCollectionAnalysisData,
+			'uploadPermissionName'=>uploadCustomerDueCollectionAnalysisData, // important:add this also into permission function names [getPermissions()]
+			'exportPermissionName'=>exportCustomerDueCollectionAnalysisData,// important:add this also into permission function names[getPermissions()]
+			'deletePermissionName'=>deleteCustomerDueCollectionAnalysisData,// important:add this also into permission function names[getPermissions()]
+			'importHeaderText'=>__('Customers Due Collection Analysis Import'),
 		]
 	] ;
 	if($type){
@@ -3739,4 +3789,212 @@ function getTotalOf(array $items):array {
 		}
 	}
 	return $total ;
+}
+function dateIsBetween(string $date , string $dateFrom , string $dateTo)
+{
+	return Carbon::make($date)->isBetween($dateFrom  , $dateTo);
+}
+function getSegmentBeforeLast()
+{
+	return Request()->segments()[count(Request()->segments()) - 2 ];
+}
+function isValidDateFormat(string $date , string $format){
+	$d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) === $date;
+}
+function getInvoiceDayIntervals()
+{
+	return [
+		'1-7',
+		'8-15',
+		'16-30',
+		'31-45',
+		'46-60',
+		'61-90',
+		'91-120',
+		'121-150'
+	];
+}
+// function getDatesFromTwoIndexes(string $dayInterval,string $date , string $direction = 'coming' ):array{
+	
+
+// 	$date= Carbon::make($date);
+// 	$functionName = $direction == 'past'  ?  'subDays' : 'addDays';
+// 	$firstDay = explode('-',$dayInterval)[0];
+// 	$secondDay = explode('-',$dayInterval)[1];
+// 	$additionalDay = getAdditionalDates()[$dayInterval]?? 0;
+// 	return [
+// 		$date->$functionName($firstDay+$additionalDay)->format('d-m-Y'),	
+// 		$date->$functionName($secondDay+$additionalDay)->format('d-m-Y'),	
+// 	];
+// }
+
+function getWeeksForCurrentDate()
+{
+	$year = date_create('today')->format('Y');
+//remove comment next line for test's
+//$year = 2001;
+
+$dtStart = date_create('2 jan '.$year)->modify('last Monday');
+$dtEnd = date_create('last monday of Dec '.$year);
+
+for($weeks = [];$dtStart <= $dtEnd;$dtStart->modify('+1 week')){
+  $key = $dtStart->format('W-Y');
+  $from = $dtStart->format('d/m/Y');
+  $to = (clone $dtStart)->modify('+6 Days')->format('d/m/Y');
+  $weeks[$key] = $from.' - '.$to;
+}
+return $weeks ;
+}
+function getWeekNumberBetweenDates(int $firstDateYear , Carbon $secondDate)
+{
+	
+		$week = 1 ;
+		$dates = generateDatesBetweenTwoDates(Carbon::make('01-01-'.$firstDateYear),$secondDate,'addDay');
+		$weeks = [];
+		$day  =1 ;
+		
+		foreach($dates as $index =>$dateAsString){
+			if(Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01'){
+				$day = 1 ; 
+				$week = 1; 	
+			
+			}
+			if(Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '31' || Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '30'){
+				$week = 52; 	
+			}
+			$weeks[$dateAsString] = $week ;
+			  if($day % 7 == 0 ){
+				$week ++ ; 
+				
+			  }
+			  $day++;
+		}
+		return $weeks  ;
+}
+
+function getMinDateOfWeek(array $dateAndWeek ,int $weekNo,int $year){
+	$items = [];
+	foreach($dateAndWeek as $date => $currentWeek){
+		$currentYear = Carbon::make($date)->year ;
+		if($weekNo == $currentWeek && $currentYear == $year){
+			$items[$date]=$currentWeek ;
+		}
+	}
+	// dd($dateAndWeek);
+	return [
+		'start_date'=>array_key_first($items),
+		'end_date'=>array_key_last($items),
+	];
+}
+function getFieldTypeAndClassFromTitle(string $title):array 
+{
+	if(Str::contains($title , 'date') || Str::contains($title,'Date') || Str::contains($title,'Estimated') ){
+		return [
+			'type'=>'date',
+			'class'=>'',
+			'default_value'=>now()
+		];
+		
+	}
+	if(Str::contains($title,getNumericExportFields())){
+		return [
+			'type'=>'numeric',
+			'class'=>'only-greater-than-or-equal-zero-allowed',
+			'default_value'=>0
+		];
+	}
+	return [
+		'type'=>'text',
+		'class'=>'',
+		'default_value'=>''
+	];
+}
+function getNumericExportFields():array 
+{
+	return ['Quantity' , __('Quantity') , 'Quantity Discount' , __('Quantity Discount') , 'Cash Discount' , __('Cash Discount') , 'Special Discount' , __('Special Discount') , __('Other Discounts') , 'Net Sales Value' , __('Net Sales Value'),'Price Per Unit' , __('Price Per Unit') , __('Sales Value') , __('Sales Value'),'Invoice Amount',__('Invoice Amount'),'Collected Amount',__('Collection Amount'),'Collected Amount',__('Collected Amount'),'Expected Collection Days',__('Expected Collection Days'),'Contracted Collection Days',__('Contracted Collection Days'),'Net Invoice Amount',__('Net Invoice Amount'),'Withhold Amount',__('Withhold Amount'),'Invoice Amount'=>__('Invoice Amount'),'Net Balance',__('Net Balance')];
+}
+function convertModelToTableName(string $modelName)
+{
+	return Str::plural(strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $modelName))) ;
+}
+function formatWeeksDatesFromStartDate(string $agingDate,string $format ='d-m-Y')
+{
+	return [
+			'past_due'=>[
+				'1-7'=>[
+					'start_date'=>$startDate = Carbon::make($agingDate)->subDay()->format($format) , 
+					'end_date'=>$endDate = Carbon::make($startDate)->subDays(6)->format($format)
+				] ,
+			'8-15'=>[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(6)->format($format)
+			] ,
+			'16-30'=>[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(14)->format($format)
+			],
+			'31-45'=>[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(14)->format($format)
+			],
+			'46-60'=>[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(14)->format($format)
+			],
+			'61-90'=>
+			[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(29)->format($format)
+			],
+			'91-120'=>[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(29)->format($format)
+			],
+			'121-150'=>[
+				'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->subDays(29)->format($format)
+			],
+		],
+		
+		
+		
+		'coming_due'=>[
+			'1-7'=>[
+				'start_date'=>$startDate = Carbon::make($agingDate)->addDay()->format($format) , 
+				'end_date'=>$endDate = Carbon::make($startDate)->addDays(6)->format($format)
+			] ,
+		'8-15'=>[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(6)->format($format)
+		] ,
+		'16-30'=>[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(14)->format($format)
+		],
+		'31-45'=>[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(14)->format($format)
+		],
+		'46-60'=>[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(14)->format($format)
+		],
+		'61-90'=>
+		[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(29)->format($format)
+		],
+		'91-120'=>[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(29)->format($format)
+		],
+		'121-150'=>[
+			'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) , 
+			'end_date'=>$endDate = Carbon::make($startDate)->addDays(29)->format($format)
+		],
+		]
+		
+		
+	];
 }

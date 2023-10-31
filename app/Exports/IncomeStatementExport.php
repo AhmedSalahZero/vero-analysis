@@ -6,6 +6,7 @@ use App\Models\IncomeStatement;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -59,6 +60,7 @@ class IncomeStatementExport implements
 	public function headings(): array
 	{
 		$dates = $this->exportData->toArray()[array_key_first($this->exportData->toArray())];
+		// $dates = $this->exportData->toArray()[array_key_first($this->exportData->toArray())];
 		//  dd(getCurrentCompany());
 
 		$header = [

@@ -10,7 +10,7 @@
                     <i class="kt-font-secondary btn-outline-hover-danger flaticon2-line-chart"></i>
                 </span>
                 <h3 class="kt-portlet__head-title">
-                    {{ 'Sections Table' }}
+                   {{ __('Logs Table' ) }}
                 </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -76,30 +76,31 @@
                     <tr class="table-standard-color">
                         <th class="text-center">{{ __('#') }}</th>
                         <th class="text-center">{{ __('User') }}</th>
-                        <th class="text-center">{{ __('Last Login Date') }}</th>
+                        <th class="text-center">{{ __('Company') }}</th>
                         <th class="text-center">{{ __('Role') }}</th>
-                        {{-- <th class="text-center">{{ __('Log') }}</th> --}}
-                        <th>{{ __('Actitivy') }}</th>
-                        <th>{{ __('Details') }}</th>
+                        <th class="text-center">{{ __('Log') }}</th>
+                        <th class="text-center">{{ __('Date') }}</th>
+                        {{-- <th>{{ __('Controll') }}</th> --}}
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($logs as $key => $log)
-						@if($log->user)
+                    @foreach ($logs as $key => $item)
+						@if($item->user)
                         <tr>
                             <td>{{ $key+1 }}</td>
-                            <td>{{ $log->user->name }}</td>
-                            <td>{{ Carbon\Carbon::make($log->created_at)->format('d-m-Y g:i A') }}</td>
-                            <td>{{ $log->user->getRoleName() }}</td>
-                            <td>{{ $log->activity }}</td>
+                            <td>{{ $item->user->name }}</td>
+                            <td>{{ $item->company ?  $item->company->getName() : '--' }}</td>
+                            <td>{{ $item->user->getRoleName() }}</td>
+                            <td>{{ $item->activity }}</td>
+                            <td>{{ Carbon\Carbon::make($item->created_at)->format('d-m-Y g:i A') }}</td>
 
-                            <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions"
+                            {{-- <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions"
                                 data-autohide-disabled="false"><span style="overflow: visible; position: relative; width: 110px;">
-                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" href="{{ route('admin.show.logs.detail',['user'=>$log->user->id]) }}"><i class="fa fa-eye"></i></a>
-                                    {{-- <a type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon"><i class="fa fa-trash"></i></a> --}}
-                                    {{-- <button type="button" class="btn btn-secondary btn-outline-hover-warning btn-icon"><i class="fa fa-eye"></i></button> --}}
+                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" href="{{route('roles.permissions.edit',[$scope,$item])}}"><i class="fa fa-edit"></i></a>
+                                    <a type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon"><i class="fa fa-trash"></i></a>
+                                    <button type="button" class="btn btn-secondary btn-outline-hover-warning btn-icon"><i class="fa fa-eye"></i></button>
                                 </span>
-                            </td>
+                            </td> --}}
                         </tr>
 						@endif
                     @endforeach

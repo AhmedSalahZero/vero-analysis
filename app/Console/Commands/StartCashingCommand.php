@@ -16,7 +16,7 @@ class StartCashingCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'caching:run';
+    protected $signature = 'caching:run {company_id?*}';
 
     /**
      * The console command description.
@@ -37,8 +37,17 @@ class StartCashingCommand extends Command
 
     public function handle()
     {
+		// php artisan caching:run 5
+		$company_id = $this->argument('company_id');
+		
+		$companies = [];
+		if(count($company_id)){
+			$companies = Company::whereIn('id',$company_id)->get();
+		}else{
+			$companies = Company::all();
+		}
         
-          foreach(Company::all() as $company){
+          foreach($companies as $company){
              dispatch((new RemoveIntervalYearCashingJob($company)));
              dispatch((new HandleCustomerDashboardCashingJob($company)));
              dispatch((new HandleCustomerNatureCashingJob($company)));

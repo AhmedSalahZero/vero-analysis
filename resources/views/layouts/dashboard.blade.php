@@ -44,6 +44,7 @@ thead th {
 tr td:first-of-type{
 	white-space:normal !important ;
 }
+
 </style>
 @endif 
 <style>
@@ -67,10 +68,13 @@ tr td:first-of-type{
 
 @endif 
 
-@if(!in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index' && !in_array('ForecastedSalesValues',Request()->segments()))
+@if(
+	!in_array('uploading',Request()->segments())&&
+	!in_array('salesGatheringImport',Request()->segments())&&
+	!in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index' && !in_array('ForecastedSalesValues',Request()->segments()))
 <style>
 
-.table-active th:first-of-type,
+.table-active:not(.remove-max-class) th:first-of-type,
 .group-color th:first-of-type,
 .group-color td:first-of-type,
 .kt_table_with_no_pagination th:first-of-type,
@@ -1231,10 +1235,7 @@ tr td:first-of-type{
     </script>
     @endif
 	
-	<script>
 	
-	
-	</script>
 <script src="{{ asset('global.js') }}"></script>
 
 @stack('js_end')

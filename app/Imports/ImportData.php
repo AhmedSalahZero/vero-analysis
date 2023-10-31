@@ -190,7 +190,7 @@ class ImportData implements
 				];
 			}	
 		}
-		if(in_array($key , ['Quantity' , __('Quantity') , 'Quantity Discount' , __('Quantity Discount') , 'Cash Discount' , __('Cash Discount') , 'Special Discount' , __('Special Discount') , __('Other Discounts') , 'Net Sales Value' , __('Net Sales Value'),'Price Per Unit' , __('Price Per Unit') , __('Sales Value') , __('Sales Value')] )){
+		if(in_array($key , getNumericExportFields() )){
 			if (!is_numeric($value) && !is_null($value) && $value != '') {
 				$allValidations[$key] =  [
 					'message'=>__('Invalid Numeric Value'),

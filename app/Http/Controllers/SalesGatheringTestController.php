@@ -23,6 +23,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -203,5 +204,36 @@ class SalesGatheringTestController extends Controller
 			'rows'=>$rows,
 			'headers'=>$headers
 		]);
+	}
+
+	public function createModel(Company $company ,Request $request, string $modelName )
+	{
+		$exportables = getExportableFieldsForModel($company->id,$modelName);
+		// dd();
+		return view('admin.create-excel-by-form',[
+			'pageTitle'=>__('Create'),
+			'type'=>'_create',
+			'exportables'=>$exportables,
+			'modelName'=>$modelName
+		]);
+	}
+	public function storeModel(Company $company ,Request $request, string $modelName )
+	{
+		$companyId = $company->id;
+		// $modelId = $request->get('model_id');
+		$class = '\App\Models\\'.$modelName ;
+		$model = new $class;
+		foreach((array)$request->get('tableIds') as $tableId){
+			foreach((array)$request->get($tableId) as  $tableDataArr){
+					$tableDataArr['company_id']  = $companyId ;
+					$model->create($tableDataArr);
+			}
+		}
+		if($modelName == 'SalesGathering'){
+			Artisan::call('caching:run',[
+				'company_id'=>[$companyId] 
+		   ]);
+		}		
+		return redirect()->back()->with('success',__('Done'));	
 	}
 }

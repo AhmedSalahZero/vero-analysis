@@ -29,15 +29,22 @@ class AnalysisReports
 	
 	public function exportAnalysisReports(Company $company)
     {
-        // $route_name = preg_replace('/(?<!\ )[A-Z]/', ' $0', request()->segment(4));
 		$id = 327;
 		Log::storeNewLogRecord('enterSection',null,__('Export Analysis Report'));
         $section = Section::with('subSections')->find($id);
         $exportableFields  = (new ExportTable)->customizedTableField($company, 'ExportAnalysis', 'selected_fields');
         $viewing_names = array_values($exportableFields);
-		// dd($section,$exportableFields);
 		$reports = ExportAnalysis::getTabs($company->id);
-
         return view('client_view.list_export_analysis',compact('company','viewing_names','section','reports'));
     }
+	// public function customerAging(Company $company)
+    // {
+	// 	$id = 328;
+	// 	Log::storeNewLogRecord('enterSection',null,__('Customer Aging Report'));
+    //     $section = Section::with('subSections')->find($id);
+    //     // $exportableFields  = (new ExportTable)->customizedTableField($company, 'ExportAnalysis', 'selected_fields');
+    //     // $viewing_names = array_values($exportableFields);
+	// 	// $reports = ExportAnalysis::getTabs($company->id);
+    //     return view('client_view.list_export_analysis',compact('company','','section'));
+    // }
 }

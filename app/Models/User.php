@@ -101,4 +101,9 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->hasMany(Log::class , 'user_id','id');
 	}
+	public function hasRole($roleName):bool
+	{
+		return $this->roles->first()->name == $roleName ;
+	}
+	
 }

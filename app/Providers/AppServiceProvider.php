@@ -16,17 +16,20 @@ use App\Models\SalesGathering;
 use App\Models\Section;
 use App\Models\User;
 use App\ReadyFunctions\CalculateDurationService;
+use App\ReadyFunctions\InvoiceAgingService;
 use App\ReadyFunctions\SeasonalityService;
 use Auth;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Mail;
 use Spatie\Permission\Models\Permission;
 use stdClass;
@@ -55,42 +58,8 @@ class AppServiceProvider extends ServiceProvider
 		
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
-		
-		
-		
-		
-		// $company = Company::find(44);
-		/*
-		*/
-		// dispatch((new HandleBreakdownDashboardCashingJob($company)));
-		// $years = $this->getIntervalYearsFormCompany(); 
-		// dd($years);
-		// $x = getEndYearBasedOnDataUploaded(Company::find(2),'jan');
-		// dd($x);
-		// dd(now()->format('Y'));
-		// dd(number_unformat('112,500.456', FILTER_SANITIZE_NUMBER_INT));
-		// Gate::before(function($user){
-		// 	return true ;
-		// });
-		// foreach([1,2,3] as $number){
-		// 	if($number == 1){
-		// 		 try{
-		// 			Permission::findByName('abc');
-		// 		 }
-		// 		 catch(\Exception $e){
-		// 			logger('inside exceptio');
-		// 		 }
-		// 	}else{
-		// 		logger('from else');
-		// 	}
-			
-		// }
-		// Zones Sales Breakdown Analysis 
-	
-		// dd($x);
-		// dd(searchWordInstr(['products / service'],'( Products / Service ) Average Prices Per Category'));
-
-		if(true){
+		// dd(getAdditionalDates('01-10-2023'));
+		if(false){
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 			$permissions = getPermissions();

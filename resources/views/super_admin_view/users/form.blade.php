@@ -4,7 +4,8 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('content')
-
+{{-- {{ dd($user->roles->first()->name,$user->hasRole('Admin')) }} --}}
+{{-- {{ dd($user) }} --}}
 <div class="row">
     <div class="col-12">
         <!--begin::Portlet-->
@@ -51,7 +52,7 @@
                                 <label>{{__('Email')}} <span class="required">*</span></label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text">@</span></div>
-                                    <input type="email" name="email" value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Email')}}" aria-describedby="basic-addon1">
+                                    <input required type="email" name="email" value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Email')}}" aria-describedby="basic-addon1">
                                 </div>
                             </div>
                             <div class="col-6">
@@ -68,14 +69,14 @@
                                 <label>{{__('Password')}} <span class="required">*</span></label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-key"></i></span></div>
-                                    <input id="password" type="password" name="password"  value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
+                                    <input required id="password" type="password" name="password"  value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
                                 </div>
                             </div>
                             <div class="col-6">
                                 <label>{{__('Confirm Password')}} <span class="required">*</span></label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-key"></i></span></div>
-                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
+                                    <input required id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
                                 </div>
                             </div>
                         </div>
@@ -97,7 +98,7 @@
 
                             <div class="col-6">
                                 <label>{{__('Select Companies - (Multi Selection)')}} </label>
-                                <select name="companies[]" class="form-control kt-selectpicker" multiple>
+                                <select required name="companies[]" class="form-control kt-selectpicker" multiple>
                                     <?php $selectedcompanies = isset($user) ?  $user->companies->pluck('id')->toArray() : []; ?>
                                     @foreach ($companies as $item)
                                         <option {{ old('companies') == $item->id || in_array($item->id, $selectedcompanies) ? 'selected' : ''}}  value="{{$item->id}}">{{$item->name[$lang]}}</option>
@@ -107,14 +108,14 @@
                             </div>
                             <div class="col-6">
                                 <label>{{__('Role')}} </label>
-                                <select id="role-select-id" name="role" class="form-control kt-selectpicker"  >
+                                <select required id="role-select-id" name="role" class="form-control kt-selectpicker"  >
                                     <option value="">{{__('Select')}}</option>
 									@if(Auth()->user()->isCompanyAdmin() || Auth()->user()->isUser() )
 	                                    <option selected  value="user">{{__("User")}}</option>
 									@else 
                                     <option {{ (isset($user) && $user->hasRole('super-admin')) ? 'selected' : ''}}  value="super-admin">{{__("Super Admin")}}</option>
                                     <option {{ (isset($user) && $user->hasRole('company-admin')) ? 'selected' : ''}}  value="company-admin">{{__("Company Admin")}}</option>
-                                    <option {{ (isset($user) && $user->hasRole('Admin') )? 'selected' : ''}}  value="Admin">{{__("Admin")}}</option>
+                                    {{-- <option {{ (isset($user) && $user->hasRole('admin') )? 'selected' : ''}}  value="admin">{{__("Admin")}}</option> --}}
                                     <option {{ (isset($user) && $user->hasRole('user') )? 'selected' : ''}}  value="user">{{__("User")}}</option>
 									@endif 
 									

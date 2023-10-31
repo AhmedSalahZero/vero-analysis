@@ -2,10 +2,35 @@
     background-color: #086691 !important; color: white !important;}
 .active-style:hover  {
       background-color: #087a7a !important;  color: white}
-.active-text   {
+/* .active-text   {
       color: #086691 !important;}
 .active-text:hover  {
-     color: #086691 !important;}
+     color: #086691 !important;
+	} */
+	
+	.active-style   {
+		background-color: #0741A5 !important; color: white !important;}
+	.active-style:hover  {
+		  background-color: #0741A5 !important;  color: white}
+		  
+		  
+		  .table-active,
+.table-active > th,
+.table-active > td {
+  background-color: #0741A5 !important;  }
+
+.table-hover .table-active:hover {
+  background-color: #0741A5 !important;  
+}
+
+
+
+table.dataTable thead tr > .dtfc-fixed-left, table.dataTable thead tr > .dtfc-fixed-right{
+	  background-color: #0741A5 !important;  
+	
+  }
+ 
+  
 .active-text-color   {
       color: #086691 !important;}
 .active-text-color:hover  {
