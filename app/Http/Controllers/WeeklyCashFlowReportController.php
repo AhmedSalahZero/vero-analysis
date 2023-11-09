@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
-use App\Models\CustomerDueCollectionAnalysis;
+use App\Models\CustomerInvoice;
 use App\Models\SalesGathering;
 use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
@@ -19,8 +19,6 @@ class WeeklyCashFlowReportController
     use GeneralFunctions;
     public function index(Company $company)
 	{
-		// $customerNames = DB::table('customer_due_collection_analysis')->where('company_id',$company->id)
-		// ->selectRaw('customer_name')->get()->pluck('customer_name')->unique()->values()->toArray();
 		
         return view('reports.weekly_cash_flow_form', compact('company'));
     }
@@ -99,7 +97,7 @@ class WeeklyCashFlowReportController
 	}
 	protected function getCustomerInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate) 
 	{
-		$items = CustomerDueCollectionAnalysis::where('company_id',$companyId)->whereBetween('invoice_due_date',[$startDate,$endDate])->get();;
+		$items = CustomerInvoice::where('company_id',$companyId)->whereBetween('invoice_due_date',[$startDate,$endDate])->get();;
 		return $items->sum('net_invoice_amount');
 	}
 

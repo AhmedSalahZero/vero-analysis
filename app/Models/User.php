@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -105,5 +106,26 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->roles->first()->name == $roleName ;
 	}
+	public function moneyReceived()
+	{
+		return $this->hasMany(MoneyReceived::class , 'user_id','id');
+	}
+	public function getMoneyReceived():Collection
+	{
+		return $this->moneyReceived->where('company_id',getCurrentCompanyId()) ;
+	}
+	public function getReceivedCheques():Collection
+	{
+		return $this->moneyReceived->where('money_type','cheque') ;
+	}
+	public function getReceivedCashes():Collection
+	{
+		return $this->moneyReceived->where('money_type','cash') ;
+	}
+	public function getReceivedTransfer():Collection
+	{
+		return $this->moneyReceived->where('money_type','incoming_transfer') ;
+	}
+	
 	
 }

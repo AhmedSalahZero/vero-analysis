@@ -10,11 +10,13 @@ use App\Models\CashFlowStatement;
 use App\Models\CashFlowStatementItem;
 
 use App\Models\Company;
+use App\Models\CustomersInvoice;
 use App\Models\IncomeStatement;
 use App\Models\Language;
 use App\Models\SalesGathering;
 use App\Models\Section;
 use App\Models\User;
+use App\Observers\CustomerInvoiceObserver;
 use App\ReadyFunctions\CalculateDurationService;
 use App\ReadyFunctions\InvoiceAgingService;
 use App\ReadyFunctions\SeasonalityService;
@@ -55,11 +57,15 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		// $date = '05-11-2023';
+		// $now = now()->format('d-m-Y');
+		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
+		// dd(Carbon::make($date)->equalTo(Carbon::make($now)));
 		
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
 		// dd(getAdditionalDates('01-10-2023'));
-		if(false){
+		if(true){
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 			$permissions = getPermissions();

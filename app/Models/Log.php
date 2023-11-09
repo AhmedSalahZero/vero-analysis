@@ -50,3 +50,5 @@ class Log extends Model
 		][$type];
 	}
 }
+
+// money_received

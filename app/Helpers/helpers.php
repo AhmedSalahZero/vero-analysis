@@ -53,10 +53,10 @@ const exportExportAnalysisData ='export export analysis data';
 const deleteExportAnalysisData ='delete export analysis data';
 const viewExportAnalysisData ='view export analysis data';
 
-const uploadCustomerDueCollectionAnalysisData ='upload customer due collection analysis data';
-const exportCustomerDueCollectionAnalysisData ='export customer due collection analysis data';
-const deleteCustomerDueCollectionAnalysisData ='delete customer due collection analysis data';
-const viewCustomerDueCollectionAnalysisData ='view customer due collection analysis data';
+const uploadCustomerInvoiceData ='upload customer invoice analysis data';
+const exportCustomerInvoiceData ='export customer invoice analysis data';
+const deleteCustomerInvoiceData ='delete customer invoice analysis data';
+const viewCustomerInvoiceData ='view customer invoice analysis data';
 
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
@@ -2874,17 +2874,17 @@ function getPermissions():array
 		],
 		
 		[
-			'name'=>viewCustomerDueCollectionAnalysisData
+			'name'=>viewCustomerInvoiceData
 		],
 		[
-			'name'=>uploadCustomerDueCollectionAnalysisData
+			'name'=>uploadCustomerInvoiceData
 		],
 		[
-			'name'=>exportCustomerDueCollectionAnalysisData
+			'name'=>exportCustomerInvoiceData
 		],
 		
 		[
-			'name'=>deleteCustomerDueCollectionAnalysisData
+			'name'=>deleteCustomerInvoiceData
 		],
 		
 		
@@ -3708,16 +3708,16 @@ function getUploadParamsFromType(string $type = null ):array
 			'deletePermissionName'=>deleteExportAnalysisData,// important:add this also into permission function names[getPermissions()]
 			'importHeaderText'=>__('Export Analysis Import'),
 		],
-		'CustomerDueCollectionAnalysis'=>[
-			'fullModel'=>'\App\Models\CustomerDueCollectionAnalysis',
-			'dbName'=>'customer_due_collection_analysis',
-			'typePrefixName'=>__('Customer Due Collection'),
+		'CustomerInvoice'=>[
+			'fullModel'=>'\App\Models\CustomerInvoice',
+			'dbName'=>'customer_invoices',
+			'typePrefixName'=>__('Customer Invoice'),
 			'orderByDateField'=>'invoice_date',
-			'viewPermissionName'=>viewCustomerDueCollectionAnalysisData,
-			'uploadPermissionName'=>uploadCustomerDueCollectionAnalysisData, // important:add this also into permission function names [getPermissions()]
-			'exportPermissionName'=>exportCustomerDueCollectionAnalysisData,// important:add this also into permission function names[getPermissions()]
-			'deletePermissionName'=>deleteCustomerDueCollectionAnalysisData,// important:add this also into permission function names[getPermissions()]
-			'importHeaderText'=>__('Customers Due Collection Analysis Import'),
+			'viewPermissionName'=>viewCustomerInvoiceData,
+			'uploadPermissionName'=>uploadCustomerInvoiceData, // important:add this also into permission function names [getPermissions()]
+			'exportPermissionName'=>exportCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
+			'deletePermissionName'=>deleteCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
+			'importHeaderText'=>__('Customer Invoice Import'),
 		]
 	] ;
 	if($type){
@@ -3997,4 +3997,19 @@ function formatWeeksDatesFromStartDate(string $agingDate,string $format ='d-m-Y'
 		
 		
 	];
+}
+function getBanksCurrencies():array 
+{
+	return [
+		'egp'=>__('EGP'),
+		'usd'=>__('USD')
+	];
+	
+}
+function getDiffBetweenTwoDatesInDays(?Carbon $firstDate , ?Carbon $secondDate)
+{
+	if($firstDate && $secondDate){
+		return $firstDate->diffInDays($secondDate);
+	}
+	return 0 ;
 }

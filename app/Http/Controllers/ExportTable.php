@@ -47,7 +47,7 @@ class ExportTable extends Controller
 		count(array_intersect($fields, ['quantity_discount', 'cash_discount', 'special_discount', 'other_discounts'])) == 0
 			?: $fields[count($fields)] = 'sales_value';
 		$fields[count($fields)] = 'net_sales_value';
-		if('CustomerDueCollectionAnalysis' ==getLastSegmentInRequest()){
+		if('customerInvoice' ==getLastSegmentInRequest()){
 			$fields[] = 'invoice_status';
 			$fields[] = 'collected_amount';
 			$fields[] = 'net_balance';

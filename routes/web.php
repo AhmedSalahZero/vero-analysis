@@ -303,12 +303,23 @@ Route::middleware([])->group(function () {
 				Route::get('customer-again-analysis', 'CustomerAgingController@index')->name('view.customer.aging.analysis');
 				Route::post('customer-again-analysis', 'CustomerAgingController@result')->name('result.customer.aging.analysis');
 				Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
-				Route::get('money-received/create', 'MoneyReceivedController@create')->name('create.money.receive');
+				Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
+				Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
+				Route::get('money-received/edit/{moneyReceived}', 'MoneyReceivedController@edit')->name('edit.money.receive');
+				Route::put('money-received/update/{moneyReceived}', 'MoneyReceivedController@update')->name('update.money.receive');
+				Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
+				Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
+				Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
+				Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
 				Route::get('money-received/get-invoice-numbers/{customer_name}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
 				Route::get('/create-item/{model}', 'SalesGatheringTestController@createModel')->name('create.sales.form');
 				Route::post('/create-item/{model}', 'SalesGatheringTestController@storeModel')->name('admin.store.analysis');
+				
+				Route::get('/create-item/{model}/edit/{modelId}', 'SalesGatheringTestController@editModel')->name('edit.sales.form');
+				Route::post('/create-item/{model}/update/{modelId}', 'SalesGatheringTestController@updateModel')->name('admin.update.analysis');
+				
 				Route::prefix('/SalesGathering')->group(function () {
 					Route::get('SalesTrendAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.trend.analysis');
 					Route::get('SalesExportAnalysis', 'AnalysisReports@exportAnalysisReports')->name('sales.export.analysis');
@@ -329,7 +340,7 @@ Route::middleware([])->group(function () {
 
 					// Providers Two Dimensional Breakdown
 					Route::post('/ProvidersTwoDimensionalBreakdown', 'Analysis\SalesGathering\ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport@result')->name('ProvidersTwoDimensionalBreakdown.result');
-
+					Route::get('/sales-persons-customers','CustomerAgingController@getCustomersFromSalesPersons')->name('get.customers.from.sales.persons');
 					############ Sales Trend Analysis Links +   Average Prices +  Breakdown ############
 					// For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
 					$routesDefinition = (new RoutesDefinition);

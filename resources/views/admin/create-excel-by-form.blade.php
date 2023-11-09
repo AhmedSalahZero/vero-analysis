@@ -113,7 +113,7 @@
 <div class="row">
     <div class="col-md-12">
 
-        <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ route('admin.store.analysis',['company'=>$company->id ,'model'=>$modelName]) }}">
+        <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ isset($model) ? route('admin.update.analysis',['company'=>$company->id ,'model'=>$modelName,'modelId'=>$model->id]) :route('admin.store.analysis',['company'=>$company->id ,'model'=>$modelName]) }}">
             @csrf
             <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">
             {{-- <input type="hidden" name="model_name" value="IncomeStatement"> --}}
@@ -147,7 +147,7 @@
                         </x-slot>
                         <x-slot name="trs">
                             @php
-                            $rows = isset($model) ? $model->generateRelationDynamically($tableId)->get() : [-1] ;
+                            $rows =  [-1] ;
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
@@ -175,7 +175,13 @@
 								$defaultValue = $fieldTypeAndClassDefaultValue['default_value'];
 							@endphp
                                 <td>
-                                    <input type="{{ $fieldType }}" value="{{ isset($subModel) ?  $subModel->getName() : $defaultValue }}" class="form-control {{ $fieldClass }}" @if($isRepeater) name="{{ $name }}" @else name="{{ $tableId }}[0][{{ $name }}]" @endif>
+									@php
+										$currentVal = isset($model) ?  $model->{$name} : $defaultValue;
+										if(is_object($currentVal)){
+											$currentVal = \Carbon\Carbon::make($currentVal)->format('Y-m-d');
+										}
+									@endphp
+                                    <input type="{{ $fieldType }}" value="{{ $currentVal }}" class="form-control {{ $fieldClass }}" @if($isRepeater) name="{{ $name }}" @else name="{{ $tableId }}[0][{{ $name }}]" @endif>
                                 </td>
 								
 								@endforeach                                 
@@ -665,6 +671,8 @@
                 , icon: 'success'
 	});
 	</script>
+	
 
 @endif 
+
 @endpush

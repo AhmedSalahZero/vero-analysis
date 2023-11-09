@@ -7,6 +7,7 @@ use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerNatureCashingJob;
 use App\Jobs\Caches\RemoveIntervalYearCashingJob;
+use App\Jobs\CalculateNetBalance;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\Jobs\RemoveCachingCompaniesData;
 use App\Jobs\SalesGatheringTestJob;
@@ -142,7 +143,15 @@ class SalesGatheringTestController extends Controller
 				new HandleBreakdownDashboardCashingJob($company),
 			])->dispatch($company->id,$modelName);
 			
-		}else{
+		}
+		elseif($modelName == 'CustomerInvoice'){
+			SalesGatheringTestJob::withChain([
+				new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id,$modelName),
+				new CalculateNetBalance($company->id,$modelName),
+				new RemoveCachingCompaniesData($company->id,$modelName),
+			])->dispatch($company->id,$modelName);
+		}
+		else{
 			SalesGatheringTestJob::withChain([
 				// new RemoveIntervalYearCashingJob($company),
 				new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id,$modelName),
@@ -209,7 +218,7 @@ class SalesGatheringTestController extends Controller
 	public function createModel(Company $company ,Request $request, string $modelName )
 	{
 		$exportables = getExportableFieldsForModel($company->id,$modelName);
-		// dd();
+	
 		return view('admin.create-excel-by-form',[
 			'pageTitle'=>__('Create'),
 			'type'=>'_create',
@@ -220,7 +229,6 @@ class SalesGatheringTestController extends Controller
 	public function storeModel(Company $company ,Request $request, string $modelName )
 	{
 		$companyId = $company->id;
-		// $modelId = $request->get('model_id');
 		$class = '\App\Models\\'.$modelName ;
 		$model = new $class;
 		foreach((array)$request->get('tableIds') as $tableId){
@@ -236,4 +244,43 @@ class SalesGatheringTestController extends Controller
 		}		
 		return redirect()->back()->with('success',__('Done'));	
 	}
+	
+	
+	
+	
+	
+	public function editModel(Company $company ,Request $request, string $modelName,$modelId )
+	{
+		$exportables = getExportableFieldsForModel($company->id,$modelName);
+		$model = ('\App\Models\\'.$modelName)::find($modelId);
+		// dd();
+		return view('admin.create-excel-by-form',[
+			'pageTitle'=>__('Create'),
+			'type'=>'_create',
+			'exportables'=>$exportables,
+			'modelName'=>$modelName,
+			'model'=>$model,
+			'removeRepeater'=>true
+		]);
+	}
+	public function updateModel(Company $company ,Request $request, string $modelName,$modelId )
+	{
+		$companyId = $company->id;
+		$model = ('\App\Models\\'.$modelName)::find($modelId) ;
+		// dd();
+		foreach((array)$request->get('tableIds') as $tableId){
+			foreach((array)$request->get($tableId) as  $tableDataArr){
+					$tableDataArr['company_id']  = $companyId ;
+					$model->update($tableDataArr);
+			}
+		}
+		if($modelName == 'SalesGathering'){
+			Artisan::call('caching:run',[
+				'company_id'=>[$companyId] 
+		   ]);
+		}		
+		return redirect()->back()->with('success',__('Done'));	
+	}
+	
+	
 }

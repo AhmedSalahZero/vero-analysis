@@ -20,7 +20,6 @@
     }
 
 </style>
-{{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
 @endsection
 @section('sub-header')
 {{ camelToTitle($modelName) }} {{ __('Section') }}
@@ -126,6 +125,10 @@
                     <form method="post" action="{{route('salesGathering.destroy',[$company,$item->id])}}" style="display: inline">
                         @method('DELETE')
                         @csrf
+						@if ($modelName == 'CustomerInvoice')
+	                        <a  class="btn btn-secondary btn-outline-hover-primary btn-icon" title="Money Receive" href="{{route('create.money.receive',['company'=>$company->id,'model'=>$item->id ])}}"><i class="fa fa-book"></i></a>
+						@endif
+                        <a  class="btn btn-secondary btn-outline-hover-primary btn-icon" title="Edit" href="{{route('edit.sales.form',['company'=>$company->id,'model'=>$modelName , 'modelId'=>$item->id])}}"><i class="fa fa-edit"></i></a>
                         <button type="submit" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href=""><i class="fa fa-trash-alt"></i></button>
                     </form>
                     {{-- <a type="button" class="btn btn-secondary btn-outline-hover-warning btn-icon" href="{{route('adjustedCollectionDate.create',[$company])}}" title="Adjusted Collection Date" href=""><i class="fa fa-sliders-h"></i></a> --}}

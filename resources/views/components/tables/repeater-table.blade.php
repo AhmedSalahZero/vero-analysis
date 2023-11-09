@@ -37,8 +37,8 @@
         </tbody>
 
         <td>
-
-            <div data-repeater-create="" class="btn btn btn-sm text-white   border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
+			@if(!$isRepeater)
+            <div  data-repeater-create="" class="btn btn btn-sm text-white   border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
                 <span>
                     <i class="fa fa-plus"> </i>
                     <span>
@@ -46,6 +46,7 @@
                     </span>
                 </span>
             </div>
+			@endif
         </td>
 
     </table>
