@@ -7,6 +7,7 @@ use Carbon\Carbon;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class CustomerInvoice extends Model
 {
@@ -20,6 +21,8 @@ class CustomerInvoice extends Model
     protected $dates = [
        'invoice_date'
     ];
+	
+	
 
     protected $guarded = [];
 
@@ -177,7 +180,10 @@ class CustomerInvoice extends Model
     {
         return $this->invoice_due_date ;
     }
-    
+    public function getInvoiceDate()
+	{
+		return $this->invoice_date->format('Y-m-d');
+	}
     public function getInvoiceNumber()
     {
         return $this->invoice_number ;
@@ -229,5 +235,67 @@ class CustomerInvoice extends Model
 		// dump($netInvoiceAmount - $totalCollected);
 		return $netInvoiceAmount - $totalCollected;
 	}
-
+	public function getDebitsDataFormattedArr():array
+	{
+		return [
+			'beginning_balance'=> 0 ,
+			'monthly_debit'=>$this->getNetInvoiceAmount(),
+			'monthly_credit'=> 0 ,
+			'end_balance'=> $this->getNetInvoiceAmount() 
+		];
+	}
+	public function monthlyCustomerInvoices()
+	{
+		return $this->hasMany(MonthlyCustomerInvoices::class , 'customer_name','customer_name');
+	}
+	public function getInvoiceDateMonth()
+	{
+		$invoiceDate = $this->getInvoiceDate() ;
+		return explode('-',$invoiceDate)[1];
+	}
+	public function getInvoiceDateYear()
+	{
+		$invoiceDate = $this->getInvoiceDate() ;
+		return explode('-',$invoiceDate)[0];
+	}
+	public function monthlyCustomerInvoiceByMonthAndYear():?MonthlyCustomerInvoices{
+		$month = $this->getInvoiceDateMonth();
+		$year = $this->getInvoiceDateYear();
+		return $this->monthlyCustomerInvoices()->where('is_closed',0)->where('month',$month)->where('year',$year)->first() ;
+	}
+	
+	// public function tttttttttttt(CustomerInvoice $customerInvoice , )
+	// {
+	// 	$totalDebits = [];
+	// 	$month = $customerInvoice->getInvoiceDateMonth();
+	// 	$year = $customerInvoice->getInvoiceDateYear();
+	// 	$currentDebitArr = $customerInvoice->getDebitsDataFormattedArr();
+	// 	$hasDataInCurrentMonthAndYearArr = isset($totalDebits[$year][$month]) ; // in current loop array
+		
+	// 	$monthCustomerInvoice = $customerInvoice->monthlyCustomerInvoiceByMonthAndYear() ;
+	// 	$hasDataInCurrentMonthAndYearDB = $monthCustomerInvoice ;
+	// 	$totalDebits[$year][$month]['monthly_debit'] = $hasDataInCurrentMonthAndYearArr ? $totalDebits[$year][$month]['monthly_debit'] + $currentDebitArr['monthly_debit']  : $currentDebitArr['monthly_debit'];
+	// 	$totalDebits[$year][$month]['monthly_debit'] = $hasDataInCurrentMonthAndYearDB ? $totalDebits[$year][$month]['monthly_debit'] + $monthCustomerInvoice->getMonthlyDebit() :  $totalDebits[$year][$month]['monthly_debit'];
+		
+	// 	$totalDebits[$year][$month]['monthly_credit'] = $hasDataInCurrentMonthAndYearArr ? $totalDebits[$year][$month]['monthly_credit'] + $currentDebitArr['monthly_credit']  : $currentDebitArr['monthly_credit'];
+	// 	$totalDebits[$year][$month]['monthly_credit'] = $hasDataInCurrentMonthAndYearDB ? $totalDebits[$year][$month]['monthly_credit'] + $monthCustomerInvoice->getMonthlyCredit() :  $totalDebits[$year][$month]['monthly_credit'];
+		
+		
+	// 	$totalDebits[$year][$month]['beginning_balance'] = $hasDataInCurrentMonthAndYearArr ? $totalDebits[$year][$month]['beginning_balance'] + $currentDebitArr['beginning_balance']  : $currentDebitArr['beginning_balance'];
+	// 	$totalDebits[$year][$month]['beginning_balance'] = $hasDataInCurrentMonthAndYearDB ? $totalDebits[$year][$month]['beginning_balance'] + $monthCustomerInvoice->getBeginningBalance() :  $totalDebits[$year][$month]['beginning_balance'];
+		
+	// 	$totalDebits[$year][$month]['end_balance'] = $hasDataInCurrentMonthAndYearArr ? $totalDebits[$year][$month]['end_balance'] + $currentDebitArr['end_balance']  : $currentDebitArr['end_balance'];
+	// 	$totalDebits[$year][$month]['end_balance'] = $hasDataInCurrentMonthAndYearDB ? $totalDebits[$year][$month]['end_balance'] + $monthCustomerInvoice->getEndBalance() :  $totalDebits[$year][$month]['end_balance'];
+		
+	// 	if($hasDataInCurrentMonthAndYearDB) {
+	// 		$monthCustomerInvoice->update($totalDebits[$year][$month]);
+	// 	} else {
+			
+	// 		$customerInvoice->monthlyCustomerInvoices()->create(array_merge(
+	// 			['month'=>$month , 'year'=>$year,'company_id'=>$this->companyId],
+	// 			$totalDebits[$year][$month]
+	// 		));
+	// 	}
+	// }
+	
 }

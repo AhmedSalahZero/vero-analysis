@@ -22,15 +22,7 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Money Received')}}
-        </h3>
-    </div>
-</div>
-</div> --}}
+       
 <form method="post" action="{{ isset($model) ?  route('cheque.send.to.collection',['company'=>$company->id]) :'#' }}" class="kt-form kt-form--label-right">
     <input type="hidden" name="cheques[]" value="{{ $model->id }}">
     @csrf

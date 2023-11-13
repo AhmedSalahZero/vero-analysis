@@ -7,19 +7,16 @@ use App\Models\CashFlowStatementItem;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use App\Rules\MustBeUniqueToIncomeStatement;
-use App\Services\VatCalculation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use League\Glide\Manipulators\Contrast;
-use PHPUnit\Framework\IncompleteTest;
+
 
 trait FinancialStatementAbleMutator
 {
 	public function storeMainSection(Request $request)
 	{
-		$financialStatementAble = (new static)::create(array_merge($request->except(['_token']), ['type' => getLastSegmentFromString(get_class(new static))]));
+		$financialStatementAble = (new static)::create(array_merge($request->except(['_token']), ['can_view_actual_report'=>0,'type' => getLastSegmentFromString(get_class(new static))]));
 
 		return $financialStatementAble;
 	}
@@ -254,11 +251,12 @@ trait FinancialStatementAbleMutator
 
 	public function storeReport(Request $request)
 	{
+		// names of new added element in add popup
+		$newAddedElements = $request->get('new_added_elements',[]) ;
+		$newAddedElements = is_array($newAddedElements) ? $newAddedElements: explode(',',$newAddedElements);
 		// NOTE:if you want to edit (update single item in popup ) search for the following text [NOTE:We update Single Item From Popup Here]
-		
 			$salesRevenuesForVat = [];
 			$expensesForVat = [];
-				
 		if ($request->get('in_add_or_edit_modal') && count((array)$request->sub_items) && !$request->has('new_sub_item_name')) {
 			$validator = $request->validate([
 				'sub_items.*.name' =>['required',new MustBeUniqueToIncomeStatement(getCurrentCompanyId(),$request->input('financial_statement_able_id'),)],
@@ -337,6 +335,7 @@ trait FinancialStatementAbleMutator
 						
 					
 					
+						
 					$subItemAlreadyExist = $financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->exists();
 					
 
@@ -394,21 +393,24 @@ trait FinancialStatementAbleMutator
 						}
 					}
 
+					// logger($subItemAlreadyExist);
 					if ($subItemAlreadyExist) {
 						$inPopup = isset($request->sub_items[0]) && isset($request->sub_items[0]['vat_rate']) && is_numeric($request->sub_items[0]['vat_rate']) && $request->get('sub_item_name') == $sub_item_origin_name ;
 						$isDeductible = $inPopup ? ($request->sub_items[0]['is_deductible']??0) : $pivotForElement->is_deductible;
 						$vatRate = $inPopup ? $request->sub_items[0]['vat_rate'] : $pivotForElement->vat_rate;
+						// logger('sub item name' . '--' .$sub_item_origin_name. ' actual vat ' . $vatRate);
 						$vatArr = $request->get('sub_item_name') == $sub_item_origin_name  ? [
 							'is_deductible'=>$isDeductible,
 							// not this
 							'vat_rate'=>$vatRate 
-						] : [];
-						
+							] : [];
+							
+							$vatRate = ($request->has('in_edit_mode') && $request->get('sub_item_name') == $sub_item_origin_name )  || in_array($sub_item_origin_name , $newAddedElements )  ?  $vatRate     : 0    ;
+							
 						
 						$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $sub_item_origin_name)->updateExistingPivot($financialStatementAbleItemId,array_merge(
 							[
 								'payload' => json_encode($this->calculatePayloadWithVat($payload ,$subItemType,$isDeductible , $vatRate,$financialStatementAbleItemId )),
-							
 							],
 							$vatArr
 						));
@@ -698,10 +700,6 @@ trait FinancialStatementAbleMutator
 						$totalDepreciationAtDates[$date] = isset($totalDepreciationAtDates[$date]) ? $totalDepreciationAtDates[$date] + $value : $value;
 					}
 				}
-				// if(IncomeStatementItem::CORPORATE_TAXES_ID){
-				// 	$totalAtDates = [];
-				// 	logger($totalAtDates);
-				// }
 				$this->withMainRowsFor($incomeStatementItemId, $subItemType)->updateExistingPivot($incomeStatementItemId, [
 					'total' => $totalOfAllRows,
 					'payload' => json_encode($totalAtDates)
@@ -897,9 +895,7 @@ trait FinancialStatementAbleMutator
 	}
 	public function calculatePayloadWithVat(array $payload , string $subItemType ,bool $isDeductible , float $vatRate , int $financialStatementItemAbleId):array 
 	{
-		// if($this instanceof CashFlowStatement){
-		// 	dd($payload);
-		// }
+		
 		if($subItemType != 'forecast'){
 			return $payload ;
 		}
@@ -909,8 +905,14 @@ trait FinancialStatementAbleMutator
 		$newPayload = [];
 		foreach($payload as $date=>$value){
 			#NOTE:calculate vat for sub item not percentage or cost
+			
 			$vatable = $this instanceof IncomeStatement && !$isDeductible || $this instanceof CashFlowStatement  && CashFlowStatementItem::CASH_IN_ID == $financialStatementItemAbleId || $this instanceof CashFlowStatement  && $isDeductible    ;
-			$newPayload[$date] = $vatable ? $value * $this->calculateVat($vatRate)  : $value ;
+			// $newPayload[$date] = 999;
+			$newPayload[$date] = $vatable ?  $value   * $this->calculateVat($vatRate)  : $value ;
+			if($vatable){
+				// logger('old vat ' . $oldVatRate . ' vat rate ' .  $vatRate );
+				
+			}
 			
 		}
 		return $newPayload;

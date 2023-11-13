@@ -10,6 +10,7 @@ use App\Models\CashFlowStatement;
 use App\Models\CashFlowStatementItem;
 
 use App\Models\Company;
+use App\Models\CustomerInvoice;
 use App\Models\CustomersInvoice;
 use App\Models\IncomeStatement;
 use App\Models\Language;
@@ -57,11 +58,11 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		
 		// $date = '05-11-2023';
 		// $now = now()->format('d-m-Y');
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
-		// dd(Carbon::make($date)->equalTo(Carbon::make($now)));
-		
+		 
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
 		// dd(getAdditionalDates('01-10-2023'));
@@ -171,7 +172,7 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-
+	
 
 
 

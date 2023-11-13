@@ -199,13 +199,13 @@ class CashFlowStatementController extends Controller
 		}
 		return $items ; 
 	}
-	public function removeVatFrom(array $items , float $vatRate):array {
-		$newItems = [];
-		foreach($items as $date => $value){
-			$newItems[$date] = $value / (1/($vatRate / 100));
-		}
-		return $newItems ; 
-	}
+	// public function removeVatFrom(array $items , float $vatRate):array {
+	// 	$newItems = [];
+	// 	foreach($items as $date => $value){
+	// 		$newItems[$date] = $value / (1/($vatRate / 100));
+	// 	}
+	// 	return $newItems ; 
+	// }
 	public function paginate(Request $request)
 	{
 		return $this->cashFlowStatementRepository->paginate($request);

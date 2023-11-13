@@ -2969,6 +2969,9 @@ function getPermissions():array
 			'name'=>'view customer aging'
 		],
 		[
+			'name'=>'view customer balances'
+		],
+		[
 			'name'=>'view weekly cash flow report'
 		],
 		[
@@ -4013,3 +4016,35 @@ function getDiffBetweenTwoDatesInDays(?Carbon $firstDate , ?Carbon $secondDate)
 	}
 	return 0 ;
 }
+function getEndYearMonthFrom(int $month,int $year)
+{
+	$monthAndYear = [];
+	foreach(range($month , 12) as $month => $year){
+		$monthAndYear[sprintf("%02d", $month)] = $year ;
+	}
+	return $monthAndYear ;
+	
+	
+}
+// function getMonthAndYearBetween(array $monthAndYear , $month , $year):array{
+// 	$day = '01';
+// 	$latestMonthAndYear = $monthAndYear[count($monthAndYear) - 1];
+// 	$prevMonth = explode('-',$latestMonthAndYear)[0];
+// 	$prevYear = explode('-',$latestMonthAndYear)[1];
+// 	$previousDateAsString = $prevYear.'-'.$prevMonth.'-'.$day;
+// 	$currentDateAsString = $year . '-'.$month . '-'.$day ;
+// 	if($year == $prevYear && $month - $prevMonth == 1 ){
+// 		return [] ;
+// 	}
+// 	$currentDate = Carbon::make($currentDateAsString) ;
+// 	$previousDate = Carbon::make($previousDateAsString) ;
+// 	$dates = generateDatesBetweenTwoDates($previousDate,$currentDate);
+// 	if (($key = array_search($currentDateAsString, $dates)) !== false) {
+// 		unset($dates[$key]);
+// 	}
+// 	if (($key = array_search($previousDateAsString, $dates)) !== false) {
+// 		unset($dates[$key]);
+// 	}
+// 	return  array_values($dates);
+	
+// }

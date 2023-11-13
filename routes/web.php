@@ -302,6 +302,9 @@ Route::middleware([])->group(function () {
 				});
 				Route::get('customer-again-analysis', 'CustomerAgingController@index')->name('view.customer.aging.analysis');
 				Route::post('customer-again-analysis', 'CustomerAgingController@result')->name('result.customer.aging.analysis');
+				
+				Route::get('customer-balances', 'CustomerBalancesController@index')->name('view.customer.balances');
+				
 				Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
 				Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
 				Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');

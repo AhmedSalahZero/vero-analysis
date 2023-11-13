@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 		$faker = Container::getInstance()->make(Generator::class);
-		$factory = factory(CustomerInvoice::class , 15000)->create()->each(function($customerInvoice) use($faker){
+		$factory = factory(CustomerInvoice::class , 2000)->create()->each(function($customerInvoice) use($faker){
 			factory(MoneyReceived::class,1)->create([
 				'customer_name'=>$customerInvoice->getCustomerName(),
 				'cheque_amount'=>$customerInvoice->getNetInvoiceAmount()  ,

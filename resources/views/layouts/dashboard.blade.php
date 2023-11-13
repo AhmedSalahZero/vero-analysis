@@ -1239,6 +1239,7 @@ tr td:first-of-type{
 <script src="{{ asset('global.js') }}"></script>
 
 @stack('js_end')
+
 </body>
 
 <!-- end::Body -->

@@ -417,7 +417,18 @@ $tableId = 'kt_table_1';
                 let canRefreshPercentages = false;
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
-
+						$(document).on('change','.names-items-names',function(){
+							var names = [];
+							$('#new_items_names').val('[]');
+							$('.names-items-names').each(function(index,input){
+								var currentName = $(input).val() ;
+								if(currentName!=''){
+								names.push(currentName);
+									
+								}
+							})
+							$('#new_items_names').val(names);
+						});
                         window.addEventListener('scroll', function() {
                             const top = window.scrollY > 140 ? window.scrollY : 140;
 
@@ -430,7 +441,7 @@ $tableId = 'kt_table_1';
 						<i class="cursor-pointer text-dark arrow-nav arrow-right fa  fa-arrow-right"></i>
 						`)
 
-
+						
                             $(document).on('click', '.arrow-nav', function() {
                                 const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
                                 const scrollByUnit = 50
@@ -1245,7 +1256,6 @@ $tableId = 'kt_table_1';
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
-							// console.log('element',parentElement);
                             const tbody = this.parentElement.parentElement.parentElement
 
                             const currentIndex = $(this).closest('[data-index]').attr('data-index')
@@ -2035,7 +2045,6 @@ $tableId = 'kt_table_1';
 
                                                         } else {
                                                             window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
-																// console.log(checkedPercentages,MainItemObject.id);
                                                                 var isCurrentChecked = checkedPercentages && (checkedPercentages.includes(MainItemObject.id.toString()) || checkedPercentages.includes(MainItemObject.name) )  ? ' selected' : ' ';
                                                                 sub_items_options += '<option ' + isCurrentChecked + ' value="' + MainItemObject.id + '">' + MainItemObject.name + '</option>'
                                                             })
@@ -2261,11 +2270,13 @@ $tableId = 'kt_table_1';
 												<div class="modal-body">
 													<form data-financial-statement-able-item-id="${data.pivot.financial_statement_able_item_id}" id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name)  }" class="edit-submit-sub-item" action="{{ route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()]) }}">
 														<input type="hidden" name="in_add_or_edit_modal" value="1">
+														
 														<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 														<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 														<input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
 														<input  type="hidden" name="cash_flow_statement_id"  value="{{ $cashFlowStatement->id }}">
+														<input  type="hidden" name="in_edit_mode"  value="1">
 														<input  type="hidden" name="was_financial_income"  value="${data.pivot && data.pivot.is_financial_income!=null ? data.pivot.is_financial_income :''}">
 														<input  type="hidden" name="was_financial_expense"  value="${data.pivot && data.pivot.is_financial_expense!=null ? data.pivot.is_financial_expense :''}">
 														<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
@@ -2507,6 +2518,7 @@ $tableId = 'kt_table_1';
 																	<label >{{ __('Non-Repeating Amount') }}</label>
 															
 															<input data-sub-item-name="new" data-in-edit-mode="0"  class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+															<input   type="hidden" value="1" name="in_add_mode"  >	
 															</div>
 															</div>
 															<div class="form-group custom-divs-class">
@@ -2620,7 +2632,7 @@ $tableId = 'kt_table_1';
 											<div style="display:flex;align-items:center;justify-content:space-between;width:100%">
 												<div style="width:60%">
 													<label class="form-label">{{ __('Name') }}</label>
-													<input  name="sub_items[0][name]" type="text" value="" class="form-control  trim-when-key-up" required>
+													<input  name="sub_items[0][name]" type="text" value="" class="form-control names-items-names trim-when-key-up" required>
 												</div>
 												
 												<div class="form-check mt-2 text-center ">
@@ -2644,7 +2656,7 @@ $tableId = 'kt_table_1';
 															<div class="form-group how-many-item d-flex flex-wrap text-nowrap justify-content-between align-items-center border-bottom-popup" data-id="${data.id}" data-index="0">
 																<div style="display:flex;align-items:center;width:100%;justify-content:space-between; ">
 																<div class="${increaseNameWidth ? 'width-66' : ''}"><label class="form-label">{{ __('Name') }}</label>
-																<input name="sub_items[0][name]" type="text" value="" class="form-control trim-when-key-up" required></div>
+																<input name="sub_items[0][name]" type="text" value="" class="form-control trim-when-key-up  names-items-names" required></div>
 																` + `` + `</div>` +
                                                                 `
 																` + has_percentage_or_fixed_sub_items + `
@@ -2673,7 +2685,8 @@ $tableId = 'kt_table_1';
 																						
 																						<label class="label ">{{ __('How Many Items ?') }}</label>
 																																	<input type="hidden" name="in_add_or_edit_modal" value="1">
-																						
+																																					<input style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;"   type="text" value="[]" id="new_items_names" name="new_items_names_in_popup"  >	
+
 																						<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 																						<input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
 																						<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
@@ -3033,7 +3046,9 @@ $tableId = 'kt_table_1';
                                     for (var pair of formData.entries()) {
                                         dataForm.append(pair[0], pair[1]);
                                     }
-
+								
+									 dataForm.append('new_added_elements',$('#new_items_names').val());
+							
                                     $('.append-table-into-dom').remove();
 
                                     $.ajax({
@@ -4108,16 +4123,18 @@ $tableId = 'kt_table_1';
                     let datesFormatted = "{{ json_encode(($incomeStatement->getIntervalFormatted())) }}"
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
                     let subItemName = editModal && pivot && pivot.payload ? pivot.sub_item_name : 'new';
+                    var isDeductable = editModal && pivot && pivot.payload ? pivot.is_deductible : 0
+                    let vatRate = editModal && pivot && pivot.payload && !isDeductable ? pivot.vat_rate : 0;
                     datesFormatted = JSON.parse(datesFormatted.replace(/(&quot\;)/g, "\""))
                     let thsForHeader = '<th class="text-white"> {{ __("Item") }}  </th>';
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
 
-
                     for (date of dates) {
 
                         var valueAtDate = editModal && pivotFormatted[date] ? pivotFormatted[date] : 0;
                         valueAtDate = parseFloat(valueAtDate)
+						valueAtDate = editModal ? valueAtDate / (1+(vatRate/100)) : valueAtDate;
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
 
                         tdForBodyValue += `<td data-id="${id}" class="" data-type="value"  data-date="${date}">

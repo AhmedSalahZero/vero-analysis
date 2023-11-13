@@ -572,8 +572,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 if (!currentTable) {
                                     currentTable = $('.main-table-class').DataTable();
                                 }
-                               // currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
-                               // currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
                                 $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
                                 $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
 
@@ -619,43 +617,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 </script>
 <script>
-    // $(function(){
-    //         $(document).on('blur','.editable',function(){
-    //                 var columnIndex = this._DT_CellIndex  ? this._DT_CellIndex.column : 0 ;
-    //                 var tdData = $(this).closest('table').find('.header-th').eq(columnIndex)[0] ;
-    //                 var dataTableId = $(this).closest('table.main-table-class').attr('id')  ;
-    //                 var modelName = $(this).parent().data('model-name') || $(this).data('model-name');
-    //                 var modelId = $(this).parent().data('model-id') || $(this).data('model-id');
-    //                 var columnName = $(tdData).data('db-column-name') || $(this).data('db-column-name');
-    //                 var isRelation = $(tdData).data('is-relation') || $(this).data('is-relation');
-    //                 var isCollectionRelation = $(tdData).data('is-collection-relation') || $(this).data('is-collection-relation');
-    //                 var collectionItemId = $(tdData).data('collection-item-id') || $(this).data('collection-item-id');
-    //                 var isJson = $(tdData).data('is-json');
-    //                 var relationName = $(tdData).data('relation-name') || $(this).data('relation-name');
-    //                 var data = $(this).text();
-
-    //                 $.ajax({
-    //                         url:"{{ route('admin.edit.table.cell',getCurrentCompanyId()) }}",
-    //                         data:{
-    //                                 "_token":"{{ csrf_token() }}",
-    //                                 "isRelation":isRelation ,
-    //                                 "columnName":columnName ,
-    //                                 "relationName":relationName,
-    //                                 "data":data,
-    //                                 'modelName':modelName,
-    //                                 'modelId':modelId,
-    //                                 'isJson':isJson,
-    //                                 "dataTableId":dataTableId,
-    //                                 "isCollectionRelation":isCollectionRelation,
-    //                                 "collectionItemId":collectionItemId
-    //                         },
-    //                         type:"POST",
-    //                         success:function(response){
-    //                                 $('#'+response.dataTableId).DataTable().ajax.reload( null, false )
-    //                         }
-    //                 })
-    //         });
-    // })
+    
     $(document).on('click', '#show-past-due-detail', function() {
         if (!currentTable) {
             currentTable = $('.main-table-class').DataTable()

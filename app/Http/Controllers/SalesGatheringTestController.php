@@ -7,7 +7,7 @@ use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerNatureCashingJob;
 use App\Jobs\Caches\RemoveIntervalYearCashingJob;
-use App\Jobs\CalculateNetBalance;
+use App\Jobs\CalculateNetBalanceWithMonthlyDebits;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\Jobs\RemoveCachingCompaniesData;
 use App\Jobs\SalesGatheringTestJob;
@@ -16,19 +16,14 @@ use App\Models\ActiveJob;
 use App\Models\CachingCompany;
 use App\Models\Company;
 use App\Models\SalesGatheringTest;
-use App\Services\Caching\CashingService;
 use Auth;
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SalesGatheringTestController extends Controller
@@ -147,7 +142,7 @@ class SalesGatheringTestController extends Controller
 		elseif($modelName == 'CustomerInvoice'){
 			SalesGatheringTestJob::withChain([
 				new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id,$modelName),
-				new CalculateNetBalance($company->id,$modelName),
+				new CalculateNetBalanceWithMonthlyDebits($company->id,$modelName),
 				new RemoveCachingCompaniesData($company->id,$modelName),
 			])->dispatch($company->id,$modelName);
 		}
@@ -161,12 +156,7 @@ class SalesGatheringTestController extends Controller
 				// new HandleBreakdownDashboardCashingJob($company),
 			])->dispatch($company->id,$modelName);
 		}
-
 		// remove old cashing for these company 
-
-		// $cashingService = new CashingService($company);
-
-
 
 		return redirect()->back();
 	}
@@ -267,7 +257,6 @@ class SalesGatheringTestController extends Controller
 	{
 		$companyId = $company->id;
 		$model = ('\App\Models\\'.$modelName)::find($modelId) ;
-		// dd();
 		foreach((array)$request->get('tableIds') as $tableId){
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['company_id']  = $companyId ;

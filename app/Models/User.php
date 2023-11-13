@@ -108,7 +108,7 @@ class User extends Authenticatable implements HasMedia
 	}
 	public function moneyReceived()
 	{
-		return $this->hasMany(MoneyReceived::class , 'user_id','id');
+		return $this->hasMany(MoneyReceived::class , 'user_id','id')->where('company_id',getCurrentCompanyId());
 	}
 	public function getMoneyReceived():Collection
 	{

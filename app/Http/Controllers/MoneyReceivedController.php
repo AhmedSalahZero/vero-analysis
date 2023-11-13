@@ -37,15 +37,10 @@ class MoneyReceivedController
 	public function create(Company $company,$singleModel = null)
 	{
 		$banks = Bank::pluck('view_name','id');
-		
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-
 		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
-		
-		
 		$customerInvoices =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$invoiceNumber = $singleModel ? CustomerInvoice::where('id',$singleModel)->first()->getInvoiceNumber():null;
-		// dd($invoiceNumber);
         return view('reports.moneyReceived.form',[
 			'banks'=>$banks,
 			'customerInvoices'=>$customerInvoices ,
