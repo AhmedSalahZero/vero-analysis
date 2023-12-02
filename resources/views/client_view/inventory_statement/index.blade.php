@@ -59,7 +59,7 @@
                                     </span>
                                     <span class="kt-option__body p-2">
                                         <button type="submit" class="btn active-style btn-icon-sm">
-                                            <i class="fas fa-trash-alt"></i>
+                                            <i class="fas fa-trash"></i>
                                             {{ __('Delete Selected Rows') }}
                                         </button>
                                     </span>

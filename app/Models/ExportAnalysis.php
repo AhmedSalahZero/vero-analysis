@@ -48,7 +48,8 @@ class ExportAnalysis extends Model
 						'second_col'=>$secondColumn = 'product_item',
 						'view_name'=>__('Customer Name Against Product Item'),
 						'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn])
-					],[
+					],
+					[
 						'first_col'=>$firstColumn ='product_item',
 						'second_col'=>$secondColumn = 'customer_name',
 						'view_name'=>__('Product Item Against Customer Name'),

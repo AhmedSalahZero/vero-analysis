@@ -1,6 +1,7 @@
 @php
 	$user = Auth()->user();
 @endphp
+
 <ul class="kt-menu__nav ">
 		@if($user->can('view sales dashboard'))
         <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{ route('dashboard', $company) }}"

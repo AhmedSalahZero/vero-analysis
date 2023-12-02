@@ -52,5 +52,13 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Log::class , 'company_id','id');
 	}
+	public function isCachingNow()
+	{
+		return $this->is_caching_now;
+	}
+	public function getMainFunctionalCurrency():string
+	{
+		return strtoupper($this->main_functional_currency) ?: __('Main Functional Currency');
+	}
 	
 }

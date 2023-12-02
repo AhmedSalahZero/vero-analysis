@@ -253,12 +253,12 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                 <div class="kt-portlet__head-toolbar">
                     <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#kt_apps_contacts_view_tab_1" role="tab">
+                            <a class="nav-link active" onclick="return false;" data-toggle="tab" href="#kt_apps_contacts_view_tab_1" role="tab">
                                 <i class="flaticon2-checking"></i> &nbsp; {{ __('Report Table') }}
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " data-toggle="tab" href="#kt_apps_contacts_view_tab_2" role="tab">
+                            <a class="nav-link " onclick="return false;" data-toggle="tab" href="#kt_apps_contacts_view_tab_2" role="tab">
                                 <i class="flaticon-line-graph"></i>{{ __('Charts') }}
                             </a>
                         </li>

@@ -106,4 +106,21 @@ class HArr
 
 		return $result;
 	}
+	public static  function sortBasedOnKey(array $arr, string $key):array 
+	{
+		usort($arr, function ($a, $b) use($key) {
+			return Carbon::make($a[$key])->greaterThan(Carbon::make($b[$key]));
+		});
+		return $arr ;
+	}
+	// public static function removeElementByValue(array $elements , $valueToRemove)
+	// {
+	// 	$newElements = [];
+	// 	foreach($elements as $key=>$value){
+	// 		if($value != $valueToRemove ){
+	// 				$newElements[$key] = $value ; 
+	// 		}
+	// 	}
+	// 	return $newElements; 
+	// }
 }

@@ -115,7 +115,7 @@
             @csrf
             @method('DELETE')
 
-            <x-table :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',['company'=>$company->id , 'modelName'=>$modelName])" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
+            <x-table :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',['company'=>$company->id , 'modelName'=>$modelName])" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
 
                 @slot('table_header')
 
@@ -141,7 +141,7 @@
                 @endif
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-lg-12 ">
+                        {{-- <div class="col-lg-12 ">
                             <label class="kt-option bg-secondary">
                                 <span class="kt-option__control">
                                     <span class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold" checked>
@@ -160,13 +160,13 @@
                                     </span>
                                     <span class="kt-option__body p-2">
                                         <button type="submit" class="btn active-style btn-icon-sm">
-                                            <i class="fas fa-trash-alt"></i>
+                                            <i class="fas fa-trash"></i>
                                             {{ __('Delete Selected Rows') }}
                                         </button>
                                     </span>
                                 </span>
                             </label>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <tr class="table-active text-center">

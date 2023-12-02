@@ -1,10 +1,8 @@
 <?php
 
 
-use App\Http;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\BalanceSheetController;
-use App\Http\Controllers\CalculatedIrrController;
 use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Controllers\DeleteAllRowsFromCaching;
 use App\Http\Controllers\DeleteMultiRowsFromCaching;
@@ -311,17 +309,47 @@ Route::middleware([])->group(function () {
 				Route::get('money-received/edit/{moneyReceived}', 'MoneyReceivedController@edit')->name('edit.money.receive');
 				Route::put('money-received/update/{moneyReceived}', 'MoneyReceivedController@update')->name('update.money.receive');
 				Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
+				
+				
+				Route::get('financial-institutions', 'FinancialInstitutionController@index')->name('view.financial.institutions');
+				Route::get('financial-institutions/create/{model?}', 'FinancialInstitutionController@create')->name('create.financial.institutions');
+				Route::post('financial-institutions/create', 'FinancialInstitutionController@store')->name('store.financial.institutions');
+				Route::get('financial-institutions/edit/{financialInstitution}', 'FinancialInstitutionController@edit')->name('edit.financial.institutions');
+				Route::put('financial-institutions/update/{financialInstitution}', 'FinancialInstitutionController@update')->name('update.financial.institutions');
+				Route::delete('financial-institutions/delete/{financialInstitution}', 'FinancialInstitutionController@destroy')->name('delete.financial.institutions');
+				
+				Route::get('financial-institutions', 'FinancialInstitutionController@index')->name('view.financial.institutions');
+				Route::get('financial-institutions/create/{model?}', 'FinancialInstitutionController@create')->name('create.financial.institutions');
+				Route::post('financial-institutions/create', 'FinancialInstitutionController@store')->name('store.financial.institutions');
+				Route::get('financial-institutions/edit/{financialInstitution}', 'FinancialInstitutionController@edit')->name('edit.financial.institutions');
+				Route::put('financial-institutions/update/{financialInstitution}', 'FinancialInstitutionController@update')->name('update.financial.institutions');
+				Route::delete('financial-institutions/delete/{financialInstitution}', 'FinancialInstitutionController@destroy')->name('delete.financial.institutions');
+				
+				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper','OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');
+				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create','OverdraftAgainstCommercialPaperController@create')->name('create.overdraft.against.commercial.paper');
+				Route::post('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create','OverdraftAgainstCommercialPaperController@store')->name('store.overdraft.against.commercial.paper');
+				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/edit/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@edit')->name('edit.overdraft.against.commercial.paper');
+				Route::put('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/update/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@update')->name('update.overdraft.against.commercial.paper');
+				Route::delete('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@destroy')->name('delete.overdraft.against.commercial.paper');
+				
+				
 				Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
 				Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
 				Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
-				Route::get('money-received/get-invoice-numbers/{customer_name}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
+				Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
 				Route::get('/create-item/{model}', 'SalesGatheringTestController@createModel')->name('create.sales.form');
 				Route::post('/create-item/{model}', 'SalesGatheringTestController@storeModel')->name('admin.store.analysis');
+				Route::post('/close-period-action', 'ClosePeriodController@execute')->name('store.close.period');
 				
 				Route::get('/create-item/{model}/edit/{modelId}', 'SalesGatheringTestController@editModel')->name('edit.sales.form');
 				Route::post('/create-item/{model}/update/{modelId}', 'SalesGatheringTestController@updateModel')->name('admin.update.analysis');
+				Route::get('/invoices-dashboard/cash', 'CustomerInvoiceDashboardController@viewCashDashboard')->name('view.customer.invoice.dashboard.cash');
+				Route::get('/invoices-dashboard/forecast', 'CustomerInvoiceDashboardController@viewForecastDashboard')->name('view.customer.invoice.dashboard.forecast');
+				Route::get('/customer-balances/invoices-report/{customerName}/{currency}', 'CustomerInvoiceDashboardController@showInvoiceReport')->name('view.invoice.report');
+				Route::get('/customer-balances/invoices-statement-report/{customerName}/{currency}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
+				Route::get('/customer-balances/total-net-balance-details/{currency}', 'CustomerBalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
 				
 				Route::prefix('/SalesGathering')->group(function () {
 					Route::get('SalesTrendAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.trend.analysis');
@@ -343,7 +371,8 @@ Route::middleware([])->group(function () {
 
 					// Providers Two Dimensional Breakdown
 					Route::post('/ProvidersTwoDimensionalBreakdown', 'Analysis\SalesGathering\ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport@result')->name('ProvidersTwoDimensionalBreakdown.result');
-					Route::get('/sales-persons-customers','CustomerAgingController@getCustomersFromSalesPersons')->name('get.customers.from.sales.persons');
+					Route::get('/get-currencies-from-business-units','CustomerAgingController@getCurrenciesFromBusinessUnit')->name('get.currencies.from.business.units');
+					Route::get('/get-customers-from-currencies','CustomerAgingController@getCustomersFromBusinessUnitsAndCurrencies')->name('get.customers.from.business.units.currencies');
 					############ Sales Trend Analysis Links +   Average Prices +  Breakdown ############
 					// For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
 					$routesDefinition = (new RoutesDefinition);

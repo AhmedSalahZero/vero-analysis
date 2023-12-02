@@ -34,7 +34,7 @@ input[type="checkbox"]{
 
 <div class="kt-portlet kt-portlet--tabs">
     <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar">
+        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1" >
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link {{ !Request('active') || Request('active') == 'cheques-in-safe' ?'active':'' }}" data-toggle="tab" href="#cheques-in-safe" role="tab">
@@ -57,6 +57,15 @@ input[type="checkbox"]{
                     </a>
                 </li>
             </ul>
+			
+			<a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  active-style btn-icon-sm align-self-center">
+                <i class="fas fa-plus"></i>
+                {{ __('New Record') }}
+            </a>
+			{{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
+				<i class="fas fa-plus"></i>
+				<span>{{ __('New Record') }}</span>
+			</a> --}}
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -65,7 +74,7 @@ input[type="checkbox"]{
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'cheques-in-safe' ?'active':'' }}" id="cheques-in-safe" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
                             <span class="kt-portlet__head-icon">
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
@@ -75,12 +84,12 @@ input[type="checkbox"]{
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-money :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :search-fields="$chequesReceivedTableSearchFields" :money-received-type="'cheques-in-safe'"  :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
-                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Select') }}</th>
@@ -106,12 +115,12 @@ input[type="checkbox"]{
 									</td>
                                     <td>{{ $cheque->getCustomerName() }}</td>
                                     {{-- <td>{{ $cheque->id }}</td> --}}
-                                    <td>{{ $cheque->getReceivingDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $cheque->getReceivingDateFormatted() }}</td>
                                     <td>{{ $cheque->getChequeNumber() }}</td>
-                                    <td>{{ $cheque->getAmountFormatted() }}</td>
-                                    <td>-</td>
+                                    <td>{{ $cheque->getReceivedAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $cheque->getCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $cheque->getDraweeBankName() }}</td>
-                                    <td>{{ $cheque->getChequeDueDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $cheque->getChequeDueDateFormatted() }}</td>
                                     <td>{{ $cheque->getChequeDueAfterDays() }}</td>
                                     <td> {{ $cheque->getChequeStatusFormatted() }} </td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
@@ -162,7 +171,7 @@ input[type="checkbox"]{
 			
 			<div class="tab-pane {{ Request('active') == 'cheques-under-collection' ? 'active':''  }}" id="cheques-under-collection" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
                             <span class="kt-portlet__head-icon">
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
@@ -172,7 +181,8 @@ input[type="checkbox"]{
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :search-fields="$chequesUnderCollectionTableSearchFields" :money-received-type="'cheques-under-collection'" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+						
                     </div>
                     <div class="kt-portlet__body">
 
@@ -181,17 +191,17 @@ input[type="checkbox"]{
                             <thead>
                                 <tr class="table-standard-color">
 								
-                                    <th>{{ __('Customer Name') }}</th>
-                                    <th>{{ __('Receiving Date') }}</th>
-                                    <th>{{ __('Cheque Number') }}</th>
-                                    <th>{{ __('Cheque Amount') }}</th>
-                                    <th>{{ __('Deposit Date') }}</th>
-                                    <th class="bank-max-width">{{ __('Drawl Bank') }}</th>
-                                    <th>{{ __('Main Account Number') }}</th>
-                                    <th>{{ __('Sub Account Number') }}</th>
-                                    <th>{{ __('Clearance Days') }}</th>
-                                    <th>{{ __('Cheque Expected Collection Date') }}</th>
-                                    <th>{{ __('Control') }}</th>
+                                    <th class="align-middle">{{ __('Customer Name') }}</th>
+                                    {{-- <th>{{ __('Receiving Date') }}</th> --}}
+                                    <th class="align-middle">{{ __('Cheque Number') }}</th>
+                                    <th class="align-middle">{{ __('Cheque Amount') }}</th>
+                                    <th class="align-middle">{{ __('Deposit Date') }}</th>
+                                    <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
+                                    {{-- <th>{{ __('Main Account Number') }}</th> --}}
+                                    <th class="align-middle">{{ __('Sub Account Number') }}</th>
+                                    <th class="align-middle">{{ __('Clearance Days') }}</th>
+                                    <th class="align-middle">{!! __('Cheque Expected <br> Collection Date') !!}</th>
+                                    <th class="align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,12 +210,12 @@ input[type="checkbox"]{
 									
                                     <td>{{ $cheque->getCustomerName() }}</td>
                                     {{-- <td>{{ $cheque->id }}</td> --}}
-                                    <td>{{ $cheque->getReceivingDateFormatted() }}</td>
+                                    {{-- <td>{{ $cheque->getReceivingDateFormatted() }}</td> --}}
                                     <td>{{ $cheque->getChequeNumber() }}</td>
-                                    <td>{{ $cheque->getAmountFormatted() }}</td>
-                                    <td> {{$cheque->getChequeDepositDate()}} </td>
+                                    <td>{{ $cheque->getReceivedAmountFormatted() }}</td>
+                                    <td class="text-nowrap"> {{$cheque->getChequeDepositDate()}} </td>
                                     <td class="bank-max-width">{{ $cheque->chequeDrawlBankName() }}</td>
-                                    <td>{{ $cheque->chequeMainAccountNumber() }}</td>
+                                    {{-- <td>{{ $cheque->chequeMainAccountNumber() }}</td> --}}
                                     <td>{{ $cheque->chequeSubAccountNumber() }}</td>
                                     <td> {{ $cheque->chequeClearanceDays() }} </td>
                                     <td> {{ $cheque->chequeExpectedCollectionDateFormatted() }} </td>
@@ -261,7 +271,7 @@ input[type="checkbox"]{
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == 'money-transfer' ? 'active':''  }}" id="money-transfer" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
                             <span class="kt-portlet__head-icon">
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
@@ -271,7 +281,7 @@ input[type="checkbox"]{
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :search-fields="$incomingTransferTableSearchFields" :money-received-type="'money-transfer'" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -279,16 +289,16 @@ input[type="checkbox"]{
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th>{{ __('Beneficiary Name') }}</th>
+                                    <th>{{ __('Customer Name') }}</th>
                                     {{-- <th>{{ __('Invoice/Contract') }}</th> --}}
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
                                     <th>{{ __('Transfer Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('Payment Bank') }}</th>
-                                    <th>{{ __('Due After Days') }}</th>
+                                    {{-- <th>{{ __('Payment Bank') }}</th> --}}
+                                    {{-- <th>{{ __('Main Bank Account') }}</th> --}}
                                     <th>{{ __('Sub-account Number') }}</th>
-                                    <th>{{ __('Status') }}</th>
+                                    {{-- <th>{{ __('Status') }}</th> --}}
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -299,12 +309,12 @@ input[type="checkbox"]{
                                     {{-- <td>COD2025</td> --}}
                                     <td>{{ $money->getReceivingDateFormatted() }}</td>
                                     <td>{{ $money->getReceivingBankName() }}</td>
-                                    <td>{{ $money->getIncomingTransferAmountFormatted() }}</td>
-                                    <td>{{ $money->getIncomeTransferCurrency() }}</td>
-                                    <td>{{ $money->getPaymentBankName() }}</td>
-                                    <td class="bank-max-width">{{ $money->getTransferMoneyDueAfterDays() }}</td>
+                                    <td>{{ $money->getReceivedAmountFormatted() }}</td>
+                                    <td>{{ $money->getCurrencyFormatted() }}</td>
+                                    {{-- <td class="bank-max-width">{{ $money->getTransferMoneyDueAfterDays() }}</td> --}}
+                                    {{-- <td>{{ $money->getMainAccountNumber() }}</td> --}}
                                     <td>{{ $money->getSubAccountNumber() }}</td>
-                                    <td>{{ $money->getTransferMoneyStatus() }}</td>
+                                    {{-- <td>{{ $money->getTransferMoneyStatus() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
@@ -352,7 +362,7 @@ input[type="checkbox"]{
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == 'cash' ? 'active':''  }}" id="cash" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
                             <span class="kt-portlet__head-icon">
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
@@ -362,7 +372,7 @@ input[type="checkbox"]{
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :search-fields="$cashReceivedTableSearchFields" :money-received-type="'cash'" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -371,7 +381,6 @@ input[type="checkbox"]{
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Customer Name') }}</th>
-                                    {{-- <th>{{ __('Invoice/Contract') }}</th> --}}
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th>{{ __('Received Amount') }}</th>
@@ -383,13 +392,11 @@ input[type="checkbox"]{
                             <tbody>
 							@foreach($receivedCashes as $cash)
                                 <tr>
-									
                                     <td>{{ $cash->getCustomerName() }}</td>
-                                    {{-- <td>COD2025</td> --}}
                                     <td>{{ $cash->getReceivingDateFormatted() }}</td>
                                     <td>{{ $cash->getCashBranchName() }}</td>
-                                    <td>{{ $cash->getCashReceivedAmountFormatted() }}</td>
-                                    <td>{{ $cash->getCashCurrency() }}</td>
+                                    <td>{{ $cash->getReceivedAmountFormatted() }}</td>
+                                    <td>{{ $cash->getCurrencyFormatted() }}</td>
                                     <td>{{ $cash->getReceiptNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                          <span style="overflow: visible; position: relative; width: 110px;">
@@ -562,6 +569,33 @@ $(document).on('click','#js-append-bank-name-if-not-exist',function(){
 	$('#js-choose-bank-id').modal('hide');
 });
 </script>
+<script>
+$(document).on('change','.js-search-modal',function(){
+	const searchFieldName = $(this).val();
+	const popupType = $(this).attr('data-type');
+	const modal = $(this).closest('.modal');
+	if(searchFieldName === 'due_date'){
+		$('.data-type-span').html('[ {{ __("Due Date") }} ]')
+		modal.find(modal).find('.search-field').val('').trigger('change').prop('disabled',true);
+	}else if(searchFieldName=='receiving_date'){
+		$(modal).find('.search-field').val('').trigger('change').prop('disabled',true);
+		modal.find('.data-type-span').html('[ {{ __("Receiving Date") }} ]')
+	}else if(searchFieldName=='cheque_deposit_date'){
+		$(modal).find('.search-field').val('').trigger('change').prop('disabled',true);
+		modal.find('.data-type-span').html('[ {{ __("Deposit Date") }} ]')
+	}else{
+		$(modal).find('.search-field').prop('disabled',false);
+	}
+})
+$(function(){
 
+	$('.js-search-modal').trigger('change')
+	
+})
 
+</script>
 @endsection
+@push('js')
+{{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
+{{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
+@endpush

@@ -173,10 +173,13 @@
 								$fieldType = $fieldTypeAndClassDefaultValue['type'];
 								$fieldClass = $fieldTypeAndClassDefaultValue['class'] ?? '';
 								$defaultValue = $fieldTypeAndClassDefaultValue['default_value'];
+								
 							@endphp
+						
+							
                                 <td>
 									@php
-										$currentVal = isset($model) ?  $model->{$name} : $defaultValue;
+										$currentVal = isset($model) && $model->{$name} ?  $model->{$name} : $defaultValue;
 										if(is_object($currentVal)){
 											$currentVal = \Carbon\Carbon::make($currentVal)->format('Y-m-d');
 										}
@@ -407,14 +410,17 @@
                 , type: form.getAttribute('method')
                 , success: function(res) {
                     $('.save-form').prop('disabled', false)
-
+					
                     Swal.fire({
                         icon: 'success'
                         , title: res.message,
+						timer:1500,
+						 showConfirmButton: false
 
-                    });
+                    }).then(function(){
+              	      window.location.href = res.redirectTo;
+					});
 
-                    window.location.href = res.redirectTo;
 
 
 

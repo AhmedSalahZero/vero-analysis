@@ -44,14 +44,14 @@ class CalculateNetBalanceWithMonthlyDebits implements ShouldQueue
         $customerInvoices = CustomerInvoice::where('company_id', $this->companyId)->where('net_balance', null)->get();
 		
         foreach($customerInvoices as $customerInvoice) {
-			$customerName = $customerInvoice->getCustomerName();
+			// $customerName = $customerInvoice->getCustomerName();
 			
             // first sync net balance
-            $customerInvoice->syncNetBalance();
+            // $customerInvoice->syncNetBalance();
 			
-			// $invoiceDate = $customerInvoice->getInvoiceDate();
-		
-            
+            // $customerInvoice->insertInvoiceDateMonthAndYearColumnsInDB();
+			
+			// $customerInvoice->calculateAmountInMainCurrency();
         }
 		// foreach($customersWithItsSmallestDate as $customerName => $customerInvoiceArr){
 		// 	$customerInvoice = $customerInvoiceArr['customer_invoice'];

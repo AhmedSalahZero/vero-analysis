@@ -10,6 +10,9 @@ $tableId = 'kt_table_1';
     .checkboxes-vat {
         margin-top: 15px;
     }
+	#kt_table_1_filter{
+		display:none;
+	}
 
     .max-w-actions {
         width: 55px !important;
@@ -437,9 +440,9 @@ $tableId = 'kt_table_1';
                         if ($('.kt-portlet__body').length) {
 
                             $('.kt-portlet__body').append(`
-						<i class="cursor-pointer text-dark arrow-nav  arrow-left fa fa-arrow-left"></i>
-						<i class="cursor-pointer text-dark arrow-nav arrow-right fa  fa-arrow-right"></i>
-						`)
+								<i class="cursor-pointer text-dark arrow-nav  arrow-left fa fa-arrow-left"></i>
+								<i class="cursor-pointer text-dark arrow-nav arrow-right fa  fa-arrow-right"></i>
+								`)
 
 						
                             $(document).on('click', '.arrow-nav', function() {
@@ -647,7 +650,7 @@ $tableId = 'kt_table_1';
 
                               //
                                 $('.modal-for-non-repeating').addClass('d-none').addClass('fade').removeClass('d-block')
-
+								
                                 $('.modal-for-non-repeating[data-index="' + currentIndex + '"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
                             }
 
@@ -1613,9 +1616,9 @@ $tableId = 'kt_table_1';
                         $(document).on('hide.bs.modal', '.edit-sub-modal-class', function() {
                             inEditMode = false
                         })
-                        $(document).on('click', '.edit-modal-icon', function() {
+                        $(document).on('click', '.edit-btn', function() {
                             inEditMode = true
-                            const target = $(this).parent().attr('data-target');
+                            const target = $(this).attr('data-target');
                             if (target) {
                                 $(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
                                 $(target).find('.can-trigger-non-repeating-modal:checked:first-of-type').trigger('change');
@@ -3091,6 +3094,9 @@ $tableId = 'kt_table_1';
                                             } else if (res.statusText) {
                                                 message = res.statusText;
                                             }
+											if(message.includes('CSRF')){
+												message = "{{ __('Your Session Expired .. Please Reload The Page And Try Again') }}"
+											}
                                             Swal.fire({
                                                 icon: 'error'
                                                 , title: "{{ __('Something Went Wrong') }}"
@@ -3977,7 +3983,7 @@ $tableId = 'kt_table_1';
 
                 function getSalesRevenueModal(editModal, pivot = null, id) {
 
-                    let salesRevenueQuantityDateValues = pivot && pivot.quantityPivot ? pivot.quantityPivot : {}
+                    let salesRevenueQuantityDateValues = editModal && pivot && pivot.quantityPivot ? pivot.quantityPivot : {}
                     let datesFormatted = "{{ json_encode(($incomeStatement->getIntervalFormatted())) }}"
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
                     let subItemName = editModal && pivot && pivot.payload ? pivot.sub_item_name : 'new';
@@ -3995,25 +4001,25 @@ $tableId = 'kt_table_1';
                         var valueAtDate = editModal && pivotFormatted[date] ? pivotFormatted[date] : 0;
                         valueAtDate = parseFloat(valueAtDate)
                         var priceAtDate = editModal && salesQuantityAtDate ? valueAtDate / salesQuantityAtDate : 0;
+					
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
-
                         tdForBodyValue += `<td class="" data-type="value"  data-date="${date}">
-							<input data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
-							<input data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
+							<input data-in-edit-mode="${editModal}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
+							<input data-in-edit-mode="${editModal}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
 							<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 							
 						  </td> `
                         tdForBodyQuantity += `<td class="" data-type="quantity"  data-date="${date}"> 
 						
-						<input data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
-						<input data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
+						<input data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
+						<input data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 						
 						</td> `
                         tdForBodyPrice += `<td class="" data-type="price"  data-date="${date}">
 						
-						<input data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup form-control blured-item"  data-type="price" type="text"  value="${number_format(priceAtDate,0)}" >
-						<input data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup" data-type="price" type="hidden" name="sub_items[0][price][${date}]" value="${priceAtDate}" >
+						<input data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup form-control blured-item"  data-type="price" type="text"  value="${number_format(priceAtDate,0)}" >
+						<input data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup" data-type="price" type="hidden" name="sub_items[0][price][${date}]" value="${priceAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 						
 						</td> 
@@ -4058,14 +4064,20 @@ $tableId = 'kt_table_1';
                             , value: tdForBodyValue
                         }
                     }
-
+					else  {
+                        salesRevenueModalTdData[editModal][subItemName] = {
+                            price: tdForBodyPrice
+                            , quantity: tdForBodyQuantity
+                            , value: tdForBodyValue
+                        }
+                    }
 
                     return `
 					<div class="quantity-section ">
 						<div class="checkboxes-for-quantity only-two-checkbox-parent mt-4">
 							<div class="quantity-checkbox-div">
 							<label >{{ __('Value') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? '' : ''}>
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox 	" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? '' : ''}>
 							</div>
 							<div class="quantity-checkbox-div">
 								<label >{{ __('Quantity') }}</label>

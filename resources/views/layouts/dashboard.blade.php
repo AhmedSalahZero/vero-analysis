@@ -20,9 +20,30 @@
 }
 </style> --}}
 <style>
+.dtfc-right-top-blocker{
+	display:none !important;
+}
+#kt_subheader{
+	z-index:1;
+}
+.font-size-1-25rem{
+	font-size:1.3rem !important;
+}
+.border-none{
+	border:none !important;
+}
+
+.font-size-1.6rem{
+	font-size:1.6rem !important;
+}
 thead th {
 	text-align:center !important;
 	
+}
+body .kt-subheader{
+	padding:15px 0 !important;
+	    padding-bottom: 0 !important;
+    margin: 0 !important;
 }
 </style>
 <style>
@@ -729,6 +750,7 @@ tr td:first-of-type{
                                 <div class="kt-subheader__main">
                                     <h3 class="kt-subheader__title" style="font-variant: small-caps;">
                                         @yield('sub-header')
+										
                                     </h3>
                                     <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn"><i class="la la-close"></i></button>
                                     <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
@@ -1203,6 +1225,27 @@ tr td:first-of-type{
                 let mainType = $('input[name="main_type"]').val();
                 let subType = $('input[name="type"]').val();
                 let appendTo = $('#append-to').val();
+				let isIntervalComarping = $('#report_type').val() === 'comparing'
+				if(isIntervalComarping){
+					let firstStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date"]').val();
+					let secondStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date_second"]').val();
+					let firstEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date"]').val();
+					let secondEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date_second"]').val();
+					if(Date.parse(firstStartDate) <= Date.parse(secondStartDate)){
+						startDate = firstStartDate;
+					}else{
+						startDate = secondStartDate;
+					}
+					if(Date.parse(firstEndDate) >= Date.parse(secondEndDate)){
+						endDate = firstEndDate;
+					}else{
+						endDate = secondEndDate;
+					}
+					console.log(startDate,endDate);
+					
+					
+				}
+				console.log(startDate,endDate)
 
 
                 $.ajax({
@@ -1239,6 +1282,12 @@ tr td:first-of-type{
 <script src="{{ asset('global.js') }}"></script>
 
 @stack('js_end')
+<script>
+$('#report_type[name="report_type"]').on('change',function(){
+	$('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
+})
+$('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
+</script>
 
 </body>
 

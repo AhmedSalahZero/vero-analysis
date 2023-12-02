@@ -26,12 +26,12 @@ class SummaryController extends Controller
 
 
         // Calculation of Total Company Sales Target In Quarters
-        $total = $total = array_sum($detailed_company_sales_target['total']);
-        $quarters = $this->companySalesTargetsQuarters($sales_forecast, $detailed_company_sales_target['total'], $total);
+        $total = $total = array_sum($detailed_company_sales_target['total'] ?? []);
+        $quarters = $this->companySalesTargetsQuarters($sales_forecast, $detailed_company_sales_target['total'] ?? 0, $total);
         //  Total Company Sales Target Data For Chart
-        $chart_data = $this->totalCompanySalesTargetsChartData($detailed_company_sales_target['total'], $total);
-        $new_products_targets_data['value'] = array_sum($detailed_company_sales_target['new']);
-        $existing_products_targets_data['value'] = array_sum($detailed_company_sales_target['existing']);
+        $chart_data = $this->totalCompanySalesTargetsChartData($detailed_company_sales_target['total']??0, $total);
+        $new_products_targets_data['value'] = array_sum($detailed_company_sales_target['new']??[]);
+        $existing_products_targets_data['value'] = array_sum($detailed_company_sales_target['existing']??[]);
         $new_products_targets_data['percentage'] = $total == 0 ? 0 : (($new_products_targets_data['value'] / $total) * 100);
         $existing_products_targets_data['percentage'] = $total == 0 ? 0 : (($existing_products_targets_data['value'] / $total) * 100);
 
@@ -55,7 +55,7 @@ class SummaryController extends Controller
         ];
         $counter = 1;
         $total_quarter = 0;
-        foreach ($total_company_sales_target as $date => $value) {
+        foreach ((array)$total_company_sales_target as $date => $value) {
             $total_quarter += $value;
             if ($counter == 3) {
                 $quarters['Quarter One'] = ['value' => $total_quarter, 'color_class' => 'warning'];
@@ -88,7 +88,7 @@ class SummaryController extends Controller
         $month_sales_percentage = [];
         $accumulated_data = [];
         $accumulated_value = 0;
-        foreach ($total_company_sales_target as $date => $value) {
+        foreach ((array)$total_company_sales_target as $date => $value) {
             $formated_date = date('d-M-Y', strtotime(('01-' . $date)));
 
             $month_sales = $total == 0 ?  0 : (($value / $total) * 100);

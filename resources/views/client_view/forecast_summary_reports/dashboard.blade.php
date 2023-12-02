@@ -53,13 +53,13 @@
                         </div>
                     </div>
                     <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-{{ $quarter['color_class'] }}">
+                        <span class="kt-widget24__stats kt-font-{{ $quarter['color_class'] ??'' }}">
                             {{ number_format($quarter['value'] ?? 0) }}
                         </span>
                     </div>
 
                     <div class="progress progress--sm">
-                        <div class="progress-bar kt-bg-{{ $quarter['color_class'] }}" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar kt-bg-{{ $quarter['color_class']??'' }}" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <div class="kt-widget24__action">
                         <span class="kt-widget24__change">
@@ -232,13 +232,13 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Sales Values') }}</th>
-                                    @foreach ($sales_values as $date => $value)
+                                    @foreach ((array)$sales_values as $date => $value)
                                     <td>
                                         {{ number_format(($value ?? 0), 0 )   }}
                                         <span class="active-text-color"><b>{{ ' [ GR  ' . number_format($gr[$date] ?? 0, 1) . ' % ] ' }}</b></span>
                                     </td>
                                     @endforeach
-                                    <td>{{ number_format(array_sum($sales_values)) }}</td>
+                                    <td>{{ number_format(array_sum((array)$sales_values)) }}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Month Sales %') }}</th>

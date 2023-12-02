@@ -62,16 +62,17 @@ $(document).on('click', '#js-append-receiving-branch-name-if-not-exist', functio
 
 
 
-$(document).on('change', '#ajax-get-invoice-numbers', function () {
+$(document).on('change', '.ajax-get-invoice-numbers', function () {
 	const inEditMode = +$('#js-in-edit-mode').val()
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
 	let specificInvoiceNumber = $('#ajax-invoice-item').val()
 	const moneyReceivedId = +$('#js-money-received-id').val()
-	const customerId = $(this).val()
+	const customerInvoiceId = $('#customer_name').val()
+	const currency = $('#js-currency-id').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
-	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerId
-	if (customerId) {
+	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId+'/'+currency
+	if (customerInvoiceId ) {
 		$.ajax({
 			url,
 			data: {
@@ -79,27 +80,45 @@ $(document).on('change', '#ajax-get-invoice-numbers', function () {
 				, money_received_id: moneyReceivedId
 			}
 		}).then(function (res) {
-			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+			// first append currencies 
+			let currenciesOptions = '';
+			var selectedCurrency = res.selectedCurrency ;
+			for(var currencyName in res.currencies){
+				
+				var currencyFormattedName = res.currencies[currencyName]
+				currenciesOptions+= `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`;
+			}
+			
+			
+			$('#js-currency-id').empty().append(currenciesOptions);
+			// second add settlements repeater 
+			var lastNode = $('.js-duplicate-node:last-of-type').clone(true);
 			$('.js-append-to').empty()
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
+				var currency = res.invoices[i].currency
 				var netInvoiceAmount = res.invoices[i].net_invoice_amount
 				var netBalance = res.invoices[i].net_balance
 				var collectedAmount = res.invoices[i].collected_amount
 				var invoiceDate = res.invoices[i].invoice_date
 				var settlementAmount = res.invoices[i].settlement_amount
+				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
 				domInvoiceNumber.val(invoiceNumber)
 				domInvoiceNumber.attr('name', 'settlements[' + invoiceNumber + '][invoice_number]')
 				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceNumber == specificInvoiceNumber)) {
 					$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-net-invoice-amount').val(number_format(netInvoiceAmount, 2))
+					$(lastNode).find('.js-currency').val(currency)
 					$(lastNode).find('.js-net-balance').val(number_format(netBalance, 2))
 					$(lastNode).find('.js-collected-amount').val(number_format(collectedAmount, 2))
 
 					var domSettlementAmount = $(lastNode).find('.js-settlement-amount')
+					var domWithholdAmount = $(lastNode).find('.js-withhold-amount')
 					domSettlementAmount.val(settlementAmount)
+					domWithholdAmount.val(withholdAmount)
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
+					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					$('.js-append-to').append(lastNode)
 					lastNode = $('.js-duplicate-node:last-of-type').clone(true)
 				}
@@ -110,7 +129,7 @@ $(document).on('change', '#ajax-get-invoice-numbers', function () {
 		})
 	}
 })
-$('#ajax-get-invoice-numbers').trigger('change')
+$('.ajax-get-invoice-numbers').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {

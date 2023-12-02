@@ -24,5 +24,9 @@ class Settlement extends Model
 	public function getAmount()
 	{
 		return $this->settlement_amount ;
+	}	
+	public function getWithhold()
+	{
+		return $this->withhold_amount ;
 	}		
 }

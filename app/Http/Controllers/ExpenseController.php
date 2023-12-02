@@ -10,14 +10,14 @@ class ExpenseController
 {
 	public function create(Company $company)
 	{
-		$dates = [
-			'01-01-2020',
-			'01-02-2020',
-			'01-03-2020',
-			'01-04-2023',
-			'01-05-2023',
-			'01-06-2023',
-		];
+		// $dates = [
+		// 	'01-01-2020',
+		// 	'01-02-2020',
+		// 	'01-03-2020',
+		// 	'01-04-2023',
+		// 	'01-05-2023',
+		// 	'01-06-2023',
+		// ];
 		$model = IncomeStatement::first();
 		// dd();
 		return view('admin.ready-made-forms.expense',[

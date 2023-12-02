@@ -23,11 +23,11 @@
             @if(isset($model) && $model->{$relationName}->count() )
 
             @foreach($model->{$relationName} as $subModel)
-            <x-tables.repeater-table-tr :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)" :model="$subModel"></x-tables.repeater-table-tr>
+            <x-tables.repeater-table-tr :isRepeater="true" :model="$subModel"></x-tables.repeater-table-tr>
 
             @endforeach
             @else
-            <x-tables.repeater-table-tr :trs="$trs" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+            <x-tables.repeater-table-tr :trs="$trs" :isRepeater="true">
 
             </x-tables.repeater-table-tr>
 
@@ -37,7 +37,7 @@
         </tbody>
 
         <td>
-			@if(!$isRepeater)
+			{{-- @if(!$isRepeater) --}}
             <div  data-repeater-create="" class="btn btn btn-sm text-white   border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
                 <span>
                     <i class="fa fa-plus"> </i>
@@ -46,7 +46,7 @@
                     </span>
                 </span>
             </div>
-			@endif
+			{{-- @endif --}}
         </td>
 
     </table>

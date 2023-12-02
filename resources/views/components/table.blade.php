@@ -7,10 +7,20 @@
                 </span>
                 <h3 class="kt-portlet__head-title">
                     {{ $tableTitle }} 
+					
+					@if(isset($instructionsIcon))
+						 <span id="open-instructions" class="kt-input-icon__icon kt-input-icon__icon--right ml-2 cursor-pointer" tabindex="0" role="button" data-toggle="kt-tooltip" data-trigger="focus" title="{{ __('Uploading Instructions') }}">
+							<span><i class="fa fa-question text-primary"></i></span>
+						</span>
+						
+						   
+								
+								
+					@endif 
                 </h3>
             </div>
             {{-- Export --}}
-            <x-export :lastUploadFailedHref="$lastUploadFailedHref" :class="$class" :href="$href" :importHref="$importHref" :exportHref="$exportHref" :exportTableHref="$exportTableHref" :icon="$icon" :firstButtonName="$firstButtonName" :truncateHref="$truncateHref"/>
+            <x-export :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices" :lastUploadFailedHref="$lastUploadFailedHref" :class="$class" :href="$href" :importHref="$importHref" :exportHref="$exportHref" :exportTableHref="$exportTableHref" :icon="$icon" :firstButtonName="$firstButtonName" :truncateHref="$truncateHref"/>
 
         </div>
     @endif

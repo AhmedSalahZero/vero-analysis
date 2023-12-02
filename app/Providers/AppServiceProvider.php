@@ -12,6 +12,7 @@ use App\Models\CashFlowStatementItem;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\CustomersInvoice;
+use App\Models\FinancialInstitution;
 use App\Models\IncomeStatement;
 use App\Models\Language;
 use App\Models\SalesGathering;
@@ -26,6 +27,7 @@ use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		// dd(FinancialInstitution::get());		
 		
 		// $date = '05-11-2023';
 		// $now = now()->format('d-m-Y');
@@ -118,7 +121,8 @@ class AppServiceProvider extends ServiceProvider
 			$Language2,
 			$Language
 		]);
-
+		
+		// View::share('navigators',$this->getUploadingPageExportNavigation());
 
 		View::share('langs', $languages);
 		// View::share('langs',Language::all());

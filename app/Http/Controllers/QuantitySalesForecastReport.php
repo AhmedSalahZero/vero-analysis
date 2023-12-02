@@ -117,7 +117,9 @@ class QuantitySalesForecastReport
 			$start_date = $sales_forecast->start_date;
 		}
 		$start_year = date('Y', strtotime($start_date));
-		$top_previous_year_100 = array_column($sales_forecast["previous_year_seasonality"], 'item');
+		$previousYearSeasonality = $sales_forecast["previous_year_seasonality"] ?? [] ;
+		
+		$top_previous_year_100 = array_column($previousYearSeasonality, 'item');
 		// others_products_previous_year
 		if (count(($sales_forecast['others_products_previous_year'] ?? [])) > 0) {
 

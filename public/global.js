@@ -32,11 +32,14 @@ $(document).on('change','.only-percentage-allowed-between-minus-plus-hundred',fu
             title = 'Ø®Ø·Ø£'  ;
             message = "Ø¨Ø±Ø¬Ø§Ø¡ Ø§Ø¯Ø®Ø§Ù„ Ù†Ø³Ø¨Ù‡ ØµØ­ÙŠØ­Ù‡"
         }
-        Swal.fire({
-            icon: "warning",
-            title: title,
-            text: message ,
-        })
+		if($(this).val() != ''){
+			
+			Swal.fire({
+				icon: "warning",
+				title: title,
+				text: message ,
+			})
+		}
 
         $(this).val(0);
 
@@ -47,7 +50,7 @@ $(document).on('change','.only-percentage-allowed-between-minus-plus-hundred',fu
 $(document).on('change','.only-percentage-allowed',function(e){
     if($(this).hasClass('only-percentage-allowed') && ! isPercentageNumber($(this).val()))
     {
-		console.log($(this).val())
+	
         let lang = $('body').data('lang');
         title = "Oops..." ;
         message = "Please Enter Valid Percentage" ;
@@ -55,11 +58,14 @@ $(document).on('change','.only-percentage-allowed',function(e){
             title = 'Ø®Ø·Ø£'  ;
             message = "Ø¨Ø±Ø¬Ø§Ø¡ Ø§Ø¯Ø®Ø§Ù„ Ù†Ø³Ø¨Ù‡ ØµØ­ÙŠØ­Ù‡"
         }
-        Swal.fire({
-            icon: "warning",
-            title: title,
-            text: message ,
-        })
+		if($(this).val() != ''){
+			Swal.fire({
+				icon: "warning",
+				title: title,
+				text: message ,
+			})
+			
+		}
 
         $(this).val(0);
 

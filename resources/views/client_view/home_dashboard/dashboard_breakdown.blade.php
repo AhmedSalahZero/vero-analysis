@@ -19,12 +19,13 @@
 <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
 <style>
-.max-w-300{
-	max-width:300px !important;
-	width:300px !important;
-	min-width:300px !important;
-	white-space:normal !important;
-}
+    .max-w-300 {
+        max-width: 300px !important;
+        width: 300px !important;
+        min-width: 300px !important;
+        white-space: normal !important;
+    }
+
     table {
         white-space: nowrap;
     }
@@ -410,7 +411,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             @slot('table_header')
                             <tr class="table-active text-center">
                                 {{-- <th>#</th> --}}
-                                <th  class="text-center max-w-300">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
+                                <th class="text-center max-w-300">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
                                 <th class="text-center">{{ __('Sales Values') }}</th>
                                 <th class="text-center">{{ __('%') }}</th>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
@@ -571,7 +572,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                 let topTypeName = $('#top_for_' + type).val();
                 let topTypeSalesValue = $('#value_for_' + type).val();
 
-                
+
                 $(this).find('#selected_type_name').html(topTypeName);
 
                 $(this).find('#total_sales_value').html(topTypeSalesValue);
@@ -612,8 +613,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
 
     });
-
-
 
 </script>
 

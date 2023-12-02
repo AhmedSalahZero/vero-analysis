@@ -108,6 +108,8 @@
                     @slot('table_body')
                     @php
                     $id = 0 ;
+					$firstAllTotal = 0 ;
+					$secondAllTotal = 0 ;
                     @endphp
                     @foreach ($mainItems as $mainItemName)
                     <tr class="group-color ">
@@ -119,6 +121,8 @@
                         <td class="text-center white-text">
                             @php
                             $firstTotal = isset($report_data[$mainItemName]) ? sum_all_array_values($report_data[$mainItemName]) : 0 ;
+							$firstAllTotal += $firstTotal ; 
+
                             @endphp
                             {{ number_format($firstTotal)  }}
                         </td>
@@ -126,6 +130,8 @@
                         <td class="text-center white-text">
                             @php
                             $secondTotal = isset($secondReportData['report_data'][$mainItemName]) ? sum_all_array_values($secondReportData['report_data'][$mainItemName]) : 0 ;
+							$secondAllTotal += $secondTotal ; 
+							
                             @endphp
                             {{ number_format($secondTotal) }}
                         </td>
@@ -133,14 +139,8 @@
                         <td class="text-center white-text">{{$firstTotal ? number_format(    ($secondTotal - $firstTotal) / $firstTotal *100    , 2 ) . ' %' : __('NA')  }} </td>
                     </tr>
                     @foreach ($secondReportData['report_data'][$mainItemName]??[] as $secondItemName=>$vall )
-
-                    {{-- @foreach ($secondItemsName as $secondItemName  ) --}}
-
                     <tr class="row{{ $id }}  text-center" style="display: none">
-                        {{-- <td></td> --}}
                         <td class="text-left"><b>{{ $secondItemName  }}</b></td>
-
-
                         <td class="text-center">
                             @php
                             $firstReportTotalForItem = $report_data[$mainItemName][$secondItemName] ?? 0 ;
@@ -148,32 +148,33 @@
                             @endphp
                             <span class="active-text-color"><b> {{ number_format($firstReportTotalForItem) }} </b></span>
                         </td>
-
                         <td class="text-center">
                             <span class="active-text-color"><b> {{ number_format($secondReportTotalForItem) }} </b></span>
                         </td>
-
-
                         <td>{{ $firstReportTotalForItem ? number_format(    ($secondReportTotalForItem - $firstReportTotalForItem) / $firstReportTotalForItem *100   , 2 ) . ' %' : __('NA') }} </td>
                     </tr>
 
                     @endforeach
-
-
-                    {{-- @elseif ($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %')
-                                    <tr class="active-style text-center">
-                                        <td class="active-style text-center" ><b>{{ __($sales_channel_name) }}</b></td>
-                    @php $decimals = $sales_channel_name == 'Growth Rate %' ? 2 : 0; @endphp
-                    @foreach ($dates as $date)
-
-                    <td class="text-center active-style">
-                        {{ number_format($sales_channel_channels_data[$date] ?? 0,$decimals) . ($decimals == 0 ? '' : ' %')}}</td>
-                    @endforeach
-                    <td class="text-center active-style">{{$sales_channel_name == 'Growth Rate %' ? "-" : number_format(array_sum($sales_channel_channels_data  ?? []),0)}}</td>
-                    </tr>
-                    @endif --}}
                     <?php $id++;?>
                     @endforeach
+					
+					
+					   <tr class="active-style text-center">
+                                        <td class="active-style text-center" ><b>{{ __('Total') }}</b></td>
+                
+
+                    <td class="text-center active-style">
+                        {{ number_format($firstAllTotal) }}
+						</td>
+						  <td class="text-center active-style">
+                        {{ number_format($secondAllTotal) }}
+						</td>
+                  
+						@php
+							$finalGrowthRate = $firstAllTotal ? ($secondAllTotal - $firstAllTotal) / $firstAllTotal * 100 : 0 ;
+						@endphp
+                    <td class="text-center active-style">{{ number_format(  $finalGrowthRate ,2) }} %</td>
+                    </tr>
 
 
                     @endslot

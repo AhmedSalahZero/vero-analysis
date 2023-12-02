@@ -60,10 +60,26 @@
                     </div>
 
                     <div class="kt-portlet__body">
+					
+					
 
                         <div class="form-group row col-12">
+						
+						
+						   <div class="col-6">
+                                    <label>{{__('Main Functional Currency') . $lang_row->name}} <span class="required">*</span></label>
+                                    <div class="kt-input-icon">
+										<select name="main_functional_currency" class="form-control">
+											@foreach(getCurrencies() as $currencyName => $currencyNameFormatted)
+											<option value="{{ $currencyName  }}"> {{ $currencyNameFormatted }} </option>
+											@endforeach 
+										</select>
+                                        {{-- <input type="text" name="main_functional_currency" value="{{ @$row['main_functional_currency'] }}" class="form-control" placeholder="{{__('Main Functional Currency')}}" required> --}}
+                                        {{-- <x-tool-tip title="{{__('Kash Vero')}}"/> --}}
+                                    </div>
+                                </div>
 
-                            <div class="col-12">
+                            <div class="col-6">
                                 <label>{{__('Company Image')}} <span class="required">*</span></label>
                                 <div class="kt-input-icon">
                                     <input type="file" class="form-control" name="image" >

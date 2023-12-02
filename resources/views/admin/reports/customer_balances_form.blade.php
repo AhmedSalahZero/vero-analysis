@@ -2,11 +2,45 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
+.dt-buttons.btn-group.flex-wrap{
+	margin-bottom:5rem !important;
+}
+#DataTables_Table_0_filter{
+	display:none !important;
+}
+.dataTables_scrollHeadInner{
+	width:100% !important;
+}
 
-    .max-w-weeks {
-        max-width: 100px !important;
-        min-width: 100px !important;
-        width: 100px !important;
+
+    .max-w-name {
+        width: 45% !important;
+        min-width: 45% !important;
+        max-width: 45% !important;
+    }
+
+    .max-w-currency {
+        width: 5% !important;
+        min-width: 5% !important;
+        max-width: 5% !important;
+    }
+
+    .max-w-serial {
+        width: 5% !important;
+        min-width: 5% !important;
+        max-width: 5% !important;
+    }
+
+    .max-w-amount {
+        width: 15% !important;
+        min-width: 15% !important;
+        max-width: 15% !important;
+    }
+
+    .max-w-report-btn {
+        width: 15% !important;
+        min-width: 15% !important;
+        max-width: 15% !important;
     }
 
     .is-sub-row.is-total-row td.sub-numeric-bg,
@@ -101,7 +135,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Balances Form') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Balances') }}</x-main-form-title>
 @endsection
 @section('content')
 
@@ -255,133 +289,223 @@
                 </style>
                 @csrf
 
+                <div class="kt-portlet mb-0">
+                    {{-- <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title head-title text-primary">
+                    {{ __('Current Customers\' Balances') }}
+                    </h3>
+                </div>
+            </div> --}}
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl ">
+                    @php
+                    $index = 0 ;
+                    @endphp
+                    @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
+                    <x-money-card :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
+                    @php
+                    $index++;
+                    @endphp
+                    @if($loop->last && isset($cardNetBalances['main_currency']))
+                    <x-money-card :show-report="0" :color="'success'" :currencyName="'Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']'" :total="$cardNetBalances['main_currency'][$mainCurrency] ?? 0"></x-money-card>
+                    @endif
+                    @endforeach
 
-                <div class="table-custom-container position-relative  ">
-
-
-
-                    <div class="responsive">
-                        <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
-                            <thead>
-
-                                <tr class="header-tr ">
-
-                                    <th class="view-table-th  bg-lighter max-w-weeks header-th  align-middle text-center">
-                                        {{ __('#') }}
-                                    </th>
-
-                                    <th class="view-table-th  bg-lighter max-w-weeks header-th  align-middle text-center">
-                                        {{ __('Customer Name') }}
-                                    </th>
-
-                                    <th class="view-table-th  bg-lighter max-w-weeks header-th  align-middle text-center">
-                                        {{ __('Net Balance') }}
-                                    </th>
-
-                                    <th class="view-table-th  bg-lighter max-w-weeks header-th  align-middle text-center">
-                                        {{ __('Statement Report') }}
-                                    </th>
-                                    <th class="view-table-th  bg-lighter max-w-weeks header-th  align-middle text-center">
-                                        {{ __('Invoice') }}
-                                    </th>
-
-
-
-                                </tr>
-
-                            </thead>
-                            <tbody>
-                                <script>
-                                    let currentTable = null;
-
-                                </script>
-                               
-                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Customers Invoices Under Collection','Customers Checks Under Collection','Sales Forecast Collections','Total Cash Inflow','Raw Materils Payable Checks','Suppliers Payable','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
-
-
-                                <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " >
-                                    {{-- <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif</td> --}}
-                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ 1 }}</td>
-                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
-                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ 2500 }}</td>
-                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ 'statement report' }}</td>
-                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ 'invoice' }}</td>
-                                    {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
-
-
-                                    {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
-
-                                </tr>
-
-
-
-
-
-
-
-
-
-                                @endforeach
-
-                            </tbody>
-                        </table>
-                    </div>
 
                 </div>
-
-                @push('js')
-                <script>
-                    var table = $(".kt_table_with_no_pagination_no_collapse");
-
-
-
-
-
-
-                    table.DataTable({
-
-
-
-
-                            dom: 'Bfrtip'
-
-                            , "processing": false
-                            , "scrollX": true
-                            , "scrollY": true
-                            , "ordering": false
-                            , 'paging': false
-                            , "fixedColumns": {
-                                left: 2
-                            }
-                            , "fixedHeader": {
-                                headerOffset: 60
-                            }
-                            , "serverSide": false
-                            , "responsive": false
-                            , "pageLength": 25
-                            , drawCallback: function(setting) {
-                                if (!currentTable) {
-                                    currentTable = $('.main-table-class').DataTable();
-                                }
-                                $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-
-                            },
-
-
-
-
-
-                        }
-
-                    )
-
-                </script>
-                @endpush
-
             </div>
         </div>
+
+
+
+        <div class="kt-portlet kt-portlet--tabs">
+
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-toolbar">
+                    <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+						
+						@foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $loop->first ? 'active':'' }}" onclick="return false;" data-toggle="tab" href="#{{ $currencyName.'report__table' }}" role="tab">
+                                <i class="flaticon2-checking"></i> &nbsp; {{ __('Customer Balance In').' ' .__($currencyName) }}
+                            </a>
+                        </li>
+						@endforeach 
+                    
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="tab-content">
+			@foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
+            <div class="tab-pane {{ $loop->first ? 'active':'' }}" id="{{ $currencyName.'report__table' }}" role="tabpanel">
+                <div class="kt-portlet">
+
+                    <div class="kt-portlet__body with-scroll pt-0">
+
+                        <div class="table-custom-container position-relative  ">
+
+
+                            <div>
+
+
+
+
+                                <div class="responsive">
+                                    <table class="table kt_table_with_no_pagination_no_collapse table-for-currency-{{ $currencyName }}  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency-{{ $currencyName }} dataTable no-footer">
+                                        <thead>
+
+                                            <tr class="header-tr ">
+
+                                                <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                                    {{ __('#') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-name   header-th  align-middle text-center">
+                                                    {{ __('Customer Name') }}
+                                                </th>
+
+                                                <th class="view-table-th  max-w-currency    header-th  align-middle text-center">
+                                                    {{ __('Currency') }}
+                                                </th>
+                                                <th class="view-table-th max-w-amount    header-th  align-middle text-center">
+                                                    {{ __('Net Balance') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
+                                                    {{ __('Statement Report') }}
+                                                </th>
+                                                <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
+                                                    {{ __('Invoice Report') }}
+                                                </th>
+
+
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+                                            <script>
+                                                 window['currentTable{{ $currencyName }}'] = null;
+
+                                            </script>
+                                            @php
+                                            @endphp
+                                            @foreach($customerInvoicesBalances as $index=>$customerInvoicesBalancesAsStdClass)
+											@if($currencyName == $customerInvoicesBalancesAsStdClass->currency)
+                                            <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
+                                                {{-- <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif</td> --}}
+                                                <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
+                                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $customerInvoicesBalancesAsStdClass->customer_name }}</td>
+                                                <td class="sub-text-bg text-center max-w-currency">{{ $currencyName }}</td>
+                                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($customerInvoicesBalancesAsStdClass->net_balance) }}</td>
+                                                <td class="sub-text-bg max-w-report-btn text-center">
+                                                    {{-- <button class="btn btn-sm btn-success">{{ __('Statement Report') }}</button> --}}
+                                                    @if($currencyName && $customerInvoicesBalancesAsStdClass->customer_name)
+                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
+                                                    @endif
+                                                </td>
+                                                <td class="sub-text-bg max-w-report-btn text-center">
+                                                    @if($customerInvoicesBalancesAsStdClass->customer_name && $customerInvoicesBalancesAsStdClass->currency)
+                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
+                                                    @endif
+                                                </td>
+                                                {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
+
+
+                                                {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
+
+                                            </tr>
+											@endif 
+
+
+
+
+
+
+
+
+
+                                            @endforeach
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            @push('js')
+                            <script>
+                                 window['table{{ $currencyName }}'] = $(".table-for-currency-{{ $currencyName }}");
+
+
+
+
+
+
+                                window['table{{ $currencyName }}'].DataTable({
+
+
+
+
+                                        dom: 'Bfrtip'
+
+                                        , "processing": false
+                                        , "scrollX": true
+                                        , "scrollY": true
+                                        , "ordering": false
+                                        , 'paging': false
+                                        , "fixedColumns": {
+                                            left: 2
+                                        }
+                                        , "fixedHeader": {
+                                            headerOffset: 60
+                                        }
+                                        , "serverSide": false
+                                        , "responsive": false
+                                        , "pageLength": 25
+                                        , drawCallback: function(setting) {
+                                            if (!window['currentTable{{ $currencyName }}']) {
+                                                window['currentTable{{ $currencyName }}'] = $('.main-table-class-for-currency-{{ $currencyName }}').DataTable();
+                                            }
+                                            $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+                                            $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+
+                                        },
+
+
+
+
+
+                                    }
+
+                                )
+
+                            </script>
+                            @endpush
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+			@endforeach 
+        </div>
+
+
+
+
+
+
+
+
     </div>
+</div>
 </div>
 @endsection
 @section('js')
@@ -408,32 +532,9 @@
 
 </script>
 <script>
-    $(document).on('click', '#show-past-due-detail', function() {
-        if (!currentTable) {
-            currentTable = $('.main-table-class').DataTable()
-        }
-        if (currentTable.column(2).visible()) {
-            $(this).html("{{ __('Show Details') }}")
-            currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
-        } else {
-            $(this).html("{{ __('Hide Details') }}")
-            currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
-        }
-    })
 
-    $(document).on('click', '#show-coming-due-detail', function() {
-        if (!currentTable) {
-            currentTable = $('.main-table-class').DataTable()
-        }
-        if (currentTable.column(13).visible()) {
-            $(this).html("{{ __('Show Details') }}")
-            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
-        } else {
-            $(this).html("{{ __('Hide Details') }}")
-            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
-        }
-    })
 
+  
 </script>
 
 @endsection

@@ -501,7 +501,7 @@ class ZoneAgainstAnalysisReport
 
 		$prev_month = 0;
 		$final_data = [];
-		foreach ($data as $date => $value) {
+		foreach ((array)$data as $date => $value) {
 			$prev_month = (round($prev_month));
 			if ($prev_month <= 0 && $value <= 0) {
 				$final_data[$date] = 0;

@@ -31,5 +31,9 @@ class HandleBreakdownDashboardCashingJob implements ShouldQueue
 	{
 		$cachingService = new CashingService($this->company);
 		$cachingService->refreshBreakdownDashboardCashing();
+		// for the last one 
+		$this->company->update([
+			'is_caching_now'=>false 
+		]);
 	}
 }

@@ -146,7 +146,7 @@
 
                     @endphp
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                    <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'js-toggle-visiability'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-tables.repeater-table :removeRepeater="false" :repeater-with-select2="true" :parentClass="'js-toggle-visiability'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Expense <br> Name')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-2" :title="__('Expense <br> Category')" :helperTitle="__('If you have different expense items under the same category, please insert Category Name')"></x-tables.repeater-table-th>
@@ -370,8 +370,6 @@
 
                     </x-tables.repeater-table>
                     {{-- end of varying amount --}}
-
-
 
                     {{-- start of fixed monthly repeating amount --}}
                     @php

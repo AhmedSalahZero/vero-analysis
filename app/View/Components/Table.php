@@ -22,9 +22,11 @@ class Table extends Component
     public $tableClass;
     public $truncateHref;
     public $lastUploadFailedHref;
+    public $notPeriodClosedCustomerInvoices;
+    public $instructionsIcon;
 	
 
-    public function __construct($tableTitle=null,$href='#',$class=null,$importHref='#',$exportHref='#',$exportTableHref='#',$firstButtonName='New Record',$icon='plus',$tableClass='kt_table_1',$truncateHref='#',$lastUploadFailedHref='#')
+    public function __construct($tableTitle=null,$href='#',$class=null,$importHref='#',$exportHref='#',$exportTableHref='#',$firstButtonName='New Record',$icon='plus',$tableClass='kt_table_1',$truncateHref='#',$lastUploadFailedHref='#',$notPeriodClosedCustomerInvoices=[],$instructionsIcon=null)
     {
         $this->tableTitle           = $tableTitle;
         $this->href                 = $href;
@@ -37,6 +39,8 @@ class Table extends Component
         $this->exportTableHref      = $exportTableHref;
         $this->truncateHref             = $truncateHref;
         $this->lastUploadFailedHref             = $lastUploadFailedHref;
+        $this->notPeriodClosedCustomerInvoices             = $notPeriodClosedCustomerInvoices;
+        $this->instructionsIcon             = $instructionsIcon;
     }
 
     /**

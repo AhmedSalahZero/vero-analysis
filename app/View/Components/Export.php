@@ -20,8 +20,9 @@ class Export extends Component
     public $exportTableHref;
     public $truncateHref;
     public $lastUploadFailedHref;
+    public $notPeriodClosedCustomerInvoices;
 
-    public function __construct($href='#',$class=null,$importHref='#',$exportHref='#', $exportTableHref ='#',$firstButtonName='New Record',$icon='plus',$truncateHref='#',$lastUploadFailedHref='#')
+    public function __construct($href='#',$class=null,$importHref='#',$exportHref='#', $exportTableHref ='#',$firstButtonName='New Record',$icon='plus',$truncateHref='#',$lastUploadFailedHref='#',$notPeriodClosedCustomerInvoices=[])
     {
 
         $this->href                 = $href;
@@ -33,6 +34,7 @@ class Export extends Component
         $this->exportTableHref      = $exportTableHref;
         $this->truncateHref         = $truncateHref;
         $this->lastUploadFailedHref         = $lastUploadFailedHref ;
+        $this->notPeriodClosedCustomerInvoices    = $notPeriodClosedCustomerInvoices ;
 
     }
 

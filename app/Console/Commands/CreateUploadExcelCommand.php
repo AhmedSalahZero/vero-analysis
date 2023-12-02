@@ -2,11 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
-use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
-use App\Jobs\Caches\HandleCustomerNatureCashingJob;
-use App\Jobs\Caches\RemoveIntervalYearCashingJob;
-use App\Models\Company;
+
 use App\Models\TablesField;
 use Artisan;
 use Illuminate\Console\Command;

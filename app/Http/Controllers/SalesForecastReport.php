@@ -610,9 +610,11 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 		}
 		$sales_forecast = SalesForecast::company()->first();
 		$products_seasonality = ProductSeasonality::company()->get();
-		$year = date('Y', strtotime($sales_forecast->start_date));
+		$year = $sales_forecast ? date('Y', strtotime($sales_forecast->start_date)) : null;
 		// dd($sales_forecast,$products_seasonality);
-
+		if(!$year){
+			return ;
+		}
 		$monthly_dates = [];
 		$quarter_dates = [];
 		$counter = 1;

@@ -15,7 +15,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
+	
     use Notifiable,HasRoles,InteractsWithMedia;
+	protected $connection = 'mysql';
     // SoftDeletes,
     // StaticBoot;
 
@@ -110,6 +112,7 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->hasMany(MoneyReceived::class , 'user_id','id')->where('company_id',getCurrentCompanyId());
 	}
+	
 	public function getMoneyReceived():Collection
 	{
 		return $this->moneyReceived->where('company_id',getCurrentCompanyId()) ;
@@ -125,6 +128,30 @@ class User extends Authenticatable implements HasMedia
 	public function getReceivedTransfer():Collection
 	{
 		return $this->moneyReceived->where('money_type','incoming_transfer') ;
+	}
+	public function financialInstitutions()
+	{
+		return $this->hasMany(FinancialInstitution::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
+	}
+	public function financialInstitutionsBanks():Collection
+	{
+		return $this->financialInstitutions->where('type','bank') ;
+	}
+	public function financialInstitutionsLeasingCompanies():Collection
+	{
+		return $this->financialInstitutions->where('type','leasing_companies') ;
+	}
+	public function financialInstitutionsFactoringCompanies():Collection
+	{
+		return $this->financialInstitutions->where('type','factoring_companies') ;
+	}
+	public function financialInstitutionsMortgageCompanies():Collection
+	{
+		return $this->financialInstitutions->where('type','mortgage_companies') ;
+	}
+	public function overdraftAgainstCommercialPaper()
+	{
+		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
 	}
 	
 	

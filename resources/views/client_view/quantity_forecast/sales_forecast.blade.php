@@ -255,8 +255,8 @@
                         @endslot
 
                         @slot('table_body')
-                        <?php $total = array_sum(array_column($sales_forecast['previous_year_seasonality'],'Sales Value')); ?>
-                        @foreach ($sales_forecast['previous_year_seasonality'] as $key => $item)
+                        <?php $total = array_sum(array_column($sales_forecast['previous_year_seasonality']??[],'Sales Value')); ?>
+                        @foreach ($sales_forecast['previous_year_seasonality']??[] as $key => $item)
                         <tr>
                             <th>{{$key+1}}</th>
                             <th class="max-w-classes">{{$item['item']?? '-'}}</th>

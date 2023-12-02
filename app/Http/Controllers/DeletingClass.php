@@ -16,7 +16,13 @@ class DeletingClass
         $all_model_data  = $model_obj->company()->get();
         if (count($all_model_data)>0) {
             $all_model_data->each->delete();
-        }
+			if($model == 'SalesGathering'){
+				Artisan::call('caching:run',[
+					'company_id'=>[$company->id] 
+			   ]);
+			}	
+		}
+		
         toastr()->success('All Rows Were Deleted  Successfully');
         return redirect()->back();
     }
@@ -42,7 +48,7 @@ class DeletingClass
         }
 			Artisan::call('caching:run',[
 				'company_id'=>[$company->id] 
-		]);
+			]);
 		if($request->ajax()){
 			return response()->json([
 				'status'=>true 

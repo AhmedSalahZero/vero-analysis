@@ -11,17 +11,21 @@ class MoneyReceived extends Model
     protected $guarded = ['id'];
     protected $table = 'money_received';
     
+	public function getType():string 
+	{
+		return $this->money_type ;
+	}
     public function isCash()
     {
-        return $this->money_type =='cash';
+        return $this->getType() =='cash';
     }
     public function isCheque()
     {
-        return $this->money_type =='cheque';
+        return $this->getType() =='cheque';
     }
     public function isIncomingTransfer()
     {
-        return $this->money_type =='money_transfer';
+        return $this->getType() =='incoming_transfer';
     }
     
 	
@@ -37,46 +41,40 @@ class MoneyReceived extends Model
     {
         return $this->receiving_branch_id;
     }
-    public function getCashReceivedAmount()
+    public function getReceivedAmount()
     {
-        return $this->cash_received_amount?:0 ;
+        return  $this->received_amount?:0 ;
     }
-	public function getCashReceivedAmountFormatted()
+	public function getReceivedAmountFormatted()
     {
-        return number_format($this->getCashReceivedAmount()) ;
+        return number_format($this->getReceivedAmount()) ;
     }
-    public function getBankCurrency()
-    {
-        return $this->cash_currency;
-    }
-	public function getCashCurrency()
+   
+	public function getCurrency()
 	{
-		return $this->cash_currency;
+		return $this->currency;
 	}
-    public function getIncomeTransferCurrency()
-    {
-        return $this->income_transfer_currency;
-    }
+	
+	public function getCurrencyFormatted()
+	{
+		return strtoupper($this->currency);
+	}
+
+	public function getExchangeRate()
+	{
+		return $this->exchange_rate;
+	}
 	public function getPaymentBankName()
 	{
 		return '-';
 	}
-	public function getIncomingTransferAmount()
-	{
-		return $this->incoming_transfer_amount ?: 0 ;
-	}
-	public function getIncomingTransferAmountFormatted()
-	{
-		return number_format($this->getIncomingTransferAmount()) ;
-	}
+
+
     public function getReceiptNumber()
     {
         return $this->receipt_number ;
     }
-    public function getChequeAmount()
-    {
-        return $this->cheque_amount ;
-    }
+
     public function getChequeDueDate()
     {
         return $this->cheque_due_date;
@@ -85,6 +83,18 @@ class MoneyReceived extends Model
     {
         return $this->cheque_number ;
     }
+	public function getNumber()
+	{
+		if($this->isCheque()){
+			return $this->getChequeNumber();
+		}
+		if($this->isCash()){
+			return $this->getReceiptNumber();
+		}
+		if($this->isIncomingTransfer()){
+			return $this->getMainAccountNumber();
+		}
+	}
     public function getDraweeBankId()
     {
         return $this->drawee_bank_id ;
@@ -97,7 +107,26 @@ class MoneyReceived extends Model
 	public function getDraweeBankName()
 	{
 		 return $this->draweeBank ? $this->draweeBank->getViewName() : __('N/A');
+	}	
+	public function getDraweeBankNameIn(string $lang)
+	{
+		 return $this->draweeBank ? $this->draweeBank['name_'.$lang] : __('N/A');
 	}
+	
+	public function getBankName()
+	{
+		if($this->isCash()){
+			return $this->getCashBranchName();
+		}
+		if($this->isCheque()){
+			return $this->getDraweeBankNameIn(app()->getLocale());
+		}
+		if($this->isIncomingTransfer()){
+			return $this->getReceivingBankNameIn(app()->getLocale());
+		}
+	}
+	
+	
 	
     public function getReceivingBankId()
     {
@@ -110,6 +139,10 @@ class MoneyReceived extends Model
 	public function getReceivingBankName()
 	{
 		 return $this->receivingBank ? $this->receivingBank->getViewName() : __('N/A');
+	}
+	public function getReceivingBankNameIn(string $lang)
+	{
+		 return $this->receivingBank ? $this->receivingBank['name_'.$lang] : __('N/A');
 	}
     public function getMainAccountNumber()
     {
@@ -135,6 +168,9 @@ class MoneyReceived extends Model
 	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $customerName):float{
 		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName)->sum('settlement_amount');
 	}
+	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $customerName):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName)->sum('withhold_amount');
+	}
     public function getReceivingDateFormatted()
     {
         $receivingDate = $this->getReceivingDate() ;
@@ -143,10 +179,7 @@ class MoneyReceived extends Model
         }
     }
     
-	public function getAmountFormatted()
-	{
-		return number_format($this->getChequeAmount(),1) ;
-	}
+
 	public function getChequeDueDateFormatted()
 	{
 		$chequeDueDate = $this->getChequeDueDate();
@@ -181,8 +214,25 @@ class MoneyReceived extends Model
 		
 		$this->attributes['cheque_due_date'] = $year.'-'.$month.'-'.$day;
 	}
+	public static function getUniqueBanks(Collection $banks):array{
+		$uniqueBanksIds = [];
+		foreach($banks as $bank){
+			if($bank->drawee_bank_id){
+				$uniqueBanksIds[$bank->drawee_bank_id] = $bank->drawee_bank_id;
+			}
+			if($bank->receiving_bank_id){
+				$uniqueBanksIds[$bank->receiving_bank_id] = $bank->receiving_bank_id;
+			}
+			if($bank->cheque_drawl_bank_id){
+				$uniqueBanksIds[$bank->cheque_drawl_bank_id] = $bank->cheque_drawl_bank_id;
+			}
+			
+		}
+		return $uniqueBanksIds; 
+	}
 	public static function getBanksForCurrentCompany(int $companyId){
-		$banks = self::where('company_id',$companyId)->pluck('drawee_bank_id')->unique()->toArray();
+		$banks = self::where('company_id',$companyId)->get(['drawee_bank_id','receiving_bank_id','cheque_drawl_bank_id']);
+		$banks = self::getUniqueBanks($banks);
 		$banksFormatted = [];
 		foreach($banks as $bankId){
 			$bank = Bank::find($bankId) ;
@@ -238,7 +288,7 @@ class MoneyReceived extends Model
 	public function getChequeDepositDateFormattedForDatePicker()
 	{
 		$date = $this->getChequeDepositDate();
-		return $date ? Carbon::make($date)->format('m-d-Y') : null;
+		return $date ? Carbon::make($date)->format('m/d/Y') : null;
 	}
 	public function setChequeDepositDateAttribute($value)
 	{
@@ -310,5 +360,9 @@ class MoneyReceived extends Model
 	public function isChequeUnderCollection()
 	{
 		return $this->getChequeStatus() == 'under_collection';
+	}
+	public function getTotalWithholdAmount():float 
+	{
+		return $this->total_withhold_amount ?: 0 ;
 	}
 }

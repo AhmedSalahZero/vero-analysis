@@ -20,13 +20,13 @@ class DatabaseSeeder extends Seeder
 		$factory = factory(CustomerInvoice::class , 2000)->create()->each(function($customerInvoice) use($faker){
 			factory(MoneyReceived::class,1)->create([
 				'customer_name'=>$customerInvoice->getCustomerName(),
-				'cheque_amount'=>$customerInvoice->getNetInvoiceAmount()  ,
+				'received_amount'=>$customerInvoice->getNetInvoiceAmount()  ,
 			])
 			->each(function($moneyReceived) use ($customerInvoice){
 				factory(Settlement::class , 1)->create([
 					'invoice_number'=>$customerInvoice->getInvoiceNumber(),
 					'customer_name'=>$customerInvoice->getCustomerName(),
-					'settlement_amount'=>$moneyReceived->getChequeAmount(),
+					'settlement_amount'=>$moneyReceived->getReceivedAmount(),
 					'money_received_id'=>$moneyReceived->id 
 				]);
 			});

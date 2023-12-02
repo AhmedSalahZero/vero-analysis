@@ -32,11 +32,11 @@ class CustomerAgingController
 		$weeksDates = formatWeeksDatesFromStartDate($aginDate);
 		return view('admin.reports.customer-invoices-aging',['customerAgings'=>$customerAgings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
 	}
-	public function getCustomersFromSalesPersons(Company $company ,Request $request)
+	public function getCurrenciesFromBusinessUnit(Company $company ,Request $request)
 	{
-		$businessUnits = $request->get('salesPersons',[]);
+		$businessUnits = $request->get('businessUnits',[]);
 	// dd($businessUnits);
-		$data = DB::table('customer_invoices')->select('customer_name')->whereIn('business_unit',$businessUnits)
+		$data = DB::table('customer_invoices')->select('currency')->whereIn('business_unit',$businessUnits)
 		->where('net_balance','>',0)
 		->where('company_id',$company->id)->get();
 		$data = $data->unique();
@@ -44,7 +44,27 @@ class CustomerAgingController
 			'status'=>true ,
 			'message'=>__('Success'),
 			'data'=>[
-				'customer_names'=>$data
+				'currencies'=>$data,
+			]
+		]);
+		
+	}
+	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request)
+	{
+		$currency = $request->get('currencies');
+		$businessUnits = $request->get('businessUnits',[]);
+		$data = DB::table('customer_invoices')->select('customer_name')
+		->whereIn('business_unit',$businessUnits)
+		->where('currency',$currency)
+		->where('net_balance','>',0)
+		->where('company_id',$company->id)->get();
+		$data = $data->unique();
+		// dd($data);
+		return response()->json([
+			'status'=>true ,
+			'message'=>__('Success'),
+			'data'=>[
+				'customer_names'=>$data,
 			]
 		]);
 		
