@@ -204,7 +204,7 @@ class CustomerInvoice extends Model
     }
 	public function getDueDateFormatted()
     {
-		$invoiceDueDate = $this->getInvoiceDueDate ;
+		$invoiceDueDate = $this->getInvoiceDueDate() ;
         return $invoiceDueDate ? Carbon::make($invoiceDueDate)->format('d-m-Y') : null   ;
     }
     public function getInvoiceDate()

@@ -332,6 +332,28 @@ Route::middleware([])->group(function () {
 				Route::put('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/update/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@update')->name('update.overdraft.against.commercial.paper');
 				Route::delete('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@destroy')->name('delete.overdraft.against.commercial.paper');
 				
+				Route::get('financial-institutions/{financialInstitution}/clean-overdraft','CleanOverdraftController@index')->name('view.clean.overdraft');
+				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@create')->name('create.clean.overdraft');
+				Route::post('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@store')->name('store.clean.overdraft');
+				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}','CleanOverdraftController@edit')->name('edit.clean.overdraft');
+				Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}','CleanOverdraftController@update')->name('update.clean.overdraft');
+				Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}','CleanOverdraftController@destroy')->name('delete.clean.overdraft');
+				
+				
+				Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility','LetterOfGuaranteeFacilityController@index')->name('view.letter.of.guarantee.facility');
+				Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/create','LetterOfGuaranteeFacilityController@create')->name('create.letter.of.guarantee.facility');
+				Route::post('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/create','LetterOfGuaranteeFacilityController@store')->name('store.letter.of.guarantee.facility');
+				Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/edit/{letterOfGuaranteeFacility}','LetterOfGuaranteeFacilityController@edit')->name('edit.letter.of.guarantee.facility');
+				Route::put('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/update/{letterOfGuaranteeFacility}','LetterOfGuaranteeFacilityController@update')->name('update.letter.of.guarantee.facility');
+				Route::delete('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/delete/{letterOfGuaranteeFacility}','LetterOfGuaranteeFacilityController@destroy')->name('delete.letter.of.guarantee.facility');
+				
+				Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility','LetterOfCreditFacilityController@index')->name('view.letter.of.credit.facility');
+				Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility/create','LetterOfCreditFacilityController@create')->name('create.letter.of.credit.facility');
+				Route::post('financial-institutions/{financialInstitution}/letter-of-credit-facility/create','LetterOfCreditFacilityController@store')->name('store.letter.of.credit.facility');
+				Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility/edit/{letterOfCreditFacility}','LetterOfCreditFacilityController@edit')->name('edit.letter.of.credit.facility');
+				Route::put('financial-institutions/{financialInstitution}/letter-of-credit-facility/update/{letterOfCreditFacility}','LetterOfCreditFacilityController@update')->name('update.letter.of.credit.facility');
+				Route::delete('financial-institutions/{financialInstitution}/letter-of-credit-facility/delete/{letterOfCreditFacility}','LetterOfCreditFacilityController@destroy')->name('delete.letter.of.credit.facility');
+				
 				
 				Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
 				Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');

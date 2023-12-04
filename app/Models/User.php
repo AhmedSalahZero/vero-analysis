@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\LetterOfCreditFacility;
+use App\Models\LetterOfGuaranteeFacility;
 use App\Traits\StaticBoot;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -152,6 +154,18 @@ class User extends Authenticatable implements HasMedia
 	public function overdraftAgainstCommercialPaper()
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
+	}
+	public function cleanOverdraft()
+	{
+		return $this->hasMany(CleanOverdraft::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
+	}
+	public function letterOfGuaranteeFacilities()
+	{
+		return $this->hasMany(LetterOfGuaranteeFacility::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
+	}
+	public function letterOfCreditFacilities()
+	{
+		return $this->hasMany(LetterOfCreditFacility::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
 	}
 	
 	

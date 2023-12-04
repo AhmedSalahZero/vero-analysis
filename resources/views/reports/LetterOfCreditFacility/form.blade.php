@@ -52,7 +52,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Overdraft Against Commercial Paper Form') }}
+{{ __('Letter Of Credit Facility Form') }}
 @endsection
 @section('content')
 <div class="row">
@@ -67,7 +67,7 @@
     </div>
 </div>
 </div> --}}
-<form method="post" action="{{ isset($model) ?  route('update.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'overdraftAgainstCommercialPaper'=>$model->id]) :route('store.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="kt-form kt-form--label-right">
+<form method="post" action="{{ isset($model) ?  route('update.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'letterOfCreditFacility'=>$model->id]) :route('store.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-received-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
     {{-- <input type="hidden" name="financial_institutions_id" value="{{ $financialInstitution->id }}"> --}}
@@ -83,7 +83,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Overdraft Against Commercial Paper')}}
+                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Letter Of Credit Letter')}}
                         </h3>
                     </div>
                 </div>
@@ -101,7 +101,6 @@
                     <div class="kt-portlet__body">
 
 
-
                         <div class="form-group row">
                             <div class="col-md-4 ">
                                 <label>{{__('Financial Institution Name')}} </label>
@@ -109,8 +108,8 @@
                                     <input disabled value="{{ $financialInstitution->getName()  }}" type="text" class="form-control" placeholder="{{__('Financial Institution Name')}}">
                                 </div>
                             </div>
-
                             <div class="col-md-2">
+
                                 <x-form.date :label="__('Contract Start Date')" :required="true" :model="$model??null" :name="'contract_start_date'" :placeholder="__('Select Contract Start Date')"></x-form.date>
                             </div>
                             <div class="col-md-2">
@@ -119,7 +118,7 @@
 
 
                             <div class="col-md-2 ">
-                                <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
+                                <x-form.input :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                             </div>
 
                             <div class="col-md-2">
@@ -144,67 +143,7 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Terms & Conditions')}}
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="kt-portlet__body">
-                        <div class="form-group row">
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
-                            </div>
-
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Outstanding Balance')" :type="'text'" :placeholder="__('Outstanding Balance')" :name="'outstanding_balance'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
-                            </div>
-
-                            <div class="col-md-4">
-                                <x-form.date :label="__('Balance Date')" :required="true" :model="$model??null" :name="'balance_date'" :placeholder="__('Select Balance Date')"></x-form.date>
-                            </div>
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Borrowing Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'borrowing_rate'" :required="true"></x-form.input>
-                            </div>
-
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'bank_margin_rate'" :required="true" :type="'text'"></x-form.input>
-                            </div>
-
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Interest Rate (%)')" :placeholder="__('Interest Rate (%)')" :name="'interest_rate'" :required="true" :type="'text'"></x-form.input>
-                            </div>
-
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Min Intrest Rate (%)')" :placeholder="__('Min Intrest Rate (%)')" :name="'min_interest_rate'" :required="true" :type="'text'"></x-form.input>
-                            </div>
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
-                            </div>
-                            <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
-                            </div>
-
-
-
-
-
-
-
-
-                        </div>
-
-
-
-
-
-
-                    </div>
-                </div>
-
-                <div class="kt-portlet ">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('More Lending Information')}}
+                                {{__('Issuance Terms & Conditions')}}
                             </h3>
                         </div>
                     </div>
@@ -219,19 +158,19 @@
 
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
-                                            <div data-repeater-list="infos" class="col-md-12">
+                                            <div data-repeater-list="termAndConditions" class="col-md-12">
                                                 {{-- {{ dd($model->lendingInformation) }} --}}
                                                 @if(isset($model) )
-                                                @foreach($model->lendingInformation as $info)
-                                                @include('reports.overdraft-against-commercial-paper.repeater' , [
-                                                'infos'=>$info,
-                                                'customers'=>$customers
+                                                @foreach($model->termAndConditions as $termAndCondition)
+                                                @include('reports.LetterOfCreditFacility.repeater' , [
+                                                'termAndCondition'=>$termAndCondition,
+
 
                                                 ])
                                                 @endforeach
                                                 @else
-                                                @include('reports.overdraft-against-commercial-paper.repeater' , [
-                                                'customers'=>$customers
+                                                @include('reports.LetterOfCreditFacility.repeater' , [
+
                                                 ])
                                                 @endif
 
@@ -274,6 +213,63 @@
 
                     </div>
                 </div>
+
+
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{__('Financing Terms & Conditions')}}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="form-group row">
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :label="__('Financial Duration')" :type="'text'" :placeholder="__('Financial Duration')" :name="'financial_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                            </div>
+							
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Borrowing Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'borrowing_rate'" :required="true"></x-form.input>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'bank_margin_rate'" :required="true" :type="'text'"></x-form.input>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Interest Rate (%)')" :placeholder="__('Interest Rate (%)')" :name="'interest_rate'" :required="true" :type="'text'"></x-form.input>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Min Intrest Rate (%)')" :placeholder="__('Min Intrest Rate (%)')" :name="'min_interest_rate'" :required="true" :type="'text'"></x-form.input>
+                            </div>
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
+                            </div>
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
+                            </div>
+
+
+
+
+
+
+
+
+                        </div>
+
+
+
+
+
+
+                    </div>
+                </div>
+
+
+
                 <x-submitting />
             </form>
 
@@ -377,4 +373,29 @@
         })
 
     </script>
+	
+	<script>
+	$('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change',function(){
+		let borrowingRate = $('input[name="borrowing_rate"]').val();
+		borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0 ;  
+		let  bankMaringRate = $('input[name="bank_margin_rate"]').val();
+		bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
+		const interestRate = borrowingRate +  bankMaringRate ;
+		$('input[name="interest_rate"]').attr('readonly',true).val(interestRate);
+	})
+	$('input[name="borrowing_rate"]').trigger('change')
+	</script>
+	
+	<script>
+	$('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change',function(){
+		let borrowingRate = $('input[name="borrowing_rate"]').val();
+		borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0 ;  
+		let  bankMaringRate = $('input[name="bank_margin_rate"]').val();
+		bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
+		const interestRate = borrowingRate +  bankMaringRate ;
+		$('input[name="interest_rate"]').attr('readonly',true).val(interestRate);
+	})
+	$('input[name="borrowing_rate"]').trigger('change')
+	</script>
+	
     @endsection

@@ -139,6 +139,7 @@
 			}
 			select = select + options  +  ' </select>';
 			$('#currencies').empty().append(select);
+			$('#currencies').find('select').trigger('change');
 			reinitializeSelect2()
 
 		})
@@ -158,13 +159,11 @@
 		}).then(function(res){
 			let select = '<select data-live-search="true" data-actions-box="true" name="customers[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple > ';
 			const customersInvoices = res.data.customer_names ;
-			console.log(customersInvoices);
 			let options = '';
 			for(index in customersInvoices  ){
 				options += '<option value="'+ customersInvoices[index].customer_name +'">'+ customersInvoices[index].customer_name +'</option>'
 			}
 			select = select + options  +  ' </select>';
-			console.log(select);
 			$('#customers').empty().append(select);
 			reinitializeSelect2()
 

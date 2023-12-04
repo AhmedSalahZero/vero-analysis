@@ -4368,5 +4368,19 @@ function getHeaderMenu()
                 
     ];
 }
-
+function getLgTypes():array 
+{
+	return [
+		'bid bond'=>__('Bid Bond'),
+		'final lgs'=>__('Final Lgs'),
+		'advanced payment lgs'=>__('Advanced Payment LGs')
+	];
+}
+function getCommissionInterval():array
+{
+	return [
+		'monthly'=>__('Monthly'),
+		'quarterly'=>__('Quarterly')
+	];
+}
 // route('view.uploading',['company'=>$company->id , 'model'=>$elementModelName])

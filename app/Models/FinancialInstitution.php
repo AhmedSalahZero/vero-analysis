@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Bank;
+use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +37,7 @@ class FinancialInstitution extends Model
     }
 	public function getName()
 	{
-		return $this->isBank() ? null : $this->name ;
+		return $this->isBank() ? $this->getBankName() : $this->name ;
 	}
 	public function getBranchName()
 	{
@@ -101,6 +102,18 @@ class FinancialInstitution extends Model
 	public function overdraftAgainstCommercialPapers()
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'financial_institution_id','id');
+	}
+	public function cleanOverdrafts()
+	{
+		return $this->hasMany(CleanOverdraft::class , 'financial_institution_id','id');
+	}
+	public function LetterOfGuaranteeFacilities()
+	{
+		return $this->hasMany(LetterOfGuaranteeFacility::class , 'financial_institution_id','id');
+	}
+	public function LetterOfCreditFacilities()
+	{
+		return $this->hasMany(LetterOfCreditFacility::class , 'financial_institution_id','id');
 	}
 	
 }

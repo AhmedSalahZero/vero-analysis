@@ -1,9 +1,7 @@
 @props([
 'hasBatchCollection','hasSearch','moneyReceivedType','searchFields'
 ,
-'financialInstitution'
-,
-
+'financialInstitution',
 'isFirstExportMoney'=>false
 ])
 <div class="kt-portlet__head-toolbar">
@@ -28,7 +26,7 @@
                         </div>
                         <div class="modal-body">
                             @csrf
-                            <form action="{{ route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ]) }}"  class="row ">
+                            <form action="{{ route('view.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}"  class="row ">
                             <input name="active" type="hidden" value="{{ $moneyReceivedType }}">
                                 <div class="form-group col-4" >
                                     <label for="Select Field " class="label">{{ __('Field Name') }}</label>

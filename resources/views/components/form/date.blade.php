@@ -10,11 +10,13 @@
 @if($required)
 <span class="required">*</span>
 @endif 
+
+{{-- {{ dd(formatDateForDatePicker($model->{$name})) }} --}}
 </label>
-{{-- {{ dd($model,$name) }} --}}
+{{-- {{ dd(formatDateForDatePicker($model->{$name}),$name) }} --}}
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input type="date" name="{{ $name }}" value="{{ $model && $model->{$name} ? formatDateForDatePicker($model->{$name}) : null }}" class="form-control"  placeholder="{{ $placeholder }}" />
+                                        <input type="date" name="{{ $name }}" value="{{ $model && $model->{$name} ? $model->{$name} : null }}" class="form-control"  placeholder="{{ $placeholder }}" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>

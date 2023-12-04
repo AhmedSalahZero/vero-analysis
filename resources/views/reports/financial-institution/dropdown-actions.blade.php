@@ -22,12 +22,12 @@
         <span class="sr-only">{{ __('Toggle Dropdown') }}</span>
     </button>
     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(141px, 36px, 0px);">
-        <a class="dropdown-item" href="#">{{__('Clean Overdraft')}}</a>
+        <a class="dropdown-item" href="{{ route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Clean Overdraft')}}</a>
         <a class="dropdown-item" href="{{ route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Overdraft Aganist Commercial Papers')}}</a>
         <a class="dropdown-item" href="#">{{__('Overdraft Aganist Contracts Assignment')}}</a>
         <a class="dropdown-item" href="#">{{__('Discounting Cheques')}}</a>
-        <a class="dropdown-item" href="#">{{__('Letter Of Guarantee')}}</a>
-        <a class="dropdown-item" href="#">{{__('Letter Of Credit')}}</a>
+        <a class="dropdown-item" href="{{ route('view.letter.of.guarantee.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Guarantee')}}</a>
+        <a class="dropdown-item" href="{{ route('view.letter.of.credit.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Credit')}}</a>
         <a class="dropdown-item" href="#">{{__('Medium Term Loans')}}</a>
         <a class="dropdown-item" href="#">{{__('Direct Lease')}}</a>
         <a class="dropdown-item" href="#">{{__('Sales & Lease Back')}}</a>

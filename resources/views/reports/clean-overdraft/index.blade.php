@@ -29,7 +29,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Overdraft Against Commercial Paper '. $financialInstitution->getName()) }}
+{{ __('Clean Overdraft '. $financialInstitution->getName()) }}
 @endsection
 @section('content')
 
@@ -38,14 +38,14 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'over-draft-against-commercial-paper' ?'active':'' }}" data-toggle="tab" href="#over-draft-against-commercial-paper" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Over Draft Against Commercial Paper Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == 'clean-over-draft' ?'active':'' }}" data-toggle="tab" href="#clean-over-draft" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Clean Overdraft Table') }}
                     </a>
                 </li>
                 
             </ul>
 
-            <a href="{{ route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+            <a href="{{ route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
@@ -59,7 +59,7 @@
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') || Request('active') == 'over-draft-against-commercial-paper' ?'active':'' }}" id="bank" role="tabpanel">
+            <div class="tab-pane {{ !Request('active') || Request('active') == 'clean-over-draft' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
@@ -67,11 +67,11 @@
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                             </span>
                             <h3 class="kt-portlet__head-title">
-                                {{ __('Overdraft Against Commercial Paper Table') }}
+                                {{ __('Clean Overdraft Table') }}
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-overdraft-against-commercial-paper :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'over-draft-against-commercial-paper'" :has-search="1" :has-batch-collection="0"   href="{{route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                        <x-export-clean-overdraft :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'clean-over-draft'" :has-search="1" :has-batch-collection="0"   href="{{route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -94,33 +94,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($overdraftAgainstCommercialPapers as $index=>$overdraftAgainstCommercialPaper)
+                                @foreach($cleanOverdrafts as $index=>$cleanOverdraft)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $overdraftAgainstCommercialPaper->getContractStartDateFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $overdraftAgainstCommercialPaper->getContractEndDateFormatted() }}</td>
-                                    <td>{{ $overdraftAgainstCommercialPaper->getAccountNumber() }}</td>
-                                    <td class="text-uppercase">{{ $overdraftAgainstCommercialPaper->getCurrency() }}</td>
-                                    <td class="text-transform">{{ $overdraftAgainstCommercialPaper->getLimit() }}</td>
-                                    <td class="bank-max-width">{{ $overdraftAgainstCommercialPaper->getBorrowingRate() }}</td>
-                                    <td class="text-nowrap">{{ $overdraftAgainstCommercialPaper->getMarginRate() }}</td>
-                                    <td>{{ $overdraftAgainstCommercialPaper->getInterestRate() }}</td>
-                                    {{-- <td>{{ $overdraftAgainstCommercialPaper->getMaxLendingLimitPerCustomer() }}</td> --}}
-                                    {{-- <td>{{ $overdraftAgainstCommercialPaper->getMaxSettlementDays() }}</td> --}}
+                                    <td>{{ $cleanOverdraft->getContractStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $cleanOverdraft->getContractEndDateFormatted() }}</td>
+                                    <td>{{ $cleanOverdraft->getAccountNumber() }}</td>
+                                    <td class="text-uppercase">{{ $cleanOverdraft->getCurrency() }}</td>
+                                    <td class="text-transform">{{ $cleanOverdraft->getLimit() }}</td>
+                                    <td class="bank-max-width">{{ $cleanOverdraft->getBorrowingRate() }}</td>
+                                    <td class="text-nowrap">{{ $cleanOverdraft->getMarginRate() }}</td>
+                                    <td>{{ $cleanOverdraft->getInterestRate() }}</td>
+                                    {{-- <td>{{ $cleanOverdraft->getMaxLendingLimitPerCustomer() }}</td> --}}
+                                    {{-- <td>{{ $cleanOverdraft->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                      
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                         {{-- @include('reports.financial-institution.dropdown-actions') --}}
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'overdraftAgainstCommercialPaper'=>$overdraftAgainstCommercialPaper->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            {{-- <a data-type="single" data-id="{{ $overdraftAgainstCommercialPaper->id }}" data-toggle="modal" data-target="#send-to-under-collection-modal" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-warning btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-sync-alt"></i></a> --}}
-                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $overdraftAgainstCommercialPaper->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $overdraftAgainstCommercialPaper->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            {{-- <a data-type="single" data-id="{{ $cleanOverdraft->id }}" data-toggle="modal" data-target="#send-to-under-collection-modal" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-warning btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-sync-alt"></i></a> --}}
+                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $cleanOverdraft->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $cleanOverdraft->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'overdraftAgainstCommercialPaper'=>$overdraftAgainstCommercialPaper]) }}" method="post">
+                                                        <form action="{{ route('delete.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
