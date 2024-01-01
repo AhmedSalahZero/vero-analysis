@@ -19,6 +19,215 @@
 	padding:25px !important;
 }
 </style> --}}
+
+
+
+    <style>
+	
+	 .visibility-hidden {
+        visibility: hidden !important;
+    }
+	
+.income-statement-table{
+}
+.btn-border-radius{
+        border-radius:10px !important;
+    }
+	
+.income-statement-table .main-level-tr td ,
+.income-statement-table .main-level-tr th
+{
+    background-color:#9FC9FB !important ;
+    border:1px solid #fff ;
+    
+}
+.income-statement-table .main-level-tr td:first-of-type ,
+.income-statement-table .main-level-tr td:nth-of-type(2) ,
+.income-statement-table .main-level-tr th:first-of-type,
+.income-statement-table .main-level-tr th:nth-of-type(2)
+{
+    background-color:#9FC9FB !important;
+}
+.income-statement-table .sub-level-tr td ,
+.income-statement-table .sub-level-tr th
+{
+    background-color:#fff !important ;
+}
+        input,
+        select,
+        .filter-option-inner-inner {
+            font-weight: 600 !important;
+            color: black !important;
+        }
+
+        html body tr.all-td-white td {
+            background-color: white !important;
+        }
+
+        .font-size-1-25rem {
+            font-size: 1.25rem !important;
+        }
+
+        .font-size-15px {
+            font-size: 15px !important
+        }
+
+        .label-clr {
+            color: #646c9a !important;
+        }
+
+        .installment-section {
+            background: #F2F2F2 !important;
+            padding-top: 10px;
+            margin-bottom: 10px !important;
+        }
+
+        .label-size {
+            font-size: 1.25rem !important;
+        }
+
+        .pr-6rem {
+            padding-right: 6rem;
+        }
+
+        .pointer-events-none {
+            pointer-events: none;
+        }
+
+        .dtfh-floatingparent.dtfh-floatingparenthead {
+            top: 59px !important;
+        }
+
+        .table-for-collection-policy tr:nth-child(odd) {
+            background-color: white !important;
+        }
+
+        .percentage-weight {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+	
+
+		
+   
+
+        .small-caps {
+            font-variant: small-caps;
+        }
+
+        .sharing-sign {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: auto;
+        }
+
+        .active-sharing {
+            background: #00ff28;
+        }
+
+        .inactive-sharing {
+            background: #f00;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .btn.dropdown-toggle {
+            height: 100%;
+        }
+
+        /* .dropdown-toggle{} */
+
+    </style>
+    <style>
+        .custom--i-class-parent {
+            position: relative;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .custom--i-class {
+            margin-top: 0 !important;
+            position: absolute !important;
+            top: 50%;
+            left: 7px !important;
+            transform: rotate(90deg) translateY(-50%) !important;
+            float: none !important;
+        }
+
+        .custom-i-class {
+            position: absolute !important;
+            left: -15px !important;
+            top: 13px !important;
+        }
+
+        .icon-lg {
+            font-size: 1.75rem !important;
+        }
+
+        .min-height-170px {
+            min-height: 170px;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .first-subrow-last-td,
+        .second-subrow-last-td {
+            text-align: right;
+        }
+
+        .font-weight-bold {
+            font-weight: bold !important;
+        }
+
+
+        .subtable-2-class {}
+
+        .subtable-1-class {}
+
+        .custom-export {
+            z-index: 5;
+            border-radius: 6px;
+            background-color: #fff;
+            position: relative;
+            right: 163px;
+            position: fixed !important;
+            top: 276px;
+            box-shadow: 0px 0px 50px 0px rgba(82, 63, 105, 0.1);
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+            width: 300px;
+            padding-bottom: 20px;
+
+
+        }
+
+        @media(max-width:767px) {
+            .custom-export {
+                z-index: 5;
+                background-color: #fff;
+                right: 30px;
+                position: fixed !important;
+                top: 215px;
+                box-shadow: 0px 0px 50px 0px rgba(82, 63, 105, 0.1);
+                width: 300px;
+                width: 200px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .custom-export {
+                width: 325px;
+            }
+        }
+
+    </style>
+    
+	
 <style>
 .dtfc-right-top-blocker{
 	display:none !important;
@@ -215,12 +424,15 @@ tr td:first-of-type{
             $(document).find('select.select2-select').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
 			
+			if($(this).selectpicker){
+				
                 $(this).selectpicker({
                     maxOptions: maxOption,
                     //   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
                     buttons: ['selectMax', 'disableAll']
                 });
                 $(this).data('max-options', maxOption);
+			}
 
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[{{ __("Max:") }}' + maxOption + ']');
 
@@ -1001,6 +1213,10 @@ tr td:first-of-type{
         $(document).ajaxComplete(function() {
             $('select.select2-select').prop('disabled', false);
             $('#loader_id').addClass('hide_class');
+			if($('select.select2-select').selectpicker){
+            $('select.select2-select').selectpicker('refresh');
+				
+			}
         })
 
     </script>
@@ -1289,6 +1505,143 @@ $('#report_type[name="report_type"]').on('change',function(){
 $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
 </script>
 
+<script>
+
+
+</script>
+  <script>
+        $(function() {
+            $(document).on('click', '.filter-btn-class', function(e) {
+                e.preventDefault();
+                let datatableInstance = $(this).data('datatable-id');
+                $('#' + datatableInstance).DataTable().ajax.reload(null, false);
+            });
+            $(document).on('click', function(e) {
+                // close opened custom modal [for filter and export btn]
+                let target = e.target;
+                if (!$(target).closest('.close-when-clickaway').length && !$(target).closest('.do-not-close-when-click-away').length) {
+                    $('.close-when-clickaway').addClass('d-none');
+                }
+            });
+
+           
+
+            $(document).on('click', '.submit-form-btn', function(e) {
+                e.preventDefault();
+
+                // Validate form before submit
+                form = $(this).closest('form')[0]
+
+                var formData = new FormData(form);
+
+                this.disabled = true;
+                $.ajax({
+                    type: "POST"
+                    , url: $(form).attr('action')
+                    , data: formData
+                    , cache: false
+                    , contentType: false
+                    , processData: false
+                    , success: function(res) {
+
+                        if (res.status) {
+                            if (res.showAlert) {
+
+                                Swal.fire({
+                                    icon: 'success'
+                                    , title: res.message
+                                    , buttonsStyling: false
+                                    , customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                    // text: successMessage,
+                                }).then(function() {
+                                    $('.submit-form-btn').disabled = false;
+                                    Swal.fire({
+                                        text: "Form has been successfully submitted!"
+                                        , icon: "success"
+                                        , buttonsStyling: false
+                                        , confirmButtonText: "Ok, got it!"
+                                        , customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    }).then(function(result) {
+                                        if (result.isConfirmed) {
+                                            // Hide modal
+                                            // modal.hide();
+
+                                            // Enable submit button after loading
+                                            $('.submit-form-btn').prop('disabled', false);
+
+                                            // Redirect to customers list page
+                                            // window.location.location = "";
+                                        }
+                                    })
+
+                                })
+                            } else {
+                                $('.submit-form.btn').prop('disabled', false);
+                                window.location.href = "{{ route('admin.view.revenue.business.line',getCurrentCompany() ? getCurrentCompany()->getIdentifier( ) : 0 ) }}"
+                            }
+
+                        } else {
+                            $('#submit-form-btn').prop('disabled', false)
+
+                            Swal.fire({
+                                icon: 'error'
+                                , title: res.message,
+
+                            })
+                        }
+                    }
+                    , error: function(res) {
+
+                        $('.submit-form-btn').prop('disabled', false)
+
+                        Swal.fire({
+                            icon: 'error'
+                            , title: res.responseJSON.message,
+
+                        })
+
+
+                    }
+                })
+
+
+
+            });
+
+            $(document).on('change', '.trigger-select-class', handleAddNewField);
+            $(document).on('click', '.trigger-select-class + button + .dropdown-menu div.inner', handleAddNewField);
+
+            function handleAddNewField(e) {
+                var id = $(this).data('trigger-id') || $(this).closest('.dropdown.trigger-select-class').find('.trigger-select-class').data('trigger-id');
+                var optionValue = $(this).val() || $(this).closest('.dropdown.trigger-select-class').find('.trigger-select-class').val();
+                if (id == 'child-trigger-1' && optionValue == 'Add New') {
+                    $('.child-trigger').removeClass('d-none');
+                    $('#' + id).removeClass('d-none');
+                }
+				else if (id == 'child-trigger-2' && optionValue == 'Add New') {
+                    $('.child-trigger').removeClass('d-none');
+                    $('.business_line_name').addClass('d-none');
+                }
+				else if (id == 'child-trigger-3' && optionValue == 'Add New') {
+                    $('.child-trigger').removeClass('d-none');
+                    $('.business_line_name').addClass('d-none');
+                    $('.service_category_name').addClass('d-none');
+                }
+				 else {
+                    $('.child-trigger').addClass('d-none');
+                }
+            }
+			$('select.trigger-select-class.revenue_business_line_class').trigger('change');
+
+
+        });
+
+    </script>
+	
 </body>
 
 <!-- end::Body -->

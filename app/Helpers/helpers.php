@@ -16,6 +16,7 @@ use App\Models\CachingCompany;
 use App\Models\CashFlowStatement;
 use App\Models\CollectionSetting;
 use App\Models\Company;
+use App\Models\Country;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
 use App\Models\IncomeStatement;
@@ -46,6 +47,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 const MAX_RANKING = 5;
 const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis';
@@ -2994,10 +2996,37 @@ function getPermissions():array
 		]
 		,[
 			'name'=>'view cash management'
-		],[
+		],
+		[
 			'name'=>'view financial institutions'
+		],
+		[
+			'name'=>'view quick price'
+		],
+		[
+			'name'=>'view pricing plans'
+		],
+		[
+			'name'=>'view quick price calculator'
+		],
+		[
+			'name'=>'view quick price setting'
+		],
+		[
+			'name'=>'view revenue business line'
+		],
+		[
+			'name'=>'view positions'
+		],
+		[
+			'name'=>'view expenses'
+		],
+		[
+			'name'=>'view labeling items'
+		],
+		[
+			'name'=>'view create labeling items'
 		]
-        
     ];
 
     foreach (Arr::except(reportNames(), ['product items', 'products / service'])  as $reportName) {
@@ -4363,7 +4392,57 @@ function getHeaderMenu()
 												]
 												
 											]
-										]
+												],
+												
+												
+												
+												
+												'quick-price'=>[
+													'title'=>__('Quick Price'),
+													'link'=>'#',
+													'show'=>$user->can('view quick price'),
+													'submenu'=>[
+														'pricing-plans'=>[
+															'title'=>__('Pricing Plan'),
+															'link'=>route('admin.view.quick.pricing.calculator',['company'=>$companyId]),
+															'show'=>$user->can('view pricing plans')
+														],
+														
+														'quick-price-calculator'=>[
+															'title'=>__('Quick Price Calculator'),
+															'link'=>route('admin.view.quick.pricing.calculator', ['company'=>$companyId]),
+															'show'=>$user->can('view quick price calculator'),
+															'submenu'=>[]
+														],
+													
+														'setting'=>[
+															'title'=>__('Setting'),
+															'link'=>'#',
+															'show'=>$user->can('view quick price setting'),
+															'submenu'=>[
+																'revenue-business-line'=>generateMenuItem(__('Revenue Business Line'), $user->can('view revenue business line'), route('admin.view.revenue.business.line', ['company'=>$companyId]), []),
+																'positions'=>generateMenuItem(__('Positions'), $user->can('view positions'), route('positions.index', ['company'=>$companyId]), []),
+																'expenses'=>generateMenuItem(__('Expenses'), $user->can('view expenses'), route('pricing-expenses.index', ['company'=>$companyId]), []),
+																
+															]
+														],
+														
+														
+													]
+													],
+													'labeling-items'=>[
+														'title'=>__('Labeling Items'),
+														'link'=>'#',
+														'show'=>$user->can('view labeling items'),
+														'submenu'=>[
+															'create-labeling-items'=>generateMenuItem(__('Create Labeling Items'), $user->can('view create labeling items'), route('create.labeling.items', ['company'=>$companyId]) ),
+															'building lable'=>generateMenuItem(__('Building Label'), $user->can('view create labeling items'), route('show.building.label', ['company'=>$companyId]) ),
+															'FF&E lable'=>generateMenuItem(__('FF&E Label'), $user->can('view create labeling items'), route('show.ffe.label', ['company'=>$companyId]) ),
+															'create-labeling-form'=>generateMenuItem(__('Create Labeling Form'), $user->can('view create labeling items'), route('create.labeling.form', ['company'=>$companyId]) ),
+															
+														]
+													],
+												
 						
                 
     ];
@@ -4383,4 +4462,197 @@ function getCommissionInterval():array
 		'quarterly'=>__('Quarterly')
 	];
 }
+
+function camelizeWithSpace($input, $separator = '-')
+{
+	return str_replace($separator, ' ', ucwords($input, $separator));
+}
+function unformat_number($money)
+{
+    $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
+    $onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
+
+    $separatorsCountToBeErased = strlen($cleanString) - strlen($onlyNumbersString) - 1;
+
+    $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
+    $removedThousandSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '',  $stringWithCommaOrDot);
+
+    return (float) str_replace(',', '.', $removedThousandSeparator);
+}
+
+
+function getRevenueBusinessLineOptions(): array
+{
+
+	// used by seeder 
+
+	return [
+		'training_service' => __('Training Service'),
+		'consulting_service' => __('Consulting Service'),
+		'internship_service' => __('Internship Service'),
+		'internship_service' => __('Internship Service'),
+		'externship_service' => __('Externship Service'),
+		'observership_service' => __('Observership Service'),
+		'observership_service' => __('Observership Service'),
+		'scholarship_service' => __('Scholarship Service'),
+		'fellowship_service' => __('Fellowship Service'),
+
+	];
+}
+function getServiceCategories(): array
+{
+
+	return [
+		'financial_courses' => __('Financial Courses'),
+		'marketing_courses' => __('Marketing Courses'),
+		'hr_courses' => __('Hr Courses'),
+		'financial_consulting' => __('Financial Consulting'),
+		'marketing_consulting' => __('Marketing Consulting'),
+		'hr_consulting' => __('Hr Consulting'),
+	];
+}
+function getServiceName(): array
+{
+
+	return [
+		'accounting' => __('Accounting'),
+		'costing' => __('Costing'),
+		'budget' => __('Budget'),
+		'feasibility_study' => __('Feasibility Study'),
+		'valuation' => __('Valuation'),
+		'performance_analysis' => __('Performance Analysis'),
+	];
+}
+function getServicesNature(): array
+{
+	return [
+		'online' => __('Online'),
+		'physical' => __('Physical')
+	];
+}
+function getCountries(): array
+{
+	$countries = Country::whereNotIn('name_en', ['United States', 'Kenya'])
+		->get()->pluck('name_' . App()->getLocale(), 'id')->toArray();
+	return $countries;
+}
+function getPositions(): array
+{
+	return [
+		'executive' => __('Executive'),
+		'senior' => __('Senior'),
+		'officer' => __('Officer')
+	];
+}
+function getCurrency()
+{
+	return [
+		'egp' => __('EGP'),
+		'usd' => __('USD'),
+		'euro' => __('EURO')
+	];
+}
+
+function getAddNewFieldRule($fieldName)
+{
+	return Rule::requiredIf(Request()->get($fieldName) == 'Add New');
+}
+
 // route('view.uploading',['company'=>$company->id , 'model'=>$elementModelName])
+function getTestBuildingArray()
+{
+	return [
+		[
+			'title'=>__('New Cataract'),
+			'value'=>__('New Cataract'),
+			'data-abb'=>'NECAT',
+			'data-code'=>'01'
+		],
+		[
+			'title'=>__('Old Cataract'),
+			'value'=>__('Old Cataract'),
+			'data-abb'=>'ODCAT',
+			'data-code'=>'02'
+		]
+	];
+}
+function getTestFfeArray()
+{
+	return [
+		[
+			'title'=>__('Furniture'),
+			'value'=>__('Furniture'),
+			'data-abb'=>'FURN',
+			'data-code'=>'01'
+		],
+		[
+			'title'=>__('Equipment'),
+			'value'=>__('Equipment'),
+			'data-abb'=>'EQUIP',
+			'data-code'=>'02'
+		]
+	];
+}
+
+function getTestFloors()
+{
+	return [
+		[
+			'title'=>'Floor1',
+			'value'=>'floor1',
+			'data-abb'=>'FO1',
+			'data-code'=>'01'
+		],
+		[
+			'title'=>'Floor2',
+			'value'=>'floor2',
+			'data-abb'=>'FO2',
+			'data-code'=>'02'
+		],
+		
+	];
+}
+function getTestCategory()
+{
+	return [
+		[
+			'title'=>'Beds',
+			'value'=>'beds',
+			'data-abb'=>'BDs',
+			'data-code'=>'01'
+		],
+		[
+			'title'=>'Chairs',
+			'value'=>'chairs',
+			'data-abb'=>'CHs',
+			'data-code'=>'02'
+		],
+		
+	];
+}
+function getTestLabelForm()
+{
+	return [
+		[
+			'value'=>'Building',
+		'title'=>'Building'
+		],
+		[
+			'value'=>'FF&E',
+		'title'=>'FF&E'
+		]
+	];
+}
+function getTestBuildNames()
+{
+	return [
+		[
+			'value'=>'New Cataract',
+		'title'=>'New Cataract'
+		],
+		[
+			'value'=>'Old Cataract',
+		'title'=>'Old Cataract'
+		]
+	];
+}

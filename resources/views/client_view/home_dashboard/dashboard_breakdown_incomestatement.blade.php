@@ -11,9 +11,6 @@
     table {
         white-space: nowrap;
     }
-
-    /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
-
 </style>
 
 <style>
@@ -104,7 +101,7 @@ $totalOfDepreactionAndAmortization = 0;
                     <label>{{ __('Start Date') }}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" id="start_date_input_id" name="start_date" required value="{{ $start_date }}" max="{{ date('Y-m-d') }}" class="form-control" placeholder="Select date" />
+                            <input type="date" id="start_date_input_id" name="start_date" required value="{{ $start_date }}"  class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>
@@ -112,7 +109,7 @@ $totalOfDepreactionAndAmortization = 0;
                     <label>{{ __('End Date') }}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="date" id="end_date_input_id" name="end_date" required value="{{ $end_date}}" {{-- max="{{ date('Y-m-d') }}" --}} class="form-control" placeholder="Select date" />
+                            <input type="date" id="end_date_input_id" name="end_date" required value="{{ $end_date}}"  class="form-control" placeholder="Select date" />
                         </div>
                     </div>
                 </div>

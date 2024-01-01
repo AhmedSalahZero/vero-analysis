@@ -142,7 +142,7 @@
                     {{-- start of fixed monthly repeating amount --}}
                     @php
                     $tableId = 'fixed_monthly_repeating_amount';
-                    $repeaterId = 'm_repeater_7';
+                    $repeaterId = 'fixed_monthly_repeating_amount_repeater';
 
                     @endphp
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -257,7 +257,7 @@
                     {{-- start of varying amount --}}
                     @php
                     $tableId = 'varying_amount';
-                    $repeaterId = 'm_repeater_8';
+                    $repeaterId = 'varying_amount_repeater';
 
                     @endphp
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -374,7 +374,7 @@
                     {{-- start of fixed monthly repeating amount --}}
                     @php
                     $tableId = 'fixed_percentage_of_sales';
-                    $repeaterId = 'm_repeater_15';
+                    $repeaterId = 'fixed_percentage_of_sales_repeater';
 
                     @endphp
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -548,7 +548,7 @@
                 {{-- start of varying percentage --}}
                 @php
                 $tableId = 'varying_percentage_of_sales';
-                $repeaterId = 'm_repeater_9';
+                $repeaterId = 'varying_percentage_of_sales_repeater';
 
                 @endphp
                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -722,7 +722,7 @@
             {{-- start of fixed cost per unit --}}
             @php
             $tableId = 'fixed_cost_per_unit';
-            $repeaterId = 'm_repeater_10';
+            $repeaterId = 'fixed_cost_per_unit_repeater';
 
             @endphp
             <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -895,7 +895,7 @@
             {{-- start of varying cost per unit --}}
             @php
             $tableId = 'varying_cost_per_unit';
-            $repeaterId = 'm_repeater_11';
+            $repeaterId = 'varying_cost_per_unit_repeater';
 
             @endphp
             <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -1071,7 +1071,7 @@
     {{-- start of fixed cost per unit --}}
     @php
     $tableId = 'expense_per_employee';
-    $repeaterId = 'm_repeater_12';
+    $repeaterId = 'expense_per_employee_repeater';
 
     @endphp
     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -1202,7 +1202,7 @@
     {{-- start of intervally repeating amount --}}
     @php
     $tableId = 'intervally_repeating_amount';
-    $repeaterId = 'm_repeater_13';
+    $repeaterId = 'intervally_repeating_amount_repeater';
 
     @endphp
     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -1328,7 +1328,7 @@
     {{-- start of one time expense --}}
     @php
     $tableId = 'one_time_expense';
-    $repeaterId = 'm_repeater_14';
+    $repeaterId = 'one_time_expense_repeater';
 
     @endphp
     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">

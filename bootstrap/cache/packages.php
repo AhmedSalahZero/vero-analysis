@@ -1,15 +1,4 @@
 <?php return array (
-  'barryvdh/laravel-debugbar' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Barryvdh\\Debugbar\\ServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Debugbar' => 'Barryvdh\\Debugbar\\Facades\\Debugbar',
-    ),
-  ),
   'barryvdh/laravel-ide-helper' => 
   array (
     'providers' => 
@@ -60,13 +49,6 @@
       'Image' => 'Intervention\\Image\\Facades\\Image',
     ),
   ),
-  'laravel/slack-notification-channel' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Illuminate\\Notifications\\SlackChannelServiceProvider',
-    ),
-  ),
   'laravel/tinker' => 
   array (
     'providers' => 
@@ -112,6 +94,18 @@
     'aliases' => 
     array (
       'LaravelLocalization' => 'Mcamara\\LaravelLocalization\\Facades\\LaravelLocalization',
+    ),
+  ),
+  'milon/barcode' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Milon\\Barcode\\BarcodeServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'DNS1D' => 'Milon\\Barcode\\Facades\\DNS1DFacade',
+      'DNS2D' => 'Milon\\Barcode\\Facades\\DNS2DFacade',
     ),
   ),
   'nesbot/carbon' => 

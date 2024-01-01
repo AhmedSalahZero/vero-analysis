@@ -12,11 +12,17 @@ use App\Http\Controllers\FinancialStatementController;
 use App\Http\Controllers\getUploadPercentage;
 use App\Http\Controllers\Helpers\DeleteSingleRecordController;
 use App\Http\Controllers\Helpers\EditTableCellsController;
+use App\Http\Controllers\Helpers\getEditFormController;
+use App\Http\Controllers\Helpers\HelpersController;
+use App\Http\Controllers\Helpers\UpdateBasedOnGlobalController;
+use App\Http\Controllers\Helpers\UpdateCitiesBasedOnCountryController;
 use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\InventoryStatementController;
 use App\Http\Controllers\InventoryStatementTestController;
+use App\Http\Controllers\QuickPricingCalculatorController;
 use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
+use App\Http\Controllers\RevenueBusinessLineController;
 use App\Http\Controllers\RoutesDefinition;
 use App\Http\Controllers\SalesGatheringTestController;
 use App\Http\Livewire\AdjustedCollectionDatesForm;
@@ -309,6 +315,8 @@ Route::middleware([])->group(function () {
 				Route::get('money-received/edit/{moneyReceived}', 'MoneyReceivedController@edit')->name('edit.money.receive');
 				Route::put('money-received/update/{moneyReceived}', 'MoneyReceivedController@update')->name('update.money.receive');
 				Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
+				Route::delete('delete-multi-rows', [HelpersController::class, 'deleteMulti'])->name('delete.multi');
+				Route::post('store-new-model', [HelpersController::class, 'storeNewModal'])->name('admin.store.new.modal');
 				
 				
 				Route::get('financial-institutions', 'FinancialInstitutionController@index')->name('view.financial.institutions');
@@ -355,12 +363,76 @@ Route::middleware([])->group(function () {
 				Route::delete('financial-institutions/{financialInstitution}/letter-of-credit-facility/delete/{letterOfCreditFacility}','LetterOfCreditFacilityController@destroy')->name('delete.letter.of.credit.facility');
 				
 				
+				
+				
+				Route::resource('sharing-links', 'SharingLinkController');
+				Route::get('shareable-paginate', 'SharingLinkController@paginate')->name('admin.get.sharing.links');
+				Route::get('export-shareable-link', 'SharingLinkController@export')->name('admin.export.sharing.link');
+
+				
+				Route::post('edit-table-cell', [EditTableCellsController::class, '__invoke'])->name('admin.edit.table.cell');
+				Route::delete('delete-revenue-business-line/{revenueBusinessLine}', [RevenueBusinessLineController::class, 'deleteRevenueBusinessLine'])->name('admin.delete.revenue.business.line');
+				Route::delete('delete-service-category/{serviceCategory}', [RevenueBusinessLineController::class, 'deleteServiceCategory'])->name('admin.delete.service.category');
+				Route::delete('delete-service-item/{serviceItem}', [RevenueBusinessLineController::class, 'deleteServiceItem'])->name('admin.delete.service.item');
+
+				//helpers
+				Route::get('get-edit-form', [getEditFormController::class, '__invoke']);
+				Route::get('helpers/updateCitiesBasedOnCountry', [UpdateCitiesBasedOnCountryController::class, '__invoke']);
+				Route::get('helpers/updateBasedOnGlobalController', [UpdateBasedOnGlobalController::class, '__invoke']);
+				//Quick pricing calculator
+				Route::get('quick-pricing-calculator', [QuickPricingCalculatorController::class, 'view'])->name('admin.view.quick.pricing.calculator');
+
+				Route::get('quick-pricing-calculator/create/{pricingPlanId?}', [QuickPricingCalculatorController::class, 'create'])->name('admin.create.quick.pricing.calculator');
+				Route::get('quick-pricing-calculator/{quickPricingCalculator}/edit', [QuickPricingCalculatorController::class, 'edit'])->name('admin.edit.quick.pricing.calculator');
+				Route::post('quick-pricing-calculator/{quickPricingCalculator}/update', [QuickPricingCalculatorController::class, 'update'])->name('admin.update.quick.pricing.calculator');
+				Route::post('quick-pricing-calculator/store', [QuickPricingCalculatorController::class, 'store'])->name('admin.store.quick.pricing.calculator');
+				Route::get('export-quick-pricing-calculator', 'QuickPricingCalculatorController@export')->name('admin.export.quick.pricing.calculator');
+				Route::get('get-quick-pricing-calculator', 'QuickPricingCalculatorController@paginate')->name('admin.get.quick.pricing.calculator');
+				Route::delete('delete-quick-pricing-calculator/{quickPricingCalculator}', 'QuickPricingCalculatorController@destroy')->name('admin.delete.quick.pricing.calculator');
+
+
+				//Quotation pricing calculator
+				Route::get('quotation-pricing-calculator', [QuotationPricingCalculatorController::class, 'view'])->name('admin.view.quotation.pricing.calculator');
+				Route::get('quotation-pricing-calculator/create', [QuotationPricingCalculatorController::class, 'create'])->name('admin.create.quotation.pricing.calculator');
+				Route::get('quotation-pricing-calculator/{quotationPricingCalculator}/edit', [QuotationPricingCalculatorController::class, 'edit'])->name('admin.edit.quotation.pricing.calculator');
+				Route::post('quotation-pricing-calculator/{quotationPricingCalculator}/update', [QuotationPricingCalculatorController::class, 'update'])->name('admin.update.quotation.pricing.calculator');
+				Route::post('quotation-pricing-calculator/store', [QuotationPricingCalculatorController::class, 'store'])->name('admin.store.quotation.pricing.calculator');
+				Route::get('export-quotation-pricing-calculator', 'QuotationPricingCalculatorController@export')->name('admin.export.quotation.pricing.calculator');
+				Route::get('get-quotation-pricing-calculator', 'QuotationPricingCalculatorController@paginate')->name('admin.get.quotation.pricing.calculator');
+
+
+				
+				Route::resource('pricing-expenses', 'PricingExpensesController');
+				Route::resource('positions', 'PositionsController');
+				Route::resource('pricing-plans', 'PricingPlansController');
+				
+				//Revenue Business Line 
+				Route::get('get-revenue-business-line', 'RevenueBusinessLineController@paginate')->name('admin.get.revenue-business-line');
+				Route::get('get-revenue-business-line/create', 'RevenueBusinessLineController@create')->name('admin.create.revenue-business-line');
+				Route::post('get-revenue-business-line/create', 'RevenueBusinessLineController@store')->name('admin.store.revenue-business-line');
+				Route::get('export-revenue-business-line', 'RevenueBusinessLineController@export')->name('admin.export.revenue-business-line');
+				Route::resource('revenue-business', 'RevenueBusinessLineController')->names([
+					'index' => 'admin.view.revenue.business.line',
+				]);
+				Route::get('revenue-business-edit/{revenueBusinessLine}/{serviceCategory?}/{serviceItem?}','RevenueBusinessLineController@editForm')->name('admin.edit.revenue');
+				Route::post('admin.update.revenue-business','RevenueBusinessLineController@updateForm')->name('admin.update.revenue');
+				
+				
+				
 				Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
 				Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
 				Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
 				Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
+				Route::get('/create-labeling-items', 'DynamicItemsController@createLabelingItems')->name('create.labeling.items');
+				Route::get('/create-labeling-form', 'DynamicItemsController@createLabelingForm')->name('create.labeling.form');
+				Route::get('/create-labeling-items/building-label', 'DynamicItemsController@showBuildingLabel')->name('show.building.label');
+				Route::get('/create-labeling-items/ff&e-label', 'DynamicItemsController@showffeLabel')->name('show.ffe.label');
+				Route::post('/create-labeling-items', 'DynamicItemsController@storeItemsCount')->name('add.count.dynamic.items');
+				Route::post('store-new','DynamicItemsController@storeNewModal')->name('admin.store.new.modal.dynamic');
+				
+				Route::post('/store-dynamic-items', 'DynamicItemsController@storeSubItems')->name('store.dynamic.items.names');
 				Route::get('/create-item/{model}', 'SalesGatheringTestController@createModel')->name('create.sales.form');
 				Route::post('/create-item/{model}', 'SalesGatheringTestController@storeModel')->name('admin.store.analysis');
 				Route::post('/close-period-action', 'ClosePeriodController@execute')->name('store.close.period');

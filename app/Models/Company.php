@@ -15,6 +15,14 @@ class Company extends Model implements HasMedia
 		StaticBoot,
 		InteractsWithMedia ;
 	protected $guarded = [];
+	public function getIdentifier():int
+    {
+        return $this->{$this->getRouteKeyName()};
+    }
+    public function getId()
+    {
+        return $this->getIdentifier();
+    }
 	protected $casts = ['name' => 'array'];
 	public function users()
 	{

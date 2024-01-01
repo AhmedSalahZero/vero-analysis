@@ -26,7 +26,7 @@
             @endif
     </label>
     @endif
-    <input id="{{isset($idSuffix) && $idSuffix ? $id . $idSuffix : $id }}" title="{{$title}}" {{$attributes}} type="{{$type}}" class="form-control form-control-sm form-control-solid mb-3 mb-lg-0 {{$inputClass}}"
+    <input id="{{isset($idSuffix) && $idSuffix ? $id . $idSuffix : $id }}" title="{{$title}}" {{$attributes}} type="{{$type}}" class="form-control  form-control-solid mb-3 mb-lg-0 {{$inputClass}}"
 
            @if($json)
            name="{{$name . '[' .  $jsonLang . ']'}}" id="{{$id."-" . $jsonLang}}"
@@ -42,4 +42,4 @@
            name="{{$name}}" id="{{$id}}"
            value="{{old($name) ?? ( @$model->{$attrName?:$name}) ?: $defaultValue }}"
            @endif
-           placeholder="{{$placeHolder}}" />
+           placeholder="{{$placeHolder??''}}" />

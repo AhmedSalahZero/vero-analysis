@@ -1,5 +1,5 @@
 @props([
-	'repeater-with-select2'=>false,
+	'repeater-with-select2'=>true,
 'isRepeater'=>$isRepeater,
 'relationName'=>$relationName,
 'repeaterId'=>$repeaterId,
@@ -62,7 +62,7 @@
              
             show: function() {
                 $(this).slideDown();      
-				$('input.trigger-change-repeater').trigger('change')     
+				$('input.trigger-change-repeater').trigger('change')   
 				 $(this).find('.only-month-year-picker').each(function(index,dateInput){
 					reinitalizeMonthYearInput(dateInput)
 					
