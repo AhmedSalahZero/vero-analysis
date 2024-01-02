@@ -36,7 +36,6 @@ class ExpenseController
 		$modelName = $request->get('model_name');
 		$model = ('\App\Models\\'.$modelName)::find($modelId);
 		
-		// dd((array)$request->get('tableIds'));		
 		foreach((array)$request->get('tableIds') as $tableId){
 			// delete all first 
 			#::delete all
