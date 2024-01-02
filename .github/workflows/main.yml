@@ -11,7 +11,7 @@ jobs:
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ftp.thetailorsweb.com
+        server: ftp://ftp.thetailorsweb.com:21
         server-dir: "public_html/test/"
         username: reveroplanner
         password: Aa@112233@aA
