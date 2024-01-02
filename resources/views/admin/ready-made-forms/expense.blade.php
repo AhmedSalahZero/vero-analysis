@@ -1762,14 +1762,7 @@
 @push('js_end')
 
 <script>
-    let oldValForInputNumber = 0;
-    $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('focus', function() {
-        oldValForInputNumber = $(this).val();
-        if (isNumber(oldValForInputNumber)) {
-            $(this).val('')
-
-        }
-    })
+    
     $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('blur', function() {
 
         if ($(this).val() == '') {
