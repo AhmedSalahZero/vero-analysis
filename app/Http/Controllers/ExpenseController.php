@@ -31,7 +31,6 @@ class ExpenseController
 		]);
 	}
 	public function store($company_id,Request $request){
-		// dd($request->all());
 		
 		$modelId = $request->get('model_id');
 		$modelName = $request->get('model_name');
