@@ -69,6 +69,7 @@
 			
 			
 		@endphp
+		
 		@for($i = 0 ; $i< $quantity ; $i++ )
     <div style="width:{{ $width }}cm;height:{{ $height }}cm;padding-top:{{ $paddingTop }}cm;padding-bottom:{{ $paddingTop }}cm;padding-right:{{ $paddingLeft }}cm;padding-left:{{ $paddingLeft }}cm;margin-bottom:{{ $marginBottom }}cm;" class="label-elemenet label-border overflow-hidden">
         <div class="code-item">
