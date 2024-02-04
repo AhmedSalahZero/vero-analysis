@@ -72,12 +72,12 @@
 		@for($i = 0 ; $i< $quantity ; $i++ )
     <div style="width:{{ $width }}cm;height:{{ $height }}cm;padding-top:{{ $paddingTop }}cm;padding-bottom:{{ $paddingTop }}cm;padding-right:{{ $paddingLeft }}cm;padding-left:{{ $paddingLeft }}cm;margin-bottom:{{ $marginBottom }}cm;" class="label-elemenet label-border overflow-hidden">
         <div class="code-item">
-            <img style="width:{{ 0.5*$height }}cm;height:{{ 0.5*$height }}cm;@if(!$company->labeling_use_client_logo)margin:auto;@endif" src="data:image/png;base64,{!! DNS2D::getBarcodePNG($item->getCode($index+1), 'QRCODE') !!}" alt="barcode" />
+            <img style="width:{{ 0.5*$height }}cm;height:{{ 0.5*$height }}cm;@if(!$company->labeling_use_client_logo)margin:auto;@endif" src="data:image/png;base64,{!! DNS2D::getBarcodePNG(str_replace($fromToString , $qIndex+ $i,qrcodeSpacing($item->getCode($index+1))), 'QRCODE') !!}" alt="barcode" />
             @if($company->labeling_use_client_logo)
             <img style="max-height:{{ 0.5*$height }}cm" src="{{ $company->labeling_use_client_logo ? asset('storage/'.$company->labeling_client_logo) : null }}">
             @endif
         </div>
-        <span class="block qrcode-font">{{ str_replace($fromToString , $qIndex+ $i,qrcodeSpacing($item->getCode($index+1))) }}</span>
+        <span class="block qrcode-font"> {{ $item->getCode($index+1) }} </span>
     </div>
     <div></div>
 	@endfor 
