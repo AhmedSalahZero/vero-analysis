@@ -2,11 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Imports\CustomerInvoiceTestImport;
 use App\Models\CachingCompany;
-use App\Models\CustomersInvoice;
-use App\Models\Deduction;
-use App\Models\SalesGathering;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

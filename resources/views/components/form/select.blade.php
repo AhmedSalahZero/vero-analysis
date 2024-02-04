@@ -34,7 +34,6 @@
     @endif
     @if($addNewModal && isset($company->id))
     <i
-	
 	@if($previousSelectMustBeSelected)
 	data-previous-must-be-opened="1"
 	data-previous-select-selector="{{ $previousSelectSelector }}"
@@ -57,7 +56,7 @@ $basicClasses = $isSelect2 ? "form-control mb-1 select select2-select" :"form-co
 <select @if($addNewModalModalName) data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" @endif {{-- data-add-modal-name="{{ $addNewModalModalName }}" --}} @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}" @if($multiple) multiple @endif>
 
     @if($pleaseSelect)
-    <option selected>{{ __('Please Select') }}</option>
+    <option value="" selected>{{ __('Please Select') }}</option>
     @endif
     @if($all)
 
@@ -71,7 +70,11 @@ $basicClasses = $isSelect2 ? "form-control mb-1 select select2-select" :"form-co
                 " data-add-new-form="{{ $addNewWithFormPopupClass ?: '' }}" data-add-model-name="{{ $addModelName }}" data-add-modal-title="{{ $addModalTitle }}">{{ $addNewText ?: __('Add New') }}</option>
     @endif
     @foreach($options as $value=>$option)
-    <option title="{{ $option['title']  }}" @foreach($option as $name=>$val)
+    <option 
+	@if(isset($option['value']))
+	value="{{ $option['value']  }}"
+	@endif
+	 title="{{ $option['title']  }}" @foreach($option as $name=>$val)
         {{ $name .'='.$val }}
         {{-- {{ logger($val == $selectedValue) }} --}}
         @if($name == 'value' && $val == $selectedValue )

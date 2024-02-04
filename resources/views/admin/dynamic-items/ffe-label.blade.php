@@ -213,7 +213,7 @@
                     <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'js-toggle-visiability'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             
-							 <x-tables.repeater-table-th
+							 {{-- <x-tables.repeater-table-th
 							 :helperTitle="'Please select {title} or click (+) to add a new one' "
 							    class="col-md-2" :title="$subItemsCount['main_field_name'] ?? '' "></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th
@@ -224,13 +224,15 @@
 							
 							 :helperTitle="__('Please write a Code')"
 							
-							  class="col-md-2" :title="__('Code')"></x-tables.repeater-table-th>
+							  class="col-md-2" :title="__('Code')"></x-tables.repeater-table-th> --}}
 							
-								@foreach($subItemsNames as $subItemName)
+								@foreach($subItemsNames as $index=>$subItemName)
+								
+								
 									 <x-tables.repeater-table-th
 							 :helperTitle="'Please select {title} or click (+) to add a new one' "
 									 
-									   class="col-md-2" :title="$subItemName "></x-tables.repeater-table-th>
+									   class="col-md-2" :title="ucfirst($subItemName) "></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th 
 							 :helperTitle="__('Please write an Abbreviation')"
 							
@@ -285,7 +287,7 @@
                                 </td>
 
 								
-								 	<td>
+								 	{{-- <td>
                                 <input type="hidden" name="id" value="1">
 								<div>
                                     <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :options="getTestFfeArray()" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
@@ -301,16 +303,18 @@
                                     <td>
                                         <label class="form-label font-weight-bold visibility-hidden">Code</label>
                                         <input data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" value="" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
-                                    </td>
+                                    </td> --}}
+							
+									@foreach($subItemsNames as $index=>$subItemName)
 									
-									@foreach($subItemsNames as $subItemName)
+								
 									<td>
 									@if($loop->last)
  										<label class="form-label font-weight-bold visibility-hidden">1</label>
                                         <input data-name-id="{{ $subItemName }}" type="text" value="" class="form-control bootstrap-select" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
                                     									
 									@else
-                                    <x-form.select-with-modal-abb data-name-id="{{ $subItemName }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="$subItemName" :add-new-modal-modal-title="$subItemName " :options="getTestCategory()" :add-new="false" :label="$subItemName " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
+                                    <x-form.select-with-modal-abb data-name-id="{{ $subItemName }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="$subItemName" :add-new-modal-modal-title="$subItemName " :options="$index == 0 ?  getTestFfeArray() : getTestCategory()" :add-new="false" :label="$subItemName " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
 									@endif
                                     </td>
 
@@ -910,6 +914,8 @@ $(document).on('change','select.main_item_js',function(){
 })
 $(function(){
 	$('.js-toggle-how-many').trigger('change');
+	$('select').trigger('change')
+	
 })
 </script>
 @endpush

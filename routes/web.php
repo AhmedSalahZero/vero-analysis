@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Exports\LabelingItemExport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\BalanceSheetController;
 use App\Http\Controllers\CashFlowStatementController;
@@ -29,6 +30,7 @@ use App\Http\Livewire\AdjustedCollectionDatesForm;
 use App\Models\Branch;
 use App\Models\CachingCompany;
 use App\Models\Company;
+use App\Models\LabelingItem;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -105,6 +107,10 @@ Route::middleware([])->group(function () {
 			
 
 			Route::prefix('{company}')->group(function () {
+				
+				Route::post('save-labeling-data','CompanyController@saveLabelingData')->name('save.labeling.item');
+				
+				
 				Route::post('get-type-based-on-dates', [FilterMainTypeBasedOnDatesController::class, '__invoke'])->name('get.type.based.on.dates');
 
 
@@ -274,7 +280,10 @@ Route::middleware([])->group(function () {
 				############ Export Routes ############
 				// Route::get('inventoryStatement/export', 'InventoryStatementController@export')->name('inventoryStatement.export');
 				Route::get('salesGathering/export/{model}', 'SalesGatheringController@export')->name('salesGathering.export');
-
+				// type excel or pdf 
+				Route::get('/export-labeling-items/{type}', 'SalesGatheringController@exportLabelingItems')->name('export.labeling.item');
+				Route::get('/print-labeling-items-qrcode/{fromIndex}/{toIndex}', 'SalesGatheringController@printLabelingItemsQrcode')->name('print.labeling.item.qrcode');
+				Route::post('/print-by-headers', 'SalesGatheringController@printLabelingByCustomHeaders')->name('print.custom.header');
 
 
 				// ->parameters(['name-of-route'=> inventoryStatement [dependancies injection of model]])
@@ -294,6 +303,7 @@ Route::middleware([])->group(function () {
 				
 				############  (TRUNCATE) ############
 				Route::get('Truncate/{model}', 'DeletingClass@truncate')->name('truncate');
+				Route::get('delete-all-labeling', 'SalesGatheringController@deleteAllLabelingItemsWithColumns')->name('delete.all.labeling.items.with.columns');
 				Route::delete('DeleteMultipleRows/{model}', 'DeletingClass@multipleRowsDeleting')->name('multipleRowsDelete');
 				Route::delete('delete-model', [DeleteSingleRecordController::class, '__invoke'])->name('delete.model');
 
@@ -425,6 +435,7 @@ Route::middleware([])->group(function () {
 				Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
+				Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');
 				Route::get('/create-labeling-items', 'DynamicItemsController@createLabelingItems')->name('create.labeling.items');
 				Route::get('/create-labeling-form', 'DynamicItemsController@createLabelingForm')->name('create.labeling.form');
 				Route::get('/create-labeling-items/building-label', 'DynamicItemsController@showBuildingLabel')->name('show.building.label');

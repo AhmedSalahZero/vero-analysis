@@ -115,4 +115,24 @@ class CompanyController extends Controller
         $companySection->delete();
         return redirect()->back();
     }
+	public function saveLabelingData(Request $request,Company $company){
+	
+		$company->update([
+			'labeling_type'=>$request->get('labeling_type'),
+			'labeling_report_title'=>$request->get('labeling_report_title'),
+			'labeling_pagination_per_page'=>$request->get('labeling_pagination_per_page'),
+			'label_width'=>$request->get('label_width'),
+			'generate_labeling_code_fields'=>$request->get('generate_labeling_code_fields',null),
+			'label_height'=>$request->get('label_height'),
+			'labeling_client_logo'=>$request->hasFile('labeling_client_logo') ? $request->file('labeling_client_logo')->store('client_logos','public') :$company->labeling_client_logo,
+			'labeling_use_client_logo'=>$request->boolean('labeling_use_client_logo'),
+		]);
+		
+		return response()->json([
+			'status'=>true ,
+			'message'=>__('Done'),
+			'reloadCurrentPage'=>true 
+		]);
+		
+	}
 }

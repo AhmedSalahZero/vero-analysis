@@ -22,37 +22,6 @@ class RolesAndPermissionsController extends Controller
     public function store(Request $request ,$scope)
     {
         $role = Role::create(['name' => $request->role,'scope' => $scope]);
-        // dd($request->permissions);
-        $prev_name = '';
-        $name_arr = [];
-        $sections = Section::where('section_side','client')->get();
-        $permissions = array_keys($request->permissions);
-        $name_of_permissions = [
-            'view',
-            'create',
-            'edit',
-            'delete',
-        ];
-        // foreach ($sections as $section) {
-        //     $route = $section->route;
-        //     $view_permission_name = $route.'.view';
-        //     $create_permission_name = $route.'.create';
-        //     $edit_permission_name = $route.'.edit';
-        //     $delete_permission_name = $route.'.delete';
-        //     if((false !== $found = array_search($view_permission_name,$permissions))
-        //         &&(false !== $found = array_search($create_permission_name,$permissions))
-        //         &&(false !== $found = array_search($edit_permission_name,$permissions))
-        //         &&(false !== $found = array_search($delete_permission_name,$permissions)))
-        //         {
-        //         foreach ($name_of_permissions as $value) {
-        //             $name = $value
-        //             if((false !== $found = array_search($view_permission_name,$permissions))
-        //         }
-        //             array_unset($permissions[$view_permission_name])
-        //     }
-        //     dd($m);
-
-        // }
         $role->syncPermissions(array_keys($request->permissions));
         toastr()->success(__('Created Successfully'));
         return redirect()->back();

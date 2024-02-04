@@ -26,11 +26,11 @@
 
 
                     <div class="form-group row">
-						<div class="col-md-4 mb-4">
+                        <div class="col-md-4 mb-4">
                             <x-form.select :options="$pricingPlans" :add-new="false" :label="__('Choose Pricing Plan (Optional)')" class="select2-select   " data-filter-type="{{ $type }}" :all="false" name="pricing_plan_id" please-select="true" id="{{$type.'_'.'pricing_plan_id' }}" :selected-value="isset($pricingPlanId)  ? $pricingPlanId :  (isset($model) ? $model->getPricingPlanId() : 0) "></x-form.select>
                         </div>
-						
-						
+
+
                         <div class="col-md-4 mb-4">
 
                             <x-form.label :class="'label'" :id="'test-id'">{{ __('Date') }}</x-form.label>
@@ -56,14 +56,14 @@
                         </div>
 
                         <div class="col-md-4 mb-4">
-                            <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'ServiceItem'" :add-new-modal-modal-title="__('Service Item')" :previous-select-name-in-dB="'service_category_id'" :previous-select-must-be-selected="true" :previous-select-selector="'select.service_category_class'" :previous-select-title="__('Service Category')"  :options="$serviceItems" :add-new="false" :label="__('Service Item')" class="select2-select service_item_class  " data-filter-type="{{ $type }}" :all="false" name="service_item_id" id="{{$type.'_'.'service_item_id' }}" :selected-value="isset($model) ? $model->getServiceItemId() : 0"></x-form.select>
+                            <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'ServiceItem'" :add-new-modal-modal-title="__('Service Item')" :previous-select-name-in-dB="'service_category_id'" :previous-select-must-be-selected="true" :previous-select-selector="'select.service_category_class'" :previous-select-title="__('Service Category')" :options="$serviceItems" :add-new="false" :label="__('Service Item')" class="select2-select service_item_class  " data-filter-type="{{ $type }}" :all="false" name="service_item_id" id="{{$type.'_'.'service_item_id' }}" :selected-value="isset($model) ? $model->getServiceItemId() : 0"></x-form.select>
                         </div>
                         <div class="col-md-4 mb-4">
 
                             <x-form.select :options="$serviceNatures" :add-new="false" :label="__('Service Nature')" class="select2-select   " data-filter-type="{{ $type }}" :all="false" name="service_nature_id" id="{{$type.'_'.'service_nature_id' }}" :selected-value="isset($model) ? $model->getServiceNatureId() : 0"></x-form.select>
                         </div>
-						
-					
+
+
 
 
                         <div class="col-md-3 mb-4">
@@ -985,13 +985,13 @@
                             , title: res.message,
 
                         });
-						if($('select[name="pricing_plan_id"]').val()){
-                        window.location.href = "{{route('admin.view.quick.pricing.calculator',['company'=>$company->id , 'active'=>'pricing-plans'])}}";
-							
-						}else{
-                        window.location.href = "{{ $redirectAfterSubmitRoute ?? '' }}";
-							
-						}
+                        if ($('select[name="pricing_plan_id"]').val()) {
+                            window.location.href = "{{route('admin.view.quick.pricing.calculator',['company'=>$company->id , 'active'=>'pricing-plans'])}}";
+
+                        } else {
+                            window.location.href = "{{ $redirectAfterSubmitRoute ?? '' }}";
+
+                        }
 
 
 
@@ -1045,24 +1045,24 @@
 
 
         $(document).on('click', '.trigger-add-new-modal', function() {
-			var additionalName = '';
-			if($(this).attr('data-previous-must-be-opened')){
-				const previosSelectorQuery = $(this).attr('data-previous-select-selector') ;
-				const previousSelectorValue =  $(previosSelectorQuery).val()
-				const previousSelectorTitle =  $(this).attr('data-previous-select-title');
-				if(!previousSelectorValue){
-					Swal.fire({
-						text:"{{ __('Please Select') }}" + ' ' + previousSelectorTitle,
-						icon:'warning' 
- 					})
-					return ;
-				}
-				const previousSelectorVal =  $(previosSelectorQuery).val();
-				const previousSelectorHtml =  $(previosSelectorQuery).find('option[value="'+previousSelectorVal+'"]').html();
-				 additionalName = "{{' '. __('For')  }}  [" + previousSelectorHtml + ' ]'
-			}
+            var additionalName = '';
+            if ($(this).attr('data-previous-must-be-opened')) {
+                const previosSelectorQuery = $(this).attr('data-previous-select-selector');
+                const previousSelectorValue = $(previosSelectorQuery).val()
+                const previousSelectorTitle = $(this).attr('data-previous-select-title');
+                if (!previousSelectorValue) {
+                    Swal.fire({
+                        text: "{{ __('Please Select') }}" + ' ' + previousSelectorTitle
+                        , icon: 'warning'
+                    })
+                    return;
+                }
+                const previousSelectorVal = $(previosSelectorQuery).val();
+                const previousSelectorHtml = $(previosSelectorQuery).find('option[value="' + previousSelectorVal + '"]').html();
+                additionalName = "{{' '. __('For')  }}  [" + previousSelectorHtml + ' ]'
+            }
             const parent = $(this).closest('label').parent();
-             parent.find('select');
+            parent.find('select');
             const type = $(this).attr('data-modal-title')
             const name = $(this).attr('data-modal-name')
             $('.modal-title-add-new-modal-' + name).html("{{ __('Add New ') }}" + type + additionalName);
@@ -1070,45 +1070,44 @@
         })
         $(document).on('click', '.store-new-add-modal', function() {
             const that = $(this);
-			$(this).attr('disabled',true);
+            $(this).attr('disabled', true);
             const modalName = $(this).attr('data-modal-name');
             const modalType = $(this).attr('data-modal-type');
             const modal = $(this).closest('.modal');
             const value = modal.find('input.name-class-js').val();
-			const previousSelectorSelector = $(this).attr('data-previous-select-selector');
-			const previousSelectorValue = previousSelectorSelector ? $(previousSelectorSelector).val() : null;
-			const previousSelectorNameInDb = $(this).attr('data-previous-select-name-in-db');
-			
+            const previousSelectorSelector = $(this).attr('data-previous-select-selector');
+            const previousSelectorValue = previousSelectorSelector ? $(previousSelectorSelector).val() : null;
+            const previousSelectorNameInDb = $(this).attr('data-previous-select-name-in-db');
+
             $.ajax({
                 url: "{{ route('admin.store.new.modal',['company'=>$company->id ?? 0  ]) }}"
                 , data: {
                     "_token": "{{ csrf_token() }}"
                     , "modalName": modalName
                     , "modalType": modalType
-                    , "value": value,
-					"previousSelectorNameInDb":previousSelectorNameInDb,
-					"previousSelectorValue":previousSelectorValue
+                    , "value": value
+                    , "previousSelectorNameInDb": previousSelectorNameInDb
+                    , "previousSelectorValue": previousSelectorValue
                 }
                 , type: "POST"
                 , success: function(response) {
-					$(that).attr('disabled',false);
+                    $(that).attr('disabled', false);
                     modal.find('input').val('');
                     $('.modal').modal('hide')
                     if (response.status) {
-                        const allSelect = $('select[data-modal-name="' + modalName + '"][data-modal-type="'+modalType+'"]') ;
-						const allSelectLength = allSelect.length ; 
-						allSelect.each(function(index, select) {
-							var isSelected = '' ; 
-							if(index == (allSelectLength-1)){
-								isSelected = 'selected' ;
-							}
-                            $(select).append(`<option `+ isSelected +` value="`+ response.id +`">` + response.value + `</option>`).selectpicker('refresh').trigger('change')
+                        const allSelect = $('select[data-modal-name="' + modalName + '"][data-modal-type="' + modalType + '"]');
+                        const allSelectLength = allSelect.length;
+                        allSelect.each(function(index, select) {
+                            var isSelected = '';
+                            if (index == (allSelectLength - 1)) {
+                                isSelected = 'selected';
+                            }
+                            $(select).append(`<option ` + isSelected + ` value="` + response.id + `">` + response.value + `</option>`).selectpicker('refresh').trigger('change')
                         })
 
                     }
-                },
-				error:function(response){
-				}
+                }
+                , error: function(response) {}
             });
         })
 

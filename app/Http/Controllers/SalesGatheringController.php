@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ExportData;
+use App\Exports\LabelingItemExport;
 use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
+use App\Models\LabelingItem;
 use App\Models\Log;
 use App\Models\SalesGathering;
 use App\Models\TablesField;
@@ -39,7 +41,15 @@ class SalesGatheringController extends Controller
 	}
     public function index(Company $company, Request $request, string $uploadType='SalesGathering')
     {
+	
+		// dd($x);
+		$hasLabelingItemCodeField = LabelingItem::hasCodeField();
+		// $hasLabelingItemCodeField=false;
         $modelName = $uploadType;
+		$labelingUniqueItemsPerColumn = [];
+		$hasCodeColumnForLabelingItem = false;  
+		$orderByDirection = $uploadType == 'LabelingItem' ? 'asc' :'desc';
+		
 		$fieldValue = $request->get('field') ;
 		$searchDateField = $this->getSearchDateFieldName($modelName,$fieldValue);
 		$hasField = $request->has('field') ;
@@ -50,7 +60,7 @@ class SalesGatheringController extends Controller
         $exportPermissionName = $uploadingArr['exportPermissionName'];
         $deletePermissionName = $uploadingArr['deletePermissionName'];
         Log::storeNewLogRecord('enterSection', null, __('Data Gathering [ '. $uploadType . ' ]'));
-
+		$pageLength = $modelName == 'LabelingItem' && is_numeric($company->labeling_pagination_per_page) && $company->labeling_pagination_per_page > 0 ?$company->labeling_pagination_per_page  : 50 ;
         // $salesGatherings = SalesGathering::company()->orderBy('date','desc')->get;
         $salesGatherings = $fullModelPath::company()->when($hasField, function ($q) use ($request,$fieldValue) {
             $q->where($fieldValue, 'like', '%'.$request->get('value') .'%');
@@ -60,18 +70,37 @@ class SalesGatheringController extends Controller
         })
         ->when($request->has('to'), function ($q) use ($request,$searchDateField) {
             $q->where($searchDateField, '<=', $request->get('to'));
-        })
-        ->orderBy($mainDateOrderBy, 'desc')->paginate(50);
+        })->when($request->has('filter_labeling'),function($q) use ($request){
+			foreach($request->all() as $key => $val){
+			
+				if($val && Schema::hasColumn('labeling_items',$key)){
+					$q->where($key,$val);
+				}
+			}
+		})
+        ->orderBy($mainDateOrderBy, $orderByDirection)->paginate($pageLength);
         $exportableFields  = (new ExportTable)->customizedTableField($company, $uploadType, 'selected_fields');
+	
         if($modelName == 'CustomerInvoice') {
             unset($exportableFields['withhold_amount']);
         }
         $viewing_names = array_values($exportableFields);
         $db_names = array_keys($exportableFields);
-        
+        if($modelName == 'LabelingItem'){
+			$labeling = LabelingItem::where('company_id',$company->id)->get();
+			if($labeling->first() && ($labeling->first()->code || $labeling->first()->Code)){
+				$hasCodeColumnForLabelingItem= true ; 
+			}
+			$labelingUniqueItemsPerColumn = filterByColumnName($labeling);
+		}
         $notPeriodClosedCustomerInvoices = $modelName == 'CustomerInvoice' ? CustomerInvoice::getOnlyNotClosedPeriods() : null;
-        $navigators =$this->getUploadingPageExportNavigation($modelName,$uploadPermissionName,$exportPermissionName,$deletePermissionName);
-        return view('client_view.sales_gathering.index', compact('navigators', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
+		$firstIndexElementInLabeling = $salesGatherings->first() ? $salesGatherings->first()->id : 0;
+		$lastIndexElementInLabeling = $salesGatherings->last() ? $salesGatherings->last()->id : 0;
+		// dd();
+        $navigators =$this->getUploadingPageExportNavigation($modelName,$uploadPermissionName,$exportPermissionName,$deletePermissionName,$firstIndexElementInLabeling,$lastIndexElementInLabeling);
+	
+        // return view('client_view.printing.custom-printing', compact('navigators','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
+        return view('client_view.sales_gathering.index', compact('navigators','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
     }
     
 
@@ -148,7 +177,6 @@ class SalesGatheringController extends Controller
      */
     public function destroy(Company $company, SalesGathering $salesGathering)
     {
-        // dd('delete');
         toastr()->error('Deleted Successfully');
         $salesGathering->delete();
         return redirect()->back();
@@ -187,10 +215,46 @@ class SalesGatheringController extends Controller
         return (new ExportData($company->id, array_values($selected_fields), $salesGathering))->download($modelName.'.xlsx');
 
     }
-    public function getUploadingPageExportNavigation(string $modelName,string $uploadPermissionName,string $exportPermissionName,string $deletePermissionName)
+    public function getUploadingPageExportNavigation(string $modelName,string $uploadPermissionName,string $exportPermissionName,string $deletePermissionName,int $fromIndex=  0 , int $toIndex=0)
     {
 		$user = auth()->user();
 		$company = getCurrentCompany();
+		$deleteAllDataTitle = $modelName == 'LabelingItem' ? __('Delete All Data (With Columns)') : __('Delete All Data') ;
+		$deleteAllDataRouteName = $modelName == 'LabelingItem'? route('delete.all.labeling.items.with.columns',[$company->id]) : route('truncate',[$company,$modelName]);
+		
+		$exportNavArr = $modelName != 'LabelingItem' ? [
+			'name'=>__('Export All Data'),
+			'link'=>$user->can($exportPermissionName) ? route('salesGathering.export',['company'=>$company->id , 'model'=>$modelName]):'#',
+			'show'=>$user->can($exportPermissionName),
+			'icon'=>'fas fa-file-import',
+			'attr'=>[
+				// 'data-toggle'=>'modal',
+				// 'data-target'=>'#search-form-modal',
+			]
+			] : 
+			[
+				'name'=>__('Export Data'),
+				'link'=>'#',
+				'show'=>$user->can($exportPermissionName),
+				'icon'=>'fas fa-file-import',
+				'sub_items'=>[
+					[
+						'name'=>__('Export Excel'),
+						'link'=>$user->can($exportPermissionName) ? route('export.labeling.item',['company'=>$company->id , 'type'=>'excel']):'#',
+						'show'=>$user->can($exportPermissionName),
+						'icon'=>'fas fa-file-import',
+					],
+					[
+						'name'=>__('Export PDF'),
+						'link'=>$user->can($exportPermissionName) ? route('export.labeling.item',['company'=>$company->id , 'type'=>'pdf']):'#',
+						'show'=>$user->can($exportPermissionName),
+						'icon'=>'fas fa-file-import',
+					],
+					
+					
+				]
+				]
+			;
 		
 		
         return [
@@ -204,7 +268,7 @@ class SalesGatheringController extends Controller
                [
                    'name'=>__('Template Download'),
                    'link'=>$user->can($uploadPermissionName)?route('table.fields.selection.view',[$company,$modelName,'sales_gathering']) : '#' ,
-                   'show'=>true
+                   'show'=>$modelName != 'LabelingItem'
                ],
                [
                    'name'=>__('Upload Data'),
@@ -220,7 +284,7 @@ class SalesGatheringController extends Controller
 		[
 			'name'=>__('Filter'),
 			'link'=>'#',
-			'show'=>true,
+			'show'=>$modelName != 'LabelingItem',
 			'icon'=>'fas fa-search ',
 			'attr'=>[
 				'data-toggle'=>'modal',
@@ -228,18 +292,30 @@ class SalesGatheringController extends Controller
 			]
 			],
 			
-			
-			
+			$exportNavArr,
 			[
-				'name'=>__('Export All Data'),
-				'link'=>$user->can($exportPermissionName) ? route('salesGathering.export',['company'=>$company->id , 'model'=>$modelName]):'#',
-				'show'=>$user->can($exportPermissionName),
-				'icon'=>'fas fa-file-import',
-				'attr'=>[
-					// 'data-toggle'=>'modal',
-					// 'data-target'=>'#search-form-modal',
-				]
+				'name'=>__('Print QR Code'),
+				'link'=>$user->can($exportPermissionName) ? route('print.labeling.item.qrcode',['company'=>$company->id,'fromIndex'=>$fromIndex,'toIndex'=>$toIndex ]):'#',
+				'show'=>$modelName == 'LabelingItem',
+				'icon'=>'fas fa-print',
+				// 'attr'=>[
+				// 	'data-toggle'=>'modal',
+				// 	'data-target'=>'#delete_from_to_modal'
+				// ]
 				],
+				[
+					'name'=>__('Print Report'),
+					'link'=>$user->can($exportPermissionName) ? route('print.labeling.item.qrcode',['company'=>$company->id,'fromIndex'=>$fromIndex,'toIndex'=>$toIndex ]):'#',
+					'show'=>$modelName == 'LabelingItem',
+					'icon'=>'fas fa-print',
+					'attr'=>[
+						'data-toggle'=>'modal',
+						'data-target'=>'#print_report'
+					]
+				]
+				
+			
+			,
 				
 				
 				
@@ -250,7 +326,7 @@ class SalesGatheringController extends Controller
 					'icon'=>'fas fa-trash',
 					'sub_items'=>[
 						[
-							'name'=>__('Delete By Date'),
+							'name'=>Request()->segment(4) == 'LabelingItem'? __('Delete By Serial') :__('Delete By Date'),
 							'link'=>'#',
 							'show'=>true,
 							'attr'=>[
@@ -259,8 +335,8 @@ class SalesGatheringController extends Controller
 							]
 						],
 						[
-							'name'=>__('Delete All Data'),
-							'link'=>$user->can($deletePermissionName)?route('truncate',[$company,$modelName]):'#',
+							'name'=>$deleteAllDataTitle,
+							'link'=>$user->can($deletePermissionName)?$deleteAllDataRouteName:'#',
 							'show'=>$user->can($deletePermissionName)
 						]
 					
@@ -280,6 +356,100 @@ class SalesGatheringController extends Controller
         
     	];
     }
+	// public function filterLabelingItems(Company $company , Request $request){
+	// 	return redirect()->route('view.uploading',[
+	// 		'company'=>$company->id ,
+	// 		'model'=>'LabelingItem',
+	// 		'request'=>$request
+	// 	]);
+		
+	// }
 
-
+		public function printLabelingItemsQrcode(Company $company , Request $request , $fromIndex , $toIndex ){
+			$labeling = LabelingItem::where('company_id',$company->id)->whereBetween('id',[$fromIndex,$toIndex])->get();
+			if(!count($labeling)){
+				return redirect()
+						->route('view.uploading',['company'=>$company->id,'model'=>'LabelingItem'])
+						->with('fail',__('No Data Found'))	
+						;
+			}
+			return view('printLabelingItems',[
+				'labelings'=>$labeling,
+				'height'=>$company->getLabelingHeight(),
+				'width'=>$company->getLabelingWidth(),
+				'width'=>$company->getLabelingWidth(),
+				'paddingLeft'=>$company->getLabelingHorizontalPadding(),
+				'paddingTop'=>$company->getLabelingVerticalPadding(),
+				'marginBottom'=>$company->getLabelingMarginBottom(),
+				
+			]);
+		}
+		
+		public function exportLabelingItems(Company $company , Request $request ,string $type){
+			if($type == 'excel'){
+				$items = LabelingItem::where('company_id',$company->id )->get() ;
+		
+				return (new LabelingItemExport($items))->download('Labeling Item.XLSX','Xlsx');
+			}
+			if($type == 'pdf'){
+				$items = LabelingItem::where('company_id',$company->id )->get() ;
+				return (new LabelingItemExport($items))->download('Labeling Item.XLSX','Xlsx');
+			}
+			
+		}
+		
+	public function deleteAllLabelingItemsWithColumns(Request $request , Company $company )
+	{
+		TablesField::where('company_id',$company->id)->delete();
+		LabelingItem::where('company_id',$company->id)->delete();
+		return redirect()->route('view.uploading',['company'=>$company->id,'model'=>'LabelingItem']);		
+		
+	}
+	public function printLabelingByCustomHeaders(Company $company , Request $request)
+	{
+		$headers = $request->get('labeling_print_headers',[]) ;
+		$headers = array_merge($headers, ['id','company_id']);
+		$printPaper = $request->get('print_labeling_type'); // landscape or portrait
+		$exportableFields  = (new ExportTable)->customizedTableField($company, 'LabelingItem', 'selected_fields');
+		$exportableFields = HArr::filterByKeys($exportableFields,$headers);
+		$rowsPerPage = $request->get('no_rows_for_each_page_labeling',10) ;
+		$company->update([
+			'no_rows_for_each_page_labeling'=>$rowsPerPage,
+			'print_labeling_type'=>$printPaper,
+			'labeling_print_headers'=>$headers,
+			'labeling_logo_1'=>$request->has('labeling_logo_1') ? $request->file('labeling_logo_1')->store('logs','public')  : $company->labeling_logo_1,
+			'labeling_logo_2'=>$request->has('labeling_logo_2') ? $request->file('labeling_logo_2')->store('logs','public')  : $company->labeling_logo_2,
+			'labeling_logo_3'=>$request->has('labeling_logo_3') ? $request->file('labeling_logo_3')->store('logs','public')  : $company->labeling_logo_3,
+			'labeling_stamp'=>$request->has('labeling_stamp') ? $request->file('labeling_stamp')->store('logs','public')  : $company->labeling_stamp,
+		]);
+        $viewing_names = array_values($exportableFields);
+        $db_names = array_keys($exportableFields);
+		$reportTitle = $company->labeling_report_title ; 
+		$hasCodeColumnForLabelingItem = false ;
+		$labeling = LabelingItem::where('company_id',$company->id)->get($headers);
+		if($labeling->first() && ($labeling->first()->code || $labeling->first()->Code)){
+			$hasCodeColumnForLabelingItem= true ; 
+		}
+		$labeling = $labeling->chunk($rowsPerPage);
+	
+		
+        return view('client_view.printing.custom-printing',[
+			'db_names'=>$db_names,
+			'company'=>$company,
+			'exportables'=>$exportableFields,
+			'hasCodeColumnForLabelingItem'=>$hasCodeColumnForLabelingItem,
+			'modelName'=>'LabelingItem',
+			'viewing_names'=>$viewing_names,
+			'labeling'=>$labeling,
+			'printPaper'=>$printPaper,
+			'reportTitle'=>$reportTitle
+		]);
+		
+	
+		
+		// return view('client_view.printing.custom-printing',[
+		// 	'hasCodeColumnForLabelingItem'
+		// ])
+	}
+	
 }

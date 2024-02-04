@@ -38,7 +38,7 @@ class CustomersNaturesAnalysisReport
 		$all_items = [];
 
 
-		$year = Carbon::make($request->date)->format('Y');
+		$year = $request->date ? Carbon::make($request->date)->format('Y') : null;
 
 
 		$customerDashboardCashing = new CustomerNatureCashing($company, $year);
@@ -160,9 +160,11 @@ class CustomersNaturesAnalysisReport
 		$all_items = [];
 
 
-		$year = Carbon::make($request->date)->format('Y');
+		$year = $request->date ? Carbon::make($request->date)->format('Y') : null;
 
-
+		if(!$year){
+			return [];
+		}
 		$customerDashboardCashing = new CustomerDashboardCashing($company, $year);
 
 		$cashedResult = $customerDashboardCashing->cacheAll();

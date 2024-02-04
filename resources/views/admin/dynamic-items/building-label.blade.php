@@ -6,7 +6,7 @@
 <style>
 .max-w-abb{
 	max-width:80px !important;
-	width:80px !important;
+	width:80px !important;	
 	min-width:80px !important;
 	
 }
@@ -141,7 +141,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="label">{{ __('Item Name') }}</label>
-                            <input value="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" name="main_field_name" class="form-control">
+                            <input value="{{ 'Building' }}" type="text" name="main_field_name" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-3 text-center">
@@ -159,6 +159,8 @@
                     </div>
 					
 						<div class="row col-12">
+						
+						
 					  @for($i = 0 ; $i < $howManyItems ; $i++) 
 						<div class="col-md-3">
                         <div class="form-group">
@@ -215,7 +217,7 @@
                             
 							 <x-tables.repeater-table-th
 							 :helperTitle="'Please select {title} or click (+) to add a new one' "
-							    class="col-md-2" :title="$subItemsCount['main_field_name'] ?? '' "></x-tables.repeater-table-th>
+							    class="col-md-2" :title="__('Building Name')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th
 							 :helperTitle="__('Please write an Abbreviation')"
 							
@@ -226,7 +228,10 @@
 							
 							  class="col-md-2" :title="__('Code')"></x-tables.repeater-table-th>
 							
-								@foreach($subItemsNames as $subItemName)
+								@foreach($subItemsNames as $index=>$subItemName)
+								@if($index == 0)
+								@continue
+								@endif 
 									 <x-tables.repeater-table-th
 							 :helperTitle="'Please select {title} or click (+) to add a new one' "
 									 
@@ -242,26 +247,7 @@
 							  class="col-md-2" :title="__('Code')"></x-tables.repeater-table-th>
 								@endforeach 
 
-							{{--
 							
-                            <tr>
-                                <x-tables.repeater-table-th class="col-md-1" :title="__('Action')"></x-tables.repeater-table-th>
-
-                                <x-tables.repeater-table-th class="col-md-1" :title="$subItemsCount['main_field_name']??'' "></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="col-md-1" :title="__('Abbreviation')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="col-md-2" :title="'Code'"></x-tables.repeater-table-th>
-
-
-                                <x-tables.repeater-table-th class="col-md-1" :title="$subItemsCount['main_field_name']??'' "></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="col-md-1" :title="__('Abbreviation')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="col-md-2" :title="'Code'"></x-tables.repeater-table-th>
-
-
-                                <x-tables.repeater-table-th class="col-md-1" :title="$subItemsCount['main_field_name']??''"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="col-md-1" :title="__('Abbreviation')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="col-md-2" :title="'Code'"></x-tables.repeater-table-th>
-
-                            </tr> --}}
                         </x-slot>
 
                         <x-slot name="trs">
@@ -303,7 +289,14 @@
                                         <input data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" value="" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
                                     </td>
 									
-									@foreach($subItemsNames as $subItemName)
+									@foreach($subItemsNames as $index=>$subItemName)
+									
+								@if($index == 0)
+								@continue
+								@endif 
+									
+									
+									
 									<td>
 									@if($loop->last)
  										<label class="form-label font-weight-bold visibility-hidden">1</label>
@@ -329,6 +322,74 @@
 
 
                             </tr>
+							
+							
+							
+							
+							
+							  <tr @if($isRepeater) data-repeater-item @endif>
+                                <td class="text-center align-middle">
+									<label class="visibility-hidden">delete</label>
+                                    <div class="">
+                                        <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                        </i>
+                                    </div>
+                                </td>
+
+								
+								 	<td>
+                                <input type="hidden" name="id" value="1">
+								<div>
+                                    <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :options="getTestBuildingArray()" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
+								
+								</div>
+
+                                    </td>
+
+                                    <td>
+                                        <label class="form-label font-weight-bold visibility-hidden">Abb</label>
+                                        <input data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" value="" class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
+                                    </td>
+                                    <td>
+                                        <label class="form-label font-weight-bold visibility-hidden">Code</label>
+                                        <input data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" value="" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
+                                    </td>
+									
+									@foreach($subItemsNames as $index=>$subItemName)
+									
+								@if($index == 0)
+								@continue
+								@endif 
+									
+									
+									
+									<td>
+									@if($loop->last)
+ 										<label class="form-label font-weight-bold visibility-hidden">1</label>
+                                        <input data-name-id="{{ $subItemName }}" type="text" value="" class="form-control bootstrap-select" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
+                                    									
+									@else
+                                    <x-form.select-with-modal-abb data-name-id="{{ $subItemName }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="$subItemName" :add-new-modal-modal-title="$subItemName " :options="getTestFloors()" :add-new="false" :label="$subItemName " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
+									@endif
+                                    </td>
+
+                                    <td>
+                                        <label class="form-label font-weight-bold visibility-hidden">Abb</label>
+                                        <input data-name-id="{{ $subItemName }}" type="text" value="" class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
+                                    </td>
+                                    <td>
+                                        <label class="form-label font-weight-bold visibility-hidden">Code</label>
+                                        <input data-name-id="{{ $subItemName }}" type="text" value="" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'code' }}" @else name="{{ $tableId }}[0][{{ 'code' }}]" @endif>
+                                    </td>
+									@endforeach 
+									
+									
+
+
+
+                            </tr>
+							
+							
                             {{-- @endforeach --}}
 
                         </x-slot>
@@ -910,6 +971,7 @@ $(document).on('change','select.main_item_js',function(){
 })
 $(function(){
 	$('.js-toggle-how-many').trigger('change');
+	$('select').trigger('change')
 })
 </script>
 @endpush

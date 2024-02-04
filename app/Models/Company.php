@@ -23,7 +23,7 @@ class Company extends Model implements HasMedia
     {
         return $this->getIdentifier();
     }
-	protected $casts = ['name' => 'array'];
+	protected $casts = ['name' => 'array','generate_labeling_code_fields'=>'array','labeling_print_headers'=>'array'];
 	public function users()
 	{
 		return $this->belongsToMany(User::class, 'companies_users');
@@ -68,5 +68,49 @@ class Company extends Model implements HasMedia
 	{
 		return strtoupper($this->main_functional_currency) ?: __('Main Functional Currency');
 	}
+	public function getLabelingHeight()
+	{
+		return $this->label_height ?: 100 ;
+	}
+	public function getLabelingHorizontalPadding()
+	{
+		return $this->getLabelingWidth() *0 ;
+	}
+	public function getLabelingVerticalPadding()
+	{
+		return $this->getLabelingHeight() * 0.05 ;
+	}
+	public function getLabelingMarginBottom()
+	{
+		return .2;
+	}
 	
+	public function getLabelingWidth()
+	{
+		// logo (clients)
+		// qrcode 
+		// code 
+		
+		return $this->label_width ?: 100 ;
+	}
+	public function getFirstLabelingLogo()
+	{
+		$logo = $this->labeling_logo_1 ;
+		return $logo && file_exists('storage/'.$logo ) ? asset('storage/'.$logo) : null ;
+	}
+	public function getSecondLabelingLogo()
+	{
+		$logo = $this->labeling_logo_2 ;
+		return $logo && file_exists('storage/'.$logo ) ? asset('storage/'.$logo) : null ;
+	}
+	public function getThirdLabelingLogo()
+	{
+		$logo = $this->labeling_logo_3 ;
+		return $logo && file_exists('storage/'.$logo ) ? asset('storage/'.$logo) : null ;
+	}
+	public function getStampLabelingLogo()
+	{
+		$logo = $this->labeling_stamp ;
+		return $logo && file_exists('storage/'.$logo ) ? asset('storage/'.$logo) : null ;
+	}
 }

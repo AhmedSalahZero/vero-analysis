@@ -25,9 +25,12 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+// use Maatwebsite\Excel\Facades\يي;
 
 class SalesGatheringTestController extends Controller
 {
+	
+	
 	public function paginate($items, $perPage = 50, $page = null, $options = [])
 	{
 		$page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
@@ -45,7 +48,13 @@ class SalesGatheringTestController extends Controller
 		$company_id = $company->id;
 		$user_id = Auth::user()->id;
 		$exportableFields = exportableFields($company_id, $modelName);
-		if ($exportableFields === null) {
+
+		/**
+		 * * حاله ال 
+		 * * labelingitem 
+		 * * بس اللي هنقبل انه يدخل من غير ما يكون عنده داتا اكسبورت لاننا هناخدها من الاكسل اللي هو هيرفعه
+		 */
+		if ($exportableFields === null && $modelName != 'LabelingItem') {
 			toastr()->warning('Please choose exportable fields first');
 			return redirect()->back();
 		}
@@ -53,16 +62,18 @@ class SalesGatheringTestController extends Controller
 
 
 		if (request()->method()  == 'GET') {
+			
 			$cacheKeys = CachingCompany::where('company_id', $company_id)->where('model',$modelName)->get();
 
 			$salesGatherings = [];
 			foreach ($cacheKeys as $cacheKey) {
 				$salesGatherings = array_merge(Cache::get($cacheKey->key_name) ?: [], $salesGatherings);
 			}
-		
-			$salesGatherings = $this->paginate($salesGatherings);
 
+			$salesGatherings = $this->paginate($salesGatherings);
+// dd($salesGatherings);
 			$exportableFields  = (new ExportTable)->customizedTableField($company, $modelName, 'selected_fields');
+		
 			$viewing_names = array_values($exportableFields);
 			$db_names = array_keys($exportableFields);
 			return view('client_view.sales_gathering.import', compact('company', 'salesGatherings', 'viewing_names', 'db_names','modelName','importHeaderText'));
@@ -72,7 +83,6 @@ class SalesGatheringTestController extends Controller
 			// Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
 			$exportable_fields = (new ExportTable)->customizedTableField($company, $modelName, 'selected_fields');
 
-			// $salesGathering = SalesGathering::where('company_id',$company_id)->get();
 			// Customizing the collection to be exported
 
 			$salesGathering_fields = [];
@@ -96,6 +106,12 @@ class SalesGatheringTestController extends Controller
 			// dd($validationCacheKey);
 			Cache::forget($validationCacheKey);
 			
+			// for  Labeling Item Only 
+		
+			
+			
+			
+		
 			$fileUpload = new  ImportData($company_id, request()->format, 'SalesGatheringTest', $salesGathering_fields, $active_job->id,auth()->user()->id,$modelName);
 				Excel::queueImport($fileUpload, request()->file('excel_file'))->chain([
 					new NotifyUserOfCompletedImport(request()->user(), $active_job->id,$company_id,$modelName),
@@ -151,9 +167,6 @@ class SalesGatheringTestController extends Controller
 				// new RemoveIntervalYearCashingJob($company),
 				new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id,$modelName),
 				new RemoveCachingCompaniesData($company->id,$modelName),
-				// new HandleCustomerDashboardCashingJob($company),
-				// new HandleCustomerNatureCashingJob($company),
-				// new HandleBreakdownDashboardCashingJob($company),
 			])->dispatch($company->id,$modelName);
 		}
 		// remove old cashing for these company 

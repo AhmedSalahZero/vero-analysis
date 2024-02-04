@@ -2,14 +2,16 @@
 
 namespace App\Imports;
 
-use App\Events\ImportFailedEvent;
+use App\Helpers\HArr;
 use App\Models\ActiveJob;
 use App\Models\CachingCompany;
-use Carbon\Carbon;
+use App\Models\TablesField;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -19,7 +21,6 @@ use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Events\ImportFailed;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
@@ -64,10 +65,12 @@ class ImportData implements
 	private $dateFailed =false;
 
 	private $userId='';
+
 	// private $rows = 0 ;
 
 	public function __construct($company_id, $format, $model, $modelFields, $jobId, $userId,$uploadModelName)
 	{
+		// dd($modelFields);
 		Self::$company_id = $company_id;
 		Self::$static_model = $model;
 		$this->modelFields = $modelFields;
@@ -77,6 +80,10 @@ class ImportData implements
 		$this->job_id = $jobId;
 		$this->userId = $userId;
 		$this->uploadModelName = $uploadModelName;
+		
+		
+
+		
 		// $this->batch = $batch;
 	}
 	/**
@@ -85,10 +92,7 @@ class ImportData implements
 	 * @return \Illuminate\Database\Eloquent\Model|null
 	 */
 
-	// public function getRowCount(): int
-	// {
-	//     return $this->rows;
-	// }
+
 
 	public function collection(Collection $chunks)
 	{
@@ -96,27 +100,65 @@ class ImportData implements
 		$validationRow = null;
 		$isInvalidData = false;
 		$rowId = 2 ;
+		if($rowId == 2 && $this->uploadModelName == 'LabelingItem'){
+			$firstItem = $chunks->first();
+		
+			// $columns = array_keys((array) json_decode($firstItem));
+			$columns = HArr::removeNullValues((array) json_decode($firstItem));
+			$columns = array_keys($columns);
+			$newItemsArr = array_combine($columns,$columns);
+			$newItemsArr = FormatKeyAsColumnName($newItemsArr);
+		
+			foreach($newItemsArr as $newFieldName=>$newFieldTitle){
+				// $columnNameWithoutSpaceOrCapitalLetter = formatColumnName($newFieldName) ;
+				$exists = TablesField::where('company_id',$this->companyId)->where('field_name',$newFieldName)->first();
+				if(!Schema::hasColumn('labeling_items',$newFieldName)){
+					Schema::table('labeling_items', function (Blueprint $table) use ($newFieldName) {
+						$table->string($newFieldName)->nullable();
+					});
+				}
+				if(!$exists){
+					TablesField::create([
+						'company_id'=>$this->companyId,
+						'model_name'=>'LabelingItem',
+						'field_name'=>$newFieldName,
+						'view_name'=>$newFieldTitle
+					]);
+				}
+				
+			}
+		
+			$this->modelFields = array_merge($newItemsArr,[
+				'company_id'=>$this->companyId,
+			]);
+			
+		}
 		foreach ($chunks as $key=>$rows) {
 			$data = $this->dataCustomizationImport($rows,$rowId);
 			$rowId ++ ;
 			if (isset($data['validations'])) {
 				$isInvalidData = true;
 				$validationRow = $data['validations'];
-		
-					DB::table('caching_company')->where('job_id', $this->job_id)->delete();
-					$cachingKey = generateCacheKeyForValidationRow($this->companyId,$this->uploadModelName);
-					$validationRows = $validationRow;
-					if (Cache::has($cachingKey)) {
-						$validationRows = arrayMergeTwoDimArray($validationRows,Cache::get($cachingKey, []));
-					}
-					Cache::forever($cachingKey , $validationRows);
+				
+				DB::table('caching_company')->where('job_id', $this->job_id)->delete();
+				$cachingKey = generateCacheKeyForValidationRow($this->companyId,$this->uploadModelName);
+				$validationRows = $validationRow;
+				if (Cache::has($cachingKey)) {
+					$validationRows = arrayMergeTwoDimArray($validationRows,Cache::get($cachingKey, []));
+				}
+				Cache::forever($cachingKey , $validationRows);
 				
 			}
+			// if($this->uploadModelName == 'LabelingItem'){
+			// 	$data = FormatKeyAsColumnName($data);	
+			// }
 			$dates[] = $data;
 		}
 		
 		if(!$isInvalidData){
 			$key = Str::random(10) . 'for_company_' . $this->companyId;
+			
+			
 			Cache::forever($key, $dates);
 			DB::table('caching_company')->insert([
 				'key_name'=>$key,
@@ -198,12 +240,6 @@ class ImportData implements
 				];
 			}
 		}
-		// if (is_null($value)) {
-		// 	$allValidations[$key] =  [
-		// 		'value'=>$value,
-		// 		'message'=>__('Empty Values Not Allowed')
-		// 	];
-		// }
 		return $allValidations;
 		
 		
@@ -216,6 +252,8 @@ class ImportData implements
 		$validations = [];
 		
 		foreach ($row as $key => $value) {
+		
+			
 			$row_with_no_spaces[trim($key)] = trim($value);
 			$rowValidation = $this->validateRowValue(trim($key), trim($value));
 			if (isset($rowValidation[$key]) && count($rowValidation[$key])) {
@@ -233,6 +271,7 @@ class ImportData implements
 				$data[$field_name] = $row_name;
 			} else {
 				if (isset($row_with_no_spaces[$row_name])) {
+			
 					if (str_contains($field_name, 'date') || str_contains($field_name,'estimated')) {
 						$data[$field_name] = $this->dateFormatting($row_with_no_spaces[$row_name]);
 					} else {

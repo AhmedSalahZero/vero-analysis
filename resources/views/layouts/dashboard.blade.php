@@ -1287,13 +1287,18 @@ tr td:first-of-type{
             if (companyName) {
                 eachInRow += 1;
             }
+			
 
 
             let reportName = $('.kt-subheader__title').html().trim() || $('.kt-portlet__head-title').html().trim();
-
-            if (reportName) {
-                companyName += (' (' + reportName + ' )');
+			if($('#report__title_for_labeling').length){
+                companyName +=  ' (' + $('#report__title_for_labeling').val() + ' )' ;
+			}
+            else if (reportName) {
+                companyName += ' (' + reportName + ' )';
             }
+			
+			
             let start_date = "{{ isset($start_date) ? $start_date : '' }}";
             let end_date = "{{ isset($end_date) ? $end_date : '' }}";
             let date = "{{ isset($date) ? $date : '' }}";
@@ -1340,7 +1345,7 @@ tr td:first-of-type{
             currentColumn = 'A'
             currentColumnHeaders = 'A'
             rows = ' ';
-
+	
             rows += Addrow(1, [{
                 k: 'A'
                 , v: companyName
@@ -1543,6 +1548,10 @@ $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigg
                     , contentType: false
                     , processData: false
                     , success: function(res) {
+								if(res.reloadCurrentPage){
+							return  window.location.reload()
+							
+						}
 
                         if (res.status) {
                             if (res.showAlert) {

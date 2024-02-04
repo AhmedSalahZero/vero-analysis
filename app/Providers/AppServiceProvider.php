@@ -2,40 +2,22 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\ExportTable;
-use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
-use App\Mail\sendDeleteTestMail;
-use App\Models\BalanceSheetItem;
-use App\Models\CashFlowStatement;
-use App\Models\CashFlowStatementItem;
+use App\Exports\LabelingItemExport;
 
+use App\Http\Controllers\ExportTable;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\Models\CustomersInvoice;
-use App\Models\FinancialInstitution;
-use App\Models\IncomeStatement;
-use App\Models\Language;
-use App\Models\SalesGathering;
 use App\Models\Section;
 use App\Models\User;
 use App\Observers\CustomerInvoiceObserver;
-use App\ReadyFunctions\CalculateDurationService;
-use App\ReadyFunctions\InvoiceAgingService;
-use App\ReadyFunctions\SeasonalityService;
 use Auth;
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Mail;
+use Milon\Barcode\DNS1D;
 use Spatie\Permission\Models\Permission;
 use stdClass;
 
@@ -60,15 +42,39 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		
+		// $srt = 'ahmedToaliTo102';
+		// $x = getLastNumericValueAfterStr('25099202420104010109100000To100006','To');
+		// dd($x);
+				
+		
+		// $x = Cache::get('POioan4mVzfor_company_2');
+		// dd($x);
+		// dd( );
+		
+		// $code = DNS1D::size(10)->getBarcodeHTML('4445645656', 'C39' ) ;
+		// dd($code);
+		
 		// dd(FinancialInstitution::get());		
 		
 		// $date = '05-11-2023';
 		// $now = now()->format('d-m-Y');
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		 
+		 
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
 		// dd(getAdditionalDates('01-10-2023'));
+		
+		Collection::macro('formattedForSelect',function(bool $isFunction , string $idAttrOrFunction ,string $titleAttrOrFunction ){
+			return $this->map(function($item) use ($isFunction , $idAttrOrFunction ,$titleAttrOrFunction ){
+				return [
+					'value' => $isFunction ? $item->$idAttrOrFunction() : $item->{$idAttrOrFunction} ,
+					'title' => $isFunction ? $item->$titleAttrOrFunction() : $item->{$titleAttrOrFunction}
+				];
+			})->toArray();
+		});
+		
 		if(true){
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
@@ -122,7 +128,6 @@ class AppServiceProvider extends ServiceProvider
 			$Language
 		]);
 		
-		// View::share('navigators',$this->getUploadingPageExportNavigation());
 
 		View::share('langs', $languages);
 		// View::share('langs',Language::all());

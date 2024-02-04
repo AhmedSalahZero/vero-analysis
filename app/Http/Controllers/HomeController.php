@@ -316,7 +316,7 @@ class HomeController extends Controller
 	{
 		// dd('d');
 		if($company->isCachingNow()){
-			return redirect()->back()->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
+			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
 		}
 		
 		$initialDates = getEndYearBasedOnDataUploaded($company);
@@ -474,14 +474,14 @@ class HomeController extends Controller
 	public function dashboardCustomers(Request $request, Company $company)
 	{
 		if($company->isCachingNow()){
-			return redirect()->back()->with('fail',__('Please Wait Until Customer Dashboard Recalculate'));
+			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Customer Dashboard Recalculate'));
 		}
 		$cashingService = new CashingService($company);
 		$years = $cashingService->getIntervalYearsFormCompany();
-		if ($request->isMethod('GET') && $years['full_end_date']) {
-			$date   = $years['full_end_date'];
+		if ($request->isMethod('GET') && isset($years['full_end_date']) &&$years['full_end_date']) {
+			$date   = $years['full_end_date'] ;
 		} else {
-			$date = $years['full_end_date'];
+			$date = $years['full_end_date']??null;
 		}
 
 		if ($request->isMethod('GET')) {

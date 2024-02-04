@@ -55,9 +55,13 @@ const Customers_Against_Categories_Trend_Analysis = 'Customers Against Categorie
 const Customers_Against_Products_ITEMS_Trend_Analysis = 'Customers Against Products Items Trend Analysis';
 const INVOICES = 'Invoices';
 const uploadExportAnalysisData ='upload export analysis data';
+const uploadLabelingItemData ='upload labeling export data';
 const exportExportAnalysisData ='export export analysis data';
+const exportLabelingItemData ='export labeling export data';
 const deleteExportAnalysisData ='delete export analysis data';
+const deleteLabelingItemData ='delete labeling export data';
 const viewExportAnalysisData ='view export analysis data';
+const viewLabelingItemData ='view labeling export data';
 
 const uploadCustomerInvoiceData ='upload customer invoice analysis data';
 const exportCustomerInvoiceData ='export customer invoice analysis data';
@@ -262,7 +266,6 @@ if (!function_exists('exportableFields')) {
     {
         if (Auth::check()) {
             $fields = CustomizedFieldsExportation::where('model_name', $model)->where('company_id', $company_id)->first();
-
             return  $fields;
         }
     }
@@ -2239,7 +2242,7 @@ function getExportDateTime(): string
 }
 function getExportUserName()
 {
-    return Auth()->user()->getName();
+    return  Auth()->user() ? Auth()->user()->getName() : null;
 }
 
 function orderArrayByItemsKeys(array $array): array
@@ -3026,6 +3029,17 @@ function getPermissions():array
 		],
 		[
 			'name'=>'view create labeling items'
+		],
+		[
+			'name'=>viewLabelingItemData
+		],
+		[
+			'name'=>uploadLabelingItemData
+		],[
+			'name'=>exportLabelingItemData
+		],
+		[
+			'name'=>deleteLabelingItemData
 		]
     ];
 
@@ -3747,6 +3761,7 @@ function sumDueDayWithPayment($paymentRate, $dueDays)
 // 2- create table with name [xyzs]
 // 3- in helpers.php search from getUploadParamsFromType add type params
 // 4- in tables_field table in db add type with all columns
+// 5- add it in getHeaderMenu
 
 function getUploadParamsFromType(string $type = null):array
 {
@@ -3773,6 +3788,17 @@ function getUploadParamsFromType(string $type = null):array
             'exportPermissionName'=>exportExportAnalysisData,// important:add this also into permission function names[getPermissions()]
             'deletePermissionName'=>deleteExportAnalysisData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Export Analysis Import'),
+        ],
+		'LabelingItem'=>[
+            'fullModel'=>'\App\Models\LabelingItem',
+            'dbName'=>'labeling_items',
+            'typePrefixName'=>__('Labeling Item'),
+            'orderByDateField'=>'id', // important for this case 
+            'viewPermissionName'=>viewLabelingItemData,// important:add this also into permission function names [getPermissions()]
+            'uploadPermissionName'=>uploadLabelingItemData, // important:add this also into permission function names [getPermissions()]
+            'exportPermissionName'=>exportLabelingItemData,// important:add this also into permission function names[getPermissions()]
+            'deletePermissionName'=>deleteLabelingItemData,// important:add this also into permission function names[getPermissions()]
+            'importHeaderText'=>__('Labeling Item Import'),
         ],
         'CustomerInvoice'=>[
             'fullModel'=>'\App\Models\CustomerInvoice',
@@ -4308,6 +4334,12 @@ function getHeaderMenu()
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
                             'show'=>$user->can(uploadCustomerInvoiceData),
                             'submenu'=>[]
+						],
+						'upload-new-labeling-data'=>[
+                            'title'=>__('Upload New Labeling Data'),
+                            'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'LabelingItem']),
+                            'show'=>$user->can(uploadLabelingItemData),
+                            'submenu'=>[]
                         ]
                     ]
                         ],
@@ -4581,7 +4613,7 @@ function getTestFfeArray()
 	return [
 		[
 			'title'=>__('Furniture'),
-			'value'=>__('Furniture'),
+			'value'=>'furniture',
 			'data-abb'=>'FURN',
 			'data-code'=>'01'
 		],
@@ -4655,4 +4687,55 @@ function getTestBuildNames()
 		'title'=>'Old Cataract'
 		]
 	];
+}
+function filterByColumnName($filterByColumnName){
+	$items = [];
+	foreach($filterByColumnName as $columnValue){
+		$attributes = $columnValue->getAttributes();
+
+		foreach($attributes as $colName => $colVal){
+				$items[$colName][$colVal] = $colVal ;
+		}
+		
+	}
+	$formatted=[];
+	foreach($items as $colName => $arr){
+		// dd();
+		foreach($arr as $col => $val){
+			$formatted[$colName][] =[
+				'title'=>$col,
+				'value'=>$val
+			]; 
+		}
+	}
+	return $formatted ; 
+}
+function formatColumnName($name)
+{
+	return trim(strtolower(str_replace(' ' , '_',lcfirst($name))));
+}
+function FormatKeyAsColumnName($items){
+	$result = [];
+	foreach($items as $key => $val){
+		$result[formatColumnName($key)] =$val; 
+	}
+	return $result ; 
+}
+function getValuesStartedAfterIndex(array $items , int $index){
+	$result = ['QR Code'];
+	foreach($items as $i => $val){
+		if($i > $index){
+			$result[]=$val ; 
+		}
+	}
+	return $result; 
+	// dd();
+}
+function qrcodeSpacing($code)
+{
+	return str_replace(['//','/'],['// ','/ '],$code);
+}
+function getDefaultImage()
+{
+	return asset('custom/images/default-img.png');
 }

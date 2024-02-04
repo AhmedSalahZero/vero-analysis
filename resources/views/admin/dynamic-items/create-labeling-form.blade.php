@@ -166,20 +166,48 @@
                     </div>
                     <div class="col-md-3 ">
 					<div class="form-group">
-						<x-form.select-with-modal-abb data-name-id="{{ $subItemName }}"  :label="__('FF&E Name')" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemName " :options="[]" :add-new="false"  class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
+						<x-form.select-with-modal-abb data-name-id="{{ $subItemName }}"  :label="__('FF&E Category')" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemName " :options="[
+							[
+								'value'=>'furniture',
+								'title'=>__('Furniture')
+							],
+							[
+								'value'=>'electronics',
+								'title'=>__('Electronies')
+							]
+						]" :add-new="false"  class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
 						</div>
 						
                     </div>
 
                     <div class="col-md-3 how-many-div-js">
 					<div class="form-group">
-						<x-form.select-with-modal-abb data-name-id="{{ $subItemName }}"  :label="__('FF&E Category')" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemName " :options="[]" :add-new="false"  class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
+						<x-form.select-with-modal-abb data-name-id="{{ $subItemName }}"  :label="__('FF&E Subcategory')" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemName " :options="[
+							[
+								'title'=>'Beds',
+								
+								'value'=>'beds'
+							],
+							[
+								'title'=>'Chairs',
+								'value'=>'chairs'
+							]
+						]" :add-new="false"  class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
 						</div>
                     </div>
 					
 					<div class="col-md-3 how-many-div-js">
 					<div class="form-group">
-						<x-form.select-with-modal-abb data-name-id="{{ $subItemName }}"  :label="__('FF&E Item')" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemName " :options="[]" :add-new="false"  class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
+						<x-form.select-with-modal-abb data-name-id="{{ $subItemName }}"  :label="__('Labeling Type')" class="text-center  repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemName " :options="[
+							[
+								'title'=>'Qrcode',
+								'value'=>'qrcode'
+							],
+							[
+								'title'=>'Barcode',
+								'value'=>'barcode'
+							]
+						]" :add-new="false"  class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
 						</div>
 						
                     </div>
@@ -302,15 +330,20 @@
                                     <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :selected-value="'beds'" :options="[['title'=>'Beds','value'=>'beds']]" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" ></x-form.select-with-modal-abb>
                                     </td>
                                     <td>
+										<div style="height:19.5px;margin-bottom:0.5rem;width:150px;"></div>
                                     {{-- <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :options="[]" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" ></x-form.select-with-modal-abb> --}}
                                         <input data-name-id="{{ $subItemName }}" type="text" value="Single Bed 1 x 2 m " class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
                                     </td>
 									
 									
                                     <td>
+										<div style="height:19.5px;margin-bottom:0.5rem;width:50px;"></div>
+									
                                         <input data-name-id="{{ $subItemName }}" type="text" value="1" class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
                                     </td>
                                     <td>
+										<div style="height:19.5px;margin-bottom:0.5rem;width:50px;"></div>
+									
                                         <input data-name-id="{{ $subItemName }}" type="text" value="1" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'code' }}" @else name="{{ $tableId }}[0][{{ 'code' }}]" @endif>
                                     </td>
 									  <td class="text-center">
@@ -355,15 +388,20 @@
                                     <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :selected-value="'beds'" :options="[['title'=>'Beds','value'=>'beds']]" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" ></x-form.select-with-modal-abb>
                                     </td>
                                     <td>
+										<div style="height:19.5px;margin-bottom:0.5rem;width:150px;"></div>
+									
                                     {{-- <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :options="[]" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" ></x-form.select-with-modal-abb> --}}
                                         <input data-name-id="{{ $subItemName }}" type="text" value="Single Bed 1 x 2 m " class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
                                     </td>
 									
 									
                                     <td>
+										<div style="height:19.5px;margin-bottom:0.5rem;width:50px;"></div>
                                         <input data-name-id="{{ $subItemName }}" type="text" value="1" class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
                                     </td>
                                     <td>
+										<div style="height:19.5px;margin-bottom:0.5rem;width:50px;"></div>
+									
                                         <input data-name-id="{{ $subItemName }}" type="text" value="1" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'code' }}" @else name="{{ $tableId }}[0][{{ 'code' }}]" @endif>
                                     </td>
 									  <td class="">

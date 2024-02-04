@@ -103,9 +103,9 @@
 
                 <!--begin: Datatable -->
                 @php
-                $others = array_slice($customers_natures['totals'] , 50 ,null,true ) ;
+                $others = array_slice($customers_natures['totals'] ?? [] , 50 ,null,true ) ;
                 $allFormattedWithOthers = array_merge(
-                array_slice($customers_natures['totals'] , 0 , 50 , true) ,
+                array_slice($customers_natures['totals']??[]  , 0 , 50 , true) ,
                 count($others) ? [
                 (object)[
                 'customer_name'=>__('Others') . ' ( ' . count($others) . ' )' ,
@@ -230,16 +230,16 @@
                     @slot('table_body')
 
                     @php
-                    $totalCount = array_sum(array_map("count", $customers_natures['statictics'])) ;
+                    $totalCount = array_sum(array_map("count", $customers_natures['statictics'] ?? [])) ;
                     $totalSales = 0 ;
-                    foreach( $customers_natures['statictics'] as $key => $val ){
+                    foreach( $customers_natures['statictics']??[] as $key => $val ){
                     $totalSales += array_sum ( array_column($val , 'total_sales') );
 
                     }
 
                     @endphp
 
-                    @foreach($customers_natures['statictics'] as $staticName=>$vals)
+                    @foreach($customers_natures['statictics']??[] as $staticName=>$vals)
                     @php
                     $countVals = count($vals) ;
                     $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
@@ -333,10 +333,10 @@
 </tr>
 @php
 $totalCount = array_sum(array_map("count", $customers_natures['stops'])) ;
-foreach( $customers_natures['stops'] as $key => $val ){
+foreach( $customers_natures['stops']??[] as $key => $val ){
 }
 @endphp
-@foreach ($customers_natures['stops'] as $name => $vals)
+@foreach ($customers_natures['stops']??[] as $name => $vals)
 @php
 $countVals = count($vals) ;
 $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
@@ -361,7 +361,7 @@ $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
 @endslot
 </x-table>
 
-@foreach ($customers_natures['stops'] as $name => $vals)
+@foreach ($customers_natures['stops']??[] as $name => $vals)
 
 @if ($countVals > 0)
 <div class="modal fade" id="kt_modal_{{str_replace(["/" .' ' ] , '-' , $name)}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">

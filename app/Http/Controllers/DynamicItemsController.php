@@ -2,29 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\ImportData;
-use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
-use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
-use App\Jobs\Caches\HandleCustomerNatureCashingJob;
-use App\Jobs\Caches\RemoveIntervalYearCashingJob;
-use App\Jobs\CalculateNetBalanceWithMonthlyDebits;
-use App\Jobs\NotifyUserOfCompletedImport;
-use App\Jobs\RemoveCachingCompaniesData;
-use App\Jobs\SalesGatheringTestJob;
-use App\Jobs\ShowCompletedMessageForSuccessJob;
-use App\Models\ActiveJob;
-use App\Models\CachingCompany;
+
 use App\Models\Company;
-use App\Models\SalesGatheringTest;
-use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
+
 
 class DynamicItemsController extends Controller
 {
@@ -33,10 +14,7 @@ class DynamicItemsController extends Controller
 	public function createLabelingItems(Company $company ,Request $request )
 	{
 		
-		// dd(session()->flush());
-		
 		$exportables = getExportableFieldsForModel($company->id,'SalesGathering');
-		// dd($exportables);
 		$subItemsCount = session()->get('sub_items_'.$company->id,[]);
 		$subItemNames = session()->get('sub_item_names_'.$company->id,[]);
 		$tableHeaders = array_merge(
@@ -91,7 +69,11 @@ class DynamicItemsController extends Controller
 	{
 		$exportables = getExportableFieldsForModel($company->id,'SalesGathering');
 		$subItemsCount = session()->get('sub_items_'.$company->id,[]);
-		$subItemNames = session()->get('sub_item_names_'.$company->id,[]);
+		$subItemNames = [
+			'Building Name',
+					'Floor',
+					'Room'
+		];
 		$tableHeaders = array_merge(
 			[
 				$subItemsCount['main_field_name'] ?? ''
@@ -112,12 +94,13 @@ class DynamicItemsController extends Controller
 	}
 	public function showffeLabel(Company $company ,Request $request )
 	{
-		$exportables = getExportableFieldsForModel($company->id,'SalesGathering');
+		// $exportables = getExportableFieldsForModel($company->id,'SalesGathering');
 		$subItemsCount = session()->get('sub_items_'.$company->id,[]);
 		// $subItemNames = session()->get('sub_item_names_'.$company->id,[]);
 		$subItemNames = [
-			'category',
-			'item'
+			'Name',
+			'Category',
+			'Item'
 		];
 		$tableHeaders = array_merge(
 			[
@@ -127,10 +110,11 @@ class DynamicItemsController extends Controller
 			);
 			
 			$howManyItems = $subItemsCount['how_many_items'] ?? 0;
+			// dd($tableHeaders);
 		return view('admin.dynamic-items.ffe-label',[
 			'pageTitle'=>__('Create'),
 			'type'=>'_create',
-			'exportables'=>$exportables,
+			// 'exportables'=>$exportables,
 			'subItemsCount'=>$subItemsCount,
 			'subItemsNames'=>$subItemNames,
 			'tableHeaders'=>$tableHeaders,

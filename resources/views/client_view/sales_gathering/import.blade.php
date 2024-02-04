@@ -3,6 +3,10 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
+.mx-auto{
+	margin-left:auto;
+	margin-right:auto;
+}
     .table-bordered.table-hover.table-checkable.dataTable.no-footer.fixedHeader-floating {
         display: none
     }
@@ -46,7 +50,6 @@
 
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action={{ route('salesGatheringImport', ['company'=>$company->id , 'model'=>$modelName]) }} enctype="multipart/form-data">
-{{-- {{ dd($modelName) }} --}}
             @csrf
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
@@ -59,12 +62,16 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <label>{{ __('Import File') }} <span class="required">*</span></label>
-                            <div class="kt-input-icon">
-                                <input required type="file" name="excel_file" class="form-control" placeholder="{{ __('Import File') }}">
-                                <x-tool-tip title="{{ __('Vero Analysis') }}" />
+                            <div class="form-group">
+                                <label>{{ __('Import File') }} <span class="required">*</span></label>
+                                <div class="kt-input-icon">
+                                    <input required type="file" name="excel_file" class="form-control" placeholder="{{ __('Import File') }}">
+                                    <x-tool-tip title="{{ __('Vero Analysis') }}" />
+                                </div>
                             </div>
                         </div>
+                        @if($modelName != 'LabelingItem')
+
                         <div class="col-md-6">
                             <label>{{ __('Date Formatting') }} <span class="required">*</span></label>
                             <div class="kt-input-icon">
@@ -78,6 +85,7 @@
                                 <x-tool-tip title="{{ __('Vero Analysis') }}" />
                             </div>
                         </div>
+                        @endif
                     </div>
                     <?php $active_job = App\Models\ActiveJob::where('company_id', $company->id)
                             ->where('status', 'test_table')
@@ -87,7 +95,7 @@
                     @php $active_job_for_saving = App\Models\ActiveJob::where('company_id', $company->id)
                     ->where('status', 'save_to_table')
                     ->where('model_name', 'SalesGatheringTest')
-					->where('model',$modelName)
+                    ->where('model',$modelName)
                     ->first(); @endphp
                     @php
                     use Illuminate\Support\Facades\Cache;
@@ -110,12 +118,18 @@
             <x-custom-button-name-to-submit :displayName="__('Upload')" />
 
         </form>
+
+        {{-- @if(!$active_job_for_saving && !$active_job && !$canViewPleaseReviewMessage) --}}
+   
+
+        {{-- @endif --}}
+
         <!--end::Form-->
-        <form action="{{ route('deleteMultiRowsFromCaching', ['company'=>$company , 'modelName'=>$modelName]) }}" method="POST">
+        <form action="{{ route('deleteMultiRowsFromCaching', ['company'=>$company , 'modelName'=>$modelName]) }}" method="POST" encrypt="multipart/form-data">
             @csrf
             @method('DELETE')
 
-            <x-table :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__('Sales Gathering Table')" :href="route('salesGatheringTest.insertToMainTable',['company'=>$company->id , 'modelName'=>$modelName])" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
+            <x-table :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__(capitializeType($modelName). ' ' . 'Table')" :href="route('salesGatheringTest.insertToMainTable',['company'=>$company->id , 'modelName'=>$modelName])" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
 
                 @slot('table_header')
 
@@ -139,46 +153,20 @@
 
                 <br>
                 @endif
-                <div class="col-md-12">
-                    <div class="row">
-                        {{-- <div class="col-lg-12 ">
-                            <label class="kt-option bg-secondary">
-                                <span class="kt-option__control">
-                                    <span class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold" checked>
-                                        <input class="rows" type="checkbox" id="select_all">
-                                        <span></span>
-                                    </span>
-                                </span>
-                                <span class="kt-option__label d-flex">
-                                    <span class="kt-option__head mr-auto p-2">
-                                        <span class="kt-option__title">
-                                            <b>
-                                                {{ __('Select All') }}
-                                            </b>
-                                        </span>
 
-                                    </span>
-                                    <span class="kt-option__body p-2">
-                                        <button type="submit" class="btn active-style btn-icon-sm">
-                                            <i class="fas fa-trash"></i>
-                                            {{ __('Delete Selected Rows') }}
-                                        </button>
-                                    </span>
-                                </span>
-                            </label>
-                        </div> --}}
-                    </div>
-                </div>
-                <tr class="table-active text-center">
+                <tr class="table-active text-center">	
                     <th class="select-to-delete">Select To Delete </th>
+					
                     @foreach ($viewing_names as $name)
                     <th>{{ __($name) }}</th>
+					
                     @endforeach
+					
+					
                     <th>{{ __('Actions') }}</th>
                 </tr>
                 @endslot
                 @slot('table_body')
-                {{-- @dd($salesGatherings) --}}
                 @foreach ($salesGatherings->take(20) as $index=> $item)
 
                 {{-- @dd($item) --}}
@@ -195,18 +183,23 @@
                                 <span class="kt-option__head">
 
                                 </span>
-                              
+
                             </span>
                         </label>
                     </td>
+	
                     @foreach ($db_names as $name)
                     @if ($name == 'date')
                     <td class="text-center">
                         {{ isset($item[$name]) ? date('d-M-Y', strtotime($item[$name])) : '-' }}</td>
                     @else
+				
                     <td class="text-center">{{ $item[$name] ?? '-' }}</td>
                     @endif
                     @endforeach
+					
+					
+					
 
                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                         <span class="d-flex justify-content-center" style="overflow: visible; position: relative; width: 110px;">
@@ -215,6 +208,8 @@
                     </td>
                 </tr>
                 @endforeach
+				
+				
                 @endslot
             </x-table>
         </form>
@@ -290,7 +285,7 @@
         setInterval(function() {
             $.ajax({
                 type: 'post'
-                , url: "/get-uploading-percentage/" + "{{$company->id}}"+"/"+"{{ $modelName }}"
+                , url: "/get-uploading-percentage/" + "{{$company->id}}" + "/" + "{{ $modelName }}"
                 , data: {
                     '_token': "{{csrf_token()}}"
                 , },
@@ -308,8 +303,8 @@
                             , showConfirmButton: false
                             , timer: 1500
                         }).then(function() {
-                            window.location.href = "{{ route('dashboard',getCurrentCompanyId()) }}"
-                       
+                            window.location.href = "{{ $modelName == 'LabelingItem' ? route('view.uploading',['company'=>getCurrentCompanyId(),'model'=> $modelName ]) : route('dashboard',getCurrentCompanyId()) }}"
+
                         })
 
 
@@ -323,18 +318,18 @@
             });
         }, 5000)
     })
-  
 
 </script>
 @endif
 @if(hasFailedRow($company->id,$modelName))
 <script>
-Swal.fire({
-	title:"{{ __('Last Upload Failed ! .. Please Review Last Upload Failed Rows Below') }}",
-	icon:'error'
-})
+    Swal.fire({
+        title: "{{ __('Last Upload Failed ! .. Please Review Last Upload Failed Rows Below') }}"
+        , icon: 'error'
+    })
+
 </script>
-@endif 
+@endif
 <script>
     $('#select_all').change(function(e) {
         if ($(this).prop("checked")) {
@@ -365,6 +360,8 @@ Swal.fire({
             });
         });
     });
+	
+	
 
 </script>
 @endsection

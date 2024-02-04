@@ -113,6 +113,37 @@ class HArr
 		});
 		return $arr ;
 	}
+	public static function removeKeyFromArrayByValue(array $items , array $valuesToRemove){
+		foreach($valuesToRemove as $valueToRemove){
+			$found = array_search($valueToRemove , $items);
+			if($found !== false){
+				unset($items[$found]);
+			}
+		}
+		return array_values($items) ; 
+	}
+	public static function removeNullValues(array $items){
+		$result = [];
+		foreach($items as $key => $val){
+			if(!trim($val)){
+				continue ;
+			}
+			$result[$key] = $val ;
+		}	
+		return $result ;
+	}
+	/**
+	 * get only items that has keys 
+	 */
+	public static function filterByKeys(array $items , array $keys){
+		$newItems = [];
+		foreach($items as $key => $value){
+			if(in_array($key , $keys)){
+				$newItems[$key] = $value ;
+			}
+		}
+		return $newItems ;
+	}
 	// public static function removeElementByValue(array $elements , $valueToRemove)
 	// {
 	// 	$newElements = [];

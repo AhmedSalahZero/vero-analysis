@@ -6,8 +6,7 @@
                     <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                 </span>
                 <h3 class="kt-portlet__head-title">
-                    {{ $tableTitle }} 
-					
+					<x-sectionTitle :title="$tableTitle"></x-sectionTitle>
 					@if(isset($instructionsIcon))
 						 <span id="open-instructions" class="kt-input-icon__icon kt-input-icon__icon--right ml-2 cursor-pointer" tabindex="0" role="button" data-toggle="kt-tooltip" data-trigger="focus" title="{{ __('Uploading Instructions') }}">
 							<span><i class="fa fa-question text-primary"></i></span>

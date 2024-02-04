@@ -18,6 +18,10 @@ class ExportTable extends Controller
 	 */
 	public  function customizedTableField(Company $company, $model, $view)
 	{
+		if($model == 'LabelingItem'){
+			// dd(TablesField::where('company_id',$company->id)->get());
+			return TablesField::where('company_id',$company->id)->pluck('view_name','field_name')->toArray();
+		}
 
 		$model_name = 'App\\Models\\' . $model;
 		$model_obj = new $model_name;
