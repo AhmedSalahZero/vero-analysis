@@ -155,7 +155,6 @@ class IncomeStatementExportAsPdf implements
 				$sheet = $afterSheet->sheet->getDelegate();
 				// $sheet = $sheet->freezePane('A2');
 				$lastColumnLatter = getNameFromNumber($this->maxColsCount);
-				// dd();
 			$mainRowBg = 'FFFFFFFF';
 			$mainRowTextColor='000000';
 			$mainRowsIndexes = $this->mainRowsIndexes ;
@@ -168,13 +167,8 @@ class IncomeStatementExportAsPdf implements
 			$percentageRowTextColor='ffffff';
 			// $percentageRowsIndexes = [68,71,73,78,81,109,111,113,121,123,125,127] ;
 			$percentageRowsIndexes = $this->percentageRowsIndexes ;
-			// dd($percentageRowsIndexes,$this->percentageRowsIndexes);
-			
-			// dd( , $this->maxColsCount);
 				for($i = 1 ; $i< $this->maxRowsCount ; $i++){
 					$range = 'A'.$i.':'.$lastColumnLatter.$i ;
-					
-					// $sheet->getStyle($range)->getBorders()->
 					
 					// default design for sub rows 
 					$bgColor=$subRowBg;
@@ -253,27 +247,6 @@ class IncomeStatementExportAsPdf implements
 				->setIndent(1);
 				
 				}
-				
-				
-				
-				
-				
-				
-			
-				
-				// $sheet->getStyle('1:3')
-				// ->getAlignment()
-				// ->setShrinkToFit(true)
-				// ->setVertical('center')
-				// ->setHorizontal('center')
-				// ->setIndent(1)
-				
-				
-				;
-				
-		
-				
-				
 			}
 		];
 	}

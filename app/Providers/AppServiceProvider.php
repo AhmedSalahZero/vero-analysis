@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Sheet;
 use Milon\Barcode\DNS1D;
+use PhpOffice\PhpSpreadsheet\Shared\Font;
 use Spatie\Permission\Models\Permission;
 use stdClass;
 
@@ -42,6 +44,15 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		
+		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
+		
+		// $pageMargins = new \PhpOffice\PhpSpreadsheet\Worksheet\PageMargins();
+		// $pageMargins->setTop(100);
+		// $pageMargins->setRight(0);
+		// $pageMargins->setBottom(1);
+		// $pageMargins->setLeft(0);
+		// Sheet::macro('setPageMargins', function($sheet, $pageMargins){});		
 		
 		// $srt = 'ahmedToaliTo102';
 		// $x = getLastNumericValueAfterStr('25099202420104010109100000To100006','To');

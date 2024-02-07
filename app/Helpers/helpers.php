@@ -4739,3 +4739,11 @@ function getDefaultImage()
 {
 	return asset('custom/images/default-img.png');
 }
+function array_to_upper(array $items)
+{
+	$result = [];
+	foreach($items as $item){
+		$result[] = snakeToCamel($item); 
+	}
+	return $result ;
+}

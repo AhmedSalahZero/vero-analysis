@@ -46,7 +46,7 @@ class LabelingItemExport implements
 	 * @param Collection $products
 	 */
 
-	public function __construct(Collection $items )
+	public function __construct( $items )
 	{
 		$this->writerType = 'Xlsx';
 		$this->fileName =   'testtt.Xlsx';

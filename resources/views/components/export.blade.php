@@ -226,7 +226,7 @@
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="print_reportTitle">{{ __('Print Report') }}</h5>
+                            <h5 class="modal-title" id="print_reportTitle">{{ __('Export As PDF') }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -256,10 +256,14 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="Select Field " class="label">{{ __('No Rows') }}</label>
-                                            <input id="js-no-" class="form-control" value="{{ $company->no_rows_for_each_page_labeling ?: 10 }}" type="number" name="no_rows_for_each_page_labeling">
+                                            <label for="Select Field " class="label">{{ __('Page Size') }}</label>
+                                            <select id="js-type" class="form-control select2-select" data-live-search="true" type="date" name="print_labeling_type" placeholder="{{ __('Type') }}">
+                                                @foreach(['a3'=>__('A3') , 'a4'=>__('A4'),'a5'=>__('A5') ] as $type => $title)
+                                                <option @if($company->labeling_paper_size ==$type) selected @endif value="{{ $type }}">{{ $title }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
 
@@ -278,7 +282,7 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <button href="#" type="submit" id="" class="btn btn-primary ">{{ __('Print Report') }}</button>
+                                    <button href="#" type="submit" id="" class="btn btn-primary ">{{ __('Export') }}</button>
                                 </div>
                             </form>
                         </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ExportData;
 use App\Exports\LabelingItemExport;
+use App\Exports\LabelingItemExportAsPdf;
 use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
@@ -249,6 +250,10 @@ class SalesGatheringController extends Controller
 						'link'=>$user->can($exportPermissionName) ? route('export.labeling.item',['company'=>$company->id , 'type'=>'pdf']):'#',
 						'show'=>$user->can($exportPermissionName),
 						'icon'=>'fas fa-file-import',
+						'attr'=>[
+							'data-toggle'=>'modal',
+							'data-target'=>'#print_report'
+						]
 					],
 					
 					
@@ -303,19 +308,19 @@ class SalesGatheringController extends Controller
 				// 	'data-target'=>'#delete_from_to_modal'
 				// ]
 				],
-				[
-					'name'=>__('Print Report'),
-					'link'=>$user->can($exportPermissionName) ? route('print.labeling.item.qrcode',['company'=>$company->id,'fromIndex'=>$fromIndex,'toIndex'=>$toIndex ]):'#',
-					'show'=>$modelName == 'LabelingItem',
-					'icon'=>'fas fa-print',
-					'attr'=>[
-						'data-toggle'=>'modal',
-						'data-target'=>'#print_report'
-					]
-				]
+				// [
+				// 	'name'=>__('Print Report'),
+				// 	'link'=>$user->can($exportPermissionName) ? route('print.labeling.item.qrcode',['company'=>$company->id,'fromIndex'=>$fromIndex,'toIndex'=>$toIndex ]):'#',
+				// 	'show'=>$modelName == 'LabelingItem',
+				// 	'icon'=>'fas fa-print',
+				// 	'attr'=>[
+				// 		'data-toggle'=>'modal',
+				// 		'data-target'=>'#print_report'
+				// 	]
+				// ]
 				
 			
-			,
+			// ,
 				
 				
 				
@@ -430,20 +435,22 @@ class SalesGatheringController extends Controller
 		if($labeling->first() && ($labeling->first()->code || $labeling->first()->Code)){
 			$hasCodeColumnForLabelingItem= true ; 
 		}
-		$labeling = $labeling->chunk($rowsPerPage);
+		// $labeling = $labeling->chunk($rowsPerPage);
 	
 		
-        return view('client_view.printing.custom-printing',[
-			'db_names'=>$db_names,
-			'company'=>$company,
-			'exportables'=>$exportableFields,
-			'hasCodeColumnForLabelingItem'=>$hasCodeColumnForLabelingItem,
-			'modelName'=>'LabelingItem',
-			'viewing_names'=>$viewing_names,
-			'labeling'=>$labeling,
-			'printPaper'=>$printPaper,
-			'reportTitle'=>$reportTitle
-		]);
+		return (new LabelingItemExportAsPdf($labeling))->download('Labeling Item.pdf','Dompdf');
+		
+        // return view('client_view.printing.custom-printing',[
+		// 	'db_names'=>$db_names,
+		// 	'company'=>$company,
+		// 	'exportables'=>$exportableFields,
+		// 	'hasCodeColumnForLabelingItem'=>$hasCodeColumnForLabelingItem,
+		// 	'modelName'=>'LabelingItem',
+		// 	'viewing_names'=>$viewing_names,
+		// 	'labeling'=>$labeling,
+		// 	'printPaper'=>$printPaper,
+		// 	'reportTitle'=>$reportTitle
+		// ]);
 		
 	
 		
