@@ -69,6 +69,9 @@ trait FinancialStatementAccessor
 	public function canEditDurationType(): bool
 	{
 		$incomeStatement = $this->incomeStatement;
+		if(!$incomeStatement){
+			return false ;
+		}
 		return  ! $incomeStatement->can_view_actual_report;
 		// $balanceSheet = $this->balanceSheet;
 		// $cashFlowStatement = $this->cashFlowStatement;
