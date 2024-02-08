@@ -68,6 +68,8 @@ class IncomeStatementController extends Controller
 		// dd();
 				
 		$incomeStatement = $this->incomeStatementRepository->store($request);
+		// return redirect()->back()->with('success',__('Income Statement Has Been Stored Successfully'));
+		
 		return response()->json([
 			'status' => true,
 			'message' => __('Income Statement Has Been Stored Successfully'),
@@ -79,6 +81,9 @@ class IncomeStatementController extends Controller
 	{
 		
 		$this->incomeStatementRepository->storeReport($request);
+		// return redirect()->back()->with('success',__('Income Statement Has Been Stored Successfully'));
+		
+		
 		return response()->json([
 			'status' => true,
 			'message' => __('Income Statement Has Been Stored Successfully')

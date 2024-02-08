@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait FinancialStatementAbleMutator
 {
-	public function storeMainSection(Request $request)
+	public function storeMainSection(Request $request):self
 	{
 		$financialStatementAble = (new static)::create(array_merge($request->except(['_token']), ['can_view_actual_report'=>0,'type' => getLastSegmentFromString(get_class(new static))]));
 
