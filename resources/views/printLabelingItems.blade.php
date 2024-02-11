@@ -79,7 +79,7 @@
             <img style="max-height:{{ 0.5*$height }}cm" src="{{ $company->labeling_use_client_logo ? asset('storage/'.$company->labeling_client_logo) : null }}">
             @endif
         </div>
-        <span id="fit-text-{{ $index }}-i-{{ $i }}" class="block qrcode-font fit-text"> {{ $item->getCode($index+1) }} dddddddddddddddddddd ssssssssss</span>
+        <span id="fit-text-{{ $index }}-i-{{ $i }}" class="block qrcode-font fit-text"> {{ $item->getCode($index+1) }}</span>
     </div>
     <div></div>
 	@endfor 
