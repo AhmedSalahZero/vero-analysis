@@ -82,6 +82,7 @@
         </div>
         {{-- <span id="fit-text-{{ $index }}-i-{{ $i }}" class="block qrcode-font fit-text">  {{ $item->getCode($index+1) }}</span> --}}
         <span id="fit-text-{{ $index }}-i-{{ $i }}" class="block qrcode-font fit-text">  {{ $item->getCode($index+1) }}</span>
+		
     </div>
     <div></div>
 	{{-- {{ str_replace($fromToString , $qIndex+ $i,qrcodeSpacing($item->getCode($index+1))) }} --}}
