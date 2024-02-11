@@ -45,7 +45,6 @@ class LabelingItem extends Model
 		// $canWeStart = false ;
 		// $canWeEnd = false;
 		// $firstItem = self::where('company_id',$this['company_id'])->orderBy('id','asc')->first();
-		// dd($firstItem->code);
 		// if($firstItem && $firstItem->code){
 		// 	$str = $firstItem->code;
 		// }

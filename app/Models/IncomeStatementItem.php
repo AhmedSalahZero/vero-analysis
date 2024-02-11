@@ -141,7 +141,6 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 				];
 		});
 		return $data ; 
-		// dd();
 	}
 
 	public static function formattedViewForDashboard(): array

@@ -695,7 +695,6 @@ function getExportFor($type, $companyId, $formatted = false, $date = false, $sta
 }
 function getNumberOfProductsItems($companyId)
 {
-    // dd(ProductSeasonality::where('company_id', $companyId)->get());
     return ProductSeasonality::where('company_id', $companyId)->count();
 }
 function canShowNewItemsProducts($companyId)

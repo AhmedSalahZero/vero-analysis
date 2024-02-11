@@ -117,7 +117,6 @@ class LabelingItemExportAsPdf implements
 	
 public function drawings()
 {
-// dd($this);
 
     $drawings = [];
 	$startQrcodeFromRowNumber = $this->startQrcodeFromRowNumber ;
@@ -191,7 +190,6 @@ public function drawings()
 			}
 				$data[$index] = trim(str_replace('//','// ',$row->{$headerName})) ;
 		}
-		// dd($data);
 		return $data ;
 	}
 
@@ -213,7 +211,6 @@ public function drawings()
 				 */
 					/**
 				 */
-				// dd($afterSheet->sheet->getPageSetup());
 				$afterSheet->sheet->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1,2);
 				$afterSheet->sheet->getPageSetup()->setOrientation($this->pageOrientation)
 				// ->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A3_TRANSVERSE_PAPER)

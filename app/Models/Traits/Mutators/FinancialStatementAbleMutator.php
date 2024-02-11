@@ -468,6 +468,8 @@ trait FinancialStatementAbleMutator
 				{
 					$financialStatementAble->refreshCalculationFor($insertSubItem);
 				}else{
+					$financialStatementAble['is_caching_'.$insertSubItem] = 1 ;
+					$financialStatementAble->save();
 					 $job = (new RecalculateIncomeStatementCalculationForTypesJob($financialStatementAble,$insertSubItem));
 					 dispatch($job)	;
 				}

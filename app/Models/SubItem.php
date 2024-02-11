@@ -9,9 +9,5 @@ class SubItem extends Model
 {
 	protected $table = 'financial_statement_able_main_item_sub_items';
 	
-	// public function updated($product)
-    // {
-		// dd($product);
-        // $product->slug = \Str::slug($product->name);
-    // }
+
 }

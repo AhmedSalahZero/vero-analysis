@@ -68,7 +68,6 @@ class IncomeStatementExportAsPdf implements
 	public function headings(): array
 	{
 		$dates = $this->exportData->toArray()[array_key_first($this->exportData->toArray())];
-		//  dd(getCurrentCompany());
 
 		$header = [
 			[
@@ -113,20 +112,7 @@ class IncomeStatementExportAsPdf implements
 
 	public function map($row): array
 	{
-		// dd($row);
 		return $row;
-
-		//    return [
-		//        $row->getId(),
-		//        $row->getRevenueBusinessLineName(),
-		//        $row->getServiceCategoryName(),
-		//        $row->getServiceItemName(),
-		//        $row->getDeliveryDays(),
-		//        $row->getTotalRecommendPriceWithoutVatFormatted(),
-		//        $row->getTotalRecommendPriceWithVatFormatted(),
-		//        $row->getTotalNetProfitAfterTaxesFormatted(),
-
-		//    ];
 	}
 
 	public function registerEvents(): array

@@ -119,7 +119,6 @@ class CashFlowStatementRepository implements IBaseRepository
 				$dataWithRelations->add($subItem);
 			});
 		});
-		// dd($dataWithRelations);
 		return [
 			'data' => $dataWithRelations,
 			"draw" => (int)Request('draw'),

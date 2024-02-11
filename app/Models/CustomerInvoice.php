@@ -123,9 +123,6 @@ class CustomerInvoice extends Model
     // }
     public function getNetBalance()
     {
-		// if($this->invoice_number == 202015){
-		// 	dd($this->net_balance);
-		// }
         return $this->net_balance ?: 0 ;
     }
 	public function getNetBalanceFormatted()
@@ -177,27 +174,27 @@ class CustomerInvoice extends Model
 	}
 
     
-    // protected function generateInvoiceStatus($totalCollected, $netInvoiceAmount)
-    // {
-    //     $invoiceDueDate = Carbon::make($this->getInvoiceDueDate());
-    //     $nowAsDate = Carbon::make(now()->setTime(0, 0)->format('d-m-Y'));
-	// 	$totalCollected += $this->withhold_amount;
-    //     if($totalCollected == $netInvoiceAmount) {
-    //         return 'collected';
-    //     }
-    //     if($totalCollected > 0 &&  $invoiceDueDate->lessThan($nowAsDate)) {
-    //         return 'partially_collected_and_past_due';
-    //     }
-    //     if($invoiceDueDate->greaterThan($nowAsDate)) {
-    //         return 'not_due_yet';
-    //     }
-    //     if($invoiceDueDate->equalTo($nowAsDate)) {
-    //         return 'due_to_day';
-    //     }
-    //     if($invoiceDueDate->lessThan($nowAsDate) && $totalCollected == 0) {
-    //         return 'past_due';
-    //     }
-    // }
+    protected function generateInvoiceStatus($totalCollected, $netInvoiceAmount)
+    {
+        $invoiceDueDate = Carbon::make($this->getInvoiceDueDate());
+        $nowAsDate = Carbon::make(now()->setTime(0, 0)->format('d-m-Y'));
+		$totalCollected += $this->withhold_amount;
+        if($totalCollected == $netInvoiceAmount) {
+            return 'collected';
+        }
+        if($totalCollected > 0 &&  $invoiceDueDate->lessThan($nowAsDate)) {
+            return 'partially_collected_and_past_due';
+        }
+        if($invoiceDueDate->greaterThan($nowAsDate)) {
+            return 'not_due_yet';
+        }
+        if($invoiceDueDate->equalTo($nowAsDate)) {
+            return 'due_to_day';
+        }
+        if($invoiceDueDate->lessThan($nowAsDate) && $totalCollected == 0) {
+            return 'past_due';
+        }
+    }
     public function getInvoiceDueDate()
     {
         return $this->invoice_due_date ;
@@ -224,25 +221,30 @@ class CustomerInvoice extends Model
         return self::where('customer_name', $customerName)->get() ;
     }
 
-    
-    // public function syncNetBalance()
-    // {
-    //     $customerName =	$this->getCustomerName();
-    //     $invoices = $this->getInvoicesForCustomerName($customerName);
-    //     foreach($invoices as $customerInvoice) {
-    //         $invoiceNumber  = $customerInvoice->getInvoiceNumber($customerName) ;
-    //         $totalCollected = 0 ;
-	// 		$totalWithhold = 0 ;
-    //         foreach($customerInvoice->moneyReceived as $moneyReceived) {
-    //             foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $customerName)  as $settlement) {
-    //                 $totalCollected += $settlement->getAmount();
-    //                 $totalWithhold += $settlement->getWithhold();
-    //             }
-    //         }
-    //         $customerInvoice->updateNetBalance($totalCollected,$totalWithhold);
-    //     }
+    public function syncNetBalance()
+    {
+		$customerName =	$this->getCustomerName();
+		/**
+		 * @var CustomerInvoice[] $invoices
+		 */
+        $invoices = $this->getInvoicesForCustomerName($customerName);
+        foreach($invoices as $customerInvoice) {
+            $invoiceNumber  = $customerInvoice->getInvoiceNumber($customerName) ;
+            $totalCollected = 0 ;
+			$totalWithhold = 0 ;
+            foreach($customerInvoice->moneyReceived as $moneyReceived) {
+				/**
+				 * @var Settlement $settlement
+				 */
+                foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $customerName)  as $settlement) {
+                    $totalCollected += $settlement->getAmount();
+                    $totalWithhold += $settlement->getWithhold();
+                }
+            }
+            $customerInvoice->updateNetBalance($totalCollected,$totalWithhold);
+        }
         
-    // }
+    }
 	// public function insertInvoiceDateMonthAndYearColumnsInDB()
 	// {
 	// 	$this->invoice_month = sprintf("%02d", explode('-',$this->invoice_date)[1]);	
@@ -260,15 +262,15 @@ class CustomerInvoice extends Model
 	// 	$this->net_invoice_amount_in_main_currency = $this->net_invoice_amount * $this->exchange_rate ; 	
 	// 	$this->save();
 	// }
-    // protected function updateNetBalance(float $totalCollected,float $totalWithholdAmount)
-    // {
-    //     $netInvoiceAmount = $this->getNetInvoiceAmount();
-    //     $this->net_balance = $netInvoiceAmount - $totalCollected ;
-    //     $this->invoice_status = $this->generateInvoiceStatus($totalCollected, $netInvoiceAmount) ;
-    //     $this->collected_amount = $totalCollected;
-    //     $this->withhold_amount = $totalWithholdAmount;
-    //     $this->save();
-    // }
+    protected function updateNetBalance(float $totalCollected,float $totalWithholdAmount)
+    {
+        $netInvoiceAmount = $this->getNetInvoiceAmount();
+        $this->net_balance = $netInvoiceAmount - $totalCollected ;
+        $this->invoice_status = $this->generateInvoiceStatus($totalCollected, $netInvoiceAmount) ;
+        $this->collected_amount = $totalCollected;
+        $this->withhold_amount = $totalWithholdAmount;
+        $this->save();
+    }
 	public function getStatus()
 	{
 		return $this->invoice_status;
@@ -332,7 +334,6 @@ class CustomerInvoice extends Model
 				$totalCollected += $settlement->getAmount();
 			}
 		}
-		// dump($netInvoiceAmount - $totalCollected);
 		return $netInvoiceAmount - $totalCollected;
 	}
 	
@@ -364,29 +365,12 @@ class CustomerInvoice extends Model
 		->where('currency',$currencyName)
 		->where('receiving_date','<=',$date)
 		->sum(DB::raw('total_withhold_amount + received_amount'));
-				
-		
-		// return Settlement::where('company_id',getCurrentCompany())
-		// ->where('customer_name',$customerName)
-		// ->where('currency',$currencyName)
-		// ->where('invoice_date','<=',$date)
-		// ->sum(function($e){
-		// 	dd('good',$e);
-		// });
-		
-
 	}
-	
-	
 	public static function formatForStatementReport(Collection $customerInvoices,string $customerName,string $startDate,string $endDate,string $currency){
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
-			
-			// 
 			$firstCustomerInvoice = $customerInvoices->first() ?: null; 
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			// dd(CustomerInvoice::getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate));
-			// dd($oneDayBeforeStartDate);
 			$beginningBalance = $firstCustomerInvoice ? $customerInvoices->first()->getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate) : 0; 
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
@@ -396,10 +380,8 @@ class CustomerInvoice extends Model
 			$currentData['credit'] = $credit = $beginningBalance < 0 ? $beginningBalance * -1 : 0 ;
 			$currentData['end_balance'] =$debit - $credit;
 			$currentData['comment'] =null;
-			// $currentData['comment'] =__('Debit - Credit');
 			$index++ ;
 			$formattedData[$index] = $currentData;
-			
 			$allMoneyReceived =  MoneyReceived::
 			where('company_id',getCurrentCompanyId())
 			->whereBetween('receiving_date',[$startDate,$endDate])
@@ -418,12 +400,7 @@ class CustomerInvoice extends Model
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index]=$currentData;
-			
-			
-			
-			
 		}
-		// dd($allMoneyReceived);
 		foreach($allMoneyReceived as $moneyReceived) {
 			$dateReceiving = $moneyReceived->getReceivingDateFormatted() ;
 			$moneyReceivedType = $moneyReceived->getType();
@@ -437,38 +414,25 @@ class CustomerInvoice extends Model
 					$currentData['document_no'] = $docNumber  ;
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$moneyReceivedAmount;
-					$currentData['comment'] =null ;
+					$currentData['comment'] =__('qqq') ;
 					$index++;
 					$formattedData[] = $currentData ;
+					$totalWithholdAmount = $moneyReceived->getTotalWithholdAmount();
 					
-					if($totalWithholdAmount = $moneyReceived->getTotalWithholdAmount()){
-						
-						
+					if($totalWithholdAmount){
 						$currentData = []; 
 					$currentData['date'] = $dateReceiving;
 					$currentData['document_type'] = __('Withhold Taxes');
 					$currentData['document_no'] =  $docNumber ;
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$totalWithholdAmount;
-					//$currentData['end_balance'] =$formattedData[$index]['end_balance'] + $formattedData[$index]['debit'] - $formattedData[$index]['credit'];
 					$currentData['comment'] =$bankName;
 					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . $docNumber;
 					$index++;
 					$formattedData[] = $currentData ;
-							
 					}
-					
-					
 				}
-				
-			// }
 		}
-		
 		return HArr::sortBasedOnKey($formattedData,'date');
-		// return $formattedData;
-		// dd($formattedData);
 	}
-	
-
-	
 }

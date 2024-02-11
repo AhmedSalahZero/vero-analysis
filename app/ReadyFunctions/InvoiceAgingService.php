@@ -30,7 +30,6 @@ class InvoiceAgingService
 			$customerInvoices->whereIn('customer_name',$customerNames);
 		}
 		$customerInvoices = $customerInvoices->get();
-		// dD($customerInvoices);
 
 		foreach($customerInvoices as $index => $customerInvoice){
 			$customerName = $customerInvoice->customer_name ;
@@ -40,7 +39,6 @@ class InvoiceAgingService
 			if(!$netBalance){
 				continue;
 			}
-			// dd($netBalance);
 			$dueNameWithDiffDays = $this->getDueNameWithDiffInDays($invoiceDueDate,$this->aging_date);
 				$dueName = array_key_first($dueNameWithDiffDays);
 				$diffInDays = $dueNameWithDiffDays[$dueName];
@@ -106,10 +104,7 @@ class InvoiceAgingService
 						}
 						
 				}
-				// dd($result['charts']);
-				// dd($result['charts']);
-				// dd($result['total_customers_due']);
-				// dd($result);
+
 		return $result ;
 	}
 	
@@ -117,7 +112,6 @@ class InvoiceAgingService
 		$date = Carbon::make($date);
 		$agingDate = Carbon::make($agingDate);
 		$diffInDays = $date->diffInDays($agingDate);
-		// dd()
 		if($diffInDays == 0){
 			return ['current_due'=>$diffInDays];
 		} 

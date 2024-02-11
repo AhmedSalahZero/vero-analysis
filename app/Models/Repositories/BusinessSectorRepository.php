@@ -83,8 +83,6 @@ class BusinessSectorRepository implements IBaseRepository
         $filterData = $this->commonScope($request);
 
         $allFilterDataCounter = $filterData->count();
-
-// dd(Request('length'));
         $datePerPage = $filterData->skip(Request('start'))->take(Request('length'))->get()->each(function(BusinessSector $businessSector , $index){
             $businessSector->businessSectorName = $businessSector->getName();
             $businessSector->creator_name = $businessSector->getCreatorName();

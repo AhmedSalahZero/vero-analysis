@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
+use Arr;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -154,7 +155,7 @@ class MoneyReceivedController
 		
 		$allCurrencies = $invoices->pluck('currency','currency')->mapWithKeys(function($value,$key){
 			return [
-				strtolower($key)=>$value 
+				strtolower($key)=>strtolower($value) 
 			];
 		});
 		// dd();
@@ -189,7 +190,7 @@ class MoneyReceivedController
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
-			$result[$index]['collected_amount'] = $inEditMode ?  $invoiceArr['collected_amount'] - $invoiceArr['settlement_amount'] : $invoiceArr['collected_amount'];
+			$result[$index]['collected_amount'] = $inEditMode 	?  $invoiceArr['collected_amount'] - $invoiceArr['settlement_amount'] : $invoiceArr['collected_amount'];
 			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  : $invoiceArr['net_balance']  ;
 			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
@@ -205,7 +206,6 @@ class MoneyReceivedController
 		$customerName = $customerInvoice->getCustomerName();
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['money_type','receiving_date','currency']);
-		
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -251,8 +251,10 @@ class MoneyReceivedController
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount
 		]);
-		
-		// $customerInvoice->syncNetBalance();
+		/**
+		 * @var CustomerInvoice $customerInvoice
+		 */
+		$customerInvoice->syncNetBalance();
 		$activeTab = $this->getActiveTab($moneyType);
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
@@ -303,8 +305,10 @@ class MoneyReceivedController
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;
 		
+		
+		
 		$additionalData = [];
-
+		
 		$receivedAmount = 0 ;
 		$currency= null  ;
 		
@@ -330,9 +334,9 @@ class MoneyReceivedController
 			$data['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
 		}
 		$data['received_amount'] = $receivedAmount ;
-		$data['currency'] = $currency ;
+		$data['currency'] = $currency?:Arr::get($data,'currency') ;
+		$data['currency'] = strtolower($data['currency']);
 		$moneyReceived->update($data);
-		
 		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
 		$moneyReceived->settlements->each(function($settlement){
 			$settlement->delete();
@@ -351,7 +355,7 @@ class MoneyReceivedController
 			'total_withhold_amount'=>$totalWithholdAmount 
 		]);
 		
-		//  $moneyReceived->customerInvoice->syncNetBalance() ;
+		 $moneyReceived->customerInvoice->syncNetBalance() ;
 		 $activeTab = $this->getActiveTab($moneyType);
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 		

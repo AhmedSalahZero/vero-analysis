@@ -46,12 +46,17 @@ class IncomeStatementController extends Controller
 
 	public function createReport(Company $company, IncomeStatement $incomeStatement)
 	{
+		$reportType  = getReportNameFromRouteName(Request()->route()->getName()) ;
+		if($incomeStatement->{'is_caching_'.$reportType}){
+			return redirect()->route('admin.view.financial.statement',['company'=>$company->id])->with('fail',__('Please Wait A Second'));
+		}
+		
 		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
 		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars([
 			'financial_statement_able_id' => $incomeStatement->id,
 			'incomeStatement' => $incomeStatement,
 			'cashFlowStatement' => $cashFlowStatement,
-			'reportType' => getReportNameFromRouteName(Request()->route()->getName())
+			'reportType' => $reportType 
 		]));
 	}
 
@@ -67,10 +72,7 @@ class IncomeStatementController extends Controller
 
 	public function store(IncomeStatementRequest $request)
 	{
-		// dd();
-				
 		$incomeStatement = $this->incomeStatementRepository->store($request);
-		// return redirect()->back()->with('success',__('Income Statement Has Been Stored Successfully'));
 		
 		return response()->json([
 			'status' => true,
@@ -247,7 +249,6 @@ class IncomeStatementController extends Controller
 	public function exportReport(Request $request)
 	{
 		$formattedData = $this->formatReportDataForExport($request)['data'];
-		// dd($formattedData);
 		
 		$incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
@@ -297,10 +298,7 @@ class IncomeStatementController extends Controller
 	public function formatReportDataForExport(Request $request)
 	{
 		$dynamicRowsShow = (bool) $request->get('dynamic_rows_shown');
-		// dd();
-		
 		$opensMainRows = (array)json_decode($request->opens) ;
-
 		$numberOfColumnBeforeDates = 1 ; // name column
 		$numberOfColumnAfterDates = 1 ; // total column
 		$staticHeaderRows = 2 ; 
@@ -363,9 +361,6 @@ class IncomeStatementController extends Controller
 				}
 			}
 		}
-		
-		
-		// dd($formattedData);
 		return [
 			'data'=>$formattedData,
 			'mainRowsIndexes'=>$mainRowsIndexes,

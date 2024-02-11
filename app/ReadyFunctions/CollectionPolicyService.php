@@ -43,12 +43,8 @@ class CollectionPolicyService
 			$year = $dateObject->format('Y');
 			$month = $dateObject->format('m');
 			$day = $dateObject->format('d');
-			// if(is_null( $this->getSumMonth($month, $periodInterval))){
-			// 	dd($month , $periodInterval);
-			// }
 			$sumMonth = sprintf("%02d", $this->getSumMonth($month, $periodInterval));
 			$resultDate = $year  . '-' . $sumMonth . '-' . $day;
-
 			$result[$resultDate] = isset($result[$resultDate]) ? $result[$resultDate] + $value  : $value;
 		}
 		return $result;
@@ -92,7 +88,6 @@ class CollectionPolicyService
 			];
 		}
 		return [];
-		// dd('interval',$interval);
 	}
 
 	protected function formatRatesWithDueDays(array $ratesAndDueDays): array
@@ -114,9 +109,7 @@ class CollectionPolicyService
 
 	protected function getSumMonth($month, $mapMonths)
 	{
-		// if(is_null($mapMonths)){
-		// 	dd($mapMonths);
-		// }
+
 		foreach ($mapMonths as $sumMonth => $sumMonths) {
 			if (in_array($month, $sumMonths)) {
 				return $sumMonth;

@@ -90,8 +90,6 @@ trait FinancialStatementAbleAccessor
 			$year = explode('-',$endDate)[0];
 			$month = explode('-',$endDate)[1];
 			$endDate = Carbon::create($year, $month)->lastOfMonth()->format('Y-m-d');
-			// $day = explode('-',$endDate)[1];
-			// dd($endDate);
 			$interval = [
 				'start_date' => ($dates[0]),
 				'end_date' =>$endDate 
@@ -99,7 +97,6 @@ trait FinancialStatementAbleAccessor
 			
 			
 		}
-		// dd($interval);
 		return $interval;
 	}
 }

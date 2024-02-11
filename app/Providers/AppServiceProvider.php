@@ -45,39 +45,11 @@ class AppServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		
-		// dd($start);
 		
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
-		
-		// $pageMargins = new \PhpOffice\PhpSpreadsheet\Worksheet\PageMargins();
-		// $pageMargins->setTop(100);
-		// $pageMargins->setRight(0);
-		// $pageMargins->setBottom(1);
-		// $pageMargins->setLeft(0);
-		// Sheet::macro('setPageMargins', function($sheet, $pageMargins){});		
-		
-		// $srt = 'ahmedToaliTo102';
-		// $x = getLastNumericValueAfterStr('25099202420104010109100000To100006','To');
-		// dd($x);
-				
-		
-		// $x = Cache::get('POioan4mVzfor_company_2');
-		// dd($x);
-		// dd( );
-		
-		// $code = DNS1D::size(10)->getBarcodeHTML('4445645656', 'C39' ) ;
-		// dd($code);
-		
-		// dd(FinancialInstitution::get());		
-		
-		// $date = '05-11-2023';
-		// $now = now()->format('d-m-Y');
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
-		 
-		 
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
-		// dd(getAdditionalDates('01-10-2023'));
 		
 		Collection::macro('formattedForSelect',function(bool $isFunction , string $idAttrOrFunction ,string $titleAttrOrFunction ){
 			return $this->map(function($item) use ($isFunction , $idAttrOrFunction ,$titleAttrOrFunction ){
@@ -106,25 +78,6 @@ class AppServiceProvider extends ServiceProvider
 		}
 		
 
-
-		// $itemStartDate = '2023-01-01';
-		// $studyEndDate = '2028-02-01';
-		// $studyDuration = 5;
-		// $monthsDurationsPerYear = (new CalculateDurationService())->calculateMonthsDurationPerYear($itemStartDate, $studyEndDate, $studyDuration);
-		// $revenueItem = [
-		// 	'seasonality' => 'distribute_quarterly',
-		// 	'quarters' => [
-		// 		20, 20, 30, 30
-		// 	],
-		// 	'distribution_months_values' => []
-		// ];
-		// $x = SeasonalityService::salesSeasonality($revenueItem, $monthsDurationsPerYear);
-		// dd($x);
-		//  $incomeStatement = IncomeStatement::find(281);
-		// $incomeStatement->refreshCalculationFor('forecast');
-		// $incomeStatement->refreshCalculationFor('actual');
-		// $incomeStatement->refreshCalculationFor('adjusted');
-		//  $incomeStatement->refreshCalculationFor('forecast');
 		$Language = new stdClass();
 		$Language->id = 2;
 		$Language->name = 'Arabic';

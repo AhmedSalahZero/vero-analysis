@@ -59,7 +59,6 @@ class IncomeStatementRepository implements IBaseRepository
 		$incomeStatement = App(IncomeStatement::class);
 
 		$incomeStatement = $incomeStatement->storeMainSection($request)->storeMainItems($request);
-		dd($incomeStatement);
 		return $incomeStatement;
 	}
 
@@ -102,13 +101,9 @@ class IncomeStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $incomeStatement);
-// dd($filterData->get() );
 		$subItemType = $request->get('sub_item_type');
-		// dd($subItemType);
 		$allFilterDataCounter = $filterData->count();
-
 		$dataWithRelations = collect([]);
-
 		$datePerPage = $filterData->get()->each(function (IncomeStatementItem $incomeStatementItem, $index) use ($dataWithRelations, $incomeStatement, $subItemType) {
 			$incomeStatementItem->creator_name = $incomeStatementItem->getCreatorName();
 			$incomeStatementItem->created_at_formatted = formatDateFromString($incomeStatementItem->created_at);
@@ -129,9 +124,7 @@ class IncomeStatementRepository implements IBaseRepository
 
 				if (!$isQuantity) {
 					$quantityRow = $incomeStatementItem->getSubItems($incomeStatement->id, $subItemType, $subItem->pivot->sub_item_name . quantityIdentifier)->first();
-
 					if ($quantityRow) {
-						// dd($quantityRow, $quantityRow->payload);
 						$subItem->pivot->quantityPivot = $quantityRow->pivot->payload ? convertJsonToArray($quantityRow->pivot->payload) : [];
 					}
 					$dataWithRelations->add($subItem);
@@ -142,7 +135,6 @@ class IncomeStatementRepository implements IBaseRepository
 				
 			});
 		});
-		// dd($dataWithRelations);
 		return [
 			'data' => $dataWithRelations,
 			"draw" => (int)Request('draw'),

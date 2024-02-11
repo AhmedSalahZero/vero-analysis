@@ -53,9 +53,7 @@ class  FinancialStatement extends Model implements IBaseModel, IHaveAllRelations
 
 	public static function getViewVars(): array
 	{
-		// dd('e');
 		$currentCompanyId =  getCurrentCompanyId();
-
 		return [
 			'getDataRoute' => route('admin.get.financial.statement', ['company' => $currentCompanyId]),
 			'modelName' => 'FinancialStatement',

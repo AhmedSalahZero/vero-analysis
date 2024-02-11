@@ -85,7 +85,6 @@ class LabelingItemExport implements
 			 ]
 
 		];
-		// dd($this->headers);
 		return array_merge($header,[$this->headers]);
 	}
 	

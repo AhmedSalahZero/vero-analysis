@@ -179,7 +179,6 @@ trait QuickPricingCalculatorMutator
 					'creator_id'=>Auth()->user()->id ,
 				]);
 			  }
-			//   dd(OtherDirectOperationExpense::all());
         	
 		}
               

@@ -28,5 +28,7 @@ class RecalculateIncomeStatementCalculationForTypesJob implements ShouldQueue
     public function handle()
     {
 		$this->financialStatementAble->refreshCalculationFor($this->type);
+		$this->financialStatementAble->{'is_caching_'.$this->type} = 0 ;
+		$this->financialStatementAble->save();
     }
 }

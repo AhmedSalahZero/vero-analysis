@@ -124,7 +124,6 @@ class FinancialStatementRepository implements IBaseRepository
 		$allFilterDataCounter = $filterData->count();
 
 		$datePerPage = $filterData->skip(Request('start'))->take(Request('length'))->get()->each(function (FinancialStatement $financialStatement, $index) {
-			// dd($financialStatement);
 			$financialStatement->creator_name = $financialStatement->getCreatorName();
 			$financialStatement->cash_flow_statement_id = $financialStatement->cashFlowStatement ? $financialStatement->cashFlowStatement->id : 0;
 			// $financialStatement->balance_sheet_id = $financialStatement->balanceSheet ? $financialStatement->balanceSheet->id : 0;
@@ -141,7 +140,6 @@ class FinancialStatementRepository implements IBaseRepository
 			$financialStatement->duration_type_select = $this->formatSelectFor($financialStatement->duration_type);
 			$financialStatement->can_edit_duration_type = $financialStatement->canEditDurationType();
 		});
-		// dd(microtime(true) - $start);
 		return [
 			'data' => $datePerPage,
 			"draw" => (int)Request('draw'),
@@ -154,7 +152,6 @@ class FinancialStatementRepository implements IBaseRepository
 	{
 
 		$filterData = $this->commonScopeForReport($request, $financialStatement);
-		//dd($filterData);
 
 		$allFilterDataCounter = $filterData->count();
 

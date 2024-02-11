@@ -30,9 +30,6 @@ class DatabaseSeeder extends Seeder
 					'money_received_id'=>$moneyReceived->id 
 				]);
 			});
-			$customerInvoice->syncNetBalance();
 		});
-		// dd($factory);
-        // $this->call(UsersTableSeeder::class);
     }
 }
