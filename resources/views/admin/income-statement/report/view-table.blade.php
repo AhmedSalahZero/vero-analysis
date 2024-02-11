@@ -717,8 +717,8 @@ $tableId = 'kt_table_1';
                             let generalExpensesId = domElements.generalExpensesId;
                             let parentModelId = this.getAttribute('data-parent-model-id');
                             let date = this.getAttribute('data-date');
-							let canRecalculateRowTotal = false // temporary condition
-                            if (canRecalculateRowTotal && date && parentModelId && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
+							let canRecalculateParentRowTotal = false // temporary condition
+                            if (canRecalculateParentRowTotal && date && parentModelId && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
                                 updateParentMainRowTotal(parentModelId, date);
                             }
                             if ((parentModelId == salesRevenueId || parentModelId == costOfGoodsId) && isLastSublingPercentageOfCostOfUnitOfParent(currentRow)) {
@@ -1208,6 +1208,7 @@ $tableId = 'kt_table_1';
                         }
 
                         function updateTotalForRow(row) {
+							return false ;
 
                             const salesRevenueId = domElements.salesRevenueId
                             var total = 0;
