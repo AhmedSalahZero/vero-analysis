@@ -67,23 +67,7 @@ class IncomeStatementRepository implements IBaseRepository
 	{
 		$incomeStatement = new IncomeStatement();
 		$incomeStatement = $incomeStatement->storeReport($request);
-		//$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		//$dates = array_keys($incomeStatement->getIntervalFormatted());
-		//$request['dates'] = $dates;
-		//$request['cash_flow_statement_id'] = $cashFlowStatement->id;
-		//$request['income_statement_id'] = $incomeStatement->id;
-//
-		//$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
-		//$request['financial_statement_able_id'] = $cashFlowStatement->id;
-		//$request['value'] = $cashFlowStatementDataFormatted['value'];
-		//$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
-		//$request['totals'] = $cashFlowStatementDataFormatted['totals'];
-		//$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
-		//$request['valueMainRowWithoutSubItems'] = [];
-
-
-
-		//$cashFlowStatement->storeReport($request);
+		
 		return $incomeStatement;
 	}
 

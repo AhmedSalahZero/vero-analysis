@@ -37,8 +37,50 @@ class LabelingItem extends Model
 	
 	public function quantityStartFrom()
 	{
-		return 100000 ; 
-	}
+		
+		$defaultStartNumber = 100000 ;
+		return $defaultStartNumber;
+		// $str = null ;
+		// $start = '';
+		// $canWeStart = false ;
+		// $canWeEnd = false;
+		// $firstItem = self::where('company_id',$this['company_id'])->orderBy('id','asc')->first();
+		// dd($firstItem->code);
+		// if($firstItem && $firstItem->code){
+		// 	$str = $firstItem->code;
+		// }
+		// if($firstItem && $firstItem->Code){
+		// 	$str = $firstItem->Code;
+		// }
+		// if($str === null){
+		// 	return $defaultStartNumber;
+		// }		
+		// $zeroAfterTFound = false ;
+		// $tIsFound = false ;
+		// foreach(array_reverse(str_split($str)) as $s){
+		// 	if(strtolower($s) == 't'){
+		// 		$tIsFound = true ;
+		// 	}
+		// 	if($s == '0' && $tIsFound){
+		// 		$zeroAfterTFound = true ;
+		// 	}
+		// 	if($tIsFound && $zeroAfterTFound){
+		// 		$canWeStart = true ;
+		// 	} 
+		// 	if($canWeStart){
+		// 		$start.= $s ;
+		// 		if($s == '1'){
+		// 			$canWeEnd = true ;
+		// 		}
+		// 		if($canWeEnd){
+		// 			$start = strrev($start);
+		// 			break;
+		// 		}
+		// 	}
+		// }
+		// return $start?: $defaultStartNumber ; 
+}
+	
 	public  function generateCodeForRow($serial,$returnQuantityString = false )
 	{
 		

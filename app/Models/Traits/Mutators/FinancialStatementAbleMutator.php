@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits\Mutators;
 
+use App\Jobs\RecalculateIncomeStatementCalculationForTypesJob;
 use App\Models\CashFlowStatement;
 use App\Models\CashFlowStatementItem;
 use App\Models\IncomeStatement;
@@ -393,12 +394,10 @@ trait FinancialStatementAbleMutator
 						}
 					}
 
-					// logger($subItemAlreadyExist);
 					if ($subItemAlreadyExist) {
 						$inPopup = isset($request->sub_items[0]) && isset($request->sub_items[0]['vat_rate']) && is_numeric($request->sub_items[0]['vat_rate']) && $request->get('sub_item_name') == $sub_item_origin_name ;
 						$isDeductible = $inPopup ? ($request->sub_items[0]['is_deductible']??0) : $pivotForElement->is_deductible;
 						$vatRate = $inPopup ? $request->sub_items[0]['vat_rate'] : $pivotForElement->vat_rate;
-						// logger('sub item name' . '--' .$sub_item_origin_name. ' actual vat ' . $vatRate);
 						$vatArr = $request->get('sub_item_name') == $sub_item_origin_name  ? [
 							'is_deductible'=>$isDeductible,
 							// not this
@@ -421,9 +420,9 @@ trait FinancialStatementAbleMutator
 			}
 		}
 		
+		$start = microtime(true);
 
 		foreach ((array)$request->get('financialStatementAbleItemName') as $financialStatementAbleId => $financialStatementAbleItems) {
-			// foreach ($values as $sub_item_origin_name => $payload) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId);
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $names) {
 				foreach ($names as $oldName => $newName) {
@@ -431,13 +430,11 @@ trait FinancialStatementAbleMutator
 					$financialStatementAble->syncSubItemNameForPivot($financialStatementAbleItemId, $subItemType, $oldName, $newName);
 				}
 			}
-			// }
 		}
 		// store auto Calculated values
 		foreach ((array)$request->valueMainRowThatHasSubItems as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId)->load('mainRows');
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $payload) {
-				//$financialStatementAbleItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId,  false);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->detach($financialStatementAbleItemId);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($payload),
@@ -453,22 +450,27 @@ trait FinancialStatementAbleMutator
 		foreach ((array)$request->valueMainRowWithoutSubItems as $financialStatementAbleId => $financialStatementAbleItems) {
 			$financialStatementAble = (new static)::find($financialStatementAbleId)->load('mainRows');
 			foreach ($financialStatementAbleItems as $financialStatementAbleItemId => $payload) {
-				//	$financialStatementAbleItemId = get_class($this) != CashFlowStatement::class ?  $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId,  false);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->detach($financialStatementAbleItemId);
 				$financialStatementAble->withMainRowsFor($financialStatementAbleItemId, $subItemType)->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($payload),
 					'company_id' => \getCurrentCompanyId(),
 					'creator_id' => Auth::id(),
 					'total' => $request->totals[$financialStatementAbleId][$financialStatementAbleItemId],
-					// 'total' => array_sum($payload),
 					'sub_item_type' => $subItemType
 				], false);
 				$financialStatementAble->updateTotalRowsWithoutSubItemsForAdjusted($financialStatementAbleItemId, $subItemType);
 			}
 		}
 		if (get_class($this) == IncomeStatement::class || ($request->get('in_add_or_edit_modal') && $request->get('financial_statement_able_item_id') == IncomeStatementItem::SALES_REVENUE_ID)) {
-			foreach ($insertSubItems as $insertSubItem) {
-				$financialStatementAble->refreshCalculationFor($insertSubItem);
+			
+			foreach ($insertSubItems as $index=>$insertSubItem) {
+				if($index ==0 ) // current type
+				{
+					$financialStatementAble->refreshCalculationFor($insertSubItem);
+				}else{
+					 $job = (new RecalculateIncomeStatementCalculationForTypesJob($financialStatementAble,$insertSubItem));
+					 dispatch($job)	;
+				}
 			}
 		}
 	

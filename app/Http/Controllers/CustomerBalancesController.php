@@ -39,6 +39,7 @@ class CustomerBalancesController
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();
 		$customerInvoicesBalances=DB::select(DB::raw('select id, customer_name , currency , sum(net_balance) as net_balance , sum(net_balance_in_main_currency) as net_balance_in_main_currency from customer_invoices where net_balance > 0 and company_id = '. $company->id .'  group by customer_name , currency order by net_balance desc;'));
+		// dd($customerInvoicesBalances,$mainCurrency);
 		$cardNetBalances = $this->sumNetBalancePerCurrency($customerInvoicesBalances,$mainCurrency);
 		// dd($cardNetBalances);
         return view('admin.reports.customer_balances_form', compact('company','customerInvoicesBalances','cardNetBalances','mainCurrency'));

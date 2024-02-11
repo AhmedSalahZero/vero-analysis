@@ -468,6 +468,7 @@ class CustomerInvoice extends Model
 		// return $formattedData;
 		// dd($formattedData);
 	}
+	
 
 	
 }

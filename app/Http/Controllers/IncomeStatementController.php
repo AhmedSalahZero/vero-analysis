@@ -8,6 +8,8 @@ use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Requests\IncomeStatementRequest;
 use App\Models\CashFlowStatement;
 use App\Models\Company;
+use App\Models\FinancialStatement;
+use App\Models\FinancialStatementAble;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use App\Models\Repositories\CashFlowStatementRepository;
@@ -110,6 +112,7 @@ class IncomeStatementController extends Controller
 
 	public function updateReport(Company $company, Request $request)
 	{
+		
 		$incomeStatementId = $request->get('financial_statement_able_id');
 		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
@@ -173,21 +176,21 @@ class IncomeStatementController extends Controller
 				]);
 				
 		}
+		/**
+		 * @var incomeStatement $incomeStatement
+		 */
 		$incomeStatement->storeReport($request);
-
-
-		//$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		//$dates = array_keys($incomeStatement->getIntervalFormatted());
-		//$request['dates'] = $dates;
-		//$request['cash_flow_statement_id'] = $cashFlowStatement->id;
-		//$request['income_statement_id'] = $incomeStatement->id;
-		//$cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
-		//$request['value'] = $cashFlowStatementDataFormatted['value'];
-		//$request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
-		//$request['totals'] = $cashFlowStatementDataFormatted['totals'];
-		//$request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
-		//$request['valueMainRowWithoutSubItems'] = [];
-		//(new CashFlowStatementController(new CashFlowStatementRepository))->updateReport($company, $request);
+		
+		// $subItemType = $request->get('sub_item_type');
+		// $financialStatementAble = IncomeStatement::find(290);
+		// $insertSubItems = $financialStatementAble->getInsertToSubItemFields($subItemType);
+		
+		// if (($request->get('in_add_or_edit_modal') && $request->get('financial_statement_able_item_id') == IncomeStatementItem::SALES_REVENUE_ID)) {
+		// 	foreach ($insertSubItems as $insertSubItem) {
+		// 		$financialStatementAble->refreshCalculationFor($insertSubItem);
+		// 	}
+		// }
+		
 		return response()->json([
 			'status' => true,
 			'message' => __('Item Has Been Updated Successfully')

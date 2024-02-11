@@ -45,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		
+		// dd($start);
+		
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		
 		// $pageMargins = new \PhpOffice\PhpSpreadsheet\Worksheet\PageMargins();
