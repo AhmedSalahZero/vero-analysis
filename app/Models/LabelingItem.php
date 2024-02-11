@@ -56,12 +56,12 @@ class LabelingItem extends Model
 			
 			if(strtolower($key) == 'qty' || strtolower($key) == 'quantity' ){
 			
-				$sumPrev = $quantityStartFrom +$previousRowLastQuantity ; 
+				$sumPrev = $quantityStartFrom + ($previousRowLastQuantity == 0 ? 1 : $previousRowLastQuantity) ; 
+				$sumPrevQ = $quantityStartFrom + $previousRowLastQuantity ; 
+				$toQuantity = $sumPrevQ+ $val ;
 				$fromQuantity = $previousRowLastQuantity ? $sumPrev +1 : $sumPrev ;
-				$toQuantity = $sumPrev+ $val ;
 				$quantityExpression =  $fromQuantity !=   $toQuantity ? $fromQuantity  . 'To' .  $toQuantity : '';
 				if($returnQuantityString){
-					
 					return $quantityExpression ;
 				}
 				$numericParent .= $quantityExpression ;
@@ -80,15 +80,26 @@ class LabelingItem extends Model
 		}
 		return HArr::removeKeyFromArrayByValue(array_keys($item->getAttributes()),['id','company_id','update_at','created_at']);
 	}
+	protected function explodeFromTo()
+	{
+		
+	}
 	public function getCode(int $index,$returnQuantityString=false)
 	{
+		if($returnQuantityString){
+			return  $this->generateCodeForRow(1,$returnQuantityString);
+		}
 		if($this->code){
-			return $this->code ;
+			return $this->removeUnwantedChars($this->code) ;
 		}
 		if($this->Code){
-			return $this->Code ; 
+			return $this->removeUnwantedChars($this->Code); 
 		}
-		return $this->generateCodeForRow($index,$returnQuantityString);
+		return $this->removeUnwantedChars($this->generateCodeForRow($index));
+	}
+	protected function removeUnwantedChars($code)
+	{
+		return str_replace([' To ','//'],['To','/'],$code);
 	}
 
 	
