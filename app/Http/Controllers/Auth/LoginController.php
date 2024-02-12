@@ -39,6 +39,7 @@ class LoginController extends Controller
 				session()->put('expired-login','Your Free Trail Has Been Expired .. Please Subscribe');
 				return redirect()->route('login');
 			}
+			session()->forget('expired-login');
             return $this->sendLoginResponse($request);
         }
 
