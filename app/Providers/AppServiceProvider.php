@@ -13,12 +13,10 @@ use App\Observers\CustomerInvoiceObserver;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Maatwebsite\Excel\Sheet;
-use Milon\Barcode\DNS1D;
 use PhpOffice\PhpSpreadsheet\Shared\Font;
 use Spatie\Permission\Models\Permission;
 use stdClass;
@@ -44,8 +42,6 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		
-		
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');

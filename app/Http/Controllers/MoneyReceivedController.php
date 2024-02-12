@@ -5,6 +5,7 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
+use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
 use Arr;
@@ -62,6 +63,10 @@ class MoneyReceivedController
 		$moneyType = $request->get('active') ;
 		$user = $request->user()->load('moneyReceived') ;
 		$receivedCashes = $user->getReceivedCashes() ;
+		$financialInstitutionBanks = FinancialInstitution::onlyBanks()->get()->keyBy('id')->map(function($item){
+			return $item->getName();
+		})->toArray();
+		// dd(($financialInstitutionBanks));
 		
 		$receivedCashes = $moneyType == 'cash' ? $this->applyFilter($request,$receivedCashes) :$receivedCashes  ;
 		$receivedTransfer = $user->getReceivedTransfer() ;
@@ -112,7 +117,7 @@ class MoneyReceivedController
 		
 		$banks = Bank::pluck('view_name','id');
 		
-        return view('reports.moneyReceived.index', compact('company','receivedChequesInSave','receivedCashes','chequesReceivedTableSearchFields','receivedTransfer','selectedBanks','banks','receivedChequesUnderCollection','chequesUnderCollectionTableSearchFields','cashReceivedTableSearchFields','incomingTransferTableSearchFields'));
+        return view('reports.moneyReceived.index', compact('company','receivedChequesInSave','receivedCashes','chequesReceivedTableSearchFields','receivedTransfer','selectedBanks','banks','receivedChequesUnderCollection','chequesUnderCollectionTableSearchFields','cashReceivedTableSearchFields','incomingTransferTableSearchFields','financialInstitutionBanks'));
     }
 	
 	public function create(Company $company,$singleModel = null)
@@ -144,7 +149,7 @@ class MoneyReceivedController
 		$moneyReceivedId = $request->get('money_received_id');
 		$moneyReceived = MoneyReceived::find($moneyReceivedId);
 		$customer = CustomerInvoice::find($customerInvoiceId);
-		
+
 		$customerName = $customer->customer_name ;
 		$invoices = CustomerInvoice::where('customer_name',$customerName)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
@@ -157,14 +162,10 @@ class MoneyReceivedController
 			return [
 				strtolower($key)=>strtolower($value) 
 			];
-		});
-		// dd();
-		
+		});		
 		if($selectedCurrency){
-			$invoices = $invoices->where('currency','=',$selectedCurrency);
-				
+			$invoices = $invoices->where('currency','=',$selectedCurrency);	
 		}
-		
 		$invoices = $invoices->orderBy('invoice_date','asc')
 		->get(['invoice_number','invoice_date','net_invoice_amount','collected_amount','net_balance','currency'])
 		->toArray();

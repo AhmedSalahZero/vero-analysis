@@ -4407,7 +4407,8 @@ function getHeaderMenu()
 													'title'=>__('Customer Aging'),
 													'link'=>route('view.customer.aging.analysis', ['company'=>$companyId]),
 													'show'=>$user->can('view customer aging'),
-													'submenu'=>[]
+													'submenu'=>[
+													]
 												],
 												'money-received'=>[
 													'title'=>__('Money Received'),

@@ -1,16 +1,12 @@
 <?php
 namespace App\Http\Controllers;
-use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
-use App\Models\FinancialStatement;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -111,11 +107,11 @@ class FinancialInstitutionController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		// $selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
         return view('reports.financial-institution.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks
+			// 'selectedBanks'=>$selectedBanks
 		]);
     }
 	
@@ -166,13 +162,13 @@ class FinancialInstitutionController
 	}
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution){
 		$banks = Bank::pluck('view_name','id');
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		// $selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		
         return view('reports.financial-institution.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks,
+			// 'selectedBanks'=>$selectedBanks,
 			'model'=>$financialInstitution
 		]);
 		

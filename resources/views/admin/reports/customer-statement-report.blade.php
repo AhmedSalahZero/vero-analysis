@@ -296,7 +296,7 @@
         </div>
         <div class="kt-portlet__body  kt-portlet__body--fit">
             <div class="row row-no-padding row-col-separator-xl">
-				<form class="w-full">
+				<form class="w-full mt-3 ml-3">
 					<div class="row align-items-center">
 						<div class="col-md-4">
 							<label for="start_date">{{ __('Start Date') }}</label>

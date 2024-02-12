@@ -3,6 +3,11 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+hr{
+}
+.kt-portlet .kt-portlet__head{
+	border-bottom-color:#CCE2FD  !important;
+}
     label {
         text-align: left !important;
     }
@@ -32,11 +37,10 @@
     }
 
     .kt-portlet {
-        overflow: visible !important;
     }
 
     input.form-control[disabled],
-    input.form-control:not(.is-date-css)[readonly] {
+    input.form-control:not(.is-date-css)[readonly]:not(#kt_datepicker_2) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }
@@ -50,15 +54,7 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Money Received')}}
-        </h3>
-    </div>
-</div>
-</div> --}}
+    
 <form method="post" action="{{ isset($model) ?  route('update.financial.institutions',['company'=>$company->id,'financialInstitution'=>$model->id]) :route('store.financial.institutions',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-received-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
@@ -75,7 +71,9 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Financial Institution')}}
+								<x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Financial Institution')"></x-sectionTitle>
+						
+                            {{-- {{ }} --}}
                         </h3>
                     </div>
                 </div>
@@ -86,7 +84,7 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Financial Institution Type')}}
+								<x-sectionTitle :title="__('Financial Institution Type')"></x-sectionTitle>
                             </h3>
                         </div>
                     </div>
@@ -110,9 +108,9 @@
                                 <label>{{__('Select Bank ')}} <span class="required">*</span> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select name="bank_id" class="form-control ">
+										<select name="bank_id" class="form-control ">
                                             <option value="">{{__('Select')}}</option>
-                                            @foreach($selectedBanks as $bankId=>$bankName)
+                                            @foreach($banks as $bankId=>$bankName)
                                             <option @if(isset($model) && $bankId==$model->bank_id ) selected @endif value="{{ $bankId }}">{{ $bankName}}</option>
                                             @endforeach
                                         </select>
@@ -145,7 +143,7 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Company Account Information')}}
+								<x-sectionTitle :title="__('Company Account Information')"></x-sectionTitle>
                             </h3>
                         </div>
                     </div>
@@ -226,7 +224,9 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Another Current Accounts')}}
+                                {{-- {{}} --}}
+								<x-sectionTitle :title="__('Another Current Accounts')"></x-sectionTitle>
+								
                             </h3>
                         </div>
                     </div>
@@ -237,7 +237,7 @@
 
 
 
-                                <div class="" style="width:100%;overflow:hidden">
+                                <div class="" style="width:100%">
 
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">

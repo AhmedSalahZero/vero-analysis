@@ -290,6 +290,11 @@ class MoneyReceived extends Model
 		$date = $this->getChequeDepositDate();
 		return $date ? Carbon::make($date)->format('m/d/Y') : null;
 	}
+	public function getChequeDepositDateFormatted()
+	{
+		$date = $this->getChequeDepositDate();
+		return $date ? Carbon::make($date)->format('d-m-Y') : null;
+	}
 	public function setChequeDepositDateAttribute($value)
 	{
 		$date = explode('/',$value);

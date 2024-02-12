@@ -23,7 +23,10 @@
 
 
     <style>
-	
+::placeholder{
+	color:lightgray !important;
+	font-weight:100;
+}	
 	 .visibility-hidden {
         visibility: hidden !important;
     }

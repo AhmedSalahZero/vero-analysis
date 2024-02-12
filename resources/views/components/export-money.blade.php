@@ -1,6 +1,6 @@
 @props([
 'selectedBanks','banks','hasBatchCollection','hasSearch','moneyReceivedType','searchFields'
-,
+,'financialInstitutionBanks',
 'isFirstExportMoney'=>false
 ])
 <div class="kt-portlet__head-toolbar">
@@ -10,7 +10,7 @@
 			@if($hasBatchCollection)
             <a  data-type="multi" data-toggle="modal" data-target="#send-to-under-collection-modal" id="js-send-to-under-collection-trigger" href="{{route('create.money.receive',['company'=>$company->id])}}" title="{{ __('Please Select More Than One Cheque') }}" class="btn  active-style btn-icon-sm js-can-trigger-cheque-under-collection-modal disabled">
                 <i class="fas fa-book"></i>
-                {{ __('Create Batch Collection') }}
+                {{ __('Create Batch Send To Collection') }}
             </a>
 			@endif 
 				@if($hasSearch)
@@ -108,13 +108,13 @@
                                         <div class="kt-input-icon">
                                             <div class="input-group date ">
                                                 <select required name="cheque_drawl_bank_id" class="form-control js-drawl-bank">
-                                                    @foreach($selectedBanks as $bankId=>$bankName)
+                                                    @foreach($financialInstitutionBanks as $bankId=>$bankName)
                                                     <option value="{{ $bankId }}" {{ isset($model) && $model->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                                     @endforeach
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     {{-- <option>{{__('Bank 1')}}</option> --}}
                                                 </select>
-                                                <div class="modal fade" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                {{-- <div class="modal fade" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -139,7 +139,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button id="js-drawee-bank" class="btn btn-sm btn-primary">Add New Bank</button>
+                                                <button id="js-drawee-bank" class="btn btn-sm btn-primary">Add New Bank</button> --}}
 
                                             </div>
                                         </div>

@@ -6,6 +6,7 @@ use App\Models\Bank;
 use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -14,7 +15,10 @@ class FinancialInstitution extends Model
 {
     protected $guarded = ['id'];
 	
-
+	public function scopeOnlyBanks(Builder $builder)
+	{
+		$builder->where('type','bank');
+	}
 	public function getType():string 
 	{
 		return $this->type ;

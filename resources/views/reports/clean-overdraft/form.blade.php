@@ -3,6 +3,9 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+.kt-portlet .kt-portlet__head{
+	border-bottom-color:#CCE2FD  !important;
+}
     label {
         white-space: nowrap !important
     }
@@ -83,7 +86,8 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Overdraft')}}
+								<x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')"></x-sectionTitle>
+                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')}}
                         </h3>
                     </div>
                 </div>
