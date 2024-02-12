@@ -855,7 +855,6 @@ tr td:first-of-type{
     <!--end::Layout Skins -->
     <link rel="shortcut icon" href="{{url('assets/media/logos/logo_va.png')}}" />
     @toastr_css
-    @livewireStyles
     @yield('css')
     @stack('css')
     <style>

@@ -164,12 +164,9 @@
                         <span class="kt-header__topbar-welcome">Hi,</span>
                         <span class="kt-header__topbar-username ">{{ $user->name }} </span>
                         <span class="kt-header__topbar-icon"><b>{{ $first_letter }}</b></span> &nbsp;
-                        <?php
-            $now = strtotime(date('Y-m-d')); // or your date as well
-            $your_date = strtotime($user->expiration_date);
-            $datediff = $your_date - $now;
-            $days = round($datediff / (60 * 60 * 24));
-            ?>
+    	                    @php
+				            $days = $user->getExpirationDaysLeft();
+            				@endphp 
                         @if ($user->subscription == 'free_trial')
                         <span class="kt-header__topbar-username "><b>{{ $days . __(' Days Left') }}</b></span>
                         @endif

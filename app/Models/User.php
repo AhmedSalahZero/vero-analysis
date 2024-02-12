@@ -17,25 +17,18 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
-	
     use Notifiable,HasRoles,InteractsWithMedia;
 	protected $connection = 'mysql';
-    // SoftDeletes,
-    // StaticBoot;
-
     protected $fillable = [
         'name', 'email', 'password','max_users',
 		'created_by'
     ];
-
     protected $hidden = [
         'password', 'remember_token',
     ];
-    
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
     public function companies()
     {
         return $this->belongsToMany(Company::class, 'companies_users');
@@ -43,16 +36,6 @@ class User extends Authenticatable implements HasMedia
     public function canViewIncomeStatement()
     {
 		return true ;
-        // return in_array($this->email , [
-        //     'mahmoud.youssef@squadbcc.com',
-        //     'samer.tawfik@squadbcc.com',
-        //     'admin@admin.com',
-		// 	'f.dandachi@digitect.com',
-		// 	's.elbana@digitect.com',
-		// 	'm.qutbuddin@digitect.com',
-		// 	'mabdallah@jobmastergroup.com',
-		// 	'khairy@edgeconsultant.com'
-        // ]);
     }
 
     public function getName():string
@@ -166,6 +149,26 @@ class User extends Authenticatable implements HasMedia
 	public function letterOfCreditFacilities()
 	{
 		return $this->hasMany(LetterOfCreditFacility::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
+	}
+	public function isFreeTrialAccount()
+	{
+		return $this->subscription == 'free_trial';	
+	}
+	public function getExpirationDaysLeft()
+	{
+		$now = strtotime(date('Y-m-d')); // or your date as well
+            $your_date = strtotime($this->expiration_date);
+			# dd($your_date); 
+            $datediff = $your_date - $now;
+            return round($datediff / (60 * 60 * 24));
+	}
+	public function AccountExpired()
+	{
+		$expirationDate = $this->expiration_date ;
+		if($expirationDate && $this->isFreeTrialAccount()){
+			return now()->greaterThan($this->expiration_date);
+		}
+		return false ;
 	}
 	
 	

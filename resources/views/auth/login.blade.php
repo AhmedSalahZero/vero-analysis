@@ -51,11 +51,23 @@
                                 Password / Change Password</b></a>
                     </div>
                 </div>
+				{{-- {{ dd(session()->all()) }} --}}
 
             </form>
         </div>
     </div>
+	<div class="col-12 mt-4">
+	
+				@if(session()->has('expired-login'))
+				<div class="row " style="justify-content:center">
+					<div class="col-6">
+					<div class="alert alert-danger">
+					{{ session()->get('expired-login') }}
+				</div>
+					</div>
+				</div>
+				@endif 
+	
+	</div>
 </div>
 @endsection
-
-

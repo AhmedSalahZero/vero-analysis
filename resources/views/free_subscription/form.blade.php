@@ -85,7 +85,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <!--end::Layout Skins -->
     <link rel="shortcut icon" href="{{url('assets/media/logos/logo_va.png')}}" />
     @toastr_css
-    @livewireStyles
+ 
     @yield('css')
 </head>
 
@@ -185,14 +185,14 @@ License: You must have a valid license purchased only from themeforest(the above
                                                     <div class="col-6">
                                                         <label>{{__('Name')}} <span class="required">*</span></label>
                                                         <div class="kt-input-icon">
-                                                            <input type="text" name="name" value="{{old('name')}}" class="form-control" placeholder="{{__('Name')}}" required>
+                                                            <input type="text" name="name" value="" class="form-control" placeholder="{{__('Name')}}" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <label>{{__('Email')}} <span class="required">*</span></label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend"><span class="input-group-text">@</span></div>
-                                                            <input type="email" name="email" value="{{old('email')}}" class="form-control" placeholder="{{__('Email')}}" aria-describedby="basic-addon1">
+                                                            <input type="email" name="email" value="" class="form-control" placeholder="{{__('Email')}}" aria-describedby="basic-addon1">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -206,7 +206,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                                     <div class="col-6">
                                                         <label>{{__('Phone Number')}} <span class="required">*</span></label>
                                                         <div class="kt-input-icon">
-                                                            <input type="number" name="phone" class="form-control" placeholder="{{__('Phone Number')}}" value="{{old('phone')}}" required>
+                                                            <input type="number" name="phone" class="form-control" placeholder="{{__('Phone Number')}}" value="" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -243,7 +243,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                                     <div class="col-6">
                                                         <label>{{__('Company Name En')}} <span class="required">*</span></label>
                                                         <div class="kt-input-icon">
-                                                            <input type="text" name="company_name[en]" class="form-control" placeholder="{{__('Company Name')}}" value="{{(old('company_name')["en"])??''}}" required>
+                                                            <input type="text" name="company_name[en]" class="form-control" placeholder="{{__('Company Name')}}" value="" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">

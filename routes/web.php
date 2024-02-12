@@ -26,7 +26,6 @@ use App\Http\Controllers\RemoveUsercontroller;
 use App\Http\Controllers\RevenueBusinessLineController;
 use App\Http\Controllers\RoutesDefinition;
 use App\Http\Controllers\SalesGatheringTestController;
-use App\Http\Livewire\AdjustedCollectionDatesForm;
 use App\Models\Branch;
 use App\Models\CachingCompany;
 use App\Models\Company;
@@ -62,7 +61,7 @@ Route::middleware([])->group(function () {
 	Route::group(
 		[
 			'prefix' => LaravelLocalization::setLocale(),
-			'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth']
+			'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth','checkIfAccountExpired']
 		],
 		function () {
 
@@ -686,22 +685,6 @@ Route::middleware([])->group(function () {
 				Route::get('fieldsToBeExported/{model}/{view}', 'ExportTable@customizedTableField')->name('table.fields.selection.view');
 				Route::post('fieldsToBeExportedSave/{model}/{modelName}', 'ExportTable@customizedTableFieldSave')->name('table.fields.selection.save');
 			});
-
-
-
-
-
-
-
-
-
-
-
-			############ Live Wire ########
-			// Route::get('/post', AdjustedCollectionDatesForm::class)->name('adjusted_collection.view');
-			// Route::any('adjusted_collection_view', AdjustedCollectionDatesForm::class)->name('adjusted_collection.view');
-
-			Route::post('/adjusted_collection_view', [AdjustedCollectionDatesForm::class, 'render']);
 		}
 	);
 });

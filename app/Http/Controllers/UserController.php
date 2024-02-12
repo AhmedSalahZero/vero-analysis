@@ -29,8 +29,7 @@ class UserController extends Controller
 			$request['password'] = Hash::make($request->password);
 
 			$dt = Carbon::parse(date('Y-m-d'));
-			$expiration_date = $dt->addDays(30)->format('Y-m-d');
-
+			$expiration_date = $dt->addDays(15)->format('Y-m-d');
 			$user = User::create($request->except('avatar'));
 			$user->subscription = 'free_trial';
 			$user->expiration_date = $expiration_date;

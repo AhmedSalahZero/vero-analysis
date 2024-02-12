@@ -12,19 +12,42 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
+	public function showLoginForm()
+    {
+        return view('auth.login');
+    }
     public function redirectTo()
     {
         return route('home');
     }
-    protected function authenticated(Request $request, $user)
+	
+	public function login(Request $request)
     {
-        // Via the global helper...
-        // $company =  Auth::user()->companies()->where('type','single')->first();
+		
+        $this->validateLogin($request);
 
-        // $company = $company ?? Auth::user()->companies()->where('type','group')->first()->subCompanies()->first();
-        // session(['company_id' => $company->id]);
+   
+        if (method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
 
-        // return redirect()->intended('home');
+            return $this->sendLockoutResponse($request);
+        }
+
+        if ($this->attemptLogin($request)) {
+			if($request->user()->AccountExpired()){
+				session()->put('expired-login','Your Free Trail Has Been Expired .. Please Subscribe');
+				return redirect()->route('login');
+			}
+            return $this->sendLoginResponse($request);
+        }
+
+        // If the login attempt was unsuccessful we will increment the number of attempts
+        // to login and redirect the user back to the login form. Of course, when this
+        // user surpasses their maximum number of attempts they will get locked out.
+        $this->incrementLoginAttempts($request);
+
+        return $this->sendFailedLoginResponse($request);
     }
 
     /**
