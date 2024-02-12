@@ -42,15 +42,11 @@ class SalesGatheringController extends Controller
 	}
     public function index(Company $company, Request $request, string $uploadType='SalesGathering')
     {
-	
-		// dd($x);
 		$hasLabelingItemCodeField = LabelingItem::hasCodeField();
-		// $hasLabelingItemCodeField=false;
         $modelName = $uploadType;
 		$labelingUniqueItemsPerColumn = [];
 		$hasCodeColumnForLabelingItem = false;  
 		$orderByDirection = $uploadType == 'LabelingItem' ? 'asc' :'desc';
-		
 		$fieldValue = $request->get('field') ;
 		$searchDateField = $this->getSearchDateFieldName($modelName,$fieldValue);
 		$hasField = $request->has('field') ;
@@ -62,7 +58,6 @@ class SalesGatheringController extends Controller
         $deletePermissionName = $uploadingArr['deletePermissionName'];
         Log::storeNewLogRecord('enterSection', null, __('Data Gathering [ '. $uploadType . ' ]'));
 		$pageLength = $modelName == 'LabelingItem' && is_numeric($company->labeling_pagination_per_page) && $company->labeling_pagination_per_page > 0 ?$company->labeling_pagination_per_page  : 50 ;
-        // $salesGatherings = SalesGathering::company()->orderBy('date','desc')->get;
         $salesGatherings = $fullModelPath::company()->when($hasField, function ($q) use ($request,$fieldValue) {
             $q->where($fieldValue, 'like', '%'.$request->get('value') .'%');
         })
@@ -73,7 +68,6 @@ class SalesGatheringController extends Controller
             $q->where($searchDateField, '<=', $request->get('to'));
         })->when($request->has('filter_labeling'),function($q) use ($request){
 			foreach($request->all() as $key => $val){
-			
 				if($val && Schema::hasColumn('labeling_items',$key)){
 					$q->where($key,$val);
 				}
@@ -81,7 +75,6 @@ class SalesGatheringController extends Controller
 		})
         ->orderBy($mainDateOrderBy, $orderByDirection)->paginate($pageLength);
         $exportableFields  = (new ExportTable)->customizedTableField($company, $uploadType, 'selected_fields');
-	
         if($modelName == 'CustomerInvoice') {
             unset($exportableFields['withhold_amount']);
         }
@@ -97,10 +90,7 @@ class SalesGatheringController extends Controller
         $notPeriodClosedCustomerInvoices = $modelName == 'CustomerInvoice' ? CustomerInvoice::getOnlyNotClosedPeriods() : null;
 		$firstIndexElementInLabeling = $salesGatherings->first() ? $salesGatherings->first()->id : 0;
 		$lastIndexElementInLabeling = $salesGatherings->last() ? $salesGatherings->last()->id : 0;
-		// dd();
         $navigators =$this->getUploadingPageExportNavigation($modelName,$uploadPermissionName,$exportPermissionName,$deletePermissionName,$firstIndexElementInLabeling,$lastIndexElementInLabeling);
-	
-        // return view('client_view.printing.custom-printing', compact('navigators','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
         return view('client_view.sales_gathering.index', compact('navigators','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
     }
     

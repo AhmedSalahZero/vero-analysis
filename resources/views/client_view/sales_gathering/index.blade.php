@@ -19,10 +19,7 @@
 
     }
 
-    th,
-    td {
-        white-space: normal !important;
-    }
+
 
     svg[xmlns],
     svg[xmlns] * {
@@ -341,7 +338,7 @@ $date = now()->format('d-m-Y')
 
             @foreach ($viewing_names as $name)
 
-            <th data-css-col-name="{{ $name }}">{{ __($name) }}</th>
+            <th @if($modelName == 'LabelingItem') data-css-col-name="{{ $name }}" @endif >{{ __($name) }}</th>
             @endforeach
 
             @if($modelName == 'LabelingItem' && ! $hasCodeColumnForLabelingItem)
@@ -410,7 +407,7 @@ $date = now()->format('d-m-Y')
             @elseif($name == 'invoice_amount' || $name == 'vat_amount' || $name == 'withhold_amount' || $name == 'collected_amount' || $name=='net_balance'|| $name=='net_invoice_amount')
             <td class="text-center">{{ number_format($item->$name?:0 ,2 ) }}</td>
             @else
-            <td data-css-col-name="{{ $name??'' }}" class="text-center">
+            <td @if($modelName == 'LabelingItem') data-css-col-name="{{ $name??'' }}" @endif class="text-center">
                 {{ qrcodeSpacing($item->$name??'') }}
 
 

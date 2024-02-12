@@ -25,6 +25,7 @@ use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
 use App\Http\Controllers\RevenueBusinessLineController;
 use App\Http\Controllers\RoutesDefinition;
+use App\Http\Controllers\SalesGatheringController;
 use App\Http\Controllers\SalesGatheringTestController;
 use App\Models\Branch;
 use App\Models\CachingCompany;
@@ -296,7 +297,7 @@ Route::middleware([])->group(function () {
 				############ Sections Resources ############
 
 				Route::resource('inventoryStatement', 'InventoryStatementController');
-				Route::resource('salesGathering', SalesGatheringController::class);
+				Route::resource('salesGathering', 'SalesGatheringController');
 				
 				Route::get('uploading/{model}','SalesGatheringController@index')->name('view.uploading');
 				
