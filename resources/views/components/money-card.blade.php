@@ -22,7 +22,9 @@
                 </h4>
 
             </div>
-			@if($showReport)
+	
+			@if($showReport && $currencyName)
+			
             <div class="kt-align-right ">
                 <a href="{{ route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName   ]) }}" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </a>
             </div>

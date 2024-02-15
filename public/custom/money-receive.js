@@ -84,8 +84,7 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 			let currenciesOptions = '';
 			var selectedCurrency = res.selectedCurrency ;
 			for(var currencyName in res.currencies){
-				
-				var currencyFormattedName = res.currencies[currencyName]
+				var currencyFormattedName = res.currencies[currencyName].toUpperCase()
 				currenciesOptions+= `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`;
 			}
 			

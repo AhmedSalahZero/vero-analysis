@@ -22,6 +22,7 @@ class CustomerInvoiceDashboardController extends Controller
 		if(!count($invoices)){
 			return  redirect()->back()->with('fail',__('No Data Found'));
 		}
+
 		return view('admin.reports.invoice-report',[
 			'invoices'=>$invoices,
 			'customerName'=>$customerName,

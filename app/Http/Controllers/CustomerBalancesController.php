@@ -16,10 +16,12 @@ class CustomerBalancesController
 	{
 		
 		$total = [];
-		// dd($items);
 		foreach($items as $item){
 			$id = $item->id ;
 			$currencyName = $item->currency ;
+			// if(!$currencyName){
+			// 	continue ;
+			// }
 			$customerName = $item->customer_name ;
 			$currentValueForCurrency = $item->net_balance;
 			$currentValueForMainCurrency= $item->net_balance_in_main_currency;
@@ -39,9 +41,7 @@ class CustomerBalancesController
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();
 		$customerInvoicesBalances=DB::select(DB::raw('select id, customer_name , currency , sum(net_balance) as net_balance , sum(net_balance_in_main_currency) as net_balance_in_main_currency from customer_invoices where net_balance > 0 and company_id = '. $company->id .'  group by customer_name , currency order by net_balance desc;'));
-		// dd($customerInvoicesBalances,$mainCurrency);
 		$cardNetBalances = $this->sumNetBalancePerCurrency($customerInvoicesBalances,$mainCurrency);
-		// dd($cardNetBalances);
         return view('admin.reports.customer_balances_form', compact('company','customerInvoicesBalances','cardNetBalances','mainCurrency'));
     }
 	public function result(Company $company , Request $request){

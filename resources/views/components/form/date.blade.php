@@ -1,7 +1,9 @@
 @props([
 	'model',
 	'label',
+	'classes'=>'',
 	'name',
+	'id'=>'',
 	'placeholder',
 	'required'=>$required??false 
 ])
@@ -11,12 +13,10 @@
 <span class="required">*</span>
 @endif 
 
-{{-- {{ dd(formatDateForDatePicker($model->{$name})) }} --}}
 </label>
-{{-- {{ dd(formatDateForDatePicker($model->{$name}),$name) }} --}}
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input type="date" name="{{ $name }}" value="{{ $model && $model->{$name} ? $model->{$name} : null }}" class="form-control"  placeholder="{{ $placeholder }}" />
+                                        <input @if($id)  id="{{ $id }}" @endif type="date" name="{{ $name }}" value="{{ $model && $model->{$name} ? $model->{$name} : null }}" class="form-control {{ $classes }}"  placeholder="{{ $placeholder }}" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>

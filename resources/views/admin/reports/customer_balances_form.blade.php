@@ -2,15 +2,17 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
-.dt-buttons.btn-group.flex-wrap{
-	margin-bottom:5rem !important;
-}
-#DataTables_Table_0_filter{
-	display:none !important;
-}
-.dataTables_scrollHeadInner{
-	width:100% !important;
-}
+    .dt-buttons.btn-group.flex-wrap {
+        margin-bottom: 5rem !important;
+    }
+
+    #DataTables_Table_0_filter {
+        display: none !important;
+    }
+
+    .dataTables_scrollHeadInner {
+        width: 100% !important;
+    }
 
 
     .max-w-name {
@@ -302,7 +304,9 @@
                     @php
                     $index = 0 ;
                     @endphp
+					{{-- {{dd($cardNetBalances['currencies'])}} --}}
                     @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
+					
                     <x-money-card :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
                     @php
                     $index++;
@@ -324,15 +328,15 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-toolbar">
                     <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-						
-						@foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
+
+                        @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
                         <li class="nav-item">
                             <a class="nav-link {{ $loop->first ? 'active':'' }}" onclick="return false;" data-toggle="tab" href="#{{ $currencyName.'report__table' }}" role="tab">
                                 <i class="flaticon2-checking"></i> &nbsp; {{ __('Customer Balance In').' ' .__($currencyName) }}
                             </a>
                         </li>
-						@endforeach 
-                    
+                        @endforeach
+
                     </ul>
                 </div>
             </div>
@@ -342,7 +346,7 @@
 
 
         <div class="tab-content">
-			@foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
+            @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
             <div class="tab-pane {{ $loop->first ? 'active':'' }}" id="{{ $currencyName.'report__table' }}" role="tabpanel">
                 <div class="kt-portlet">
 
@@ -391,21 +395,19 @@
                                         </thead>
                                         <tbody>
                                             <script>
-                                                 window['currentTable{{ $currencyName }}'] = null;
+                                                window['currentTable{{ $currencyName }}'] = null;
 
                                             </script>
                                             @php
                                             @endphp
                                             @foreach($customerInvoicesBalances as $index=>$customerInvoicesBalancesAsStdClass)
-											@if($currencyName == $customerInvoicesBalancesAsStdClass->currency)
+                                            @if( $currencyName == $customerInvoicesBalancesAsStdClass->currency)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                                {{-- <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif</td> --}}
                                                 <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                                 <td class="sub-text-bg  max-w-name is-name-cell ">{{ $customerInvoicesBalancesAsStdClass->customer_name }}</td>
                                                 <td class="sub-text-bg text-center max-w-currency">{{ $currencyName }}</td>
                                                 <td class="sub-text-bg text-center max-w-amount">{{ number_format($customerInvoicesBalancesAsStdClass->net_balance) }}</td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
-                                                    {{-- <button class="btn btn-sm btn-success">{{ __('Statement Report') }}</button> --}}
                                                     @if($currencyName && $customerInvoicesBalancesAsStdClass->customer_name)
                                                     <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
                                                     @endif
@@ -415,24 +417,9 @@
                                                     <a href="{{ route('view.invoice.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
                                                     @endif
                                                 </td>
-                                                {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
-
-
-                                                {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
-
                                             </tr>
-											@endif 
-
-
-
-
-
-
-
-
-
+                                            @endif
                                             @endforeach
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -441,18 +428,8 @@
 
                             @push('js')
                             <script>
-                                 window['table{{ $currencyName }}'] = $(".table-for-currency-{{ $currencyName }}");
-
-
-
-
-
-
+                                window['table{{ $currencyName }}'] = $(".table-for-currency-{{ $currencyName }}");
                                 window['table{{ $currencyName }}'].DataTable({
-
-
-
-
                                         dom: 'Bfrtip'
 
                                         , "processing": false
@@ -494,7 +471,7 @@
                     </div>
                 </div>
             </div>
-			@endforeach 
+            @endforeach
         </div>
 
 
@@ -534,7 +511,7 @@
 <script>
 
 
-  
+
 </script>
 
 @endsection

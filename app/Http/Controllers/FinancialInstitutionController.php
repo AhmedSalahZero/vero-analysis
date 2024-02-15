@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\Bank;
 use App\Models\Branch;
+use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
@@ -44,6 +45,7 @@ class FinancialInstitutionController
 	}
 	public function index(Company $company,Request $request)
 	{
+		$financialInst = new CertificatesOfDeposit();
 		
 		$type = $request->get('active') ;
 		$user = $request->user()->load('financialInstitutions') ;
@@ -116,7 +118,6 @@ class FinancialInstitutionController
     }
 	
 	public function store(Company $company , Request $request){
-		
 		$type = $request->get('type');
 		$data = $request->only(['type','branch_name']);
 		$accounts = $type == 'bank' ? $request->get('accounts',[]) : [];
@@ -125,7 +126,7 @@ class FinancialInstitutionController
 		$additionalData = [];
 
 		if($type =='bank'){
-			$additionalData = ['bank_id','company_account_number','swift_code','iban_code','current_account_number','main_currency','balance_amount'] ;
+			$additionalData = ['bank_id','company_account_number','iban','main_currency'] ;
 		}
 		else{
 			$additionalData = ['name'] ;
@@ -136,18 +137,8 @@ class FinancialInstitutionController
 		}
 		$data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
 		$financialInstitution = FinancialInstitution::create($data);
-		foreach($accounts as $accountArr){
-			$balanceDate = $accountArr['balance_date'] ?? null  ;
-			$financialInstitution->accounts()->create([
-				'account_number'=>$accountArr['account_number'],
-				'currency'=>$accountArr['currency'],
-				'balance_amount'=>$accountArr['balance_amount'],
-				'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
-			]);
-		}
-		
+		$financialInstitution->storeNewAccounts($accounts,$data['balance_date']);
 		$activeTab = $this->getActiveTab($type);
-		
 		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
@@ -162,13 +153,11 @@ class FinancialInstitutionController
 	}
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution){
 		$banks = Bank::pluck('view_name','id');
-		// $selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		
         return view('reports.financial-institution.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			// 'selectedBanks'=>$selectedBanks,
 			'model'=>$financialInstitution
 		]);
 		
@@ -176,8 +165,6 @@ class FinancialInstitutionController
 	
 	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution){
 		$type = $request->get('type');
-		$accounts = $type == 'bank' ? $request->get('accounts',[]) : [];
-		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only(['type','branch_name']);
 		$additionalData = [];
@@ -187,27 +174,11 @@ class FinancialInstitutionController
 		else{
 			$additionalData = ['name'] ;
 		}
-		
 		foreach($additionalData as $name){
 			$data[$name] = $request->get($name);
 		}
 		$data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
-	
-		
 		$financialInstitution->update($data);
-		$financialInstitution->accounts->each(function($settlement){
-			$settlement->delete();
-		});
-		
-		foreach($accounts as $accountArr){
-			$balanceDate = $accountArr['balance_date'] ?? null  ;
-			$financialInstitution->accounts()->create([
-				'account_number'=>$accountArr['account_number'],
-				'currency'=>$accountArr['currency'],
-				'balance_amount'=>$accountArr['balance_amount'],
-				'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
-			]);
-		}
 		 $activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 		
@@ -221,6 +192,22 @@ class FinancialInstitutionController
 		});
 		$financialInstitution->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
+	}
+	public function getAccountNumbersBasedOnCurrency(Company $company , Request $request , FinancialInstitution $financialInstitution,?string $currency)
+	{
+		$financialInstitution->accounts;
+	}
+	public function addAccount(Company $company , Request $request , FinancialInstitution $financialInstitution)
+	{
+		return view('reports.financial-institution.add-account',[
+			'company'=>$company,
+			'financialInstitution'=>$financialInstitution,
+		]);
+	}
+	public function storeAccount(Company $company , Request $request , FinancialInstitution $financialInstitution)
+	{
+		$accounts = $request->get('accounts',[]) ;
+		$financialInstitution->storeNewAccounts($accounts,null,true);
 	}
 
 	

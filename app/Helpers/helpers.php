@@ -4747,3 +4747,15 @@ function array_to_upper(array $items)
 	}
 	return $result ;
 }
+function findByKey(array $items , $key , $searchId )
+{
+	foreach($items as $item){
+		if(isset($item[$key]) && $item[$key] == $searchId){
+			return $item;
+		}
+	}
+	return [];
+}
+function touppercase($currentName){
+	return Str::upper($currentName);
+}

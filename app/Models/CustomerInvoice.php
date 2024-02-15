@@ -161,12 +161,14 @@ class CustomerInvoice extends Model
     public function getNetInvoiceAmount()
     {
 		$netInvoiceAmount = $this->net_invoice_amount ?:0 ; 
-        return  $netInvoiceAmount + $this->getVatAmount();
+		return $netInvoiceAmount;
+        // return  $netInvoiceAmount + $this->getVatAmount();
     }
 	public function getNetInvoiceInMainCurrencyAmount()
     {
 		$netInvoiceAmount = $this->net_invoice_amount_in_main_currency ?:0 ; 
-        return  $netInvoiceAmount + $this->getVatAmount();
+		return $netInvoiceAmount;
+        // return  $netInvoiceAmount + $this->getVatAmount();
     }
 	public function getNetInvoiceAmountFormatted()
 	{

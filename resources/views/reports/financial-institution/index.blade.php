@@ -196,7 +196,6 @@
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-
                                     <th class="align-middle">{{ __('#') }}</th>
                                     <th class="align-middle">{{ __('Name') }}</th>
                                     <th class="align-middle">{{ __('Branch Name') }}</th>
@@ -309,6 +308,10 @@
 
 </script>
 <script>
+	$('button[data-dismiss-modal="inner-modal"]').click(function () {
+		$(this).closest('.modal').modal('hide');
+	});
+
     $(document).on('change', '.js-search-modal', function() {
         const searchFieldName = $(this).val();
         const popupType = $(this).attr('data-type');

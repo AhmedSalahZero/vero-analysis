@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Models\Bank;
+use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 
 class FinancialInstitution extends Model
 {
@@ -19,6 +20,9 @@ class FinancialInstitution extends Model
 	{
 		$builder->where('type','bank');
 	}
+	/**
+	 * * نوع المؤسسة المالية وليكن مثلا بنك
+	 */
 	public function getType():string 
 	{
 		return $this->type ;
@@ -47,33 +51,16 @@ class FinancialInstitution extends Model
 	{
 		return $this->branch_name ;
 	}
+	/**
+	 * * هو رقم مميز للحساب الرئيسي زي ال الاي دي وبالتالي هو يختلف عن رقم الحساب نفسه 
+	 */
 	public function getCompanyAccountNumber()
 	{
 		return $this->company_account_number ; 
 	}
-	public function getSwiftCode()
-	{
-		return $this->swift_code ; 
-	}
-	public function getIbanCode()
-	{
-		return $this->iban_code ; 
-	}
-	public function getCurrentAccountNumber()
-	{
-		return $this->current_account_number ;
-	}
-	
-	public function getBalanceAmount()
-	{
-		return $this->balance_amount ?: 0 ;
-	}
-	public function getBalanceAmountFormatted()
-	{
-		$balanceAmount = $this->getBalanceAmount();
-		
-		return $balanceAmount ? number_format($balanceAmount,0) : 0  ;
-	}
+	/**
+	 * * تاريخ المبالغ الماليه اللي معايا في حساباتي في المؤسسة المالية دي 
+	 */
 	public function getBalanceDate()
 	{
 		return $this->balance_date ;
@@ -107,6 +94,10 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'financial_institution_id','id');
 	}
+	public function certificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id');
+	}
 	public function cleanOverdrafts()
 	{
 		return $this->hasMany(CleanOverdraft::class , 'financial_institution_id','id');
@@ -118,6 +109,26 @@ class FinancialInstitution extends Model
 	public function LetterOfCreditFacilities()
 	{
 		return $this->hasMany(LetterOfCreditFacility::class , 'financial_institution_id','id');
+	}
+	public function storeNewAccounts(array $accounts,string $startDate = null,$inAddAdditionalAccountForm = false)
+	{
+		foreach($accounts as $index=>$accountArr){
+			$isMainAccount = $inAddAdditionalAccountForm ? false : $index == 0 ;
+			$account = $this->accounts()->create([
+				'account_number'=>$accountArr['account_number'],
+				'balance_amount'=>$accountArr['balance_amount'],
+				'exchange_rate'=>$accountArr['exchange_rate'],
+				'currency'=>$isMainAccount ?'egp': strtolower($accountArr['currency']),
+				'iban'=>$accountArr['iban'],
+				'is_main_account'=>$isMainAccount // الحساب المصري
+			]);
+			$startDate = isset($accountArr['start_date']) && $accountArr['start_date'] ? Carbon::make($accountArr['start_date'])->format('Y-m-d') : $startDate;
+			$account->accountInterests()->create([
+				'interest_rate'=>$accountArr['interest_rate'],
+				'min_balance'=>$accountArr['min_balance'],
+				'start_date'=>$startDate
+			]);
+		}
 	}
 	
 }

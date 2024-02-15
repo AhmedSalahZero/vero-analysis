@@ -37,6 +37,33 @@ namespace App{
 
 namespace App\Models{
 /**
+ * * اسعار الفايده المخصصة لهذا الحساب
+ * * لانه في حاله تغيرت لابد من تتبعها لان النهاردا ممكن يكون علي الحساب دا سعر فايده معينه وممكن الشهر الجي يتغير وهكذا
+ *
+ * @property int $id
+ * @property int $financial_institution_account_id
+ * @property string|null $start_date
+ * @property string|null $interest_rate
+ * @property string|null $min_balance
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\FinancialInstitutionAccount $financialInstitutionAccount
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereFinancialInstitutionAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereMinBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereUpdatedAt($value)
+ */
+	class AccountInterest extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\ActiveJob
  *
  * @property int $id
@@ -441,6 +468,49 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUpdatedBy($value)
  */
 	class Category extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * * توفر شهادات الإيداع ) (CDsللمدخر ين طر يقة لكسب معدل فائدة أعلى على مدخراتك مقابل الموافقة على حجز
+ * *    أموالك لفترة زمنية محددة - مع الحفاظ على أموالك آمنة بفضل حمايتها من البنك المركزي
+ *
+ * @property int $id
+ * @property int $financial_institution_id
+ * @property string|null $account_number
+ * @property string|null $amount
+ * @property string|null $currency
+ * @property string $interest_rate
+ * @property string $interest_amount
+ * @property int $maturity_amount_added_to_account_id
+ * @property string|null $start_date
+ * @property string|null $end_date
+ * @property int|null $company_id
+ * @property int|null $created_by
+ * @property int|null $update_by
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\FinancialInstitution $financialInstitution
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereFinancialInstitutionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereInterestAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereMaturityAmountAddedToAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereUpdateBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereUpdatedAt($value)
+ */
+	class CertificatesOfDeposit extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -1017,11 +1087,6 @@ namespace App\Models{
  * @property int|null $bank_id
  * @property string|null $name
  * @property string|null $company_account_number
- * @property string|null $swift_code
- * @property string|null $iban_code
- * @property string|null $current_account_number
- * @property string|null $main_currency
- * @property string|null $balance_amount
  * @property string|null $balance_date
  * @property int|null $company_id
  * @property int|null $created_by
@@ -1035,14 +1100,16 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FinancialInstitutionAccount[] $accounts
  * @property-read int|null $accounts_count
  * @property-read \App\Models\Bank|null $bank
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CertificatesOfDeposit[] $certificatesOfDeposits
+ * @property-read int|null $certificates_of_deposits_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CleanOverdraft[] $cleanOverdrafts
  * @property-read int|null $clean_overdrafts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OverdraftAgainstCommercialPaper[] $overdraftAgainstCommercialPapers
  * @property-read int|null $overdraft_against_commercial_papers_count
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution onlyBanks()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution query()
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereBalanceAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereBalanceDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereBranchName($value)
@@ -1050,12 +1117,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereCurrentAccountNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereIbanCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereMainCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereSwiftCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereUpdatedBy($value)
@@ -1072,20 +1135,26 @@ namespace App\Models{
  * @property string|null $account_number
  * @property string|null $currency
  * @property float|null $balance_amount
- * @property string|null $balance_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $iban
+ * @property int|null $is_main_account
+ * @property string|null $exchange_rate
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\AccountInterest[] $accountInterests
+ * @property-read int|null $account_interests_count
  * @property-read \App\Models\FinancialInstitution|null $financialInstitution
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount query()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereBalanceAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereBalanceDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereExchangeRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereFinancialInstitutionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereIban($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereIsMainAccount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereUpdatedAt($value)
  */
 	class FinancialInstitutionAccount extends \Eloquent {}
@@ -3763,6 +3832,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CertificatesOfDeposit[] $certificatesOfDeposits
+ * @property-read int|null $certificates_of_deposits_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CleanOverdraft[] $cleanOverdraft
  * @property-read int|null $clean_overdraft_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Company[] $companies

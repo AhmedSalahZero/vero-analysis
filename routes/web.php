@@ -113,7 +113,6 @@ Route::middleware([])->group(function () {
 				
 				Route::post('get-type-based-on-dates', [FilterMainTypeBasedOnDatesController::class, '__invoke'])->name('get.type.based.on.dates');
 
-
 				Route::get('income-statement', [IncomeStatementController::class, 'view'])->name('admin.view.income.statement');
 				Route::get('income-statement/create', [IncomeStatementController::class, 'create'])->name('admin.create.income.statement');
 				Route::get('income-statement-report/{incomeStatement}/edit', [IncomeStatementController::class, 'editItems']);
@@ -336,12 +335,22 @@ Route::middleware([])->group(function () {
 				Route::put('financial-institutions/update/{financialInstitution}', 'FinancialInstitutionController@update')->name('update.financial.institutions');
 				Route::delete('financial-institutions/delete/{financialInstitution}', 'FinancialInstitutionController@destroy')->name('delete.financial.institutions');
 				
+				
+				Route::get('get-financial-institution-accounts-number-based-on-currency/{financialInstitution}/{currency}','FinancialInstitutionController@getAccountNumbersBasedOnCurrency');
+				
 				Route::get('financial-institutions', 'FinancialInstitutionController@index')->name('view.financial.institutions');
 				Route::get('financial-institutions/create/{model?}', 'FinancialInstitutionController@create')->name('create.financial.institutions');
 				Route::post('financial-institutions/create', 'FinancialInstitutionController@store')->name('store.financial.institutions');
 				Route::get('financial-institutions/edit/{financialInstitution}', 'FinancialInstitutionController@edit')->name('edit.financial.institutions');
 				Route::put('financial-institutions/update/{financialInstitution}', 'FinancialInstitutionController@update')->name('update.financial.institutions');
 				Route::delete('financial-institutions/delete/{financialInstitution}', 'FinancialInstitutionController@destroy')->name('delete.financial.institutions');
+				
+				Route::get('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@addAccount')->name('financial.institution.add.account');
+				Route::post('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@storeAccount')->name('financial.institution.store.account');
+				Route::get('financial-institution-accounts/edit/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@edit')->name('edit.financial.institutions.account');
+				Route::put('financial-institution-accounts/update/{financialInstitutionAccount}', 'financialInstitutionAccountController@update')->name('update.financial.institutions.account');
+				Route::delete('financial-institution-accounts/delete/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@destroy')->name('delete.financial.institutions.account');
+				
 				
 				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper','OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');
 				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create','OverdraftAgainstCommercialPaperController@create')->name('create.overdraft.against.commercial.paper');
@@ -356,6 +365,15 @@ Route::middleware([])->group(function () {
 				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}','CleanOverdraftController@edit')->name('edit.clean.overdraft');
 				Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}','CleanOverdraftController@update')->name('update.clean.overdraft');
 				Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}','CleanOverdraftController@destroy')->name('delete.clean.overdraft');
+				
+				
+				// bank certificate of deposit
+				Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit','CertificatesOfDepositsController@index')->name('view.certificates.of.deposit');
+				Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit/create','CertificatesOfDepositsController@create')->name('create.certificates.of.deposit');
+				Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/create','CertificatesOfDepositsController@store')->name('store.certificates.of.deposit');
+				Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit/edit/{certificatesOfDeposit}','CertificatesOfDepositsController@edit')->name('edit.certificates.of.deposit');
+				Route::put('financial-institutions/{financialInstitution}/certificates-of-deposit/update/{certificatesOfDeposit}','CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
+				Route::delete('financial-institutions/{financialInstitution}/certificates-of-deposit/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
 				
 				
 				Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility','LetterOfGuaranteeFacilityController@index')->name('view.letter.of.guarantee.facility');

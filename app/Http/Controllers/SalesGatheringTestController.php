@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-// use Maatwebsite\Excel\Facades\يي;
 
 class SalesGatheringTestController extends Controller
 {
@@ -69,22 +68,15 @@ class SalesGatheringTestController extends Controller
 			foreach ($cacheKeys as $cacheKey) {
 				$salesGatherings = array_merge(Cache::get($cacheKey->key_name) ?: [], $salesGatherings);
 			}
-
 			$salesGatherings = $this->paginate($salesGatherings);
-// dd($salesGatherings);
 			$exportableFields  = (new ExportTable)->customizedTableField($company, $modelName, 'selected_fields');
-		
 			$viewing_names = array_values($exportableFields);
 			$db_names = array_keys($exportableFields);
 			return view('client_view.sales_gathering.import', compact('company', 'salesGatherings', 'viewing_names', 'db_names','modelName','importHeaderText'));
 		} else {
-
-
 			// Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
 			$exportable_fields = (new ExportTable)->customizedTableField($company, $modelName, 'selected_fields');
-
 			// Customizing the collection to be exported
-
 			$salesGathering_fields = [];
 			foreach ($exportable_fields as $field_name => $column_name) {
 				$salesGathering_fields[$field_name] = $column_name;
@@ -103,7 +95,6 @@ class SalesGatheringTestController extends Controller
 				]);
 			}
 			$validationCacheKey = generateCacheKeyForValidationRow($company_id,$modelName);
-			// dd($validationCacheKey);
 			Cache::forget($validationCacheKey);
 			
 			// for  Labeling Item Only 
@@ -119,7 +110,6 @@ class SalesGatheringTestController extends Controller
 				]);
 				
 				
-			// dd($fileUpload->getRowCount());
 
 
 

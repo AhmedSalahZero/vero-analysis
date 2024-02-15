@@ -16,7 +16,7 @@ return [
 
 	// 'default' => 'mysql_production',
 	'default' => 'mysql',
-
+    'migrations' => 'migrations',
 	/*
     |--------------------------------------------------------------------------
     | Database Connections

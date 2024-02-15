@@ -13,7 +13,7 @@
     <title>VERO ANALYSIS</title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-{{-- <style>
+    {{-- <style>
 
 .kt-portlet .kt-portlet__body{
 	padding:25px !important;
@@ -23,39 +23,40 @@
 
 
     <style>
-::placeholder{
-	color:lightgray !important;
-	font-weight:100;
-}	
-	 .visibility-hidden {
-        visibility: hidden !important;
-    }
-	
-.income-statement-table{
-}
-.btn-border-radius{
-        border-radius:10px !important;
-    }
-	
-.income-statement-table .main-level-tr td ,
-.income-statement-table .main-level-tr th
-{
-    background-color:#9FC9FB !important ;
-    border:1px solid #fff ;
-    
-}
-.income-statement-table .main-level-tr td:first-of-type ,
-.income-statement-table .main-level-tr td:nth-of-type(2) ,
-.income-statement-table .main-level-tr th:first-of-type,
-.income-statement-table .main-level-tr th:nth-of-type(2)
-{
-    background-color:#9FC9FB !important;
-}
-.income-statement-table .sub-level-tr td ,
-.income-statement-table .sub-level-tr th
-{
-    background-color:#fff !important ;
-}
+        ::placeholder {
+            color: lightgray !important;
+            font-weight: 100;
+        }
+
+        .visibility-hidden {
+            visibility: hidden !important;
+        }
+
+        .income-statement-table {}
+
+        .btn-border-radius {
+            border-radius: 10px !important;
+        }
+
+        .income-statement-table .main-level-tr td,
+        .income-statement-table .main-level-tr th {
+            background-color: #9FC9FB !important;
+            border: 1px solid #fff;
+
+        }
+
+        .income-statement-table .main-level-tr td:first-of-type,
+        .income-statement-table .main-level-tr td:nth-of-type(2),
+        .income-statement-table .main-level-tr th:first-of-type,
+        .income-statement-table .main-level-tr th:nth-of-type(2) {
+            background-color: #9FC9FB !important;
+        }
+
+        .income-statement-table .sub-level-tr td,
+        .income-statement-table .sub-level-tr th {
+            background-color: #fff !important;
+        }
+
         input,
         select,
         .filter-option-inner-inner {
@@ -109,10 +110,10 @@
             font-weight: bold;
             margin-right: 10px;
         }
-	
 
-		
-   
+
+
+
 
         .small-caps {
             font-variant: small-caps;
@@ -229,112 +230,122 @@
         }
 
     </style>
-    
-	
-<style>
-.dtfc-right-top-blocker{
-	display:none !important;
-}
-#kt_subheader{
-	z-index:1;
-}
-.font-size-1-25rem{
-	font-size:1.3rem !important;
-}
-.border-none{
-	border:none !important;
-}
 
-.font-size-1.6rem{
-	font-size:1.6rem !important;
-}
-thead th {
-	text-align:center !important;
-	
-}
-body .kt-subheader{
-	padding:15px 0 !important;
-	    padding-bottom: 0 !important;
-    margin: 0 !important;
-}
-</style>
-<style>
-#add-row{
-	border-color:green;
-	background-color:green;
-	color:white;
-}
-.tooltip-inner{
-	text-align:left !important;
-}
-.font-1-5{
-	font-size:1.5rem !important;
-}
-</style>
-@if(in_array('Result',Request()->segments()) && in_array('SalesGathering',Request()->segments()))
-<style>
 
-tr td:first-of-type{
-	white-space:normal !important ;
-}
+    <style>
+        .dtfc-right-top-blocker {
+            display: none !important;
+        }
 
-</style>
-@endif 
-<style>
-.max-w-classes
-{
-	width:350px !important;
-	min-width:350px !important;
-	max-width:350px !important;
-	white-space:normal !important;
-}
-</style>
-@if(in_array('TwoDimensionalBreakdown',Request()->segments()))
-<style>
-.kt_table_with_no_pagination  td {
-		width:110px !important;
-	min-width:110px !important;
-	max-width:110px !important;
-	white-space:normal !important;
-}
-</style>
+        #kt_subheader {
+            z-index: 1;
+        }
 
-@endif 
+        .font-size-1-25rem {
+            font-size: 1.3rem !important;
+        }
 
-@if(
-	!in_array('uploading',Request()->segments())&&
-	!in_array('salesGatheringImport',Request()->segments())&&
-	!in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index' && !in_array('ForecastedSalesValues',Request()->segments()))
-<style>
+        .border-none {
+            border: none !important;
+        }
 
-.table-active:not(.remove-max-class) th:first-of-type,
-.group-color th:first-of-type,
-.group-color td:first-of-type,
-.kt_table_with_no_pagination th:first-of-type,
-.kt_table_with_no_pagination_no_fixed_right  th:first-of-type
-.kt_table_with_no_pagination_no_fixed_right  td:first-of-type
-{
-	width:350px !important;
-	min-width:350px !important;
-	max-width:350px !important;
-	white-space:normal !important;
-}
-</style>
-@endif 
+        .font-size-1.6rem {
+            font-size: 1.6rem !important;
+        }
 
-<style>
-.table-title{
-	color:red;
-	
-}
-.edit-modal-icon{
+        thead th {
+            text-align: center !important;
 
-	color:#046187 !important;
-}
-.fas.fa-trash-alt{
-	color:#ea1b1b !important;
-}
-</style>
+        }
+
+        body .kt-subheader {
+            padding: 15px 0 !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
+        }
+
+    </style>
+    <style>
+        #add-row {
+            border-color: green;
+            background-color: green;
+            color: white;
+        }
+
+        .tooltip-inner {
+            text-align: left !important;
+        }
+
+        .font-1-5 {
+            font-size: 1.5rem !important;
+        }
+
+    </style>
+    @if(in_array('Result',Request()->segments()) && in_array('SalesGathering',Request()->segments()))
+    <style>
+        tr td:first-of-type {
+            white-space: normal !important;
+        }
+
+    </style>
+    @endif
+    <style>
+        .max-w-classes {
+            width: 350px !important;
+            min-width: 350px !important;
+            max-width: 350px !important;
+            white-space: normal !important;
+        }
+
+    </style>
+    @if(in_array('TwoDimensionalBreakdown',Request()->segments()))
+    <style>
+        .kt_table_with_no_pagination td {
+            width: 110px !important;
+            min-width: 110px !important;
+            max-width: 110px !important;
+            white-space: normal !important;
+        }
+
+    </style>
+
+    @endif
+
+    @if(
+    !in_array('uploading',Request()->segments())&&
+    !in_array('salesGatheringImport',Request()->segments())&&
+    !in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index' && !in_array('ForecastedSalesValues',Request()->segments()))
+    <style>
+        .table-active:not(.remove-max-class) th:first-of-type,
+        .group-color th:first-of-type,
+        .group-color td:first-of-type,
+        .kt_table_with_no_pagination th:first-of-type,
+        .kt_table_with_no_pagination_no_fixed_right th:first-of-type .kt_table_with_no_pagination_no_fixed_right td:first-of-type {
+            width: 350px !important;
+            min-width: 350px !important;
+            max-width: 350px !important;
+            white-space: normal !important;
+        }
+
+    </style>
+    @endif
+
+    <style>
+        .table-title {
+            color: red;
+
+        }
+
+        .edit-modal-icon {
+
+            color: #046187 !important;
+        }
+
+        .fas.fa-trash-alt {
+            color: #ea1b1b !important;
+        }
+
+    </style>
 
     {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
@@ -426,16 +437,16 @@ tr td:first-of-type{
 
             $(document).find('select.select2-select').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
-			
-			if($(this).selectpicker){
-				
-                $(this).selectpicker({
-                    maxOptions: maxOption,
-                    //   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
-                    buttons: ['selectMax', 'disableAll']
-                });
-                $(this).data('max-options', maxOption);
-			}
+
+                if ($(this).selectpicker) {
+
+                    $(this).selectpicker({
+                        maxOptions: maxOption,
+                        //   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
+                        buttons: ['selectMax', 'disableAll']
+                    });
+                    $(this).data('max-options', maxOption);
+                }
 
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[{{ __("Max:") }}' + maxOption + ']');
 
@@ -506,20 +517,22 @@ tr td:first-of-type{
     <link href="{{url('datatable/datatable.css')}}" rel="stylesheet" type="text/css" />
     <!--end::Global Theme Styles -->
     <style>
-	
-	.bg-green{
-		background-color:green;
-	}
-	.border-green{
-		border-color:green;
-	}
-	
-	.bg-red{
-		background-color:red;
-	}
-	.border-red {
-		background-color:green ;
-	}
+        .bg-green {
+            background-color: green;
+        }
+
+        .border-green {
+            border-color: green;
+        }
+
+        .bg-red {
+            background-color: red;
+        }
+
+        .border-red {
+            background-color: green;
+        }
+
         .arrow-nav {
             font-size: 18px;
             color: white !important;
@@ -566,28 +579,28 @@ tr td:first-of-type{
 
     </style> --}}
 
-	@if( !in_array('financial-statement',Request()->segments()) )
-	<style>
-		label{
-			font-weight:700 !important ; 
-			font-size:1rem !important;
-			color:#646c9a !important;  
-		}
-	</style>
-	@endif 
-	   <style>
-	   
-	.flex-center{
-		display:flex;
-		align-items:center;
-		justify-content:center;
-		height:100%;
-	}
+    @if( !in_array('financial-statement',Request()->segments()) )
+    <style>
+        label {
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            color: #646c9a !important;
+        }
+
+    </style>
+    @endif
+    <style>
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
         table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style) {
             color: black !important;
             font-weight: bold !important;
         }
-	
 
     </style>
 
@@ -881,8 +894,8 @@ tr td:first-of-type{
         }
 
     </style>
-	
-	
+
+
 
     <script>
         function array_sum(array) {
@@ -907,9 +920,9 @@ tr td:first-of-type{
 <!-- begin::Body -->
 <body data-lang="{{app()->getLocale()}}" data-base-url="{{\Illuminate\Support\Facades\URL::to('/')}}" data-current-company-id="{{ $company->id ?? 0  }}" data-token="{{ csrf_token() }}" style="background-image: url({{url('assets/media/demos/demo4/header.jpg')}}); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
     @php
-		$user = Auth()->user();
-	@endphp
-	{{-- <div style="width: 100%;
+    $user = Auth()->user();
+    @endphp
+    {{-- <div style="width: 100%;
 	height: 100%;
 	position: fixed;
 
@@ -964,7 +977,7 @@ tr td:first-of-type{
                                 <div class="kt-subheader__main">
                                     <h3 class="kt-subheader__title" style="font-variant: small-caps;">
                                         @yield('sub-header')
-										
+
                                     </h3>
                                     <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn"><i class="la la-close"></i></button>
                                     <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
@@ -1063,7 +1076,7 @@ tr td:first-of-type{
     <script src="{{url('assets/vendors/general/bootstrap-timepicker/js/bootstrap-timepicker.min.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/bootstrap-daterangepicker/daterangepicker.js')}}" type="text/javascript"></script>
     <script src="{{url('assets/vendors/general/bootstrap-switch/dist/js/bootstrap-switch.js')}}" type="text/javascript"></script>
-	
+
     <script>
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
@@ -1215,10 +1228,10 @@ tr td:first-of-type{
         $(document).ajaxComplete(function() {
             $('select.select2-select').prop('disabled', false);
             $('#loader_id').addClass('hide_class');
-			if($('select.select2-select').selectpicker){
-            $('select.select2-select').selectpicker('refresh');
-				
-			}
+            if ($('select.select2-select').selectpicker) {
+                $('select.select2-select').selectpicker('refresh');
+
+            }
         })
 
     </script>
@@ -1257,11 +1270,11 @@ tr td:first-of-type{
     </script>
 
     @endif
-	
-	
 
-	  @if(isset($errors) &&$errors&& count($errors))
-				    <script>
+
+
+    @if(isset($errors) &&$errors&& count($errors))
+    <script>
         toastr.error('{{ session()->get("errors")->first() }}')
 
     </script>
@@ -1276,7 +1289,7 @@ tr td:first-of-type{
         function hasAttribute(attr) {
             return typeof attr !== 'undefined' && attr !== false;
         }
-		  
+
 
         function exportToExcel(xlsx) {
 
@@ -1289,18 +1302,17 @@ tr td:first-of-type{
             if (companyName) {
                 eachInRow += 1;
             }
-			
+
 
 
             let reportName = $('.kt-subheader__title').html().trim() || $('.kt-portlet__head-title').html().trim();
-			if($('#report__title_for_labeling').length){
-                companyName +=  ' (' + $('#report__title_for_labeling').val() + ' )' ;
-			}
-            else if (reportName) {
+            if ($('#report__title_for_labeling').length) {
+                companyName += ' (' + $('#report__title_for_labeling').val() + ' )';
+            } else if (reportName) {
                 companyName += ' (' + reportName + ' )';
             }
-			
-			
+
+
             let start_date = "{{ isset($start_date) ? $start_date : '' }}";
             let end_date = "{{ isset($end_date) ? $end_date : '' }}";
             let date = "{{ isset($date) ? $date : '' }}";
@@ -1347,7 +1359,7 @@ tr td:first-of-type{
             currentColumn = 'A'
             currentColumnHeaders = 'A'
             rows = ' ';
-	
+
             rows += Addrow(1, [{
                 k: 'A'
                 , v: companyName
@@ -1386,15 +1398,16 @@ tr td:first-of-type{
 
 
     @if(isset($company) && $company->id)
-	@if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName )))
-	<script>
-	Swal.fire({
-		  title: "{{ __('Error While Importing Excel File') }}"
-                , text: "{{ CacheGetAndRemove(generateCacheFailedName($company->id , auth()->user()->id,$modelName )) }}"
-                , icon: 'error'
-	});
-	</script>
-	@endif 
+    @if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName )))
+    <script>
+        Swal.fire({
+            title: "{{ __('Error While Importing Excel File') }}"
+            , text: "{{ CacheGetAndRemove(generateCacheFailedName($company->id , auth()->user()->id,$modelName )) }}"
+            , icon: 'error'
+        });
+
+    </script>
+    @endif
     <script>
         $(document).on('click', '.delete-record-btn', function(e) {
             e.preventDefault();
@@ -1448,27 +1461,27 @@ tr td:first-of-type{
                 let mainType = $('input[name="main_type"]').val();
                 let subType = $('input[name="type"]').val();
                 let appendTo = $('#append-to').val();
-				let isIntervalComarping = $('#report_type').val() === 'comparing'
-				if(isIntervalComarping){
-					let firstStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date"]').val();
-					let secondStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date_second"]').val();
-					let firstEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date"]').val();
-					let secondEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date_second"]').val();
-					if(Date.parse(firstStartDate) <= Date.parse(secondStartDate)){
-						startDate = firstStartDate;
-					}else{
-						startDate = secondStartDate;
-					}
-					if(Date.parse(firstEndDate) >= Date.parse(secondEndDate)){
-						endDate = firstEndDate;
-					}else{
-						endDate = secondEndDate;
-					}
-					console.log(startDate,endDate);
-					
-					
-				}
-				console.log(startDate,endDate)
+                let isIntervalComarping = $('#report_type').val() === 'comparing'
+                if (isIntervalComarping) {
+                    let firstStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date"]').val();
+                    let secondStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date_second"]').val();
+                    let firstEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date"]').val();
+                    let secondEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date_second"]').val();
+                    if (Date.parse(firstStartDate) <= Date.parse(secondStartDate)) {
+                        startDate = firstStartDate;
+                    } else {
+                        startDate = secondStartDate;
+                    }
+                    if (Date.parse(firstEndDate) >= Date.parse(secondEndDate)) {
+                        endDate = firstEndDate;
+                    } else {
+                        endDate = secondEndDate;
+                    }
+                    console.log(startDate, endDate);
+
+
+                }
+                console.log(startDate, endDate)
 
 
                 $.ajax({
@@ -1500,23 +1513,24 @@ tr td:first-of-type{
 
     </script>
     @endif
-	
-	
-<script src="{{ asset('global.js') }}"></script>
-
-@stack('js_end')
-<script>
-$('#report_type[name="report_type"]').on('change',function(){
-	$('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
-})
-$('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
-</script>
-
-<script>
 
 
-</script>
-  <script>
+    <script src="{{ asset('global.js') }}"></script>
+
+    @stack('js_end')
+    <script>
+        $('#report_type[name="report_type"]').on('change', function() {
+            $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
+        })
+        $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigger('change')
+
+    </script>
+
+    <script>
+
+
+    </script>
+    <script>
         $(function() {
             $(document).on('click', '.filter-btn-class', function(e) {
                 e.preventDefault();
@@ -1531,7 +1545,7 @@ $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigg
                 }
             });
 
-           
+
 
             $(document).on('click', '.submit-form-btn', function(e) {
                 e.preventDefault();
@@ -1550,10 +1564,10 @@ $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigg
                     , contentType: false
                     , processData: false
                     , success: function(res) {
-								if(res.reloadCurrentPage){
-							return  window.location.reload()
-							
-						}
+                        if (res.reloadCurrentPage) {
+                            return window.location.reload()
+
+                        }
 
                         if (res.status) {
                             if (res.showAlert) {
@@ -1632,27 +1646,35 @@ $('#report_type[name="report_type"]').closest('.kt-portlet').find('input').trigg
                 if (id == 'child-trigger-1' && optionValue == 'Add New') {
                     $('.child-trigger').removeClass('d-none');
                     $('#' + id).removeClass('d-none');
-                }
-				else if (id == 'child-trigger-2' && optionValue == 'Add New') {
+                } else if (id == 'child-trigger-2' && optionValue == 'Add New') {
                     $('.child-trigger').removeClass('d-none');
                     $('.business_line_name').addClass('d-none');
-                }
-				else if (id == 'child-trigger-3' && optionValue == 'Add New') {
+                } else if (id == 'child-trigger-3' && optionValue == 'Add New') {
                     $('.child-trigger').removeClass('d-none');
                     $('.business_line_name').addClass('d-none');
                     $('.service_category_name').addClass('d-none');
-                }
-				 else {
+                } else {
                     $('.child-trigger').addClass('d-none');
                 }
             }
-			$('select.trigger-select-class.revenue_business_line_class').trigger('change');
+            $('select.trigger-select-class.revenue_business_line_class').trigger('change');
 
 
         });
 
     </script>
-	
+
+    <script>
+        function getDiffBetweenTwoDateInDays(firstDateAsString,secondDateAsString) {
+            const date1 = new Date(firstDateAsString);
+            const date2 = new Date(secondDateAsString);
+            const diffTime = Math.abs(date2 - date1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays 
+        }
+
+    </script>
+
 </body>
 
 <!-- end::Body -->

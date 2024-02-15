@@ -2,70 +2,96 @@
 
 namespace App\Models;
 
-use App\Models\Bank;
-use Carbon\Carbon;
+use App\Models\AccountInterest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class FinancialInstitutionAccount extends Model
 {
     protected $guarded = ['id'];
-	public function financialInstitution()
+
+    public function financialInstitution()
+    {
+        return $this->belongsTo(FinancialInstitution::class, 'financial_institution_id', 'id');
+    }
+
+	/**
+	 * * رقم الحساب ( رقم الفيزا مثلا)
+	 */
+    public function getAccountNumber()
+    {
+        return $this->account_number ;
+    }
+
+    /**
+     * *رقم الحساب البنكى الدولى International Bank Account Number وبذلك فهو يعبر عن رقم حسابك البنكى اثناء التحويلات البنكية الدولية وهذا الرقم يتم الحصول علية لكل الحسابات البنكية فى أغلب الدول حول العالم.
+     **	ولذلك لا يعتبر رقم الايبان رقم جديد لحسابك ولكن هو شكل وصيغة مختلفة لرقم الحساب ليتم التعرف علية دوليا بسهولة وبالتالى يساعد فى سرعة وسهولة ** التحويلات البنكية الدولية وتجنب العديد من الاخطاء التى قد تحدث وتتسبب فى تأخير وصول الدفعات والحوالات البنكية.
+     * *
+     * *
+     */
+    public function getIban()
+    {
+        return $this->iban ;
+    }
+
+    public function getMainCurrency()
+    {
+        return $this->main_currency ;
+    }
+
+	/**
+	 * * اجمالي الفلوس اللي معايا في الحساب دا
+	 */
+    public function getBalanceAmount()
+    {
+        return $this->balance_amount ?: 0 ;
+    }
+		// /**
+		//  * * نسب الفايدة اللي بخدها من الحساب دا ( احيانا بيكون فيه عروض بحيث انك تنشئ حساب وتاخد علي نسبة فايدة كل شهر مثلا)
+		//  */
+	public function accountInterests():HasMany
 	{
-		return $this->belongsTo(FinancialInstitution::class,'financial_institution_id','id');
+		return $this->hasMany(AccountInterest::class , 'financial_institution_account_id','id');
 	}
-	public function getAccountNumber()
-	{
-		return $this->account_number ; 
-	}
-	public function getSwiftCode()
-	{
-		return $this->swift_code ; 
-	}
-	public function getIbanCode()
-	{
-		return $this->iban_code ; 
-	}
-	public function getCurrentAccountNumber()
-	{
-		return $this->current_account_number ;
-	}
-	public function getMainCurrency()
-	{
-		return $this->main_currency ;
-	}
-	public function getBalanceAmount()
-	{
-		return $this->balance_amount ?: 0 ;
-	}
-	public function getBalanceDate()
-	{
-		return $this->balance_date ;
-	}
-	public function getId()
-	{
-		return $this->id ;
-	}
-	public function getCurrency()
-	{
-		return $this->currency;
-	}
-	// public function getBankId()
-    // {
-    //     return $this->bank_id ;
-    // }
-	// public function bank()
-	// {
-	// 	return $this->belongsTo(Bank::class ,'bank_id','id');
-	// }
-	// public function getBankName()
-	// {
-	// 	 return $this->bank ? $this->bank->getViewName() : __('N/A');
-	// }	
-	// public function getBankNameIn(string $lang)
-	// {
-	// 	 return $this->bank ? $this->bank['name_'.$lang] : __('N/A');
-	// }
 	
+	public function getExchangeRate()
+    {
+        return $this->exchange_rate ?: 1 ;
+    }
+	
+	
+	/**
+	 * * هو اول حساب بيدخلة اليوزر وبيكون دايما مصري لان ما ينفعش تنشئ حساب دولاري مثلا من غير الحساب المصري
+	 */
+    public function isMainAccount():bool
+	{
+		return (bool)$this->is_main_account;
+	}
+	
+	public function isMainAccountFormatted():string 
+	{
+		return $this->isMainAccount() ? __('Yes') : __('No');
+	}
+	
+	public function getCertificatesOfDeposits():HasMany
+	{
+		return $this->hasMany(CertificatesOfDeposit::class,'maturity_amount_added_to_account_id','id');
+	}
+	
+
+    public function getId()
+    {
+        return $this->id ;
+    }
+
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+	public function getCurrencyFormatted()
+	{
+		return Str::upper($this->getCurrency());
+	}
 	
 }

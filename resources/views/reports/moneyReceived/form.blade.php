@@ -198,7 +198,7 @@ input.form-control:not(.is-date-css)[readonly]
                                 <select id="js-currency-id" name="currency" class="form-control ajax-get-invoice-numbers">
                                     <option value="" selected>{{__('Select')}}</option>
 									@foreach(getBanksCurrencies() as $currencyId=>$currentName)
-                                    <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected':'' }} value="{{ $currencyId }}">{{ $currentName }}</option>
+                                    <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected':'' }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
 									@endforeach 
                                 </select>
                             </div>

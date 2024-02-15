@@ -23,7 +23,7 @@ class CleanOverdraft extends Model
 	}
 	public function getContractEndDateFormatted()
 	{
-		$contractEndDate = $this->getContractStartDate() ;
+		$contractEndDate = $this->getContractEndDate() ;
 		return $contractEndDate ? Carbon::make($contractEndDate)->format('d-m-Y'):null ;
 	}
 	public function getAccountNumber()
