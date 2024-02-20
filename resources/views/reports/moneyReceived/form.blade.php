@@ -321,7 +321,7 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-2 width-12">
                         <label>{{__('Account Type')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -335,7 +335,7 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-2 width-12">
                         <label>{{__('Account Number')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -491,7 +491,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                    <div class="col-md-2">
+                    <div class="col-md-2 width-12">
                         <label>{{__('Account Type')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -505,7 +505,7 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-2 width-12">
                         <label>{{__('Account Number')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
