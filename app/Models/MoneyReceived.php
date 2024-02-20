@@ -29,6 +29,10 @@ class MoneyReceived extends Model
     {
         return $this->getType() ==self::CASH_IN_BANK;
     }
+	public function isChequeInSafe()
+    {
+        return $this->getType() ==self::CHEQUE_IN_SAFE;
+    }
   
     public function isIncomingTransfer()
     {
@@ -106,9 +110,7 @@ class MoneyReceived extends Model
 	
 	/**
 	 * * drawee_bank
-		**					هو البنك اللي بنسحب منه الشيك وليكن مثلا شخص اداني شيك معين وقتها بروح اسحبه من هذا 
-		**					البنك فا مش شرط يكون من البنوك بتاعتي لانه مش شيك انا اللي مطلعه
-                                
+		**					هو البنك اللي العميل جابلي منه الشيك وبالتالي مش شرط يكون من بنوك لانة ممكن يكون من بنك خاص بالعميل
 	 */
 	public function DraweeBank()
 	{
@@ -247,6 +249,7 @@ class MoneyReceived extends Model
 		}
 		return $uniqueBanksIds; 
 	}
+	
 	public static function getBanksForCurrentCompany(int $companyId){
 		$banks = self::where('company_id',$companyId)->get(['drawee_bank_id','cheque_drawl_bank_id']);
 		$banks = self::getUniqueBanks($banks);
@@ -269,17 +272,7 @@ class MoneyReceived extends Model
 		$secondDate = Carbon::make($this->getReceivingDate());
 		return getDiffBetweenTwoDatesInDays($firstDate , $secondDate);
 	}
-	public function getTransferMoneyStatus()
-	{
-		return 'Not Received Yet';
-	}
-	public function getTransferMoneyDueAfterDays()
-	{
-		return '-';
-		// $firstDate = Carbon::make($this->getDueDate());
-		// $secondDate = Carbon::make($this->getReceivingDate());
-		// return getDiffBetweenTwoDatesInDays($firstDate , $secondDate);
-	}
+
 	public function getChequeStatus()
 	{
 		return $this->cheque_status;
@@ -325,6 +318,13 @@ class MoneyReceived extends Model
 		$this->attributes['cheque_deposit_date'] = $year.'-'.$month.'-'.$day;
 		
 	}
+	
+	
+	/** cheque_drawl_bank_id
+	**	هو البنك اللي بنسحب منه الشيك وليكن مثلا شخص اداني شيك معين وقتها بروح اسحبه من هذا 
+	**	البنك فا شرط يكون من البنوك بتاعتي علشان البنك بتاعي يتواصل مع بنك ال
+	**	drawee بعدين يحطلي الفلوس بتاعته في حسابي
+	*/		 
 	public function chequeDrawlBank()
 	{
 		return $this->belongsTo(Bank::class,'cheque_drawl_bank_id','id') ;

@@ -147,6 +147,7 @@ class MoneyReceivedController
 	public function create(Company $company,$singleModel = null)
 	{
 		$banks = Bank::pluck('view_name','id');
+		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts']);		
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
@@ -160,7 +161,8 @@ class MoneyReceivedController
 			'selectedBanks'=>$selectedBanks,
 			'singleModel'=>$singleModel,
 			'invoiceNumber'=>$invoiceNumber,
-			'banks'=>$banks
+			'banks'=>$banks,
+			'accountTypes'=>$accountTypes
 		]);
     }
 	
@@ -171,7 +173,6 @@ class MoneyReceivedController
 	}
 	public function getInvoiceNumber(Company $company ,  Request $request , int $customerInvoiceId,?string $selectedCurrency=null)
 	{
-		// $companyId = $company->id ; 
 		$inEditMode = $request->get('inEditMode');
 		$moneyReceivedId = $request->get('money_received_id');
 		$moneyReceived = MoneyReceived::find($moneyReceivedId);
@@ -260,6 +261,7 @@ class MoneyReceivedController
 		$data['received_amount'] = $receivedAmount ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$moneyReceived = MoneyReceived::create($data);
+		dd($data);
 		$totalWithholdAmount= 0 ;
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{

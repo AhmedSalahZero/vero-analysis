@@ -14,6 +14,7 @@ use App\Observers\CustomerInvoiceObserver;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;
@@ -44,7 +45,12 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		$moneyReceived = MoneyReceived::find(3);
+		// $start = microtime(true);
+		// $data = DB::table('money2')->sum('cash') ;
+		// $data = DB::table('money')->where('type','cash')->sum('amount') ;
+		// $end = microtime(true) - $start ;
+		// dd($end , $data);
+		// $moneyReceived = MoneyReceived::find(3);
 		// dd(Str::slug('Time Deposit (T/D)'));
 		// dd($moneyReceived->settlements);
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);

@@ -35,20 +35,6 @@ namespace App{
 	class Delete extends \Eloquent {}
 }
 
-namespace App\Enums{
-/**
- * * انواع الاكونتات
- * * ودي  عبارة عن اربع انواع
- * * FinancialInstitution - CleanOverDraft - Overdraft Against Commercial Papers - Overdraft Against Contracts Assignment
- * * بمعني لو اليوزر اختار واحد منهم مثلا هنروح نجيب ال الاكونت نامبر اللي في الجدول المناظر للنوع دا وخلاص
- *
- * @method static \Illuminate\Database\Eloquent\Builder|AccountType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AccountType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AccountType query()
- */
-	class AccountType extends \Eloquent {}
-}
-
 namespace App\Models{
 /**
  * * اسعار الفايده المخصصة لهذا الحساب
@@ -74,6 +60,34 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AccountInterest whereUpdatedAt($value)
  */
 	class AccountInterest extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * * هي عباره عن انواع الحسابات البنكية وليكن مثلا ال
+ * * debit  (فلوس ليا عند البنك)-> current , time deposit , certificate of deposit الحساب الجاري الحساب الودايع حساب الشهادات
+ * * credit التسهيلات البنكية (فلوس عليا) ->
+ *
+ * @property int $id
+ * @property string $name_en
+ * @property string $name_ar
+ * @property string $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType onlySlugs(array $slugs)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereNameAr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereNameEn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereUpdatedAt($value)
+ */
+	class AccountType extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -551,6 +565,7 @@ namespace App\Models{
  * @property int|null $updated_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $to_be_setteled_max_within_days الصفر يمثل غير محدود
  * @property-read \App\Models\FinancialInstitution|null $financialInstitution
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\LendingInformation[] $lendingInformation
  * @property-read int|null $lending_information_count
@@ -575,6 +590,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereMinInterestRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereOutstandingBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereToBeSetteledMaxWithinDays($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereUpdatedBy($value)
  */
@@ -1123,6 +1139,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution onlyBanks()
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution onlyForCompany(int $companyId)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution query()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereBalanceDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitution whereBankId($value)
@@ -1875,6 +1892,23 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Money
+ *
+ * @property int $id
+ * @property string|null $type
+ * @property string|null $amount
+ * @method static \Illuminate\Database\Eloquent\Builder|Money newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Money newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Money query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Money whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Money whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Money whereType($value)
+ */
+	class Money extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\MoneyReceived
  *
  * @property int $id
@@ -1893,12 +1927,9 @@ namespace App\Models{
  * @property string|null $receiving_bank_id
  * @property string|null $cheque_due_date
  * @property string|null $cheque_number
- * @property string|null $main_account_number
- * @property string|null $sub_account_number
  * @property string|null $cheque_deposit_date
  * @property string|null $cheque_drawl_bank_id
- * @property string|null $cheque_main_account_number
- * @property string|null $cheque_sub_account_number
+ * @property string|null $account_number_for_cheques_collection
  * @property string|null $cheque_account_balance
  * @property string|null $cheque_expected_collection_date
  * @property string|null $cheque_clearance_days
@@ -1918,16 +1949,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereAccountNumberForChequesCollection($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeAccountBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeClearanceDays($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeDepositDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeDrawlBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeDueDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeExpectedCollectionDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeMainAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeSubAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCurrency($value)
@@ -1935,7 +1965,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereDraweeBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereExchangeRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereMainAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereMoneyType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceiptBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceiptNumber($value)
@@ -1944,7 +1973,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivingBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivingBranchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivingDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereSubAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereTotalWithholdAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereTotalWithholdAmountInMainCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereUpdatedAt($value)
@@ -1955,41 +1983,34 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\MonthlyCustomerInvoices
+ * App\Models\MoneyTwo
  *
  * @property int $id
- * @property int $company_id
- * @property string $customer_name
- * @property int $month
- * @property int $year
- * @property float $beginning_balance
- * @property float $monthly_debit
- * @property int $monthly_credit
- * @property float $end_balance
- * @property int $is_closed
- * @property int $created_by
- * @property int|null $updated_by
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $cash
+ * @property string|null $cheque
+ * @property string|null $transfer
+ * @property string|null $deposit
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereCash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereCheque($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereDeposit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereTransfer($value)
+ */
+	class MoneyTwo extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MonthlyCustomerInvoices
+ *
  * @property-read \App\Models\CustomerInvoice $customerInvoice
  * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices company()
  * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices query()
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereBeginningBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereCustomerName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereEndBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereIsClosed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereMonthlyCredit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereMonthlyDebit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereUpdatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MonthlyCustomerInvoices whereYear($value)
  */
 	class MonthlyCustomerInvoices extends \Eloquent {}
 }

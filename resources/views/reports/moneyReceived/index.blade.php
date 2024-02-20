@@ -330,15 +330,11 @@
                                 @foreach($receivedTransfer as $money)
                                 <tr>
                                     <td>{{ $money->getCustomerName() }}</td>
-                                    {{-- <td>COD2025</td> --}}
                                     <td>{{ $money->getReceivingDateFormatted() }}</td>
                                     <td>{{ $money->getReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
-                                    {{-- <td class="bank-max-width">{{ $money->getTransferMoneyDueAfterDays() }}</td> --}}
-                                    {{-- <td>{{ $money->getMainAccountNumber() }}</td> --}}
                                     <td>{{ $money->getSubAccountNumber() }}</td>
-                                    {{-- <td>{{ $money->getTransferMoneyStatus() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>

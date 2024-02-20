@@ -95,7 +95,7 @@
                                         <label>{{__('Cheque Deposit Date')}}</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <input required type="text" name="cheque_deposit_date" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                <input required type="text" name="cheque_deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="la la-calendar-check-o"></i>
