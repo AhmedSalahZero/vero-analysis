@@ -1,3 +1,19 @@
 {
-	"php.suggest.basic": false
+	"php.suggest.basic": false,
+	"sqltools.connections": [
+		{
+			"mysqlOptions": {
+				"authProtocol": "default",
+				"enableSsl": "Disabled"
+			},
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 3306,
+			"driver": "MySQL",
+			"name": "db",
+			"database": "vero_analysis",
+			"username": "root",
+			"password": ""
+		}
+	]
 }

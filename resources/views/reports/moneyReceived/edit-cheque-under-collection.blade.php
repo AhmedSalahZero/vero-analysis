@@ -41,19 +41,19 @@
                     <div class="row mb-3">
 
 
-						@foreach([
-							'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getCustomerName() , 'class'=>'col-md-5'],
-							'cheque_amount'=>['title'=>__('Cheque Amount'),'value'=>$model->getReceivedAmount() , 'class'=>'col-md-3'],
-							'currency'=>['title'=>__('Currency'),'value'=>$model->getCurrency() , 'class'=>'col-md-2'],
-							'cheque_number'=>['title'=>__('Cheque Number'),'value'=>$model->getChequeNumber() , 'class'=>'col-md-2'],
-						] as $uniqueName => $field)
+                        @foreach([
+                        'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getCustomerName() , 'class'=>'col-md-5'],
+                        'cheque_amount'=>['title'=>__('Cheque Amount'),'value'=>$model->getReceivedAmount() , 'class'=>'col-md-3'],
+                        'currency'=>['title'=>__('Currency'),'value'=>$model->getCurrency() , 'class'=>'col-md-2'],
+                        'cheque_number'=>['title'=>__('Cheque Number'),'value'=>$model->getChequeNumber() , 'class'=>'col-md-2'],
+                        ] as $uniqueName => $field)
                         <div class="{{ $field['class'] }} mb-3">
                             <label>{{$field['title']}} </label>
                             <div class="kt-input-icon">
                                 <input readonly type="text" value="{{ $field['value'] }}" class="form-control">
                             </div>
                         </div>
-						@endforeach 
+                        @endforeach
 
 
 
@@ -96,8 +96,6 @@
                                         @foreach($selectedBanks as $bankId=>$bankName)
                                         <option value="{{ $bankId }}" {{ isset($model) && $model->chequeDrawlBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                         @endforeach
-                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                        {{-- <option>{{__('Bank 1')}}</option> --}}
                                     </select>
                                     <div class="modal fade" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -135,17 +133,25 @@
 
 
 
-                        <div class="col-md-3 mb-3">
-                            <label>{{__('Main Account Number')}} <span class="required">*</span></label>
+
+                        <div class="col-md-4">
+                            <label>{{__('Account Type')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
-                                <input required type="text" value="{{ $model->chequeMainAccountNumber() }}" name="cheque_main_account_number" class="form-control" placeholder="{{__('Main Account Number')}}">
-                                <x-tool-tip title="{{__('Kash Vero')}}" />
+                                <div class="input-group date">
+                                    <select data-currency="{{ $model->getCurrency() }}" name="cheque_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                        <option value="" selected>{{__('Select')}}</option>
+                                        @foreach($accountTypes as $id => $name)
+                                        <option value="{{ $id }}" @if($id==$model->chequeAccountType() ) selected @endif>{{ $name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-md-3 mb-3">
-                            <label>{{__('Sub Account Number')}} <span class="required">*</span></label>
+                            <label>{{__('Account Number')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
-                                <input value="{{ $model->chequeSubAccountNumber() }}" required type="text" name="cheque_sub_account_number" class="form-control" placeholder="{{__('Main Account Number')}}">
+                                <input value="{{ $model->getAccountNumberForChequesCollection() }}" required type="text" name="account_number_for_cheques_collection" class="form-control" placeholder="{{__('Main Account Number')}}">
                                 <x-tool-tip title="{{__('Kash Vero')}}" />
                             </div>
                         </div>

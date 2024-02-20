@@ -96,7 +96,7 @@ class CleanOverdraftController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate'];
+		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		

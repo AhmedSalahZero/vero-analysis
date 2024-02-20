@@ -209,6 +209,19 @@ class FinancialInstitutionController
 		$accounts = $request->get('accounts',[]) ;
 		$financialInstitution->storeNewAccounts($accounts,null,true);
 	}
+	/**
+	 * * عرض كل الحسابات الخاصة بالبنك
+	 */
+	public function viewAllAccounts(Company $company , Request $request , FinancialInstitution $financialInstitution)
+	{
+		return view('bank-accounts.index',[
+			'bankAccounts'=>$financialInstitution->accounts,
+			'financialInstitution'=>$financialInstitution,
+			'company'=>$company,
+			'filterDate'=>now()->format('Y-m-d'),
+		]);
+		// return view();
+	}
 
 	
 	

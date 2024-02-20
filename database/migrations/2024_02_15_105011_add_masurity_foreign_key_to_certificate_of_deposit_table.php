@@ -14,7 +14,6 @@ class AddMasurityForeignKeyToCertificateOfDepositTable extends Migration
     public function up()
     {
         Schema::table('certificates_of_deposits', function (Blueprint $table) {
-	
 			$table->integer('maturity_amount_added_to_account_id')->after('interest_amount');
 			$table->foreign('maturity_amount_added_to_account_id','foreign_id')->references('id')->on('financial_institution_accounts')->cascadeOnDelete()->cascadeOnUpdate();
         });

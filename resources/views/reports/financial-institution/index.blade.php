@@ -4,6 +4,9 @@
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+.hover-color-black:hover i{
+	color:black !important;
+}
     input[type="checkbox"] {
         cursor: pointer;
     }
@@ -133,6 +136,7 @@
                                      
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-success btn-outline-hover-success btn-icon hover-color-black"  title="{{ __('Show All Account') }}" href="{{ route('view.all.bank.accounts',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}"><i class="fa fa-eye"></i></a>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}"><i class="fa fa-pen-alt"></i></a>
                                             {{-- <a data-type="single" data-id="{{ $financialInstitutionBank->id }}" data-toggle="modal" data-target="#send-to-under-collection-modal" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-warning btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-sync-alt"></i></a> --}}
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $financialInstitutionBank->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>

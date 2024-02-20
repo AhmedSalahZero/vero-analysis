@@ -35,6 +35,20 @@ namespace App{
 	class Delete extends \Eloquent {}
 }
 
+namespace App\Enums{
+/**
+ * * انواع الاكونتات
+ * * ودي  عبارة عن اربع انواع
+ * * FinancialInstitution - CleanOverDraft - Overdraft Against Commercial Papers - Overdraft Against Contracts Assignment
+ * * بمعني لو اليوزر اختار واحد منهم مثلا هنروح نجيب ال الاكونت نامبر اللي في الجدول المناظر للنوع دا وخلاص
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType query()
+ */
+	class AccountType extends \Eloquent {}
+}
+
 namespace App\Models{
 /**
  * * اسعار الفايده المخصصة لهذا الحساب
@@ -1140,6 +1154,7 @@ namespace App\Models{
  * @property string|null $iban
  * @property int|null $is_main_account
  * @property string|null $exchange_rate
+ * @property int|null $company_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\AccountInterest[] $accountInterests
  * @property-read int|null $account_interests_count
  * @property-read \App\Models\FinancialInstitution|null $financialInstitution
@@ -1148,6 +1163,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount query()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereBalanceAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereExchangeRate($value)

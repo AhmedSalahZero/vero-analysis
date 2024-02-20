@@ -328,6 +328,16 @@ Route::middleware([])->group(function () {
 				Route::post('store-new-model', [HelpersController::class, 'storeNewModal'])->name('admin.store.new.modal');
 				
 				
+				
+				
+				
+				
+				/**
+				 * * Start Of Financial Institution Routes
+				 */
+				
+				 
+				
 				Route::get('financial-institutions', 'FinancialInstitutionController@index')->name('view.financial.institutions');
 				Route::get('financial-institutions/create/{model?}', 'FinancialInstitutionController@create')->name('create.financial.institutions');
 				Route::post('financial-institutions/create', 'FinancialInstitutionController@store')->name('store.financial.institutions');
@@ -351,6 +361,17 @@ Route::middleware([])->group(function () {
 				Route::put('financial-institution-accounts/update/{financialInstitutionAccount}', 'financialInstitutionAccountController@update')->name('update.financial.institutions.account');
 				Route::delete('financial-institution-accounts/delete/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@destroy')->name('delete.financial.institutions.account');
 				
+				/**
+				 * * Bank Accounts
+				 * * لعرض الاكونتات الخاصة بالعميل في بنك معين او مؤسسة مالية
+				 */
+				Route::get('financial-institutions/{financialInstitution}/bank-accounts','FinancialInstitutionController@viewAllAccounts')->name('view.all.bank.accounts');
+				// Route::get('financial-institutions/{financialInstitution}/bank-accounts/create','CertificatesOfDepositsController@create')->name('create.certificates.of.deposit');
+				// Route::post('financial-institutions/{financialInstitution}/bank-accounts/create','CertificatesOfDepositsController@store')->name('store.certificates.of.deposit');
+				// Route::get('financial-institutions/{financialInstitution}/bank-accounts/edit/{certificatesOfDeposit}','CertificatesOfDepositsController@edit')->name('edit.certificates.of.deposit');
+				// Route::put('financial-institutions/{financialInstitution}/bank-accounts/update/{certificatesOfDeposit}','CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
+				// Route::delete('financial-institutions/{financialInstitution}/bank-accounts/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
+				
 				
 				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper','OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');
 				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create','OverdraftAgainstCommercialPaperController@create')->name('create.overdraft.against.commercial.paper');
@@ -365,6 +386,10 @@ Route::middleware([])->group(function () {
 				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}','CleanOverdraftController@edit')->name('edit.clean.overdraft');
 				Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}','CleanOverdraftController@update')->name('update.clean.overdraft');
 				Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}','CleanOverdraftController@destroy')->name('delete.clean.overdraft');
+				
+				
+				
+				
 				
 				
 				// bank certificate of deposit
@@ -389,6 +414,22 @@ Route::middleware([])->group(function () {
 				Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility/edit/{letterOfCreditFacility}','LetterOfCreditFacilityController@edit')->name('edit.letter.of.credit.facility');
 				Route::put('financial-institutions/{financialInstitution}/letter-of-credit-facility/update/{letterOfCreditFacility}','LetterOfCreditFacilityController@update')->name('update.letter.of.credit.facility');
 				Route::delete('financial-institutions/{financialInstitution}/letter-of-credit-facility/delete/{letterOfCreditFacility}','LetterOfCreditFacilityController@destroy')->name('delete.letter.of.credit.facility');
+				
+				
+				
+				
+				
+				/**
+				 * * End Of Financial Institution Routes
+				 * 
+				 */
+				
+				
+				
+				
+				
+				
+				
 				
 				
 				
@@ -451,6 +492,7 @@ Route::middleware([])->group(function () {
 				Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
 				Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
 				Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
+				Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
 				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
 				Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');

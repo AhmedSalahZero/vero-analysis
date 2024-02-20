@@ -103,17 +103,29 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->moneyReceived->where('company_id',getCurrentCompanyId()) ;
 	}
-	public function getReceivedCheques():Collection
+	public function getReceivedChequesInSafe():Collection
 	{
-		return $this->moneyReceived->where('money_type','cheque') ;
+		return $this->moneyReceived->where('money_type',MoneyReceived::CHEQUE_IN_SAFE)
+		->whereIn('cheque_status',['in safe','rejected'])
+		;
 	}
-	public function getReceivedCashes():Collection
+	public function getReceivedChequesUnderCollection():Collection
 	{
-		return $this->moneyReceived->where('money_type','cash') ;
+		return $this->moneyReceived->where('money_type',MoneyReceived::CHEQUE_IN_SAFE)
+		->whereIn('cheque_status',['under_collection'])
+		;
+	}
+	public function getReceivedCashesInSafe():Collection
+	{
+		return $this->moneyReceived->where('money_type',MoneyReceived::CASH_IN_SAFE) ;
+	}
+	public function getReceivedCashesInBank():Collection
+	{
+		return $this->moneyReceived->where('money_type',MoneyReceived::CASH_IN_BANK) ;
 	}
 	public function getReceivedTransfer():Collection
 	{
-		return $this->moneyReceived->where('money_type','incoming_transfer') ;
+		return $this->moneyReceived->where('money_type',MoneyReceived::INCOMING_TRANSFER) ;
 	}
 	public function financialInstitutions()
 	{

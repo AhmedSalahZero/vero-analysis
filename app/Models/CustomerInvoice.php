@@ -225,26 +225,26 @@ class CustomerInvoice extends Model
 
     public function syncNetBalance()
     {
-		$customerName =	$this->getCustomerName();
-		/**
-		 * @var CustomerInvoice[] $invoices
-		 */
-        $invoices = $this->getInvoicesForCustomerName($customerName);
-        foreach($invoices as $customerInvoice) {
-            $invoiceNumber  = $customerInvoice->getInvoiceNumber($customerName) ;
-            $totalCollected = 0 ;
-			$totalWithhold = 0 ;
-            foreach($customerInvoice->moneyReceived as $moneyReceived) {
-				/**
-				 * @var Settlement $settlement
-				 */
-                foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $customerName)  as $settlement) {
-                    $totalCollected += $settlement->getAmount();
-                    $totalWithhold += $settlement->getWithhold();
-                }
-            }
-            $customerInvoice->updateNetBalance($totalCollected,$totalWithhold);
-        }
+		// $customerName =	$this->getCustomerName();
+		// /**
+		//  * @var CustomerInvoice[] $invoices
+		//  */
+        // $invoices = $this->getInvoicesForCustomerName($customerName);
+        // foreach($invoices as $customerInvoice) {
+        //     $invoiceNumber  = $customerInvoice->getInvoiceNumber($customerName) ;
+        //     $totalCollected = 0 ;
+		// 	$totalWithhold = 0 ;
+        //     foreach($customerInvoice->moneyReceived as $moneyReceived) {
+		// 		/**
+		// 		 * @var Settlement $settlement
+		// 		 */
+        //         foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $customerName)  as $settlement) {
+        //             $totalCollected += $settlement->getAmount();
+        //             $totalWithhold += $settlement->getWithhold();
+        //         }
+        //     }
+        //     $customerInvoice->updateNetBalance($totalCollected,$totalWithhold);
+        // }
         
     }
 	// public function insertInvoiceDateMonthAndYearColumnsInDB()
@@ -266,12 +266,13 @@ class CustomerInvoice extends Model
 	// }
     protected function updateNetBalance(float $totalCollected,float $totalWithholdAmount)
     {
-        $netInvoiceAmount = $this->getNetInvoiceAmount();
-        $this->net_balance = $netInvoiceAmount - $totalCollected ;
-        $this->invoice_status = $this->generateInvoiceStatus($totalCollected, $netInvoiceAmount) ;
-        $this->collected_amount = $totalCollected;
-        $this->withhold_amount = $totalWithholdAmount;
-        $this->save();
+	
+        // $netInvoiceAmount = $this->getNetInvoiceAmount();
+        // $this->net_balance = $netInvoiceAmount - $totalCollected ;
+        // $this->invoice_status = $this->generateInvoiceStatus($totalCollected, $netInvoiceAmount) ;
+        // $this->collected_amount = $totalCollected;
+        // $this->withhold_amount = $totalWithholdAmount;
+        // $this->save();
     }
 	public function getStatus()
 	{
@@ -416,7 +417,10 @@ class CustomerInvoice extends Model
 					$currentData['document_no'] = $docNumber  ;
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$moneyReceivedAmount;
-					$currentData['comment'] =__('qqq') ;
+					// dd();
+					// dd($moneyReceived);
+					// dd();
+					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray()); ;
 					$index++;
 					$formattedData[] = $currentData ;
 					$totalWithholdAmount = $moneyReceived->getTotalWithholdAmount();
@@ -429,7 +433,7 @@ class CustomerInvoice extends Model
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$totalWithholdAmount;
 					$currentData['comment'] =$bankName;
-					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . $docNumber;
+					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->where('withhold_amount','>',0)->pluck('invoice_number')->toArray());
 					$index++;
 					$formattedData[] = $currentData ;
 					}

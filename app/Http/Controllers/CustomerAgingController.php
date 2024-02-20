@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\ExportTable;
 use App\Models\Company;
-use App\Models\SalesGathering;
 use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
-use App\Traits\Intervals;
-use Carbon\Carbon;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * * هي اسمها اعمار الديون
+ * * هو عباره عن الفواتير اللي لسه مفتوحة ( اعمار الديون) .. سواء الدين لسه جايه او المتاخر او حق اليوم
+ * * وبالتالي بمجرد ما تندفع مش بتيجي هنا (لو النت بلانس اكبر من صفر يبقي لسه ما استدتش كاملا)
+ */
 class CustomerAgingController
 {
     use GeneralFunctions;

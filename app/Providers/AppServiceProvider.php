@@ -7,6 +7,7 @@ use App\Exports\LabelingItemExport;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\CustomersInvoice;
+use App\Models\MoneyReceived;
 use App\Models\Section;
 use App\Models\User;
 use App\Observers\CustomerInvoiceObserver;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Font;
 use Spatie\Permission\Models\Permission;
 use stdClass;
@@ -42,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		$moneyReceived = MoneyReceived::find(3);
+		// dd(Str::slug('Time Deposit (T/D)'));
+		// dd($moneyReceived->settlements);
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');

@@ -8,7 +8,6 @@ use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,9 +15,15 @@ class FinancialInstitution extends Model
 {
     protected $guarded = ['id'];
 	
+	const BANK = 'bank';
+	
+	public function scopeOnlyForCompany(Builder $builder , int $companyId){
+		return $builder->where('company_id',$companyId);
+	}
+	
 	public function scopeOnlyBanks(Builder $builder)
 	{
-		$builder->where('type','bank');
+		$builder->where('type',self::BANK);
 	}
 	/**
 	 * * نوع المؤسسة المالية وليكن مثلا بنك
@@ -29,7 +34,7 @@ class FinancialInstitution extends Model
 	}
     public function isBank():bool
     {
-        return $this->getType() =='bank';
+        return $this->getType() == self::BANK;
     }
     public function isLeasingCompanies():bool
     {
@@ -120,6 +125,7 @@ class FinancialInstitution extends Model
 				'exchange_rate'=>$accountArr['exchange_rate'],
 				'currency'=>$isMainAccount ?'egp': strtolower($accountArr['currency']),
 				'iban'=>$accountArr['iban'],
+				'company_id'=>getCurrentCompanyId(),
 				'is_main_account'=>$isMainAccount // الحساب المصري
 			]);
 			$startDate = isset($accountArr['start_date']) && $accountArr['start_date'] ? Carbon::make($accountArr['start_date'])->format('Y-m-d') : $startDate;
@@ -129,6 +135,10 @@ class FinancialInstitution extends Model
 				'start_date'=>$startDate
 			]);
 		}
+	}
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName):array
+	{
+		return FinancialInstitutionAccount::where('company_id',$companyId)->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
 	}
 	
 }

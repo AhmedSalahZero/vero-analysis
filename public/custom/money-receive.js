@@ -152,7 +152,39 @@ $('.js-send-to-collection').on('change', function () {
 	}
 
 })
+
+$(document).on('change','.js-update-account-number-based-on-account-type',function(){
+	const val = $(this).val()
+	const lang = $('body').attr('data-lang')
+	const companyId = $('body').attr('data-current-company-id')
+	const data = []
+	const currency = $(this).closest('form').find('#current-currency').val()
+	
+	if(!val || !currency ){
+		return ;
+	}
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val+'/'+currency
+	$.ajax({
+		url ,
+		data,
+		success:function(res){
+			options = '';
+			for(key in res.data){
+				var val = res.data[key];
+				console.log(val)
+				options  += '<option value="'+val+'">'+ val +'</option>';	
+			}
+			$('.js-cheque-account-number').empty().append(options)
+		}
+	});
+	
+	
+	
+	
+	
+})
 $(function () {
+	$('.js-update-account-number-based-on-account-type').trigger('change')
 	setTimeout(function () {
 		$('.js-send-to-collection').trigger('change')
 	}, 1000)

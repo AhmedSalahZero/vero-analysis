@@ -47,6 +47,10 @@ class FinancialInstitutionAccount extends Model
     {
         return $this->balance_amount ?: 0 ;
     }
+	public function getBalanceAmountFormatted()
+	{
+		return number_format($this->getBalanceAmount() , 0) ; 
+	}
 		// /**
 		//  * * نسب الفايدة اللي بخدها من الحساب دا ( احيانا بيكون فيه عروض بحيث انك تنشئ حساب وتاخد علي نسبة فايدة كل شهر مثلا)
 		//  */
@@ -93,5 +97,12 @@ class FinancialInstitutionAccount extends Model
 	{
 		return Str::upper($this->getCurrency());
 	}
-	
+	public function getType()
+	{
+		return __('Current');
+	}
+	public function isBlocked():bool
+	{
+		return false;
+	}
 }

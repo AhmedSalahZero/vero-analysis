@@ -162,6 +162,7 @@
                             <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :label="__('Outstanding Balance')" :type="'text'" :placeholder="__('Outstanding Balance')" :name="'outstanding_balance'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                             </div>
+							
 
                             <div class="col-md-4">
                                 <x-form.date :label="__('Balance Date')" :required="true" :model="$model??null" :name="'balance_date'" :placeholder="__('Select Balance Date')"></x-form.date>
@@ -185,8 +186,12 @@
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="false" :type="'text'"></x-form.input>
                             </div>
+							 <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :label="__('Setteled Max Within (Days)')" :type="'text'" :placeholder="__('Setteled Max Within (Days)')" :name="'to_be_setteled_max_within_days'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                            </div>
+						
 
 
 

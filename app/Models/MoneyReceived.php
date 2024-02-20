@@ -8,6 +8,12 @@ use Illuminate\Support\Collection;
 
 class MoneyReceived extends Model
 {
+	const CASH_IN_SAFE  = 'cash-in-safe';
+	const CASH_IN_BANK  = 'cash-in-bank';
+	const INCOMING_TRANSFER  = 'incoming-transfer';
+	const CHEQUE_IN_SAFE  = 'cheque-is-safe';
+	const CHEQUE_IN_UNDER_COLLECTION  = 'cheque-under-collection';
+	 
     protected $guarded = ['id'];
     protected $table = 'money_received';
     
@@ -15,17 +21,18 @@ class MoneyReceived extends Model
 	{
 		return $this->money_type ;
 	}
-    public function isCash()
+    public function isCashInSafe()
     {
-        return $this->getType() =='cash';
+        return $this->getType() ==self::CASH_IN_SAFE;
     }
-    public function isCheque()
+	public function isCashInBank()
     {
-        return $this->getType() =='cheque';
+        return $this->getType() ==self::CASH_IN_BANK;
     }
+  
     public function isIncomingTransfer()
     {
-        return $this->getType() =='incoming_transfer';
+        return $this->getType() ==self::INCOMING_TRANSFER;
     }
     
 	
@@ -62,7 +69,8 @@ class MoneyReceived extends Model
 
 	public function getExchangeRate()
 	{
-		return $this->exchange_rate;
+		
+		return $this->exchange_rate?:1;
 	}
 	public function getPaymentBankName()
 	{
@@ -88,20 +96,27 @@ class MoneyReceived extends Model
 		if($this->isCheque()){
 			return $this->getChequeNumber();
 		}
-		if($this->isCash()){
+		if($this->isCashInSafe()){
 			return $this->getReceiptNumber();
 		}
 		if($this->isIncomingTransfer()){
 			return $this->getMainAccountNumber();
 		}
 	}
-    public function getDraweeBankId()
-    {
-        return $this->drawee_bank_id ;
-    }
+	
+	/**
+	 * * drawee_bank
+		**					هو البنك اللي بنسحب منه الشيك وليكن مثلا شخص اداني شيك معين وقتها بروح اسحبه من هذا 
+		**					البنك فا مش شرط يكون من البنوك بتاعتي لانه مش شيك انا اللي مطلعه
+                                
+	 */
 	public function DraweeBank()
 	{
 		return $this->belongsTo(Bank::class ,'drawee_bank_id','id');
+	}
+	public function getDraweeBankId()
+	{
+		return $this->drawee_bank_id ;
 	}
 	
 	public function getDraweeBankName()
@@ -115,7 +130,7 @@ class MoneyReceived extends Model
 	
 	public function getBankName()
 	{
-		if($this->isCash()){
+		if($this->isCashInSafe()){
 			return $this->getCashBranchName();
 		}
 		if($this->isCheque()){
@@ -138,19 +153,16 @@ class MoneyReceived extends Model
 	}
 	public function getReceivingBankName()
 	{
-		 return $this->receivingBank ? $this->receivingBank->getViewName() : __('N/A');
+		 return $this->receivingBank ? $this->receivingBank->getName() : __('N/A');
 	}
-	public function getReceivingBankNameIn(string $lang)
-	{
-		 return $this->receivingBank ? $this->receivingBank['name_'.$lang] : __('N/A');
-	}
-    public function getMainAccountNumber()
+	// public function getReceivingBankNameIn(string $lang)
+	// {
+	// 	 return $this->receivingBank ? $this->receivingBank['name_'.$lang] : __('N/A');
+	// }
+    public function getAccountNumber()
     {
-        return $this->main_account_number ;
-    }
-    public function getSubAccountNumber()
-    {
-        return $this->sub_account_number;
+		// if statement here for type
+        return $this->account_number;
     }
     public function settlements()
     {
@@ -160,7 +172,12 @@ class MoneyReceived extends Model
     {
         return $this->belongsTo(CustomerInvoice::class, 'customer_name', 'customer_name');
     }
-    
+   
+
+	public function getSettlementsForCustomerName( string $customerName):Collection
+    {
+        return $this->settlements->where('customer_name', $customerName) ;
+    }
     public function getSettlementsForInvoiceNumber($invoiceNumber, string $customerName):Collection
     {
         return $this->settlements->where('invoice_number', $invoiceNumber)->where('customer_name', $customerName) ;
@@ -231,7 +248,7 @@ class MoneyReceived extends Model
 		return $uniqueBanksIds; 
 	}
 	public static function getBanksForCurrentCompany(int $companyId){
-		$banks = self::where('company_id',$companyId)->get(['drawee_bank_id','receiving_bank_id','cheque_drawl_bank_id']);
+		$banks = self::where('company_id',$companyId)->get(['drawee_bank_id','cheque_drawl_bank_id']);
 		$banks = self::getUniqueBanks($banks);
 		$banksFormatted = [];
 		foreach($banks as $bankId){
@@ -321,15 +338,18 @@ class MoneyReceived extends Model
 		return $this->cheque_drawl_bank_id ;
 	}
 	
-	public function chequeMainAccountNumber()
+	public function chequeAccountType()
 	{
-		return $this->cheque_main_account_number ;
+		return $this->cheque_account_type ;
 	}
 	
 	
-	public function chequeSubAccountNumber()
+	/**
+	 * * هو عباره عن رقم الحساب اللي هينزل فيه مبلغ الشيك بعد التحصيل من البنك
+	 */
+	public function getAccountNumberForChequesCollection()
 	{
-		return $this->cheque_sub_account_number ;
+		return $this->account_number_for_cheques_collection ;
 	}
 	
 	public function chequeAccountBalance()
