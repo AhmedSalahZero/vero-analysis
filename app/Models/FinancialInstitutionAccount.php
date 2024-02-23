@@ -105,4 +105,11 @@ class FinancialInstitutionAccount extends Model
 	{
 		return false;
 	}
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	{
+		return self::where('company_id',$companyId)
+		->where('financial_institution_id',$financialInstitutionId)
+		->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
+	}
+	
 }

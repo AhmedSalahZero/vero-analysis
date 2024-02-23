@@ -45,14 +45,6 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		// $start = microtime(true);
-		// $data = DB::table('money2')->sum('cash') ;
-		// $data = DB::table('money')->where('type','cash')->sum('amount') ;
-		// $end = microtime(true) - $start ;
-		// dd($end , $data);
-		// $moneyReceived = MoneyReceived::find(3);
-		// dd(Str::slug('Time Deposit (T/D)'));
-		// dd($moneyReceived->settlements);
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');

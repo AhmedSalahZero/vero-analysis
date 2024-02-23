@@ -228,11 +228,7 @@ class SalesGatheringTestController extends Controller
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['company_id']  = $companyId ;
 					$modelItem=$model->create($tableDataArr);
-					// if($modelName =='CustomerInvoice'){
-					// 	$modelItem->syncNetBalance();
-					// 	$modelItem->insertInvoiceDateMonthAndYearColumnsInDB();
-					// 	$modelItem->calculateAmountInMainCurrency();
-					// }
+				
 			}
 		}
 		if($modelName == 'SalesGathering'){
@@ -268,13 +264,8 @@ class SalesGatheringTestController extends Controller
 		foreach((array)$request->get('tableIds') as $tableId){
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['company_id']  = $companyId ;
-					// dd($model ,$tableDataArr);
 					$model->update($tableDataArr);
-					// if($modelName =='CustomerInvoice'){
-					// 	$model->syncNetBalance();
-					// 	$model->insertInvoiceDateMonthAndYearColumnsInDB();
-					// 	$model->calculateAmountInMainCurrency();
-					// }
+					
 			}
 		}
 		if($modelName == 'SalesGathering'){

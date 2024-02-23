@@ -77,6 +77,9 @@ class User extends Authenticatable implements HasMedia
 	
 		$canViewReport = false ;
 		$user = Auth()->user() ; 
+		/**
+		 * @var User $user ;
+		 */
 		$reports  = searchWordInstr(reportNames(),$reportName);
 		foreach($reports as $report){
 			$canViewReport = $user->can(generateReportName($report));
@@ -105,27 +108,48 @@ class User extends Authenticatable implements HasMedia
 	}
 	public function getReceivedChequesInSafe():Collection
 	{
-		return $this->moneyReceived->where('money_type',MoneyReceived::CHEQUE_IN_SAFE)
-		->whereIn('cheque_status',['in safe','rejected'])
-		;
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+			$cheque = $moneyReceived->cheque ;
+			return $cheque && in_array($cheque->getStatus(),[Cheque::IN_SAFE]) ;
+		})->values();
 	}
+	/**
+	 * * هي الشيكات اللي اترفضت ورجعتها الخزنة تاني وليكن مثلا بسبب ان حساب العميل مفيهوش فلوس حاليا
+	 */
+	public function getReceivedRejectedChequesInSafe():Collection
+	{
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+			$cheque = $moneyReceived->cheque ;
+			return $cheque && in_array($cheque->getStatus(),[Cheque::REJECTED]) ;
+		})->values();
+	}
+	
+	public function getCollectedCheques():Collection
+	{
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+			$cheque = $moneyReceived->cheque ;
+			return $cheque && in_array($cheque->getStatus(),[Cheque::COLLECTED]) ;
+		})->values();
+	}
+	
 	public function getReceivedChequesUnderCollection():Collection
 	{
-		return $this->moneyReceived->where('money_type',MoneyReceived::CHEQUE_IN_SAFE)
-		->whereIn('cheque_status',['under_collection'])
-		;
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+			$cheque = $moneyReceived->cheque ;
+			return $cheque && in_array($cheque->getStatus(),[Cheque::UNDER_COLLECTION]) ;
+		})->values();
 	}
 	public function getReceivedCashesInSafe():Collection
 	{
-		return $this->moneyReceived->where('money_type',MoneyReceived::CASH_IN_SAFE) ;
+		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_SAFE) ;
 	}
 	public function getReceivedCashesInBank():Collection
 	{
-		return $this->moneyReceived->where('money_type',MoneyReceived::CASH_IN_BANK) ;
+		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_BANK) ;
 	}
 	public function getReceivedTransfer():Collection
 	{
-		return $this->moneyReceived->where('money_type',MoneyReceived::INCOMING_TRANSFER) ;
+		return $this->moneyReceived->where('type',MoneyReceived::INCOMING_TRANSFER) ;
 	}
 	public function financialInstitutions()
 	{

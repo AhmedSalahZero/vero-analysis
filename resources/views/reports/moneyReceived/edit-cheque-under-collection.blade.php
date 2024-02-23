@@ -45,7 +45,7 @@
                         'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getCustomerName() , 'class'=>'col-md-5'],
                         'cheque_amount'=>['title'=>__('Cheque Amount'),'value'=>$model->getReceivedAmount() , 'class'=>'col-md-3'],
                         'currency'=>['title'=>__('Currency'),'value'=>$model->getCurrency() , 'class'=>'col-md-2'],
-                        'cheque_number'=>['title'=>__('Cheque Number'),'value'=>$model->getChequeNumber() , 'class'=>'col-md-2'],
+                        'cheque_number'=>['title'=>__('Cheque Number'),'value'=>$model->cheque->getChequeNumber() , 'class'=>'col-md-2'],
                         ] as $uniqueName => $field)
                         <div class="{{ $field['class'] }} mb-3">
                             <label>{{$field['title']}} </label>
@@ -78,7 +78,7 @@
                             <label>{{__('Cheque Deposit Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input required value="{{ $model->getChequeDepositDateFormattedForDatePicker() }}" type="text" name="cheque_deposit_date" class="form-control" placeholder="Select date" id="kt_datepicker_2" />
+                                    <input required value="{{ $model->getChequeDepositDateFormattedForDatePicker() }}" type="text" name="deposit_date" class="form-control" placeholder="Select date" id="kt_datepicker_2" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -92,7 +92,7 @@
                             <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date ">
-                                    <select required name="cheque_drawl_bank_id" class="form-control js-drawl-bank">
+                                    <select required name="drawl_bank_id" class="form-control js-drawl-bank">
                                         @foreach($selectedBanks as $bankId=>$bankName)
                                         <option value="{{ $bankId }}" {{ isset($model) && $model->chequeDrawlBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                         @endforeach
@@ -140,8 +140,8 @@
                                 <div class="input-group date">
                                     <select data-currency="{{ $model->getCurrency() }}" name="cheque_account_type" class="form-control js-update-account-number-based-on-account-type">
                                         <option value="" selected>{{__('Select')}}</option>
-                                        @foreach($accountTypes as $id => $name)
-                                        <option value="{{ $id }}" @if($id==$model->chequeAccountType() ) selected @endif>{{ $name }}</option>
+                                        @foreach($accountTypes as $index => $accountType)
+                                        <option value="{{ $accountType->getId() }}" @if($id==$model->chequeAccountType() ) selected @endif>{{ $accountType->getName() }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -151,7 +151,7 @@
                         <div class="col-md-3 mb-3">
                             <label>{{__('Account Number')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
-                                <input value="{{ $model->getAccountNumberForChequesCollection() }}" required type="text" name="account_number_for_cheques_collection" class="form-control" placeholder="{{__('Main Account Number')}}">
+                                <input value="{{ $model->cheque&&$model->cheque->getAccountNumber() }}" required type="text" name="account_number" class="form-control" placeholder="{{__('Main Account Number')}}">
                                 <x-tool-tip title="{{__('Kash Vero')}}" />
                             </div>
                         </div>
@@ -159,14 +159,14 @@
                         <div class="col-md-3 mb-3">
                             <label>{{__('Account Balance')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
-                                <input value="{{ $model->chequeAccountBalance() }}" required value="0" type="text" name="cheque_account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
+                                <input value="{{ $model->cheque->getAccountBalance() }}" required value="0" readonly type="text" name="cheque_account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
                                 <x-tool-tip title="{{__('Kash Vero')}}" />
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>{{__('Clearance Days')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
-                                <input value="{{ $model->chequeClearanceDays() }}" required name="cheque_clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
+                                <input value="{{ $model->cheque->getClearanceDays() }}" required name="clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
                                 <x-tool-tip title="{{__('Kash Vero')}}" />
                             </div>
                         </div>
@@ -197,7 +197,7 @@
                                         <select name="drawee_bank_id" class="form-control ">
                                             {{-- <option value="-1">{{__('New Bank')}}</option> --}}
                                             @foreach($selectedBanks as $bankId=>$bankName)
-                                            <option value="{{ $bankId }}" {{ isset($model) && $model->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+                                            <option value="{{ $bankId }}" {{ isset($model) && $model->cheque && $model->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                             @endforeach
                                         </select>
                                         <button id="js-drawee-bank" class="btn btn-sm btn-primary">Add New Bank</button>
@@ -217,7 +217,7 @@
                                 <label>{{__('Cheque Due Date')}} <span class="required">*</span></label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input type="text" value="{{ isset($model) ?$model->getChequeDueDate():0 }}" name="cheque_due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                        <input type="text" value="{{ isset($model) ?$model->cheque->getDueDate():0 }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>
@@ -231,7 +231,7 @@
                             <div class="col-md-2">
                                 <label>{{__('Cheque Number')}} <span class="required">*</span></label>
                                 <div class="kt-input-icon">
-                                    <input type="text" name="cheque_number" value="{{ isset($model) ? $model->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
+                                    <input type="text" name="cheque_number" value="{{ isset($model) ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}" />
                                 </div>
                             </div>

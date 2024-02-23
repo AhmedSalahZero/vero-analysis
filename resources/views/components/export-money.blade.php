@@ -4,12 +4,15 @@
 'isFirstExportMoney'=>false,
 'accountTypes'
 ])
+@php
+use App\Models\MoneyReceived ;
+@endphp
 <div class="kt-portlet__head-toolbar">
     <div class="kt-portlet__head-wrapper">
         <div class="kt-portlet__head-actions">
             &nbsp;
             @if($hasBatchCollection)
-            <a data-type="multi" data-toggle="modal" data-target="#send-to-under-collection-modal" id="js-send-to-under-collection-trigger" href="{{route('create.money.receive',['company'=>$company->id])}}" title="{{ __('Please Select More Than One Cheque') }}" class="btn  active-style btn-icon-sm js-can-trigger-cheque-under-collection-modal disabled">
+            <a  data-money-type="{{ $moneyReceivedType }}" data-type="multi" data-toggle="modal" data-target="#send-to-under-collection-modal{{ $moneyReceivedType }}" id="js-send-to-under-collection-trigger{{ $moneyReceivedType }}" href="{{route('create.money.receive',['company'=>$company->id])}}" title="{{ __('Please Select More Than One Cheque') }}" class="btn  active-style btn-icon-sm js-can-trigger-cheque-under-collection-modal disabled">
                 <i class="fas fa-book"></i>
                 {{ __('Create Batch Send To Collection') }}
             </a>
@@ -75,13 +78,13 @@
 
 
 
-            <div class="modal fade" id="send-to-under-collection-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="send-to-under-collection-modal{{ $moneyReceivedType }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <form id="ajax-send-cheques-to-collection-id" class="ajax-send-cheques-to-collection" action="{{ route('cheque.send.to.collection',['company'=>$company->id]) }}" method="post">
-                            <input type="hidden" id="single-or-multi" value="single">
-                            <input type="hidden" id="current-single-item" value="0">
-                            <input type="hidden" id="current-currency" value="">
+                        <form  data-money-type="{{ $moneyReceivedType }}" id="ajax-send-cheques-to-collection-id{{ $moneyReceivedType }}" class="ajax-send-cheques-to-collection" action="{{ route('cheque.send.to.collection',['company'=>$company->id]) }}" method="post">
+                            <input type="hidden" id="single-or-multi{{ $moneyReceivedType }}" value="single">
+                            <input type="hidden" id="current-single-item{{ $moneyReceivedType }}" value="0">
+                            <input type="hidden" id="current-currency{{ $moneyReceivedType }}" class="current-currency"  value="">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Cheque / Cheques To Under Collection ?') }}</h5>
@@ -95,7 +98,7 @@
                                         <label>{{__('Cheque Deposit Date')}}</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <input required type="text" name="cheque_deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                <input required type="text" name="deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="la la-calendar-check-o"></i>
@@ -109,9 +112,9 @@
                                         <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date ">
-                                                <select required name="cheque_drawl_bank_id" class="form-control js-drawl-bank">
-                                                    @foreach($financialInstitutionBanks as $bankId=>$bankName)
-                                                    <option value="{{ $bankId }}" {{ isset($model) && $model->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+                                                <select js-when-change-trigger-change-account-type data-financial-institution-id required name="drawl_bank_id" class="form-control js-drawl-bank">
+                                                    @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
+                                                    <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->cheque && $model->cheque->getDraweeBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -122,14 +125,14 @@
                                 <div class="row mb-3">
 
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 ">
                                         <label>{{__('Account Type')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select  data-currency="{{ 'test' }}" name="cheque_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
                                                     <option value="" selected>{{__('Select')}}</option>
-                                                    @foreach($accountTypes as $id => $name)
-                                                    <option value="{{ $id }}">{{ $name }}</option>
+                                                    @foreach($accountTypes as $index => $accountType)
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -140,10 +143,10 @@
                                         <label>{{__('Account Number')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="account_number_for_cheques_collection" class="form-control js-cheque-account-number">
+                                                <select name="account_number" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                     @foreach([] as $id => $name)
-                                                    <option value="{{ $id }}" @if($id==$model->getAccountNumberForChequesCollection() ) selected @endif>{{ $name }}</option>
+                                                    <option value="{{ $id }}" @if($model->cheque && $id==$model->cheque->getAccountNumber()  ) selected @endif>{{ $name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -153,48 +156,34 @@
                                     <div class="col-md-3 mb-3">
                                         <label>{{__('Account Balance')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
-                                            <input required value="0" type="text" name="cheque_account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
+                                            <input readonly required value="0" type="text" name="account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
                                             <x-tool-tip title="{{__('Kash Vero')}}" />
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label>{{__('Clearance Days')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
-                                            <input required name="cheque_clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
+                                            <input value="0" required name="clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
                                             <x-tool-tip title="{{__('Kash Vero')}}" />
                                         </div>
                                     </div>
-                                    {{-- <div class="col-md-2 mb-3">
-                                        <label>{{__('Due After (Days)')}}</label>
-                                    <div class="kt-input-icon">
-                                        <input required type="number" name="cheque_expected_collection_date" min="0" class="form-control" placeholder="{{__('Due After (Days)')}}">
-                                        <x-tool-tip title="{{__('Kash Vero')}}" />
-                                    </div>
-                                </div> --}}
 
+
+
+                                </div>
 
                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                            </div>
 
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
-                    </div>
-
-                    </form>
                 </div>
             </div>
+
+
         </div>
-
-        {{-- <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn active-style btn-icon-sm ">
-        <i class="fas fa-plus"></i>
-        {{ __('New Record') }}
-        </a> --}}
-
-
-
-        {{-- @endif --}}
-
     </div>
-</div>
 </div>

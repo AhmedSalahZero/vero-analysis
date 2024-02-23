@@ -61,13 +61,9 @@ class CleanOverdraftController
 			'limit'=>__('Limit'),
 			'outstanding_balance'=>__('Outstanding Balance'),
 			'balance_date'=>__('Balance Date'),
-			// 'borrowing_rate'=>__('Borrowing Rate'),
-			// 'bank_margin_rate'=>__('Margin Rate'),
-			// 'interest_rate'=>__('Interest Rate'),
 			
 		];
-		// $selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
-		// $banks = Bank::pluck('view_name','id');
+
         return view('reports.clean-overdraft.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
@@ -84,12 +80,11 @@ class CleanOverdraftController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+	
 		$customers = $this->getCustomers($company);
         return view('reports.clean-overdraft.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks,
 			'financialInstitution'=>$financialInstitution,
 			'customers'=>$customers
 		]);
@@ -124,14 +119,12 @@ class CleanOverdraftController
 	// }
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft){
 		$banks = Bank::pluck('view_name','id');
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$customers = $this->getCustomers($company);
 		
         return view('reports.clean-overdraft.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks,
 			'financialInstitution'=>$financialInstitution,
 			'customers'=>$customers,
 			'model'=>$cleanOverdraft

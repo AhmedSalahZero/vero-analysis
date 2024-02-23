@@ -75,12 +75,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $slug
+ * @property string|null $model_name
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType onlySlugs(array $slugs)
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType query()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereModelName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereNameAr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereNameEn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereSlug($value)
@@ -468,6 +470,59 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\CashInBank
+ *
+ * @property int $id
+ * @property int $money_received_id
+ * @property int|null $receiving_bank_id
+ * @property string|null $account_type
+ * @property int|null $account_number
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\AccountType|null $accountType
+ * @property-read \App\Models\MoneyReceived $moneyReceived
+ * @property-read \App\Models\FinancialInstitution|null $receivingBank
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereMoneyReceivedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereReceivingBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereUpdatedAt($value)
+ */
+	class CashInBank extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\CashInSafe
+ *
+ * @property int $id
+ * @property int $money_received_id
+ * @property int|null $receiving_branch_id
+ * @property string|null $receipt_number
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MoneyReceived $moneyReceived
+ * @property-read \App\Models\Branch|null $receivingBranch
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereMoneyReceivedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereReceiptNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereReceivingBranchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereUpdatedAt($value)
+ */
+	class CashInSafe extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Category
  *
  * @property int $id
@@ -539,6 +594,54 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CertificatesOfDeposit whereUpdatedAt($value)
  */
 	class CertificatesOfDeposit extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Cheque
+ *
+ * @property int $id
+ * @property string|null $cheque_number
+ * @property string $status
+ * @property int $money_received_id
+ * @property int|null $drawee_bank_id هو البنك اللي جالي منة الشيك من العميل فا مش شرط يكون من بنوكي
+ * @property int|null $drawl_bank_id هو البنك اللي انا باخد الشيك واسحبة منة وبالتالي لازم يكون من بنوكي
+ * @property string $account_type نوع الحساب اللي هينزلك عليه فلوس الشيك بعد اما تودية البنك
+ * @property string $account_number رقم الحساب اللي هينزلك عليه فلوس الشيك بعد اما تودية البنك
+ * @property string|null $due_date هو تاريخ استحقاق الشيك .. يعني اقدر اسحبة امتة
+ * @property string|null $deposit_date هو تاريخ ايداع الشيك في البنك.. يعني ممكن يكون تاريخ الاستحقاق بكرا بس هطيته في البنك النهاردا
+ * @property string|null $expected_collection_date هو تاريخ اللي متوقع ان البنك يحطلي فيه قيمة الشيك في حسابي
+ * @property string|null $actual_collection_date هو تاريخ اللي البنك حطلي فيه قيمة الشيك في حسابي بشكل فعلي لاني ممكن اتوقع في يوم بس فعليا البنك حطة في يوم تاني بس وجود اجازة مثلا في اليوم اللي انا توقعته
+ * @property int|null $clearance_days
+ * @property string $account_balance دي اجمالي اللي معايا في الحساب بعد اما الشيك مثلا انسحب ودي احنا اللي بنجسبها افتراضيا
+ * @property string $collection_fees الرسوم اللي البنك بياخدها منك لتحصيل الشيك
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Bank|null $draweeBank
+ * @property-read \App\Models\FinancialInstitution|null $drawlBank
+ * @property-read \App\Models\MoneyReceived $moneyReceived
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereAccountBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereActualCollectionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereChequeNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereClearanceDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereCollectionFees($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereDepositDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereDraweeBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereDrawlBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereDueDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereExpectedCollectionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereMoneyReceivedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereUpdatedAt($value)
+ */
+	class Cheque extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -1163,7 +1266,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int|null $financial_institution_id
- * @property string|null $account_number
+ * @property int|null $account_number
  * @property string|null $currency
  * @property float|null $balance_amount
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1411,6 +1514,34 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementItem whereUpdatedAt($value)
  */
 	class IncomeStatementItem extends \Eloquent implements \App\Interfaces\Models\Interfaces\IFinancialStatementAbleItem {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\IncomingTransfer
+ *
+ * @property int $id
+ * @property int $money_received_id
+ * @property int|null $receiving_bank_id
+ * @property string|null $account_type
+ * @property int|null $account_number
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\AccountType|null $accountType
+ * @property-read \App\Models\MoneyReceived $moneyReceived
+ * @property-read \App\Models\FinancialInstitution|null $receivingBank
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer query()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereMoneyReceivedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereReceivingBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereUpdatedAt($value)
+ */
+	class IncomingTransfer extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -1894,15 +2025,9 @@ namespace App\Models{
 /**
  * App\Models\Money
  *
- * @property int $id
- * @property string|null $type
- * @property string|null $amount
  * @method static \Illuminate\Database\Eloquent\Builder|Money newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Money newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Money query()
- * @method static \Illuminate\Database\Eloquent\Builder|Money whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Money whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Money whereType($value)
  */
 	class Money extends \Eloquent {}
 }
@@ -1912,69 +2037,42 @@ namespace App\Models{
  * App\Models\MoneyReceived
  *
  * @property int $id
- * @property string|null $money_type
+ * @property string|null $type
  * @property string|null $customer_name
  * @property string|null $receiving_date
- * @property int|null $receiving_branch_id
  * @property string|null $received_amount
  * @property float $total_withhold_amount
  * @property float|null $total_withhold_amount_in_main_currency
  * @property float|null $received_amount_in_main_currency
  * @property string|null $currency
- * @property string|null $receipt_number
- * @property int|null $receipt_bank_id
- * @property int $drawee_bank_id
- * @property string|null $receiving_bank_id
- * @property string|null $cheque_due_date
- * @property string|null $cheque_number
- * @property string|null $cheque_deposit_date
- * @property string|null $cheque_drawl_bank_id
- * @property string|null $account_number_for_cheques_collection
- * @property string|null $cheque_account_balance
- * @property string|null $cheque_expected_collection_date
- * @property string|null $cheque_clearance_days
  * @property float|null $exchange_rate
- * @property string|null $cheque_status
  * @property int|null $user_id
  * @property int|null $company_id
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Bank $DraweeBank
- * @property-read \App\Models\Bank|null $chequeDrawlBank
+ * @property-read \App\Models\CashInBank|null $cashInBank
+ * @property-read \App\Models\CashInSafe|null $cashInSafe
+ * @property-read \App\Models\Cheque|null $cheque
+ * @property-read \App\Models\Bank $chequeDrawlBank
  * @property-read \App\Models\CustomerInvoice|null $customerInvoice
- * @property-read \App\Models\Bank|null $receivingBank
- * @property-read \App\Models\Branch|null $receivingBranch
+ * @property-read \App\Models\IncomingTransfer|null $incomingTransfer
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Settlement[] $settlements
  * @property-read int|null $settlements_count
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived query()
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereAccountNumberForChequesCollection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeAccountBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeClearanceDays($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeDepositDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeDrawlBankId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeDueDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeExpectedCollectionDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereChequeStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereCustomerName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereDraweeBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereExchangeRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereMoneyType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceiptBankId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceiptNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivedAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivedAmountInMainCurrency($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivingBankId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivingBranchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereReceivingDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereTotalWithholdAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereTotalWithholdAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyReceived whereUserId($value)
  */
@@ -1985,19 +2083,9 @@ namespace App\Models{
 /**
  * App\Models\MoneyTwo
  *
- * @property int $id
- * @property string|null $cash
- * @property string|null $cheque
- * @property string|null $transfer
- * @property string|null $deposit
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo query()
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereCash($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereCheque($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereDeposit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MoneyTwo whereTransfer($value)
  */
 	class MoneyTwo extends \Eloquent {}
 }

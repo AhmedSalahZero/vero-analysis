@@ -223,36 +223,7 @@ class CustomerInvoice extends Model
         return self::where('customer_name', $customerName)->get() ;
     }
 
-    public function syncNetBalance()
-    {
-		// $customerName =	$this->getCustomerName();
-		// /**
-		//  * @var CustomerInvoice[] $invoices
-		//  */
-        // $invoices = $this->getInvoicesForCustomerName($customerName);
-        // foreach($invoices as $customerInvoice) {
-        //     $invoiceNumber  = $customerInvoice->getInvoiceNumber($customerName) ;
-        //     $totalCollected = 0 ;
-		// 	$totalWithhold = 0 ;
-        //     foreach($customerInvoice->moneyReceived as $moneyReceived) {
-		// 		/**
-		// 		 * @var Settlement $settlement
-		// 		 */
-        //         foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $customerName)  as $settlement) {
-        //             $totalCollected += $settlement->getAmount();
-        //             $totalWithhold += $settlement->getWithhold();
-        //         }
-        //     }
-        //     $customerInvoice->updateNetBalance($totalCollected,$totalWithhold);
-        // }
-        
-    }
-	// public function insertInvoiceDateMonthAndYearColumnsInDB()
-	// {
-	// 	$this->invoice_month = sprintf("%02d", explode('-',$this->invoice_date)[1]);	
-	// 	$this->invoice_year = explode('-',$this->invoice_date)[0];	
-	// 	$this->save();
-	// }
+  
 	public function getVatAmount()
 	{
 		return $this->vat_amount ?: 0 ;
@@ -417,9 +388,6 @@ class CustomerInvoice extends Model
 					$currentData['document_no'] = $docNumber  ;
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$moneyReceivedAmount;
-					// dd();
-					// dd($moneyReceived);
-					// dd();
 					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray()); ;
 					$index++;
 					$formattedData[] = $currentData ;

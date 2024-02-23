@@ -88,13 +88,11 @@ class CertificatesOfDepositsController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
 		$customers = $this->getCustomers($company);
 		$accounts = $financialInstitution->accounts ;
         return view('reports.certificates-of-deposit.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks,
 			'financialInstitution'=>$financialInstitution,
 			'customers'=>$customers,
 			'accounts'=>$accounts

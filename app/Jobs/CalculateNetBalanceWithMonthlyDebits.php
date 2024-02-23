@@ -43,40 +43,6 @@ class CalculateNetBalanceWithMonthlyDebits implements ShouldQueue
 		// get only new customer invoices
         $customerInvoices = CustomerInvoice::where('company_id', $this->companyId)->where('net_balance', null)->get();
 		
-        foreach($customerInvoices as $customerInvoice) {
-			// $customerName = $customerInvoice->getCustomerName();
-			
-            // first sync net balance
-            // $customerInvoice->syncNetBalance();
-			
-            // $customerInvoice->insertInvoiceDateMonthAndYearColumnsInDB();
-			
-			// $customerInvoice->calculateAmountInMainCurrency();
-        }
-		// foreach($customersWithItsSmallestDate as $customerName => $customerInvoiceArr){
-		// 	$customerInvoice = $customerInvoiceArr['customer_invoice'];
-		// 	$latestDate = $customerInvoiceArr['invoice_date'];
-		// 	$monthlyCustomerInvoices =$customerInvoice->monthlyCustomerInvoices ; 
-		// 	if(!count($monthlyCustomerInvoices)){
-		// 		$currentYear = explode('-',$latestDate)[0];
-		// 		$currentMonth = explode('-',$latestDate)[1];
-		// 		$getEndYearMonthFrom = getEndYearMonthFrom($currentMonth,$currentYear);
-		// 		foreach($getEndYearMonthFrom as $month=>$year){
-					
-		// 		}
-		// 	}
-			
-		// }
     }
-	// protected function getLatestArrayWithSmallestDate(array $currentInvoiceArr , string $invoiceDate ):array 
-	// {
-	// 	$currentInvoiceDate = $currentInvoiceArr['invoice_date'];
-	// 	if(Carbon::make($currentInvoiceDate)->greaterThan(Carbon::make($invoiceDate)))
-	// 	{
-	// 		$currentInvoiceArr['invoice_date'] = $invoiceDate;
-	// 	}
-	// 	return $currentInvoiceArr ;
-		
-	// }
 	
 }

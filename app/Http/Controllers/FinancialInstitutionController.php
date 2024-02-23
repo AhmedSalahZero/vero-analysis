@@ -100,7 +100,7 @@ class FinancialInstitutionController
 			'financialInstitutionCompanies'=>$financialInstitutionsMortgageCompanies
 		]
 		];
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$banks = Bank::pluck('view_name','id');
         return view('reports.financial-institution.index', compact('company','companiesSearchFields','selectedBanks','banks','financialInstitutionsBanks','financialInstitutionCompanies'));
     }
@@ -109,7 +109,7 @@ class FinancialInstitutionController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		// $selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
         return view('reports.financial-institution.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,

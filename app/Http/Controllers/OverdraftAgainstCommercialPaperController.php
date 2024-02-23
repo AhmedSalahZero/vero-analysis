@@ -63,13 +63,8 @@ class OverdraftAgainstCommercialPaperController
 			'limit'=>__('Limit'),
 			'outstanding_balance'=>__('Outstanding Balance'),
 			'balance_date'=>__('Balance Date'),
-			// 'borrowing_rate'=>__('Borrowing Rate'),
-			// 'bank_margin_rate'=>__('Margin Rate'),
-			// 'interest_rate'=>__('Interest Rate'),
-			
 		];
-		// $selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
-		// $banks = Bank::pluck('view_name','id');
+
         return view('reports.overdraft-against-commercial-paper.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
@@ -86,12 +81,11 @@ class OverdraftAgainstCommercialPaperController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+
 		$customers = $this->getCustomers($company);
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks,
 			'financialInstitution'=>$financialInstitution,
 			'customers'=>$customers
 		]);
@@ -150,14 +144,12 @@ class OverdraftAgainstCommercialPaperController
 	}
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
 		$banks = Bank::pluck('view_name','id');
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$customers = $this->getCustomers($company);
 		
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			'selectedBanks'=>$selectedBanks,
 			'financialInstitution'=>$financialInstitution,
 			'customers'=>$customers,
 			'model'=>$overdraftAgainstCommercialPaper

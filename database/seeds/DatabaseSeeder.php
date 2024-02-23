@@ -13,13 +13,14 @@ class DatabaseSeeder extends Seeder
 	
     public function run()
     {
-		for($i = 0 ; $i<=159591;$i++){
-			DB::table('money2')->insert([
-				'cash'=>250000,
-				'cheque'=>250000,
-				'transfer'=>250000,
-				'deposit'=>250000,
-			]);
-		}
+		// $this->call(AccountTypeSeeder::class);
+		// for($i = 0 ; $i<=159591;$i++){
+		// 	DB::table('money2')->insert([
+		// 		'cash'=>250000,
+		// 		'cheque'=>250000,
+		// 		'transfer'=>250000,
+		// 		'deposit'=>250000,
+		// 	]);
+		// }
     }
 }

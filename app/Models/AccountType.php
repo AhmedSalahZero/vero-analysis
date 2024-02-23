@@ -15,10 +15,26 @@ class AccountType extends Model
 	protected $guarded =[
 		'id'
 	];
+	public function getModelName()
+	{
+		return $this->model_name;
+	}
+	public function getSlug()
+	{
+		return $this->slug ; 
+	}
 	
 	public function scopeOnlySlugs(Builder $builder , array $slugs)
 	{
 		return $builder->whereIn('slug',$slugs);
+	}
+	public function getId()
+	{
+		return $this->id ;
+	}
+	public function getName()
+	{
+		return $this['name_'.app()->getLocale()];
 	}
 	
 	

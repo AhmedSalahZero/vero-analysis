@@ -105,10 +105,8 @@
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            {{-- @include('reports.financial-institution.dropdown-actions') --}}
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a type="button" class="btn btn-secondary @if($bankAccount->isBlocked()) btn-outline-danger @else btn-outline-success @endif btn-icon" title="Edit" href="{{ route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ]) }}"><i class="fa @if($bankAccount->isBlocked()) fa-lock @else fa-unlock @endif"></i></a>
-                                            {{-- <a data-type="single" data-id="{{ $bankAccount->id }}" data-toggle="modal" data-target="#send-to-under-collection-modal" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-warning btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-sync-alt"></i></a> --}}
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $bankAccount->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $bankAccount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">

@@ -4,6 +4,7 @@ use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
+use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
@@ -12,7 +13,6 @@ use App\Models\User;
 use App\Traits\GeneralFunctions;
 use Arr;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -25,8 +25,8 @@ class MoneyReceivedController
 		}
 		$searchFieldName = $request->get('field');
 		$dateFieldName = $searchFieldName === 'due_date' ? 'due_date' : 'receiving_date'; 
-		if($searchFieldName =='cheque_deposit_date'){
-			$dateFieldName = 'cheque_deposit_date';
+		if($searchFieldName =='deposit_date'){
+			$dateFieldName = 'deposit_date';
 		}
 		$from = $request->get('from');
 		$to = $request->get('to');
@@ -35,9 +35,17 @@ class MoneyReceivedController
 		->when($request->has('value'),function($collection) use ($request,$value,$searchFieldName){
 			return $collection->filter(function($moneyReceived) use ($value,$searchFieldName){
 				$currentValue = $moneyReceived->{$searchFieldName} ;
-				
+				// $moneyReceivedRelationName cash-in-safe -> cashInSafe relation ship name
+				$moneyReceivedRelationName = dashesToCamelCase(Request('active')) ;
+				$relationRecord = $moneyReceived->$moneyReceivedRelationName ;
+				/**
+				 * * بمعني لو مالقناش القيمة في جدول ال
+				 * * moneyReceived
+				 * * هندور عليها في العلاقه 
+				 */
+				$currentValue = is_null($currentValue) && $relationRecord ? $relationRecord->{$searchFieldName}  :$currentValue ;
 				if($searchFieldName == 'receiving_branch_id'){
-					$currentValue = $moneyReceived->getCashBranchName() ;  
+					$currentValue = $moneyReceived->getCashInSafeBranchName() ;  
 				}
 				if($searchFieldName == 'receiving_bank_id'){
 					$currentValue = $moneyReceived->getReceivingBankName() ;  
@@ -69,22 +77,43 @@ class MoneyReceivedController
 		*/
 		$receivedCashesInSafe = $user->getReceivedCashesInSafe() ;
 		$receivedCashesInBank = $user->getReceivedCashesInBank() ;
-		$financialInstitutionBanks = FinancialInstitution::onlyBanks()->get()->keyBy('id')->map(function($item){
-			return $item->getName();
-		})->toArray();
-		// $accountTypes = [];		
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts']);		
+		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		
+		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
 		$receivedCashesInSafe = $moneyType == MoneyReceived::CASH_IN_SAFE ? $this->applyFilter($request,$receivedCashesInSafe) :$receivedCashesInSafe  ;
 		$receivedCashesInBank = $moneyType == MoneyReceived::CASH_IN_BANK ? $this->applyFilter($request,$receivedCashesInBank) :$receivedCashesInBank  ;
 		$receivedTransfer = $user->getReceivedTransfer() ;
 		$receivedTransfer = $moneyType === MoneyReceived::INCOMING_TRANSFER ? $this->applyFilter($request,$receivedTransfer) : $receivedTransfer  ;
-		$receivedChequesInSafe = $user->getReceivedChequesInSafe();
-		$receivedChequesInSafe = $moneyType == 'cheques-in-safe' ? $this->applyFilter($request,$receivedChequesInSafe) : $receivedChequesInSafe;
-		$receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection();
-		$receivedChequesUnderCollection=  $moneyType == 'cheques-under-collection' ? $this->applyFilter($request,$receivedChequesUnderCollection) : $receivedChequesUnderCollection ;
 		
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		$receivedCashInBanks = $user->getReceivedCashesInBank() ;
+		$receivedCashInBanks = $moneyType === MoneyReceived::CASH_IN_BANK ? $this->applyFilter($request,$receivedCashInBanks) : $receivedCashInBanks  ;
+	
+		$receivedChequesInSafe = $user->getReceivedChequesInSafe();
+		$receivedChequesInSafe = $moneyType == MoneyReceived::CHEQUE ? $this->applyFilter($request,$receivedChequesInSafe) : $receivedChequesInSafe;
+		
+		$receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe();
+		$receivedRejectedChequesInSafe = $moneyType == MoneyReceived::CHEQUE_REJECTED ? $this->applyFilter($request,$receivedRejectedChequesInSafe) : $receivedRejectedChequesInSafe;
+		
+		$receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection();
+		$receivedChequesUnderCollection=  $moneyType == MoneyReceived::CHEQUE_UNDER_COLLECTION ? $this->applyFilter($request,$receivedChequesUnderCollection) : $receivedChequesUnderCollection ;
+		
+		$collectedCheques=  $user->getCollectedCheques();
+		$collectedCheques=  $moneyType == MoneyReceived::CHEQUE_COLLECTED ? $this->applyFilter($request,$collectedCheques) : $collectedCheques ;
+		
+		
+		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$chequesReceivedTableSearchFields = [
+			'customer_name'=>__('Customer Name'),
+			'receiving_date'=>__('Receiving Date'),
+			'cheque_number'=>__('Cheque Number'),
+			'currency'=>__('Currency'),
+			'drawee_bank_id'=>__('Drawee Bank'),
+			'due_date'=>__('Due Date'),
+			'cheque_status'=>__('Status')
+		];
+		
+		
+		$chequesRejectedTableSearchFields = [
 			'customer_name'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'cheque_number'=>__('Cheque Number'),
@@ -98,19 +127,39 @@ class MoneyReceivedController
 			'customer_name'=>__('Customer Name'),
 			'cheque_number'=>__('Cheque Number'),
 			'received_amount'=>__('Cheque Amount'),
-			'cheque_deposit_date'=>__('Deposit Date'),
-			'cheque_drawl_bank_id'=>__('Drawal Bank'),
-			'account_number_for_cheques_collection'=>__('Account Number'),
-			'cheque_clearance_days'=>'Clearance Days'
+			'deposit_date'=>__('Deposit Date'),
+			'drawl_bank_id'=>__('Drawl Bank'),
+			// 'account_type'=>__('Account Number'),
+			'clearance_days'=>'Clearance Days'
 		];
+		
+		$collectedChequesTableSearchFields = [
+			'customer_name'=>__('Customer Name'),
+			'cheque_number'=>__('Cheque Number'),
+			'received_amount'=>__('Cheque Amount'),
+			'deposit_date'=>__('Deposit Date'),
+			'drawl_bank_id'=>__('Drawl Bank'),
+			'clearance_days'=>'Clearance Days'
+		];
+		
 		$incomingTransferTableSearchFields = [
 			'customer_name'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'receiving_bank_id'=>__('Receiving Bank'),
 			'received_amount'=>__('Transfer Amount'),
 			'currency'=>__('Currency'),
-			'sub_account_number'=>__('Sub Account Number')
+			'account_number'=>__('Account Number')
 		];
+		
+		$cashInBankTableSearchFields = [
+			'customer_name'=>__('Customer Name'),
+			'receiving_date'=>__('Receiving Date'),
+			'receiving_bank_id'=>__('Receiving Bank'),
+			'received_amount'=>__('Deposit Amount'),
+			'currency'=>__('Currency'),
+			'account_number'=>__('Account Number')
+		];
+		
 		$cashInSafeReceivedTableSearchFields = [
 			'customer_name'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
@@ -122,8 +171,10 @@ class MoneyReceivedController
 		
 		
 		
+		
+		
 		$banks = Bank::pluck('view_name','id');
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts']);		
+		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
 		
 		
         return view('reports.moneyReceived.index', [
@@ -133,13 +184,19 @@ class MoneyReceivedController
 			'receivedCashesInSafe'=>$receivedCashesInSafe,
 			'chequesReceivedTableSearchFields'=>$chequesReceivedTableSearchFields,
 			'receivedTransfer'=>$receivedTransfer,
+			'receivedCashInBanks'=>$receivedCashInBanks,
 			'banks'=>$banks,
 			'receivedChequesUnderCollection'=>$receivedChequesUnderCollection,
 			'chequesUnderCollectionTableSearchFields'=>$chequesUnderCollectionTableSearchFields ,
 			'cashInSafeReceivedTableSearchFields'=>$cashInSafeReceivedTableSearchFields,
 			'incomingTransferTableSearchFields'=>$incomingTransferTableSearchFields,
+			'cashInBankTableSearchFields'=>$cashInBankTableSearchFields,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
-			'accountTypes'=>$accountTypes
+			'accountTypes'=>$accountTypes,
+			'chequesRejectedTableSearchFields'=>$chequesRejectedTableSearchFields,
+			'receivedRejectedChequesInSafe'=>$receivedRejectedChequesInSafe,
+			'collectedCheques'=>$collectedCheques,
+			'collectedChequesTableSearchFields'=>$collectedChequesTableSearchFields
 		]);
         return view('reports.moneyReceived.index', compact('financialInstitutionBanks','accountTypes'));
     }
@@ -147,11 +204,10 @@ class MoneyReceivedController
 	public function create(Company $company,$singleModel = null)
 	{
 		$banks = Bank::pluck('view_name','id');
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts']);		
+		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		
 		$customerInvoices =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$invoiceNumber = $singleModel ? CustomerInvoice::where('id',$singleModel)->first()->getInvoiceNumber():null;
         return view('reports.moneyReceived.form',[
@@ -228,44 +284,58 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request){
-		$moneyType = $request->get('money_type');
+		$moneyType = $request->get('type');
 		$customerInvoiceId = $request->get('customer_id');
 		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
 		$customerName = $customerInvoice->getCustomerName();
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['money_type','receiving_date','currency']);
+		$data = $request->only(['type','receiving_date','currency']);
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		
-		$additionalData = [];
-
+		$relationData = [];
+		$relationName = null ;
 		$receivedAmount = 0 ;
 		$exchangeRate = $request->input('exchange_rate.'.$moneyType,1) ;
 		$receivedAmount = $request->input('received_amount.'.$moneyType ,0) ;
 		if($moneyType ==MoneyReceived::CASH_IN_SAFE){
-			$additionalData = ['receiving_branch','receipt_number'] ;
+			$relationData = $request->only(['receipt_number']) ;
+			$relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
+			$relationName = 'cashInSafe';
 		}
-		elseif($moneyType ==MoneyReceived::CHEQUE_IN_SAFE){
-			$additionalData = ['drawee_bank_id','cheque_due_date','cheque_number'] ;
+		elseif($moneyType ==MoneyReceived::INCOMING_TRANSFER ){
+			$relationName = 'incomingTransfer';
+			$relationData = [
+				'receiving_bank_id'=>$request->input('receiving_bank_id.'.MoneyReceived::INCOMING_TRANSFER),
+				'account_number'=>$request->input('account_number.'.MoneyReceived::INCOMING_TRANSFER),
+				'account_type'=>$request->input('account_type.'.MoneyReceived::INCOMING_TRANSFER)
+			];
 		}
-		elseif($moneyType ==MoneyReceived::INCOMING_TRANSFER){
-			$additionalData = ['receiving_bank_id','incoming_transfer_account_number','receiving_branch_id'] ;
+		elseif($moneyType ==MoneyReceived::CASH_IN_BANK ){
+			$relationName = 'cashInBank';
+			$relationData = [
+				'receiving_bank_id'=>$request->input('receiving_bank_id.'.MoneyReceived::CASH_IN_BANK),
+				'account_number'=>$request->input('account_number.'.MoneyReceived::CASH_IN_BANK),
+				'account_type'=>$request->input('account_type.'.MoneyReceived::CASH_IN_BANK)
+			];
 		}
-		foreach($additionalData as $name){
-			$data[$name] = $request->get($name);
-		}
-		if($moneyType ==MoneyReceived::CASH_IN_SAFE ){
-			$data['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
+		elseif($moneyType ==MoneyReceived::CHEQUE ){
+			$relationName = 'cheque';
+			$relationData = [
+				'due_date'=>$request->input('due_date'),
+				'cheque_number'=>$request->input('cheque_number'),
+				'drawee_bank_id'=>$request->input('drawee_bank_id')
+			];
 		}
 		$data['received_amount'] = $receivedAmount ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$moneyReceived = MoneyReceived::create($data);
-		dd($data);
+		$moneyReceived->$relationName()->create($relationData);
 		$totalWithholdAmount= 0 ;
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{
-			if($settlementArr['settlement_amount'] > 0){
+			if(isset($settlementArr['settlement_amount'])&&$settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $company->id ;
 				$settlementArr['customer_name'] = $customerName ;
 				$totalWithholdAmount += $settlementArr['withhold_amount']  ;
@@ -279,9 +349,8 @@ class MoneyReceivedController
 		/**
 		 * @var CustomerInvoice $customerInvoice
 		 */
-		dd('good');
-		$customerInvoice->syncNetBalance();
-		$activeTab = $this->getActiveTab($moneyType);
+
+		$activeTab = $moneyType;
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
@@ -292,14 +361,12 @@ class MoneyReceivedController
 	}
 	public function edit(Company $company , Request $request , moneyReceived $moneyReceived ,$singleModel = null){
 		$banks = Bank::pluck('view_name','id');
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$customerInvoices = CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts']);		
-		$financialInstitutionBanks = FinancialInstitution::onlyBanks()->get()->keyBy('id')->map(function($item){
-			return $item->getName();
-		})->toArray();
-		$selectedBanks = MoneyReceived::getBanksForCurrentCompany($company->id) ;
+		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
+		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		if($moneyReceived->isChequeUnderCollection()){
 			return view('reports.moneyReceived.edit-cheque-under-collection',[
 				'banks'=>$banks,
@@ -326,72 +393,75 @@ class MoneyReceivedController
 		
 	}
 	
-	public function update(Company $company , Request $request , moneyReceived $moneyReceived){
-		$customerInvoiceId = $request->get('customer_id');
-		$receivedBankName = $request->get('receiving_branch_id') ;
-		$moneyType = $request->get('money_type');
-		$customerInvoiceId = $request->get('customer_id');
-		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
-		$customerName = $customerInvoice->getCustomerName();
-		$data = $request->only(['money_type','receiving_date','currency']);
-		$data['customer_name'] = $customerName;
-		$data['user_id'] = auth()->user()->id ;
+	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived){
+		$oldType = $moneyReceived->getType();
+		$newType = $request->get('type');
+		$oldTypeRelationName = dashesToCamelCase($oldType);
+		$moneyReceived->$oldTypeRelationName ? $moneyReceived->$oldTypeRelationName->delete() : null;
+		$moneyReceived->delete();
+		$this->store($company,$request);
+		
+		// $customerInvoiceId = $request->get('customer_id');
+		// $customerInvoice = CustomerInvoice::find($customerInvoiceId);
+		// $customerName = $customerInvoice->getCustomerName();
+		// $data = $request->only(['type','receiving_date','currency']);
+		// $data['customer_name'] = $customerName;
+		// $data['user_id'] = auth()->user()->id ;
 		
 		
 		
-		$additionalData = [];
+		// $additionalData = [];
 		
-		$currency= null  ;
-		$receivedAmount = $request->input('received_amount.'.$moneyType ,0);
+		// $currency= null  ;
+		// $receivedAmount = $request->input('received_amount.'.$moneyType ,0);
 		
-		if($moneyType ==MoneyReceived::CASH_IN_SAFE){
-			$additionalData = ['receiving_branch','receipt_number'] ;
-			$currency = $request->get('cash_currency');
-		}
-		elseif($moneyType ==MoneyReceived::CHEQUE_IN_SAFE){
-			$additionalData = ['drawee_bank_id','cheque_due_date','cheque_number','exchange_rate'] ;
-			$receivedAmount = $request->input('received_amount.'.$moneyType ,0);
-			$currency = $request->get('cheque_currency');
-		}
-		elseif($moneyType ==MoneyReceived::INCOMING_TRANSFER){
-			$additionalData = ['receiving_bank_id','income_transfer_account_number'] ;
-			$receivedAmount = $request->get('incoming_transfer_amount',0);
-			$currency = $request->get('cheque_currency');
-		}
-		foreach($additionalData as $name){
-			$data[$name] = $request->get($name);
-		}
-		if($moneyType ==MoneyReceived::CASH_IN_SAFE ){
-			$data['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
-		}
-		$data['received_amount'] = $receivedAmount ;
-		$data['currency'] = $currency?:Arr::get($data,'currency') ;
-		$data['currency'] = strtolower($data['currency']);
-		$moneyReceived->update($data);
-		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
-		$moneyReceived->settlements->each(function($settlement){
-			$settlement->delete();
-		});
+		// if($moneyType ==MoneyReceived::CASH_IN_SAFE){
+		// 	$additionalData = ['receiving_branch','receipt_number'] ;
+		// 	$currency = $request->get('cash_currency');
+		// }
+		// elseif($moneyType ==MoneyReceived::CHEQUE){
+		// 	$additionalData = ['drawee_bank_id','due_date','cheque_number','exchange_rate'] ;
+		// 	$receivedAmount = $request->input('received_amount.'.$moneyType ,0);
+		// 	$currency = $request->get('cheque_currency');
+		// }
+		// elseif($moneyType ==MoneyReceived::INCOMING_TRANSFER){
+		// 	$additionalData = ['receiving_bank_id','income_transfer_account_number'] ;
+		// 	$receivedAmount = $request->get('incoming_transfer_amount',0);
+		// 	$currency = $request->get('cheque_currency');
+		// }
+		// foreach($additionalData as $name){
+		// 	$data[$name] = $request->get($name);
+		// }
+		// if($moneyType ==MoneyReceived::CASH_IN_SAFE ){
+		// 	$data['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
+		// }
+		// $data['received_amount'] = $receivedAmount ;
+		// $data['currency'] = $currency?:Arr::get($data,'currency') ;
+		// $data['currency'] = strtolower($data['currency']);
+		// $moneyReceived->update($data);
+		// $customerInvoice = CustomerInvoice::find($customerInvoiceId);
+		// $moneyReceived->settlements->each(function($settlement){
+		// 	$settlement->delete();
+		// });
 		
-		$totalWithholdAmount = 0 ;
-		foreach($request->get('settlements',[]) as $settlementArr)
-		{
-				if($settlementArr['settlement_amount'] > 0 ){
-					$settlementArr['company_id'] = $company->id ;
-					$settlementArr['customer_name'] = $customerName ;
-					$totalWithholdAmount += $settlementArr['withhold_amount'];
+		// $totalWithholdAmount = 0 ;
+		// foreach($request->get('settlements',[]) as $settlementArr)
+		// {
+		// 		if($settlementArr['settlement_amount'] > 0 ){
+		// 			$settlementArr['company_id'] = $company->id ;
+		// 			$settlementArr['customer_name'] = $customerName ;
+		// 			$totalWithholdAmount += $settlementArr['withhold_amount'];
 					
-					$moneyReceived->settlements()->create($settlementArr);
+		// 			$moneyReceived->settlements()->create($settlementArr);
 					
-				}
+		// 		}
 			
-		}
-		$moneyReceived->update([
-			'total_withhold_amount'=>$totalWithholdAmount 
-		]);
+		// }
+		// $moneyReceived->update([
+		// 	'total_withhold_amount'=>$totalWithholdAmount 
+		// ]);
 		
-		 $moneyReceived->customerInvoice->syncNetBalance() ;
-		 $activeTab = $this->getActiveTab($moneyType);
+		 $activeTab = $newType;
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 		
 		
@@ -402,7 +472,6 @@ class MoneyReceivedController
 		$moneyReceived->settlements->each(function($settlement){
 			$settlement->delete();
 		});
-		// $moneyReceived->customerInvoice->syncNetBalance();
 		$moneyReceived->delete();
 		return redirect()->back()->with('success',__('Money Received Has Been Delete Successfully'));
 	}
@@ -419,61 +488,74 @@ class MoneyReceivedController
 	}
 	public function sendToCollection(Company $company,Request $request)
 	{
-		$cheques = $request->get('cheques') ;
-		$chequeIds = is_array($cheques) ? $cheques :  explode(',',$cheques);
-		$data = $request->only(['cheque_deposit_date','cheque_drawl_bank_id','cheque_account_type','account_number_for_cheques_collection','cheque_account_balance','cheque_clearance_days']);
+		$moneyReceivedIds = $request->get('cheques') ;
+		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
+		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);
 		
-		$data['cheque_status'] = 'under_collection';
-		foreach($chequeIds as $chequesId){
-			$cheque = MoneyReceived::find($chequesId) ;
-			$data['cheque_expected_collection_date'] = $cheque->calculateChequeExpectedCollectionDate($data['cheque_deposit_date'],$data['cheque_clearance_days']);
-			$cheque->update($data);
+		$data['status'] = Cheque::UNDER_COLLECTION;
+		foreach($moneyReceivedIds as $moneyReceivedId){
+			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
+			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
+			$moneyReceived->cheque->update($data);
 		}
 		if($request->ajax()){
 			return response()->json([
 				'status'=>true ,
-				'msg'=>__('Good')
+				'msg'=>__('Good'),
+				'pageLink'=>route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION])
 			]);	
 		}
-		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>'cheques-under-collection']);
+		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION]);
 		
+	}
+	/**
+	 * * تحديد ان الشيك دا تم بالفعل صرفة من البنك ونزل في حسابك
+	 */
+	public function applyCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
+	{
+		$moneyReceived->cheque->update([
+			'status'=>Cheque::COLLECTED,
+			'collection_fees'=>$request->get('collection_fees'),
+			'actual_collection_date'=>$request->get('actual_collection_date') 
+		]);
+		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	
 	public function sendToSafe(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
-		$moneyReceived->update([
-			'cheque_status'=>'in safe',
-			'cheque_deposit_date'=>null ,
-			'cheque_drawl_bank_id'=>null ,
-			'cheque_account_type'=>null ,
-			'account_number_for_cheques_collection'=>null ,
-			'cheque_account_balance'=>null ,
-			'cheque_expected_collection_date'=>null ,
-			'cheque_clearance_days'=>null
+		$moneyReceived->cheque->update([
+			'status'=>Cheque::IN_SAFE,
+			'deposit_date'=>null ,
+			'drawl_bank_id'=>null ,
+			'account_type'=>null ,
+			'account_number'=>null ,
+			'account_balance'=>null ,
+			'expected_collection_date'=>null ,
+			'clearance_days'=>null
 		]);
-		
-		return redirect()->back()->with('success'  , __('Cheque Is Returned To Safe'));
-		
+		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	public function sendToSafeAsRejected(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
-		$moneyReceived->update([
-			'cheque_status'=>'rejected',
-			'cheque_deposit_date'=>null ,
-			'cheque_drawl_bank_id'=>null ,
-			'cheque_account_type'=>null ,
-			'account_number_for_cheques_collection'=>null ,
-			'cheque_account_balance'=>null ,
-			'cheque_expected_collection_date'=>null ,
-			'cheque_clearance_days'=>null
-		]);
 		
-		return redirect()->back()->with('success'  , __('Cheque Is Returned To Safe'));
+		$moneyReceived->cheque->update([
+			'status'=>Cheque::REJECTED,
+			'deposit_date'=>null ,
+			'drawl_bank_id'=>null ,
+			'account_type'=>null ,
+			'account_number'=>null ,
+			'account_balance'=>null ,
+			'expected_collection_date'=>null ,
+			'clearance_days'=>null
+		]);
+		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_REJECTED])->with('success',__('Cheque Is Returned To Safe'));
 		
 	}
 
-	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null){
-		$accountNumberModel =  ('\App\Models\\'.$accountType)::getAllAccountNumberForCurrency($company->id , $selectedCurrency);
+	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
+		$accountType = AccountType::find($accountType);
+		
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId);
 		return response()->json([
 			'status'=>true , 
 			'data'=>$accountNumberModel

@@ -4759,3 +4759,9 @@ function findByKey(array $items , $key , $searchId )
 function touppercase($currentName){
 	return Str::upper($currentName);
 }
+function dashesToCamelCase($string) 
+{
+    $str = str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
+    $str[0] = strtolower($str[0]);
+    return $str;
+}

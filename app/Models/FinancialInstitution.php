@@ -136,9 +136,6 @@ class FinancialInstitution extends Model
 			]);
 		}
 	}
-	public static function getAllAccountNumberForCurrency($companyId , $currencyName):array
-	{
-		return FinancialInstitutionAccount::where('company_id',$companyId)->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
-	}
+	
 	
 }

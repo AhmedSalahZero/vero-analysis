@@ -490,9 +490,10 @@ Route::middleware([])->group(function () {
 				
 				Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
 				Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
+				Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
 				Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
 				Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
-				Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
+				Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
 				Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 				Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
 				Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');
@@ -739,7 +740,7 @@ Route::middleware([])->group(function () {
 
 
 
-				Route::resource('adjustedCollectionDate', AdjustedCollectionDateController::class);
+				// Route::resource('adjustedCollectionDate', AdjustedCollectionDateController::class);
 				
 
 				############ Exportable Fields Selection Routes ############

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 @section('css')
 @php
-	use App\Models\MoneyReceived;
+use App\Models\MoneyReceived;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -41,42 +41,58 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE_IN_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_IN_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques In Safe Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques') }}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == MoneyReceived::CHEQUE_IN_UNDER_COLLECTION ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_IN_UNDER_COLLECTION }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques Under Collection Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_REJECTED }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ Request('active') == MoneyReceived::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques Under Collection') }}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ Request('active') == MoneyReceived::CHEQUE_COLLECTED ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_COLLECTED }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Collected Cheques') }}
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::INCOMING_TRANSFER ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::INCOMING_TRANSFER }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i>{{ __('Incoming Transfer Table') }}
+                        <i class="fa fa-money-check-alt"></i>{{ __('Incoming Transfer') }}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::CASH_IN_SAFE ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CASH_IN_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i>{{ __('Cash In Safe Received Table') }}
+                        <i class="fa fa-money-check-alt"></i>{{ __('Cash In Safe Received') }}
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ Request('active') == MoneyReceived::CASH_IN_BANK ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CASH_IN_BANK }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i>{{ __('Cash In Bank') }}
+                    </a>
+                </li>
+
             </ul>
 
             <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+
         </div>
     </div>
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE_IN_SAFE ?'active':'' }}" id="{{ MoneyReceived::CHEQUE_IN_SAFE }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE ?'active':'' }}" id="{{ MoneyReceived::CHEQUE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label " style="flex:1;">
@@ -84,11 +100,12 @@
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                             </span>
                             <h3 class="kt-portlet__head-title text-nowrap">
-                                {{ __('Cheques Received Table') }}
+                                {{ __('Cheques Received') }}
                             </h3>
                             <form class="w-full  ml-3">
                                 <div class="row align-items-center justify-content-center">
                                     <div class="col-md-4 d-flex align-items-center">
+
                                         <label for="start_date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
                                         <input id="start_date" type="date" value="{{ $startDate??'' }}" class="form-control" name="start_date">
                                     </div>
@@ -107,7 +124,7 @@
                                 </div>
                             </form>
                         </div>
-                        <x-export-money   :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesReceivedTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_IN_SAFE" :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesReceivedTableSearchFields" :money-received-type="MoneyReceived::CHEQUE" :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -118,7 +135,6 @@
                                     <th>{{ __('Select') }}</th>
 
                                     <th>{{ __('Customer Name') }}</th>
-                                    {{-- <th>{{ __('Invoice/Contract') }}</th> --}}
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Cheque Number') }}</th>
                                     <th>{{ __('Cheque Amount') }}</th>
@@ -131,30 +147,276 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($receivedChequesInSafe as $cheque)
+                                @foreach($receivedChequesInSafe as $moneyReceived)
                                 <tr>
                                     <td>
-                                        <input style="max-height:25px;" id="cash-send-to-collection-{{ $cheque->id }}" type="checkbox" name="second_to_collection[]" value="{{ $cheque->id }}" class="form-control checkbox js-send-to-collection">
+                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
-                                    <td>{{ $cheque->getCustomerName() }}</td>
-                                    {{-- <td>{{ $cheque->id }}</td> --}}
-                                    <td class="text-nowrap">{{ $cheque->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $cheque->getChequeNumber() }}</td>
-                                    <td>{{ $cheque->getReceivedAmountFormatted() }}</td>
-                                    <td class="text-transform" data-currency="{{ $cheque->getCurrency() }}">{{ $cheque->getCurrencyFormatted() }}</td>
-                                    <td class="bank-max-width">{{ $cheque->getDraweeBankName() }}</td>
-                                    <td class="text-nowrap">{{ $cheque->getChequeDueDateFormatted() }}</td>
-                                    <td>{{ $cheque->getChequeDueAfterDays() }}</td>
-                                    <td> {{ $cheque->getChequeStatusFormatted() }} </td>
+                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
+                                    <td class="text-transform" data-currency="{{ $moneyReceived->getCurrency() }}">{{ $moneyReceived->getCurrencyFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->cheque->getDraweeBankName() }}</td>
+                                    <td class="text-nowrap">{{ $moneyReceived->cheque->getDueDateFormatted() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getDueAfterDays() }}</td>
+                                    <td> {{ $moneyReceived->cheque->getStatusFormatted() }} </td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$cheque->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-type="single" data-currency="{{ $cheque->getCurrency() }}" data-id="{{ $cheque->id }}" data-toggle="modal" data-target="#send-to-under-collection-modal" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
-                                            <a data-toggle="modal" data-target="#delete-cheque-id-{{ $cheque->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-cheque-id-{{ $cheque->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-id="{{ $moneyReceived->id }}" data-type="single" data-currency="{{ $moneyReceived->getCurrency() }}" data-money-type="{{ MoneyReceived::CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyReceived::CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$cheque->id]) }}" method="post">
+                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="tab-pane {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" id="{{ MoneyReceived::CHEQUE_REJECTED }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
+                        <div class="kt-portlet__head-label " style="flex:1;">
+                            <span class="kt-portlet__head-icon">
+                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
+                            </span>
+                            <h3 class="kt-portlet__head-title text-nowrap">
+                                {{ __('Rejected Cheques Received') }}
+                            </h3>
+                            <form class="w-full  ml-3">
+                                <div class="row align-items-center justify-content-center">
+                                    <div class="col-md-4 d-flex align-items-center">
+
+                                        <label for="start_date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
+                                        <input id="start_date" type="date" value="{{ $startDate??'' }}" class="form-control" name="start_date">
+                                    </div>
+
+                                    <div class="col-md-4 d-flex align-items-center">
+                                        <label for="end_Date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
+                                        <input id="end_Date" type="date" value="{{ $endDate??'' }}" class="form-control" name="end_Date">
+                                    </div>
+                                    <div class="col-md-1 d-flex">
+                                        <label for="button"></label>
+                                        <button type="submit" class="btn block form-control btn-primary btn-sm "> {{ __('Submit') }}</button>
+
+                                    </div>
+
+
+                                </div>
+                            </form>
+                        </div>
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesRejectedTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_REJECTED" :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                    </div>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+                                    <th>{{ __('Select') }}</th>
+
+                                    <th>{{ __('Customer Name') }}</th>
+                                    <th>{{ __('Receiving Date') }}</th>
+                                    <th>{{ __('Cheque Number') }}</th>
+                                    <th>{{ __('Cheque Amount') }}</th>
+                                    <th>{{ __('Currency') }}</th>
+                                    <th class="bank-max-width">{{ __('Drawee Bank') }}</th>
+                                    <th>{{ __('Due Date') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                    <th>{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($receivedRejectedChequesInSafe as $moneyReceived)
+                                <tr>
+                                    <td>
+                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" class="form-control checkbox js-send-to-collection" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}">
+                                    </td>
+                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
+                                    <td class="text-transform" data-currency="{{ $moneyReceived->getCurrency() }}">{{ $moneyReceived->getCurrencyFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->cheque->getDraweeBankName() }}</td>
+                                    <td class="text-nowrap">{{ $moneyReceived->cheque->getDueDateFormatted() }}</td>
+                                    <td> {{ $moneyReceived->cheque->getStatusFormatted() }} </td>
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-id="{{ $moneyReceived->id }}" data-type="single" data-currency="{{ $moneyReceived->getCurrency() }}" data-id="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyReceived::CHEQUE_REJECTED }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            <div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
+                        <div class="kt-portlet__head-label">
+                            <span class="kt-portlet__head-icon">
+                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
+                            </span>
+                            <h3 class="kt-portlet__head-title">
+                                {{ __('Cheques Under Collection') }}
+                            </h3>
+                        </div>
+                        {{-- Export --}}
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesUnderCollectionTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_UNDER_COLLECTION" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+
+                    </div>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+
+                                    <th class="align-middle">{{ __('Customer Name') }}</th>
+                                    <th class="align-middle">{{ __('Cheque Number') }}</th>
+                                    <th class="align-middle">{{ __('Cheque Amount') }}</th>
+                                    <th class="align-middle">{{ __('Deposit Date') }}</th>
+                                    <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
+                                    <th class="align-middle">{{ __('Account Number') }}</th>
+                                    <th class="align-middle">{{ __('Clearance Days') }}</th>
+                                    <th class="align-middle">{!! __('Cheque Expected <br> Collection Date') !!}</th>
+                                    <th class="align-middle">{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($receivedChequesUnderCollection as $moneyReceived)
+                                <tr>
+
+                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
+                                    <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
+                                    <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
+                                    <td> {{ $moneyReceived->cheque->getClearanceDays() }} </td>
+                                    <td> {{ $moneyReceived->cheque->chequeExpectedCollectionDateFormatted() }} </td>
+
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyReceived->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
+                                            <div class="modal fade" id="apply-collection-modal-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('cheque.apply.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}" method="post">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque To Be Collected  ?') }}</h5>
+                                                                <button type="button" class="close" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-3">
+                                                                        <label>{{__('Collection Date')}}</label>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group date">
+                                                                                <input required type="text" name="actual_collection_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">
+                                                                                        <i class="la la-calendar-check-o"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-3 mb-3">
+                                                                        <label>{{__('Collection Fees')}} <span class="required">*</span></label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                </div>
+
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
+                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
+                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -186,13 +448,10 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-            <div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_IN_UNDER_COLLECTION ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_IN_UNDER_COLLECTION }}" role="tabpanel">
+			
+			
+			
+			<div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_COLLECTED ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_COLLECTED }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
@@ -200,11 +459,11 @@
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                             </span>
                             <h3 class="kt-portlet__head-title">
-                                {{ __('Cheques Under Collection Table') }}
+                                {{ __('Collected Cheques') }}
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-money   :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesUnderCollectionTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_IN_UNDER_COLLECTION" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$collectedChequesTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_COLLECTED" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
 
                     </div>
                     <div class="kt-portlet__body">
@@ -215,45 +474,90 @@
                                 <tr class="table-standard-color">
 
                                     <th class="align-middle">{{ __('Customer Name') }}</th>
-                                    {{-- <th>{{ __('Receiving Date') }}</th> --}}
                                     <th class="align-middle">{{ __('Cheque Number') }}</th>
                                     <th class="align-middle">{{ __('Cheque Amount') }}</th>
+                                    <th class="align-middle">{{ __('Due Date') }}</th>
                                     <th class="align-middle">{{ __('Deposit Date') }}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
-                                    {{-- <th>{{ __('Main Account Number') }}</th> --}}
                                     <th class="align-middle">{{ __('Account Number') }}</th>
-                                    <th class="align-middle">{{ __('Clearance Days') }}</th>
-                                    <th class="align-middle">{!! __('Cheque Expected <br> Collection Date') !!}</th>
-                                    <th class="align-middle">{{ __('Control') }}</th>
+                                    <th class="align-middle">{{ __('Collection Fees') }}</th>
+                                    <th class="align-middle">{!! __('Cheque Actual <br> Collection Date') !!}</th>
+                                    {{-- <th class="align-middle">{{ __('Control') }}</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($receivedChequesUnderCollection as $cheque)
+                                @foreach($collectedCheques as $moneyReceived)
                                 <tr>
 
-                                    <td>{{ $cheque->getCustomerName() }}</td>
-                                    {{-- <td>{{ $cheque->id }}</td> --}}
-                                    {{-- <td>{{ $cheque->getReceivingDateFormatted() }}</td> --}}
-                                    <td>{{ $cheque->getChequeNumber() }}</td>
-                                    <td>{{ $cheque->getReceivedAmountFormatted() }}</td>
-                                    <td class="text-nowrap"> {{$cheque->getChequeDepositDateFormatted()}} </td>
-                                    <td class="bank-max-width">{{ $cheque->chequeDrawlBankName() }}</td>
-                                    {{-- <td>{{ $cheque->chequeMainAccountNumber() }}</td> --}}
-                                    <td>{{ $cheque->getAccountNumberForChequesCollection() }}</td>
-                                    <td> {{ $cheque->chequeClearanceDays() }} </td>
-                                    <td> {{ $cheque->chequeExpectedCollectionDateFormatted() }} </td>
+                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
+                                    <td class="text-nowrap"> {{$moneyReceived->cheque->getDueDateFormatted()}} </td>
+                                    <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
+                                    <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
+                                    <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
+                                    <td> {{ $moneyReceived->cheque->chequeExpectedCollectionDateFormatted() }} </td>
 
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    {{-- <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$cheque->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$cheque->id ]) }}"><i class="fa fa-coins"></i></a>
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$cheque->id ]) }}"><i class="fa fa-sync-alt"></i></a>
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$cheque->id ]) }}"><i class="fa fa-undo"></i></a>
-                                            {{-- <a data-toggle="modal" data-target="#delete-cheque-id-{{ $cheque->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a> --}}
-                                            <div class="modal fade" id="delete-cheque-id-{{ $cheque->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyReceived->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
+                                            <div class="modal fade" id="apply-collection-modal-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('cheque.apply.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}" method="post">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque To Be Collected  ?') }}</h5>
+                                                                <button type="button" class="close" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-3">
+                                                                        <label>{{__('Collection Date')}}</label>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group date">
+                                                                                <input required type="text" name="actual_collection_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">
+                                                                                        <i class="la la-calendar-check-o"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-3 mb-3">
+                                                                        <label>{{__('Collection Fees')}} <span class="required">*</span></label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                </div>
+
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
+                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
+                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$cheque->id]) }}" method="post">
+                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -262,9 +566,7 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            {{-- <div class="modal-body">
-                                                            ...
-                                                        </div> --}}
+                                                           
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                                 <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
@@ -275,7 +577,7 @@
                                                 </div>
                                             </div>
                                         </span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -293,7 +595,7 @@
             <!--End:: Tab Content-->
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ Request('active') == 'incoming_transfer' ? 'active':''  }}" id="incoming_transfer" role="tabpanel">
+            <div class="tab-pane {{ Request('active') == MoneyReceived::INCOMING_TRANSFER ? 'active':''  }}" id="{{ MoneyReceived::INCOMING_TRANSFER }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
@@ -301,11 +603,11 @@
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
                             </span>
                             <h3 class="kt-portlet__head-title">
-                                {{ __('Incoming Transfer Table') }}
+                                {{ __('Incoming Transfer') }}
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-money   :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$incomingTransferTableSearchFields" :money-received-type="MoneyReceived::INCOMING_TRANSFER" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$incomingTransferTableSearchFields" :money-received-type="MoneyReceived::INCOMING_TRANSFER" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -314,27 +616,27 @@
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Customer Name') }}</th>
-                                    {{-- <th>{{ __('Invoice/Contract') }}</th> --}}
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
                                     <th>{{ __('Transfer Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    {{-- <th>{{ __('Payment Bank') }}</th> --}}
-                                    {{-- <th>{{ __('Main Bank Account') }}</th> --}}
-                                    <th>{{ __('Sub-account Number') }}</th>
-                                    {{-- <th>{{ __('Status') }}</th> --}}
+                                    <th>{{ __('Account Type') }}</th>
+                                    <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
+
                                 @foreach($receivedTransfer as $money)
+
                                 <tr>
                                     <td>{{ $money->getCustomerName() }}</td>
                                     <td>{{ $money->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $money->getReceivingBankName() }}</td>
+                                    <td>{{ $money->getIncomingTransferReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
-                                    <td>{{ $money->getSubAccountNumber() }}</td>
+                                    <td>{{ $money->getIncomingTransferAccountTypeName() }}</td>
+                                    <td>{{ $money->getIncomingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
@@ -380,7 +682,7 @@
 
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ Request('active') == 'cash-in-safe' ? 'active':''  }}" id="cash-in-safe" role="tabpanel">
+            <div class="tab-pane {{ Request('active') == MoneyReceived::CASH_IN_SAFE ? 'active':''  }}" id="{{ MoneyReceived::CASH_IN_SAFE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
@@ -392,7 +694,7 @@
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-money   :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInSafeReceivedTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_SAFE" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInSafeReceivedTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_SAFE" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -410,23 +712,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($receivedCashesInSafe as $cash)
+                                @foreach($receivedCashesInSafe as $moneyReceived)
+
                                 <tr>
-                                    <td>{{ $cash->getCustomerName() }}</td>
-                                    <td>{{ $cash->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $cash->getCashBranchName() }}</td>
-                                    <td>{{ $cash->getReceivedAmountFormatted() }}</td>
-                                    <td data-currency="{{ $cash->getCurrency() }}">{{ $cash->getCurrencyFormatted() }}</td>
-                                    <td>{{ $cash->getReceiptNumber() }}</td>
+                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td>{{ $moneyReceived->getReceivingDateFormatted() }}</td>
+                                    <td>{{ $moneyReceived->getCashInSafeBranchName() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
+                                    <td data-currency="{{ $moneyReceived->getCurrency() }}">{{ $moneyReceived->getCurrencyFormatted() }}</td>
+                                    <td>{{ $moneyReceived->getCashInSafeReceiptNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$cash->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 
-                                            <a data-toggle="modal" data-target="#delete-transfer-id-{{ $cash->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-transfer-id-{{ $cash->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a data-toggle="modal" data-target="#delete-transfer-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-transfer-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$cash->id]) }}" method="post">
+                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -463,6 +766,98 @@
             </div>
 
             <!--End:: Tab Content-->
+
+
+
+
+
+
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{ Request('active') == MoneyReceived::CASH_IN_BANK ? 'active':''  }}" id="{{ MoneyReceived::CASH_IN_BANK }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
+                        <div class="kt-portlet__head-label">
+                            <span class="kt-portlet__head-icon">
+                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
+                            </span>
+                            <h3 class="kt-portlet__head-title">
+                                {{ __('Cash In Bank Table') }}
+                            </h3>
+                        </div>
+                        {{-- Export --}}
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInBankTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_BANK" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+                    </div>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+                                    <th>{{ __('Customer Name') }}</th>
+                                    <th>{{ __('Receiving Date') }}</th>
+                                    <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
+                                    <th>{{ __('Deposit Amount') }}</th>
+                                    <th>{{ __('Currency') }}</th>
+                                    <th>{{ __('Account Type') }}</th>
+                                    <th>{{ __('Account Number') }}</th>
+                                    <th>{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach($receivedCashInBanks as $money)
+
+                                <tr>
+                                    <td>{{ $money->getCustomerName() }}</td>
+                                    <td>{{ $money->getReceivingDateFormatted() }}</td>
+                                    <td>{{ $money->getIncomingTransferReceivingBankName() }}</td>
+                                    <td>{{ $money->getReceivedAmountFormatted() }}</td>
+                                    <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
+                                    <td>{{ $money->getCashInBankAccountTypeName() }}</td>
+                                    <td>{{ $money->getCashInBankAccountNumber() }}</td>
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
+
+                                            <a data-toggle="modal" data-target="#delete-cash-in-bank-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-cash-in-bank-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+
+
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+
+            <!--End:: Tab Content-->
+
         </div>
     </div>
 </div>
@@ -490,37 +885,30 @@
 
 </script>
 
-
-{{-- <script src="{{ url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js') }}" type="text/javascript">
-</script> --}}
-
-{{-- <script>
-    $(function() {
-        $('#firstColumnId').trigger('change');
-    })
-
-</script> --}}
 <script>
     $(document).on('click', '.js-can-trigger-cheque-under-collection-modal', function(e) {
         e.preventDefault();
+        const moneyType = $(this).attr('data-money-type')
         const type = $(this).attr('data-type') // single or multi
-        $('#single-or-multi').val(type);
+        $('#single-or-multi' + moneyType).val(type);
         if (type == 'single') {
-            $('#current-single-item').val($(this).attr('data-id'));
-            $('#current-currency').val($(this).attr('data-currency'));
+            $('#current-single-item' + moneyType).val($(this).attr('data-id'));
+            $('#current-currency' + moneyType).val($(this).attr('data-currency'));
         }
     })
     $(document).on('submit', '.ajax-send-cheques-to-collection', function(e) {
         e.preventDefault();
         const url = $(this).attr('action');
-        const type = $('#single-or-multi').val();
-        const singleId = parseInt($('#current-single-item').val());
+        const moneyType = $(this).attr('data-money-type')
+        const type = $('#single-or-multi' + moneyType).val();
+        const singleId = parseInt($('#current-single-item' + moneyType).val());
         let checked = [];
-        $('.js-send-to-collection:checked').each(function(index, element) {
+        $('.js-send-to-collection[data-money-type="' + moneyType + '"]:checked').each(function(index, element) {
             checked.push(parseInt($(element).val()));
         });
+
         const checkedItems = type == 'multi' ? checked : [singleId];
-        let form = document.getElementById('ajax-send-cheques-to-collection-id');
+        let form = document.getElementById('ajax-send-cheques-to-collection-id' + moneyType);
         let formData = new FormData(form);
         formData.append('cheques', checkedItems);
         $('button').prop('disabled', true)
@@ -537,7 +925,7 @@
                 , icon: 'success'
                 , timer: 2000
             }).then(function() {
-                window.location.reload();
+                window.location.href = res.pageLink;
             });
         })
     });
@@ -577,7 +965,7 @@
         } else if (searchFieldName == 'receiving_date') {
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
             modal.find('.data-type-span').html('[ {{ __("Receiving Date") }} ]')
-        } else if (searchFieldName == 'cheque_deposit_date') {
+        } else if (searchFieldName == 'deposit_date') {
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
             modal.find('.data-type-span').html('[ {{ __("Deposit Date") }} ]')
         } else {

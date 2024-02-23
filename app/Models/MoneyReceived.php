@@ -11,15 +11,17 @@ class MoneyReceived extends Model
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
-	const CHEQUE_IN_SAFE  = 'cheque-is-safe';
-	const CHEQUE_IN_UNDER_COLLECTION  = 'cheque-under-collection';
-	 
+	const CHEQUE  = 'cheque';
+	const CHEQUE_UNDER_COLLECTION  = 'cheque-under-collection';
+	const CHEQUE_REJECTED  = 'cheque-rejected';
+	const CHEQUE_COLLECTED = 'cheque-collected';
+	
     protected $guarded = ['id'];
     protected $table = 'money_received';
     
 	public function getType():string 
 	{
-		return $this->money_type ;
+		return $this->type ;
 	}
     public function isCashInSafe()
     {
@@ -29,15 +31,17 @@ class MoneyReceived extends Model
     {
         return $this->getType() ==self::CASH_IN_BANK;
     }
-	public function isChequeInSafe()
+	public function isCheque()
     {
-        return $this->getType() ==self::CHEQUE_IN_SAFE;
+        return $this->getType() ==self::CHEQUE;
     }
   
     public function isIncomingTransfer()
     {
         return $this->getType() ==self::INCOMING_TRANSFER;
     }
+	
+	
     
 	
     public function getCustomerName()
@@ -48,9 +52,10 @@ class MoneyReceived extends Model
     {
         return $this->receiving_date;
     }
-    public function getReceivingBranchId()
+    public function getCashInSafeReceivingBranchId()
     {
-        return $this->receiving_branch_id;
+		$cashInSafe = $this->cashInSafe ;
+        return  $cashInSafe ? $cashInSafe->getReceivingBranchId() :0;
     }
     public function getReceivedAmount()
     {
@@ -82,90 +87,104 @@ class MoneyReceived extends Model
 	}
 
 
-    public function getReceiptNumber()
+    public function getCashInSafeReceiptNumber()
     {
-        return $this->receipt_number ;
+		$cashInSafe = $this->cashInSafe;
+        return $cashInSafe ? $cashInSafe->getReceiptNumber() :  null ;
     }
 
-    public function getChequeDueDate()
-    {
-        return $this->cheque_due_date;
-    }
-    public function getChequeNumber()
-    {
-        return $this->cheque_number ;
-    }
+  
 	public function getNumber()
 	{
 		if($this->isCheque()){
-			return $this->getChequeNumber();
+			return $this->cheque->getChequeNumber();
 		}
 		if($this->isCashInSafe()){
-			return $this->getReceiptNumber();
+			return $this->getCashInSafeReceiptNumber();
 		}
 		if($this->isIncomingTransfer()){
-			return $this->getMainAccountNumber();
+			return $this->getIncomingTransferAccountNumber();
+		}
+		if($this->isCashInBank()){
+			return $this->getCashInBankAccountNumber();
 		}
 	}
 	
-	/**
-	 * * drawee_bank
-		**					هو البنك اللي العميل جابلي منه الشيك وبالتالي مش شرط يكون من بنوك لانة ممكن يكون من بنك خاص بالعميل
-	 */
-	public function DraweeBank()
-	{
-		return $this->belongsTo(Bank::class ,'drawee_bank_id','id');
-	}
-	public function getDraweeBankId()
-	{
-		return $this->drawee_bank_id ;
-	}
-	
-	public function getDraweeBankName()
-	{
-		 return $this->draweeBank ? $this->draweeBank->getViewName() : __('N/A');
-	}	
-	public function getDraweeBankNameIn(string $lang)
-	{
-		 return $this->draweeBank ? $this->draweeBank['name_'.$lang] : __('N/A');
-	}
+
 	
 	public function getBankName()
 	{
 		if($this->isCashInSafe()){
-			return $this->getCashBranchName();
+			return $this->getCashInSafeBranchName();
 		}
 		if($this->isCheque()){
-			return $this->getDraweeBankNameIn(app()->getLocale());
+			return $this->cheque->getDraweeBankName();
 		}
 		if($this->isIncomingTransfer()){
-			return $this->getReceivingBankNameIn(app()->getLocale());
+			return $this->getIncomingTransferReceivingBankName(app()->getLocale());
+		}
+		if($this->isCashInBank()){
+			return $this->getCashInBankReceivingBankName(app()->getLocale());
 		}
 	}
 	
-	
-	
-    public function getReceivingBankId()
+	public function incomingTransfer()
+	{
+		return $this->hasOne(IncomingTransfer::class,'money_received_id','id');
+	}
+
+    public function getIncomingTransferReceivingBankId()
     {
-        return $this->receiving_bank_id;
+		$incomingTransfer = $this->incomingTransfer ;
+        return $incomingTransfer ? $incomingTransfer->getReceivingBankId() : 0 ;
     }
-	public function receivingBank()
+	public function incomingTransferReceivingBank():?FinancialInstitution
 	{
-		return $this->belongsTo(Bank::class , 'receiving_bank_id','id');
+		$incomingTransfer = $this->incomingTransfer ;
+		return $incomingTransfer ? $incomingTransfer->receivingBank() : null ;
 	}
-	public function getReceivingBankName()
+	public function getIncomingTransferReceivingBankName()
 	{
-		 return $this->receivingBank ? $this->receivingBank->getName() : __('N/A');
+		$incomingTransfer = $this->incomingTransfer ;
+        return $incomingTransfer ? $incomingTransfer->getReceivingBankName() : __('N/A') ;
 	}
+	
+	
+	
+	
+	
+	
+	
+	public function cashInBank()
+	{
+		return $this->hasOne(CashInBank::class,'money_received_id','id');
+	}
+	public function getCashInBankReceivingBankName()
+    {
+		$cashInBank = $this->cashInBank ;
+        return $cashInBank ? $cashInBank->getReceivingBankName() : 0 ;
+    }
+    public function getCashInBankReceivingBankId()
+    {
+		$cashInBank = $this->cashInBank ;
+        return $cashInBank ? $cashInBank->getReceivingBankId() : 0 ;
+    }
+	public function cashInBankReceivingBank():?FinancialInstitution
+	{
+		$cashInBank = $this->cashInBank ;
+		return $cashInBank ? $cashInBank->receivingBank() : null ;
+	}
+	
+	
 	// public function getReceivingBankNameIn(string $lang)
 	// {
 	// 	 return $this->receivingBank ? $this->receivingBank['name_'.$lang] : __('N/A');
 	// }
-    public function getAccountNumber()
-    {
-		// if statement here for type
-        return $this->account_number;
-    }
+    // public function getAccountNumber()
+    // {
+	// 	// if statement here for type
+    //     return $this->account_number;
+    // }
     public function settlements()
     {
         return $this->hasMany(Settlement::class, 'money_received_id', 'id');
@@ -197,13 +216,12 @@ class MoneyReceived extends Model
             return Carbon::make($receivingDate)->format('d-m-Y');
         }
     }
+	
+	// public function getChequeFinancialInstitutionId(){
+		
+	// }
     
 
-	public function getChequeDueDateFormatted()
-	{
-		$chequeDueDate = $this->getChequeDueDate();
-		return $chequeDueDate ? Carbon::make($chequeDueDate)->format('d-m-Y') : null;
-	}
 	public function setReceivingDateAttribute($value)
 	{
 		if(is_object($value)){
@@ -220,39 +238,29 @@ class MoneyReceived extends Model
 		$this->attributes['receiving_date'] = $year.'-'.$month.'-'.$day;
 		
 	}
-	public function setChequeDueDateAttribute($value)
-	{
-		$date = explode('/',$value);
-		if(count($date) != 3){
-			$this->attributes['cheque_due_date'] =  $value ;
-			return ;
-		}
-		$month = $date[0];
-		$day = $date[1];
-		$year = $date[2];
-		
-		$this->attributes['cheque_due_date'] = $year.'-'.$month.'-'.$day;
-	}
-	public static function getUniqueBanks(Collection $banks):array{
+	
+	public static function getUniqueBanks( $banks):array{
 		$uniqueBanksIds = [];
-		foreach($banks as $bank){
-			if($bank->drawee_bank_id){
-				$uniqueBanksIds[$bank->drawee_bank_id] = $bank->drawee_bank_id;
-			}
-			if($bank->receiving_bank_id){
-				$uniqueBanksIds[$bank->receiving_bank_id] = $bank->receiving_bank_id;
-			}
-			if($bank->cheque_drawl_bank_id){
-				$uniqueBanksIds[$bank->cheque_drawl_bank_id] = $bank->cheque_drawl_bank_id;
-			}
+		foreach($banks as $bankId){
+			// if($bank->drawee_bank_id){
+				$uniqueBanksIds[$bankId] = $bankId;
+			// }
+			// if($bank->receiving_bank_id){
+			// 	$uniqueBanksIds[$bank->receiving_bank_id] = $bank->receiving_bank_id;
+			// }
+			// if($bank->drawl_bank_id){
+			// 	$uniqueBanksIds[$bank->drawl_bank_id] = $bank->drawl_bank_id;
+			// }
 			
 		}
 		return $uniqueBanksIds; 
 	}
 	
-	public static function getBanksForCurrentCompany(int $companyId){
-		$banks = self::where('company_id',$companyId)->get(['drawee_bank_id','cheque_drawl_bank_id']);
-		$banks = self::getUniqueBanks($banks);
+	public static function getDrawlBanksForCurrentCompany(int $companyId){
+
+		$cheques = self::where('company_id',$companyId)->has('cheque')->with('cheque')->get()->pluck('cheque.drawee_bank_id')->toArray();
+		// $banks = self::where('company_id',$companyId)->get(['drawee_bank_id']);
+		$banks = self::getUniqueBanks($cheques);
 		$banksFormatted = [];
 		foreach($banks as $bankId){
 			$bank = Bank::find($bankId) ;
@@ -266,34 +274,25 @@ class MoneyReceived extends Model
 	
 	
 	
-	public function getChequeDueAfterDays()
-	{
-		$firstDate = Carbon::make($this->getChequeDueDate());
-		$secondDate = Carbon::make($this->getReceivingDate());
-		return getDiffBetweenTwoDatesInDays($firstDate , $secondDate);
-	}
 
-	public function getChequeStatus()
-	{
-		return $this->cheque_status;
-	}
-	public function getChequeStatusFormatted()
-	{
-		return snakeToCamel($this->getChequeStatus());
-	}
+
 	
-	public function receivingBranch()
+	public function cashInSafeReceivingBranch()
 	{
-		return $this->belongsTo(Branch::class , 'receiving_branch_id','id');
+		$cashInSafe = $this->cashInSafe;
+		return $cashInSafe ? $cashInSafe->receivingBranch : null ;
 	}
-	public function getCashBranchName()
+	public function getCashInSafeBranchName()
 	{
-		return $this->receivingBranch ? $this->receivingBranch->getName() : __('N/A') ;
+		$cashInSafe = $this->cashInSafe;
+
+		return $cashInSafe ? $cashInSafe->getReceivingBranchName() : null ;
 	}
 	
 	public function getChequeDepositDate()
 	{
-		return $this->cheque_deposit_date;
+		$cheque = $this->cheque;
+		return $cheque ? $this->getDepositDate() : null;
 	}
 	public function getChequeDepositDateFormattedForDatePicker()
 	{
@@ -305,29 +304,17 @@ class MoneyReceived extends Model
 		$date = $this->getChequeDepositDate();
 		return $date ? Carbon::make($date)->format('d-m-Y') : null;
 	}
-	public function setChequeDepositDateAttribute($value)
-	{
-		$date = explode('/',$value);
-		if(count($date) != 3){
-			$this->attributes['cheque_deposit_date'] = $value;
-			return  ;
-		}
-		$month = $date[0];
-		$day = $date[1];
-		$year = $date[2];
-		$this->attributes['cheque_deposit_date'] = $year.'-'.$month.'-'.$day;
-		
-	}
 	
 	
-	/** cheque_drawl_bank_id
+	
+	/** drawl_bank_id
 	**	هو البنك اللي بنسحب منه الشيك وليكن مثلا شخص اداني شيك معين وقتها بروح اسحبه من هذا 
 	**	البنك فا شرط يكون من البنوك بتاعتي علشان البنك بتاعي يتواصل مع بنك ال
 	**	drawee بعدين يحطلي الفلوس بتاعته في حسابي
 	*/		 
 	public function chequeDrawlBank()
 	{
-		return $this->belongsTo(Bank::class,'cheque_drawl_bank_id','id') ;
+		return $this->belongsTo(Bank::class,'drawl_bank_id','id') ;
 	}
 	public function chequeDrawlBankName()
 	{
@@ -335,7 +322,7 @@ class MoneyReceived extends Model
 	}
 	public function chequeDrawlBankId()
 	{
-		return $this->cheque_drawl_bank_id ;
+		return $this->drawl_bank_id ;
 	}
 	
 	public function chequeAccountType()
@@ -344,50 +331,53 @@ class MoneyReceived extends Model
 	}
 	
 	
-	/**
-	 * * هو عباره عن رقم الحساب اللي هينزل فيه مبلغ الشيك بعد التحصيل من البنك
-	 */
-	public function getAccountNumberForChequesCollection()
+
+	
+	public function cashInSafe()
 	{
-		return $this->account_number_for_cheques_collection ;
+		return $this->hasOne(CashInSafe::class,'money_received_id','id');
 	}
 	
-	public function chequeAccountBalance()
+	public function cheque()
 	{
-		return $this->cheque_account_balance?:0 ;
+		return $this->hasOne(Cheque::class,'money_received_id','id');
 	}
-	public function chequeExpectedCollectionDate()
-	{
-		return $this->cheque_expected_collection_date ;
-	}
-	public function chequeExpectedCollectionDateFormatted()
-	{
-		$date  = $this->cheque_expected_collection_date ;
-		return $date ? Carbon::make($date)->format('d-m-Y') : null ;
-	}
-	public function chequeClearanceDays()
-	{
-		return $this->cheque_clearance_days ?: 0;
-	}
-	public function calculateChequeExpectedCollectionDate(string $chequeDepositDate , int $chequeClearanceDays):string 
-	{
-		$chequeDueDate = $this->getChequeDueDate();
-		$chequeDueDate = Carbon::make($chequeDueDate);
-		$chequeDepositDate = Carbon::make($chequeDepositDate);
-		if($chequeDepositDate->lessThan($chequeDueDate)){
-			$diffInDays = $chequeDueDate->diffInDays($chequeDepositDate) + $chequeClearanceDays ;
-			return $chequeDepositDate->addDays($diffInDays)->format('Y-m-d');
-		}
-		else{
-			return $chequeDepositDate->addDays($chequeClearanceDays)->format('Y-m-d');	
-		}
-	}	
+		
 	public function isChequeUnderCollection()
 	{
-		return $this->getChequeStatus() == 'under_collection';
+		return $this->cheque && $this->cheque->getStatus() == Cheque::UNDER_COLLECTION;
 	}
 	public function getTotalWithholdAmount():float 
 	{
 		return $this->total_withhold_amount ?: 0 ;
 	}
+	public function getIncomingTransferAccountTypeId(){
+		$incomingTransfer = $this->incomingTransfer;
+		return $incomingTransfer ? $incomingTransfer->getAccountTypeId() : 0 ;
+	}
+	public function getIncomingTransferAccountTypeName(){
+		$incomingTransfer = $this->incomingTransfer;
+		return $incomingTransfer ? $incomingTransfer->getAccountTypeName() : 0 ;
+	}
+	public function getIncomingTransferAccountNumber(){
+		$incomingTransfer = $this->incomingTransfer;
+		return $incomingTransfer ? $incomingTransfer->getAccountNumber() : 0 ;
+	}
+	
+	
+	
+	
+	public function getCashInBankAccountTypeId(){
+		$cashInBank = $this->cashInBank;
+		return $cashInBank ? $cashInBank->getAccountTypeId() : 0 ;
+	}
+	public function getCashInBankAccountTypeName(){
+		$cashInBank = $this->cashInBank;
+		return $cashInBank ? $cashInBank->getAccountTypeName() : 0 ;
+	}
+	public function getCashInBankAccountNumber(){
+		$cashInBank = $this->cashInBank;
+		return $cashInBank ? $cashInBank->getAccountNumber() : 0 ;
+	}
+	
 }

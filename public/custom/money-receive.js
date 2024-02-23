@@ -68,7 +68,7 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 	let specificInvoiceNumber = $('#ajax-invoice-item').val()
 	const moneyReceivedId = +$('#js-money-received-id').val()
 	const customerInvoiceId = $('#customer_name').val()
-	const currency = $('#js-currency-id').val()
+	const currency = $('.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId+'/'+currency
@@ -89,7 +89,7 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 			}
 			
 			
-			$('#js-currency-id').empty().append(currenciesOptions);
+			$('.current-currency').empty().append(currenciesOptions);
 			// second add settlements repeater 
 			var lastNode = $('.js-duplicate-node:last-of-type').clone(true);
 			$('.js-append-to').empty()
@@ -134,7 +134,7 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	$('.js-settlement-amount').each(function (index, input) {
 		total += parseFloat($(input).val())
 	})
-	const currentType = $('#money_type').val()
+	const currentType = $('#type').val()
 	const receivedAmount = $('.js-' + currentType + '-received-amount').val()
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0 ;
@@ -143,7 +143,8 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 })
 $('.js-send-to-collection').on('change', function () {
 	const noCheckedItems = $('.js-send-to-collection:checked').length
-	const sendToCollectionTrigger = $('#js-send-to-under-collection-trigger')
+	const moneyType = $(this).attr('data-money-type')
+	const sendToCollectionTrigger = $('#js-send-to-under-collection-trigger'+moneyType)
 	if (noCheckedItems) {
 		sendToCollectionTrigger.attr('title', '').removeClass('disabled')
 	}
@@ -157,13 +158,17 @@ $(document).on('change','.js-update-account-number-based-on-account-type',functi
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
+	const parent = $(this).closest('.kt-portlet__body')
+	const moneyType = $(this).closest('form').attr('data-money-type')
 	const data = []
-	const currency = $(this).closest('form').find('#current-currency').val()
+	let currency = $(this).closest('form').find('.current-currency').val()
+	currency = currency ? currency : $('.js-send-to-collection[data-money-type="'+moneyType+'"]').closest('tr').find('[data-currency]').attr('data-currency')
 	
-	if(!val || !currency ){
+	const financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
+	if(!val || !currency || !financialInstitutionBankId ){
 		return ;
 	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val+'/'+currency
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val+'/'+currency+'/'+financialInstitutionBankId
 	$.ajax({
 		url ,
 		data,
@@ -174,7 +179,7 @@ $(document).on('change','.js-update-account-number-based-on-account-type',functi
 				console.log(val)
 				options  += '<option value="'+val+'">'+ val +'</option>';	
 			}
-			$('.js-cheque-account-number').empty().append(options)
+			$(parent).find('.js-account-number').empty().append(options)
 		}
 	});
 	
@@ -182,6 +187,10 @@ $(document).on('change','.js-update-account-number-based-on-account-type',functi
 	
 	
 	
+	
+})
+$(document).on('change','[js-when-change-trigger-change-account-type]',function(){
+	$(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type').trigger('change')
 })
 $(function () {
 	$('.js-update-account-number-based-on-account-type').trigger('change')

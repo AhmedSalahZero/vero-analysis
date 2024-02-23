@@ -8,9 +8,10 @@ use Illuminate\Support\Collection;
 class Bank extends Model
 {
 	protected $guarded = ['id'];
-	public function getName()
+	public function getName($lang = null)
 	{
-		return $this['name_'.App()->getLocale()];
+		$lang = $lang ?: app()->getLocale();
+		return $this['name_'.$lang];
 	}
 	public function getViewName()
 	{

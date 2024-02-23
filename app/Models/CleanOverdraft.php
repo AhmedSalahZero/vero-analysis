@@ -66,9 +66,11 @@ class CleanOverdraft extends Model
 	{
 		return $this->hasMany(LendingInformation::class , 'overdraft_against_commercial_paper_id','id');
 	}
-	public static function getAllAccountNumberForCurrency($companyId , $currencyName):array
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
 	{
-		return self::where('company_id',$companyId)->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
+		return self::where('company_id',$companyId)->where('currency',$currencyName)
+		->where('financial_institution_id',$financialInstitutionId)
+		->pluck('account_number','account_number')->toArray();		
 	}
 
 	
