@@ -46,7 +46,7 @@ use App\Models\MoneyReceived;
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_REJECTED }}" role="tab">
+                    <a class="nav-link {{  Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_REJECTED }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
                     </a>
                 </li>
