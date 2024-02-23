@@ -202,7 +202,7 @@ use App\Models\MoneyReceived;
 
 
 
-            <div class="tab-pane {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" id="{{ MoneyReceived::CHEQUE_REJECTED }}" role="tabpanel">
+            <div class="tab-pane {{  Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" id="{{ MoneyReceived::CHEQUE_REJECTED }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label " style="flex:1;">
