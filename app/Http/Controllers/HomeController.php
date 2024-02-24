@@ -349,7 +349,8 @@ class HomeController extends Controller
 			'service_provider_name' => 'warning',
 			'service_provider_type' => 'danger',
 			'service_provider_birth_year' => 'success',
-			'country'=>'danger'
+			'country'=>'danger',
+			'principle'=>'danger'
 		];
 		$reports_data = [];
 		$top_data = [];
@@ -357,10 +358,6 @@ class HomeController extends Controller
 		foreach ($types as  $type => $color) {
 			if (false !== $found = array_search($type, $db_names)) {
 				$request['type'] = $type;
-				// salesBreakdownAnalysisResult
-				// dd($request->get('report_type'));
-				// $breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
-				
 				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				if (!Cache::has($cacheKeyName)) {
 					$breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
