@@ -51,6 +51,7 @@ trait FinancialStatementAbleMutator
 	public function updateTotalRowsWithoutSubItemsForAdjusted(int $financialStatementAbleItemId, string $subItemType)
 	{
 		if ($subItemType == 'forecast' || $subItemType == 'actual') {
+			// dd($financialStatementAbleItemId);
 			$pivotForForecast = $this->withMainRowsFor($financialStatementAbleItemId, 'forecast')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$payloadForMainRow = $this->withMainRowsFor($financialStatementAbleItemId, 'modified')->first() ;
 			$payloadForMainRow =  $payloadForMainRow && $payloadForMainRow->pivot ? (array) json_decode($payloadForMainRow->pivot->payload) : null;
@@ -61,13 +62,12 @@ trait FinancialStatementAbleMutator
 			$pivotForActual = $this->withMainRowsFor($financialStatementAbleItemId, 'actual')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
-			// $pivotForModified = array_merge($pivotForForecast, $pivotForActual);
 			$actualDates = [];
 			$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
+			// dd($pivotForForecast,$pivotForActual,$actualDates);
 			
 			
 			// and here
-
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
@@ -80,10 +80,7 @@ trait FinancialStatementAbleMutator
 
 
 		
-			
-			// if(!$payloadForMainRow 
-			// || !twoArrayIsEqualValues($pivotForModified,$payloadForMainRow)
-			// ){
+	
 			
 				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
 				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
@@ -112,12 +109,11 @@ trait FinancialStatementAbleMutator
 			$pivotForActual = $this->withMainRowsFor($financialStatementAbleItemId, 'actual')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
-			//$pivotForModified = array_merge($pivotForForecast, $pivotForActual);
 			$actualDates = [];
-
+			
 			$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
 			// and here
-
+			
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->detach($financialStatementAbleItemId);
 			$this->withMainRowsFor($financialStatementAbleItemId, 'adjusted')->attach($financialStatementAbleItemId, [
 				'payload' => json_encode($pivotForModified),
@@ -126,11 +122,8 @@ trait FinancialStatementAbleMutator
 				'total' => array_sum($pivotForModified),
 				'sub_item_type' => 'adjusted'
 			], false);
-
+				
 			
-			// if(!$payloadForMainRow 
-			// || !twoArrayIsEqualValues($pivotForModified,$payloadForMainRow)
-			// ){
 				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->detach($financialStatementAbleItemId);
 				$this->withMainRowsFor($financialStatementAbleItemId, 'modified')->attach($financialStatementAbleItemId, [
 					'payload' => json_encode($pivotForModified),
@@ -462,7 +455,7 @@ trait FinancialStatementAbleMutator
 			}
 		}
 		if (get_class($this) == IncomeStatement::class || ($request->get('in_add_or_edit_modal') && $request->get('financial_statement_able_item_id') == IncomeStatementItem::SALES_REVENUE_ID)) {
-			
+			// dd($insertSubItems);
 			foreach ($insertSubItems as $index=>$insertSubItem) {
 				if($index ==0 ) // current type
 				{
@@ -594,11 +587,9 @@ trait FinancialStatementAbleMutator
 
 	public function refreshCalculationFor(string $subItemType)
 	{
-		// $incomeStatementId = $this->id;
 		$dates = $this->getIntervalFormatted();
 		$allMainItems = $this->mainItems()->get();
 		$totals = [];
-		// earningBeforeTaxesTotalValue
 		foreach ($allMainItems as $mainItem) {
 			$incomeStatementItemId = $mainItem->id;
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();

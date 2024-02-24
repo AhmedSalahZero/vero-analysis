@@ -2273,7 +2273,6 @@ $tableId = 'kt_table_1';
 														<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
 														<input  type="hidden" name="financial_statement_able_id"  value="{{ $incomeStatement->id }}">
 														<input  type="hidden" name="income_statement_id"  value="{{ $incomeStatement->id }}">
-														<input  type="hidden" name="cash_flow_statement_id"  value="{{ $cashFlowStatement->id }}">
 														<input  type="hidden" name="in_edit_mode"  value="1">
 														<input  type="hidden" name="was_financial_income"  value="${data.pivot && data.pivot.is_financial_income!=null ? data.pivot.is_financial_income :''}">
 														<input  type="hidden" name="was_financial_expense"  value="${data.pivot && data.pivot.is_financial_expense!=null ? data.pivot.is_financial_expense :''}">

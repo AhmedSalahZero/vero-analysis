@@ -101,7 +101,7 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
 			'type' => 'create',
 			'incomeStatement' => $options['incomeStatement'],
-			'cashFlowStatement' => $options['cashFlowStatement'],
+			// 'cashFlowStatement' => $options['cashFlowStatement'],
 			'interval' => getIntervalForSelect($options['incomeStatement']->getDurationType()),
 			'reportType' => $options['reportType']
 		];

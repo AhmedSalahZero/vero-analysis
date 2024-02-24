@@ -70,7 +70,6 @@ class IntervalsComparingForIncomeStatementReport
 		$firstIncomeStatementId = $firstIncomeStatement->id;
 		$secondIncomeStatementId = $secondIncomeStatement->id;
 		$firstMainItem = $firstIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();
-
 		$firstIncomeStatementItemSubItemsPivot = $firstMainItem->has_sub_items ? $firstMainItem->getSubItemsPivot($firstIncomeStatementId, $firstReportType) : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$firstIncomeStatementItemSubItemsPivot = count($firstIncomeStatementItemSubItemsPivot) ? $firstIncomeStatementItemSubItemsPivot : $firstMainItem->getMainRowsPivot($firstIncomeStatementId, $firstReportType);
 		$secondMainItem = $secondIncomeStatement->withMainItemsFor($incomeStatementItemId)->first();

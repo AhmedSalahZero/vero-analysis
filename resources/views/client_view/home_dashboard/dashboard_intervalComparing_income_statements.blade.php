@@ -161,8 +161,8 @@
                 </div>
 
 
-                <div class="col-md-8">
-                    <label>{{__('Report Type')}}</label>
+                <div class="col-md-4">
+                    <label>{{__('First Report Type')}}</label>
                     <select id="first-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="first_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
                         @foreach (getAllFinancialAbleTypes() as $firstReportType)
                         <option value="{{ $firstReportType }}" @if($firstReportType==$selectedItems['first_report_type']) selected @endif> {{ $firstReportType }} </option>
@@ -170,6 +170,18 @@
 
                     </select>
                 </div>
+				
+				
+				 <div class="col-md-4">
+                    <label>{{__('Second Report Type')}}</label>
+                    <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
+                        @foreach (getAllFinancialAbleTypes() as $firstReportType)
+                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
+                        @endforeach
+
+                    </select>
+                </div>
+				
 
 
 

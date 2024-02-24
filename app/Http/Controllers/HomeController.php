@@ -647,7 +647,7 @@ class HomeController extends Controller
 	{
 		$canRefreshDates = false ; 
 		$firstReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
-		$secondReportType = $request->has('first_report_type') ? $request->get('first_report_type') : 'forecast';
+		$secondReportType = $request->has('second_report_type') ? $request->get('second_report_type') : 'forecast';
 
 		$incomeStatements  = IncomeStatement::where('company_id', $company->id)->get();
 		if (!(count($incomeStatements) >= 1)) {
@@ -754,10 +754,10 @@ class HomeController extends Controller
 		$selectedTypesIndexes = [
 			$firstReportType, $secondReportType
 		];
-
 		return view('client_view.home_dashboard.dashboard_intervalComparing_income_statements', compact(
 			'selectedItems',
 			'company',
+			'secondReportType',
 			'selectedTypesIndexes',
 			'start_date_0',
 			'end_date_0',
@@ -886,15 +886,14 @@ class HomeController extends Controller
 			'income_statement_id' => $incomeStatementId ?: $incomeStatement->id,
 			'main_items' => $selectedTypes,
 			'first_report_type' => $firstComparingType,
+			'second_report_type' => $secondComparingType,
 			'start_date' =>  $start_date,
 			'end_date' =>   $end_date,
-			'second_report_type' => $secondComparingType,
 			'report_type' => $reportType
 
 		];
 
 		$mainItemsWithItemsSubItems = extractMainItemsAndSubItemsFrom($intervalComparing);
-		// dd($selectedItems,$mainItemsWithItemsSubItems);
 		
 		
 		return view('client_view.home_dashboard.dashboard_variousComparing_income_statements', compact(

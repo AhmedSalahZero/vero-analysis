@@ -6,20 +6,14 @@ use App\Exports\IncomeStatementExport;
 use App\Exports\IncomeStatementExportAsPdf;
 use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Requests\IncomeStatementRequest;
-use App\Models\CashFlowStatement;
 use App\Models\Company;
-use App\Models\FinancialStatement;
-use App\Models\FinancialStatementAble;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use App\Models\Repositories\CashFlowStatementRepository;
 use App\Models\Repositories\IncomeStatementRepository;
-use App\Models\User;
 use App\Rules\MustBeUniqueToIncomeStatementExceptMine;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Maatwebsite\Excel\Excel;
 use Validator;
 
 class IncomeStatementController extends Controller
@@ -51,11 +45,11 @@ class IncomeStatementController extends Controller
 			return redirect()->route('admin.view.financial.statement',['company'=>$company->id])->with('fail',__('Please Wait A Second'));
 		}
 		
-		$cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
+		// $cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
 		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars([
 			'financial_statement_able_id' => $incomeStatement->id,
 			'incomeStatement' => $incomeStatement,
-			'cashFlowStatement' => $cashFlowStatement,
+			// 'cashFlowStatement' => $cashFlowStatement,
 			'reportType' => $reportType 
 		]));
 	}
@@ -183,15 +177,7 @@ class IncomeStatementController extends Controller
 		 */
 		$incomeStatement->storeReport($request);
 		
-		// $subItemType = $request->get('sub_item_type');
-		// $financialStatementAble = IncomeStatement::find(290);
-		// $insertSubItems = $financialStatementAble->getInsertToSubItemFields($subItemType);
-		
-		// if (($request->get('in_add_or_edit_modal') && $request->get('financial_statement_able_item_id') == IncomeStatementItem::SALES_REVENUE_ID)) {
-		// 	foreach ($insertSubItems as $insertSubItem) {
-		// 		$financialStatementAble->refreshCalculationFor($insertSubItem);
-		// 	}
-		// }
+	
 		
 		return response()->json([
 			'status' => true,

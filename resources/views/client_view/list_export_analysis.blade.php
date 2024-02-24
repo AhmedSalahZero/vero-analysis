@@ -37,13 +37,9 @@
                                         <i
                                         class="kt-menu__ver-arrow {{ $options['icon'] }}"></i><span class="kt-menu__link-text">
 											{{ $options['view_name'] }}											
-											{{-- {{ $subSection->name['en'] }} --}}
                                             </span>
-
-
                                     </a>
                                 </li>
-							
            @endforeach
                 </ul>
             </div>
@@ -51,14 +47,10 @@
         <div class="kt-portlet__body">
             <div class="tab-content">
                   @foreach ($reports as   $mainName=>$options)
-             
-                
                         @php
 							$subIsActive = $loop->first ;
 							$mainNameAsId=convertStringToClass($mainName);
 						@endphp
-
-                     
                         <div class="tab-pane {{ $subIsActive ? 'active':'' }}" id="kt_widget2_tab1_content_{{$mainNameAsId}}">
                             <div class="kt-widget2">
                                 <div class="row">

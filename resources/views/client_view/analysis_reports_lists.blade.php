@@ -135,11 +135,6 @@
                                             )
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) )
-												{{-- {{ dd($name_of_section , str_contains($name_of_section,"Sales Analysis")) }} --}}
-                           
-						
-												{{-- @endif --}}
-												{{-- @if($user->canViewReport($sub_section->name['en'])) --}}
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">
@@ -160,11 +155,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
-												{{-- @endif  --}}
                                             @endif
                                         @elseif ($mainSubSection->name['en'] == "Average Prices" )
                                             @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Average Prices Per ")+19  );
-
                                             @endphp 
                                             @if (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names) )
 												@if($user->canViewReport($sub_section->name['en']))
@@ -189,8 +182,6 @@
 												@endif 
                                             @endif
                                         @elseif ( $section->name['en'] == 'Sales Breakdown Analysis Report')
-
-
 
                                                 @if ($mainSubSection->name['en'] !== "Customers Nature" ||
                                                 ($mainSubSection->name['en'] == "Customers Nature" && false !== $found =  array_search('Customer Name',$viewing_names)) ||
