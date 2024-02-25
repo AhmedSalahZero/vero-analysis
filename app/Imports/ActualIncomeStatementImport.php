@@ -60,19 +60,20 @@ ToCollection,
 					if($row[$dateIndex+1] != null){
 						$currentValue = $row[$dateIndex+1]; 
 					}else{
-						$currentValue = ((array)json_decode($this->incomeStatement->subItems->where('pivot.financial_statement_able_id',$this->incomeStatement->id)->where('pivot.financial_statement_able_item_id',$mainItem->id)->where('pivot.sub_item_name',$subItemName)->where('pivot.sub_item_type','actual')->first()->pivot->payload))[$currentDate] ?? 0;
+						$model = $this->incomeStatement->subItems->where('pivot.financial_statement_able_id',$this->incomeStatement->id)->where('pivot.financial_statement_able_item_id',$mainItem->id)->where('pivot.sub_item_name',$subItemName)->where('pivot.sub_item_type','actual')->first() ;
+						// if(!$model){
+						// 	continue ;
+						// }
+						
+						$currentValue = ((array)json_decode($model->pivot->payload))[$currentDate] ?? 0 ;
 					}				
 					$subItemsValues['value'][$this->incomeStatement->id][$mainItem->id][$subItemName][$currentDate] = number_unformat($currentValue);
 				}
 			}
-			// dd($subItemsValues);
 			$newRequest = new Request(array_merge([
 				'sub_item_type'=> 'actual' ,
 				'financial_statement_able_id'=>$this->incomeStatement->id ,
-				
-				
 			],$subItemsValues));
-			
 			$this->incomeStatement->storeReport($newRequest);
 		return $rows ;
     }

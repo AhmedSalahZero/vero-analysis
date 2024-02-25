@@ -214,12 +214,20 @@ trait FinancialStatementAbleMutator
 		} elseif (isset($options['collection_policy']['type'][$collectionPolicyType]['value'])) {
 			$collection_value = $options['collection_policy']['type'][$collectionPolicyType]['value'];
 		}
+		$subItemName = $isQuantityRepeating ? html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']);
+		$percentageOf= $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null;
+		$costOfUnitOf = $percentageOrFixed == 'cost_of_unit' ? json_encode((array)$options['is_cost_of_unit_of']) : null;
+		// if($subType == 'adjusted' || $subType =='modified')		
+		// dump($subType);
+		dd('good');
+		if($subItemType == 'adjusted'){
+			dd('good');
+		}
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
 			'sub_item_type' => $subType,
-			// not this 
-			'sub_item_name' => $isQuantityRepeating ? html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']),
+			'sub_item_name' => $subItemName,
 			'created_from' => $subItemType,
 			'is_depreciation_or_amortization' => $options['is_depreciation_or_amortization'] ?? 0,
 			'has_collection_policy' => $options['collection_policy']['has_collection_policy'] ?? false,
@@ -230,8 +238,8 @@ trait FinancialStatementAbleMutator
 			'is_value_quantity_price' => $options['is_value_quantity_price'] ?? 'value',
 			'percentage_or_fixed' => $percentageOrFixed,
 			'can_be_percentage_or_fixed' => $options['can_be_percentage_or_fixed'] ?? false,
-			'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null,
-			'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode((array)$options['is_cost_of_unit_of']) : null,
+			'is_percentage_of' =>$percentageOf ,
+			'is_cost_of_unit_of' => $costOfUnitOf,
 			'repeating_fixed_value' => $percentageOrFixed == 'repeating_fixed' ? $options['repeating_fixed_value'] : null,
 			'percentage_value' => $percentageOrFixed == 'percentage' ? $options['percentage_value'] : null,
 			'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ? $options['cost_of_unit_value'] : null,
@@ -461,10 +469,11 @@ trait FinancialStatementAbleMutator
 				{
 					$financialStatementAble->refreshCalculationFor($insertSubItem);
 				}else{
-					$financialStatementAble['is_caching_'.$insertSubItem] = 1 ;
-					$financialStatementAble->save();
-					 $job = (new RecalculateIncomeStatementCalculationForTypesJob($financialStatementAble,$insertSubItem));
-					 dispatch($job)	;
+					$financialStatementAble->refreshCalculationFor($insertSubItem);
+					// $financialStatementAble['is_caching_'.$insertSubItem] = 1 ;
+					// $financialStatementAble->save();
+					//  $job = (new RecalculateIncomeStatementCalculationForTypesJob($financialStatementAble,$insertSubItem));
+					//  dispatch($job)	;
 				}
 			}
 		}
@@ -497,7 +506,7 @@ trait FinancialStatementAbleMutator
 		return (1+$vat/100) ;
 	}
 
-	public function updateCostOfUnitAndPercentagesOfSubItems(Collection $subItemsForCurrentIncomeStatementItem, array $dates, string $subItemType): void
+	public function updateCostOfUnitAndPercentagesOfSubItems(Collection $subItemsForCurrentIncomeStatementItem, array $dates, string $subItemType,bool $debug): void
 	{
 		$salesRevenueId = IncomeStatementItem::SALES_REVENUE_ID;
 		$salesRevenuesSubItemsArray = $this->withSubItemsFor($salesRevenueId, $subItemType)->get()->keyBy(function ($salesRevenueSubItem) {
@@ -505,6 +514,7 @@ trait FinancialStatementAbleMutator
 		})->map(function ($salesRevenuePivotSubItem) {
 			return (array)json_decode($salesRevenuePivotSubItem->pivot->payload);
 		})->toArray();
+		
 		foreach ($subItemsForCurrentIncomeStatementItem as $subItem) {
 			$financialStatementAbleItemId = $subItem->pivot->financial_statement_able_item_id;
 			$subItemName = $subItem->pivot->sub_item_name;
@@ -514,22 +524,28 @@ trait FinancialStatementAbleMutator
 			$isPercentage = $subItemPivotType == 'percentage';
 			$isCostOfUnit = $subItemPivotType == 'cost_of_unit';
 			$isFinancialExpense = $subItem->pivot->is_financial_expense;
+			
 			if ($isPercentage && $subItemName == 'Corporate Taxes') {
 				// will update it in another place while updating main row for earning before tax
 				// search for the following comment to find it
 				// update sub items of corporate taxes [needs to be here]
 			} elseif ($isPercentage) {
 				$percentageValue  = $subItem->pivot->percentage_value ?: 0;
+				
 				if ($isFinancialExpense && $percentageValue >0) {
 					$percentageValue = $percentageValue * -1;
 				}
 				$percentageValue = $percentageValue / 100;
 				$percentagesOf = stringArrayToArray($subItem->pivot->is_percentage_of);
+				
 				foreach ($dates as $date => $formattedDate) {
 					$totalPercentageOfValue = 0;
 					foreach ($percentagesOf as $percentageOf) {
 						$loopPercentageValueOfSalesRevenue = $salesRevenuesSubItemsArray[$percentageOf][$date] ?? 0;
 						$totalPercentageOfValue += $loopPercentageValueOfSalesRevenue;
+					}
+					if($debug){
+						dd('debug',$salesRevenuesSubItemsArray,$percentageOf,$date);
 					}
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = isset($payload->{$date}) ? $payload->{$date} : 0;
@@ -545,6 +561,7 @@ trait FinancialStatementAbleMutator
 						$values[$financialStatementAbleItemId][$subItemName][$date] = $percentageVal ;
 					}
 				}
+				
 				$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
 					'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName]),
 					'is_deductible'=>$subItem->pivot->is_deductible,
@@ -590,10 +607,16 @@ trait FinancialStatementAbleMutator
 		$dates = $this->getIntervalFormatted();
 		$allMainItems = $this->mainItems()->get();
 		$totals = [];
+		$debug = false ;
 		foreach ($allMainItems as $mainItem) {
 			$incomeStatementItemId = $mainItem->id;
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
-			$this->updateCostOfUnitAndPercentagesOfSubItems($oldSubItemsForCurrentMainItem, $dates, $subItemType);
+			if($subItemType == 'adjusted' && $mainItem->id == 7){
+				$debug = true ;
+				// dd('good');
+				// dd($oldSubItemsForCurrentMainItem);
+			}
+			$this->updateCostOfUnitAndPercentagesOfSubItems($oldSubItemsForCurrentMainItem, $dates, $subItemType,$debug);
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {

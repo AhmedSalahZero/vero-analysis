@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
-use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
@@ -75,11 +74,17 @@ class CategoriesAgainstAnalysisReport
         }
 
          elseif (request()->route()->named('customers.Items.analysis')) {
-            // by salah
             $type  = 'product_item';
             $view_name = Customers_Against_Products_ITEMS_Trend_Analysis ;
         }
-        
+		elseif (request()->route()->named('categories.principles.analysis')) {
+            $type  = 'principle';
+            $view_name = 'Categories Against Principle' ;
+        }
+		elseif (request()->route()->named('customers.principles.analysis')) {
+            $type  = 'principle';
+            $view_name = 'Customers Against Principle' ;
+        }
         $name_of_selector_label = str_replace(['Categories Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.categories_analysis_form', compact('company','name_of_selector_label','type','view_name'));
     }

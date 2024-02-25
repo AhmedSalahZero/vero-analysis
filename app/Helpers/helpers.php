@@ -843,8 +843,7 @@ function maxOptionsForOneSelector(): int
 
 function isCustomerExceptionalCase($type, $name_of_selector_label)
 {
-    $conditionOne = ($type == 'category' && ($name_of_selector_label == 'Customers Against Categories' || $name_of_selector_label == 'Categories'));
-
+    $conditionOne = (($type == 'category' ) && ($name_of_selector_label == 'Customers Against Categories' ||  $name_of_selector_label == 'Categories'));
     return $conditionOne;
 }
 
@@ -4765,3 +4764,9 @@ function dashesToCamelCase($string)
     $str[0] = strtolower($str[0]);
     return $str;
 }
+// function getMappingFromForecastToAdjustedOrModified($subItemForForecast,$currentSubItemType)
+// {
+// 	$isPercentageOf = $subItemPivotForForecast->pivot->is_percentage_of ;
+// 	$subItemName = $subItemPivotForForecast->pivot->sub_item_name;
+// 	dd($subItemPivotForForecast,$isPercentageOf);
+// }

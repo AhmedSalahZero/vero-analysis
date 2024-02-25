@@ -47,9 +47,14 @@ class SKUsAgainstAnalysisReport
         } elseif (request()->route()->named('Items.businessUnits.analysis')) {
             $type  = 'business_unit';
             $view_name = 'Products Items Against Business Units Trend Analysis';
-        } elseif (request()->route()->named('Items.branches.analysis')) {
+        } 
+		elseif (request()->route()->named('Items.branches.analysis')) {
             $type  = 'branch';
             $view_name = 'Products Items Against Branches Trend Analysis';
+        }
+		elseif (request()->route()->named('Items.principles.analysis')) {
+            $type  = 'principle';
+            $view_name = 'Products Items Against Principle Trend Analysis';
         }
         $name_of_selector_label = str_replace(['Products Items Against ', ' Trend Analysis'], '', $view_name);
         return view('client_view.reports.sales_gathering_analysis.skus_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));

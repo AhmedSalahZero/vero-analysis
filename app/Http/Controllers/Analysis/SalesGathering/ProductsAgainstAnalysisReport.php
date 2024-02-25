@@ -66,8 +66,12 @@ class ProductsAgainstAnalysisReport
 			$type  = 'averagePricesProductItems';
 			$view_name = 'Products Items Average Prices';
 		}
+		elseif (request()->route()->named('products.principles.analysis')) {
+			 $type  = 'principle';;
+			$view_name = 'Products Against Principle';
+		}	
+		// dd(request()->route()->getName());
 		$name_of_selector_label = ($type == 'averagePricesProductItems') ? 'Products Items' : str_replace(['Products Against ', ' Trend Analysis'], '', $view_name);
-		// dd($view_name);
 		return view('client_view.reports.sales_gathering_analysis.products_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
 	}
 	public function result(Request $request, Company $company, $result = "view", $secondReport = true)

@@ -114,9 +114,10 @@ class IncomeStatementController extends Controller
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$currentSubItemType = $request->get('sub_item_type'); 
-		$id = $incomeStatementItem
-				->withSubItemsFor($incomeStatementId,$currentSubItemType, $request->get('sub_item_name'))
-				->first()->pivot->id ;
+		$subItemPivot = $incomeStatementItem
+		->withSubItemsFor($incomeStatementId,$currentSubItemType, $request->get('sub_item_name'))
+		->first()->pivot;
+		$id = $subItemPivot->id ;
 				
 		$validator = Validator::make($request->all(),[
 			'new_sub_item_name'=>['sometimes',new MustBeUniqueToIncomeStatementExceptMine($company->id , $incomeStatementId,$currentSubItemType,$id)]
@@ -142,6 +143,11 @@ class IncomeStatementController extends Controller
 		foreach ($subItemTypesToDetach as $subItemType) {
 			#NOTE:We update Single Item From Popup Here
 			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
+			$percentageOf = $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null ;
+			$adjustedOrModified = $subItemType == 'adjusted'|| $subItemType =='modified' ;
+			// $percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($subItemPivot,$subItemType)) : $percentageOf;
+			// dd('done');
+			
 			$incomeStatementItem
 				->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))
 				->updateExistingPivot($incomeStatementId, [
@@ -158,7 +164,7 @@ class IncomeStatementController extends Controller
 					'cost_of_unit_value' => $percentageOrFixed == 'cost_of_unit' ?  $request->input('sub_items.0.cost_of_unit_value') : null,
 					'is_financial_expense' => $request->input('sub_items.0.is_financial_expense'),
 					'is_financial_income' => $request->input('sub_items.0.is_financial_income'),
-					'is_percentage_of' => $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null,
+					'is_percentage_of' => $percentageOf,
 					'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
 
 				]);
