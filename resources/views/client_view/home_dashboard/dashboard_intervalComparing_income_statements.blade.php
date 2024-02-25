@@ -31,7 +31,15 @@
 
     }
 
-    .is-sub-row td.sub-numeric-bg,
+
+ .is-sub-row td.sub-numeric-bg,
+    .is-sub-row td.sub-text-bg {
+        background-color: #E2EFFE !important;
+        color: black !important;
+		
+    }
+	
+	.is-sub-row td.sub-numeric-bg,
     .is-sub-row td.sub-text-bg {
         background-color: #0e96cd !important;
         color: white !important;
@@ -39,10 +47,11 @@
 		
 		background-color:#E2EFFE !important;
 		color:black !important
-		
 
     }
-
+		.table-bordered th, .table-bordered td {
+		border:1px solid white !important;
+	}
     .header-tr {
         background-color: #046187 !important;
     }
@@ -91,7 +100,6 @@
 </style>
 @endsection
 @section('content')
-
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
@@ -124,6 +132,7 @@
                 <div class="col-md-4">
                     <label><b>{{__('Income Statements')}}</b></label>
                 </div>
+				{{-- {{ dd($incomeStatements) }} --}}
                 <div class="col-md-4">
                     <label>{{__('First Income Statement')}}</label>
 
@@ -286,8 +295,17 @@
                             <tr class="header-tr ">
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell trigger-expand is-opened" style="cursor:pointer">{{ __('Expand All') }}</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
-                                @foreach ($intervals as $intervalName )
-                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} <br> ({{ getIntervalFromString($intervalName) }})</th>
+                                @foreach ($intervals as $index => $intervalName )
+								
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> 
+								@if($index == 0)
+								{{ $firstIncomeStatement->getName() }} <br>
+								{{$selectedItems['first_report_type'] ?? ''}}
+								@else
+								{{ $secondIncomeStatement->getName() }} <br>
+								{{$selectedItems['second_report_type'] ?? ''}}
+								@endif 
+								 <br> ({{ getIntervalFromString($intervalName) }})</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ __('% / Revenues') }} </th>
                                 @endforeach
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>

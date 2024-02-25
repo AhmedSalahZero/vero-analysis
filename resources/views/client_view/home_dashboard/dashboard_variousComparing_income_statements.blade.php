@@ -115,7 +115,6 @@
         background-color: #E2EFFE !important;
         color: black !important;
 		
-		
     }
 	
 

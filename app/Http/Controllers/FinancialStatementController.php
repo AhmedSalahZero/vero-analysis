@@ -236,6 +236,5 @@ class FinancialStatementController extends Controller
 	{
 		Excel::import(new ActualIncomeStatementImport($company,$incomeStatement) , Request()->file('excel_file'));
 		return redirect()->back()->with('success',__('Actual Report Has Been Uploaded Successfully'));
-		
 	}
 }

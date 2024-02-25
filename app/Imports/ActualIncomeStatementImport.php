@@ -66,6 +66,7 @@ ToCollection,
 					$subItemsValues['value'][$this->incomeStatement->id][$mainItem->id][$subItemName][$currentDate] = number_unformat($currentValue);
 				}
 			}
+			// dd($subItemsValues);
 			$newRequest = new Request(array_merge([
 				'sub_item_type'=> 'actual' ,
 				'financial_statement_able_id'=>$this->incomeStatement->id ,

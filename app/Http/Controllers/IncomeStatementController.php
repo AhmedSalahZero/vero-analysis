@@ -147,7 +147,11 @@ class IncomeStatementController extends Controller
 			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
 			$percentageOf = $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null ;
 			$adjustedOrModified = $subItemType == 'adjusted'|| $subItemType =='modified' ;
-			// $percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($subItem,$subItemType)) : $percentageOf;
+			$percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($percentageOf,$subItemType)) : $percentageOf;
+			
+			$costOfUnit = $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null;
+			$costOfUnit = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($costOfUnit,$subItemType)) : $costOfUnit;
+		
 			
 			$incomeStatementItem
 				->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))
@@ -166,7 +170,7 @@ class IncomeStatementController extends Controller
 					'is_financial_expense' => $request->input('sub_items.0.is_financial_expense'),
 					'is_financial_income' => $request->input('sub_items.0.is_financial_income'),
 					'is_percentage_of' => $percentageOf,
-					'is_cost_of_unit_of' => $percentageOrFixed == 'cost_of_unit' ? json_encode($request->input('sub_items.0.is_cost_of_unit_of')) : null,
+					'is_cost_of_unit_of' => $costOfUnit,
 
 				]);
 				

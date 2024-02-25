@@ -21,6 +21,7 @@ use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
+use App\Models\IncomeStatementSubItem;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
@@ -4765,16 +4766,39 @@ function dashesToCamelCase($string)
     $str[0] = strtolower($str[0]);
     return $str;
 }
-function getMappingFromForecastToAdjustedOrModified($incomeStatement,$currentSubItemType)
+function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSubItemType)
 {
 	/**
 	 * @var IncomeStatement $incomeStatement
+	 * * 
 	 */
-	$subItemName = $incomeStatement->pivot->sub_item_name;
-	dd($incomeStatement->id,$currentSubItemType,$subItemName);
-	dd($incomeStatement->withSubItemsFor($incomeStatement->id,$currentSubItemType, $subItemName)->get());
-	$isPercentageOfs = $incomeStatement->pivot->is_percentage_of ;
-	foreach($isPercentageOfs as $percentageOfId){
-		dd($incomeStatement);
+	$newPercentageOf = []; 
+
+	// $isPercentageOfs = $incomeStatement->pivot->{$propertyName} ;
+	
+	foreach((array)convertStringArrayToArr($isPercentageOfs) as $percentageOfId){
+		$subItem = IncomeStatementSubItem::find($percentageOfId);
+		if($subItem){
+			$item  = IncomeStatementSubItem::where('financial_statement_able_id',$subItem->financial_statement_able_id)
+			// $item  = IncomeStatementSubItem::where('financial_statement_able_id',$incomeStatement->id)
+			->where('financial_statement_able_item_id',$subItem->financial_statement_able_item_id)
+			->where('sub_item_name',$subItem->sub_item_name)
+			->where('sub_item_type',$currentSubItemType)
+			->first();
+			;
+			if($item){
+				$newPercentageOf[] = $item->id;
+			}
+		}
+		
 	}
+	return $newPercentageOf;
 }
+ function convertStringArrayToArr($arrayAsString):?array 
+	{
+		// dd(is_string($arrayAsString));
+		if(is_string($arrayAsString)){
+			return (array)(json_decode($arrayAsString)) ;
+		}
+		return $arrayAsString;
+	} 

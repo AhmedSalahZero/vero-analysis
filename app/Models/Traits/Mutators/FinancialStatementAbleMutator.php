@@ -212,15 +212,13 @@ trait FinancialStatementAbleMutator
 		} elseif (isset($options['collection_policy']['type'][$collectionPolicyType]['value'])) {
 			$collection_value = $options['collection_policy']['type'][$collectionPolicyType]['value'];
 		}
+		$adjustedOrModified = $subType == 'adjusted' || $subType == 'modified' ;
 		$subItemName = $isQuantityRepeating ? html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']);
 		$percentageOf= $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null;
+		$percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($percentageOf,$subType)) : $percentageOf;
 		$costOfUnitOf = $percentageOrFixed == 'cost_of_unit' ? json_encode((array)$options['is_cost_of_unit_of']) : null;
-		// if($subType == 'adjusted' || $subType =='modified')		
-		// dump($subType);
-		// dd('good');
-		// if($subItemType == 'adjusted'){
-		// 	dd('good');
-		// }
+		$costOfUnitOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($costOfUnitOf,$subType)) : $costOfUnitOf;
+		
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
@@ -467,11 +465,15 @@ trait FinancialStatementAbleMutator
 				{
 					$financialStatementAble->refreshCalculationFor($insertSubItem);
 				}else{
-					$financialStatementAble->refreshCalculationFor($insertSubItem);
-					// $financialStatementAble['is_caching_'.$insertSubItem] = 1 ;
-					// $financialStatementAble->save();
-					//  $job = (new RecalculateIncomeStatementCalculationForTypesJob($financialStatementAble,$insertSubItem));
-					//  dispatch($job)	;
+					if(env('APP_ENV') =='local'){
+						$financialStatementAble->refreshCalculationFor($insertSubItem);
+					}
+					else{
+						$financialStatementAble['is_caching_'.$insertSubItem] = 1 ;
+						$financialStatementAble->save();
+						$job = (new RecalculateIncomeStatementCalculationForTypesJob($financialStatementAble,$insertSubItem));
+						dispatch($job)	;
+					}
 				}
 			}
 		}
@@ -615,6 +617,13 @@ trait FinancialStatementAbleMutator
 				// dd($oldSubItemsForCurrentMainItem);
 			}
 			$this->updateCostOfUnitAndPercentagesOfSubItems($oldSubItemsForCurrentMainItem, $dates, $subItemType,$debug);
+			// dd($this);
+			// if($this->id == 7){
+			// 	// dd();
+			// 	dd( $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get());
+			// }
+			// dd($this->id == 7 ){
+			// }
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
@@ -682,6 +691,13 @@ trait FinancialStatementAbleMutator
 			$totalOfAllRows = 0;
 			$totalAtDates = [];
 			$totalDepreciationAtDates = [];
+			
+			if(!count($subItemNameWithDateValues)){
+				$this->withMainRowsFor($incomeStatementItemId, $subItemType)->updateExistingPivot($incomeStatementItemId, [
+					'total' => 0,
+					'payload' => json_encode([])
+				]);	
+			}
 			foreach ($subItemNameWithDateValues as $subItemName => $optionsAndValues) {
 				$dateValues = $optionsAndValues['values'];
 				$options = $optionsAndValues['options'];
