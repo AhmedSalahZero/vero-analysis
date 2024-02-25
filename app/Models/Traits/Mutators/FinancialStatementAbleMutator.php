@@ -219,10 +219,10 @@ trait FinancialStatementAbleMutator
 		$costOfUnitOf = $percentageOrFixed == 'cost_of_unit' ? json_encode((array)$options['is_cost_of_unit_of']) : null;
 		// if($subType == 'adjusted' || $subType =='modified')		
 		// dump($subType);
-		dd('good');
-		if($subItemType == 'adjusted'){
-			dd('good');
-		}
+		// dd('good');
+		// if($subItemType == 'adjusted'){
+		// 	dd('good');
+		// }
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
@@ -544,9 +544,9 @@ trait FinancialStatementAbleMutator
 						$loopPercentageValueOfSalesRevenue = $salesRevenuesSubItemsArray[$percentageOf][$date] ?? 0;
 						$totalPercentageOfValue += $loopPercentageValueOfSalesRevenue;
 					}
-					if($debug){
-						dd('debug',$salesRevenuesSubItemsArray,$percentageOf,$date);
-					}
+					// if($debug){
+					// 	dd('debug',$salesRevenuesSubItemsArray,$percentageOf,$date);
+					// }
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = isset($payload->{$date}) ? $payload->{$date} : 0;
 					} else {
