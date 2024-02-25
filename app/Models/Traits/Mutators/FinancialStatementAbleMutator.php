@@ -51,7 +51,6 @@ trait FinancialStatementAbleMutator
 	public function updateTotalRowsWithoutSubItemsForAdjusted(int $financialStatementAbleItemId, string $subItemType)
 	{
 		if ($subItemType == 'forecast' || $subItemType == 'actual') {
-			// dd($financialStatementAbleItemId);
 			$pivotForForecast = $this->withMainRowsFor($financialStatementAbleItemId, 'forecast')->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 			$payloadForMainRow = $this->withMainRowsFor($financialStatementAbleItemId, 'modified')->first() ;
 			$payloadForMainRow =  $payloadForMainRow && $payloadForMainRow->pivot ? (array) json_decode($payloadForMainRow->pivot->payload) : null;
@@ -64,7 +63,6 @@ trait FinancialStatementAbleMutator
 			$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 			$actualDates = [];
 			$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
-			// dd($pivotForForecast,$pivotForActual,$actualDates);
 			
 			
 			// and here
@@ -844,26 +842,14 @@ trait FinancialStatementAbleMutator
 					if (!$pivotForCorporateTaxes) {
 						$valuesForCorporateTaxesAtDate[$date] = 0;
 					} else {
-						// $pivotPayloadForCorporateTaxes = $pivotForCorporateTaxes->payload ? json_decode($pivotForCorporateTaxes->payload) : null;
 						$valuesForCorporateTaxesAtDate[$date] = 0;
-						// $valuesForCorporateTaxesAtDate[$date] = $pivotPayloadForCorporateTaxes && $pivotPayloadForCorporateTaxes->{$date} ? $pivotPayloadForCorporateTaxes->{$date} : 0;
 					}
 				} else {
 					$valuesForCorporateTaxesAtDate[$date] = 0;
-					//$valuesForCorporateTaxesAtDate[$date] = $earningBeforeInterestTaxesAtDate < 0 ? 0 : $valueForCurrentCorporateTaxesSubItem;
 				}
 			}
 		}
-		// elseif ($incomeStatementItemId === $corporateTaxesID) {
-		// 	$percentageOfCorporateTaxes = $this->withSubItemsFor($incomeStatementItemId, $subItemType, 'Corporate Taxes')->first()->pivot->percentage_value ?: 0;
-		// 	$percentageOfCorporateTaxes = $percentageOfCorporateTaxes / 100;
-		// 	$totalEarningBeforeTax = $totalOfMainRows[$earningBeforeTaxesId]['total']['total'] ?? 0;
-		// 	$values['total']['total'] = $totalEarningBeforeTax < 0 ? 0 : $totalEarningBeforeTax *  $percentageOfCorporateTaxes;
-		// 	foreach ($dates as $date => $formattedDate) {
-		// 		$earningBeforeTaxAtDate = $totalOfMainRows[$earningBeforeTaxesId]['total']['dates'][$date] ?? 0;
-		// 		$values['total']['dates'][$date] = $earningBeforeTaxAtDate < 0 ? 0 :  $percentageOfCorporateTaxes * $earningBeforeTaxAtDate;
-		// 	}
-		// }
+	
 		elseif ($incomeStatementItemId === IncomeStatementItem::NET_PROFIT_ID) {
 			$totalOfCorporateTaxes = $totalOfMainRows[$corporateTaxesID]['total']['total'] ?? 0;
 			$totalOfEarningBeforeTaxes = $totalOfMainRows[$earningBeforeTaxesId]['total']['total'] ?? 0;

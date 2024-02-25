@@ -32,7 +32,7 @@ $basicTableClasses = 'table table-striped- table-bordered table-hover table-chec
 
     @if($wrapWithForm)
     @if(isset($saveAndReturn) && $saveAndReturn)
-    <x-submitting-with-return :return-redirect-route="$redirectRoute"></x-submitting-with-return>
+    <x-submitting-with-refresh :return-redirect-route="$redirectRoute"></x-submitting-with-refresh>
     @else
     <x-submitting></x-submitting>
     @endif

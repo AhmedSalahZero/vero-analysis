@@ -2235,9 +2235,7 @@ $tableId = 'kt_table_1';
 
                                                     var quantity = '';
                                                     if (data.pivot && data.pivot.can_be_quantity) {
-                                                        //            let checkedQuantity = '';
                                                         if (data.pivot.is_quantity) {
-                                                            //              checkedQuantity = ' checked ';
                                                         }
 
                                                     }
@@ -2254,8 +2252,6 @@ $tableId = 'kt_table_1';
 
                                                     $(row).append(
                                                         `
-                            
-                            
 										<div class="modal fade edit-sub-modal-class" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name) }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 											<div class="modal-dialog" role="document">
 												<div class="modal-content modal-xl">

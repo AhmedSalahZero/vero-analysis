@@ -60,9 +60,6 @@ class SalesGatheringTestJob implements ShouldQueue
                 $oldTotalUploaded = cache::get($key) ?:0 ;
                 cache::forever( $key , $oldTotalUploaded + count($chunk) );
             }
-                
-            
-          
         });
         
     }

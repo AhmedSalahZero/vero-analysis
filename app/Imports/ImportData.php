@@ -110,7 +110,6 @@ class ImportData implements
 			$newItemsArr = FormatKeyAsColumnName($newItemsArr);
 		
 			foreach($newItemsArr as $newFieldName=>$newFieldTitle){
-				// $columnNameWithoutSpaceOrCapitalLetter = formatColumnName($newFieldName) ;
 				$exists = TablesField::where('company_id',$this->companyId)->where('field_name',$newFieldName)->first();
 				if(!Schema::hasColumn('labeling_items',$newFieldName)){
 					Schema::table('labeling_items', function (Blueprint $table) use ($newFieldName) {
@@ -149,9 +148,6 @@ class ImportData implements
 				Cache::forever($cachingKey , $validationRows);
 				
 			}
-			// if($this->uploadModelName == 'LabelingItem'){
-			// 	$data = FormatKeyAsColumnName($data);	
-			// }
 			$dates[] = $data;
 		}
 		

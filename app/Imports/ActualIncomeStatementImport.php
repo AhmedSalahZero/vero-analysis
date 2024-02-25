@@ -61,10 +61,6 @@ ToCollection,
 						$currentValue = $row[$dateIndex+1]; 
 					}else{
 						$model = $this->incomeStatement->subItems->where('pivot.financial_statement_able_id',$this->incomeStatement->id)->where('pivot.financial_statement_able_item_id',$mainItem->id)->where('pivot.sub_item_name',$subItemName)->where('pivot.sub_item_type','actual')->first() ;
-						// if(!$model){
-						// 	continue ;
-						// }
-						
 						$currentValue = ((array)json_decode($model->pivot->payload))[$currentDate] ?? 0 ;
 					}				
 					$subItemsValues['value'][$this->incomeStatement->id][$mainItem->id][$subItemName][$currentDate] = number_unformat($currentValue);

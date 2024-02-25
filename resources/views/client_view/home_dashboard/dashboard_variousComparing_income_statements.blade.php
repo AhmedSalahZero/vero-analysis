@@ -678,7 +678,7 @@ $currentReportType = Request()->segment(5)
 
 
 
-    <div class="row w-100" {{-- style="order:{{ ++$i }}" --}}>
+    <div class="row w-100" >
 
         <div class="col-md-12 reset-padding">
             <div class="kt-portlet kt-portlet--mobile">
@@ -699,11 +699,10 @@ $currentReportType = Request()->segment(5)
                         </thead>
                         <tbody>
 
-@php
-$typeIndex = 0 ;
-$currentTotalsOfSalesRevenues = [];
-@endphp 
-{{-- {{dd($intervalComparing)}} --}}
+								@php
+								$typeIndex = 0 ;
+								$currentTotalsOfSalesRevenues = [];
+								@endphp 
                             @foreach ($intervalComparing as $theType => $intervals)
                             <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
                                 <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg sub-closed">+</td>
@@ -714,7 +713,6 @@ $currentTotalsOfSalesRevenues = [];
 								@endphp
 								
                                 @foreach ($intervals as $intervalName => $data )
-								{{-- {{dd($intervals)}} --}}
                                 @php
                                 $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
 								if($typeIndex == 0){
@@ -729,7 +727,6 @@ $currentTotalsOfSalesRevenues = [];
 									@if($subIndex == 1)
 								style="color:{{ getColorForIndexes($currentTotalsOfSalesRevenues[0],$currentTotalsOfSalesRevenues[1],$typeIndex ) }}"
 								@endif 
-								
 								>
 								@if($typeIndex == 0 )
 								-
@@ -779,20 +776,16 @@ $currentTotalsOfSalesRevenues = [];
                                 $currentValues[] = $salesValue ;
                                 @endphp
 								
-								{{-- {{dd($currentTotals , $theType,$typeIndex)}} --}}
                                 <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
                                 @php
 								$currentPercentageValue = !isQuantitySubItem($subItemName) ? ($currentTotalsOfSalesRevenues[$intervalIndex] ? $salesValue / $currentTotalsOfSalesRevenues[$intervalIndex] * 100 : 0) : '-';
 								$currentPercentageValueArr[] = !isQuantitySubItem($subItemName) ? ($currentTotalsOfSalesRevenues[$intervalIndex] ? $salesValue / $currentTotalsOfSalesRevenues[$intervalIndex] * 100 : 0) : '-';
-								
-								
 								@endphp 
 								<td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "
 								@if($intervalIndex == 1)
 								style="color:{{ getColorForIndexes($currentPercentageValueArr[0],$currentPercentageValueArr[1],$typeIndex ) }}"
 								@endif 
 								> 
-								{{-- {{dd($currentTotalsOfSalesRevenues)}} --}}
 								{{
 									
 									is_numeric($currentPercentageValue) ? number_format($currentPercentageValue , 2)  . ' %' : $currentPercentageValue
@@ -809,8 +802,6 @@ $currentTotalsOfSalesRevenues = [];
                                 $percentage = isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] * 100 , 2) : number_format(0,2) ;
                                 if($val > 0 && $currentValues[0] <0) { $percentage=$percentage * -1; } $color=getPercentageColorOfSubTypes($val,$theType) ; @endphp <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell " style="color:{{ getPercentageColorOfSubTypes($val , $theType) }} !important">
                                     {{ number_format($val ) }}
-
-
                                     </td>
                                     <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell " style="color:{{ getPercentageColorOfSubTypes($percentage , $theType) }} !important">
                                         {{ $percentage .' %' }}
@@ -819,18 +810,15 @@ $currentTotalsOfSalesRevenues = [];
 
 
                             </tr>
-@php
-$typeIndex++ ;
-@endphp 
+							@php
+							$typeIndex++ ;
+							@endphp 
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-        {{-- @endforeach --}}
-
 
 
 

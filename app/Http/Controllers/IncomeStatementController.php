@@ -114,9 +114,11 @@ class IncomeStatementController extends Controller
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$currentSubItemType = $request->get('sub_item_type'); 
-		$subItemPivot = $incomeStatementItem
+		// dd($incomeStatementId);
+		$subItem = $incomeStatementItem
 		->withSubItemsFor($incomeStatementId,$currentSubItemType, $request->get('sub_item_name'))
-		->first()->pivot;
+		->first();
+		$subItemPivot = $subItem->pivot;
 		$id = $subItemPivot->id ;
 				
 		$validator = Validator::make($request->all(),[
@@ -145,8 +147,7 @@ class IncomeStatementController extends Controller
 			$percentageOrFixed = $subItemType == 'actual' ? 'non_repeating_fixed' :  $request->input('sub_items.0.percentage_or_fixed');
 			$percentageOf = $percentageOrFixed == 'percentage' ? json_encode($request->input('sub_items.0.is_percentage_of')) : null ;
 			$adjustedOrModified = $subItemType == 'adjusted'|| $subItemType =='modified' ;
-			// $percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($subItemPivot,$subItemType)) : $percentageOf;
-			// dd('done');
+			// $percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($subItem,$subItemType)) : $percentageOf;
 			
 			$incomeStatementItem
 				->withSubItemsFor($incomeStatementId, $subItemType, $request->get('sub_item_name'))

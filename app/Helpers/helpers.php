@@ -3137,15 +3137,19 @@ function checkIfAllDates(array $dates):array
 
 function number_unformat($number, $force_number = true, $dec_point = '.', $thousands_sep = ',')
 {
+	$isNegativeNumber = str_starts_with($number,'-');
+	// dd($isSign);
     if ($force_number) {
-        $number = preg_replace('/^[^\d]+/', '', $number);
+		$number = preg_replace('/^[^\d]+/', '', $number);
     } elseif (preg_match('/^[^\d]+/', $number)) {
         return false;
     }
     $type = (strpos($number, $dec_point) === false) ? 'int' : 'float';
     $number = str_replace([$dec_point, $thousands_sep], ['.', ''], $number);
     settype($number, $type);
-
+	if($isNegativeNumber){
+		$number  = $number * -1 ;
+	}
     return $number;
 }
 function hasUploadData($company_id)
@@ -3340,13 +3344,6 @@ function replace_all_spacial_character_in_array_values(array $items)
     }
     return $newItems ;
 }
-// function dateLessThanOrEqual(string $date , string $endDate){
-// 	if(!$date || !$endDate ){
-// 		return true ;
-// 	}
-// 	return Carbon::make($date)->lessThanOrEqualTo(Carbon::make($endDate))  ;
-// }
-
 function getNextDate(?array $array, ?string $date, $datesExistsAsKeys = true)
 {
 
@@ -4758,15 +4755,26 @@ function findByKey(array $items , $key , $searchId )
 function touppercase($currentName){
 	return Str::upper($currentName);
 }
+function toupperfirst($currentName){
+	return ucfirst($currentName);
+}
+
 function dashesToCamelCase($string) 
 {
     $str = str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
     $str[0] = strtolower($str[0]);
     return $str;
 }
-// function getMappingFromForecastToAdjustedOrModified($subItemForForecast,$currentSubItemType)
-// {
-// 	$isPercentageOf = $subItemPivotForForecast->pivot->is_percentage_of ;
-// 	$subItemName = $subItemPivotForForecast->pivot->sub_item_name;
-// 	dd($subItemPivotForForecast,$isPercentageOf);
-// }
+function getMappingFromForecastToAdjustedOrModified($incomeStatement,$currentSubItemType)
+{
+	/**
+	 * @var IncomeStatement $incomeStatement
+	 */
+	$subItemName = $incomeStatement->pivot->sub_item_name;
+	dd($incomeStatement->id,$currentSubItemType,$subItemName);
+	dd($incomeStatement->withSubItemsFor($incomeStatement->id,$currentSubItemType, $subItemName)->get());
+	$isPercentageOfs = $incomeStatement->pivot->is_percentage_of ;
+	foreach($isPercentageOfs as $percentageOfId){
+		dd($incomeStatement);
+	}
+}

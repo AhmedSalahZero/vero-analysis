@@ -165,7 +165,7 @@
                     <label>{{__('First Report Type')}}</label>
                     <select id="first-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="first_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
                         @foreach (getAllFinancialAbleTypes() as $firstReportType)
-                        <option value="{{ $firstReportType }}" @if($firstReportType==$selectedItems['first_report_type']) selected @endif> {{ $firstReportType }} </option>
+                        <option  value="{{ $firstReportType }}" @if($firstReportType==$selectedItems['first_report_type']) selected @endif> {{ toupperfirst($firstReportType) }} </option>
                         @endforeach
 
                     </select>
@@ -175,8 +175,8 @@
 				 <div class="col-md-4">
                     <label>{{__('Second Report Type')}}</label>
                     <select id="second-report-type" data-actions-box="false" data-live-search="true" data-max-options="1" name="second_report_type" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder select-all">
-                        @foreach (getAllFinancialAbleTypes() as $firstReportType)
-                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ $secondReportType }} </option>
+                        @foreach (getAllFinancialAbleTypes() as $secondReportType)
+                        <option value="{{ $secondReportType }}" @if($secondReportType==$selectedItems['second_report_type']) selected @endif> {{ toupperfirst($secondReportType) }} </option>
                         @endforeach
 
                     </select>
@@ -281,14 +281,14 @@
             <div class="kt-portlet kt-portlet--mobile">
 
                 <div class="kt-portlet__body dataTables_wrapper dt-bootstrap4 no-footer">
-                    <table class="table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                      <table class="table table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                         <thead>
                             <tr class="header-tr ">
-                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">#</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell trigger-expand is-opened" style="cursor:pointer">{{ __('Expand All') }}</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">Name</th>
-                                {{-- {{ dd() }} --}}
-                                @foreach ($intervals as $i=>$intervalName )
-                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.$selectedTypesIndexes[$i].' '. __('Value') }} ({{ getIntervalFromString($intervalName) }})</th>
+                                @foreach ($intervals as $intervalName )
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ ''.getFirstSegmentInString($intervalName,'#').' '. __('Value') }} <br> ({{ getIntervalFromString($intervalName) }})</th>
+                                <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell text-capitalize"> {{ __('% / Revenues') }} </th>
                                 @endforeach
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Variance') }}</th>
                                 <th class="text-center view-table-th header-th sorting_disabled sub-text-bg text-nowrap editable editable-text is-name-cell">{{ __('Percentage') }}</th>
@@ -296,60 +296,120 @@
                         </thead>
                         <tbody>
 
+								@php
+								$typeIndex = 0 ;
+								$currentTotalsOfSalesRevenues = [];
+								@endphp 
                             @foreach ($intervalComparing as $theType => $intervals)
-
                             <tr class="sub-numeric-bg text-nowrap" data-model-id="{{ convertStringToClass($theType) }}">
-                                <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg">+</td>
+                                <td class=" reset-table-width trigger-child-row-1 cursor-pointer sub-text-bg sub-closed">+</td>
                                 <td class="sub-text-bg text-nowrap is-name-cell text-left" style="text-align: left !important;">{{ $theType }}</td>
                                 @php
-                                $currentValue =[ ]
-                                @endphp
+                                $currentValue =[ ];
+                                $subIndex = 0;
+								@endphp
+								
                                 @foreach ($intervals as $intervalName => $data )
                                 @php
                                 $currentValue[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
-                                @endphp
-                                <td class="sub-numeric-bg text-nowrap "> {{ number_format( sum_all_keys($intervalComparing[$theType][$intervalName]) ) }} </td>
+								if($typeIndex == 0){
+                                $currentTotalsOfSalesRevenues[] = sum_all_keys($intervalComparing[$theType][$intervalName]) ;
+									
+								}
+                                $totalOfRevenue = sum_all_keys($intervalComparing[$theType][$intervalName])
+								@endphp
+								
+                                <td class="sub-numeric-bg text-nowrap "> {{  number_format( $totalOfRevenue  ) }} </td>
+								<td 
+									@if($subIndex == 1)
+								style="color:{{ getColorForIndexes($currentTotalsOfSalesRevenues[0],$currentTotalsOfSalesRevenues[1],$typeIndex ) }}"
+								@endif 
+								>
+								@if($typeIndex == 0 )
+								-
+								@elseif($currentTotalsOfSalesRevenues[$subIndex])
+								
+								{{number_format($currentValue[$subIndex] /$currentTotalsOfSalesRevenues[$subIndex] * 100,2)}} % 
+								@else
+								
+								0 % 
+								
+								@endif 
+								</td>
+								@php
+								$subIndex++;
+								@endphp
                                 @endforeach
                                 @php
                                 $val = $currentValue[1] - $currentValue[0] ;
-                                @endphp
-                                <td class="sub-numeric-bg text-nowrap ">{{ number_format($val)  }}</td>
-                                <td class="sub-numeric-bg text-nowrap ">
-                                    {{ isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100    , 2) . ' %' : number_format(0,2). ' %' }}
-                                </td>
+                                $percentage = isset($currentValue[0]) && $currentValue[0] ? number_format($val/ $currentValue[0] * 100 , 2) : number_format(0,2) ;
+                                if($val > 0 && $currentValue[0] <0) { $percentage=$percentage * -1; } $color=getPercentageColorOfSubTypes($val,$theType) ; @endphp <td class="sub-numeric-bg text-nowrap " style="color:{{  $color }} !important">{{ number_format($val)  }}</td>
+                                    <td class="sub-numeric-bg text-nowrap  " style="color:{{ getPercentageColorOfSubTypes($percentage , $theType) }} !important">
+                                        {{ $percentage . ' %' }}
+                                    </td>
 
                             </tr>
                             @php
                             $currentValue=[];
+					
                             @endphp
+
                             @foreach(getSubItemsNames($intervalComparing[$theType]) as $subItemName=>$values )
+
                             <tr class="edit-info-row add-sub maintable-1-row-class{{ convertStringToClass($theType) }} is-sub-row even d-none">
                                 <td class="sub-text-bg text-nowrap editable editable-text is-name-cell"> </td>
-                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">{{ $subItemName }}</td>
+                                <td class="sub-text-bg text-nowrap editable editable-text is-name-cell">
+                                    {{ $subItemName }}
+                                </td>
                                 @php
                                 $currentValues =[];
-                                @endphp
+                                $intervalIndex = 0;
+								$currentPercentageValueArr = [];
+								@endphp
+								
                                 @foreach($intervals as $newIntervalName => $intervalValue)
                                 @php
                                 $salesValue = $values[$newIntervalName] ?? 0;
                                 $currentValues[] = $salesValue ;
                                 @endphp
-                                <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell"> {{ number_format($salesValue) }} </td>
-                                @endforeach
-                                <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
-                                    @php
-                                    $val = $currentValues[1] - $currentValues[0] ;
-                                    @endphp
+								
+                                <td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "> {{ number_format($salesValue) }} </td>
+                                @php
+								$currentPercentageValue = !isQuantitySubItem($subItemName) ? ($currentTotalsOfSalesRevenues[$intervalIndex] ? $salesValue / $currentTotalsOfSalesRevenues[$intervalIndex] * 100 : 0) : '-';
+								$currentPercentageValueArr[] = !isQuantitySubItem($subItemName) ? ($currentTotalsOfSalesRevenues[$intervalIndex] ? $salesValue / $currentTotalsOfSalesRevenues[$intervalIndex] * 100 : 0) : '-';
+								@endphp 
+								<td class=" sub-numeric-bg sub-text-bg text-nowrap editable editable-text is-name-cell  "
+								@if($intervalIndex == 1)
+								style="color:{{ getColorForIndexes($currentPercentageValueArr[0],$currentPercentageValueArr[1],$typeIndex ) }}"
+								@endif 
+								> 
+								{{
+									
+									is_numeric($currentPercentageValue) ? number_format($currentPercentageValue , 2)  . ' %' : $currentPercentageValue
+								
+								}}  </td>
+                                @php
+								$intervalIndex ++ ;
+								@endphp
+								@endforeach
+
+                                @php
+
+                                $val = $currentValues[1] - $currentValues[0] ;
+                                $percentage = isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] * 100 , 2) : number_format(0,2) ;
+                                if($val > 0 && $currentValues[0] <0) { $percentage=$percentage * -1; } $color=getPercentageColorOfSubTypes($val,$theType) ; @endphp <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell " style="color:{{ getPercentageColorOfSubTypes($val , $theType) }} !important">
                                     {{ number_format($val ) }}
-                                </td>
-                                <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell">
-                                    {{ isset($currentValues[0]) && $currentValues[0] ? number_format($val/ $currentValues[0] *100 , 2)  . ' %' : number_format(0,2). ' %' }}
-                                </td>
-                                @endforeach
+                                    </td>
+                                    <td class="sub-numeric-bg   text-nowrap editable editable-text is-name-cell " style="color:{{ getPercentageColorOfSubTypes($percentage , $theType) }} !important">
+                                        {{ $percentage .' %' }}
+                                    </td>
+                                    @endforeach
 
 
                             </tr>
-
+							@php
+							$typeIndex++ ;
+							@endphp 
                             @endforeach
                         </tbody>
                     </table>

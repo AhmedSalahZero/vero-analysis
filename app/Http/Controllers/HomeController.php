@@ -705,7 +705,6 @@ class HomeController extends Controller
 			$request['end_date_one'] = $end_date_0;
 			$request['start_date_two'] = $start_date_1;
 			$request['end_date_two'] = $end_date_1;
-
 			//  $request['start_date_three'] = $start_date_2;
 			// $request['end_date_three'] = $end_date_2;
 
@@ -802,7 +801,6 @@ class HomeController extends Controller
 		
 		$start_date = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['start_date'] : date('2021-01-01');
 		$end_date   = $incomeStatement ? $incomeStatement->getFirstAndEndDate()['end_date'] : date('2021-12-31');
-// dd($end_date);
 		if(! Carbon::make($end_date)){
 			return redirect()->back()->with('fail', __('Please Enter End Date'));
 		}
@@ -813,24 +811,19 @@ class HomeController extends Controller
 
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 		$db_names = array_keys($exportableFields);
-		
 		$permittedTypes = [];
 		foreach ($allTypes as  $id => $name) {
 			$permittedTypes[$id] = ($name);
 		}
-		// dd($permittedTypes);
 		$selectedTypes = count((array)$request->types) ? (array)$request->types : array_keys($permittedTypes);
-		
 		$intervalComparing = [];
 		$requestMethod = $request->method();
 		if ($request->isMethod('GET')) {
 			Log::storeNewLogRecord('enterSection',null,__('Variance Dashboard'));
-			
 			$canRefreshDates = true ; 
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[1] ?? 0;
 			$secondKey = $keys[2] ?? 0;
-			// $thirdKey = $keys[2] ?? 0;
 			$request['types'] = $keys;
 			$request['start_date'] = $start_date;
 			$request['end_date'] = $end_date;
@@ -838,8 +831,6 @@ class HomeController extends Controller
 			$canRefreshDates = false  ; 
 			$start_date  = $request['start_date'];
 			$end_date  = $request['end_date'];
-			// $start_date_2  = $request['start_date_three'];
-			// $end_date_2  = $request['end_date_three'];
 		}
 		if (Carbon::make($end_date)->lessThan(Carbon::make($start_date))) {
 			$start_date_wap = $start_date;
@@ -855,7 +846,6 @@ class HomeController extends Controller
 		$dates = [];
 		$chartHasBeenFound = false;
 		$chartItems = count((array)$request->get('chart_items')) ? (array)$request->get('chart_items') : addAllSubItemForMainItemsArray($allTypes, $incomeStatement, request()->segments()[4]);
-		// dd($chartItems,addAllSubItemForMainItemsArray($allTypes, $incomeStatement, request()->segments()[4]));
 
 		foreach ($selectedTypes as $typeId) {
 			$request['mainItemId'] = $typeId;
@@ -873,12 +863,7 @@ class HomeController extends Controller
 		if ($incomeStatementId) {
 			$selectedIncomeStatement =     IncomeStatement::find($incomeStatementId);
 		}
-		
-		
 		$intervals = getIntervals($intervalComparing);
-		
-		// dd(get_defined_vars());
-		
 		$selectedItems = [
 			'income_statement_id' => $incomeStatementId ?: $incomeStatement->id,
 			'main_items' => $selectedTypes,
@@ -909,8 +894,6 @@ class HomeController extends Controller
 			'intervals',
 			'intervalDates',
 			'requestMethod',
-			// 'start_date_2', 'end_date_2',
-
 			'permittedTypes',
 			'selectedTypes',
 			'intervalComparing',
