@@ -358,7 +358,7 @@ Route::middleware([])->group(function () {
 				Route::get('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@addAccount')->name('financial.institution.add.account');
 				Route::post('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@storeAccount')->name('financial.institution.store.account');
 				Route::get('financial-institution-accounts/edit/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@edit')->name('edit.financial.institutions.account');
-				Route::put('financial-institution-accounts/update/{financialInstitutionAccount}', 'financialInstitutionAccountController@update')->name('update.financial.institutions.account');
+				Route::put('financial-institution-accounts/update/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@update')->name('update.financial.institutions.account');
 				Route::delete('financial-institution-accounts/delete/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@destroy')->name('delete.financial.institutions.account');
 				
 				/**

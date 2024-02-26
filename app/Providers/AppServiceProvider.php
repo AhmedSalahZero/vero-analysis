@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Observers\CustomerInvoiceObserver;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -59,6 +60,21 @@ class AppServiceProvider extends ServiceProvider
 				];
 			})->toArray();
 		});
+		
+		
+		Collection::macro('filterByReceivingDate',function(?string $startDate, ?string $endDate  ){
+			/**
+			 * @var Collection $this 
+			 */
+			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
+				// dd($items,$startDate , $endDate);
+				return $items->where('receiving_date','>=',$startDate)->where('receiving_date','<=',$endDate);
+				// return $items->where(function( $builder) use ($startDate,$endDate){
+				// 	dd($builder);
+				// });
+			}) ;
+		});
+		
 		
 		if(true){
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();

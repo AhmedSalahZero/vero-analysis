@@ -1518,6 +1518,81 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\IncomeStatementSubItem
+ *
+ * @property int $id
+ * @property string|null $vat_rate
+ * @property int|null $is_deductible
+ * @property string|null $is_value_quantity_price
+ * @property int $financial_statement_able_id
+ * @property int $financial_statement_able_item_id
+ * @property string|null $sub_item_name when null it stores the main row data that has no sub rows
+ * @property string $sub_item_type
+ * @property string|null $receivable_or_payment
+ * @property int $ordered
+ * @property string $created_from
+ * @property mixed|null $payload
+ * @property mixed|null $actual_dates
+ * @property int|null $is_depreciation_or_amortization
+ * @property int $has_collection_policy
+ * @property string|null $collection_policy_type
+ * @property string|null $collection_policy_value
+ * @property int|null $is_quantity
+ * @property int $can_be_quantity
+ * @property int $can_be_percentage_or_fixed
+ * @property int $company_id
+ * @property string $percentage_or_fixed
+ * @property mixed|null $is_percentage_of
+ * @property string|null $repeating_fixed_value
+ * @property int|null $creator_id
+ * @property string|null $percentage_value
+ * @property mixed|null $is_cost_of_unit_of
+ * @property string|null $cost_of_unit_value
+ * @property int|null $is_financial_expense
+ * @property string|null $is_financial_income
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereActualDates($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCanBePercentageOrFixed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCanBeQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCollectionPolicyType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCollectionPolicyValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCostOfUnitValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCreatedFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereCreatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereFinancialStatementAbleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereFinancialStatementAbleItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereHasCollectionPolicy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsCostOfUnitOf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsDeductible($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsDepreciationOrAmortization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsFinancialExpense($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsFinancialIncome($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsPercentageOf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereIsValueQuantityPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereOrdered($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem wherePercentageOrFixed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem wherePercentageValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereReceivableOrPayment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereRepeatingFixedValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereSubItemName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereSubItemType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomeStatementSubItem whereVatRate($value)
+ */
+	class IncomeStatementSubItem extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\IncomingTransfer
  *
  * @property int $id

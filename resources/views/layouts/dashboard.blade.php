@@ -23,6 +23,12 @@
 
 
     <style>
+	.flex-2{
+		flex:2 !important;
+	}
+	.text-main-color{
+		color:#0742A6 !important
+	}
         ::placeholder {
             color: lightgray !important;
             font-weight: 100;
@@ -1270,7 +1276,6 @@
     </script>
 
     @endif
-
 
 
     @if(isset($errors) &&$errors&& count($errors))

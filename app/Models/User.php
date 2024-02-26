@@ -106,9 +106,9 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->moneyReceived->where('company_id',getCurrentCompanyId()) ;
 	}
-	public function getReceivedChequesInSafe():Collection
+	public function getReceivedChequesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::IN_SAFE]) ;
 		})->values();
@@ -116,40 +116,40 @@ class User extends Authenticatable implements HasMedia
 	/**
 	 * * هي الشيكات اللي اترفضت ورجعتها الخزنة تاني وليكن مثلا بسبب ان حساب العميل مفيهوش فلوس حاليا
 	 */
-	public function getReceivedRejectedChequesInSafe():Collection
+	public function getReceivedRejectedChequesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::REJECTED]) ;
 		})->values();
 	}
 	
-	public function getCollectedCheques():Collection
+	public function getCollectedCheques(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::COLLECTED]) ;
 		})->values();
 	}
 	
-	public function getReceivedChequesUnderCollection():Collection
+	public function getReceivedChequesUnderCollection(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::UNDER_COLLECTION]) ;
 		})->values();
 	}
-	public function getReceivedCashesInSafe():Collection
+	public function getReceivedCashesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_SAFE) ;
+		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_SAFE)->filterByReceivingDate($startDate,$endDate) ;
 	}
-	public function getReceivedCashesInBank():Collection
+	public function getReceivedCashesInBank(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_BANK) ;
+		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_BANK)->filterByReceivingDate($startDate,$endDate) ;
 	}
-	public function getReceivedTransfer():Collection
+	public function getReceivedTransfer(?string $startDate = null ,?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::INCOMING_TRANSFER) ;
+		return $this->moneyReceived->where('type',MoneyReceived::INCOMING_TRANSFER)->filterByReceivingDate($startDate,$endDate) ;
 	}
 	public function financialInstitutions()
 	{

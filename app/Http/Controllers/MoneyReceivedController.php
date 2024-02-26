@@ -69,35 +69,85 @@ class MoneyReceivedController
 	}
 	public function index(Company $company,Request $request)
 	{
+		// dd($request->all());
+		$numberOfMonthsBetweenEndDateAndStartDate = 3 ;
+		$moneyType = $request->get('active',MoneyReceived::CHEQUE) ;
+		$filterDates = [];
+		foreach(MoneyReceived::getAllTypes() as $type){
+			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
+			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
+			
+			$filterDates[$type] = [
+				'startDate'=>$startDate,
+				'endDate'=>$endDate
+			];
+		}
+		// cash in safe
+		$receivedCashesInSafeStartDate = $filterDates[MoneyReceived::CASH_IN_SAFE]['startDate'] ?? null ;
+		$receivedCashesInSafeEndDate = $filterDates[MoneyReceived::CASH_IN_SAFE]['endDate'] ?? null ;
 		
-		$moneyType = $request->get('active') ;
+		// cashes in Bank
+		$cashesInBankStartDate = $filterDates[MoneyReceived::CASH_IN_BANK]['startDate'] ?? null ;
+		$cashesInBankEndDate = $filterDates[MoneyReceived::CASH_IN_BANK]['endDate'] ?? null ;
+			// incoming transfer
+			$incomingTransferStartDate = $filterDates[MoneyReceived::INCOMING_TRANSFER]['startDate'] ?? null ;
+			$incomingTransferEndDate = $filterDates[MoneyReceived::INCOMING_TRANSFER]['endDate'] ?? null ;
+			
+		/**
+		 * * cheques in safe
+		 */
+		$chequesInSafeStartDate = $filterDates[MoneyReceived::CHEQUE]['startDate'] ?? null ;
+		$chequesInSafeEndDate = $filterDates[MoneyReceived::CHEQUE]['endDate'] ?? null ;
+		
+		/**
+		 * * rejected cheques
+		 */
+		$chequesRejectedStartDate = $filterDates[MoneyReceived::CHEQUE_REJECTED]['startDate'] ?? null ;
+		$chequesRejectedEndDate = $filterDates[MoneyReceived::CHEQUE_REJECTED]['endDate'] ?? null ;
+		
+		
+		/**
+		 * *  cheques under collection
+		 */
+		$chequesUnderCollectionStartDate = $filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['startDate'] ?? null ;
+		$chequesUnderCollectionEndDate = $filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['endDate'] ?? null ;
+			/**
+		 * *  cheques collection
+		 */
+		$chequesCollectedStartDate = $filterDates[MoneyReceived::CHEQUE_COLLECTED]['startDate'] ?? null ;
+		$chequesCollectedEndDate = $filterDates[MoneyReceived::CHEQUE_COLLECTED]['endDate'] ?? null ;
+		
+		
+		
+	
 		$user = $request->user()->load('moneyReceived') ;
 		/** 
 		* @var User $user
 		*/
-		$receivedCashesInSafe = $user->getReceivedCashesInSafe() ;
-		$receivedCashesInBank = $user->getReceivedCashesInBank() ;
+		// dd($cashesInBankStartDate , $receivedCashesInSafeStartDate);
+		$receivedCashesInSafe = $user->getReceivedCashesInSafe($receivedCashesInSafeStartDate ,$receivedCashesInSafeEndDate ) ;
+		$receivedCashesInBanks = $user->getReceivedCashesInBank($cashesInBankStartDate,$cashesInBankEndDate) ;
+		$receivedTransfer = $user->getReceivedTransfer($incomingTransferStartDate,$incomingTransferEndDate) ;
+		$receivedChequesInSafe = $user->getReceivedChequesInSafe($chequesInSafeStartDate,$chequesInSafeEndDate);
+		$receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe($chequesRejectedStartDate,$chequesRejectedEndDate);
+		$receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
+		$collectedCheques=  $user->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
+		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		
 		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
 		$receivedCashesInSafe = $moneyType == MoneyReceived::CASH_IN_SAFE ? $this->applyFilter($request,$receivedCashesInSafe) :$receivedCashesInSafe  ;
-		$receivedCashesInBank = $moneyType == MoneyReceived::CASH_IN_BANK ? $this->applyFilter($request,$receivedCashesInBank) :$receivedCashesInBank  ;
-		$receivedTransfer = $user->getReceivedTransfer() ;
+		$receivedCashesInBanks = $moneyType == MoneyReceived::CASH_IN_BANK ? $this->applyFilter($request,$receivedCashesInBanks) :$receivedCashesInBanks  ;
 		$receivedTransfer = $moneyType === MoneyReceived::INCOMING_TRANSFER ? $this->applyFilter($request,$receivedTransfer) : $receivedTransfer  ;
 		
-		$receivedCashInBanks = $user->getReceivedCashesInBank() ;
-		$receivedCashInBanks = $moneyType === MoneyReceived::CASH_IN_BANK ? $this->applyFilter($request,$receivedCashInBanks) : $receivedCashInBanks  ;
 	
-		$receivedChequesInSafe = $user->getReceivedChequesInSafe();
 		$receivedChequesInSafe = $moneyType == MoneyReceived::CHEQUE ? $this->applyFilter($request,$receivedChequesInSafe) : $receivedChequesInSafe;
 		
-		$receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe();
+		
 		$receivedRejectedChequesInSafe = $moneyType == MoneyReceived::CHEQUE_REJECTED ? $this->applyFilter($request,$receivedRejectedChequesInSafe) : $receivedRejectedChequesInSafe;
 		
-		$receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection();
 		$receivedChequesUnderCollection=  $moneyType == MoneyReceived::CHEQUE_UNDER_COLLECTION ? $this->applyFilter($request,$receivedChequesUnderCollection) : $receivedChequesUnderCollection ;
 		
-		$collectedCheques=  $user->getCollectedCheques();
 		$collectedCheques=  $moneyType == MoneyReceived::CHEQUE_COLLECTED ? $this->applyFilter($request,$collectedCheques) : $collectedCheques ;
 		
 		
@@ -172,11 +222,8 @@ class MoneyReceivedController
 		
 		
 		
-		
 		$banks = Bank::pluck('view_name','id');
 		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
-		
-		
         return view('reports.moneyReceived.index', [
 			'company'=>$company ,
 			'selectedBanks'=>$selectedBanks,
@@ -184,7 +231,7 @@ class MoneyReceivedController
 			'receivedCashesInSafe'=>$receivedCashesInSafe,
 			'chequesReceivedTableSearchFields'=>$chequesReceivedTableSearchFields,
 			'receivedTransfer'=>$receivedTransfer,
-			'receivedCashInBanks'=>$receivedCashInBanks,
+			'receivedCashesInBanks'=>$receivedCashesInBanks,
 			'banks'=>$banks,
 			'receivedChequesUnderCollection'=>$receivedChequesUnderCollection,
 			'chequesUnderCollectionTableSearchFields'=>$chequesUnderCollectionTableSearchFields ,
@@ -196,7 +243,9 @@ class MoneyReceivedController
 			'chequesRejectedTableSearchFields'=>$chequesRejectedTableSearchFields,
 			'receivedRejectedChequesInSafe'=>$receivedRejectedChequesInSafe,
 			'collectedCheques'=>$collectedCheques,
-			'collectedChequesTableSearchFields'=>$collectedChequesTableSearchFields
+			'collectedChequesTableSearchFields'=>$collectedChequesTableSearchFields,
+			'filterDates'=>$filterDates,
+			
 		]);
         return view('reports.moneyReceived.index', compact('financialInstitutionBanks','accountTypes'));
     }

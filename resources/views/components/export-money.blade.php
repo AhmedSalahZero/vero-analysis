@@ -7,7 +7,7 @@
 @php
 use App\Models\MoneyReceived ;
 @endphp
-<div class="kt-portlet__head-toolbar">
+<div class="kt-portlet__head-toolbar" style="flex:1 !important;">
     <div class="kt-portlet__head-wrapper">
         <div class="kt-portlet__head-actions">
             &nbsp;
@@ -20,14 +20,14 @@ use App\Models\MoneyReceived ;
             @if($hasSearch)
             <a data-type="multi" data-toggle="modal" data-target="#search-money-modal-{{ $moneyReceivedType }}" id="js-search-money-received" href="#" title="{{ __('Search Money Received') }}" class="btn  active-style btn-icon-sm  ">
                 <i class="fas fa-search"></i>
-                {{ __('Search') }}
+                {{ __('Advanced Filter') }}
             </a>
 
             <div class="modal fade" id="search-money-modal-{{ $moneyReceivedType }}" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="delete_from_to_modalTitle">{{ __('Search Form') }}</h5>
+                            <h5 class="modal-title" id="delete_from_to_modalTitle">{{ __('Filter Form') }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>

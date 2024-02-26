@@ -16,6 +16,20 @@ class MoneyReceived extends Model
 	const CHEQUE_REJECTED  = 'cheque-rejected';
 	const CHEQUE_COLLECTED = 'cheque-collected';
 	
+	public static function getAllTypes()
+	{
+		return [
+			self::CASH_IN_SAFE,
+			self::CASH_IN_BANK,
+			self::INCOMING_TRANSFER,
+			self::CHEQUE,
+			self::CHEQUE_UNDER_COLLECTION,
+			self::CHEQUE_REJECTED,
+			self::CHEQUE_COLLECTED,
+			
+		];
+	}
+	
     protected $guarded = ['id'];
     protected $table = 'money_received';
     
