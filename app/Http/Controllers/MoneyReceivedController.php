@@ -70,7 +70,7 @@ class MoneyReceivedController
 	public function index(Company $company,Request $request)
 	{
 		// dd($request->all());
-		$numberOfMonthsBetweenEndDateAndStartDate = 3 ;
+		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$moneyType = $request->get('active',MoneyReceived::CHEQUE) ;
 		$filterDates = [];
 		foreach(MoneyReceived::getAllTypes() as $type){
@@ -135,7 +135,7 @@ class MoneyReceivedController
 		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$receivedCashesInSafe = $moneyType == MoneyReceived::CASH_IN_SAFE ? $this->applyFilter($request,$receivedCashesInSafe) :$receivedCashesInSafe  ;
 		$receivedCashesInBanks = $moneyType == MoneyReceived::CASH_IN_BANK ? $this->applyFilter($request,$receivedCashesInBanks) :$receivedCashesInBanks  ;
 		$receivedTransfer = $moneyType === MoneyReceived::INCOMING_TRANSFER ? $this->applyFilter($request,$receivedTransfer) : $receivedTransfer  ;
@@ -223,7 +223,7 @@ class MoneyReceivedController
 		
 		
 		$banks = Bank::pluck('view_name','id');
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();		
         return view('reports.moneyReceived.index', [
 			'company'=>$company ,
 			'selectedBanks'=>$selectedBanks,
@@ -253,7 +253,7 @@ class MoneyReceivedController
 	public function create(Company $company,$singleModel = null)
 	{
 		$banks = Bank::pluck('view_name','id');
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
@@ -413,7 +413,7 @@ class MoneyReceivedController
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$customerInvoices = CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
-		$accountTypes = AccountType::onlySlugs(['current-account','clean-overdraft','overdraft-against-commercial-paper','overdraft-against-assignment-of-contracts'])->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		if($moneyReceived->isChequeUnderCollection()){
@@ -603,7 +603,6 @@ class MoneyReceivedController
 
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);
-		
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId);
 		return response()->json([
 			'status'=>true , 

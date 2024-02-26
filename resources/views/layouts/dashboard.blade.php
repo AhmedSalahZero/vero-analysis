@@ -23,6 +23,19 @@
 
 
     <style>
+	.text-green{
+		color:green !important;
+	}
+	.text-red{
+		color:red !important;
+	}
+	
+	.table-condensed th{
+		background-color:white !important;
+	}
+	input,select,.dropdown-toggle.bs-placeholder{
+		border:1px solid #CCE2FD !important;
+	}
 	.flex-2{
 		flex:2 !important;
 	}

@@ -145,9 +145,6 @@ use App\Models\MoneyReceived ;
                                             <div class="input-group date">
                                                 <select name="account_number" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
-                                                    @foreach([] as $id => $name)
-                                                    <option value="{{ $id }}" @if($model->cheque && $id==$model->cheque->getAccountNumber()  ) selected @endif>{{ $name }}</option>
-                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>

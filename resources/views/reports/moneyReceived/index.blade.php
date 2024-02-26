@@ -7,6 +7,17 @@ use App\Models\MoneyReceived;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+    button[type="submit"],
+    button[type="button"] {
+        font-size: 1rem !important;
+
+    }
+
+    button[type="submit"] {
+        background-color: green !important;
+        border: 1px solid green !important;
+    }
+
     .kt-portlet__body {
         padding-top: 0 !important;
     }
@@ -50,21 +61,21 @@ use App\Models\MoneyReceived;
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{  Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_REJECTED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Cheques Under Collection') }}
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::CHEQUE_COLLECTED ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_COLLECTED }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Collected Cheques') }}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{  Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE_REJECTED }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
+                    </a>
+                </li>
+
 
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::INCOMING_TRANSFER ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::INCOMING_TRANSFER }}" role="tab">
@@ -79,7 +90,7 @@ use App\Models\MoneyReceived;
 
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::CASH_IN_BANK ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CASH_IN_BANK }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i>{{ __('Cash In Bank') }}
+                        <i class="fa fa-money-check-alt"></i>{{ __('Bank Deposit') }}
                     </a>
                 </li>
 
@@ -108,18 +119,17 @@ use App\Models\MoneyReceived;
                         <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th>{{ __('Select') }}</th>
-
-                                    <th>{{ __('Customer Name') }}</th>
-                                    <th>{{ __('Receiving Date') }}</th>
-                                    <th>{{ __('Cheque Number') }}</th>
-                                    <th>{{ __('Cheque Amount') }}</th>
-                                    <th>{{ __('Currency') }}</th>
-                                    <th class="bank-max-width">{{ __('Drawee Bank') }}</th>
-                                    <th>{{ __('Due Date') }}</th>
-                                    <th>{{ __('Due After Days') }}</th>
-                                    <th>{{ __('Status') }}</th>
-                                    <th>{{ __('Control') }}</th>
+                                    <th class="align-middle">{{ __('Select') }}</th>
+                                    <th class="align-middle">{{ __('Customer Name') }}</th>
+                                    <th class="align-middle">{!! __('Receiving<br>Date') !!}</th>
+                                    <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
+                                    <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
+                                    <th class="align-middle">{{ __('Currency') }}</th>
+                                    <th class="align-middle" class="bank-max-width">{{ __('Drawee Bank') }}</th>
+                                    <th class="align-middle">{!! __('Due<br>Date') !!}</th>
+                                    <th class="align-middle">{!! __('Due <br> After Days') !!}</th>
+                                    <th class="align-middle">{!! __('Status') !!}</th>
+                                    <th class="align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -136,7 +146,11 @@ use App\Models\MoneyReceived;
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDraweeBankName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->cheque->getDueDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getDueAfterDays() }}</td>
-                                    <td> {{ $moneyReceived->cheque->getStatusFormatted() }} </td>
+									@php
+										$dueStatus = $moneyReceived->cheque->getDueStatusFormatted() ;
+									@endphp
+									
+                                    <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">{{ $dueStatus['status'] }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
@@ -180,11 +194,11 @@ use App\Models\MoneyReceived;
 
             <div class="tab-pane {{  Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" id="{{ MoneyReceived::CHEQUE_REJECTED }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-				
-				<x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_REJECTED" :title="__('Rejected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_REJECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_REJECTED]['endDate']??''">
+
+                    <x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_REJECTED" :title="__('Rejected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_REJECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_REJECTED]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesRejectedTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_REJECTED" :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
-		
+
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -263,13 +277,13 @@ use App\Models\MoneyReceived;
 
             <div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-				
-				<x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_UNDER_COLLECTION" :title="__('Cheques Under Collection')" :startDate="$filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['endDate']??''">
+
+                    <x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_UNDER_COLLECTION" :title="__('Cheques Under Collection')" :startDate="$filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesUnderCollectionTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_UNDER_COLLECTION" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-						
+
                     </x-table-title.with-two-dates>
-					
-                
+
+
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -277,14 +291,16 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
 
-                                    <th class="align-middle">{{ __('Customer Name') }}</th>
-                                    <th class="align-middle">{{ __('Cheque Number') }}</th>
-                                    <th class="align-middle">{{ __('Cheque Amount') }}</th>
-                                    <th class="align-middle">{{ __('Deposit Date') }}</th>
+                                    <th class="align-middle">{!! __('Customer <br> Name') !!}</th>
+                                    <th class="align-middle">{!! __('Cheque <br> Number') !!}</th>
+                                    <th class="align-middle">{!! __('Cheque <br> Amount') !!}</th>
+                                    <th class="align-middle">{!! __('Deposit <br> Date') !!}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
-                                    <th class="align-middle">{{ __('Account Number') }}</th>
-                                    <th class="align-middle">{{ __('Clearance Days') }}</th>
+                                    <th class="align-middle">{!! __('Account <br> Number') !!}</th>
+                                    <th class="align-middle">{!! __('Cheque <br> Due Date') !!}</th>
+                                    <th class="align-middle">{!! __('Clearance <br>Days') !!}</th>
                                     <th class="align-middle">{!! __('Cheque Expected <br> Collection Date') !!}</th>
+                                    <th class="align-middle">{!! __('Status') !!}</th>
                                     <th class="align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -298,12 +314,19 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
+                                    <td> {{ $moneyReceived->cheque->getDueDateFormatted() }} </td>
                                     <td> {{ $moneyReceived->cheque->getClearanceDays() }} </td>
                                     <td> {{ $moneyReceived->cheque->chequeExpectedCollectionDateFormatted() }} </td>
+										@php
+										$dueStatus = $moneyReceived->cheque->getDueStatusFormatted() ;
+									@endphp
+                                    <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">{{ $dueStatus['status'] }}</td>
+                                
 
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@if($moneyReceived->cheque->getDueStatus())
                                             <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyReceived->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
                                             <div class="modal fade" id="apply-collection-modal-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
@@ -318,7 +341,31 @@ use App\Models\MoneyReceived;
                                                             </div>
                                                             <div class="modal-body">
                                                                 <div class="row mb-3">
-                                                                    <div class="col-md-3">
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Customr Name')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{ $moneyReceived->getCustomerName() }}" type="text" disabled class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Cheque Number')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{ $moneyReceived->cheque->getChequeNumber() }}" type="text" disabled class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Cheque Amount')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{ $moneyReceived->getReceivedAmountFormatted() }}" type="text" disabled class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Due Date')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{ $moneyReceived->cheque->getDueDateFormatted() }}" type="text" disabled class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 mb-4">
                                                                         <label>{{__('Collection Date')}}</label>
                                                                         <div class="kt-input-icon">
                                                                             <div class="input-group date">
@@ -332,7 +379,7 @@ use App\Models\MoneyReceived;
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="col-md-3 mb-3">
+                                                                    <div class="col-md-4 mb-4">
                                                                         <label>{{__('Collection Fees')}} <span class="required">*</span></label>
                                                                         <div class="kt-input-icon">
                                                                             <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
@@ -354,7 +401,9 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                             <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
+											@if($moneyReceived->cheque->getDueStatus())
                                             <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -380,6 +429,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif
                                         </span>
                                     </td>
                                 </tr>
@@ -396,11 +446,11 @@ use App\Models\MoneyReceived;
 
             <div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_COLLECTED ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_COLLECTED }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-					<x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_COLLECTED" :title="__('Collected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['endDate']??''">
+                    <x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_COLLECTED" :title="__('Collected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$collectedChequesTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_COLLECTED" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-						
+
                     </x-table-title.with-two-dates>
-				
+
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -532,12 +582,10 @@ use App\Models\MoneyReceived;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == MoneyReceived::INCOMING_TRANSFER ? 'active':''  }}" id="{{ MoneyReceived::INCOMING_TRANSFER }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-				
-				<x-table-title.with-two-dates :type="MoneyReceived::INCOMING_TRANSFER" :title="__('Incoming Transfer')" :startDate="$filterDates[MoneyReceived::INCOMING_TRANSFER]['startDate']??''" :endDate="$filterDates[MoneyReceived::INCOMING_TRANSFER]['endDate']??''">
+
+                    <x-table-title.with-two-dates :type="MoneyReceived::INCOMING_TRANSFER" :title="__('Incoming Transfer')" :startDate="$filterDates[MoneyReceived::INCOMING_TRANSFER]['startDate']??''" :endDate="$filterDates[MoneyReceived::INCOMING_TRANSFER]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$incomingTransferTableSearchFields" :money-received-type="MoneyReceived::INCOMING_TRANSFER" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
-					
-           
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -613,12 +661,12 @@ use App\Models\MoneyReceived;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == MoneyReceived::CASH_IN_SAFE ? 'active':''  }}" id="{{ MoneyReceived::CASH_IN_SAFE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-				
-				<x-table-title.with-two-dates :type="MoneyReceived::CASH_IN_SAFE" :title="__('Cash In Safe')" :startDate="$filterDates[MoneyReceived::CASH_IN_SAFE]['startDate']??''" :endDate="$filterDates[MoneyReceived::CASH_IN_SAFE]['endDate']??''">
+
+                    <x-table-title.with-two-dates :type="MoneyReceived::CASH_IN_SAFE" :title="__('Cash In Safe')" :startDate="$filterDates[MoneyReceived::CASH_IN_SAFE]['startDate']??''" :endDate="$filterDates[MoneyReceived::CASH_IN_SAFE]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInSafeReceivedTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_SAFE" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-						
+
                     </x-table-title.with-two-dates>
-		
+
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -698,13 +746,13 @@ use App\Models\MoneyReceived;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == MoneyReceived::CASH_IN_BANK ? 'active':''  }}" id="{{ MoneyReceived::CASH_IN_BANK }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-				
-					<x-table-title.with-two-dates :type="MoneyReceived::CASH_IN_BANK" :title="__('Cash In Bank')" :startDate="$filterDates[MoneyReceived::CASH_IN_BANK]['startDate']??''" :endDate="$filterDates[MoneyReceived::CASH_IN_BANK]['endDate']??''">
+
+                    <x-table-title.with-two-dates :type="MoneyReceived::CASH_IN_BANK" :title="__('Bank Deposit')" :startDate="$filterDates[MoneyReceived::CASH_IN_BANK]['startDate']??''" :endDate="$filterDates[MoneyReceived::CASH_IN_BANK]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInBankTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_BANK" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-						
+
                     </x-table-title.with-two-dates>
-					
-			
+
+
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
