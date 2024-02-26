@@ -78,18 +78,18 @@
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'bank' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
+					<x-table-title.title :title="__('Bank Table')" :icon="'fa-university'">
+                        <x-export-financial-institution :search-fields="$companiesSearchFields" :money-received-type="'bank'" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.financial.institutions',['company'=>$company->id])}}" />
+					</x-table-title.title>
+                    {{-- <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
                             <span class="kt-portlet__head-icon">
                                 <i class="kt-font-dark btn-outline-hover-danger kt-menu__link-icon fa fa-university "></i>
                             </span>
                             <h3 class="kt-portlet__head-title">
-                                {{ __('Bank Table') }}
                             </h3>
                         </div>
-                        {{-- Export --}}
-                        <x-export-financial-institution :search-fields="$companiesSearchFields" :money-received-type="'bank'" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.financial.institutions',['company'=>$company->id])}}" />
-                    </div>
+                    </div> --}}
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->

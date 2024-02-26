@@ -80,7 +80,7 @@
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input @if($isRepeater) name="exchange_rate" @else name="accounts[0][exchange_rate]" @endif type="text" class="form-control " value="{{ number_format(isset($account) ? $account->getExchangeRate() : old('exchange_rate',0)) }}">
+                                <input @if($isRepeater) name="exchange_rate" @else name="accounts[0][exchange_rate]" @endif type="text" class="form-control " value="{{ number_format(isset($account) ? $account->getExchangeRate() : old('exchange_rate',1)) }}">
                             </div>
                         </div>
                     </div>
