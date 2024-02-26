@@ -7,6 +7,10 @@ use App\Models\MoneyReceived;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+    .kt-portlet__body {
+        padding-top: 0 !important;
+    }
+
     input[type="checkbox"] {
         cursor: pointer;
     }
@@ -42,7 +46,7 @@ use App\Models\MoneyReceived;
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE ?'active':'' }}" data-toggle="tab" href="#{{ MoneyReceived::CHEQUE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques') }}
+                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques In Safe') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -69,7 +73,7 @@ use App\Models\MoneyReceived;
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyReceived::CASH_IN_SAFE ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyReceived::CASH_IN_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i>{{ __('Cash In Safe Received') }}
+                        <i class="fa fa-money-check-alt"></i>{{ __('Cash In Safe') }}
                     </a>
                 </li>
 
@@ -88,47 +92,19 @@ use App\Models\MoneyReceived;
 
         </div>
     </div>
+    {{-- {{ dd($start_date) }} --}}
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
-
             <!--Begin:: Tab Content-->
+            {{-- {{ dd($filterDates[MoneyReceived::CHEQUE]['startDate']) }} --}}
             <div class="tab-pane {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE ?'active':'' }}" id="{{ MoneyReceived::CHEQUE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label " style="flex:1;">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title text-nowrap">
-                                {{ __('Cheques Received') }}
-                            </h3>
-                            <form class="w-full  ml-3">
-                                <div class="row align-items-center justify-content-center">
-                                    <div class="col-md-4 d-flex align-items-center">
-
-                                        <label for="start_date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                        <input id="start_date" type="date" value="{{ $startDate??'' }}" class="form-control" name="start_date">
-                                    </div>
-
-                                    <div class="col-md-4 d-flex align-items-center">
-                                        <label for="end_Date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                        <input id="end_Date" type="date" value="{{ $endDate??'' }}" class="form-control" name="end_Date">
-                                    </div>
-                                    <div class="col-md-1 d-flex">
-                                        <label for="button"></label>
-                                        <button type="submit" class="btn block form-control btn-primary btn-sm "> {{ __('Submit') }}</button>
-
-                                    </div>
-
-
-                                </div>
-                            </form>
-                        </div>
+                    <x-table-title.with-two-dates :type="MoneyReceived::CHEQUE" :title="__('Cheques In Safe')" :startDate="$filterDates[MoneyReceived::CHEQUE]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesReceivedTableSearchFields" :money-received-type="MoneyReceived::CHEQUE" :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-                    </div>
+                    </x-table-title.with-two-dates>
+
                     <div class="kt-portlet__body">
 
-                        <!--begin: Datatable -->
                         <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
@@ -204,38 +180,11 @@ use App\Models\MoneyReceived;
 
             <div class="tab-pane {{  Request('active') == MoneyReceived::CHEQUE_REJECTED ?'active':'' }}" id="{{ MoneyReceived::CHEQUE_REJECTED }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label " style="flex:1;">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title text-nowrap">
-                                {{ __('Rejected Cheques Received') }}
-                            </h3>
-                            <form class="w-full  ml-3">
-                                <div class="row align-items-center justify-content-center">
-                                    <div class="col-md-4 d-flex align-items-center">
-
-                                        <label for="start_date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                        <input id="start_date" type="date" value="{{ $startDate??'' }}" class="form-control" name="start_date">
-                                    </div>
-
-                                    <div class="col-md-4 d-flex align-items-center">
-                                        <label for="end_Date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                        <input id="end_Date" type="date" value="{{ $endDate??'' }}" class="form-control" name="end_Date">
-                                    </div>
-                                    <div class="col-md-1 d-flex">
-                                        <label for="button"></label>
-                                        <button type="submit" class="btn block form-control btn-primary btn-sm "> {{ __('Submit') }}</button>
-
-                                    </div>
-
-
-                                </div>
-                            </form>
-                        </div>
+				
+				<x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_REJECTED" :title="__('Rejected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_REJECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_REJECTED]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesRejectedTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_REJECTED" :has-search="1" :has-batch-collection="1" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-                    </div>
+                    </x-table-title.with-two-dates>
+		
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -314,19 +263,13 @@ use App\Models\MoneyReceived;
 
             <div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title">
-                                {{ __('Cheques Under Collection') }}
-                            </h3>
-                        </div>
-                        {{-- Export --}}
+				
+				<x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_UNDER_COLLECTION" :title="__('Cheques Under Collection')" :startDate="$filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_UNDER_COLLECTION]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesUnderCollectionTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_UNDER_COLLECTION" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-
-                    </div>
+						
+                    </x-table-title.with-two-dates>
+					
+                
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -448,24 +391,16 @@ use App\Models\MoneyReceived;
                     </div>
                 </div>
             </div>
-			
-			
-			
-			<div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_COLLECTED ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_COLLECTED }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title">
-                                {{ __('Collected Cheques') }}
-                            </h3>
-                        </div>
-                        {{-- Export --}}
-                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$collectedChequesTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_COLLECTED" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
 
-                    </div>
+
+
+            <div class="tab-pane {{ Request('active') == MoneyReceived::CHEQUE_COLLECTED ? 'active':''  }}" id="{{ MoneyReceived::CHEQUE_COLLECTED }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+					<x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_COLLECTED" :title="__('Collected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['endDate']??''">
+                        <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$collectedChequesTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_COLLECTED" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
+						
+                    </x-table-title.with-two-dates>
+				
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -502,81 +437,81 @@ use App\Models\MoneyReceived;
                                     {{-- <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyReceived->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
-                                            <div class="modal fade" id="apply-collection-modal-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('cheque.apply.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}" method="post">
-                                                            @csrf
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque To Be Collected  ?') }}</h5>
-                                                                <button type="button" class="close" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-3">
-                                                                        <label>{{__('Collection Date')}}</label>
-                                                                        <div class="kt-input-icon">
-                                                                            <div class="input-group date">
-                                                                                <input required type="text" name="actual_collection_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">
-                                                                                        <i class="la la-calendar-check-o"></i>
-                                                                                    </span>
-                                                                                </div>
-                                                                            </div>
+                                    <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyReceived->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
+                                    <div class="modal fade" id="apply-collection-modal-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form action="{{ route('cheque.apply.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}" method="post">
+                                                    @csrf
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque To Be Collected  ?') }}</h5>
+                                                        <button type="button" class="close" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-3">
+                                                                <label>{{__('Collection Date')}}</label>
+                                                                <div class="kt-input-icon">
+                                                                    <div class="input-group date">
+                                                                        <input required type="text" name="actual_collection_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text">
+                                                                                <i class="la la-calendar-check-o"></i>
+                                                                            </span>
                                                                         </div>
                                                                     </div>
-
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label>{{__('Collection Fees')}} <span class="required">*</span></label>
-                                                                        <div class="kt-input-icon">
-                                                                            <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
-                                                                        </div>
-                                                                    </div>
-
-
-
                                                                 </div>
-
-
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
                                                             </div>
 
-                                                        </form>
+                                                            <div class="col-md-3 mb-3">
+                                                                <label>{{__('Collection Fees')}} <span class="required">*</span></label>
+                                                                <div class="kt-input-icon">
+                                                                    <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </div>
+
+
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
-                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                           
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
-
-                                                        </form>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
                                                     </div>
-                                                </div>
+
+                                                </form>
                                             </div>
-                                        </span>
+                                        </div>
+                                    </div>
+                                    <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
+                                    <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
+                                    <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </span>
                                     </td> --}}
                                 </tr>
                                 @endforeach
@@ -597,18 +532,12 @@ use App\Models\MoneyReceived;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == MoneyReceived::INCOMING_TRANSFER ? 'active':''  }}" id="{{ MoneyReceived::INCOMING_TRANSFER }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title">
-                                {{ __('Incoming Transfer') }}
-                            </h3>
-                        </div>
-                        {{-- Export --}}
+				
+				<x-table-title.with-two-dates :type="MoneyReceived::INCOMING_TRANSFER" :title="__('Incoming Transfer')" :startDate="$filterDates[MoneyReceived::INCOMING_TRANSFER]['startDate']??''" :endDate="$filterDates[MoneyReceived::INCOMING_TRANSFER]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$incomingTransferTableSearchFields" :money-received-type="MoneyReceived::INCOMING_TRANSFER" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-                    </div>
+                    </x-table-title.with-two-dates>
+					
+           
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -684,18 +613,12 @@ use App\Models\MoneyReceived;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == MoneyReceived::CASH_IN_SAFE ? 'active':''  }}" id="{{ MoneyReceived::CASH_IN_SAFE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title">
-                                {{ __('Cash In Safe Received Table') }}
-                            </h3>
-                        </div>
-                        {{-- Export --}}
+				
+				<x-table-title.with-two-dates :type="MoneyReceived::CASH_IN_SAFE" :title="__('Cash In Safe')" :startDate="$filterDates[MoneyReceived::CASH_IN_SAFE]['startDate']??''" :endDate="$filterDates[MoneyReceived::CASH_IN_SAFE]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInSafeReceivedTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_SAFE" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-                    </div>
+						
+                    </x-table-title.with-two-dates>
+		
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -775,18 +698,13 @@ use App\Models\MoneyReceived;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ Request('active') == MoneyReceived::CASH_IN_BANK ? 'active':''  }}" id="{{ MoneyReceived::CASH_IN_BANK }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title">
-                                {{ __('Cash In Bank Table') }}
-                            </h3>
-                        </div>
-                        {{-- Export --}}
+				
+					<x-table-title.with-two-dates :type="MoneyReceived::CASH_IN_BANK" :title="__('Cash In Bank')" :startDate="$filterDates[MoneyReceived::CASH_IN_BANK]['startDate']??''" :endDate="$filterDates[MoneyReceived::CASH_IN_BANK]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInBankTableSearchFields" :money-received-type="MoneyReceived::CASH_IN_BANK" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-                    </div>
+						
+                    </x-table-title.with-two-dates>
+					
+			
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -805,7 +723,7 @@ use App\Models\MoneyReceived;
                             </thead>
                             <tbody>
 
-                                @foreach($receivedCashInBanks as $money)
+                                @foreach($receivedCashesInBanks as $money)
 
                                 <tr>
                                     <td>{{ $money->getCustomerName() }}</td>

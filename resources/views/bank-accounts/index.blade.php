@@ -44,10 +44,10 @@
                 </li>
 
             </ul>
-{{-- 
-            <a href="{{ route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
+            {{--
+            <a href="{{ route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn active-style btn-icon-sm align-self-center">
+            <i class="fas fa-plus"></i>
+            {{ __('New Record') }}
             </a> --}}
         </div>
     </div>
@@ -57,27 +57,9 @@
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'bank-accounts' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label ml-4">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <label class="kt-portlet__head-title " style="font-size:20px !important; ">
-                                {{ __('Date') }}
-                            </label>
-
-                        </div>
-
-                    <x-filter-by-single-date :filter-date="$filterDate" ></x-filter-by-single-date>
-
-                        {{-- Export --}}
-                        {{-- <x-export-bank-accounts :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'bank-accounts'" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" /> --}}
-                    </div>
-                    <div
-					
-					
-					
-					 class="kt-portlet__body" >
+                    {{-- {{ dd('e') }} --}}
+					<x-table-title.with-one-date :filterDate="$filterDate"></x-table-title.with-one-date>
+                    <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
                         <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">

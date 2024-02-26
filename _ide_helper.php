@@ -14229,6 +14229,18 @@
         {
                         return \Illuminate\Support\Collection::formattedForSelect($isFunction, $idAttrOrFunction, $titleAttrOrFunction);
         }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @param string|null $startDate
+         * @param string|null $endDate
+         * @static 
+         */ 
+        public static function filterByReceivingDate($startDate, $endDate)
+        {
+                        return \Illuminate\Support\Collection::filterByReceivingDate($startDate, $endDate);
+        }
          
     }
      
