@@ -306,7 +306,7 @@ class MoneyReceived extends Model
 	public function getChequeDepositDate()
 	{
 		$cheque = $this->cheque;
-		return $cheque ? $this->getDepositDate() : null;
+		return $cheque ? $cheque->getDepositDate() : null;
 	}
 	public function getChequeDepositDateFormattedForDatePicker()
 	{
@@ -339,13 +339,17 @@ class MoneyReceived extends Model
 		return $this->drawl_bank_id ;
 	}
 	
-	public function chequeAccountType()
+	public function getChequeAccountType()
 	{
-		return $this->cheque_account_type ;
+		$cheque = $this->cheque ;
+		return $cheque ? $cheque->getAccountType() : null ;
 	}
 	
-	
-
+	public function getChequeAccountNumber()
+	{
+		$cheque = $this->cheque ;
+		return $cheque ? $cheque->getAccountNumber() : null ;
+	}
 	
 	public function cashInSafe()
 	{
@@ -393,5 +397,9 @@ class MoneyReceived extends Model
 		$cashInBank = $this->cashInBank;
 		return $cashInBank ? $cashInBank->getAccountNumber() : 0 ;
 	}
+	
+	
+	
+	
 	
 }

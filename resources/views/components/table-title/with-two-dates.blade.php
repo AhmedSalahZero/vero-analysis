@@ -26,7 +26,13 @@
 							
 							>
                                 <div class="row align-items-center ">
-                                    <div class="col-md-3 d-flex align-items-center mr-5">
+                                    <div class="col-md-3 d-flex align-items-center "
+									@if($lang == 'ar')
+									style="margin-left:5rem !important"
+									@else
+									style="margin-right:5rem !important"
+									@endif 
+									>
                                         <label for="{{ $startDateId }}" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
                                         <input id="{{ $startDateId }}" type="date" value="{{ $startDate }}" class="form-control" name="{{ $startDateInputName }}">
                                     </div>
@@ -40,7 +46,14 @@
 				
 										>
                                     </div>
-                                    <div class="col-md-2 d-flex justify-content-center">
+                                    <div 
+									@if($lang == 'ar')
+									style="margin-right:2rem !important"
+									@else
+									style="margin-left:2rem !important"
+									@endif 
+									
+									class="col-md-2 d-flex justify-content-center">
                                         <label for="button"></label>
                                         <button style="width:70px !important;font-size:1rem !important;" type="submit" class="btn block form-control btn-primary btn-sm "> {{ __('Submit') }}</button>
 

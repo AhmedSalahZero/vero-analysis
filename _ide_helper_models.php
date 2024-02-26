@@ -10,31 +10,6 @@
  */
 
 
-namespace App{
-/**
- * App\Delete
- *
- * @property int $id
- * @property int $company_id
- * @property int $created_by
- * @property string $f1
- * @property string $g1
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Delete newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Delete newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Delete query()
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereF1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereG1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Delete whereUpdatedAt($value)
- */
-	class Delete extends \Eloquent {}
-}
-
 namespace App\Models{
 /**
  * * اسعار الفايده المخصصة لهذا الحساب
@@ -78,6 +53,7 @@ namespace App\Models{
  * @property string|null $model_name
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AccountType onlyCashAccounts()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType onlySlugs(array $slugs)
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType query()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType whereCreatedAt($value)
@@ -646,7 +622,14 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\CleanOverdraft
+ * * هو نوع من انواع حسابات التسهيل البنكية (زي القرض يعني بس فية فرق بينهم ) وبيسمى حد جاري مدين بدون ضمان
+ * * بدون ضمان يعني مش بياخدوا مقابل قصادة يعني مثلا مش بياخدوا منك شيكات مثلا او بيت .
+ * 
+ * . الخ علشان كدا اسمه كلين
+ * * والفرق بينه وبين القرض ان هنا انت مش ملتزم تسدد مبلغ معين في فتره معين اي لا  يوجد اقساط للدفع
+ * * وبناء عليه كل اما قللت التسديد كل اما هينزل عليك فايدة اكبر الشهر الجاي
+ * * وعموما في حالة انك مدان للبنك وليكن مثلا لو انت سالف من البنك عشر الالف وسحبت تسعه ونزل عليك فايدة خمس مئة جنية
+ * * وقتها ال خمس مئة جنية دول بينسحبوا من حسابك علطول وبالتالي انت ما عتش فاضلك غير خمس مئة مثلا
  *
  * @property int $id
  * @property int|null $financial_institution_id
@@ -1266,6 +1249,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int|null $financial_institution_id
+ * @property int|null $account_type_id
  * @property int|null $account_number
  * @property string|null $currency
  * @property float|null $balance_amount
@@ -1282,6 +1266,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount query()
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereAccountTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereBalanceAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FinancialInstitutionAccount whereCreatedAt($value)

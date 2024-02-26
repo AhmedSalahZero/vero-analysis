@@ -174,12 +174,14 @@ $(document).on('change','.js-update-account-number-based-on-account-type',functi
 		data,
 		success:function(res){
 			options = '';
+			var selectToAppendInto = $(parent).find('.js-account-number') ;
+			
 			for(key in res.data){
 				var val = res.data[key];
-				console.log(val)
-				options  += '<option value="'+val+'">'+ val +'</option>';	
+				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : '';	
+				options  += '<option '+ selected +'  value="'+val+'">'+ val +'</option>';	
 			}
-			$(parent).find('.js-account-number').empty().append(options)
+			selectToAppendInto.empty().append(options)
 		}
 	});
 	

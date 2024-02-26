@@ -4,6 +4,9 @@
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+.kt-portlet__body{
+	padding-top:0 !important;
+}
 .hover-color-black:hover i{
 	color:black !important;
 }
@@ -42,7 +45,7 @@
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link {{ !Request('active') || Request('active') == 'bank' ?'active':'' }}" data-toggle="tab" href="#bank" role="tab">
-                        <i class="kt-menu__link-icon fa fa-university"></i> {{ __('Bank Table') }}
+                        <i class="kt-menu__link-icon fa fa-university"></i> {{ __('Banks Table') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -78,7 +81,7 @@
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'bank' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-					<x-table-title.title :title="__('Bank Table')" :icon="'fa-university'">
+					<x-table-title.title :title="__('Banks Table')" :icon="'fa-university'">
                         <x-export-financial-institution :search-fields="$companiesSearchFields" :money-received-type="'bank'" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.financial.institutions',['company'=>$company->id])}}" />
 					</x-table-title.title>
                     {{-- <div class="kt-portlet__head kt-portlet__head--lg p-0">

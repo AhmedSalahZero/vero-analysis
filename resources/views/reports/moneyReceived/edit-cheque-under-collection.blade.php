@@ -1,3 +1,6 @@
+@php
+use App\Models\MoneyReceived;
+@endphp
 @extends('layouts.dashboard')
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
@@ -40,7 +43,7 @@
 
                     <div class="row mb-3">
 
-
+                        <input type="hidden" class="current-currency" value="{{ $model->getCurrency() }}">
                         @foreach([
                         'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getCustomerName() , 'class'=>'col-md-5'],
                         'cheque_amount'=>['title'=>__('Cheque Amount'),'value'=>$model->getReceivedAmount() , 'class'=>'col-md-3'],
@@ -50,16 +53,10 @@
                         <div class="{{ $field['class'] }} mb-3">
                             <label>{{$field['title']}} </label>
                             <div class="kt-input-icon">
-                                <input readonly type="text" value="{{ $field['value'] }}" class="form-control">
+                                <input readonly type="text" value="{{ strtoupper($field['value']) }}" class="form-control">
                             </div>
                         </div>
                         @endforeach
-
-
-
-
-
-
                     </div>
                 </div>
             </div>
@@ -92,37 +89,12 @@
                             <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date ">
-                                    <select required name="drawl_bank_id" class="form-control js-drawl-bank">
-                                        @foreach($selectedBanks as $bankId=>$bankName)
-                                        <option value="{{ $bankId }}" {{ isset($model) && $model->chequeDrawlBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+                                    <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::CASH_IN_BANK  }}]" class="form-control js-drawl-bank">
+                                        @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
+                                        <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                         @endforeach
                                     </select>
-                                    <div class="modal fade" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Select Bank') }}</h5>
-                                                    <button type="button" class="close" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
 
-                                                    <select id="js-bank-names" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                                        @foreach($banks as $bankId => $bankEnAndAr)
-                                                        <option data-name="{{ $bankEnAndAr }}" value="{{ $bankId }}">{{ $bankEnAndAr }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary js-close-modal">{{ __('Close') }}</button>
-                                                    <button id="js-append-bank-name-if-not-exist" type="button" class="btn btn-primary">{{ __('Save') }}</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button id="js-drawee-bank" class="btn btn-sm btn-primary">{{ __('Add New Bank') }}</button>
 
                                 </div>
                             </div>
@@ -131,28 +103,29 @@
                     </div>
                     <div class="row mb-3">
 
-
-
-
                         <div class="col-md-4">
                             <label>{{__('Account Type')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-currency="{{ $model->getCurrency() }}" name="cheque_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                    <select data-currency="{{ $model->getCurrency() }}" name="account_type[{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}]" class="form-control js-update-account-number-based-on-account-type">
                                         <option value="" selected>{{__('Select')}}</option>
+
                                         @foreach($accountTypes as $index => $accountType)
-                                        <option value="{{ $accountType->getId() }}" @if($id==$model->chequeAccountType() ) selected @endif>{{ $accountType->getName() }}</option>
+                                        <option value="{{ $accountType->getId() }}" @if($accountType->getId() ==$model->getChequeAccountType() ) selected @endif>{{ $accountType->getName() }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-2 width-12">
                             <label>{{__('Account Number')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
-                                <input value="{{ $model->cheque&&$model->cheque->getAccountNumber() }}" required type="text" name="account_number" class="form-control" placeholder="{{__('Main Account Number')}}">
-                                <x-tool-tip title="{{__('Kash Vero')}}" />
+                                <div class="input-group date">
+                                    <select data-current-selected="{{ $model->getChequeAccountNumber() }}" name="account_number[{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}]" class="form-control js-account-number">
+                                        <option value="" selected>{{__('Select')}}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -309,6 +282,9 @@
         }
         $('#js-choose-bank-id').modal('hide');
     });
+
+</script>
+<script src="/custom/money-receive.js">
 
 </script>
 

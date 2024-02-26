@@ -12,9 +12,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AccountType extends Model
 {
+	CONST CURRENT_ACCOUNT = 'current-account';
+	CONST CLEAN_OVERDRAFT = 'clean-overdraft';
+	CONST OVERDRAFT_AGAINST_COMMERCIAL_PAPER = 'overdraft-against-commercial-paper';
+	CONST OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS= 'overdraft-against-assignment-of-contracts';
 	protected $guarded =[
 		'id'
 	];
+	public function scopeOnlyCashAccounts(Builder $builder)
+	{
+		return $builder->onlySlugs([self::CURRENT_ACCOUNT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
+	}
 	public function getModelName()
 	{
 		return $this->model_name;

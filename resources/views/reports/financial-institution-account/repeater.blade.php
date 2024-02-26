@@ -22,7 +22,7 @@
 
 
 
-   <div class="col-md-4">
+   <div class="col-md-2">
                         <x-calendar :value="$accountInterest->getStartDateForSelect()" :label="__('Start Date')" :id="'start_date'" name="start_date"></x-calendar>
                     </div>
 
@@ -40,7 +40,7 @@
                     </div>
 
 
-                    <div class="col-4">
+                    <div class="col-2">
                         <label class="form-label font-weight-bold">{{ __('Min Balance') }}
                         </label>
                         <div class="kt-input-icon">

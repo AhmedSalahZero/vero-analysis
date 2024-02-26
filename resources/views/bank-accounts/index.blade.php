@@ -38,8 +38,12 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'bank-accounts' ?'active':'' }}" data-toggle="tab" href="#bank-accounts" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Bank Accounts Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == 'bank-accounts' ?'active':'' }}" 
+					{{-- data-toggle="tab" href="#bank-accounts" --}}
+					 href="{{ route('view.financial.institutions',['company'=>$company->id]) }}"
+					
+					 role="tab">
+                        <i class="fa fa-arrow-left"></i> {{ __('Back To Banks Table') }}
                     </a>
                 </li>
 

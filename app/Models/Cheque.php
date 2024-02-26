@@ -134,6 +134,31 @@ class Cheque extends Model
 		$dueDate = $this->getDueDate();
 		return  $dueDate ? Carbon::make($dueDate)->format('d-m-Y') : null ;
 	}
+	/**
+	 * * هنعرفه ان كان مستحق الدفع ولا لا كا استرنج مش بولين
+	 */
+	public function getDueStatus():bool 
+	{
+		$dueDate = $this->getDueDate();
+		return !Carbon::make($dueDate)->greaterThan(now());
+	}
+	/**
+	 * * هنعرفه ان كان مستحق الدفع ولا لا كا استرنج مش بولين
+	 */
+	public function getDueStatusFormatted():array 
+	{
+		if($this->getDueStatus()){
+			return [
+				'status'=>__('Due') ,
+				'color'=>'red'
+			];
+		}
+		return [
+			'status'=>__('Not Due Yet'),
+			'color'=>'green'
+		];
+		
+	}
 	
 	public function getDueAfterDays()
 	{
@@ -152,9 +177,13 @@ class Cheque extends Model
 	{
 		return $this->account_balance ;
 	}
+	/**
+	 * * عدد الايام المتوقع فيها تحصيل الشيك من البنك ولو البنك الخاص بالشيك اللي العميل جابه هو نفس البنك اللي هتحصل فيه 
+	 * * فا بيكون قيمته بصفر
+	 */
 	public function getClearanceDays()
 	{
-		return $this->clearance_days;
+		return $this->clearance_days ?: 0;
 	}
 	public function calculateChequeExpectedCollectionDate(string $chequeDepositDate , int $chequeClearanceDays):string 
 	{
@@ -202,5 +231,8 @@ class Cheque extends Model
 		$date  = $this->chequeActualCollectionDate() ;
 		return $date ? Carbon::make($date)->format('d-m-Y') : null ;
 	}
-	
+	public function getAccountType()
+	{
+		return $this->account_type ;
+	}
 }
