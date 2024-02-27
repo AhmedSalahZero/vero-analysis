@@ -46,7 +46,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -2987,6 +2986,23 @@ function getPermissions():array
         [
             'name'=>'view customer balances'
         ],
+		[
+            'name'=>'view cash dashboard'
+        ],
+		
+		[
+            'name'=>'view notification settings'
+        ],
+		
+		
+		[
+            'name'=>'view cashvero settings'
+        ],
+		
+		
+		[
+            'name'=>'view cash Forecast dashboard'
+        ],
         [
             'name'=>'view weekly cash flow report'
         ],
@@ -4360,7 +4376,8 @@ function getHeaderMenu()
                                     'show'=>$user->can('view cash flow analysis'),
                                     'link'=>'#',
                                     'submenu'=>getCashFlowAnalysisSubmenu($user, $companyId)
-                                ]
+								],
+								
                                 
                             ]
                             
@@ -4394,6 +4411,31 @@ function getHeaderMenu()
 											'link'=>'#',
 											'show'=>$user->can('view cash management'),
 											'submenu'=>[
+												'cash-dashboard'=>[
+													'title'=>__('Cash Dashboard'),
+													'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
+													'show'=>$user->can('view cash dashboard'),
+													'submenu'=>[]
+												],
+												'cash-forecast-dashboard'=>[
+													'title'=>__('Cash Forecast Dashboard'),
+													'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+													'show'=>$user->can('view cash Forecast dashboard'),
+													'submenu'=>[]
+												],
+												'settings'=>[
+													'title'=>__('Settings'),
+													'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+													'show'=>$user->can('view cashvero settings'),
+													'submenu'=>[
+														[
+															'title'=>__('Notification Settings'),
+														'link'=>route('notifications-settings.index', ['company'=>$companyId]),
+														'show'=>$user->can('view notification settings'),
+														
+														]
+													]
+												],
 												'financial-institution'=>[
 													'title'=>__('Financial Institutions'),
 													'link'=>route('view.financial.institutions',['company'=>$companyId]),
@@ -4419,6 +4461,7 @@ function getHeaderMenu()
 													'show'=>$user->can('view customer balances'),
 													'submenu'=>[]
 												]
+												
 												
 											]
 												],

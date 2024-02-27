@@ -62,15 +62,7 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Money Received')}}
-        </h3>
-    </div>
-</div>
-</div> --}}
+     
 <form method="post" action="{{ isset($model) ?  route('update.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$model->id]) :route('store.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-received-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
@@ -88,7 +80,7 @@
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
                             <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')"></x-sectionTitle>
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')}}
+                            {{-- {{ __((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')}} --}}
                         </h3>
                     </div>
                 </div>

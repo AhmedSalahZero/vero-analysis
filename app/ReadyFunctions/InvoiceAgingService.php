@@ -3,8 +3,12 @@ namespace App\ReadyFunctions;
 
 use App\Models\CustomerInvoice;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
+/**
+ * * هي اسمها اعمار الديون
+ * * هو عباره عن الفواتير اللي لسه مفتوحة ( اعمار الديون) .. سواء الدين لسه جايه او المتاخر او حق اليوم
+ * * وبالتالي بمجرد ما تندفع مش بتيجي هنا (لو النت بلانس اكبر من صفر يبقي لسه ما استدتش كاملا)
+ */
 class InvoiceAgingService
 {
 	const MORE_THAN_150  = 'More Than 150';
