@@ -20,6 +20,7 @@ use App\Http\Controllers\Helpers\UpdateCitiesBasedOnCountryController;
 use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\InventoryStatementController;
 use App\Http\Controllers\InventoryStatementTestController;
+use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\QuickPricingCalculatorController;
 use App\Http\Controllers\RemoveCompanycontroller;
 use App\Http\Controllers\RemoveUsercontroller;
@@ -79,7 +80,7 @@ Route::middleware([])->group(function () {
 			Route::resource('section', 'SectionController');
 			Route::resource('companySection', 'CompanyController');
 			Route::resource('user', 'UserController');
-			Route::resource('deduction', 'DeductionController');
+			// Route::resource('deduction', 'DeductionController');
 			Route::resource('toolTipData', 'ToolTipDataController');
 
 
@@ -288,9 +289,9 @@ Route::middleware([])->group(function () {
 				// ->parameters(['name-of-route'=> inventoryStatement [dependancies injection of model]])
 
 				############ test table for uploading ############
-				Route::resource('inventoryStatementTest', InventoryStatementTestController::class)
-					->only(['edit', 'update', 'destroy']);
-				Route::resource('salesGatheringTest', SalesGatheringTestController::class)
+				// Route::resource('inventoryStatementTest', 'InventoryStatementTestController')
+				// 	->only(['edit', 'update', 'destroy']);
+				Route::resource('salesGatheringTest', 'SalesGatheringTestController')
 					->only(['edit', 'update', 'destroy']);
 
 				############ Sections Resources ############
@@ -313,8 +314,8 @@ Route::middleware([])->group(function () {
 					Route::get('/EndBalanceAnalysis/View', 'Analysis\Inventory\EndBalanceAnalysisReport@index')->name('end.balance.analysis');
 					Route::post('/EndBalanceAnalysis/Result', 'Analysis\Inventory\EndBalanceAnalysisReport@result')->name('end.balance.analysis.result');
 				});
-				Route::get('customer-again-analysis', 'CustomerAgingController@index')->name('view.customer.aging.analysis');
-				Route::post('customer-again-analysis', 'CustomerAgingController@result')->name('result.customer.aging.analysis');
+				Route::get('customer-aging-analysis', 'CustomerAgingController@index')->name('view.customer.aging.analysis');
+				Route::post('customer-aging-analysis', 'CustomerAgingController@result')->name('result.customer.aging.analysis');
 				
 				Route::get('customer-balances', 'CustomerBalancesController@index')->name('view.customer.balances');
 				
@@ -371,7 +372,17 @@ Route::middleware([])->group(function () {
 				// Route::get('financial-institutions/{financialInstitution}/bank-accounts/edit/{certificatesOfDeposit}','CertificatesOfDepositsController@edit')->name('edit.certificates.of.deposit');
 				// Route::put('financial-institutions/{financialInstitution}/bank-accounts/update/{certificatesOfDeposit}','CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
 				// Route::delete('financial-institutions/{financialInstitution}/bank-accounts/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
+			
 				
+				Route::resource('notifications-settings','NotificationSettingsController');
+				
+				
+				Route::get('financial-institutions/{financialInstitution}/clean-overdraft','CleanOverdraftController@index')->name('view.clean.overdraft');
+				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@create')->name('create.clean.overdraft');
+				Route::post('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@store')->name('store.clean.overdraft');
+				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}','CleanOverdraftController@edit')->name('edit.clean.overdraft');
+				Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}','CleanOverdraftController@update')->name('update.clean.overdraft');
+				Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}','CleanOverdraftController@destroy')->name('delete.clean.overdraft');
 				
 				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper','OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');
 				Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create','OverdraftAgainstCommercialPaperController@create')->name('create.overdraft.against.commercial.paper');
@@ -380,12 +391,6 @@ Route::middleware([])->group(function () {
 				Route::put('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/update/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@update')->name('update.overdraft.against.commercial.paper');
 				Route::delete('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete/{overdraftAgainstCommercialPaper}','OverdraftAgainstCommercialPaperController@destroy')->name('delete.overdraft.against.commercial.paper');
 				
-				Route::get('financial-institutions/{financialInstitution}/clean-overdraft','CleanOverdraftController@index')->name('view.clean.overdraft');
-				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@create')->name('create.clean.overdraft');
-				Route::post('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@store')->name('store.clean.overdraft');
-				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}','CleanOverdraftController@edit')->name('edit.clean.overdraft');
-				Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}','CleanOverdraftController@update')->name('update.clean.overdraft');
-				Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}','CleanOverdraftController@destroy')->name('delete.clean.overdraft');
 				
 				
 				
@@ -434,9 +439,9 @@ Route::middleware([])->group(function () {
 				
 				
 				
-				Route::resource('sharing-links', 'SharingLinkController');
-				Route::get('shareable-paginate', 'SharingLinkController@paginate')->name('admin.get.sharing.links');
-				Route::get('export-shareable-link', 'SharingLinkController@export')->name('admin.export.sharing.link');
+				// Route::resource('sharing-links', 'SharingLinkController');
+				// Route::get('shareable-paginate', 'SharingLinkController@paginate')->name('admin.get.sharing.links');
+				// Route::get('export-shareable-link', 'SharingLinkController@export')->name('admin.export.sharing.link');
 
 				
 				Route::post('edit-table-cell', [EditTableCellsController::class, '__invoke'])->name('admin.edit.table.cell');
@@ -461,13 +466,13 @@ Route::middleware([])->group(function () {
 
 
 				//Quotation pricing calculator
-				Route::get('quotation-pricing-calculator', [QuotationPricingCalculatorController::class, 'view'])->name('admin.view.quotation.pricing.calculator');
-				Route::get('quotation-pricing-calculator/create', [QuotationPricingCalculatorController::class, 'create'])->name('admin.create.quotation.pricing.calculator');
-				Route::get('quotation-pricing-calculator/{quotationPricingCalculator}/edit', [QuotationPricingCalculatorController::class, 'edit'])->name('admin.edit.quotation.pricing.calculator');
-				Route::post('quotation-pricing-calculator/{quotationPricingCalculator}/update', [QuotationPricingCalculatorController::class, 'update'])->name('admin.update.quotation.pricing.calculator');
-				Route::post('quotation-pricing-calculator/store', [QuotationPricingCalculatorController::class, 'store'])->name('admin.store.quotation.pricing.calculator');
-				Route::get('export-quotation-pricing-calculator', 'QuotationPricingCalculatorController@export')->name('admin.export.quotation.pricing.calculator');
-				Route::get('get-quotation-pricing-calculator', 'QuotationPricingCalculatorController@paginate')->name('admin.get.quotation.pricing.calculator');
+				// Route::get('quotation-pricing-calculator', [QuotationPricingCalculatorController::class, 'view'])->name('admin.view.quotation.pricing.calculator');
+				// Route::get('quotation-pricing-calculator/create', [QuotationPricingCalculatorController::class, 'create'])->name('admin.create.quotation.pricing.calculator');
+				// Route::get('quotation-pricing-calculator/{quotationPricingCalculator}/edit', [QuotationPricingCalculatorController::class, 'edit'])->name('admin.edit.quotation.pricing.calculator');
+				// Route::post('quotation-pricing-calculator/{quotationPricingCalculator}/update', [QuotationPricingCalculatorController::class, 'update'])->name('admin.update.quotation.pricing.calculator');
+				// Route::post('quotation-pricing-calculator/store', [QuotationPricingCalculatorController::class, 'store'])->name('admin.store.quotation.pricing.calculator');
+				// Route::get('export-quotation-pricing-calculator', 'QuotationPricingCalculatorController@export')->name('admin.export.quotation.pricing.calculator');
+				// Route::get('get-quotation-pricing-calculator', 'QuotationPricingCalculatorController@paginate')->name('admin.get.quotation.pricing.calculator');
 
 
 				

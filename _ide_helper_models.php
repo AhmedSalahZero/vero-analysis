@@ -4054,12 +4054,27 @@ namespace App{
  * * بمعني ان مجموع القيم لازم يساوي ال
  * * outstanding balance in clean overdraft
  *
+ * @property int $id
+ * @property string $settlement_date
+ * @property string $amount
+ * @property int $model_id وليكن مثلا clean_overdraft_id
+ * @property string $model_type
+ * @property int $company_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CleanOverdraft $cleanOverDraft
  * @property-read \App\Models\Company $company
- * @property-write mixed $settlement_date
  * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown query()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereModelType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereSettlementDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereUpdatedAt($value)
  */
 	class OutstandingBreakdown extends \Eloquent {}
 }

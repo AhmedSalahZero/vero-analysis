@@ -7,7 +7,8 @@
 	'readonly'=>false,
 	'placeholder'=>$placeholder ?? null,
 	'class'=>$class ?? '',
-	'id'=>''
+	'id'=>'',
+	'defaultValue'=>''
 ])
 <label> {{ $label }} 
 @if($required)
@@ -15,5 +16,5 @@
 @endif 
 </label>
                                 <div class="kt-input-icon">
-                                    <input @if($readonly) readonly @endif @if($id) id="{{ $id }}" @endif name="{{ $name }}" value="{{ $model ?  $model->{$name} : null  }}" type="{{ $type }}" class="form-control {{ $class }}" placeholder="{{$placeholder}}">
+                                    <input @if($readonly) readonly @endif @if($id) id="{{ $id }}" @endif name="{{ $name }}" value="{{ $model ?  $model->{$name} : $defaultValue  }}" type="{{ $type }}" class="form-control {{ $class }}" placeholder="{{$placeholder}}">
                                 </div>

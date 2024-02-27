@@ -327,6 +327,10 @@
                                         </th>
 										
 										 <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+                                            {{ __('Adjust Due Date') }}
+                                        </th>
+										
+										 <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Actions') }}
                                         </th>
 
@@ -354,7 +358,10 @@
                                         <td class="sub-text-bg  text-center">
                                            {{ $invoice->getAging() }}
                                         </td>
-										
+							       <td class="sub-text-bg  text-center">
+                                            <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" style="background-color:green !important;">{{ __('Adjust Due Date') }}</a>
+                                        </td>
+												
                                         <td class="sub-text-bg  text-center">
                                             <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Money Received') }}" class="btn btn-sm btn-primary">{{ __('money Received') }}</a>
                                         </td>
