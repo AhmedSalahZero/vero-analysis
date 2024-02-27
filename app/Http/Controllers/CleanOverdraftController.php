@@ -6,7 +6,6 @@ use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
-use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -101,22 +100,18 @@ class CleanOverdraftController
 		}
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		$financialInstitution->cleanOverdrafts()->create($data);
+		/**
+		 * @var CleanOverDraft $cleanOverdraft 
+		 */
+		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
+		// dd($cleanOverdraft);
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ; 
-		
+		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
-	// protected function getActiveTab(string $moneyType)
-	// {
-	// 	return [
-	// 		'bank'=>'bank',
-	// 		'leasing_companies'=>'leasing_companies',
-	// 		'factoring_companies'=>'factoring_companies',
-	// 		'mortgage_companies'=>'mortgage_companies'
-	// 	][$moneyType];
-	// }
+
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
@@ -133,8 +128,7 @@ class CleanOverdraftController
 	}
 	
 	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,CleanOverdraft $cleanOverdraft){
-		// $type = $request->get('type');
-		$infos =  $request->get('infos',[]) ;
+		// $infos =  $request->get('infos',[]) ;
 		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
@@ -143,11 +137,9 @@ class CleanOverdraftController
 		}
 		
 		$cleanOverdraft->update($data);
-		
-	
+		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ;
-		//  $activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 		
 		

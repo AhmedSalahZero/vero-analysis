@@ -274,15 +274,85 @@
 
                     </div>
                 </div>
-                <x-submitting />
-            </form>
 
             <!--end::Form-->
 
+
+  <div class="kt-portlet">
+
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{__('Outstanding Breakdown')}}
+                            </h3>
+                        </div>
+                    </div>
+					
+                    <div class="kt-portlet__body">
+                        <div class="form-group row" style="flex:1;">
+                            <div class="col-md-12 mt-3">
+
+
+
+                                <div class="" style="width:100%">
+
+                                    <div id="m_repeater_0" class="cash-and-banks-repeater">
+                                        <div class="form-group  m-form__group row  ">
+                                            <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
+                                                @if(isset($model) )
+                                                @foreach($model->outstandingBreakdowns as $outstandingBreakdown)
+                                                @include('outstanding-breakdown.repeater' , [
+                                                'outstandingBreakdown'=>$outstandingBreakdown,
+                                                ])
+
+                                                @endforeach
+                                                @else
+                                                @include('outstanding-breakdown.repeater' , [
+                                                ])
+
+                                                @endif
+
+
+
+
+
+
+                                            </div>
+                                        </div>
+                                        <div class="m-form__group form-group row">
+
+                                            <div class="col-lg-6">
+                                                <div data-repeater-create="" class="btn btn btn-sm btn-success m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
+                                                    <span>
+                                                        <i class="fa fa-plus"> </i>
+                                                        <span>
+                                                            {{ __('Add') }}
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+				
             <!--end::Portlet-->
         </div>
     </div>
 
+                <x-submitting />
+            </form>
     @endsection
     @section('js')
     <!--begin::Page Scripts(used by this page) -->
@@ -375,6 +445,49 @@
 
             }
         })
+		
+		   $('#m_repeater_0').repeater({
+        initEmpty: false
+        , isFirstItemUndeletable: true
+        , defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function() {
+            $(this).slideDown();
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
+            $(this).find('.only-month-year-picker').each(function(index, dateInput) {
+                reinitalizeMonthYearInput(dateInput)
+            });
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+
+        },
+
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
+
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
+                });
+            } else {
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
+
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
+
+                    });
+                }
+            }
+        }
+    });
 
     </script>
     @endsection

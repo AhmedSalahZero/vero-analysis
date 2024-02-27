@@ -92,7 +92,7 @@
                                 <?php
                                             $status_disanbeled_fields = $fieldName == 'net_sales_value' ||  $fieldName == 'invoice_status' || 
                                                             ($fieldName == 'sales_value'  && count(array_intersect($selected_fields, ['quantity_discount','cash_discount','special_discount','other_discounts'])) == 0 );
-															$hiddenFields = ['invoice_status','collected_amount','net_balance'];
+															$hiddenFields = ['invoice_status','net_balance'];
 										?>
 										
 										@if(!in_array($fieldName,$hiddenFields))

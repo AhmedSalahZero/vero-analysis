@@ -641,14 +641,6 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-
-                            {{-- <div class="col-md-1 text-center">
-                                <a href="javascript:;" data-repeater-delete="" class="btn btn-danger btn-elevate btn-circle btn-icon">
-                                    <i class="fa fa-trash-alt"></i>
-                                </a>
-                            </div> --}}
-
-
                         </div>
 
                     </div>
@@ -662,7 +654,7 @@ use App\Models\MoneyReceived ;
                 <div class="col-md-2"></div>
                 <div class="col-md-2"></div>
                 <div class="col-md-2"></div>
-                <div class="col-md-2">
+                <div class="col-md-2 width-12 ml-auto mr-4">
                     <label class="label">{{ __('Unapplied Amount') }}</label>
                     <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
                 </div>

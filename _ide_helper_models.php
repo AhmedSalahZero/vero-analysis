@@ -655,6 +655,8 @@ namespace App\Models{
  * @property-read \App\Models\FinancialInstitution|null $financialInstitution
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\LendingInformation[] $lendingInformation
  * @property-read int|null $lending_information_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\OutstandingBreakdown[] $outstandingBreakdowns
+ * @property-read int|null $outstanding_breakdowns_count
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft query()
@@ -2199,43 +2201,11 @@ namespace App\Models{
 /**
  * App\Models\Other
  *
- * @property int $id
- * @property string|null $collection_policy_type
- * @property string $collection_policy_value
- * @property string|null $collection_policy_interval
- * @property int|null $other_type_id
- * @property string|null $f&b_facilities
- * @property int|null $other_count
- * @property string|null $chosen_other_currency
- * @property int $hospitality_sector_id
- * @property string|null $charges_per_guest_escalation_rate
- * @property string|null $charges_per_guest
- * @property string|null $charges_per_guest_annual_escalation_rate
- * @property string|null $charges_per_guest_at_operation_date
- * @property array|null $guest_capture_cover_percentage
- * @property array|null $percentage_from_rooms_revenues
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon $created_at
+ * @property-write mixed $guest_capture_cover_percentage
+ * @property-write mixed $percentage_from_rooms_revenues
  * @method static \Illuminate\Database\Eloquent\Builder|Other newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Other newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Other query()
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereChargesPerGuest($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereChargesPerGuestAnnualEscalationRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereChargesPerGuestAtOperationDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereChargesPerGuestEscalationRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereChosenOtherCurrency($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereCollectionPolicyInterval($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereCollectionPolicyType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereCollectionPolicyValue($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereF&bFacilities($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereGuestCaptureCoverPercentage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereHospitalitySectorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereOtherCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereOtherTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other wherePercentageFromRoomsRevenues($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Other whereUpdatedAt($value)
  */
 	class Other extends \Eloquent {}
 }
@@ -2330,6 +2300,8 @@ namespace App\Models{
  * @property-read \App\Models\FinancialInstitution|null $financialInstitution
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\LendingInformation[] $lendingInformation
  * @property-read int|null $lending_information_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\OutstandingBreakdown[] $outstandingBreakdowns
+ * @property-read int|null $outstanding_breakdowns_count
  * @method static \Illuminate\Database\Eloquent\Builder|OverdraftAgainstCommercialPaper newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OverdraftAgainstCommercialPaper newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OverdraftAgainstCommercialPaper query()
@@ -4067,5 +4039,28 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedBy($value)
  */
 	class User extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
+}
+
+namespace App{
+/**
+ * * هو عباره عن التقسيمة الخاصة بال
+ * *clean overdraft
+ * * outstanding balance
+ * * او اي نوع تاني خاص بالتسهيلات
+ * * بمعني انك لما بتحط ال
+ * * الفلوس اللي انت سحبتها من الحساب لحد لحظه فتح حسابك علي كاش فيرو .
+ * 
+ * .سحبت قديه يوم قديه وقديه يوم قديه وهكذا
+ * * بمعني ان مجموع القيم لازم يساوي ال
+ * * outstanding balance in clean overdraft
+ *
+ * @property-read \App\Models\CleanOverdraft $cleanOverDraft
+ * @property-read \App\Models\Company $company
+ * @property-write mixed $settlement_date
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown query()
+ */
+	class OutstandingBreakdown extends \Eloquent {}
 }
 

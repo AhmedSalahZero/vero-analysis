@@ -73,9 +73,9 @@ class ExportTable extends Controller
 			if(isset($columnsWithViewingNames['invoice_status'])){
 				unset($columnsWithViewingNames['invoice_status']);
 			}
-			if(isset($columnsWithViewingNames['collected_amount'])){
-				unset($columnsWithViewingNames['collected_amount']);
-			}
+			// if(isset($columnsWithViewingNames['collected_amount'])){
+			// 	unset($columnsWithViewingNames['collected_amount']);
+			// }
 			if(isset($columnsWithViewingNames['net_balance'])){
 				unset($columnsWithViewingNames['net_balance']);
 			}

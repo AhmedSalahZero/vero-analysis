@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasOutstandingBreakdown;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 class CleanOverdraft extends Model
 {
     protected $guarded = ['id'];
+	use HasOutstandingBreakdown ;
 	/**
 	 * * هو تاريخ بداية التعاقد مع البنك علي هذا التسهيل (القرض)
 	 */
@@ -62,10 +64,7 @@ class CleanOverdraft extends Model
 	{
 		return $this->outstanding_balance ?: 0 ;
 	}
-	public function getMarginRate()
-	{
-		return $this->bank_margin_rate ?: 0 ;
-	}
+	
 	public function getInterestRate()
 	{
 		return $this->interest_rate?:0;
@@ -74,13 +73,27 @@ class CleanOverdraft extends Model
 	{
 		return $this->max_lending_limit_per_customer?:0;
 	}
+	/**
+	 * * هو عدد الايام اللي اجباري تسدد السحبات فيها 
+	 * * وليكن مثلا لو سحبت النهاردا الف جنية فا مفروض اسددها بعد كام يوم 
+	 */
 	public function getMaxSettlementDays()
 	{
 		return $this->to_be_setteled_max_within_days?:0;
 	}
+	/**
+	 * * هي فايدة بيحددها البنك بالبنك المركزي
+	 */
 	public function getBorrowingRate()
 	{
 		return $this->borrowing_rate ?: 0;
+	}
+		/**
+	 * * هي فايدة خاصة بالبنك بناء علي العميل (طبقا للقدرة المالية زي امتلاكك للمصانع)
+	 */
+	public function getMarginRate()
+	{
+		return $this->bank_margin_rate ?: 0 ;
 	}
 	public function getCurrency()
 	{
@@ -100,7 +113,8 @@ class CleanOverdraft extends Model
 		->where('financial_institution_id',$financialInstitutionId)
 		->pluck('account_number','account_number')->toArray();		
 	}
-
+	
+	
 	
 	
 	
