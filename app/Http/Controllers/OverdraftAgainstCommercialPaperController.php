@@ -1,12 +1,10 @@
 <?php
 namespace App\Http\Controllers;
-use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
-use App\Models\MoneyReceived;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -103,29 +101,15 @@ class OverdraftAgainstCommercialPaperController
 		$lendingInformation = $request->get('infos',[]) ; 
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		// $additionalData = [];
 		
-		// if($type =='bank'){
-			// 	$additionalData = ['bank_id','company_account_number','swift_code','iban_code','current_account_number','main_currency','balance_amount'] ;
-			// }
-			// else{
-				// 	$additionalData = ['name'] ;
-				// }
-				
-				// foreach($additionalData as $name){
-					// 	$data[$name] = $request->get($name);
-					// }
 					
 					$overdraftAgainstCommercialPapers = $financialInstitution->overdraftAgainstCommercialPapers()->create($data);
-					// dd('good',$request->all());
 					// dd($request->all());
+					$overdraftAgainstCommercialPapers->storeOutstandingBreakdown($request,$company);
 		foreach($lendingInformation as $lendingInformationArr){
-			// $balanceDate = $accountArr['balance_date'] ?? null  ;
 			$overdraftAgainstCommercialPapers->lendingInformation()->create(array_merge($lendingInformationArr , [
-				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
 			]));
 		}
-		// dd('ff');
 		$type = $request->get('type','over-draft-against-commercial-paper');
 		$activeTab = $type ; 
 		// $activeTab = $this->getActiveTab($type);
@@ -166,21 +150,9 @@ class OverdraftAgainstCommercialPaperController
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
-		$additionalData = [];
-		// if($type =='bank'){
-		// 	$additionalData = ['bank_id','company_account_number','swift_code','iban_code','current_account_number','main_currency','balance_amount'] ;
-		// }
-		// else{
-		// 	$additionalData = ['name'] ;
-		// }
-		
-		// foreach($additionalData as $name){
-		// 	$data[$name] = $request->get($name);
-		// }
-		// $data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
-	
 		
 		$overdraftAgainstCommercialPaper->update($data);
+		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
 		$overdraftAgainstCommercialPaper->lendingInformation->each(function($lendingInformation){
 			$lendingInformation->delete();
 		});
