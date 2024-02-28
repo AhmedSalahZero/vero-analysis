@@ -28,7 +28,7 @@
 
                     <div class="form-group row">
 					
-					 <div class="col-md-3">
+					 <div class="col-md-3 mb-4">
                             <label>{{ __('Aging Date') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="sales_channels">
@@ -37,12 +37,12 @@
                             </div>
                         </div>
 						
-						
-						<div class="col-md-3">
+						@if(count($businessUnits))
+						<div class="col-md-3 mb-4">
                             <label>{{ __('Select Business Unit') }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" id="business_units">
-                                    <select data-live-search="true" data-actions-box="true" name="business_units[]" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-business-unit" multiple>
+                                <div class="input-group date" >
+                                    <select  data-live-search="true" data-actions-box="true" name="business_units[]" class="form-control business-unit-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-refresh-customers" multiple>
                                          @foreach($businessUnits as $businessUnit)
                                         <option value="{{ $businessUnit }}"> {{ __($businessUnit) }}</option>
                                         @endforeach 
@@ -50,22 +50,59 @@
                                 </div>
                             </div>
                         </div>
+						@endif 
+						@if(count($salesPersons))
+						<div class="col-md-3 mb-4">
+                            <label>{{ __('Select Sales Person') }} <span class="multi_selection"></span>  </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" >
+                                    <select  data-live-search="true" data-actions-box="true" name="sales_persons[]" class="form-control sales-person-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-refresh-customers" multiple>
+                                         @foreach($salesPersons as $salesPerson)
+                                        <option value="{{ $salesPerson }}"> {{ __($salesPerson) }}</option>
+                                        @endforeach 
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						@endif 
+						@if(count($businessSectors))
+							<div class="col-md-3 mb-4">
+                            <label>{{ __('Select Business Sectors') }} <span class="multi_selection"></span>  </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" >
+                                    <select  data-live-search="true" data-actions-box="true" name="business_sectors[]" class="form-control business-sector-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-refresh-customers" multiple>
+                                         @foreach($businessSectors as $businessSector)
+                                        <option value="{{ $businessSector }}"> {{ __($businessSector) }}</option>
+                                        @endforeach 
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						@endif
 						
-						 <div class="col-md-3">
+						
+						
+						 <div class="col-md-3 mb-4">
                             <label>{{ __('Select Currency') }}   </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" id="currencies">
-                                    <select  data-live-search="true" data-actions-box="true" name="currencies[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name" >
+                                <div class="input-group date" >
+                                    <select  data-live-search="true" data-actions-box="true" name="currencies[]" required class="form-control currency-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name" >
+										@foreach($currencies as $currencyName)
+										<option value="{{ $currencyName }}">{{ touppercase($currencyName) }}</option>
+										@endforeach 
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-4">
                             <label>{{ __('Select Customers') }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" id="customers">
-                                    <select data-live-search="true" data-actions-box="true" name="customers[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
+                                <div class="input-group date" >
+                                    <select  data-live-search="true" data-actions-box="true" name="customers[]" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
+									@foreach($customerInvoices as $customerInvoice)
+									<option value="{{ $customerInvoice->getId() }}">{{ $customerInvoice->getName() }}</option>
+									@endforeach 
                                     </select>
                                 </div>
                             </div>
@@ -121,52 +158,40 @@
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
 <script>
-	$('select.ajax-business-unit').on('change',function(){
-		const businessUnits = $(this).val();
-
-		$.ajax({
-			url:"{{ route('get.currencies.from.business.units',['company'=>$company->id]) }}",
-			data:{
-				businessUnits
-			},
-			type:'get'
-		}).then(function(res){
-			let select = '<select  data-live-search="true" data-actions-box="true" name="currencies[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name"  > ';
-			const currencies = res.data.currencies ;
-			let options = '';
-			for(index in currencies  ){
-				options += '<option value="'+ currencies[index].currency +'">'+ currencies[index].currency +'</option>'
-			}
-			select = select + options  +  ' </select>';
-			$('#currencies').empty().append(select);
-			$('#currencies').find('select').trigger('change');
-			reinitializeSelect2()
-
-		})
-	})
 	
-	$(document).on('change','select.ajax-currency-name',function(){
-		const businessUnits = $('select.ajax-business-unit').val();
-		const currencies = $(this).val();
+	$(document).on('change','select.ajax-refresh-customers',function(){
+		const businessUnits = $('select.business-unit-js').val();
+		const salesPersons = $('select.sales-person-js').val();
+		const businessSectors = $('select.business-sector-js').val();
+		const currencies = $('select.currency-js').val();
 
 		$.ajax({
 			url:"{{ route('get.customers.from.business.units.currencies',['company'=>$company->id]) }}",
 			data:{
-				businessUnits,
-				currencies
+				business_units:businessUnits,
+				business_sectors:businessSectors,
+				sales_persons:salesPersons,
+				currencies,
+				
 			},
 			type:'get'
 		}).then(function(res){
-			let select = '<select data-live-search="true" data-actions-box="true" name="customers[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple > ';
-			const customersInvoices = res.data.customer_names ;
-			let options = '';
-			for(index in customersInvoices  ){
-				options += '<option value="'+ customersInvoices[index].customer_name +'">'+ customersInvoices[index].customer_name +'</option>'
+			let currenciesOptions = '';
+			for (var currencyName of res.data.currencies_names){
+				currenciesOptions += `<option value="${currencyName}">${currencyName}</option>`
 			}
-			select = select + options  +  ' </select>';
-			$('#customers').empty().append(select);
-			reinitializeSelect2()
-
+			let customersOptions = '';
+	
+			for (var customerName of res.data.customer_names){
+				customersOptions += ` <option value="${customerName}">${customerName}</option> `
+			}
+			$('select.currency-js').selectpicker('destroy');
+			$('select.currency-js').empty().append(currenciesOptions)
+			$('select.currency-js').selectpicker("refresh")
+			
+			$('select.customers-js').selectpicker('destroy');
+			$('select.customers-js').empty().append(customersOptions)
+			$('select.customers-js').selectpicker("refresh")
 		})
 	})
 	

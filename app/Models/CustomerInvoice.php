@@ -6,8 +6,8 @@ use App\Helpers\HArr;
 use App\Traits\StaticBoot;
 use Carbon\Carbon;
 // use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -38,6 +38,12 @@ class CustomerInvoice extends Model
      *
      * @var string
      */
+	public function getId(){
+		return $this->id ;
+	}
+	public function scopeOnlyCompany(Builder $query,$companyId){
+		return $query->where('company_id',$companyId);
+	}
     public function scopeCompany($query)
     {
         return $query->where('company_id', request()->company->id?? Request('company_id'));

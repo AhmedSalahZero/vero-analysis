@@ -23,6 +23,7 @@ class OutstandingBreakdown extends Model
 	 */
 	public function getCustomerComingDuesInvoicesNotificationsDays()
 	{
+		// before due date
 		return $this->customer_coming_dues_invoices_notifications_days;
 	}
 
