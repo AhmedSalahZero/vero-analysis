@@ -1208,7 +1208,11 @@
     <script src="{{url('datatable/datatable.js')}}" type="text/javascript"></script>
 
     @stack('js')
-
+	<script>
+	refreshSelectpicker(){
+		
+	}
+	</script>
     <script>
         reinitializeSelect2();
 

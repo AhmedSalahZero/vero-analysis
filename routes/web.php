@@ -542,7 +542,7 @@ Route::middleware([])->group(function () {
 
 					// Providers Two Dimensional Breakdown
 					Route::post('/ProvidersTwoDimensionalBreakdown', 'Analysis\SalesGathering\ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport@result')->name('ProvidersTwoDimensionalBreakdown.result');
-					Route::get('/get-currencies-from-business-units','CustomerAgingController@getCurrenciesFromBusinessUnit')->name('get.currencies.from.business.units');
+					// Route::get('/get-currencies-from-business-units','CustomerAgingController@getCurrenciesFromBusinessUnit')->name('get.currencies.from.business.units');
 					Route::get('/get-customers-from-currencies','CustomerAgingController@getCustomersFromBusinessUnitsAndCurrencies')->name('get.customers.from.business.units.currencies');
 					############ Sales Trend Analysis Links +   Average Prices +  Breakdown ############
 					// For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
