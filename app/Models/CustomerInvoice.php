@@ -168,7 +168,6 @@ class CustomerInvoice extends Model
     {
 		$netInvoiceAmount = $this->net_invoice_amount ?:0 ; 
 		return $netInvoiceAmount;
-        // return  $netInvoiceAmount + $this->getVatAmount();
     }
 	public function getNetInvoiceInMainCurrencyAmount()
     {
@@ -336,6 +335,10 @@ class CustomerInvoice extends Model
 		->sum(DB::raw('invoice_amount + vat_amount'));
 
 	}
+	public function getCurrency()
+	{
+		return $this->currency;
+	}
 	public static function getTotalMoneyReceivedAmountPlusWithhold( string $currencyName, string $customerName,string $date)
 	{
 		
@@ -414,5 +417,9 @@ class CustomerInvoice extends Model
 				}
 		}
 		return HArr::sortBasedOnKey($formattedData,'date');
+	}
+	public function dueDateHistories()
+	{
+		return $this->hasMany(DueDateHistory::class,'customer_invoice_id','id');
 	}
 }

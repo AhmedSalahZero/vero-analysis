@@ -375,7 +375,13 @@ Route::middleware([])->group(function () {
 			
 				
 				Route::resource('notifications-settings','NotificationSettingsController');
+				Route::get('mark-notifications-as-read','NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
 				
+				Route::get('adjust-due-dates/{customerInvoice}','AdjustedDueDateHistoriesController@index')->name('adjust.due.dates');
+				Route::post('adjust-due-dates/{customerInvoice}','AdjustedDueDateHistoriesController@store')->name('store.adjust.due.dates');
+				Route::get('adjust-due-dates/edit/{customerInvoice}/{dueDateHistory}','AdjustedDueDateHistoriesController@edit')->name('edit.adjust.due.dates');
+				Route::patch('adjust-due-dates/edit/{customerInvoice}/{dueDateHistory}','AdjustedDueDateHistoriesController@update')->name('update.adjust.due.dates');
+				Route::delete('delete-adjust-due-dates/edit/{customerInvoice}/{dueDateHistory}','AdjustedDueDateHistoriesController@destroy')->name('delete.adjust.due.dates');
 				
 				Route::get('financial-institutions/{financialInstitution}/clean-overdraft','CleanOverdraftController@index')->name('view.clean.overdraft');
 				Route::get('financial-institutions/{financialInstitution}/clean-overdraft/create','CleanOverdraftController@create')->name('create.clean.overdraft');

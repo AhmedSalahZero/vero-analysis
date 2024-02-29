@@ -1,4 +1,8 @@
 @extends('layouts.dashboard')
+@php
+	use Carbon\Carbon;
+@endphp
+
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
@@ -15,35 +19,9 @@
     }
 
 
-    .max-w-name {
-        width: 45% !important;
-        min-width: 45% !important;
-        max-width: 45% !important;
-    }
 
-    .max-w-currency {
-        width: 5% !important;
-        min-width: 5% !important;
-        max-width: 5% !important;
-    }
-
-    .max-w-serial {
-        width: 5% !important;
-        min-width: 5% !important;
-        max-width: 5% !important;
-    }
-
-    .max-w-amount {
-        width: 15% !important;
-        min-width: 15% !important;
-        max-width: 15% !important;
-    }
-
-    .max-w-report-btn {
-        width: 15% !important;
-        min-width: 15% !important;
-        max-width: 15% !important;
-    }
+ 
+   
 
     .is-sub-row.is-total-row td.sub-numeric-bg,
     .is-sub-row.is-total-row td.sub-text-bg {
@@ -137,7 +115,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Balances') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Adjusted Due Date') }}</x-main-form-title>
 @endsection
 @section('content')
 
@@ -291,57 +269,82 @@
                 </style>
                 @csrf
 
-                <div class="kt-portlet mb-0">
-                 
-            <div class="kt-portlet__body  kt-portlet__body--fit">
-                <div class="row row-no-padding row-col-separator-xl ">
-                    @php
-                    $index = 0 ;
-                    @endphp
-					{{-- {{dd($cardNetBalances['currencies'])}} --}}
-                    @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
-					
-                    <x-money-card :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
-                    @php
-                    $index++;
-                    @endphp
-                    @if($loop->last && isset($cardNetBalances['main_currency']))
-                    <x-money-card :show-report="0" :color="'success'" :currencyName="'Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']'" :total="$cardNetBalances['main_currency'][$mainCurrency] ?? 0"></x-money-card>
-                    @endif
-                    @endforeach
+              
 
 
+
+    
+
+
+
+          <div class="row">
+    <div class="col-md-12">
+        <!--begin::Portlet-->
+
+         
+        <!--begin::Form-->
+        <form method="post" action="{{ isset($model) ? route('update.adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$customerInvoice->id , 'dueDateHistory'=>$model->id]) :route('store.adjust.due.dates',['company'=>$company->id , 'customerInvoice'=>$customerInvoice->getId()]) }}" class="kt-form kt-form--label-right">
+@csrf
+		@if(isset($model))
+		@method('patch')
+		@endif 
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{__('Adjusted Collection Date Section')}}
+                        </h3>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div class="form-group row">
+						<div class="col-md-4 mb-4">
+                            <label>{{__('Customer Name')}} </label>
+							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getCustomerName() }}">
+						</div>
+						<div class="col-md-4 mb-4">
+                            <label>{{__('Invoice Number')}} </label>
+							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getInvoiceNumber() }}">
+						</div>
+						<div class="col-md-4 mb-4">
+                            <label>{{__('Invoice Due Date')}} </label>
+							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getDueDateFormatted() }}">
+						</div>
+						
+							<div class="col-md-4 mb-4">
+                            <label>{{__('Invoice Net Balance')}} </label>
+							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getNetBalanceFormatted() }}">
+						</div>
+						<div class="col-md-4 mb-4">
+                            <label>{{__('Invoice Currency')}} </label>
+						<input type="text" class="form-control" disabled value="{{ $customerInvoice->getCurrency() }}">
+						</div>
+						
+				
+						
+                        <div class="col-md-4">
+                            <label>{{__('Adjusted Collection Date')}} @include('star') </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <input required type="text" name="due_date" value="{{ isset($model) ? $model->getDueDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}"  />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="la la-calendar-check-o"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
+            <x-submitting />
 
+        </form>  
+</div>
+</div>
 
-        <div class="kt-portlet kt-portlet--tabs">
-
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-toolbar">
-                    <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-
-                        @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
-                        <li class="nav-item">
-                            <a class="nav-link {{ $loop->first ? 'active':'' }}" onclick="return false;" data-toggle="tab" href="#{{ $currencyName.'report__table' }}" role="tab">
-                                <i class="flaticon2-checking"></i> &nbsp; {{ __('Customer Balance In').' ' .__($currencyName) }}
-                            </a>
-                        </li>
-                        @endforeach
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-
-
-
-        <div class="tab-content">
-            @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
-            <div class="tab-pane {{ $loop->first ? 'active':'' }}" id="{{ $currencyName.'report__table' }}" role="tabpanel">
                 <div class="kt-portlet">
 
                     <div class="kt-portlet__body with-scroll pt-0">
@@ -355,7 +358,7 @@
 
 
                                 <div class="responsive">
-                                    <table class="table kt_table_with_no_pagination_no_collapse table-for-currency-{{ $currencyName }}  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency-{{ $currencyName }} dataTable no-footer">
+                                    <table class="table kt_table_with_no_pagination_no_collapse table-for-currency  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency dataTable no-footer">
                                         <thead>
 
                                             <tr class="header-tr ">
@@ -365,22 +368,25 @@
                                                 </th>
 
                                                 <th class="view-table-th max-w-name   header-th  align-middle text-center">
-                                                    {{ __('Customer Name') }}
+                                                    {{ __('Date') }}
                                                 </th>
+												
+												<th class="view-table-th max-w-name   header-th  align-middle text-center">
+                                                    {{ __('Days Count') }}
+                                                </th>
+												
+												<th class="view-table-th max-w-name   header-th  align-middle text-center">
+                                                    {{ __('Amount') }}
+                                                </th>
+												
+												
+												<th class="view-table-th max-w-name   header-th  align-middle text-center">
+                                                    {{ __('Actions') }}
+                                                </th>
+												
+												
 
-                                                <th class="view-table-th  max-w-currency    header-th  align-middle text-center">
-                                                    {{ __('Currency') }}
-                                                </th>
-                                                <th class="view-table-th max-w-amount    header-th  align-middle text-center">
-                                                    {{ __('Net Balance') }}
-                                                </th>
-
-                                                <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
-                                                    {{ __('Statement Report') }}
-                                                </th>
-                                                <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
-                                                    {{ __('Invoice Report') }}
-                                                </th>
+                                              
 
 
 
@@ -388,32 +394,55 @@
 
                                         </thead>
                                         <tbody>
-                                            <script>
-                                                window['currentTable{{ $currencyName }}'] = null;
-
-                                            </script>
-                                            @php
-                                            @endphp
-                                            @foreach($customerInvoicesBalances as $index=>$customerInvoicesBalancesAsStdClass)
-                                            @if( $currencyName == $customerInvoicesBalancesAsStdClass->currency)
+										@php
+											$previousDate = $customerInvoice->getInvoiceDueDate() ;
+										@endphp
+											@foreach($dueDateHistories as $index => $dueDateHistory)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                                <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $customerInvoicesBalancesAsStdClass->customer_name }}</td>
-                                                <td class="sub-text-bg text-center max-w-currency">{{ $currencyName }}</td>
-                                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($customerInvoicesBalancesAsStdClass->net_balance) }}</td>
-                                                <td class="sub-text-bg max-w-report-btn text-center">
-                                                    @if($currencyName && $customerInvoicesBalancesAsStdClass->customer_name)
-                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
-                                                    @endif
-                                                </td>
-                                                <td class="sub-text-bg max-w-report-btn text-center">
-                                                    @if($customerInvoicesBalancesAsStdClass->customer_name && $customerInvoicesBalancesAsStdClass->currency)
-                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
-                                                    @endif
-                                                </td>
+                                                <td class="sub-text-bg max-w-serial   ">{{ ++$index }}</td>
+                                                <td class="sub-text-bg max-w-serial   ">{{ $currentDueDate = $dueDateHistory->getDueDateFormatted() }}</td>
+                                                <td class="sub-text-bg max-w-serial   ">{{ getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) }}</td>
+												@php
+													$previousDate  = $dueDateHistory->getDueDate();
+												@endphp
+                                                <td class="sub-text-bg max-w-serial   ">{{ $dueDateHistory->getAmountFormatted() }}</td>
+                                                <td class="sub-text-bg max-w-serial   ">
+												@if($loop->last)
+                            						<a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.adjust.due.dates',[$company,$customerInvoice->id,$dueDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
+													
+													
+													 <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $dueDateHistory['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                                </a>
+												@endif
+
+                                                <div id="modal-delete-{{ $dueDateHistory['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">{{ __('Delete Due Date History ' .$dueDateHistory->getDueDateFormatted()) }}</h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                            </div>
+                                                            <form action="{{ route('delete.adjust.due.dates',[$company,$customerInvoice->id,$dueDateHistory->id]) }}" method="post" id="delete_form">
+                                                                {{ csrf_field() }}
+                                                                {{ method_field('DELETE') }}
+                                                                <div class="modal-footer">
+                                                                    <button class="btn btn-danger">
+                                                                        {{ __('Delete') }}
+                                                                    </button>
+                                                                    <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+                                                                        {{ __('Close') }}
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+												
+												</td>
                                             </tr>
-                                            @endif
-                                            @endforeach
+											@endforeach 
                                         </tbody>
                                     </table>
                                 </div>
@@ -422,8 +451,8 @@
 
                             @push('js')
                             <script>
-                                window['table{{ $currencyName }}'] = $(".table-for-currency-{{ $currencyName }}");
-                                window['table{{ $currencyName }}'].DataTable({
+                          
+                                $('.table-for-currency').DataTable({
                                         dom: 'Bfrtip'
 
                                         , "processing": false
@@ -441,17 +470,9 @@
                                         , "responsive": false
                                         , "pageLength": 25
                                         , drawCallback: function(setting) {
-                                            if (!window['currentTable{{ $currencyName }}']) {
-                                                window['currentTable{{ $currencyName }}'] = $('.main-table-class-for-currency-{{ $currencyName }}').DataTable();
-                                            }
                                             $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
                                             $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-
                                         },
-
-
-
-
 
                                     }
 
@@ -464,9 +485,7 @@
 
                     </div>
                 </div>
-            </div>
-            @endforeach
-        </div>
+     
 
 
 

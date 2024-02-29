@@ -66,7 +66,7 @@ use App\NotificationSetting ;
     <div class="col-md-12">
         <!--begin::Portlet-->
 
-        <form method="post" action="#" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ route('notifications-settings.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             @csrf
 
             <div class="row">
@@ -94,10 +94,10 @@ use App\NotificationSetting ;
 
                             <div class="form-group row">
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="3" :model="$model??null" :label="__('Comming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Comming Dues Invoices Notifications Days')" :name="'supplier_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Comming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Comming Dues Invoices Notifications Days')" :name="'customer_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="1" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'supplier_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'customer_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
                             </div>
                         </div>
@@ -115,10 +115,10 @@ use App\NotificationSetting ;
                         <div class="kt-portlet__body">
                             <div class="form-group row">
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="3" :model="$model??null" :label="__('Cheques In Safe Notifications Days')" :type="'text'" :placeholder="__('Cheques In Safe Notifications Days')" :name="'cheques_in_safe_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Cheques In Safe Notifications Days')" :type="'text'" :placeholder="__('Cheques In Safe Notifications Days')" :name="'cheques_in_safe_notifications_days'" :required="true"></x-form.input>
                                 </div>
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="0" :model="$model??null" :label="__('Cheques Under Collection Notifications Days')" :type="'text'" :placeholder="__('Cheques Under Collection Notifications Days')" :name="'cheques_under_collection_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Cheques Under Collection Notifications Days')" :type="'text'" :placeholder="__('Cheques Under Collection Notifications Days')" :name="'cheques_under_collection_notifications_days'" :required="true"></x-form.input>
                                 </div>
                             </div>
                         </div>
@@ -138,10 +138,10 @@ use App\NotificationSetting ;
 
                             <div class="form-group row">
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="3" :model="$model??null" :label="__('Comming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Comming Dues Invoices Notifications Days')" :name="'customer_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="3" :model="$model??null" :label="__('Comming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Comming Dues Invoices Notifications Days')" :name="'supplier_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="1" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'customer_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="1" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'supplier_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
                             </div>
                         </div>

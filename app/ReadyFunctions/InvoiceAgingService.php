@@ -3,6 +3,7 @@ namespace App\ReadyFunctions;
 
 use App\Models\CustomerInvoice;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * * هي اسمها اعمار الديون
@@ -26,15 +27,15 @@ class InvoiceAgingService
 	public function __execute(array $customerNames)
 	{
 		$result = [];
-		// $customerInvoices = DB::table('customer_invoices')->where('company_id',$this->company_id)
-		// ->selectRaw('customer_name ,invoice_due_date, invoice_date,invoice_number,net_balance')->where('invoice_date' ,'<=' , $this->aging_date);
 		$customerInvoices = CustomerInvoice::where('invoice_date' ,'<=' , $this->aging_date)->where('company_id',$this->company_id);
-	
 		if(count($customerNames)){
 			$customerInvoices->whereIn('customer_name',$customerNames);
 		}
 		$customerInvoices = $customerInvoices->get();
 
+		/**
+		 * @var CustomerInvoice[] $customerInvoices
+		 */
 		foreach($customerInvoices as $index => $customerInvoice){
 			$customerName = $customerInvoice->customer_name ;
 			$invoiceNumber = $customerInvoice->invoice_number;

@@ -29,7 +29,6 @@ class CustomerAgingController
 			->where('business_unit','!=',null)
 			->where('business_unit','!=','')
 			->selectRaw('business_unit')->get()->pluck('business_unit')->unique()->values()->toArray();
-			
 		}
 		if(isset($exportables['sales_person'])){
 			$salesPersons = DB::table('customer_invoices')->where('company_id',$company->id)->where('sales_person','!=',null)->where('sales_person','!=','')
@@ -63,32 +62,16 @@ class CustomerAgingController
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
 		$customerAgings  = $invoiceAgingService->__execute($customerNames) ;
 		$weeksDates = formatWeeksDatesFromStartDate($aginDate);
-
 		return view('admin.reports.customer-invoices-aging',['customerAgings'=>$customerAgings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
 	}
-	// public function getCurrenciesFromBusinessUnit(Company $company ,Request $request)
-	// {
-	// 	$businessUnits = $request->get('businessUnits',[]);
-	// 	$data = DB::table('customer_invoices')->select('currency')->whereIn('business_unit',$businessUnits)
-	// 	->where('net_balance','>',0)
-	// 	->where('company_id',$company->id)->get();
-	// 	$data = $data->unique();
-	// 	return response()->json([
-	// 		'status'=>true ,
-	// 		'message'=>__('Success'),
-	// 		'data'=>[
-	// 			'currencies'=>$data,
-	// 		]
-	// 	]);
-		
-	// }
+
 	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request)
 	{
 		$currency = $request->get('currencies');
 		$businessUnits = $request->get('business_units',[]);
 		$salesPersons = $request->get('sales_persons',[]);
 		$businessSectors = $request->get('business_sectors',[]);
-		$query = DB::table('customer_invoices')->select('customer_name','currency')->where('company_id',$company->id)->where('net_balance','>',0);
+		$query = DB::table('customer_invoices')->select('customer_name','currency')->where('currency',$currency)->where('company_id',$company->id)->where('net_balance','>',0);
 		if(count($businessUnits)){
 			$query = $query->whereIn('business_unit',$businessUnits);
 		}

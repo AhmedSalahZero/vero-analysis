@@ -1208,11 +1208,7 @@
     <script src="{{url('datatable/datatable.js')}}" type="text/javascript"></script>
 
     @stack('js')
-	<script>
-	refreshSelectpicker(){
-		
-	}
-	</script>
+
     <script>
         reinitializeSelect2();
 
@@ -1418,7 +1414,18 @@
 
 
 
-
+	@if(isset($company) && $company->id)
+	<script>
+	$(document).on('click','.js-mark-notifications-as-read',function(){
+		alert('clicked')
+		$.ajax({
+			url:"{{ route('mark.notifications.as.read',['company'=>$company->id]) }}",
+		})
+		
+	})
+	</script>
+	
+	@endif 
     @if(isset($company) && $company->id)
     @if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName )))
     <script>

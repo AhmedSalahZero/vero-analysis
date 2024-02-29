@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PastDueInvoiceNotification extends Notification
+class DueInvoiceNotification extends Notification
 {
     use Queueable;
 
@@ -16,11 +16,13 @@ class PastDueInvoiceNotification extends Notification
      *
      * @return void
      */
-	protected $invoice_number,$due_days ; 
-    public function __construct($invoiceNumber , $dueDays)
+	protected $message_en , $message_ar ,$type; 
+    public function __construct($messageEn , $messageAr,$type)
     {
-        $this->invoice_number = $invoiceNumber ; 
-		$this->due_days = $dueDays ; 
+   
+		$this->message_en = $messageEn;
+		$this->message_ar = $messageAr;
+		$this->type = $type;
     }
 
     /**
@@ -57,8 +59,9 @@ class PastDueInvoiceNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-			'message_en'=>__('Invoice Number ') . $this->invoice_number . ' '.__('Is Past Due Since ') . ' ' . $this->due_days . ' ' . 'days',
-			'message_ar'=>__('Invoice Number ') . $this->invoice_number . ' '.__('Is Past Due Since ') . ' ' . $this->due_days . ' ' . 'days'
+			'type'=>$this->type,
+			'message_en'=>$this->message_en,
+			'message_ar'=>$this->message_ar,
         ];
     }
 }
