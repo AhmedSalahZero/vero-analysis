@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CashInSafe extends Model
 {
-
-	 
     protected $guarded = ['id'];
 	
 	public function moneyReceived()

@@ -455,6 +455,7 @@ namespace App\Models{
  * @property int|null $account_number
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $company_id
  * @property-read \App\Models\AccountType|null $accountType
  * @property-read \App\Models\MoneyReceived $moneyReceived
  * @property-read \App\Models\FinancialInstitution|null $receivingBank
@@ -463,6 +464,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashInBank query()
  * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInBank whereMoneyReceivedId($value)
@@ -482,11 +484,13 @@ namespace App\Models{
  * @property string|null $receipt_number
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $company_id
  * @property-read \App\Models\MoneyReceived $moneyReceived
  * @property-read \App\Models\Branch|null $receivingBranch
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereMoneyReceivedId($value)
@@ -593,6 +597,7 @@ namespace App\Models{
  * @property string $collection_fees الرسوم اللي البنك بياخدها منك لتحصيل الشيك
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $company_id
  * @property-read \App\Models\Bank|null $draweeBank
  * @property-read \App\Models\FinancialInstitution|null $drawlBank
  * @property-read \App\Models\MoneyReceived $moneyReceived
@@ -606,6 +611,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereChequeNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereClearanceDays($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereCollectionFees($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereDepositDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cheque whereDraweeBankId($value)
@@ -753,6 +759,9 @@ namespace App\Models{
  * @property-read int|null $logs_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|\Spatie\MediaLibrary\MediaCollections\Models\Media[] $media
  * @property-read int|null $media_count
+ * @property-read \App\NotificationSetting|null $notificationSetting
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Company[] $subCompanies
  * @property-read int|null $sub_companies_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
@@ -887,6 +896,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice company()
  * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice onlyCompany($companyId)
  * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice query()
  * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice whereBusinessSector($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CustomerInvoice whereBusinessUnit($value)
@@ -1589,6 +1599,7 @@ namespace App\Models{
  * @property int|null $account_number
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $company_id
  * @property-read \App\Models\AccountType|null $accountType
  * @property-read \App\Models\MoneyReceived $moneyReceived
  * @property-read \App\Models\FinancialInstitution|null $receivingBank
@@ -1597,6 +1608,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer query()
  * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IncomingTransfer whereMoneyReceivedId($value)
@@ -4039,6 +4051,38 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedBy($value)
  */
 	class User extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
+}
+
+namespace App{
+/**
+ * App\NotificationSetting
+ *
+ * @property int $id
+ * @property int $customer_coming_dues_invoices_notifications_days
+ * @property int $customer_past_dues_invoices_notifications_days
+ * @property int $cheques_in_safe_notifications_days
+ * @property int $cheques_under_collection_notifications_days
+ * @property int $supplier_coming_dues_invoices_notifications_days
+ * @property int $supplier_past_dues_invoices_notifications_days
+ * @property int $company_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Company $company
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereChequesInSafeNotificationsDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereChequesUnderCollectionNotificationsDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCustomerComingDuesInvoicesNotificationsDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCustomerPastDuesInvoicesNotificationsDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereSupplierComingDuesInvoicesNotificationsDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereSupplierPastDuesInvoicesNotificationsDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereUpdatedAt($value)
+ */
+	class NotificationSetting extends \Eloquent {}
 }
 
 namespace App{

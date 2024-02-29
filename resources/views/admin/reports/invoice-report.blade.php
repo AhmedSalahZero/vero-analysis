@@ -359,7 +359,7 @@
                                            {{ $invoice->getAging() }}
                                         </td>
 							       <td class="sub-text-bg  text-center">
-                                            <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" style="background-color:green !important;">{{ __('Adjust Due Date') }}</a>
+                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" style="background-color:green !important;">{{ __('Adjust Due Date') }}</a>
                                         </td>
 												
                                         <td class="sub-text-bg  text-center">
@@ -392,11 +392,6 @@
                     <script>
                         var table = $(".kt_table_with_no_pagination_no_collapse");
 
-
-
-
-
-
                         table.DataTable({
 
 
@@ -424,7 +419,6 @@
                                     }
                                     $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
                                     $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-
                                 },
 
 

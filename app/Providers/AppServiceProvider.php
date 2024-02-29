@@ -46,8 +46,7 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-
-		// dd(number_unformat('-10,000'));
+		
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');

@@ -2,14 +2,18 @@
 
 namespace App;
 
-use App\Models\CleanOverdraft;
 use App\Models\Company;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class OutstandingBreakdown extends Model
+class NotificationSetting extends Model
 {
     protected $guarded = ['id'];
+	
+	const CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS = 3;
+	const CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS = 1;
+	const CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS = 3;
+	const CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS = 0;
+	
 	public function getId()
 	{
 		return $this->id;

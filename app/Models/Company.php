@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use App\NotificationSetting;
 use App\Traits\StaticBoot;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Company extends Model implements HasMedia
 {
 	use
-		//  SoftDeletes,
 		StaticBoot,
-		InteractsWithMedia ;
+		InteractsWithMedia ,
+		Notifiable;
 	protected $guarded = [];
 	public function getIdentifier():int
     {
@@ -112,5 +113,29 @@ class Company extends Model implements HasMedia
 	{
 		$logo = $this->labeling_stamp ;
 		return $logo && file_exists('storage/'.$logo ) ? asset('storage/'.$logo) : null ;
+	}
+	public function notificationSetting()
+	{
+		return $this->hasOne(NotificationSetting::class , 'company_id','id');
+	}
+	public function getCustomerComingDuesInvoicesNotificationsDays():int
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getCustomerComingDuesInvoicesNotificationsDays() : NotificationSetting::CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS ;
+	}
+	public function getCustomerPastDuesInvoicesNotificationsDays():int
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getCustomerPastDuesInvoicesNotificationsDays() : NotificationSetting::CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS ;
+	}
+	public function getChequesInSafeNotificationDays():int 
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getChequesInSafeNotificationsDays() : NotificationSetting::CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS ;
+	}
+	public function getChequesUnderCollectionNotificationDays()
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getChequesUnderCollectionNotificationsDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
 	}
 }
