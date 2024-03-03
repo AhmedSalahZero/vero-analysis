@@ -307,7 +307,7 @@
                                         </th>
 										
 										  <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Amount') }}
+                                            {{ __('Net Invoice Amount') }}
                                         </th>
 										
 										 <th class="view-table-th   bg-lighter header-th  align-middle text-center">
@@ -347,6 +347,7 @@
                                     @php
                                     @endphp
                                     @foreach($invoices as $index=>$invoice)
+									
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                         <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceDateFormatted() }}</td>
@@ -358,7 +359,8 @@
                                         <td class="sub-text-bg  text-center">
                                            {{ $invoice->getAging() }}
                                         </td>
-							      		 <td class="sub-text-bg  text-center">
+							      		 <td class="sub-text-bg  text-center">	
+										 	@if(!$invoice->isCollected())
                                             <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" 
 											@if($invoice->dueDateHistories->count())
 											style="background-color:orange !important;color:black !important;border-color:white !important;"
@@ -366,10 +368,13 @@
 											style="background-color:green !important; border-color:white !important;"
 											@endif 
 											>{{ $invoice->dueDateHistories->count() ? __('Adjusted') : __('Adjust Due Date') }}</a>
+											@endif
                                         </td>
 												
                                         <td class="sub-text-bg  text-center">
+										@if(!$invoice->isCollected())
                                             <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Money Received') }}" class="btn btn-sm btn-primary">{{ __('money Received') }}</a>
+											@endif
                                         </td>
                                         {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
 

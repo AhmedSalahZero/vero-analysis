@@ -263,7 +263,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-3">
                         <label>{{__('Received Amount')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount() :0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed js-cash-received-amount" placeholder="{{__('Received Amount')}}">
+                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount() :0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_SAFE .'-received-amount' }}" placeholder="{{__('Received Amount')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
@@ -317,7 +317,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-2 ">
                         <label>{{__('Deposit Amount')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed js-incoming_transfer-received-amount" placeholder="{{__('Insert Amount')}}">
+                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_BANK .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
                         </div>
                     </div>
 
@@ -416,7 +416,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-2 width-12">
                         <label>{{__('Cheque Amount')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed js-cheque-received-amount">
+                            <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}">
                         </div>
                     </div>
 
@@ -504,7 +504,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-2 ">
                         <label>{{__('Incoming Transfer Amount')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed js-incoming_transfer-received-amount" placeholder="{{__('Insert Amount')}}">
+                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::INCOMING_TRANSFER .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
                         </div>
                     </div>
 
