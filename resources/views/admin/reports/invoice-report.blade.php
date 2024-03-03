@@ -358,8 +358,14 @@
                                         <td class="sub-text-bg  text-center">
                                            {{ $invoice->getAging() }}
                                         </td>
-							       <td class="sub-text-bg  text-center">
-                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" style="background-color:green !important;">{{ __('Adjust Due Date') }}</a>
+							      		 <td class="sub-text-bg  text-center">
+                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" 
+											@if($invoice->dueDateHistories->count())
+											style="background-color:orange !important;color:black !important;border-color:white !important;"
+											@else
+											style="background-color:green !important; border-color:white !important;"
+											@endif 
+											>{{ $invoice->dueDateHistories->count() ? __('Adjusted') : __('Adjust Due Date') }}</a>
                                         </td>
 												
                                         <td class="sub-text-bg  text-center">

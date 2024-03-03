@@ -308,14 +308,7 @@ class SalesChannelsAgainstAnalysisReport
 		// dd($final_report_total);
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
-		// if($request->interval == 'monthly'){
-			// $dates = formatDateVariable($dates , $request->start_date  , $request->end_date,$request->interval);
-			// dd($report_data,$dates);
-			// $report_data_and_dates = replaceReportDateLastDateWithEndEndDate($report_data  , $request->get('end_date'),$request->get('interval'));
-			// $dates = $report_data_and_dates['dates'];
-			// $report_data = $report_data_and_dates['result'];
-		// }
-
+		
 
            $Items_names = $sales_channels_names ;
          $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'sales_channel' );

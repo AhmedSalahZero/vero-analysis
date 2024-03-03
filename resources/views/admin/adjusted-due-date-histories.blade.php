@@ -6,6 +6,27 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
+	.max-w-invoice-date {
+        width: 25% !important;
+        min-width: 25% !important;
+        max-width: 25% !important;
+    }
+	.max-w-counts {
+        width: 20% !important;
+        min-width: 20% !important;
+        max-width: 20% !important;
+    }
+	.max-w-action {
+        width: 25% !important;
+        min-width: 25% !important;
+        max-width: 25% !important;
+    }
+  .max-w-serial {
+        width: 5% !important;
+        min-width: 5% !important;
+        max-width: 5% !important;
+    }
+	
     .dt-buttons.btn-group.flex-wrap {
         margin-bottom: 5rem !important;
     }
@@ -367,20 +388,20 @@
                                                     {{ __('#') }}
                                                 </th>
 
-                                                <th class="view-table-th max-w-name   header-th  align-middle text-center">
+                                                <th class="view-table-th max-w-name  max-w-invoice-date header-th  align-middle text-center">
                                                     {{ __('Date') }}
                                                 </th>
 												
-												<th class="view-table-th max-w-name   header-th  align-middle text-center">
+												<th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
                                                     {{ __('Days Count') }}
                                                 </th>
 												
-												<th class="view-table-th max-w-name   header-th  align-middle text-center">
+												<th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
                                                     {{ __('Amount') }}
                                                 </th>
 												
 												
-												<th class="view-table-th max-w-name   header-th  align-middle text-center">
+												<th class="view-table-th max-w-name max-w-action  header-th  align-middle text-center">
                                                     {{ __('Actions') }}
                                                 </th>
 												
@@ -395,18 +416,18 @@
                                         </thead>
                                         <tbody>
 										@php
-											$previousDate = $customerInvoice->getInvoiceDueDate() ;
+											$previousDate = null ;
 										@endphp
 											@foreach($dueDateHistories as $index => $dueDateHistory)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                                <td class="sub-text-bg max-w-serial   ">{{ ++$index }}</td>
-                                                <td class="sub-text-bg max-w-serial   ">{{ $currentDueDate = $dueDateHistory->getDueDateFormatted() }}</td>
-                                                <td class="sub-text-bg max-w-serial   ">{{ getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) }}</td>
+                                                <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
+                                                <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $dueDateHistory->getDueDateFormatted() }} {{ is_null($previousDate) ? __(' (Original Due Date) ') : '' }} </td>
+                                                <td class="sub-text-bg  text-center  max-w-counts ">{{ $previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) : '-' }}</td>
 												@php
 													$previousDate  = $dueDateHistory->getDueDate();
 												@endphp
-                                                <td class="sub-text-bg max-w-serial   ">{{ $dueDateHistory->getAmountFormatted() }}</td>
-                                                <td class="sub-text-bg max-w-serial   ">
+                                                <td class="sub-text-bg  text-center max-w-counts ">{{ $dueDateHistory->getAmountFormatted() }}</td>
+                                                <td class="sub-text-bg  text-center max-w-action   ">
 												@if($loop->last)
                             						<a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.adjust.due.dates',[$company,$customerInvoice->id,$dueDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
 													
