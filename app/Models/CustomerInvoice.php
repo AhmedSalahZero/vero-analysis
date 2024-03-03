@@ -306,6 +306,7 @@ class CustomerInvoice extends Model
 		$invoiceNumber = $this->getInvoiceNumber();
 		$customerName = $this->getCustomerName();
 		$netInvoiceAmount = $this->getNetInvoiceAmount();
+		$totalWithhold = $this->getTotalWithholdAmount();
 		$totalCollected = 0 ;
 		$moneyReceives = $this->moneyReceived->where('receiving_date','<=',$date) ;
 		foreach($moneyReceives as $moneyReceived) {
@@ -313,7 +314,7 @@ class CustomerInvoice extends Model
 				$totalCollected += $settlement->getAmount();
 			}
 		}
-		return $netInvoiceAmount - $totalCollected;
+		return $netInvoiceAmount - $totalCollected - $totalWithhold;
 	}
 	
 
@@ -338,6 +339,10 @@ class CustomerInvoice extends Model
 	public function getCurrency()
 	{
 		return $this->currency;
+	}
+	public function getTotalWithholdAmount()
+	{
+		return $this->total_withhold_amount ; 
 	}
 	public static function getTotalMoneyReceivedAmountPlusWithhold( string $currencyName, string $customerName,string $date)
 	{
