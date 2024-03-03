@@ -69,7 +69,6 @@ class MoneyReceivedController
 	}
 	public function index(Company $company,Request $request)
 	{
-		// dd($request->all());
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$moneyType = $request->get('active',MoneyReceived::CHEQUE) ;
 		$filterDates = [];
@@ -124,7 +123,6 @@ class MoneyReceivedController
 		/** 
 		* @var User $user
 		*/
-		// dd($cashesInBankStartDate , $receivedCashesInSafeStartDate);
 		$receivedCashesInSafe = $user->getReceivedCashesInSafe($receivedCashesInSafeStartDate ,$receivedCashesInSafeEndDate ) ;
 		$receivedCashesInBanks = $user->getReceivedCashesInBank($cashesInBankStartDate,$cashesInBankEndDate) ;
 		$receivedTransfer = $user->getReceivedTransfer($incomingTransferStartDate,$incomingTransferEndDate) ;
@@ -303,6 +301,7 @@ class MoneyReceivedController
 		->get(['invoice_number','invoice_date','net_invoice_amount','collected_amount','net_balance','currency'])
 		->toArray();
 		
+		
 		foreach($invoices as $index=>$invoiceArr){
 			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName) : 0;
 			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName) : 0;
@@ -324,8 +323,8 @@ class MoneyReceivedController
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
 
-			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount'] : (double)$invoiceArr['collected_amount'];
-			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  : $invoiceArr['net_balance']  ;
+			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
+			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
 			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
 			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
@@ -450,71 +449,8 @@ class MoneyReceivedController
 		$moneyReceived->$oldTypeRelationName ? $moneyReceived->$oldTypeRelationName->delete() : null;
 		$moneyReceived->delete();
 		$this->store($company,$request);
-		
-		// $customerInvoiceId = $request->get('customer_id');
-		// $customerInvoice = CustomerInvoice::find($customerInvoiceId);
-		// $customerName = $customerInvoice->getCustomerName();
-		// $data = $request->only(['type','receiving_date','currency']);
-		// $data['customer_name'] = $customerName;
-		// $data['user_id'] = auth()->user()->id ;
-		
-		
-		
-		// $additionalData = [];
-		
-		// $currency= null  ;
-		// $receivedAmount = $request->input('received_amount.'.$moneyType ,0);
-		
-		// if($moneyType ==MoneyReceived::CASH_IN_SAFE){
-		// 	$additionalData = ['receiving_branch','receipt_number'] ;
-		// 	$currency = $request->get('cash_currency');
-		// }
-		// elseif($moneyType ==MoneyReceived::CHEQUE){
-		// 	$additionalData = ['drawee_bank_id','due_date','cheque_number','exchange_rate'] ;
-		// 	$receivedAmount = $request->input('received_amount.'.$moneyType ,0);
-		// 	$currency = $request->get('cheque_currency');
-		// }
-		// elseif($moneyType ==MoneyReceived::INCOMING_TRANSFER){
-		// 	$additionalData = ['receiving_bank_id','income_transfer_account_number'] ;
-		// 	$receivedAmount = $request->get('incoming_transfer_amount',0);
-		// 	$currency = $request->get('cheque_currency');
-		// }
-		// foreach($additionalData as $name){
-		// 	$data[$name] = $request->get($name);
-		// }
-		// if($moneyType ==MoneyReceived::CASH_IN_SAFE ){
-		// 	$data['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
-		// }
-		// $data['received_amount'] = $receivedAmount ;
-		// $data['currency'] = $currency?:Arr::get($data,'currency') ;
-		// $data['currency'] = strtolower($data['currency']);
-		// $moneyReceived->update($data);
-		// $customerInvoice = CustomerInvoice::find($customerInvoiceId);
-		// $moneyReceived->settlements->each(function($settlement){
-		// 	$settlement->delete();
-		// });
-		
-		// $totalWithholdAmount = 0 ;
-		// foreach($request->get('settlements',[]) as $settlementArr)
-		// {
-		// 		if($settlementArr['settlement_amount'] > 0 ){
-		// 			$settlementArr['company_id'] = $company->id ;
-		// 			$settlementArr['customer_name'] = $customerName ;
-		// 			$totalWithholdAmount += $settlementArr['withhold_amount'];
-					
-		// 			$moneyReceived->settlements()->create($settlementArr);
-					
-		// 		}
-			
-		// }
-		// $moneyReceived->update([
-		// 	'total_withhold_amount'=>$totalWithholdAmount 
-		// ]);
-		
 		 $activeTab = $newType;
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
-		
-		
 	}
 	
 	public function destroy(Company $company , MoneyReceived $moneyReceived)
@@ -522,8 +458,9 @@ class MoneyReceivedController
 		$moneyReceived->settlements->each(function($settlement){
 			$settlement->delete();
 		});
+		$activeTab = $moneyReceived->getType();
 		$moneyReceived->delete();
-		return redirect()->back()->with('success',__('Money Received Has Been Delete Successfully'));
+		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
 	protected function generateBranchId($nameOrId,$companyId){
 		$branch = Branch::where('id',$nameOrId)->first();

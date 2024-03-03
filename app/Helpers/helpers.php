@@ -3142,7 +3142,6 @@ function getColorForIndexes($firstValue, $secondValue, $elementIndex)
 function checkIfAllDates(array $dates):array
 {
     $validDates = [];
-    // dd($dates);
     foreach ($dates as $date) {
         if (DateTime::createFromFormat('Y-m', $date) !== false) {
             $validDates[] =$date;
@@ -3155,7 +3154,6 @@ function checkIfAllDates(array $dates):array
 function number_unformat($number, $force_number = true, $dec_point = '.', $thousands_sep = ',')
 {
 	$isNegativeNumber = str_starts_with($number,'-');
-	// dd($isSign);
     if ($force_number) {
 		$number = preg_replace('/^[^\d]+/', '', $number);
     } elseif (preg_match('/^[^\d]+/', $number)) {
@@ -3176,13 +3174,11 @@ function hasUploadData($company_id)
 function getEndYearBasedOnDataUploaded(Company $company, int $minusFromYear = 0)
 {
     $cashingService = new CashingService($company);
-    // dd($cashingService->getIntervalYearsFormCompany());
     $dates = $cashingService->getIntervalYearsFormCompany() ;
     
     $endYear = $dates['end_year'];
     $endYear = $endYear ?: now()->format('Y');
     $endYear = $endYear - $minusFromYear;
-    // dd($dates);
     return [
         'jan'=>$endYear . '-' . '01' . '-' . '01',
         'dec'=>isset($dates['full_end_date']) ? Carbon::make($dates['full_end_date'])->subYears($minusFromYear)->format('Y-m-d') :$endYear . '-' . '12' . '-' . '31',
@@ -3286,9 +3282,7 @@ function array_first($array)
 }
 function array_sum_at_date($items, $date)
 {
-    // dd($items , $date);
     $total = 0 ;
-    // dd($items);
     foreach($items as$keys=> $vals) {
         foreach($vals as $key => $val) {
             
@@ -3297,7 +3291,6 @@ function array_sum_at_date($items, $date)
             }
         }
     }
-    // dd($total);
     return $total ;
 }
 function get_total_with_preserve_key($items)
@@ -3307,8 +3300,6 @@ function get_total_with_preserve_key($items)
     if(!count($items)) {
         return [];
     }
-    // dd($items);
-    // dd($items);
     foreach(array_keys(Arr::first($items)) as $date) {
         foreach($items as $key => $values) {
             $currentValue = $values[$date] ?? 0 ;
@@ -3373,190 +3364,9 @@ function getNextDate(?array $array, ?string $date, $datesExistsAsKeys = true)
 }
 function replaceDateWithLastDateInMonth(string $date)
 {
-    // dd($date);
     $yearOfEndDate = explode('-', $date)[0];
     $monthOfEndDate = explode('-', $date)[1];
     return  Carbon::create($yearOfEndDate, $monthOfEndDate)->lastOfMonth()->format('Y-m-d');
-}
-function replaceReportDateLastDateWithEndEndDate(array $report_data, string $end_date, string $interval):array
-{
-    
-    $dates = [];
-    $newResult = [];
-    $end_date_formatted = Carbon::make($end_date)->format('d-m-Y');
-    // dd($report_data);
-    // foreach($report_data as $name => $report_elements){
-    // 	if($name == 'Total'  || $name == 'Growth Rate %'){
-    // 		// dd($report_elements);
-    // 		dump('before',$report_elements);
-    // 			$newResult[$name] = sumIntervals($report_elements,$interval);
-    // 			dd('after',$newResult);
-    // 	}else{
-    // 		continue;
-    // 	}
-    // }
-    // dd('end');
-    
-    // foreach($report_data as $name=>$report_elements){
-    // 	if($name =='Total' || $name == 'Growth Rate %'){
-    // 		// $newResult[$name] = $report_elements ;
-    // 		foreach($report_elements as $date => $value){
-    // 			$nextDate = getNextDate($report_elements  , $date);
-    // 						$nextDate = $nextDate ? Carbon::make($nextDate)->format('Y-m-d') : null ;
-    // 						if($nextDate && Carbon::make($end_date)->greaterThan(Carbon::make($date)) && Carbon::make($end_date)->lessThanOrEqualTo($nextDate)){
-                                
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-    // 							// dd($currentEnd);
-    // 							$newResult[$name][$date] = $value ;
-    // 							if(!in_array($date,$dates)){
-    // 								$dates[$date] = $date;
-    // 							}
-    // 							// dump(getNextDate($salesOrGrowthValues  , $date));
-    // 							$newResult[$name][$currentEnd] = $report_elements[getNextDate($report_elements  , $date)] ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-                                
-    // 						}
-    // 						elseif($nextDate && Carbon::make($date)->greaterThan(Carbon::make($end_date)) ){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-                                
-    // 							$newResult[$name][$currentEnd] = $value ;
-                                
-    // 							// dd($newResult , $name , $currentEnd , $value);
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-                                
-    // 						}
-    // 						elseif(! $nextDate  ){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-                                
-    // 							$newResult[$name][$currentEnd] = $value ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-    // 						}
-    // 						else{
-    // 							if(!in_array($date,$dates) && (Carbon::make($end_date)->greaterThanOrEqualTo(Carbon::make($date)))){
-    // 								$dates[$date] = $date;
-    // 							}
-    // 							$newResult[$name][$date] = $value ;
-    // 						}
-                            
-                            
-    // 		}
-    // 		continue ;
-    // 	}
-    // 			foreach($report_elements as $typeName => $salesAndGrowths){
-    // 				if($typeName =='Total' || $typeName == 'Growth Rate %'){
-    // 					// dd($salesAndGrowths);
-                        
-    // 					foreach($salesAndGrowths as $date => $value){
-    // 						$nextDate = getNextDate($salesAndGrowths  , $date);
-    // 						$nextDate = $nextDate ? Carbon::make($nextDate)->format('Y-m-d') : null ;
-    // 						if($nextDate && Carbon::make($end_date)->greaterThan($date) && Carbon::make($end_date)->lessThanOrEqualTo($nextDate)){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-    // 							// dd($currentEnd);
-                                
-    // 							$newResult[$name][$typeName][$date] = $value ;
-    // 							if(!in_array($date,$dates)){
-    // 								$dates[$date] = $date;
-    // 							}
-    // 							// dump(getNextDate($salesOrGrowthValues  , $date));
-    // 							$newResult[$name][$typeName][$currentEnd] = $salesAndGrowths[getNextDate($salesAndGrowths  , $date)] ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-    // 						}
-    // 						elseif($nextDate && Carbon::make($date)->greaterThan(Carbon::make($end_date)) ){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-    // 							$newResult[$name][$typeName][$currentEnd] = $value  ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-    // 							break ;
-                                
-    // 						}
-    // 						elseif(!$nextDate){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-                                
-    // 							$newResult[$name][$typeName][$currentEnd] = $value ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] =$currentEnd;
-    // 							}
-    // 						}
-    // 						else{
-    // 							if(!in_array($date,$dates) && (Carbon::make($end_date)->greaterThanOrEqualTo(Carbon::make($date)))){
-    // 								$dates[$date] = $date;
-    // 							}
-    // 							$newResult[$name][$typeName][$date] = $value ;
-    // 						}
-    // 					}
-                        
-                        
-                        
-                        
-    // 					// $newResult[$name][$typeName] = $salesAndGrowths ;
-    // 					continue ;
-    // 				}
-    // 				foreach($salesAndGrowths as $salesOrGrowthName => $salesOrGrowthValues){
-                        
-    // 					foreach($salesOrGrowthValues as $date => $value){
-    // 						$nextDate = getNextDate($salesOrGrowthValues  , $date);
-    // 						$nextDate = $nextDate ? Carbon::make($nextDate)->format('Y-m-d') : null ;
-    // 						// dd($date , $end_date);
-    // 						// dd($nextDate);
-    // 						// dd($end_date);
-    // 						if($nextDate && Carbon::make($end_date)->greaterThan($date) && Carbon::make($end_date)->lessThanOrEqualTo($nextDate)){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-    // 							// dd($currentEnd);
-                                
-    // 							$newResult[$name][$typeName][$salesOrGrowthName][$date] = $value ;
-    // 							if(!in_array($date,$dates)){
-    // 								$dates[$date] = $date;
-    // 							}
-    // 							// dump(getNextDate($salesOrGrowthValues  , $date));
-    // 							$newResult[$name][$typeName][$salesOrGrowthName][$currentEnd] = $salesOrGrowthValues[getNextDate($salesOrGrowthValues  , $date)] ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-    // 							break;
-    // 						}
-                            
-    // 						elseif($nextDate && Carbon::make($date)->greaterThan(Carbon::make($end_date)) ){
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-    // 							$newResult[$name][$typeName][$salesOrGrowthName][$currentEnd] = $value ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] = $currentEnd;
-    // 							}
-                                
-    // 						}
-    // 						elseif(! $nextDate ){
-                                
-    // 							$currentEnd = Carbon::make($end_date)->format('d-m-Y');
-                                
-    // 							$newResult[$name][$typeName][$salesOrGrowthName][$currentEnd] = $value ;
-    // 							if(!in_array($currentEnd , $dates)){
-    // 								$dates[$currentEnd] =$currentEnd;
-    // 							}
-    // 						}
-    // 						else{
-    // 							if(!in_array($date,$dates) && (Carbon::make($end_date)->greaterThanOrEqualTo($date))){
-    // 								$dates[$date] = $date;
-    // 							}
-    // 							$newResult[$name][$typeName][$salesOrGrowthName][$date] = $value ;
-    // 						}
-    // 					}
-    // 				}
-    // 			}
-    // }
-    sortArr($dates);
-    $dates = dateInInterval($dates, $interval);
-    return [
-        'dates'=>$dates ,
-        'result'=>$newResult
-    ] ;
 }
 
 
@@ -3761,7 +3571,6 @@ function snakeToCamel($input)
 function sumDueDayWithPayment($paymentRate, $dueDays)
 {
     $items = [];
-    // dd($dueDays);
     foreach($dueDays as $index=>$dueDay) {
         $currentPaymentRate = $paymentRate[$index]??0 ;
         $items[$dueDay] = isset($items[$dueDay]) ? $items[$dueDay] + $currentPaymentRate : $currentPaymentRate;
@@ -3992,7 +3801,6 @@ function getMinDateOfWeek(array $dateAndWeek, int $weekNo, int $year)
             $items[$date]=$currentWeek ;
         }
     }
-    // dd($dateAndWeek);
     return [
         'start_date'=>array_key_first($items),
         'end_date'=>array_key_last($items),
@@ -4040,7 +3848,7 @@ function formatWeeksDatesFromStartDate(string $agingDate, string $format ='d-m-Y
                 ] ,
             '8-15'=>[
                 'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(6)->format($format)
+                'end_date'=>$endDate = Carbon::make($startDate)->subDays(7)->format($format)
             ] ,
             '16-30'=>[
                 'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
@@ -4078,7 +3886,7 @@ function formatWeeksDatesFromStartDate(string $agingDate, string $format ='d-m-Y
             ] ,
         '8-15'=>[
             'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(6)->format($format)
+            'end_date'=>$endDate = Carbon::make($startDate)->addDays(7)->format($format)
         ] ,
         '16-30'=>[
             'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
@@ -4740,7 +4548,6 @@ function filterByColumnName($filterByColumnName){
 	}
 	$formatted=[];
 	foreach($items as $colName => $arr){
-		// dd();
 		foreach($arr as $col => $val){
 			$formatted[$colName][] =[
 				'title'=>$col,
@@ -4769,7 +4576,6 @@ function getValuesStartedAfterIndex(array $items , int $index){
 		}
 	}
 	return $result; 
-	// dd();
 }
 function qrcodeSpacing($code)
 {
@@ -4839,7 +4645,6 @@ function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSub
 }
  function convertStringArrayToArr($arrayAsString):?array 
 	{
-		// dd(is_string($arrayAsString));
 		if(is_string($arrayAsString)){
 			return (array)(json_decode($arrayAsString)) ;
 		}

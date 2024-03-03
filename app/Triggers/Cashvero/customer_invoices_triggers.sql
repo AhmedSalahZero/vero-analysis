@@ -13,14 +13,14 @@ CREATE TRIGGER `insert_net_invoice_amount` BEFORE INSERT
 		
 	IF (NEW.net_balance = 0 ) THEN
 			SET  NEW.invoice_status = 'collected';
-		ELSEIF(NEW.collected_amount + NEW.withhold_amount > 0 and DATE(NEW.invoice_due_date) < DATE(NOW() )) THEN 
+		ELSEIF(ifnull(NEW.collected_amount,0) + ifnull(NEW.withhold_amount,0) > 0 and DATE(NEW.invoice_due_date) < DATE(NOW() )) THEN 
 		SET  NEW.invoice_status = 'partially_collected_and_past_due'; 
 	ELSEIF( DATE(NEW.invoice_due_date) > DATE(NOW() )) THEN 
 		SET  NEW.invoice_status = 'not_due_yet'; 
 	ELSEIF( DATE(NEW.invoice_due_date) = DATE(NOW() )) THEN 
 		SET  NEW.invoice_status = 'due_to_day';
 
-	ELSEIF(NEW.collected_amount + NEW.withhold_amount = 0 and DATE(NEW.invoice_due_date) < DATE(NOW() )) THEN 
+	ELSEIF(ifnull(NEW.collected_amount,0) + ifnull(NEW.withhold_amount,0) = 0 and DATE(NEW.invoice_due_date) < DATE(NOW() )) THEN 
 		SET  NEW.invoice_status = 'past_due';            
 		END IF;
 		
@@ -45,15 +45,17 @@ UPDATE
 	set new.net_balance_in_main_currency = (new.net_balance * new.exchange_rate);
 	 IF (new.net_balance = 0 ) THEN
         SET  new.invoice_status = 'collected';
-     ELSEIF(new.collected_amount + new.withhold_amount > 0 and DATE(new.invoice_due_date) < DATE(NOW() )) THEN 
+     ELSEIF(ifnull(new.collected_amount,0) + ifnull(new.withhold_amount,0) > 0 and DATE(new.invoice_due_date) < DATE(NOW() )) THEN 
      SET  new.invoice_status = 'partially_collected_and_past_due'; 
  	ELSEIF( DATE(new.invoice_due_date) > DATE(NOW() )) THEN 
      SET  new.invoice_status = 'not_due_yet'; 
 	ELSEIF( DATE(new.invoice_due_date) = DATE(NOW() )) THEN 
      SET  new.invoice_status = 'due_to_day';
 
-	 ELSEIF(new.collected_amount + new.withhold_amount = 0 and DATE(new.invoice_due_date) < DATE(NOW() )) THEN 
-     SET  new.invoice_status = 'past_due';            
+	 ELSEIF(ifnull(new.collected_amount,0) + ifnull(new.withhold_amount,0) = 0 and DATE(new.invoice_due_date) < DATE(NOW() )) THEN 
+     SET  new.invoice_status = 'past_due';
+	-- else 
+	-- set new.invoice_status=new.net_balance;            
     END IF ;
 	set new.invoice_month = LPAD(MONTH(new.invoice_date), 2, 0);
 	set new.invoice_year = YEAR(new.invoice_date);
