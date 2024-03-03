@@ -138,6 +138,7 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	const receivedAmount = $('.js-' + currentType + '-received-amount').val()
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0 ;
+	console.log(totalRemaining);
 	$('#remaining-settlement-js').val(totalRemaining);
 	
 })

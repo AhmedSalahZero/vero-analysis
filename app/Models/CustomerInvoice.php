@@ -121,12 +121,7 @@ class CustomerInvoice extends Model
                 
         ];
     }
-    // public function getNetBalanceAttribute()
-    // {
-	// 	$netInvoice = $this->net_invoice_amount ?: 0 ;
-	// 	$collected = $this->collected_amount  ?: 0;
-    //     return $netInvoice - $collected ;
-    // }
+ 
     public function getNetBalance()
     {
         return $this->net_balance ?: 0 ;
@@ -233,23 +228,6 @@ class CustomerInvoice extends Model
 	{
 		return $this->vat_amount ?: 0 ;
 	}
-	// public function calculateAmountInMainCurrency()
-	// {
-	// 	$this->invoice_amount_in_main_currency = $this->invoice_amount * $this->exchange_rate ; 	
-	// 	$this->vat_amount_in_main_currency = $this->vat_amount * $this->exchange_rate ; 	
-	// 	$this->net_invoice_amount_in_main_currency = $this->net_invoice_amount * $this->exchange_rate ; 	
-	// 	$this->save();
-	// }
-    protected function updateNetBalance(float $totalCollected,float $totalWithholdAmount)
-    {
-	
-        // $netInvoiceAmount = $this->getNetInvoiceAmount();
-        // $this->net_balance = $netInvoiceAmount - $totalCollected ;
-        // $this->invoice_status = $this->generateInvoiceStatus($totalCollected, $netInvoiceAmount) ;
-        // $this->collected_amount = $totalCollected;
-        // $this->withhold_amount = $totalWithholdAmount;
-        // $this->save();
-    }
 	public function getStatus()
 	{
 		return $this->invoice_status;
@@ -258,6 +236,11 @@ class CustomerInvoice extends Model
 	{
 		return snakeToCamel($this->getStatus());
 	}
+	
+	public function isCollected()
+	{
+		return $this->getStatus() === 'collected'; 
+ 	}
 	
 	public function getDebitsDataFormattedArr():array
 	{
