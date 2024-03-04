@@ -25,7 +25,8 @@ class CustomerAgingController
 		$businessUnits = [];
 		$businessSectors = [];
 		if(isset($exportables['business_unit'])){
-			$businessUnits = DB::table('customer_invoices')->where('company_id',$company->id)->where('business_unit','!=',null)
+			$businessUnits = DB::table('customer_invoices')
+			->where('company_id',$company->id)->where('business_unit','!=',null)
 			->where('business_unit','!=',null)
 			->where('business_unit','!=','')
 			->selectRaw('business_unit')->get()->pluck('business_unit')->unique()->values()->toArray();

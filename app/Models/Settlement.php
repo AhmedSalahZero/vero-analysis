@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Settlement extends Model
@@ -28,4 +29,40 @@ class Settlement extends Model
 	{
 		return $this->withhold_amount ;
 	}		
+	public function unappliedAmount()
+	{
+		return $this->belongsTo(UnappliedAmount::class,'unapplied_amount_id','id');
+	}
+	public function getInvoiceNumber()
+	{
+		return $this->invoice_number ; 
+	}
+	public function getWithholdAmount()
+	{
+		return $this->withhold_amount?:0 ; 
+	}
+	public function getWithholdAmountFormatted()
+	{
+		return number_format($this->getWithholdAmount(),0);
+	}
+	public function getSettlementAmount()
+	{
+		return $this->settlement_amount?:0 ; 
+	}
+	public function getSettlementAmountFormatted()
+	{
+		return number_format($this->getSettlementAmount(),0);
+	}
+	public function getSettlementDate()
+	{
+		return $this->unappliedAmount->settlement_date ; 
+	}
+	public function getSettlementDateFormatted()
+    {
+        $settlementDate = $this->getSettlementDate() ;
+        if($settlementDate) {
+            return Carbon::make($settlementDate)->format('d-m-Y');
+        }
+    }
+	
 }

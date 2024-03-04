@@ -253,6 +253,8 @@ class MoneyReceived extends Model
 		
 	}
 	
+	
+	
 	public static function getUniqueBanks( $banks):array{
 		$uniqueBanksIds = [];
 		foreach($banks as $bankId){
@@ -397,9 +399,12 @@ class MoneyReceived extends Model
 		$cashInBank = $this->cashInBank;
 		return $cashInBank ? $cashInBank->getAccountNumber() : 0 ;
 	}
+	public function unappliedAmounts()
+	{
+		return $this->hasMany(UnappliedAmount::class ,'money_received_id','id');	
+	}
 	
-	
-	
+		
 	
 	
 }

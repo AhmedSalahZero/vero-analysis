@@ -122,7 +122,6 @@ class SalesGatheringTestController extends Controller
 	{
 		$active_job = ActiveJob::where('company_id',  $company->id)->where('model',$modelName)->where('status', 'save_to_table')->where('model_name', 'SalesGatheringTest')->first();
 		if ($active_job === null) {
-
 			$active_job = ActiveJob::create([
 				'company_id'  => $company->id,
 				'model_name'  => 'SalesGatheringTest',

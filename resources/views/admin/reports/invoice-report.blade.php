@@ -124,7 +124,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Invoices Table') . '[ '. $customerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Invoices Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
 @endsection
 @section('content')
 
@@ -277,14 +277,26 @@
 
                 </style>
                 @csrf
-				
+{{-- {{ dd(get_defined_vars()) }} --}}
+                <div class="text-right">
 
+                    <a href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                        <i class="fas fa-money-bill"></i>
+                        {{ __('Unapplied Amount Settlement') }}
+                    </a>
+
+                    <a href="#" class="btn  active-style btn-icon-sm align-self-center">
+                        <i class="fas fa-money-bill"></i>
+                        {{ __('Downpayment Amount Settlement') }}
+                    </a>
+
+                </div>
 
                 <div class="table-custom-container position-relative  ">
 
 
                     <div>
-                        
+
 
 
 
@@ -301,20 +313,20 @@
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Date') }}
                                         </th>
-										
-										  <th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Number') }}
                                         </th>
-										
-										  <th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Net Invoice Amount') }}
                                         </th>
-										
-										 <th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Due Date') }}
                                         </th>
 
-                                       
+
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Net Balance') }}
                                         </th>
@@ -325,17 +337,19 @@
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Aging') }}
                                         </th>
-										
-										 <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Adjust Due Date') }}
                                         </th>
-										
-										 <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+
+
+                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Actions') }}
                                         </th>
 
-
-
+                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+                                            {!! __('Unapplied Amount <br> Settlement') !!}
+                                        </th>
                                     </tr>
 
                                 </thead>
@@ -347,7 +361,7 @@
                                     @php
                                     @endphp
                                     @foreach($invoices as $index=>$invoice)
-									
+
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                         <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceDateFormatted() }}</td>
@@ -357,25 +371,32 @@
                                         <td class="sub-text-bg text-center ">{{ $invoice->getNetBalanceFormatted() }}</td>
                                         <td class="sub-text-bg text-center">{{ $invoice->getStatusFormatted() }}</td>
                                         <td class="sub-text-bg  text-center">
-                                           {{ $invoice->getAging() }}
+                                            {{ $invoice->getAging() }}
                                         </td>
-							      		 <td class="sub-text-bg  text-center">	
-										 	@if(!$invoice->isCollected())
-                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" 
-											@if($invoice->dueDateHistories->count())
-											style="background-color:orange !important;color:black !important;border-color:white !important;"
-											@else
-											style="background-color:green !important; border-color:white !important;"
-											@endif 
-											>{{ $invoice->dueDateHistories->count() ? __('Adjusted') : __('Adjust Due Date') }}</a>
-											@endif
-                                        </td>
-												
                                         <td class="sub-text-bg  text-center">
-										@if(!$invoice->isCollected())
-                                            <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Money Received') }}" class="btn btn-sm btn-primary">{{ __('money Received') }}</a>
-											@endif
+                                            @if(!$invoice->isCollected())
+                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" @if($invoice->dueDateHistories->count())
+                                                style="background-color:orange !important;color:black !important;border-color:white !important;"
+                                                @else
+                                                style="background-color:green !important; border-color:white !important;"
+                                                @endif
+                                                >{{ $invoice->dueDateHistories->count() ? __('Adjusted') : __('Adjust Due Date') }}</a>
+                                            @endif
                                         </td>
+
+                                        <td class="sub-text-bg  text-center">
+                                            @if(!$invoice->isCollected())
+                                            <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Money Received') }}" class="btn btn-sm btn-primary">{{ __('money Received') }}</a>
+                                            @endif
+                                        </td>
+										
+										
+                                        <td class="sub-text-bg  text-center">
+                                            @if(!$invoice->isCollected())
+                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id ]) }}" title="{{ __('Settlement') }}" class="btn btn-sm btn-primary">{{ __('Settlement') }}</a>
+                                            @endif
+                                        </td>
+										
                                         {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
 
 

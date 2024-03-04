@@ -11,6 +11,7 @@ use App\Models\MoneyReceived;
 use App\Models\Section;
 use App\Models\User;
 use App\Observers\CustomerInvoiceObserver;
+use App\Providers\ProductionArtisanServiceProvider;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -46,12 +47,10 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
-		
 		Collection::macro('formattedForSelect',function(bool $isFunction , string $idAttrOrFunction ,string $titleAttrOrFunction ){
 			return $this->map(function($item) use ($isFunction , $idAttrOrFunction ,$titleAttrOrFunction ){
 				return [
@@ -67,13 +66,12 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				// dd($items,$startDate , $endDate);
 				return $items->where('receiving_date','>=',$startDate)->where('receiving_date','<=',$endDate);
-				// return $items->where(function( $builder) use ($startDate,$endDate){
-				// 	dd($builder);
-				// });
 			}) ;
 		});
+		
+	
+		
 		
 		
 		if(true){

@@ -29,12 +29,8 @@ class BusinessSector extends Model  implements IBaseModel
      public static function getViewVars():array 
     {
         $currentCompanyId =  getCurrentCompanyId();
-        
         return [
-            // 'getDataRoute'=>route('admin.get.quick.pricing.calculator' , ['company'=>$currentCompanyId]) ,
             'modelName'=>'BusinessSector',
-            // 'exportRoute'=>route('admin.export.quick.pricing.calculator' , $currentCompanyId),
-            // 'createRoute'=>route('admin.create.quick.pricing.calculator',$currentCompanyId),
             'storeRoute'=>route('admin.store.business.sector',$currentCompanyId),
             'pageTitle'=>static::getPageTitle(),
             'type'=>'create'

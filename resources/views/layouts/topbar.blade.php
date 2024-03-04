@@ -28,7 +28,7 @@
 
 
             <!--begin: Notifications -->
-			@if(count($company->notifications))
+			@if(isset($company) && count($company->notifications))
             <div class="kt-header__topbar kt-grid__item ">
                 <div class="kt-header__topbar-item dropdown">
                     <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">

@@ -403,12 +403,12 @@
                                                 <td class="sub-text-bg text-center max-w-amount">{{ number_format($customerInvoicesBalancesAsStdClass->net_balance) }}</td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     @if($currencyName && $customerInvoicesBalancesAsStdClass->customer_name)
-                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
+                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$customerInvoicesBalancesAsStdClass->customer_id,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
                                                     @endif
                                                 </td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     @if($customerInvoicesBalancesAsStdClass->customer_name && $customerInvoicesBalancesAsStdClass->currency)
-                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'customerName'=>$customerInvoicesBalancesAsStdClass->customer_name,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
+                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$customerInvoicesBalancesAsStdClass->customer_id,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
                                                     @endif
                                                 </td>
                                             </tr>

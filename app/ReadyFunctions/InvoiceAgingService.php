@@ -41,7 +41,6 @@ class InvoiceAgingService
 			$invoiceNumber = $customerInvoice->invoice_number;
 			$invoiceDueDate = $customerInvoice->invoice_due_date;
 			$netBalance = $customerInvoice->getNetBalanceUntil($this->aging_date) ;
-
 			if(!$netBalance){
 				continue;
 			}

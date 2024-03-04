@@ -131,7 +131,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Statement Table') . '[ '. $customerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Statement Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
 @endsection
 @section('content')
 
@@ -406,11 +406,7 @@
                                         <td class="sub-text-bg  max-w-comment text-wrap">{{ $item['comment'] }}</td>
 										
                                      
-                                        {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
-
-
-                                        {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
-
+                 
                                     </tr>
 
 
