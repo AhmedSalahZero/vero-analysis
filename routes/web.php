@@ -325,6 +325,15 @@ Route::middleware([])->group(function () {
 				Route::get('money-received/edit/{moneyReceived}', 'MoneyReceivedController@edit')->name('edit.money.receive');
 				Route::put('money-received/update/{moneyReceived}', 'MoneyReceivedController@update')->name('update.money.receive');
 				Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
+				
+				Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
+				Route::get('unapplied-amounts/create/{customerInvoiceId}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
+				Route::post('unapplied-amounts/create', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
+				// Route::get('unapplied-amounts/edit/{moneyReceived}', 'MoneyReceivedController@edit')->name('edit.money.receive');
+				// Route::put('unapplied-amounts/update/{moneyReceived}', 'MoneyReceivedController@update')->name('update.money.receive');
+				// Route::delete('unapplied-amounts/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
+				
+				
 				Route::delete('delete-multi-rows', [HelpersController::class, 'deleteMulti'])->name('delete.multi');
 				Route::post('store-new-model', [HelpersController::class, 'storeNewModal'])->name('admin.store.new.modal');
 				
@@ -524,10 +533,11 @@ Route::middleware([])->group(function () {
 				Route::post('/create-item/{model}/update/{modelId}', 'SalesGatheringTestController@updateModel')->name('admin.update.analysis');
 				Route::get('/invoices-dashboard/cash', 'CustomerInvoiceDashboardController@viewCashDashboard')->name('view.customer.invoice.dashboard.cash');
 				Route::get('/invoices-dashboard/forecast', 'CustomerInvoiceDashboardController@viewForecastDashboard')->name('view.customer.invoice.dashboard.forecast');
-				Route::get('/customer-balances/invoices-report/{customerName}/{currency}', 'CustomerInvoiceDashboardController@showInvoiceReport')->name('view.invoice.report');
-				Route::get('/customer-balances/invoices-statement-report/{customerName}/{currency}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
+				Route::get('/customer-balances/invoices-report/{partnerId}/{currency}', 'CustomerInvoiceDashboardController@showInvoiceReport')->name('view.invoice.report');
+				Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
 				Route::get('/customer-balances/total-net-balance-details/{currency}', 'CustomerBalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
-				
+				Route::resource('sharing-links', 'SharingLinkController');
+
 				Route::prefix('/SalesGathering')->group(function () {
 					Route::get('SalesTrendAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.trend.analysis');
 					Route::get('SalesExportAnalysis', 'AnalysisReports@exportAnalysisReports')->name('sales.export.analysis');
@@ -660,7 +670,6 @@ Route::middleware([])->group(function () {
 					
 					
 					Route::get('export-analysis-reports/{firstColumn}/{secondColumn}','Analysis\SalesGathering\ExportAgainstAnalysisReport@index')->name('view.export.against.report');
-					// Route::get('customer-aging-reports/','CustomerAgingController@index')->name('view.customer.aging.analysis');
 					Route::post('export-analysis-reports','Analysis\SalesGathering\ExportAgainstAnalysisReport@result')->name('result.export.against.report');
 
 					// Customers Nature

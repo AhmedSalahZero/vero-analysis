@@ -410,4 +410,9 @@ class CustomerInvoice extends Model
 	{
 		return $this->hasMany(DueDateHistory::class,'customer_invoice_id','id');
 	}
+	public static function getAllUniqueCustomerNames(int $companyId)
+	{
+		return CustomerInvoice::where('company_id',$companyId)
+		->get()->pluck('customer_name','customer_name')->toArray();
+	}
 }

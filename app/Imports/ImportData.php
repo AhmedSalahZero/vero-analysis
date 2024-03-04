@@ -80,11 +80,6 @@ class ImportData implements
 		$this->job_id = $jobId;
 		$this->userId = $userId;
 		$this->uploadModelName = $uploadModelName;
-		
-		
-
-		
-		// $this->batch = $batch;
 	}
 	/**
 	 * @param array $row

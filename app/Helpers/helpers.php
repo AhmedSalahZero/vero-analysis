@@ -3343,15 +3343,6 @@ function replaceSingleQuote($string)
 {
     return str_replace("'", "\'", $string) ;
 }
-function replace_all_spacial_character_in_array_values(array $items)
-{
-    
-    $newItems = [];
-    foreach($items as $key => $value) {
-        $newItems[$key]=$value ? str_replace(array('"', "'","\\"), ' ', $value) : $value;
-    }
-    return $newItems ;
-}
 function getNextDate(?array $array, ?string $date, $datesExistsAsKeys = true)
 {
 

@@ -348,7 +348,7 @@ class MoneyReceivedController
 		$receivedAmount = 0 ;
 		$exchangeRate = $request->input('exchange_rate.'.$moneyType,1) ;
 		$receivedAmount = $request->input('received_amount.'.$moneyType ,0) ;
-		if($moneyType ==MoneyReceived::CASH_IN_SAFE){
+		if($moneyType == MoneyReceived::CASH_IN_SAFE){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
 			$relationName = 'cashInSafe';
@@ -382,6 +382,15 @@ class MoneyReceivedController
 		$moneyReceived = MoneyReceived::create($data);
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
+		if($request->get('unapplied_amount') > 0 ){
+			$moneyReceived->unappliedAmounts()->create([
+				'amount'=>$request->get('unapplied_amount'),
+				'partner_id'=>$customerInvoiceId,
+				'settlement_date'=>$request->get('receiving_date'),
+				'company_id'=>$company->id,
+				'net_balance_until_date'=>0
+			]);
+		}
 		$totalWithholdAmount= 0 ;
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{

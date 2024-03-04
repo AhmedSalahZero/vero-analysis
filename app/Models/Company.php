@@ -138,4 +138,8 @@ class Company extends Model implements HasMedia
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getChequesUnderCollectionNotificationsDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
 	}
+	public function getUnappliedAmounts()
+	{
+		return $this->hasMany();
+	}
 }

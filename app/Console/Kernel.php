@@ -2,9 +2,9 @@
 
 namespace App\Console;
 
+use App\Jobs\CheckDueAndPastedInvoicesJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Jobs\CheckDueAndPastedInvoicesJob;
 
 
 class Kernel extends ConsoleKernel
@@ -27,7 +27,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 		$schedule->job(new CheckDueAndPastedInvoicesJob)->everyMinute();
-
     }
 
     /**

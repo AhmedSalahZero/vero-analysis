@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+class Partner extends Model
+{
+    protected $dates = [
+    ];
+	
+	
+
+    protected $guarded = [];
+
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+	public function getId(){
+		return $this->id ;
+	}
+	public function getName()
+	{
+		return $this->name ;
+	}
+	public function getCustomerName()
+	{
+		return $this->getName();
+	}
+	public function scopeOnlyCompany(Builder $query,$companyId){
+		return $query->where('company_id',$companyId);
+	}
+	public function unappliedAmounts()
+	{
+		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	
+	}
+	public function getUnappliedAmountsWithSettlements(string $startDate , string $endDate):Collection
+	{
+		return $this->unappliedAmounts->load('settlements')->has('settlements')->whereBetween('settlement_date',[$startDate,$endDate]);
+	}
+	public function settlementForUnappliedAmounts()
+	{
+		return $this->hasMany(Settlement::class,'customer_name','name')->whereNotNull('unapplied_amount_id');
+	}
+	public function getSettlementForUnappliedAmounts(string $startDate , string $endDate)
+	{
+		// dd($this);
+		return $this->settlementForUnappliedAmounts()
+		->whereHas('unappliedAmount',function(Builder $q) use ($startDate,$endDate){
+			$q->where('settlement_date','>=',$startDate)->where('settlement_date','<=',$endDate);
+		})
+		->
+		get();
+	}
+	
+	
+}

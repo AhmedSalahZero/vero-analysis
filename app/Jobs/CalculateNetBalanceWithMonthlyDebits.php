@@ -2,16 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Models\CachingCompany;
 use App\Models\CustomerInvoice;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Cache;
 
 class CalculateNetBalanceWithMonthlyDebits implements ShouldQueue
 {

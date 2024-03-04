@@ -9,7 +9,6 @@ use App\Models\FinancialStatement;
 use App\Models\IncomeStatement;
 use App\Observers\BalanceSheetObserver;
 use App\Observers\CashFlowStatementObserver;
-use App\Observers\CustomersInvoiceObserver;
 use App\Observers\FinancialStatementObserver;
 use App\Observers\IncomeStatementObserver;
 use Illuminate\Support\ServiceProvider;
@@ -33,7 +32,6 @@ class ObserversModelServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		CustomersInvoice::observe(CustomersInvoiceObserver::class);
 		IncomeStatement::observe(IncomeStatementObserver::class);
 		BalanceSheet::observe(BalanceSheetObserver::class);
 		CashFlowStatement::observe(CashFlowStatementObserver::class);

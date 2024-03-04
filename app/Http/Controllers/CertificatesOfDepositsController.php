@@ -79,22 +79,17 @@ class CertificatesOfDepositsController
 			'filterStartDate'=>$filterStartDate
 		]);
     }
-	public function getCustomers(Company $company):array 
-	{
-		return CustomerInvoice::where('company_id',$company->id)
-		->get()->pluck('customer_name','customer_name')->toArray();
-	}
+	
 	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customers = $this->getCustomers($company);
+		
 		$accounts = $financialInstitution->accounts ;
         return view('reports.certificates-of-deposit.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			'customers'=>$customers,
 			'accounts'=>$accounts
 		]);
     }
