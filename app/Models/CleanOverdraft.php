@@ -18,6 +18,8 @@ class CleanOverdraft extends Model
 {
     protected $guarded = ['id'];
 	use HasOutstandingBreakdown ;
+	
+	
 	/**
 	 * * هو تاريخ بداية التعاقد مع البنك علي هذا التسهيل (القرض)
 	 */
@@ -113,9 +115,28 @@ class CleanOverdraft extends Model
 		->where('financial_institution_id',$financialInstitutionId)
 		->pluck('account_number','account_number')->toArray();		
 	}
+	public function cleanOverdraftBankStatements()
+	{
+		return $this->hasMany(CleanOverdraftBankStatement::class,'clean_overdraft_id','id');
+	}
+	public static function findByAccountNumber($accountNumber)
+	{
+		return self::where('account_number',$accountNumber)->first();
+	}
 	
+	public function bankStatements()
+	{
+		return $this->hasMany(CleanOverdraftBankStatement::class , 'clean_overdraft_id','id');
+	}	
 	
-	
+	public function generateForeignKeyFormModelName()
+	{
+		return 'clean_overdraft_id';
+	}	
+	public function getBankStatementTableName()
+	{
+		return 'clean_overdraft_bank_statements';
+	}
 	
 	
 }

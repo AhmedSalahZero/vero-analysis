@@ -8,7 +8,7 @@
 ])
 <div class="col-md-12 {{ $parentClass }}  js-parent-to-table" style="display:none">
     <hr style="width:100%;">
-    <table id="{{ $repeaterId }}" class="table {{ $repeaterId }} table-white repeater-class repeater {{ $tableName }}"  >
+    <table id="{{ $repeaterId }}" class="table  {{ $repeaterId }} table-white repeater-class repeater {{ $tableName }}"  >
         <thead>
             <tr>
                 <x-tables.repeater-table-th class="col-md-1" :title="__('Action')"></x-tables.repeater-table-th>
@@ -65,8 +65,11 @@
 				$('input.trigger-change-repeater').trigger('change')   
 				 $(this).find('.only-month-year-picker').each(function(index,dateInput){
 					reinitalizeMonthYearInput(dateInput)
-					
 				 });
+				 $(document).find('.datepicker-input:not(.only-month-year-picker)').datepicker({
+                            dateFormat: 'mm-dd-yy'
+                            , autoclose: true
+                        })
 				$('input:not([type="hidden"])').trigger('change');
 				$(this).find('.dropdown-toggle').remove();
 				$(this).find('select.repeater-select').selectpicker("refresh");

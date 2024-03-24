@@ -25,6 +25,7 @@
 							@endif
 							
 							>
+							<input type="hidden" name="active" value="{{ $type }}">
                                 <div class="row align-items-center ">
                                     <div class="col-md-3 d-flex align-items-center "
 									@if($lang == 'ar')

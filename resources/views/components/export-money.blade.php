@@ -154,7 +154,7 @@ use App\Models\MoneyReceived ;
                                         <label>{{__('Account Balance')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
                                             <input readonly required value="0" type="text" name="account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
-                                            <x-tool-tip title="{{__('Kash Vero')}}" />
+                                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">

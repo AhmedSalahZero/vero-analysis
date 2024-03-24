@@ -14241,6 +14241,18 @@
         {
                         return \Illuminate\Support\Collection::filterByReceivingDate($startDate, $endDate);
         }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @param string|null $startDate
+         * @param string|null $endDate
+         * @static 
+         */ 
+        public static function filterByIssuanceDate($startDate, $endDate)
+        {
+                        return \Illuminate\Support\Collection::filterByIssuanceDate($startDate, $endDate);
+        }
          
     }
      

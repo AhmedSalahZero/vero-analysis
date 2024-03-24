@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\LgTypes;
 use App\Http\Controllers\Analysis\SalesGathering\BranchesAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\BusinessSectorsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\CategoriesAgainstAnalysisReport;
@@ -2044,6 +2045,19 @@ function getDurationIntervalTypesForSelect(): array
 }
 
 
+function MonthAndQuarterlyIntervals(): array
+{
+    return [
+        [
+            'value' => 'monthly',
+            'title' => __('Monthly')
+        ],
+        [
+            'value' => 'quarterly',
+            'title' => __('Quarterly')
+        ]
+    ];
+}
 
 function getDurationIntervalTypesForSelectExceptMonthly(): array
 {
@@ -2240,7 +2254,11 @@ function getExportDateTime(): string
 }
 function getExportUserName()
 {
-    return  Auth()->user() ? Auth()->user()->getName() : null;
+	/**
+	 * @var User $user 
+	 */
+	$user = Auth()->user() ;
+    return  $user ? $user->getName() : null;
 }
 
 function orderArrayByItemsKeys(array $array): array
@@ -2985,6 +3003,9 @@ function getPermissions():array
         ],
         [
             'name'=>'view customer balances'
+        ], 
+		[
+            'name'=>'view letter of guarantee issuance'
         ],
 		[
             'name'=>'view cash dashboard'
@@ -2993,6 +3014,14 @@ function getPermissions():array
 		[
             'name'=>'view notification settings'
         ],
+		[
+            'name'=>'view opening balances'
+        ]
+		,
+		[
+            'name'=>'view contracts'
+        ]
+		,
 		
 		
 		[
@@ -4097,6 +4126,9 @@ function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId)
 function getHeaderMenu()
 {
     $company = getCurrentCompany();
+	/**
+	 * @var User $user 
+	 */
     $user = auth()->user();
     if(!$company) {
         return [
@@ -4109,6 +4141,80 @@ function getHeaderMenu()
     $hasSelectCustomerNameInTemplate = isset($exportablesForSalesGathering['customer_name']);
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
 
+	$cashManagementSubItems = [
+		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
+		'cash-dashboard'=>[
+			'title'=>__('Cash Dashboard'),
+			'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
+			'show'=>$user->can('view cash dashboard'),
+			'submenu'=>[]
+		],
+		'cash-forecast-dashboard'=>[
+			'title'=>__('Cash Forecast Dashboard'),
+			'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+			'show'=>$user->can('view cash Forecast dashboard'),
+			'submenu'=>[]
+		],
+		'settings'=>[
+			'title'=>__('Settings'),
+			'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+			'show'=>$user->can('view cashvero settings'),
+			'submenu'=>[
+				[
+					'title'=>__('Contracts'),
+				'link'=>route('contracts.index', ['company'=>$companyId]),
+				'show'=>$user->can('view contracts'),
+				
+				],
+				[
+					'title'=>__('Opening Balance'),
+				'link'=>route('opening-balance.index', ['company'=>$companyId]),
+				'show'=>$user->can('view opening balances'),
+				
+				]
+				
+				,[
+					'title'=>__('Notification Settings'),
+				'link'=>route('notifications-settings.index', ['company'=>$companyId]),
+				'show'=>$user->can('view notification settings'),
+				
+				]
+			]
+		],
+		'financial-institution'=>[
+			'title'=>__('Financial Institutions'),
+			'link'=>route('view.financial.institutions',['company'=>$companyId]),
+			'show'=>$user->can('view financial institutions')
+		],
+		
+		'customer-aging'=>[
+			'title'=>__('Customer Aging'),
+			'link'=>route('view.customer.aging.analysis', ['company'=>$companyId]),
+			'show'=>$user->can('view customer aging'),
+			'submenu'=>[
+			]
+		],
+		'money-received'=>[
+			'title'=>__('Money Received'),
+			'link'=>route('view.money.receive', ['company'=>$companyId]),
+			'show'=>$user->can('view money received'),
+			'submenu'=>[]
+		],
+		'customer-balances'=>[
+			'title'=>__('Customer Balances'),
+			'link'=>route('view.customer.balances', ['company'=>$companyId]),
+			'show'=>$user->can('view customer balances'),
+			'submenu'=>[]
+		],'view letter of guarantee issuance'=>[
+			'title'=>__('LG Issuance'),
+			'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
+			'show'=>$user->can('view letter of guarantee issuance'),
+			'submenu'=>[]
+		]
+		];
+		if(hasMiddleware('isCashManagement')){
+			return $cashManagementSubItems ;
+		}
     return [
         'home'=>generateMenuItem(__('Home'), $user->can('view home'),route('home'), []),
         'dashboard'=>[
@@ -4209,60 +4315,7 @@ function getHeaderMenu()
 											'title'=>__('Cash Management'),
 											'link'=>'#',
 											'show'=>$user->can('view cash management'),
-											'submenu'=>[
-												'cash-dashboard'=>[
-													'title'=>__('Cash Dashboard'),
-													'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
-													'show'=>$user->can('view cash dashboard'),
-													'submenu'=>[]
-												],
-												'cash-forecast-dashboard'=>[
-													'title'=>__('Cash Forecast Dashboard'),
-													'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-													'show'=>$user->can('view cash Forecast dashboard'),
-													'submenu'=>[]
-												],
-												'settings'=>[
-													'title'=>__('Settings'),
-													'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-													'show'=>$user->can('view cashvero settings'),
-													'submenu'=>[
-														[
-															'title'=>__('Notification Settings'),
-														'link'=>route('notifications-settings.index', ['company'=>$companyId]),
-														'show'=>$user->can('view notification settings'),
-														
-														]
-													]
-												],
-												'financial-institution'=>[
-													'title'=>__('Financial Institutions'),
-													'link'=>route('view.financial.institutions',['company'=>$companyId]),
-													'show'=>$user->can('view financial institutions')
-												],
-												
-												'customer-aging'=>[
-													'title'=>__('Customer Aging'),
-													'link'=>route('view.customer.aging.analysis', ['company'=>$companyId]),
-													'show'=>$user->can('view customer aging'),
-													'submenu'=>[
-													]
-												],
-												'money-received'=>[
-													'title'=>__('Money Received'),
-													'link'=>route('view.money.receive', ['company'=>$companyId]),
-													'show'=>$user->can('view money received'),
-													'submenu'=>[]
-												],
-												'customer-balances'=>[
-													'title'=>__('Customer Balances'),
-													'link'=>route('view.customer.balances', ['company'=>$companyId]),
-													'show'=>$user->can('view customer balances'),
-													'submenu'=>[]
-												]
-												
-												
-											]
+											'submenu'=>$cashManagementSubItems
 												],
 												
 												
@@ -4320,11 +4373,7 @@ function getHeaderMenu()
 }
 function getLgTypes():array 
 {
-	return [
-		'bid bond'=>__('Bid Bond'),
-		'final lgs'=>__('Final Lgs'),
-		'advanced payment lgs'=>__('Advanced Payment LGs')
-	];
+	return LgTypes::getAll();
 }
 function getCommissionInterval():array
 {
@@ -4641,3 +4690,7 @@ function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSub
 		}
 		return $arrayAsString;
 	} 
+function hasMiddleware(string $middlewareName)
+{
+	return in_array($middlewareName,array_values(Route::current()->gatherMiddleware()) );
+}

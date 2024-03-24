@@ -3,7 +3,9 @@ namespace App\Traits;
 
 use App\Models\Company;
 use App\OutstandingBreakdown;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 trait HasOutstandingBreakdown
@@ -22,15 +24,41 @@ trait HasOutstandingBreakdown
 	{
 		return $this->hasMany(OutstandingBreakdown::class , 'model_id','id')->where('model_type',self::class);	
 	}
+	
 	public function storeOutstandingBreakdown(Request $request , Company $company)
 	{
+		$outstandingBalance = $request->get('outstanding_balance',0);
 		$this->outstandingBreakdowns()->delete();
-		foreach($request->get('outstanding_breakdowns',[]) as $outstandingBreakdownArr){
-			unset($outstandingBreakdownArr['id']);
-			$outstandingBreakdownArr['company_id'] = $company->id ;
-			$outstandingBreakdownArr['model_type'] = get_class($this);
-			$outstandingBreakdownArr['amount'] = number_unformat($outstandingBreakdownArr['amount']);
-			$this->outstandingBreakdowns()->create($outstandingBreakdownArr);
+		if($outstandingBalance > 0) {
+			$bankStatement = $this->bankStatements()->create([
+				'type'=>'outstanding_balance',
+				'money_received_id'=>0 ,
+				'company_id'=>$company->id ,
+				'date'=>$request->get('balance_date'),
+				'limit'=>$this->getLimit(),
+				'beginning_balance'=>$outstandingBalance * -1 ,
+				'debit'=>0,
+				'credit'=> 0 
+			]);
+			foreach($request->get('outstanding_breakdowns',[]) as $outstandingBreakdownArr){
+				unset($outstandingBreakdownArr['id']);
+				$outstandingBreakdownArr['company_id'] = $company->id ;
+				$outstandingBreakdownArr['model_type'] = get_class($this);
+				$modelForeignKey = $this->generateForeignKeyFormModelName();
+				$outstandingBreakdownArr['amount'] = number_unformat($outstandingBreakdownArr['amount']);
+				$withdrawalDate = Carbon::make($outstandingBreakdownArr['settlement_date'])->subDays($this->getMaxSettlementDays())->format('Y-m-d');
+				$bankStatement->withdrawals()->create([
+					$modelForeignKey =>$this->id ,
+					'company_id'=>$company->id ,
+					'withdrawal_date'=>$withdrawalDate,
+					'withdrawal_amount'=>$outstandingBreakdownArr['amount'] ,
+					'max_settlement_days'=>$this->getMaxSettlementDays(),
+					'due_date'=>$outstandingBreakdownArr['settlement_date'] ,
+					'settlement_amount'=>0,
+				]);
+				$this->outstandingBreakdowns()->create($outstandingBreakdownArr);
+			}
+				
 		}
 	}
 }

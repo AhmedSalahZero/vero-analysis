@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\OpeningBalance;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -16,6 +17,10 @@ class MoneyReceived extends Model
 	const CHEQUE_REJECTED  = 'cheque-rejected';
 	const CHEQUE_COLLECTED = 'cheque-collected';
 	
+	public function getId()
+	{
+		return $this->id ;
+	}	
 	public static function getAllTypes()
 	{
 		return [
@@ -54,8 +59,6 @@ class MoneyReceived extends Model
     {
         return $this->getType() ==self::INCOMING_TRANSFER;
     }
-	
-	
     
 	
     public function getCustomerName()
@@ -75,6 +78,13 @@ class MoneyReceived extends Model
     {
         return  $this->received_amount?:0 ;
     }
+	public function getChequeDueDate(){
+		return $this->cheque ? $this->cheque->getDueDate(): null;
+	}
+	public function getChequeNumber()
+	{
+		return $this->cheque ? $this->cheque->getChequeNumber():null;
+	}
 	public function getReceivedAmountFormatted()
     {
         return number_format($this->getReceivedAmount()) ;
@@ -230,12 +240,6 @@ class MoneyReceived extends Model
             return Carbon::make($receivingDate)->format('d-m-Y');
         }
     }
-	
-	// public function getChequeFinancialInstitutionId(){
-		
-	// }
-    
-
 	public function setReceivingDateAttribute($value)
 	{
 		if(is_object($value)){
@@ -258,16 +262,7 @@ class MoneyReceived extends Model
 	public static function getUniqueBanks( $banks):array{
 		$uniqueBanksIds = [];
 		foreach($banks as $bankId){
-			// if($bank->drawee_bank_id){
 				$uniqueBanksIds[$bankId] = $bankId;
-			// }
-			// if($bank->receiving_bank_id){
-			// 	$uniqueBanksIds[$bank->receiving_bank_id] = $bank->receiving_bank_id;
-			// }
-			// if($bank->drawl_bank_id){
-			// 	$uniqueBanksIds[$bank->drawl_bank_id] = $bank->drawl_bank_id;
-			// }
-			
 		}
 		return $uniqueBanksIds; 
 	}
@@ -275,7 +270,6 @@ class MoneyReceived extends Model
 	public static function getDrawlBanksForCurrentCompany(int $companyId){
 
 		$cheques = self::where('company_id',$companyId)->has('cheque')->with('cheque')->get()->pluck('cheque.drawee_bank_id')->toArray();
-		// $banks = self::where('company_id',$companyId)->get(['drawee_bank_id']);
 		$banks = self::getUniqueBanks($cheques);
 		$banksFormatted = [];
 		foreach($banks as $bankId){
@@ -284,7 +278,6 @@ class MoneyReceived extends Model
 				$banksFormatted[$bankId] = $bank->getViewName() ;
 			}
 		}
-		
 		return $banksFormatted; 
 	}
 	
@@ -403,8 +396,33 @@ class MoneyReceived extends Model
 	{
 		return $this->hasMany(UnappliedAmount::class ,'money_received_id','id');	
 	}
-	
-		
-	
-	
+	public function cleanOverdraftBankStatement()
+	{
+		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
+	}
+	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $receivedAmount )
+	{
+		return $this->cleanOverdraftBankStatement()->create([
+			'type'=>$moneyType ,
+			'clean_overdraft_id'=>$cleanOverdraft->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$cleanOverdraft->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>$receivedAmount,
+			'credit'=>0 
+		]) ;
+	}		
+	public function openingBalance()
+	{
+		return $this->belongsTo(OpeningBalance::class,'opening_balance_id');
+	}
+	public function isOpenBalance()
+	{
+		return $this->opening_balance_id !== null ;
+	}
+	public function getChequeClearanceDays()
+	{
+		return $this->cheque ? $this->cheque->clearance_days : 0 ;
+	}
 }

@@ -79,12 +79,8 @@
                     <div class="kt-widget24__details">
                         <div class="kt-widget24__info">
                             <h4 class="kt-widget24__title font-size">
-                                {{ __('Day Sales') }} <span {{-- id="end-date-id" --}}> : {{ $end_date ?  \Carbon\Carbon::make($end_date)->format('d-M-Y') : '' }}
-                                    {{-- asdasdasd --}}
-
-                                    {{-- {{ $salesReport['last_date'] }} --}}
+                                {{ __('Day Sales') }} <span > : {{ $end_date ?  \Carbon\Carbon::make($end_date)->format('d-M-Y') : '' }}
                                     <br>
-                                    {{-- {{ $daySales[0]->day_sales }} --}}
                                 </span>
                             </h4>
 

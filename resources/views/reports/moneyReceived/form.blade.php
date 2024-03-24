@@ -408,7 +408,7 @@ use App\Models\MoneyReceived ;
                                     <option value="{{ $bankId }}" {{ isset($model) && $model->cheque && $model->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                     @endforeach
                                 </select>
-                                <button id="js-drawee-bank" class="btn btn-sm btn-primary">Add New Bank</button>
+                                <button id="js-drawee-bank" class="btn btn-sm btn-primary">{{ __('Add New Bank') }}</button>
                             </div>
                         </div>
                     </div>

@@ -77,7 +77,7 @@ $(document).on('change','.only-greater-than-zero-allowed',function(){
     if(! isGreaterThanZero($(this).val()) && $(this).val())
     {
         let currentLang = $('body').data('lang');
-
+	
         let trans = {
             "The Value Must Be Greater Than Zero":{
                 "en":"The Value Must Be Greater Than Zero",

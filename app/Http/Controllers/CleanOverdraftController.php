@@ -96,9 +96,9 @@ class CleanOverdraftController
 		 * @var CleanOverDraft $cleanOverdraft 
 		 */
 		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
-		// dd($cleanOverdraft);
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ; 
+		
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
@@ -107,8 +107,7 @@ class CleanOverdraftController
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customers = $this->getCustomers($company);
-		
+		 $customers = CustomerInvoice::getAllUniqueCustomerNames($company->id);;
         return view('reports.clean-overdraft.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,

@@ -137,7 +137,7 @@ class User extends Authenticatable implements HasMedia
 	}
 	public function getReceivedCashesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_SAFE)->filterByReceivingDate($startDate,$endDate) ;
+		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_SAFE)->whereNull('opening_balance_id')->filterByReceivingDate($startDate,$endDate) ;
 	}
 	public function getReceivedCashesInBank(?string $startDate = null , ?string $endDate = null):Collection
 	{

@@ -10,8 +10,10 @@ class Partner extends Model
 {
     protected $dates = [
     ];
-	
-	
+	public function contracts()
+	{
+		return $this->hasMany(Contract::class,'partner_id','id');
+	}
 
     protected $guarded = [];
 
@@ -35,6 +37,14 @@ class Partner extends Model
 	public function scopeOnlyCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}
+	public function scopeOnlyForCompany(Builder $query,$companyId){
+		return $query->where('company_id',$companyId);
+	}
+	public function scopeOnlyCustomers(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_customer',1);
+		});
+	}
 	public function unappliedAmounts()
 	{
 		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	
@@ -57,6 +67,5 @@ class Partner extends Model
 		->
 		get();
 	}
-	
 	
 }

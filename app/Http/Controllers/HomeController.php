@@ -43,6 +43,10 @@ class HomeController extends Controller
 		if (count($user->companies) > 1) {
 			return view('client_view.home', compact('companies'));
 		} else {
+			if(count($user->companies) == 0){
+				auth()->logout();
+				return redirect()->route('login');
+			}
 			$company = $user->companies[0];
 			return view('client_view.homePage', compact('company'));
 		}
@@ -442,7 +446,6 @@ class HomeController extends Controller
 			$incomeStatement = optional();
 			$breakdown_data   = [];
 		}
-		// dd($breakdown_data);
 		$formattedDataForChart = formatDataForChart($breakdown_data);
 		$monthlyChartCumulative = getMonthlyChartCumulative($formattedDataForChart);
 		$types = array_unique(array_keys($breakdown_data));

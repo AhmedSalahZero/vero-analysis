@@ -29,7 +29,9 @@
 	.text-red{
 		color:red !important;
 	}
-	
+	.show-class-js{
+		display:block !important;
+	}	
 	.table-condensed th{
 		background-color:white !important;
 	}
@@ -370,6 +372,7 @@
 
     <!--begin::Fonts -->
     <script src="{{ asset('custom/webfont.js') }}"></script>
+    <script src="{{ asset('custom/helper.js') }}"></script>
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script> --}}
     <script>
         var wto;

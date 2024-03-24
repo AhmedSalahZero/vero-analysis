@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\CashManagementMiddleware;
 use App\Http\Middleware\CheckIfAccountExpired;
 use App\Http\Middleware\SetCompany;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -40,6 +41,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\SetCompany::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\canViewCurrentCompany::class,
+			
             
         ],
 
@@ -73,6 +75,7 @@ class Kernel extends HttpKernel
         'localeSessionRedirect'   => \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
         'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
         'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
-        'checkIfAccountExpired'          => CheckIfAccountExpired::class
+        'checkIfAccountExpired'          => CheckIfAccountExpired::class,
+		'isCashManagement'=>CashManagementMiddleware::class
     ];
 }

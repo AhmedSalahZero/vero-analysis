@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
+use App\Models\MoneyReceived;
+use App\Models\OpeningBalance;
 use App\Models\SalesForecast;
 use App\Models\SalesGathering;
 use App\Services\Caching\CashingService;
@@ -18,7 +21,7 @@ class TestCommand extends Command
 	 *
 	 * @var string
 	 */
-	protected $signature = 'test:run';
+	protected $signature = 'run:test';
 
 	/**
 	 * The console command description.
@@ -44,5 +47,26 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+		$openingBalance = OpeningBalance::find(18);
+		dd($openingBalance->chequeInSafe);
+		// $item = CleanOverdraftBankStatement::where('id',3)->first();
+		// $item->delete();
+		///////////////////
+		// $item = CleanOverdraftBankStatement::where('id',3)->first();
+		// $item->clean_overdraft_id = 2 ;
+		// $item->debit = 0 ;
+		// $item->save();
+		
+		
+dd('good');		
+		
+		// CleanOverdraftBankStatement::where('id','>=',2)->each(function($item){
+		// 	$debit = $item->id ==3  ? 100 : $item->debit ;
+		// 	$item->update([
+		// 		'updated_at'=>now(),
+		// 		'debit'=>$debit
+		// 	]);
+		// });
+		// dd('good');
 	}
 }

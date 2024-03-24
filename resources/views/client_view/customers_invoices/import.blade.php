@@ -47,10 +47,16 @@
                                 <div class="kt-input-icon">
                                     <select name="format" class="form-control" required>
                                         <option value="">{{__('Select')}}</option>
-                                        <option value="d-m-Y" >{{__('Day-Month-Year')}}</option>
+                                        {{-- <option value="d-m-Y" >{{__('Day-Month-Year')}}  </option>
                                         <option value="m-d-Y">{{__('Month-Day-Year')}}</option>
                                         <option value="Y-m-d" >{{__('Year-Month-Day')}}</option>
-                                        <option value="Y-d-m">{{__('Year-Day-Month')}}</option>
+                                        <option value="Y-d-m">{{__('Year-Day-Month')}}</option> --}}
+										 <option value="d-m-Y">{{ __('Day-Month-Year') }} eg [ 15-01-2024]</option>
+									  <option value="d-M-Y" >{{__('Day-Month-Year')}} eg [ 15-Jan-2024]</option>
+                                    <option value="m-d-Y">{{ __('Month-Day-Year') }} eg [ 05-15-2024] </option>
+                                    <option value="Y-m-d">{{ __('Year-Month-Day') }} eg [2024-05-15] </option>
+                                    <option value="Y-d-m">{{ __('Year-Day-Month') }} eg [2024-15-05] </option>
+									
                                     </select>
                                     <x-tool-tip title="{{ __('Kash Vero') }}" />
                                 </div>

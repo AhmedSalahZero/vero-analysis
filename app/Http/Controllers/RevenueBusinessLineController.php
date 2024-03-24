@@ -4,18 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exports\RevenueBusinessLineExport;
 use App\Http\Requests\RevenueBusinessGroupingRequest;
-use App\Http\Requests\RevenueBusinessLineRequest;
-use App\Http\Requests\ServiceItemRequest;
-use App\Models\BusinessSector;
-use App\Models\Category;
 use App\Models\Company;
 use App\Models\Repositories\RevenueBusinessLineRepository;
 use App\Models\RevenueBusinessLine;
 use App\Models\ServiceCategory;
 use App\Models\ServiceItem;
-use App\Validators\RevenueBusinessLineValidator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class RevenueBusinessLineController extends Controller
 {
@@ -53,16 +47,12 @@ class RevenueBusinessLineController extends Controller
 					$items[$revenueBusinessLineId]['sub_items'][$categoryId]['data'] = ['name'=>$categoryName];
 					foreach($category->serviceItems as $serviceItem) {
 						$serviceName = $serviceItem->getName() ;
-						
 						$items[$revenueBusinessLineId]['sub_items'][$categoryId]['sub_items'][$serviceItem->id]['data'] = ['name'=>$serviceName];
-					   
-						
 					}
 				}	
 			}
             
         }
-        // dd($items);
         return view('admin.revenue-business-line.view', array_merge($tableVars, ['items'=>$items,'company'=>$company ]));
     }
     public function paginate(Request $request)

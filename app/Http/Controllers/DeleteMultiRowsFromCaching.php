@@ -21,7 +21,6 @@ class DeleteMultiRowsFromCaching extends Controller
          $selectedRows = (array)$request->rows ;
 		 $dateFrom = $request->get('delete_date_from',$request->get('delete_serial_from'));
 		 $dateTo = $request->get('delete_date_to',$request->get('delete_serial_to'));
-		 dd($dateFrom,$dateTo);
 		 if($selectedRows && count($selectedRows) || ($dateFrom && $dateTo))
 		 {
 			 $caches = CachingCompany::where('company_id' , $company->id )->where('model',$modelName)->get();
@@ -30,8 +29,8 @@ class DeleteMultiRowsFromCaching extends Controller
 				 $reCache = false ; 
 				 $cachesGroup = Cache::get($cache->key_name) ?: [] ;
 				 foreach($cachesGroup as $index=>$cachesElement){
-					dd($cachesElement);
-					 $found = dateIsBetween($cachesElement['date'] , $dateFrom , $dateTo);
+		
+					 $found = $dateFrom && $dateTo ?  dateIsBetween($cachesElement['date'] , $dateFrom , $dateTo) : true ;
 					 if(count($selectedRows)){
 						 $found = in_array($cachesElement['id'] , $selectedRows);
 						}else{

@@ -85,7 +85,10 @@ class OverdraftAgainstCommercialPaper extends Model
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
 	}
-	
+	public function generateForeignKeyFormModelName()
+	{
+		return 'overdraft_against_commercial_paper_id';
+	}	
 	
 	
 	
