@@ -1,22 +1,42 @@
+
+
 $(document).on('click', '#js-drawee-bank', function (e) {
 	e.preventDefault()
 	$('#js-choose-bank-id').modal('show')
 })
-
+$(document).on('click', '.js-drawee-bank-class', function (e) {
+	e.preventDefault()
+	$('#js-choose-bank-id').modal('show')
+})
 $(document).on('click', '#js-append-bank-name-if-not-exist', function () {
 	const receivingBank = document.getElementById('js-drawee-bank').parentElement
 	const newBankId = $('#js-bank-names').val()
 	const newBankName = $('#js-bank-names option:selected').attr('data-name')
 	const isBankExist = $(receivingBank).find('option[value="' + newBankId + '"]').length
+
 	if (!isBankExist) {
 		const option = '<option selected value="' + newBankId + '">' + newBankName + '</option>'
+
 		$('#js-drawee-bank').parent().find('select').append(option)
 	}
 	$('#js-choose-bank-id').modal('hide')
 })
 
 
+$(document).on('click', '.js-append-bank-name-if-not-exist-in-repeater', function () {
+	const newBankId = $('#js-bank-names').val()
+	const newBankName = $('#js-bank-names option:selected').attr('data-name')
+	$('select.drawee-bank-class').each(function (index, selectElement) {
+		const isBankExist = $(selectElement).find('option[value="' + newBankId + '"]').length
+		if (!isBankExist) {
+			const option = '<option  value="' + newBankId + '">' + newBankName + '</option>'
+			$(selectElement).append(option).selectpicker("refresh")
+		}
+	})
 
+
+	$('#js-choose-bank-id').modal('hide')
+})
 
 $(document).on('click', '#js-receiving-bank', function (e) {
 	e.preventDefault()
@@ -61,18 +81,21 @@ $(document).on('click', '#js-append-receiving-branch-name-if-not-exist', functio
 
 
 
-
 $(document).on('change', '.ajax-get-invoice-numbers', function () {
-	const inEditMode = +$('#js-in-edit-mode').val()
+	let inEditMode = +$('#js-in-edit-mode').val()
+	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
 	let specificInvoiceNumber = $('#ajax-invoice-item').val()
 	const moneyReceivedId = +$('#js-money-received-id').val()
-	const customerInvoiceId = $('#customer_name').val()
-	const currency = $('.current-currency').val()
+	let customerInvoiceId = $('#customer_name').val()
+	customerInvoiceId = customerInvoiceId ? customerInvoiceId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
+	let currency = $('.current-currency').val()
+	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
-	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId+'/'+currency
-	if (customerInvoiceId ) {
+	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId + '/' + currency
+
+	if (customerInvoiceId) {
 		$.ajax({
 			url,
 			data: {
@@ -81,17 +104,17 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 			}
 		}).then(function (res) {
 			// first append currencies 
-			let currenciesOptions = '';
-			var selectedCurrency = res.selectedCurrency ;
-			for(var currencyName in res.currencies){
+			let currenciesOptions = ''
+			var selectedCurrency = res.selectedCurrency
+			for (var currencyName in res.currencies) {
 				var currencyFormattedName = res.currencies[currencyName].toUpperCase()
-				currenciesOptions+= `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`;
+				currenciesOptions += `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
 			}
-			
-			
-			$('.current-currency').empty().append(currenciesOptions);
+
+
+			$('.current-currency').empty().append(currenciesOptions)
 			// second add settlements repeater 
-			var lastNode = $('.js-duplicate-node:last-of-type').clone(true);
+			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
 			$('.js-append-to').empty()
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
@@ -137,15 +160,15 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	const currentType = $('#type').val()
 	const receivedAmount = $('.js-' + currentType + '-received-amount').val()
 	let totalRemaining = receivedAmount - total
-	totalRemaining = totalRemaining ? totalRemaining : 0 ;
-	console.log(totalRemaining);
-	$('#remaining-settlement-js').val(totalRemaining);
-	
+	totalRemaining = totalRemaining ? totalRemaining : 0
+	console.log(totalRemaining)
+	$('#remaining-settlement-js').val(totalRemaining)
+
 })
 $('.js-send-to-collection').on('change', function () {
 	const noCheckedItems = $('.js-send-to-collection:checked').length
 	const moneyType = $(this).attr('data-money-type')
-	const sendToCollectionTrigger = $('#js-send-to-under-collection-trigger'+moneyType)
+	const sendToCollectionTrigger = $('#js-send-to-under-collection-trigger' + moneyType)
 	if (noCheckedItems) {
 		sendToCollectionTrigger.attr('title', '').removeClass('disabled')
 	}
@@ -155,44 +178,47 @@ $('.js-send-to-collection').on('change', function () {
 
 })
 
-$(document).on('change','.js-update-account-number-based-on-account-type',function(){
+$(document).on('change', '.js-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
-	const parent = $(this).closest('.kt-portlet__body')
+	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
 	const moneyType = $(this).closest('form').attr('data-money-type')
 	const data = []
 	let currency = $(this).closest('form').find('.current-currency').val()
-	currency = currency ? currency : $('.js-send-to-collection[data-money-type="'+moneyType+'"]').closest('tr').find('[data-currency]').attr('data-currency')
-	
-	const financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
-	if(!val || !currency || !financialInstitutionBankId ){
-		return ;
+	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
+	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
+
+	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	if (!val || !currency || !financialInstitutionBankId) {
+		return
 	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val+'/'+currency+'/'+financialInstitutionBankId
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
 	$.ajax({
-		url ,
+		url,
 		data,
-		success:function(res){
-			options = '';
-			var selectToAppendInto = $(parent).find('.js-account-number') ;
-			
-			for(key in res.data){
-				var val = res.data[key];
-				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : '';	
-				options  += '<option '+ selected +'  value="'+val+'">'+ val +'</option>';	
+		success: function (res) {
+			options = ''
+			var selectToAppendInto = $(parent).find('.js-account-number')
+
+			for (key in res.data) {
+				var val = res.data[key]
+				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
+
 			selectToAppendInto.empty().append(options)
 		}
-	});
-	
-	
-	
-	
-	
-	
+	})
+
+
+
+
+
+
 })
-$(document).on('change','[js-when-change-trigger-change-account-type]',function(){
+$(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
 	$(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type').trigger('change')
 })
 $(function () {

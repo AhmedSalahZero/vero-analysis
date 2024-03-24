@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Exports\LabelingItemExport;
 
 use App\Http\Controllers\ExportTable;
+use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\CustomersInvoice;
 use App\Models\MoneyReceived;
+use App\Models\NetBalance;
 use App\Models\Section;
 use App\Models\User;
 use App\Observers\CustomerInvoiceObserver;
@@ -16,6 +18,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -38,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
 	 
 	public function register()
 	{
+	
+
 		if ($this->app->isLocal()) {
 			$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 		}
@@ -47,6 +52,9 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		
+
+		// dd(NetBalance::create($formattedRows));
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');
@@ -61,12 +69,22 @@ class AppServiceProvider extends ServiceProvider
 		});
 		
 		
+		
 		Collection::macro('filterByReceivingDate',function(?string $startDate, ?string $endDate  ){
 			/**
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
 				return $items->where('receiving_date','>=',$startDate)->where('receiving_date','<=',$endDate);
+			}) ;
+		});
+		
+		Collection::macro('filterByIssuanceDate',function(?string $startDate, ?string $endDate  ){
+			/**
+			 * @var Collection $this 
+			 */
+			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
+				return $items->where('issuance_date','>=',$startDate)->where('issuance_date','<=',$endDate);
 			}) ;
 		});
 		

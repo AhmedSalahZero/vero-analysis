@@ -11,6 +11,14 @@ class IncomingTransfer extends Model
 	 
     protected $guarded = ['id'];
 	
+	// protected static function booted(): void
+    // {
+    //     static::created(function (IncomingTransfer $incomingTransfer) {
+			
+    //     });
+    // }
+	
+	
 	public function moneyReceived()
 	{
 		return $this->belongsTo(MoneyReceived::class,'money_received_id');

@@ -1,4 +1,3 @@
-
 @extends('layouts.dashboard')
 @section('css')
 <x-styles.commons></x-styles.commons>
@@ -130,81 +129,76 @@
                         @php
                         $index = 0 ;
                         @endphp
-                    
 
 
-                    {{-- start of fixed monthly repeating amount --}}
-                    @php
-                    $tableId = $modelName;
-                    $repeaterId = 'm_repeater_7';
 
-                    @endphp
-                    <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                    <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'js-toggle-visiability'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                        <x-slot name="ths">
-						@foreach($exportables as $name=>$title)
-                            <x-tables.repeater-table-th class="col-md-2" :title="$title"></x-tables.repeater-table-th>
-						@endforeach 
-                        </x-slot>
-                        <x-slot name="trs">
-                            @php
-                            $rows =  [-1] ;
-                            @endphp
-                            @foreach( count($rows) ? $rows : [-1] as $subModel)
-                            @php
-                            if( !($subModel instanceof \App\Models\Expense) ){
-                            unset($subModel);
-                            }
+                        {{-- start of fixed monthly repeating amount --}}
+                        @php
+                        $tableId = $modelName;
+                        $repeaterId = 'm_repeater_7';
 
-                            @endphp
-                            <tr @if($isRepeater) data-repeater-item @endif>
-                                <td class="text-center">
-                                    <div class="">
-                                        <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                        </i>
-                                    </div>
-                                </td>
+                        @endphp
+                        <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
+                        <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'js-toggle-visiability'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                            <x-slot name="ths">
+                                @foreach($exportables as $name=>$title)
+                                <x-tables.repeater-table-th class="col-md-2" :title="$title"></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
+                                @php
+                                $rows = [-1] ;
+                                @endphp
+                                @foreach( count($rows) ? $rows : [-1] as $subModel)
+                                @php
+                                if( !($subModel instanceof \App\Models\Expense) ){
+                                unset($subModel);
+                                }
 
+                                @endphp
+                                <tr @if($isRepeater) data-repeater-item @endif>
+                                    <td class="text-center">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
 
-                                <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-                                {{-- <input type="hidden"  value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
-							@foreach($exportables as $name=>$title)
-							@php
-								$fieldTypeAndClassDefaultValue = getFieldTypeAndClassFromTitle($title);
-								$fieldType = $fieldTypeAndClassDefaultValue['type'];
-								$fieldClass = $fieldTypeAndClassDefaultValue['class'] ?? '';
-								$defaultValue = $fieldTypeAndClassDefaultValue['default_value'];
-								
-							@endphp
-						
-							
-                                <td>
-									@php
-										$currentVal = isset($model) && $model->{$name} ?  $model->{$name} : $defaultValue;
-										if(is_object($currentVal)){
-											$currentVal = \Carbon\Carbon::make($currentVal)->format('Y-m-d');
-										}
-									@endphp
-                                    <input type="{{ $fieldType }}" value="{{ $currentVal }}" class="form-control {{ $fieldClass }}" @if($isRepeater) name="{{ $name }}" @else name="{{ $tableId }}[0][{{ $name }}]" @endif>
-                                </td>
-								
-								@endforeach                                 
 
-                            </tr>
-                            @endforeach
+                                    <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
+                                    {{-- <input type="hidden"  value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
+                                    @foreach($exportables as $name=>$title)
+                                    @php
+                                    $fieldTypeAndClassDefaultValue = getFieldTypeAndClassFromTitle($title);
+                                    $fieldType = $fieldTypeAndClassDefaultValue['type'];
+                                    $fieldClass = $fieldTypeAndClassDefaultValue['class'] ?? '';
+                                    $defaultValue = $fieldTypeAndClassDefaultValue['default_value'];
 
-                        </x-slot>
+                                    @endphp
 
 
+                                    <td>
+                                        @php
+                                        $currentVal = isset($model) && $model->{$name} ? $model->{$name} : $defaultValue;
+                                        if(is_object($currentVal)){
+                                        $currentVal = \Carbon\Carbon::make($currentVal)->format('Y-m-d');
+                                        }
+                                        @endphp
+                                        <input type="{{ $fieldType }}" value="{{ $currentVal }}" class="form-control {{ $fieldClass }}" @if($isRepeater) name="{{ $name }}" @else name="{{ $tableId }}[0][{{ $name }}]" @endif>
+                                    </td>
 
+                                    @endforeach
 
-                    </x-tables.repeater-table>
-                    {{-- end of fixed monthly repeating amount --}}
+                                </tr>
+                                @endforeach
 
+                            </x-slot>
 
 
 
 
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
 
 
 
@@ -277,22 +271,27 @@
 
 
 
+
+
+
+
+
+
+
+                    </div>
 
 
                 </div>
-
-
             </div>
+            <x-save />
+
+
+
+
+            <!--end::Form-->
+
+            <!--end::Portlet-->
     </div>
-    <x-save />
-
-
-
-
-    <!--end::Form-->
-
-    <!--end::Portlet-->
-</div>
 
 
 </div>
@@ -411,16 +410,16 @@
                 , type: form.getAttribute('method')
                 , success: function(res) {
                     $('.save-form').prop('disabled', false)
-					
+
                     Swal.fire({
                         icon: 'success'
-                        , title: res.message,
-						timer:1500,
-						 showConfirmButton: false
+                        , title: res.message
+                        , timer: 1500
+                        , showConfirmButton: false
 
-                    }).then(function(){
-              	      window.location.href = res.redirectTo;
-					});
+                    }).then(function() {
+                        window.location.href = res.redirectTo;
+                    });
 
 
 
@@ -501,7 +500,7 @@
         $(tableId).closest('.js-parent-to-table').show();
 
     })
-	$('.js-parent-to-table').show();
+    $('.js-parent-to-table').show();
     $(function() {
         $('#expense_type').trigger('change')
         $('.js-type-btn.active').trigger('click')
@@ -667,19 +666,18 @@
         $('.rate-element').trigger('change');
     })
 
-
-
 </script>
 @if(session()->has('success'))
 
-	<script>
-	Swal.fire({
-                 text: "{{ session()->get('success') }}"
-                , icon: 'success'
-	});
-	</script>
-	
+<script>
+    Swal.fire({
+        text: "{{ session()->get('success') }}"
+        , icon: 'success'
+    });
 
-@endif 
+</script>
+
+
+@endif
 
 @endpush

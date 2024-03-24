@@ -210,7 +210,7 @@
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
                                             <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
-                                                @if(isset($model) )
+                                                @if(isset($model) && count($model->outstandingBreakdowns))
                                                 @foreach($model->outstandingBreakdowns as $outstandingBreakdown)
                                                 @include('outstanding-breakdown.repeater' , [
                                                 'outstandingBreakdown'=>$outstandingBreakdown,

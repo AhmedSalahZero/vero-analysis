@@ -1,13 +1,8 @@
 <?php
 namespace App\Http\Controllers;
-use App\Http\Requests\StoreMoneyReceivedRequest;
-use App\Models\Bank;
-use App\Models\Branch;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeFacility;
-use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

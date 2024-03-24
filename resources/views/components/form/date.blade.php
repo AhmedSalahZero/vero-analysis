@@ -1,12 +1,16 @@
 @props([
 	'model',
-	'label',
+	'label'=>'',
 	'classes'=>'',
 	'name',
 	'id'=>'',
 	'placeholder',
-	'required'=>$required??false 
+	'required'=>$required??false ,
+	'readonly'=>false,
+	'type'=>'date',
+	'defaultValue'=>null
 ])
+@if($label)
 <label>
 {{ $label }}
 @if($required)
@@ -14,9 +18,16 @@
 @endif 
 
 </label>
+@endif
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input @if($id)  id="{{ $id }}" @endif type="date" name="{{ $name }}" value="{{ $model && $model->{$name} ? $model->{$name} : null }}" class="form-control {{ $classes }}"  placeholder="{{ $placeholder }}" />
+                                        <input
+										@if($readonly)
+										readonly
+										@endif
+										
+										 @if($id)  id="{{ $id }}" @endif type="{{ $type }}" name="{{ $name }}" value="{{ isset($defaultValue) ? $defaultValue : ($model && $model->{$name} ? $model->{$name} : null) }}" class="form-control {{ $classes }}"  placeholder="{{ $placeholder }}" />
+										
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>

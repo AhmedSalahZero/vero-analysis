@@ -26,7 +26,6 @@
                         <tbody>
                             @for($rateIndex= 0 ;$rateIndex<6 ; $rateIndex++) <tr>
                                 <td>
-								{{-- {{ dd($subModel) }} --}}
                                     <input class="form-control only-percentage-allowed rate-element" value="{{ isset($subModel) ? $subModel->getPaymentRate($rateIndex) :  0 }}" placeholder="{{ __('Rate') .  ' ' . $rateIndex }}">
                                     <input multiple class="rate-element-hidden" type="hidden" value="{{ (isset($subModel) ? $subModel->getPaymentRate($rateIndex) : 0) }}" name="@if($isRepeater)payment_rate @else {{ $tableId }}[0][payment_rate] @endif">
                                 </td>
@@ -49,13 +48,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
-                {{-- <button type="button" class="btn btn-primary">{{ __('Save changes') }}</button> --}}
             </div>
         </div>
     </div>
 </div>
-@push('js')
-<script>
-//    $('#' + "{{ $id }}").modal('show');
-</script>
-@endpush

@@ -275,7 +275,6 @@ use App\Models\MoneyReceived;
         const newBankId = $('#js-bank-names').val();
         const newBankName = $('#js-bank-names option:selected').attr('data-name');
         const isBankExist = $(receivingBank).find('select.js-drawl-bank').find('option[value="' + newBankId + '"]').length;
-        console.log(isBankExist, newBankId, $(receivingBank).find('option[value="' + newBankId + '"]')[0]);
         if (!isBankExist) {
             const option = '<option selected value="' + newBankId + '">' + newBankName + '</option>'
             $('#js-drawee-bank').parent().find('select.js-drawl-bank').append(option);

@@ -138,8 +138,20 @@ class Company extends Model implements HasMedia
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getChequesUnderCollectionNotificationsDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
 	}
-	public function getUnappliedAmounts()
+	public function letterOfGuaranteeIssuances()
 	{
-		return $this->hasMany();
+		return $this->hasMany(LetterOfGuaranteeIssuance::class , 'company_id','id');
 	}
+	public function openingBalance()
+	{
+		return $this->hasOne(OpeningBalance::class,'company_id');
+	}	
+	public function contracts()
+	{
+		return $this->hasMany(Contract::class,'company_id','id');
+	}
+	// public function getUnappliedAmounts()
+	// {
+	// 	return $this->hasMany();
+	// }
 }

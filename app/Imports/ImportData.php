@@ -186,17 +186,15 @@ class ImportData implements
 				$this->format = str_replace('-', '/', $this->format);
 			}
 			if (!$strtotimeValue) {
-				// $cacheKey = generateKeyForFailed($this->companyId , $this->userId);
-				// Cache::forever($cacheKey ,  );
+		
 				$this->errorMessage = __('Some Date Formate Is Not Correct');
 				//TODO:if format [$this->format] is not correct it return false . so the following code causes error
-				// logger([$this->format , $date]);
 				return null;
 			} else {
 				$date =  $strtotimeValue->format('Y-m-d');
 			}
 		}
-
+				
 		return $date;
 	}
 

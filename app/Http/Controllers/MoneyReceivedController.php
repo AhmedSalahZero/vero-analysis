@@ -5,6 +5,7 @@ use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Cheque;
+use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
@@ -336,6 +337,7 @@ class MoneyReceivedController
 		$moneyType = $request->get('type');
 		$customerInvoiceId = $request->get('customer_id');
 		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
+		$customer = $customerInvoice->customer ;
 		$customerName = $customerInvoice->getCustomerName();
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency']);
@@ -379,13 +381,23 @@ class MoneyReceivedController
 		}
 		$data['received_amount'] = $receivedAmount ;
 		$data['exchange_rate'] =$exchangeRate ;
+		/**
+		 * @var MoneyReceived $moneyReceived ;
+		 */
 		$moneyReceived = MoneyReceived::create($data);
+		
+		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
+		
+		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType));
+			$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['receiving_date'],$receivedAmount);
+		}
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
 		if($request->get('unapplied_amount') > 0 ){
 			$moneyReceived->unappliedAmounts()->create([
 				'amount'=>$request->get('unapplied_amount'),
-				'partner_id'=>$customerInvoiceId,
+				'partner_id'=>$customer->id,
 				'settlement_date'=>$request->get('receiving_date'),
 				'company_id'=>$company->id,
 				'net_balance_until_date'=>0
@@ -487,11 +499,13 @@ class MoneyReceivedController
 		$moneyReceivedIds = $request->get('cheques') ;
 		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);
-		
 		$data['status'] = Cheque::UNDER_COLLECTION;
 		foreach($moneyReceivedIds as $moneyReceivedId){
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
+			
+			
+			
 			$moneyReceived->cheque->update($data);
 		}
 		if($request->ajax()){
@@ -514,6 +528,18 @@ class MoneyReceivedController
 			'collection_fees'=>$request->get('collection_fees'),
 			'actual_collection_date'=>$request->get('actual_collection_date') 
 		]);
+		$accountType = AccountType::find($moneyReceived->cheque->account_type) ;
+		$receivedAmount = $moneyReceived->getReceivedAmount();
+		$receivingDate = $moneyReceived->getReceivingDate();
+		$moneyType = MoneyReceived::CHEQUE;
+		/**
+		 * @var AccountType $accountType ;
+		 */
+		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($moneyReceived->cheque->account_number);
+			$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
+		}
+		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	

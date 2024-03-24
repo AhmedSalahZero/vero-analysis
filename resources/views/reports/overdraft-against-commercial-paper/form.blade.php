@@ -275,11 +275,10 @@
                     </div>
                 </div>
 
-            <!--end::Form-->
+                <!--end::Form-->
 
 
-  <div class="kt-portlet">
-
+                <div class="kt-portlet">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
@@ -287,7 +286,7 @@
                             </h3>
                         </div>
                     </div>
-					
+
                     <div class="kt-portlet__body">
                         <div class="form-group row" style="flex:1;">
                             <div class="col-md-12 mt-3">
@@ -299,7 +298,7 @@
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
                                             <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
-                                                @if(isset($model) )
+                                                @if(isset($model) && count($model->outstandingBreakdowns) )
                                                 @foreach($model->outstandingBreakdowns as $outstandingBreakdown)
                                                 @include('outstanding-breakdown.repeater' , [
                                                 'outstandingBreakdown'=>$outstandingBreakdown,
@@ -309,14 +308,7 @@
                                                 @else
                                                 @include('outstanding-breakdown.repeater' , [
                                                 ])
-
                                                 @endif
-
-
-
-
-
-
                                             </div>
                                         </div>
                                         <div class="m-form__group form-group row">
@@ -346,107 +338,40 @@
 
                     </div>
                 </div>
-				
-            <!--end::Portlet-->
+
+                <!--end::Portlet-->
         </div>
     </div>
 
-                <x-submitting />
-            </form>
-    @endsection
-    @section('js')
-    <!--begin::Page Scripts(used by this page) -->
-    <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
-    <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
-    <script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
-    <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
-    <script>
+    <x-submitting />
+</form>
+@endsection
+@section('js')
+<!--begin::Page Scripts(used by this page) -->
+<script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
+<script>
 
-    </script>
+</script>
 
-    <script>
-        $(document).find('.datepicker-input').datepicker({
-            dateFormat: 'mm-dd-yy'
-            , autoclose: true
-        })
-        $('#m_repeater_0').repeater({
-            initEmpty: false
-            , isFirstItemUndeletable: true
-            , defaultValues: {
-                'text-input': 'foo'
-            },
-
-            show: function() {
-                $(this).slideDown();
-                $('input.trigger-change-repeater').trigger('change')
-                $(document).find('.datepicker-input').datepicker({
-                    dateFormat: 'mm-dd-yy'
-                    , autoclose: true
-                })
-                $(this).find('.only-month-year-picker').each(function(index, dateInput) {
-                    reinitalizeMonthYearInput(dateInput)
-                });
-                $('input:not([type="hidden"])').trigger('change');
-                $(this).find('.dropdown-toggle').remove();
-                $(this).find('select.repeater-select').selectpicker("refresh");
-
-            },
-
-            hide: function(deleteElement) {
-                if ($('#first-loading').length) {
-                    $(this).slideUp(deleteElement, function() {
-
-                        deleteElement();
-                        //   $('select.main-service-item').trigger('change');
-                    });
-                } else {
-                    if (confirm('Are you sure you want to delete this element?')) {
-                        $(this).slideUp(deleteElement, function() {
-
-                            deleteElement();
-                            $('input.trigger-change-repeater').trigger('change')
-
-                        });
-                    }
-                }
-            }
-        });
-
-    </script>
-
-    <script>
-        let oldValForInputNumber = 0;
-        $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('focus', function() {
-            oldValForInputNumber = $(this).val();
-            $(this).val('')
-        })
-        $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('blur', function() {
-
-            if ($(this).val() == '') {
-                $(this).val(oldValForInputNumber)
-            }
-        })
-
-        $(document).on('change', 'input:not([placeholder])[type="number"],input:not([placeholder])[type="password"],input:not([placeholder])[type="text"],input:not([placeholder])[type="email"],input:not(.exclude-text)', function() {
-            if (!$(this).hasClass('exclude-text')) {
-                let val = $(this).val()
-                val = number_unformat(val)
-                $(this).parent().find('input[type="hidden"]').val(val)
-
-            }
-        })
-		
-		   $('#m_repeater_0').repeater({
+<script>
+    $(document).find('.datepicker-input').datepicker({
+        dateFormat: 'mm-dd-yy'
+        , autoclose: true
+    })
+    $('#m_repeater_0').repeater({
         initEmpty: false
         , isFirstItemUndeletable: true
         , defaultValues: {
@@ -489,5 +414,72 @@
         }
     });
 
-    </script>
-    @endsection
+</script>
+
+<script>
+    let oldValForInputNumber = 0;
+    $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('focus', function() {
+        oldValForInputNumber = $(this).val();
+        $(this).val('')
+    })
+    $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('blur', function() {
+
+        if ($(this).val() == '') {
+            $(this).val(oldValForInputNumber)
+        }
+    })
+
+    $(document).on('change', 'input:not([placeholder])[type="number"],input:not([placeholder])[type="password"],input:not([placeholder])[type="text"],input:not([placeholder])[type="email"],input:not(.exclude-text)', function() {
+        if (!$(this).hasClass('exclude-text')) {
+            let val = $(this).val()
+            val = number_unformat(val)
+            $(this).parent().find('input[type="hidden"]').val(val)
+
+        }
+    })
+
+    $('#m_repeater_0').repeater({
+        initEmpty: false
+        , isFirstItemUndeletable: true
+        , defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function() {
+            $(this).slideDown();
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
+            $(this).find('.only-month-year-picker').each(function(index, dateInput) {
+                reinitalizeMonthYearInput(dateInput)
+            });
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+
+        },
+
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
+
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
+                });
+            } else {
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
+
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
+
+                    });
+                }
+            }
+        }
+    });
+
+</script>
+@endsection

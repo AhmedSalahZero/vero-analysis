@@ -415,4 +415,9 @@ class CustomerInvoice extends Model
 		return CustomerInvoice::where('company_id',$companyId)
 		->get()->pluck('customer_name','customer_name')->toArray();
 	}
+	public function customer()
+	{
+		return $this->belongsTo(Partner::class,'customer_id','id');
+	}
+	
 }

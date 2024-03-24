@@ -1,15 +1,8 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\Bank;
-use App\Models\Branch;
-use App\Models\CleanOverdraft;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
-use App\Models\FinancialInstitution;
 use App\Traits\GeneralFunctions;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class NotificationSettingsController
 {

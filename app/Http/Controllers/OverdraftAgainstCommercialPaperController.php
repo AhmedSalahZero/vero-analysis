@@ -124,7 +124,7 @@ class OverdraftAgainstCommercialPaperController
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customers = $this->getCustomers($company);
+		$customers = CustomerInvoice::getAllUniqueCustomerNames($company->id);
 		
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
