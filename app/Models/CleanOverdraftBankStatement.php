@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use CreateBanksTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -77,6 +76,10 @@ class CleanOverdraftBankStatement extends Model
 	public function moneyReceived()
 	{
 		return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
+	}
+	public function downPayment()
+	{
+		return $this->belongsTo(DownPayment::class,'down_payment_id','id');
 	}
 	public function withdrawals()
 	{

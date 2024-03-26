@@ -384,6 +384,13 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
                     Route::get('/customer-balances/total-net-balance-details/{currency}', 'CustomerBalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
 
+					// Route::get('down-payments', 'DownPaymentController@index')->name('view.down.payment');
+                    // Route::get('down-payments/create/{model?}', 'DownPaymentController@create')->name('create.down.payment');
+                    // Route::post('down-payments/create', 'DownPaymentController@store')->name('store.down.payment');
+                    // Route::get('down-payments/edit/{downPayment}', 'DownPaymentController@edit')->name('edit.down.payment');
+                    // Route::put('down-payments/update/{downPayment}', 'DownPaymentController@update')->name('update.down.payment');
+                    // Route::delete('down-payments/delete/{downPayment}', 'DownPaymentController@destroy')->name('delete.down.payment');
+
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
@@ -452,10 +459,11 @@ Route::middleware([])->group(function () {
                 Route::get('revenue-business-edit/{revenueBusinessLine}/{serviceCategory?}/{serviceItem?}', 'RevenueBusinessLineController@editForm')->name('admin.edit.revenue');
                 Route::post('admin.update.revenue-business', 'RevenueBusinessLineController@updateForm')->name('admin.update.revenue');
 
-                Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
+			Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
                 Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
                 Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
                 Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
+                Route::get('down-payments/get-sales-orders-for-contract/{contract_id}/{currency?}', 'MoneyReceivedController@getSalesOrdersForContract'); // ajax request
                 Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
                 Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
                 Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');

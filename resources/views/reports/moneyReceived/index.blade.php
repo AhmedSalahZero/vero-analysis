@@ -96,9 +96,14 @@ use App\Models\MoneyReceived;
 
             </ul>
 
-            <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  active-style btn-icon-sm align-self-center">
+            <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
+                {{ __('Money Received') }}
+            </a>
+			
+			  <a href="{{route('create.money.receive',['company'=>$company->id,'type'=>'down-payment'])}}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+                <i class="fas fa-plus"></i>
+                {{ __('downPayment') }}
             </a>
 
         </div>
@@ -120,6 +125,7 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th class="align-middle">{{ __('Select') }}</th>
+                                    <th class="align-middle">{{ __('Type') }}</th>
                                     <th class="align-middle">{{ __('Customer Name') }}</th>
                                     <th class="align-middle">{!! __('Receiving<br>Date') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
@@ -138,6 +144,7 @@ use App\Models\MoneyReceived;
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
+                                    <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
@@ -211,6 +218,7 @@ use App\Models\MoneyReceived;
                                 <tr class="table-standard-color">
                                     <th>{{ __('Select') }}</th>
 
+                                    <th>{{ __('Type') }}</th>
                                     <th>{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Cheque Number') }}</th>
@@ -228,6 +236,7 @@ use App\Models\MoneyReceived;
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" class="form-control checkbox js-send-to-collection" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}">
                                     </td>
+									   <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
@@ -299,6 +308,7 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
 
+                                    <th class="align-middle">{!! __('Type') !!}</th>
                                     <th class="align-middle">{!! __('Customer <br> Name') !!}</th>
                                     <th class="align-middle">{!! __('Cheque <br> Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque <br> Amount') !!}</th>
@@ -315,7 +325,7 @@ use App\Models\MoneyReceived;
                             <tbody>
                                 @foreach($receivedChequesUnderCollection as $moneyReceived)
                                 <tr>
-
+  									 <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -470,6 +480,7 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
 
+                                    <th class="align-middle">{{ __('Type') }}</th>
                                     <th class="align-middle">{{ __('Customer Name') }}</th>
                                     <th class="align-middle">{{ __('Cheque Number') }}</th>
                                     <th class="align-middle">{{ __('Cheque Amount') }}</th>
@@ -485,7 +496,7 @@ use App\Models\MoneyReceived;
                             <tbody>
                                 @foreach($collectedCheques as $moneyReceived)
                                 <tr>
-
+ 									  <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -495,86 +506,6 @@ use App\Models\MoneyReceived;
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
                                     <td> {{ $moneyReceived->cheque->chequeExpectedCollectionDateFormatted() }} </td>
-
-                                    {{-- <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                    <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyReceived->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
-                                    <div class="modal fade" id="apply-collection-modal-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <form action="{{ route('cheque.apply.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}" method="post">
-                                                    @csrf
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque To Be Collected  ?') }}</h5>
-                                                        <button type="button" class="close" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-3">
-                                                                <label>{{__('Collection Date')}}</label>
-                                                                <div class="kt-input-icon">
-                                                                    <div class="input-group date">
-                                                                        <input required type="text" name="actual_collection_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text">
-                                                                                <i class="la la-calendar-check-o"></i>
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-3 mb-3">
-                                                                <label>{{__('Collection Fees')}} <span class="required">*</span></label>
-                                                                <div class="kt-input-icon">
-                                                                    <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
-                                                                </div>
-                                                            </div>
-
-
-
-                                                        </div>
-
-
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
-                                                    </div>
-
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
-                                    <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
-                                    <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                    </div>
-
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </span>
-                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -604,6 +535,7 @@ use App\Models\MoneyReceived;
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
+                                    <th>{{ __('Type') }}</th>
                                     <th>{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
@@ -619,6 +551,7 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedTransfer as $money)
 
                                 <tr>
+								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getCustomerName() }}</td>
                                     <td>{{ $money->getReceivingDateFormatted() }}</td>
                                     <td>{{ $money->getIncomingTransferReceivingBankName() }}</td>
@@ -688,6 +621,7 @@ use App\Models\MoneyReceived;
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
+                                    <th>{{ __('Type') }}</th>
                                     <th>{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
@@ -701,6 +635,7 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedCashesInSafe as $moneyReceived)
 
                                 <tr>
+                                    <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCashInSafeBranchName() }}</td>
@@ -775,6 +710,7 @@ use App\Models\MoneyReceived;
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
+                                    <th>{{ __('Type') }}</th>
                                     <th>{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
@@ -790,6 +726,7 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedCashesInBanks as $money)
 
                                 <tr>
+								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getCustomerName() }}</td>
                                     <td>{{ $money->getReceivingDateFormatted() }}</td>
                                     <td>{{ $money->getIncomingTransferReceivingBankName() }}</td>
