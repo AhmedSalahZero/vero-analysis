@@ -10,7 +10,7 @@ class AddNewCustomerController extends Controller
 {
 	public function addNew(Company $company , Request $request){
 		$customerName = $request->get('customerName');
-		$isExist = Partner::where('is_customer',1)->where('name',$customerName)->exists();
+		$isExist = Partner::where('is_customer',1)->where('name',$customerName)->where('company_id',$company->id)->exists();
 		if($isExist){
 			return response()->json([
 				'status'=>false ,

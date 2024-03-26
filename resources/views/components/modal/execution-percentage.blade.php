@@ -21,6 +21,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center">{{ __('Execution Percentage %') }}</th>
+                                <th class="text-center">{{ __('Amount') }}</th>
                                 <th class="text-center">{{ __('Start Date') }}</th>
                                 <th class="text-center">{{ __('Execution Days') }}</th>
                                 <th class="text-center">{{ __('End Date') }}</th>
@@ -32,7 +33,14 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input name="execution_percentage_{{ $i }}" type="numeric" step="0.1" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getExecutionPercentage($i) : old('salesOrders.execution_percentage_'.$i,0) }}">
+                                            <input name="execution_percentage_{{ $i }}" type="numeric" step="0.1" class="form-control execution-percentage-js" value="{{ isset($salesOrder) ? $salesOrder->getExecutionPercentage($i) : old('salesOrders.execution_percentage_'.$i,0) }}">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input readonly type="text" class="form-control amount-js" value="{{ isset($salesOrder) ? $salesOrder->getActualAmount($i) : old('salesOrders.execution_percentage_'.$i,0) }}">
                                         </div>
                                     </div>
                                 </td>

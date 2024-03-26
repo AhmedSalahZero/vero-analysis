@@ -209,9 +209,19 @@ class MoneyReceived extends Model
 	// 	// if statement here for type
     //     return $this->account_number;
     // }
+	/**
+	 * * For Money Received Only
+	 */
     public function settlements()
     {
         return $this->hasMany(Settlement::class, 'money_received_id', 'id');
+    }
+	/**
+	 * * For Down Payment Only
+	 */
+    public function downPaymentSettlements()
+    {
+        return $this->hasMany(DownPaymentSettlement::class, 'money_received_id', 'id');
     }
     public function customerInvoice()
     {
@@ -424,5 +434,21 @@ class MoneyReceived extends Model
 	public function getChequeClearanceDays()
 	{
 		return $this->cheque ? $this->cheque->clearance_days : 0 ;
+	}
+	public function isDownPayment()
+	{
+		return $this->getMoneyType() == 'down-payment';
+	}
+	public function getMoneyType()
+	{
+		return $this->money_type; 
+	}
+	public function getMoneyTypeFormatted()
+	{
+		return camelizeWithSpace($this->getMoneyType()) ;
+	}
+	public function getContractId()
+	{
+		return $this->contract_id;
 	}
 }

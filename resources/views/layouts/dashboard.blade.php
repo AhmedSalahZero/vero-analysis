@@ -1420,7 +1420,6 @@
 	@if(isset($company) && $company->id)
 	<script>
 	$(document).on('click','.js-mark-notifications-as-read',function(){
-		alert('clicked')
 		$.ajax({
 			url:"{{ route('mark.notifications.as.read',['company'=>$company->id]) }}",
 		})

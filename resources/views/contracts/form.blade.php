@@ -127,7 +127,7 @@ use App\Models\MoneyReceived ;
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-live-search="true" data-actions-box="true"  id="customer_name" name="partner_id" class="form-control select2-select">
+                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($customers as $index => $customer )
                                                     <option @if(isset($model) && $model->getCustomerName() == $customer->getName() ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
@@ -138,7 +138,7 @@ use App\Models\MoneyReceived ;
                                     </div>
 
 
-                                    
+
 
                                 </div>
                                 <div class="col-md-1">
@@ -147,28 +147,28 @@ use App\Models\MoneyReceived ;
                                         {{ __('Add New') }}
                                     </button>
                                 </div>
-								
-								<div class="modal fade" id="add-new-customer-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Add New Customer') }}</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                   <form >
-												   		<input value="" class="form-control" name="new_customer_name" id="new_customer_name" placeholder="{{ __('Enter New Customer Name') }}">
-												   </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                    <button type="button" class="btn btn-primary js-add-new-customer-if-not-exist">{{ __('Save') }}</button>
-                                                </div>
+
+                                <div class="modal fade" id="add-new-customer-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">{{ __('Add New Customer') }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <input value="" class="form-control" name="new_customer_name" id="new_customer_name" placeholder="{{ __('Enter New Customer Name') }}">
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                <button type="button" class="btn btn-primary js-add-new-customer-if-not-exist">{{ __('Save') }}</button>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
                                 <div class="col-md-2 ">
                                     <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date'" :default-value="formatDateForDatePicker(isset($model)  ? $model->getStartDate() : now())" :model="$model??null" :label="__('Start Date')" :type="'text'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
@@ -309,7 +309,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="amount" type="text" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getAmount() : old('salesOrders.amount',0) }}">
+                                                        <input name="amount" type="text" class="form-control js-recalculate-amounts-in-popup" value="{{ isset($salesOrder) ? $salesOrder->getAmount() : old('salesOrders.amount',0) }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -484,10 +484,10 @@ use App\Models\MoneyReceived ;
 
 
 
+            <x-submitting />
 
     </div>
 </div>
-<x-submitting />
 
 @endsection
 @section('js')
@@ -610,6 +610,32 @@ use App\Models\MoneyReceived ;
 </script>
 
 <script>
+    $(document).on('change', '.js-recalculate-amounts-in-popup', function() {
+        let amount = $(this).val()
+        amount = amount ? amount : 0;
+        console.log(amount)
+        const parent = $(this).closest('[data-repeater-item]');
+        console.log(parent)
+        console.log($(parent).find('.execution-percentage-js').length)
+
+        $(parent).find('.execution-percentage-js').each(function(index, element) {
+            var executionPercentage = $(element).val();
+            executionPercentage = executionPercentage ? executionPercentage / 100 : 0;
+            $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
+        })
+    });   
+	
+	$(document).on('change', '.execution-percentage-js', function() {
+        let executionPercentage = $(this).val()
+        executionPercentage = executionPercentage ? executionPercentage : 0;
+		executionPercentage = executionPercentage / 100 ;
+        const parent = $(this).closest('[data-repeater-item]');
+		let amount = $(parent).find('.js-recalculate-amounts-in-popup').val()
+		amount = amount ? amount : 0 ;
+ 		 $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
+        
+    });
+
     $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {
         let borrowingRate = $('input[name="borrowing_rate"]').val();
         borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0;
@@ -662,31 +688,31 @@ use App\Models\MoneyReceived ;
         e.preventDefault();
         $(this).closest('td').find('.modal-item-js').modal('show')
     })
-	$(document).on('click','.js-add-new-customer-if-not-exist',function(e){
-		const customerName = $('#new_customer_name').val()
-		console.log(customerName)
-		const url = "{{ route('add.new.customer',['company'=>$company->id]) }}"
-		if(customerName){
-			$.ajax({
-				url,
-				data:{
-					customerName
-				},
-				type:"post",
-				success:function(response){
-					if(response.status){
-						$('select#customer_name').append('<option selected value="'+response.customer.id+'"> ' + customerName + ' </option>  ')
-						$('#add-new-customer-modal').modal('hide')
-					}
-					else{
-						Swal.fire({
-							icon:"error",
-							title:response.message
-						})
-					}
-				}
-			})
-		}
-	})
+    $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
+        const customerName = $('#new_customer_name').val()
+        console.log(customerName)
+        const url = "{{ route('add.new.customer',['company'=>$company->id]) }}"
+        if (customerName) {
+            $.ajax({
+                url
+                , data: {
+                    customerName
+                }
+                , type: "post"
+                , success: function(response) {
+                    if (response.status) {
+                        $('select#customer_name').append('<option selected value="' + response.customer.id + '"> ' + customerName + ' </option>  ')
+                        $('#add-new-customer-modal').modal('hide')
+                    } else {
+                        Swal.fire({
+                            icon: "error"
+                            , title: response.message
+                        })
+                    }
+                }
+            })
+        }
+    })
+
 </script>
 @endsection

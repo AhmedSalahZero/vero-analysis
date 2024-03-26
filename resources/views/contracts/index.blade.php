@@ -286,29 +286,32 @@
                             <b class="text-capitalize ">{{ $parent['name'] }}</b>
                         </div>
                     </td>
-					<td>
-					  <b class="text-capitalize ">
-					      <b class="text-capitalize ">{{ $parent['customer_name'] }}</b>
-					  </b>
-              
-					</td><td>
-					  <b class="text-capitalize ">
-					      <b class="text-capitalize ">{{ $parent['start_date'] }}</b>
-					  </b>
-                        
-           
-					</td><td>
-					  <b class="text-capitalize ">
-					      <b class="text-capitalize ">{{ $parent['end_date'] }}</b>
-					  </b>
-                        
-                        
-					</td><td>
-					  <b class="text-capitalize ">
-					      <b class="text-capitalize ">{{ $parent['amount'] }}</b>
-					  </b>
-                        
-					</td>
+                    <td>
+                        <b class="text-capitalize ">
+                            <b class="text-capitalize ">{{ $parent['customer_name'] }}</b>
+                        </b>
+
+                    </td>
+                    <td>
+                        <b class="text-capitalize ">
+                            <b class="text-capitalize ">{{ $parent['start_date'] }}</b>
+                        </b>
+
+
+                    </td>
+                    <td>
+                        <b class="text-capitalize ">
+                            <b class="text-capitalize ">{{ $parent['end_date'] }}</b>
+                        </b>
+
+
+                    </td>
+                    <td>
+                        <b class="text-capitalize ">
+                            <b class="text-capitalize ">{{ $parent['amount'] }}</b>
+                        </b>
+
+                    </td>
 
 
                     <td class="text-left text-capitalize"><b class="ml-3">
@@ -360,16 +363,9 @@
                 <tr class="row{{ $mainItemId }}  text-center sub-item-row" style="display: none">
                     <td colspan="5" class="text-left max-w-80 text-capitalize">
                         <table class="table ml-3 table-borderless">
-                            {{-- <tr>
-                                <td>{{ __('Start Date') }}</td>
-                                <td>{{ $titleAndValue['start_date'] }}</td>
 
-                                <td>{{ __('End Date') }}</td>
-                                <td>{{ $titleAndValue['end_date'] }}</td>
 
-                            </tr> --}}
-							
-							 <tr>
+                            <tr>
                                 <td>{{ __('So Number') }}</td>
                                 <td>{{ $titleAndValue['so_number'] }}</td>
 
@@ -377,7 +373,7 @@
                                 <td>{{ $titleAndValue['amount'] }}</td>
 
                             </tr>
-							
+
                         </table>
                     </td>
 

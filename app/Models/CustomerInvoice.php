@@ -159,6 +159,10 @@ class CustomerInvoice extends Model
     {
         return $this->customer_name ;
     }
+	public function getCustomerId()
+    {
+        return $this->customer_id ;
+    }
     public function getNetInvoiceAmount()
     {
 		$netInvoiceAmount = $this->net_invoice_amount ?:0 ; 

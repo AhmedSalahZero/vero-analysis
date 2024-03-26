@@ -3039,6 +3039,9 @@ function getPermissions():array
             'name'=>'view money received'
         ],
 		[
+            'name'=>'view down payments'
+        ],
+		[
 			'name'=>'view income statement planning'
 		]
 		,[
@@ -4200,6 +4203,12 @@ function getHeaderMenu()
 			'show'=>$user->can('view money received'),
 			'submenu'=>[]
 		],
+		// 'down-payments'=>[
+		// 	'title'=>__('Down Payments'),
+		// 	'link'=>route('view.down.payment', ['company'=>$companyId]),
+		// 	'show'=>$user->can('view down payments'),
+		// 	'submenu'=>[]
+		// ],
 		'customer-balances'=>[
 			'title'=>__('Customer Balances'),
 			'link'=>route('view.customer.balances', ['company'=>$companyId]),
