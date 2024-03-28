@@ -623,17 +623,17 @@ use App\Models\MoneyReceived ;
             executionPercentage = executionPercentage ? executionPercentage / 100 : 0;
             $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
         })
-    });   
-	
-	$(document).on('change', '.execution-percentage-js', function() {
+    });
+
+    $(document).on('change', '.execution-percentage-js', function() {
         let executionPercentage = $(this).val()
         executionPercentage = executionPercentage ? executionPercentage : 0;
-		executionPercentage = executionPercentage / 100 ;
+        executionPercentage = executionPercentage / 100;
         const parent = $(this).closest('[data-repeater-item]');
-		let amount = $(parent).find('.js-recalculate-amounts-in-popup').val()
-		amount = amount ? amount : 0 ;
- 		 $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
-        
+        let amount = $(parent).find('.js-recalculate-amounts-in-popup').val()
+        amount = amount ? amount : 0;
+        $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
+
     });
 
     $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {

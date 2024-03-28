@@ -103,7 +103,7 @@ use App\Models\MoneyReceived;
 			
 			  <a href="{{route('create.money.receive',['company'=>$company->id,'type'=>'down-payment'])}}" class="btn btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
-                {{ __('downPayment') }}
+                {{ __('Down Payment') }}
             </a>
 
         </div>

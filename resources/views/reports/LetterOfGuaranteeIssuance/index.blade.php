@@ -89,7 +89,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th>{{ __('Transaction Name') }}</th>
                                     <th>{{ __('Bank Name') }}</th>
                                     <th>{{ __('Lg Code') }}</th>
-                                    <th>{{ __('Purchase Order Date') }}</th>
+                                    <th>{{ __('Transaction Reference') }}</th>
+                                    <th>{{ __('Transaction Order Date') }}</th>
                                     <th>{{ __('Issuance Date') }}</th>
                                     <th>{{ __('Renewal Date') }}</th>
                                     <th>{{ __('Control') }}</th>
@@ -104,7 +105,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getTransactionReference() }}</td>
+                                    <td class="text-transform">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

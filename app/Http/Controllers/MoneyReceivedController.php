@@ -11,6 +11,7 @@ use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
+use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
@@ -261,8 +262,12 @@ class MoneyReceivedController
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$customerInvoices =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$invoiceNumber = $singleModel ? CustomerInvoice::where('id',$singleModel)->first()->getInvoiceNumber():null;
-		$customers =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','customer_id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','customer_id')->unique()->toArray(); 
-		$contracts = Contract::where('company_id',$company->id)->get();
+		/**
+		 * * for contracts
+		 */
+		$customers =  $singleModel ?  Partner::where('id',$singleModel)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_customer',1)->has('contracts')->pluck('name','id')->toArray(); 
+		$contracts = [];
+
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'customerInvoices'=>$customerInvoices ,
@@ -280,6 +285,13 @@ class MoneyReceivedController
 	public function result(Company $company , Request $request){
 		
 		return view('reports.moneyReceived.form',[
+		]);
+	}
+	public function getContractsForCustomer(Company $company , Request $request ){
+		$contracts = Contract::where('partner_id',$request->get('customerId'))->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
+		return response()->json([
+			'status'=>true ,
+			'contracts'=>$contracts
 		]);
 	}
 	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId,?string $selectedCurrency=null)
@@ -450,6 +462,9 @@ class MoneyReceivedController
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType));
 			$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['receiving_date'],$receivedAmount);
 		}
+		if($moneyReceived->isCashInSafe()){
+			$moneyReceived->storeCashInSafeStatement($data['receiving_date'],$receivedAmount);
+		}
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
 		/**
@@ -551,10 +566,9 @@ class MoneyReceivedController
 	}
 	
 	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived){
-		$oldType = $moneyReceived->getType();
+		
 		$newType = $request->get('type');
-		$oldTypeRelationName = dashesToCamelCase($oldType);
-		$moneyReceived->$oldTypeRelationName ? $moneyReceived->$oldTypeRelationName->delete() : null;
+		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
 		$this->store($company,$request);
 		 $activeTab = $newType;
@@ -563,9 +577,7 @@ class MoneyReceivedController
 	
 	public function destroy(Company $company , MoneyReceived $moneyReceived)
 	{
-		$moneyReceived->settlements->each(function($settlement){
-			$settlement->delete();
-		});
+		$moneyReceived->deleteRelations();
 		$activeTab = $moneyReceived->getType();
 		$moneyReceived->delete();
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));

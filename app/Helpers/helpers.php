@@ -3038,8 +3038,9 @@ function getPermissions():array
         [
             'name'=>'view money received'
         ],
+		
 		[
-            'name'=>'view down payments'
+            'name'=>'view internal money transfer'
         ],
 		[
 			'name'=>'view income statement planning'
@@ -4201,6 +4202,12 @@ function getHeaderMenu()
 			'title'=>__('Money Received'),
 			'link'=>route('view.money.receive', ['company'=>$companyId]),
 			'show'=>$user->can('view money received'),
+			'submenu'=>[]
+		],
+		'internal-money-transfer'=>[
+			'title'=>__('Internal Money Transfer'),
+			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
+			'show'=>$user->can('view internal money transfer'),
 			'submenu'=>[]
 		],
 		// 'down-payments'=>[

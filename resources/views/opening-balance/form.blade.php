@@ -24,9 +24,9 @@ use App\Models\MoneyReceived ;
     }
 
     .drawee-bank-width {
-        max-width: 300px !important;
-        width: 300px !important;
-        min-width: 300px !important;
+        max-width: 665px !important;
+        width: 665px !important;
+        min-width: 665px !important;
     }
 
     .width-8 {
@@ -43,9 +43,7 @@ use App\Models\MoneyReceived ;
         flex: initial !important;
     }
 
-    .show-class-js.js-parent-to-table {
-        overflow-x: scroll !important;
-    }
+   
 
     .width-15 {
         max-width: 170px !important;
@@ -88,6 +86,16 @@ use App\Models\MoneyReceived ;
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }
+
+</style>
+
+<style>
+ .show-class-js.js-parent-to-table {
+        overflow: scroll !important;
+    }
+	
+</style>
+<style>
 
 </style>
 @endsection

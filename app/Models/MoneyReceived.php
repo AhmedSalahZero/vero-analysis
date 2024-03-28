@@ -267,8 +267,6 @@ class MoneyReceived extends Model
 		
 	}
 	
-	
-	
 	public static function getUniqueBanks( $banks):array{
 		$uniqueBanksIds = [];
 		foreach($banks as $bankId){
@@ -410,6 +408,10 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
 	}
+	public function cashInSafeStatement()
+	{
+		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
+	}
 	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $receivedAmount )
 	{
 		return $this->cleanOverdraftBankStatement()->create([
@@ -422,6 +424,14 @@ class MoneyReceived extends Model
 			'debit'=>$receivedAmount,
 			'credit'=>0 
 		]) ;
+	}
+	public function storeCashInSafeStatement(string $date , $receivedAmount )
+	{
+		return $this->cashInSafeStatement()->create([
+			'company_id'=>$this->company_id ,
+			'debit'=>$receivedAmount,
+			'date'=>$date
+		]);
 	}		
 	public function openingBalance()
 	{
@@ -450,5 +460,16 @@ class MoneyReceived extends Model
 	public function getContractId()
 	{
 		return $this->contract_id;
+	}
+	public function deleteRelations()
+	{
+		$oldType = $this->getType();
+		$oldTypeRelationName = dashesToCamelCase($oldType);
+		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
+		$this->settlements->each(function($settlement){
+			$settlement->delete();
+		});
+		$this->cleanOverdraftBankStatement ? $this->cleanOverdraftBankStatement->delete() : null ;
+		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
 	}
 }

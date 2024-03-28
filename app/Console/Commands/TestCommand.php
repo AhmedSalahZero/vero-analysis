@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\CashInSafe;
+use App\Models\CashInSafeStatement;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\MoneyReceived;
@@ -47,8 +49,18 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$openingBalance = OpeningBalance::find(18);
-		dd($openingBalance->chequeInSafe);
+		// CashInSafeStatement::first()->update([
+		// 	'credit'=>10
+		// ]);
+		CashInSafeStatement::create([
+			'money_received_id'=>1 ,
+			'company_id'=>2 ,
+			'debit'=>50,
+			'date'=>now()->format('Y-m-d')
+		]);
+		
+		// $openingBalance = OpeningBalance::find(18);
+		// dd($openingBalance->chequeInSafe);
 		// $item = CleanOverdraftBankStatement::where('id',3)->first();
 		// $item->delete();
 		///////////////////

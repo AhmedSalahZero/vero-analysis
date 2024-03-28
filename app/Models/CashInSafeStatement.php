@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class CashInSafeStatement extends Model
+{
+    protected $guarded = [
+        'id'
+    ];
+
+    protected static function booted(): void
+    {
+        // دي علشان نشغل التريجرز
+        // mysql
+        // علشان تروح تحدث كل الروز اللي تحتها
+        static::updated(function (CashInSafeStatement $model) {
+            DB::table('cash_in_safe_statements')->where('id', '>=', $model->id)->orderBy('id')->where('company_id', $model->company_id)->update([
+                'updated_at' => now()
+            ]);
+        });
+
+        static::deleting(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
+            $cleanOverdraftBankStatement->debit = 0;
+            $cleanOverdraftBankStatement->credit = 0;
+            $cleanOverdraftBankStatement->save();
+        });
+    }
+
+    public function moneyReceived()
+    {
+        return $this->belongsTo(MoneyReceived::class, 'money_received_id', 'id');
+    }
+
+    public function getId()
+    {
+        return $this->id ;
+    }
+
+    public function setDateAttribute($value)
+    {
+        $date = explode('/', $value);
+        if (count($date) != 3) {
+            $this->attributes['date'] = $value ;
+
+            return ;
+        }
+        $month = $date[0];
+        $day = $date[1];
+        $year = $date[2];
+
+        $this->attributes['date'] = $year . '-' . $month . '-' . $day;
+    }
+}

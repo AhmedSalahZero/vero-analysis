@@ -108,7 +108,7 @@
                                     </div>
 
                                     <div class="col-md-4 ">
-                                        <x-form.input :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'" :placeholder="__('Total LGs Outstanding Balance')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'" :placeholder="__('Total LGs Outstanding Balance')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-4">
@@ -116,7 +116,7 @@
                                             @include('star')
                                         </label>
 
-                                        <select name="lg_type" class="form-control">
+                                        <select name="lg_type" class="form-control js-toggle-bond">
                                             <option selected>{{__('Select')}}</option>
                                             @foreach(getLgTypes() as $name => $nameFormatted )
                                             <option value="{{ $name  }}" @if(isset($model) && $model->getLgType() == $name ) selected @endif > {{ $nameFormatted }}</option>
@@ -125,7 +125,7 @@
                                     </div>
 
                                     <div class="col-md-4 ">
-                                        <x-form.input :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('LG Code')" :type="'text'" :placeholder="__('LG Code')" :name="'lg_code'" :class="''" :required="true"></x-form.input>
@@ -149,21 +149,68 @@
 
 
                                 <div class="form-group row">
+								
+								
+								 <div class="col-md-5">
 
-                                    <div class="col-md-3">
-
-                                        <label> {{ __('Beneficiary Name') }}
-                                            @include('star')
-                                        </label>
-
-                                        <select name="partner_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            @foreach($beneficiaries as $customer)
+                                    <label>{{__('Beneficiary Name')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                     @foreach($beneficiaries as $customer)
                                             <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option>
                                             @endforeach
-                                        </select>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-3">
+
+
+
+                                </div>
+                                <div class="col-md-1 hidden show-only-bond">
+                                    <label style="visibility:hidden !important;"> *</label>
+                                    <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal">
+                                        {{ __('Add New') }}
+                                    </button>
+                                </div>
+								  <div class="modal fade" id="add-new-customer-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">{{ __('Add New Customer') }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <input value="" class="form-control" name="new_customer_name" id="new_customer_name" placeholder="{{ __('Enter New Customer Name') }}">
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                <button type="button" class="btn btn-primary js-add-new-customer-if-not-exist">{{ __('Save') }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                              
+
+<div class="col-md-3 hidden show-only-bond">
+
+                                        
+                                        <x-form.input :default-value="1" :model="$model??null" :label="__('Transaction Reference')" :type="'text'" :placeholder="__('Transaction Reference')" :name="'transaction_reference'" :class="''" :required="true"></x-form.input>
+                                       
+                                    </div>
+									
+                                    <div class="col-md-3 hidden hide-only-bond">
 
                                         <label> {{ __('Contract Reference') }}
                                             @include('star')
@@ -175,7 +222,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 hidden hide-only-bond">
 
                                         <label> {{ __('Purchase Order') }}
                                             @include('star')
@@ -188,9 +235,13 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 hidden hide-only-bond">
 
                                         <x-form.date :label="__('Purchase Order Date')" :required="true" :model="$model??null" :name="'purchase_order_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
+                                    </div>
+									  <div class="col-md-3 hidden show-only-bond">
+
+                                        <x-form.date :label="__('Transaction Date')" :required="true" :model="$model??null" :name="'transaction_date'" :placeholder="__('Select Transaction Date')"></x-form.date>
                                     </div>
 
                                 </div>
@@ -228,7 +279,7 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">
@@ -246,24 +297,24 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
                                     </div>
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
                                     </div>
 
 
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :model="$model??null" :label="__('LG Commission Rate %')" :type="'text'" :placeholder="__('LG Commission Rate %')" :name="'lg_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lg-commission-amount-js lg-commission-rate-js'" :required="true"></x-form.input>
+                                        <x-form.input  :default-value="0" :model="$model??null" :label="__('LG Commission Rate %')" :type="'text'" :placeholder="__('LG Commission Rate %')" :name="'lg_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lg-commission-amount-js lg-commission-rate-js'" :required="true"></x-form.input>
                                     </div>
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
 
 
@@ -316,7 +367,7 @@
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Naumber')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
+                                        <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Number')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
                                     </div>
 
 
@@ -411,6 +462,35 @@
                     }
                 });
 
+
+
+
+ $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
+        const customerName = $('#new_customer_name').val()
+        console.log(customerName)
+        const url = "{{ route('add.new.customer',['company'=>$company->id]) }}"
+        if (customerName) {
+            $.ajax({
+                url
+                , data: {
+                    customerName
+                }
+                , type: "post"
+                , success: function(response) {
+                    if (response.status) {
+                        $('select#customer_name').append('<option selected value="' + response.customer.id + '"> ' + customerName + ' </option>  ')
+                        $('#add-new-customer-modal').modal('hide')
+                    } else {
+                        Swal.fire({
+                            icon: "error"
+                            , title: response.message
+                        })
+                    }
+                }
+            })
+        }
+    })
+	
             </script>
 
             <script>
@@ -476,4 +556,17 @@
                 $('.recalculate-lg-commission-amount-js').trigger('change')
 
             </script>
+			<script>
+			$(document).on('change','.js-toggle-bond',function(){
+				const isBond = $(this).val() == 'bid-bond'
+				if(isBond){
+					$('.show-only-bond').removeClass('hidden')
+					$('.hide-only-bond').addClass('hidden')
+				}else{
+					$('.hide-only-bond').removeClass('hidden')
+					$('.show-only-bond').addClass('hidden')
+				}
+			})
+			$('.js-toggle-bond').trigger('change')
+			</script>
             @endsection

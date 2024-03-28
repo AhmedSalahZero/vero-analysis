@@ -8,6 +8,8 @@ begin
 		declare _interest_rate decimal(5,2) default 0 ;
 		declare _min_interest_rate decimal(5,2) default 0 ; 
 		declare _count_all_rows integer default 0 ; 
+		declare interest_type_text varchar(100) default 'interest';
+	 declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 		if new.id then 
 		-- في حاله التعديل
 		select date,end_balance into _previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and id < new.id order by id desc limit 1 ;
@@ -70,6 +72,7 @@ begin
 	declare _current_credit decimal(14,2) default 0 ;
 	declare _current_date date default null ;
 	declare _bank_statements_debit_greater_than_or_equal_current_item_length integer default 0 ; 
+
 	 select count(_bank_statements_debit_greater_than_or_equal_current_item_length) into _bank_statements_debit_greater_than_or_equal_current_item_length from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and id >= _clean_overdraft_bank_statement_to_start_from   ;
 
 	if _bank_statements_debit_greater_than_or_equal_current_item_length > 0 then 
@@ -139,7 +142,7 @@ create  trigger refresh_calculation_before_update before update on `clean_overdr
 begin 
 	-- الكود دا نفس الكود اللي في ال
 	-- before insert 
-	-- ما عدا #REMEMBER _last_bank_statement_id , _bank_statement_start_from_id
+	-- ما عدا #REMEMBER _last_bank_statement_id  , _bank_statement_start_from_id
 	-- ومن اول ال
 	-- call reverse_clean_overdraft_settlements
 	-- فا لو عدلت ال
@@ -158,12 +161,17 @@ begin
 		declare _bank_statements_greater_than_current_one_length integer default 0 ;
 		
 		declare _last_bank_statement_id integer default 0 ;
+			 declare _current_interest_amount decimal(14,2) default 0;
+			  declare _largest_end_balance decimal(14,2) default 0;
+   	declare _highest_debt_balance_rate decimal(5,2) default 0 ;
 		declare _bank_statement_start_from_id integer default 0 ;
-		declare _test_id integer default 0 ;
-		 
+
+		declare interest_type_text varchar(100) default 'interest';
+	 declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+		
 		if new.id then 
 		-- في حاله التعديل
-		select id,date,end_balance into _test_id,_previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and id < new.id order by id desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and id < new.id order by id desc limit 1 ;
 		set _count_all_rows =1 ;
 		else
 		-- في حاله الانشاء
@@ -173,7 +181,8 @@ begin
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
     set new.room = new.limit +  new.end_balance ;
-
+	
+	
 
 	set @dayCounts = 0 ;
 	set @interestAmount = 0 ; 
@@ -202,6 +211,7 @@ begin
 	set new.interest_rate_daily = @dailyInterestRate ;
 	set new.days_count = @dayCounts ;
 	set new.interest_amount = @interestAmount;
+	
 	-- نهاية حسبة الفوائد
 	-- هنيجي بعد كدا علي تحديث جدول ال 
 	-- withdrawal 
@@ -221,6 +231,31 @@ begin
 	
 		 
 	 end if;
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	-- اعادة حساب فايدة نهاية كل شهر (في حالة التعديل مش الانشاء)
+
+	if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
+				select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and clean_overdraft_id = new.clean_overdraft_id and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
+				select highest_debt_balance_rate into _highest_debt_balance_rate from clean_overdrafts where id = new.clean_overdraft_id  ;
+				if new.type = interest_type_text then 
+				-- للفايدة الخاصة باخر الشهر
+				insert into debugging (message) values(concat(interest_type_text,'---',_current_interest_amount));
+					set new.credit = _current_interest_amount ;
+				elseif new.type = highest_debit_balance_text then 
+				  -- حساب ال highest debit balance
+				set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 
+					set new.credit = _current_interest_amount ;
+				end if;
+				
+	end if ;
+	
 	
 	
 end //
@@ -331,13 +366,13 @@ begin
    	 declare _clean_overdraft_bank_statement_id integer default 0 ;
    	 declare _clean_overdraft_id integer default 0 ;
      declare _company_id integer default 0 ;
-	 declare _current_interest_amount decimal(14,2) default 0;
 	 declare _limit decimal(14,2) default 0;
 	 declare _largest_end_balance decimal(14,2) default 0;
 	declare interest_type_text varchar(100) default 'interest';
 	 declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+	 declare _current_interest_amount decimal(14,2) default 0;
    	declare _highest_debt_balance_rate decimal(5,2) default 0 ;
-	 select count(*) into @n from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id;
+	 select count(distinct(clean_overdraft_id)) into @n from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id;
 	set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
     set @n = ifnull(@n,0);
     if @n > 0 then 
@@ -345,8 +380,6 @@ begin
 				-- حساب الفايدة نهاية كل شهر
                 select clean_overdraft_id , sum(interest_amount) , max(end_balance) into _clean_overdraft_id,_current_interest_amount,_largest_end_balance from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id limit i , 1;
 				select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from clean_overdrafts where id = _clean_overdraft_id  ;
-				set _current_interest_amount = ifnull(_current_interest_amount,0);
-				set _largest_end_balance = ifnull(_largest_end_balance,0);
 				insert into clean_overdraft_bank_statements (type ,priority,clean_overdraft_id,money_received_id,company_id,date,`limit`,credit,interest_type) values(interest_type_text,1,_clean_overdraft_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month');
           		  -- حساب ال highest debit balance
 				set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 

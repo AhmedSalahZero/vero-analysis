@@ -117,7 +117,32 @@ class LetterOfGuaranteeIssuance extends Model
 		
 		$this->attributes['purchase_order_date'] = $year.'-'.$month.'-'.$day;
 	}
-	
+	public function getTransactionDate()
+	{
+		return $this->transaction_date;
+	}
+	public function getTransactionDateFormatted()
+	{
+		$transactionDate = $this->getTransactionDate() ;
+		return $transactionDate ? Carbon::make($transactionDate)->format('d-m-Y'):null ;
+	}
+	public function setTransactionDateAttribute($value)
+	{
+		$date = explode('/',$value);
+		if(count($date) != 3){
+			$this->attributes['transaction_date'] =  $value ;
+			return ;
+		}
+		$month = $date[0];
+		$day = $date[1];
+		$year = $date[2];
+		
+		$this->attributes['transaction_date'] = $year.'-'.$month.'-'.$day;
+	}
+	public function getTransactionReference()
+	{
+		return $this->transaction_reference ;
+	}
 	
 	public function getIssuanceDate()
 	{

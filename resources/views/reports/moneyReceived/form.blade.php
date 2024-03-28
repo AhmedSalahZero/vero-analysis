@@ -190,7 +190,7 @@ use App\Models\MoneyReceived ;
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select id="customer_name" name="customer_id" class="form-control ajax-get-invoice-numbers">
+                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers">
                                     <option value="" selected>{{__('Select')}}</option>
                                     {{-- {{  }} --}}
                                     @foreach($customerInvoices as $customerInvoiceId => $customerName)
