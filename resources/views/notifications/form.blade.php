@@ -94,7 +94,7 @@ use App\NotificationSetting ;
 
                             <div class="form-group row">
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="NotificationSetting::CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Comming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Comming Dues Invoices Notifications Days')" :name="'customer_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Coming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Coming Dues Invoices Notifications Days')" :name="'customer_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
                                 <div class="col-md-4 ">
                                     <x-form.input :default-value="NotificationSetting::CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'customer_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
@@ -138,7 +138,7 @@ use App\NotificationSetting ;
 
                             <div class="form-group row">
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="3" :model="$model??null" :label="__('Comming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Comming Dues Invoices Notifications Days')" :name="'supplier_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="3" :model="$model??null" :label="__('Coming Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Coming Dues Invoices Notifications Days')" :name="'supplier_coming_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
                                 <div class="col-md-4 ">
                                     <x-form.input :default-value="1" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'supplier_past_dues_invoices_notifications_days'" :required="true"></x-form.input>

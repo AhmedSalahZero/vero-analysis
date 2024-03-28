@@ -52,75 +52,75 @@ class CustomerInvoice extends Model
     {
         return [];
     }
-    public static function getTabs(int $companyId)
-    {
-        return [
-            'exportAnalysis'=>[
-                'view_name'=>__('Export Analysis'),
-                'icon'=>'fa fa-crosshairs',
-                'subTabs'=>[
-                    [
-                        'first_col'=>$firstColumn ='customer_name',
-                        'second_col'=>$secondColumn = 'product_item',
-                        'view_name'=>__('Customer Name Against Product Item'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn])
-                    ],[
-                        'first_col'=>$firstColumn ='product_item',
-                        'second_col'=>$secondColumn = 'customer_name',
-                        'view_name'=>__('Product Item Against Customer Name'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn])
-                    ],
-                    [
-                        'first_col'=>$firstColumn='shipping_line',
-                        'second_col'=>$secondColumn = 'destination_country',
-                        'view_name'=>__('Shipping Line Against Destination Country'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],
-                    [
-                        'first_col'=>$firstColumn='destination_country',
-                        'second_col'=>$secondColumn = 'shipping_line',
-                        'view_name'=>__('Destination Country Against Shipping Line'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],
-                    [
-                        'first_col'=>$firstColumn='customer_name',
-                        'second_col'=>$secondColumn = 'estimated_time_of_arrival',
-                        'view_name'=>__('Customers’ Orders Against Estimated Arrival Date'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],
-                    [
-                        'first_col'=>$firstColumn='customer_name',
-                        'second_col'=>$secondColumn = 'purchase_order_status',
-                        'view_name'=>__('Customers’ Orders Against Purchase Order Status'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],
-                    [
-                        'first_col'=>$firstColumn='purchase_order_status',
-                        'second_col'=>$secondColumn = 'customer_name',
-                        'view_name'=>__('Purchase Order Status Against Customers’ Orders'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],
-                    [
-                        'first_col'=>$firstColumn='payment_terms',
-                        'second_col'=>$secondColumn = 'customer_name',
-                        'view_name'=>__('Collection Terms Against Customers'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],[
-                        'first_col'=>$firstColumn='business_unit',
-                        'second_col'=>$secondColumn = 'revenue_stream',
-                        'view_name'=>__('Business Unit Against Revenue Stream'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],[
-                        'first_col'=>$firstColumn='export_bank',
-                        'second_col'=>$secondColumn = 'customer_name',
-                        'view_name'=>__('Export Bank Against Customer Name'),
-                        'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
-                    ],
-                ]
-                ],
+    // public static function getTabs(int $companyId)
+    // {
+    //     return [
+    //         'exportAnalysis'=>[
+    //             'view_name'=>__('Export Analysis'),
+    //             'icon'=>'fa fa-crosshairs',
+    //             'subTabs'=>[
+    //                 [
+    //                     'first_col'=>$firstColumn ='customer_name',
+    //                     'second_col'=>$secondColumn = 'product_item',
+    //                     'view_name'=>__('Customer Name Against Product Item'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn])
+    //                 ],[
+    //                     'first_col'=>$firstColumn ='product_item',
+    //                     'second_col'=>$secondColumn = 'customer_name',
+    //                     'view_name'=>__('Product Item Against Customer Name'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn])
+    //                 ],
+    //                 [
+    //                     'first_col'=>$firstColumn='shipping_line',
+    //                     'second_col'=>$secondColumn = 'destination_country',
+    //                     'view_name'=>__('Shipping Line Against Destination Country'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],
+    //                 [
+    //                     'first_col'=>$firstColumn='destination_country',
+    //                     'second_col'=>$secondColumn = 'shipping_line',
+    //                     'view_name'=>__('Destination Country Against Shipping Line'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],
+    //                 [
+    //                     'first_col'=>$firstColumn='customer_name',
+    //                     'second_col'=>$secondColumn = 'estimated_time_of_arrival',
+    //                     'view_name'=>__('Customers’ Orders Against Estimated Arrival Date'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],
+    //                 [
+    //                     'first_col'=>$firstColumn='customer_name',
+    //                     'second_col'=>$secondColumn = 'purchase_order_status',
+    //                     'view_name'=>__('Customers’ Orders Against Purchase Order Status'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],
+    //                 [
+    //                     'first_col'=>$firstColumn='purchase_order_status',
+    //                     'second_col'=>$secondColumn = 'customer_name',
+    //                     'view_name'=>__('Purchase Order Status Against Customers’ Orders'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],
+    //                 [
+    //                     'first_col'=>$firstColumn='payment_terms',
+    //                     'second_col'=>$secondColumn = 'customer_name',
+    //                     'view_name'=>__('Collection Terms Against Customers'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],[
+    //                     'first_col'=>$firstColumn='business_unit',
+    //                     'second_col'=>$secondColumn = 'revenue_stream',
+    //                     'view_name'=>__('Business Unit Against Revenue Stream'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],[
+    //                     'first_col'=>$firstColumn='export_bank',
+    //                     'second_col'=>$secondColumn = 'customer_name',
+    //                     'view_name'=>__('Export Bank Against Customer Name'),
+    //                     'route'=>route('view.export.against.report', [$companyId,$firstColumn,$secondColumn]),
+    //                 ],
+    //             ]
+    //             ],
                 
-        ];
-    }
+    //     ];
+    // }
  
     public function getNetBalance()
     {
@@ -246,19 +246,19 @@ class CustomerInvoice extends Model
 		return $this->getStatus() === 'collected'; 
  	}
 	
-	public function getDebitsDataFormattedArr():array
-	{
-		return [
-			'beginning_balance'=> 0 ,
-			'monthly_debit'=>$this->getNetInvoiceAmount(),
-			'monthly_credit'=> 0 ,
-			'end_balance'=> $this->getNetInvoiceAmount() 
-		];
-	}
-	public function monthlyCustomerInvoices()
-	{
-		return $this->hasMany(MonthlyCustomerInvoices::class , 'customer_name','customer_name');
-	}
+	// public function getDebitsDataFormattedArr():array
+	// {
+	// 	return [
+	// 		'beginning_balance'=> 0 ,
+	// 		'monthly_debit'=>$this->getNetInvoiceAmount(),
+	// 		'monthly_credit'=> 0 ,
+	// 		'end_balance'=> $this->getNetInvoiceAmount() 
+	// 	];
+	// }
+	// public function monthlyCustomerInvoices()
+	// {
+	// 	return $this->hasMany(MonthlyCustomerInvoices::class , 'customer_name','customer_name');
+	// }
 	public function getInvoiceDateMonth():int
 	{
 		return sprintf("%02d", $this->invoice_month) ;
@@ -267,15 +267,15 @@ class CustomerInvoice extends Model
 	{
 		return $this->invoice_year ;
 	}
-	public function getInvoiceDateMonthAndYearFormatted()
-	{
-		return $this->getInvoiceDateMonth() .'-'.$this->getInvoiceDateYear();
-	}
-	public function monthlyCustomerInvoiceByMonthAndYear():?MonthlyCustomerInvoices{
-		$month = $this->getInvoiceDateMonth();
-		$year = $this->getInvoiceDateYear();
-		return $this->monthlyCustomerInvoices()->where('is_closed',0)->where('month',$month)->where('year',$year)->first() ;
-	}
+	// public function getInvoiceDateMonthAndYearFormatted()
+	// {
+	// 	return $this->getInvoiceDateMonth() .'-'.$this->getInvoiceDateYear();
+	// }
+	// public function monthlyCustomerInvoiceByMonthAndYear():?MonthlyCustomerInvoices{
+	// 	$month = $this->getInvoiceDateMonth();
+	// 	$year = $this->getInvoiceDateYear();
+	// 	return $this->monthlyCustomerInvoices()->where('is_closed',0)->where('month',$month)->where('year',$year)->first() ;
+	// }
 	public static function getOnlyNotClosedPeriods()
 	{
 		return self::where('company_id',getCurrentCompanyId())->where('is_period_closed',0)->get()->unique(function($item){return $item['invoice_month'] .'-'.$item['invoice_year'];})->values()->toArray();

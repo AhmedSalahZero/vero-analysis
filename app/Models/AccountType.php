@@ -23,6 +23,10 @@ class AccountType extends Model
 	{
 		return $builder->onlySlugs([self::CURRENT_ACCOUNT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
 	}
+	public function isCleanOverDraftAccount():bool 
+	{
+		return $this->slug === self::CLEAN_OVERDRAFT ;
+	}
 	public function getModelName()
 	{
 		return $this->model_name;

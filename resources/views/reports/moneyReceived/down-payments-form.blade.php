@@ -184,15 +184,15 @@ use App\Models\MoneyReceived ;
 
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <label>{{__('Customer Name')}}
                         @include('star')
                     </label>
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select id="customer_name" name="customer_id" class="form-control ajax-get-sales-orders-for-contract">
-                                    <option value="" selected>{{__('Select')}}</option>
+                                <select id="customer_name" data-live-search="true" data-actions-box="true" name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                     @foreach($customers as $customerId => $customerName)
                                     <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
                                     @endforeach
@@ -212,7 +212,7 @@ use App\Models\MoneyReceived ;
 					</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="currency" class="form-control current-currency ajax-get-sales-orders-for-contract">
+                            <select id="currency" name="currency" class="form-control ajax-get-contracts-for-customer current-currency ajax-get-sales-orders-for-contract">
                                 <option value="" selected>{{__('Select')}}</option>
                                 @foreach(getBanksCurrencies() as $currencyId=>$currentName)
                                 <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
@@ -223,7 +223,7 @@ use App\Models\MoneyReceived ;
                 </div>
 
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>{{__('Contract Name')}}
                         @include('star')
                     </label>
@@ -628,7 +628,7 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <label>{{__('Amount')}} </label>
                         <div class="kt-input-icon">
                             <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
@@ -652,7 +652,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <label>{{__('Received Amount')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <input name="sales_orders_amounts[][received_amounts]" placeholder="{{ __('Received Amount') }}" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
@@ -736,13 +736,27 @@ use App\Models\MoneyReceived ;
     })
 
 </script>
-{{-- <script src="{{ url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js') }}" type="text/javascript">
-</script> --}}
-
-{{-- <script>
-    $(function() {
-        $('#firstColumnId').trigger('change');
-    })
-
-</script> --}}
+<script>
+$(document).on('change','.ajax-get-contracts-for-customer',function(e){
+	e.preventDefault()
+	const customerId = $('#customer_name').val()
+	const currency = $('#currency').val()
+	if(customerId && currency){
+		$.ajax({
+			url:"{{ route('get.contracts.for.customer',['company'=>$company->id]) }}",
+			data:{
+				customerId,
+				currency
+			},
+			success:function(res){
+				let options='';
+				for(id in res.contracts){
+					options+= `<option value="${id}">${res.contracts[id]}</option>`
+				}
+				$('#contract-id').empty().append(options)
+			}
+		})
+	}
+})
+</script>
 @endsection

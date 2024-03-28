@@ -150,6 +150,11 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Contract::class,'company_id','id');
 	}
+	public function moneyTransfers()
+	{
+		return $this->hasMany(InternalMoneyTransfer::class,'company_id','id');
+	}
+	
 	// public function getUnappliedAmounts()
 	// {
 	// 	return $this->hasMany();

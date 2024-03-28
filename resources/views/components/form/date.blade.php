@@ -25,8 +25,7 @@
 										@if($readonly)
 										readonly
 										@endif
-										
-										 @if($id)  id="{{ $id }}" @endif type="{{ $type }}" name="{{ $name }}" value="{{ isset($defaultValue) ? $defaultValue : ($model && $model->{$name} ? $model->{$name} : null) }}" class="form-control {{ $classes }}"  placeholder="{{ $placeholder }}" />
+										 @if($id)  id="{{ $id }}" @endif type="{{ $type }}" name="{{ $name }}" value="{{ isset($defaultValue) ? $defaultValue : ($model && $model->{$name} ? $model->{$name} : now()->format('Y-m-d') ) }}" class="form-control {{ $classes }}"  placeholder="{{ $placeholder }}" />
 										
                                         <div class="input-group-append">
                                             <span class="input-group-text">

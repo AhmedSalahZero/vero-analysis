@@ -12,6 +12,7 @@ class CleanOverdraftBankStatement extends Model
 	protected $guarded =[
 		'id'
 	];
+	const MONEY_TRANSFER  = 'money-transfer';
 
 		protected static function booted(): void
 		{
@@ -20,9 +21,12 @@ class CleanOverdraftBankStatement extends Model
 			// علشان تروح تحدث كل الروز اللي تحتها
 			static::updated(function (CleanOverdraftBankStatement $model) {
 				
-				$model->cleanOverDraft->update([
-					'start_settlement_from_bank_statement_id'=>$model->id
-				]);
+				if($model->cleanOverDraft){
+					$model->cleanOverDraft->update([
+						'start_settlement_from_bank_statement_id'=>$model->id
+					]);
+				}
+					
 				DB::table('clean_overdraft_bank_statements')->where('id','>=',$model->id)->orderBy('id')->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
 					'updated_at'=>now()
 				]);
@@ -61,15 +65,7 @@ class CleanOverdraftBankStatement extends Model
 				$cleanOverdraftBankStatement->debit = 0;
 				$cleanOverdraftBankStatement->credit = 0;
 				$cleanOverdraftBankStatement->save();
-				// $firstCleanOverdraftBankStatementAfterCurrentOne = CleanOverdraftBankStatement::where('id','!=',$cleanOverdraftBankStatement->id)->where('clean_overdraft_id',$cleanOverdraftBankStatement->clean_overdraft_id)->orderBy('id')->first() ;
-				// if($firstCleanOverdraftBankStatementAfterCurrentOne){
-				// 	$cleanOverdraftBankStatement->cleanOverDraft->update([
-				// 		'start_settlement_from_bank_statement_id'=> $firstCleanOverdraftBankStatementAfterCurrentOne->id
-				// 	]);
-				// 	DB::table('clean_overdraft_bank_statements')->where('id','>=',$firstCleanOverdraftBankStatementAfterCurrentOne->id )->where('clean_overdraft_id',$cleanOverdraftBankStatement->clean_overdraft_id)->orderBy('id')->update([
-				// 		'updated_at'=>now()
-				// 	]);
-				// }
+				
 			});
 		}
 		
@@ -77,10 +73,7 @@ class CleanOverdraftBankStatement extends Model
 	{
 		return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
 	}
-	public function downPayment()
-	{
-		return $this->belongsTo(DownPayment::class,'down_payment_id','id');
-	}
+	
 	public function withdrawals()
 	{
 		return $this->hasMany(CleanOverdraftWithdrawal::class,'clean_overdraft_bank_statement_id','id');
