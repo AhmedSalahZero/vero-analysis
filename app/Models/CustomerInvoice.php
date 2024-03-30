@@ -312,7 +312,6 @@ class CustomerInvoice extends Model
 		return $totalInvoicesPlusVatAmount - $totalMoneyReceivedAmountPlusWithhold;
 		
 	}
-	
 	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, string $customerName,string $date):float
 	{
 		return DB::table('customer_invoices')
