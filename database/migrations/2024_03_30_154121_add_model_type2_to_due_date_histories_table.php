@@ -14,7 +14,7 @@ class AddModelType2ToDueDateHistoriesTable extends Migration
     public function up()
     {
         Schema::table('due_date_histories', function (Blueprint $table) {
-			$table->string('model_type')->after('model_id')->comment('وليكن مثلا CustomerInvoice , SupplierInvoice');
+			$table->string('model_type')->comment('وليكن مثلا CustomerInvoice , SupplierInvoice');
         });
     }
 
