@@ -1,31 +1,35 @@
 <?php
-namespace App\Traits\Models;
 
-use App\Models\AccountType;
-use App\Models\Branch;
-use App\Models\FinancialInstitution;
+namespace App\Models;
+
+use App\Traits\Models\IsIncomingTransfer;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
- 
-/**
- * * ال تريت دا مشترك بين
- * * IncomingTransfer  
- * * الخاصة بال money received
- * * وال IncomingTransfer  الخاصة بال down payments
- */
-trait IsIncomingTransfer 
+
+class OutgoingTransfer extends Model
 {
-	public function receivingBank():?BelongsTo{
-		return $this->belongsTo(FinancialInstitution::class,'receiving_bank_id','id');
+	 
+    protected $guarded = ['id'];
+	
+	public function moneyPayment()
+	{
+		return $this->belongsTo(MoneyPayment::class,'money_payment_id');
+	}
+	/**
+	 * * البنك اللي طلعنا منه التحويلة
+	 */
+	public function deliveryBank():?BelongsTo{
+		return $this->belongsTo(FinancialInstitution::class,'delivery_bank_id','id');
 	}
 	
-	public function getReceivingBankId()
+	public function getDeliveryBankId()
 	{
-		$bank = $this->receivingBank;
+		$bank = $this->deliveryBank;
 		return $bank ? $bank->id : 0 ;
 	}
-	public function getReceivingBankName()
+	public function getDeliveryBankName()
 	{
-		$bank = $this->receivingBank;
+		$bank = $this->deliveryBank;
 		return $bank ? $bank->getName() : __('N/A') ;
 	}
 	public function getReceiptNumber()
@@ -50,4 +54,6 @@ trait IsIncomingTransfer
 	{
 		return $this->account_number;
 	}
+	
+	
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Exports\ExportData;
 use App\Models\Company;
 use App\Models\InventoryStatement;
-use App\Models\TablesField;
 use Illuminate\Http\Request;
 
 class InventoryStatementController extends Controller

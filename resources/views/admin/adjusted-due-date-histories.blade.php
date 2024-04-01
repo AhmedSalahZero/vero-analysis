@@ -1,32 +1,35 @@
 @extends('layouts.dashboard')
 @php
-	use Carbon\Carbon;
+use Carbon\Carbon;
 @endphp
 
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
-	.max-w-invoice-date {
+    .max-w-invoice-date {
         width: 25% !important;
         min-width: 25% !important;
         max-width: 25% !important;
     }
-	.max-w-counts {
+
+    .max-w-counts {
         width: 20% !important;
         min-width: 20% !important;
         max-width: 20% !important;
     }
-	.max-w-action {
+
+    .max-w-action {
         width: 25% !important;
         min-width: 25% !important;
         max-width: 25% !important;
     }
-  .max-w-serial {
+
+    .max-w-serial {
         width: 5% !important;
         min-width: 5% !important;
         max-width: 5% !important;
     }
-	
+
     .dt-buttons.btn-group.flex-wrap {
         margin-bottom: 5rem !important;
     }
@@ -41,8 +44,8 @@
 
 
 
- 
-   
+
+
 
     .is-sub-row.is-total-row td.sub-numeric-bg,
     .is-sub-row.is-total-row td.sub-text-bg {
@@ -290,81 +293,79 @@
                 </style>
                 @csrf
 
-              
 
 
 
-    
 
 
 
-          <div class="row">
-    <div class="col-md-12">
-        <!--begin::Portlet-->
 
-         
-        <!--begin::Form-->
-        <form method="post" action="{{ isset($model) ? route('update.adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$customerInvoice->id , 'dueDateHistory'=>$model->id]) :route('store.adjust.due.dates',['company'=>$company->id , 'customerInvoice'=>$customerInvoice->getId()]) }}" class="kt-form kt-form--label-right">
-@csrf
-		@if(isset($model))
-		@method('patch')
-		@endif 
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{__('Adjusted Collection Date Section')}}
-                        </h3>
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                    <div class="form-group row">
-						<div class="col-md-4 mb-4">
-                            <label>{{__('Customer Name')}} </label>
-							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getCustomerName() }}">
-						</div>
-						<div class="col-md-4 mb-4">
-                            <label>{{__('Invoice Number')}} </label>
-							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getInvoiceNumber() }}">
-						</div>
-						<div class="col-md-4 mb-4">
-                            <label>{{__('Invoice Due Date')}} </label>
-							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getDueDateFormatted() }}">
-						</div>
-						
-							<div class="col-md-4 mb-4">
-                            <label>{{__('Invoice Net Balance')}} </label>
-							<input type="text" class="form-control" disabled value="{{ $customerInvoice->getNetBalanceFormatted() }}">
-						</div>
-						<div class="col-md-4 mb-4">
-                            <label>{{__('Invoice Currency')}} </label>
-						<input type="text" class="form-control" disabled value="{{ $customerInvoice->getCurrency() }}">
-						</div>
-						
-				
-						
-                        <div class="col-md-4">
-                            <label>{{__('Adjusted Collection Date')}} @include('star') </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <input required type="text" name="due_date" value="{{ isset($model) ? $model->getDueDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}"  />
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="la la-calendar-check-o"></i>
-                                        </span>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--begin::Portlet-->
+
+
+                        <!--begin::Form-->
+                        <form method="post" action="{{ isset($model) ? route('update.adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>$modeType , 'dueDateHistory'=>$model->id]) :route('store.adjust.due.dates',['company'=>$company->id , 'modelId'=>$invoice->getId(),'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
+                            @csrf
+                            @if(isset($model))
+                            @method('patch')
+                            @endif
+                            <div class="kt-portlet">
+                                <div class="kt-portlet__head">
+                                    <div class="kt-portlet__head-label">
+                                        <h3 class="kt-portlet__head-title head-title text-primary">
+                                            {{__('Adjusted Collection Date Section')}}
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="kt-portlet__body">
+                                    <div class="form-group row">
+                                        <div class="col-md-4 mb-4">
+                                            <label>{{$customerNameOrSupplierNameText}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $invoice->getName() }}">
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <label>{{__('Invoice Number')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $invoice->getInvoiceNumber() }}">
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <label>{{__('Invoice Due Date')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $invoice->getDueDateFormatted() }}">
+                                        </div>
+
+                                        <div class="col-md-4 mb-4">
+                                            <label>{{__('Invoice Net Balance')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $invoice->getNetBalanceFormatted() }}">
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <label>{{__('Invoice Currency')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $invoice->getCurrency() }}">
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>{{__('Adjusted Collection Date')}} @include('star') </label>
+                                            <div class="kt-input-icon">
+                                                <div class="input-group date">
+                                                    <input required type="text" name="due_date" value="{{ isset($model) ? $model->getDueDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}" />
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">
+                                                            <i class="la la-calendar-check-o"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                            <x-submitting />
+
+                        </form>
                     </div>
                 </div>
-            </div>
-
-            <x-submitting />
-
-        </form>  
-</div>
-</div>
 
                 <div class="kt-portlet">
 
@@ -391,23 +392,23 @@
                                                 <th class="view-table-th max-w-name  max-w-invoice-date header-th  align-middle text-center">
                                                     {{ __('Date') }}
                                                 </th>
-												
-												<th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
+
+                                                <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
                                                     {{ __('Days Count') }}
                                                 </th>
-												
-												<th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
+
+                                                <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
                                                     {{ __('Amount') }}
                                                 </th>
-												
-												
-												<th class="view-table-th max-w-name max-w-action  header-th  align-middle text-center">
+
+
+                                                <th class="view-table-th max-w-name max-w-action  header-th  align-middle text-center">
                                                     {{ __('Actions') }}
                                                 </th>
-												
-												
 
-                                              
+
+
+
 
 
 
@@ -415,55 +416,55 @@
 
                                         </thead>
                                         <tbody>
-										@php
-											$previousDate = null ;
-										@endphp
-											@foreach($dueDateHistories as $index => $dueDateHistory)
+                                            @php
+                                            $previousDate = null ;
+                                            @endphp
+                                            @foreach($dueDateHistories as $index => $dueDateHistory)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
                                                 <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $dueDateHistory->getDueDateFormatted() }} {{ is_null($previousDate) ? __(' (Original Due Date) ') : '' }} </td>
                                                 <td class="sub-text-bg  text-center  max-w-counts ">{{ $previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) : '-' }}</td>
-												@php
-													$previousDate  = $dueDateHistory->getDueDate();
-												@endphp
+                                                @php
+                                                $previousDate = $dueDateHistory->getDueDate();
+                                                @endphp
                                                 <td class="sub-text-bg  text-center max-w-counts ">{{ $dueDateHistory->getAmountFormatted() }}</td>
                                                 <td class="sub-text-bg  text-center max-w-action   ">
-												@if($loop->last)
-                            						<a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.adjust.due.dates',[$company,$customerInvoice->id,$dueDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
-													
-													
-													 <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $dueDateHistory['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
-                                                </a>
-												@endif
+                                                    @if($loop->last)
+                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.adjust.due.dates',[$company,$invoice->id,$modelType,$dueDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
 
-                                                <div id="modal-delete-{{ $dueDateHistory['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">{{ __('Delete Due Date History ' .$dueDateHistory->getDueDateFormatted()) }}</h4>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
-                                                            </div>
-                                                            <form action="{{ route('delete.adjust.due.dates',[$company,$customerInvoice->id,$dueDateHistory->id]) }}" method="post" id="delete_form">
-                                                                {{ csrf_field() }}
-                                                                {{ method_field('DELETE') }}
-                                                                <div class="modal-footer">
-                                                                    <button class="btn btn-danger">
-                                                                        {{ __('Delete') }}
-                                                                    </button>
-                                                                    <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
-                                                                        {{ __('Close') }}
-                                                                    </button>
+
+                                                    <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $dueDateHistory['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                                    </a>
+                                                    @endif
+
+                                                    <div id="modal-delete-{{ $dueDateHistory['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">{{ __('Delete Due Date History ' .$dueDateHistory->getDueDateFormatted()) }}</h4>
                                                                 </div>
-                                                            </form>
+                                                                <div class="modal-body">
+                                                                    <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                                </div>
+                                                                <form action="{{ route('delete.adjust.due.dates',[$company,$invoice->id,$modelType,$dueDateHistory->id]) }}" method="post" id="delete_form">
+                                                                    {{ csrf_field() }}
+                                                                    {{ method_field('DELETE') }}
+                                                                    <div class="modal-footer">
+                                                                        <button class="btn btn-danger">
+                                                                            {{ __('Delete') }}
+                                                                        </button>
+                                                                        <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+                                                                            {{ __('Close') }}
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-												
-												</td>
+
+                                                </td>
                                             </tr>
-											@endforeach 
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -472,7 +473,6 @@
 
                             @push('js')
                             <script>
-                          
                                 $('.table-for-currency').DataTable({
                                         dom: 'Bfrtip'
 
@@ -506,7 +506,6 @@
 
                     </div>
                 </div>
-     
 
 
 
@@ -515,37 +514,38 @@
 
 
 
+
+            </div>
+        </div>
     </div>
-</div>
-</div>
-@endsection
-@section('js')
-<x-js.commons></x-js.commons>
+    @endsection
+    @section('js')
+    <x-js.commons></x-js.commons>
 
-<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
-<script>
-    function getDateFormatted(yourDate) {
-        const offset = yourDate.getTimezoneOffset()
-        yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
-        return yourDate.toISOString().split('T')[0]
-    }
+    <script>
+        function getDateFormatted(yourDate) {
+            const offset = yourDate.getTimezoneOffset()
+            yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
+            return yourDate.toISOString().split('T')[0]
+        }
 
-    am4core.ready(function() {
+        am4core.ready(function() {
 
-        // Themes begin
+            // Themes begin
 
 
 
-    }); // end am4core.ready()
+        }); // end am4core.ready()
 
-</script>
-<script>
+    </script>
+    <script>
 
 
 
-</script>
+    </script>
 
-@endsection
+    @endsection

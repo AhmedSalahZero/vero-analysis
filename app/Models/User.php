@@ -97,6 +97,10 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->hasMany(MoneyReceived::class , 'user_id','id')->where('company_id',getCurrentCompanyId());
 	}
+	public function moneyPayments()
+	{
+		return $this->hasMany(MoneyPayment::class , 'user_id','id')->where('company_id',getCurrentCompanyId());
+	}
 	public function downPayment()
 	{
 		return $this->hasMany(DownPayment::class , 'user_id','id')->where('company_id',getCurrentCompanyId());
@@ -212,5 +216,25 @@ class User extends Authenticatable implements HasMedia
 		return false ;
 	}
 	
+
+
+	 /**
+	  * * For Money Payments 
+	  */
+	public function getCashPayments(?string $startDate = null , ?string $endDate = null):Collection
+	{
+		return $this->moneyPayments->where('type',MoneyPayment::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByDeliveryDate($startDate,$endDate) ;
+	}
+	public function getOutgoingTransfer(?string $startDate = null ,?string $endDate = null):Collection
+	{
+		return $this->moneyPayments->where('type',MoneyPayment::OUTGOING_TRANSFER)->filterByDeliveryDate($startDate,$endDate) ;
+	}	
+	public function getPayableCheques(?string $startDate = null , ?string $endDate = null):Collection
+	{
+		return $this->moneyPayments->where('type',MoneyPayment::PAYABLE_CHEQUE)->filterByDeliveryDate($startDate,$endDate)->filter(function(MoneyPayment $moneyPayment){
+			$payableCheque = $moneyPayment->payableCheque ;
+			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
+		})->values();
+	}
 	
 }

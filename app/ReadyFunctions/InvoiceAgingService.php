@@ -3,7 +3,6 @@ namespace App\ReadyFunctions;
 
 use App\Models\CustomerInvoice;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * * هي اسمها اعمار الديون
@@ -24,23 +23,25 @@ class InvoiceAgingService
 		$this->aging_date = $agingDate ; 
 		
 	}
-	public function __execute(array $customerNames)
+	public function __execute(array $clientNames,string $modelType)
 	{
+		$fullModelName = ("\App\Models\\".$modelType) ;
+		$clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
 		$result = [];
-		$customerInvoices = CustomerInvoice::where('invoice_date' ,'<=' , $this->aging_date)->where('company_id',$this->company_id);
-		if(count($customerNames)){
-			$customerInvoices->whereIn('customer_name',$customerNames);
+		$invoices = $fullModelName::where('invoice_date' ,'<=' , $this->aging_date)->where('company_id',$this->company_id);
+		if(count($clientNames)){
+			$invoices->whereIn($clientNameColumnName,$clientNames);
 		}
-		$customerInvoices = $customerInvoices->get();
+		$invoices = $invoices->get();
 
 		/**
-		 * @var CustomerInvoice[] $customerInvoices
+		 * @var CustomerInvoice[] $invoices
 		 */
-		foreach($customerInvoices as $index => $customerInvoice){
-			$customerName = $customerInvoice->customer_name ;
-			$invoiceNumber = $customerInvoice->invoice_number;
-			$invoiceDueDate = $customerInvoice->invoice_due_date;
-			$netBalance = $customerInvoice->getNetBalanceUntil($this->aging_date) ;
+		foreach($invoices as $index => $invoice){
+			$clientName = $invoice[$clientNameColumnName] ;
+			$invoiceNumber = $invoice->invoice_number;
+			$invoiceDueDate = $invoice->invoice_due_date;
+			$netBalance = $invoice->getNetBalanceUntil($this->aging_date) ;
 			if(!$netBalance){
 				continue;
 			}
@@ -52,30 +53,30 @@ class InvoiceAgingService
 					$dueName = 'current_due';
 					$dayInterval = 0 ;
 				}
-					$result[$customerName][$dueName][$dayInterval] = isset($result[$customerName][$dueName][$dayInterval])  ?  $result[$customerName][$dueName][$dayInterval] + $netBalance : $netBalance ;
+					$result[$clientName][$dueName][$dayInterval] = isset($result[$clientName][$dueName][$dayInterval])  ?  $result[$clientName][$dueName][$dayInterval] + $netBalance : $netBalance ;
 					if($netBalance){
-						$result[$customerName][$dueName]['no_invoices'][$dayInterval]  = isset($result[$customerName][$dueName]['no_invoices'][$dayInterval]) ? $result[$customerName][$dueName]['no_invoices'][$dayInterval] + 1 : 1 ;
+						$result[$clientName][$dueName]['no_invoices'][$dayInterval]  = isset($result[$clientName][$dueName]['no_invoices'][$dayInterval]) ? $result[$clientName][$dueName]['no_invoices'][$dayInterval] + 1 : 1 ;
 					}
 					
-					$result[$customerName][$dueName]['total'] = isset($result[$customerName][$dueName]['total']) ? $result[$customerName][$dueName]['total'] + $netBalance : $netBalance ; 
-					$result[$customerName]['total'] = isset($result[$customerName]['total']) ? $result[$customerName]['total'] + $netBalance : $netBalance;
-					$result[$customerName]['invoices'][$invoiceNumber][$dueName][$dayInterval] = $netBalance;
-					$result[$customerName]['invoices'][$invoiceNumber][$dueName]['total'] = isset($result[$customerName]['invoices'][$invoiceNumber][$dueName]['total']) ? $result[$customerName]['invoices'][$invoiceNumber][$dueName]['total']  +$netBalance  : $netBalance;
-					$result[$customerName]['invoices'][$invoiceNumber]['total'] = isset($result[$customerName]['invoices'][$invoiceNumber]['total']) ? $result[$customerName]['invoices'][$invoiceNumber]['total']  +$netBalance  : $netBalance;
+					$result[$clientName][$dueName]['total'] = isset($result[$clientName][$dueName]['total']) ? $result[$clientName][$dueName]['total'] + $netBalance : $netBalance ; 
+					$result[$clientName]['total'] = isset($result[$clientName]['total']) ? $result[$clientName]['total'] + $netBalance : $netBalance;
+					$result[$clientName]['invoices'][$invoiceNumber][$dueName][$dayInterval] = $netBalance;
+					$result[$clientName]['invoices'][$invoiceNumber][$dueName]['total'] = isset($result[$clientName]['invoices'][$invoiceNumber][$dueName]['total']) ? $result[$clientName]['invoices'][$invoiceNumber][$dueName]['total']  +$netBalance  : $netBalance;
+					$result[$clientName]['invoices'][$invoiceNumber]['total'] = isset($result[$clientName]['invoices'][$invoiceNumber]['total']) ? $result[$clientName]['invoices'][$invoiceNumber]['total']  +$netBalance  : $netBalance;
 					$result['total'][$dueName][$dayInterval] = isset($result['total'][$dueName][$dayInterval]) ? $result['total'][$dueName][$dayInterval] + $netBalance :$netBalance ;
 					if($netBalance){
 						$result['invoice_count'][$dueName][$dayInterval] = isset($result['invoice_count'][$dueName][$dayInterval]) ? $result['invoice_count'][$dueName][$dayInterval] + 1 : 1 ;
-						$result['invoice_count'][$dueName]['customers'][$dayInterval][$customerName] = $customerName;
+						$result['invoice_count'][$dueName]['clients'][$dayInterval][$clientName] = $clientName;
 					}
 					
 					$result['grand_total'] = isset($result['grand_total']) ? $result['grand_total'] + $netBalance :$netBalance ;
 					if($netBalance){
-						$result['grand_customers_total'][$customerName] = $customerName ;
+						$result['grand_clients_total'][$clientName] = $clientName ;
 					}
 					$result['total_of_due'][$dueName] = isset($result['total_of_due'][$dueName]) ? $result['total_of_due'][$dueName] + $netBalance: $netBalance ;
 					
 					if($netBalance){
-						$result['total_customers_due'][$dueName][$customerName] = $customerName ;
+						$result['total_clients_due'][$dueName][$clientName] = $clientName ;
 					}
 				}
 				

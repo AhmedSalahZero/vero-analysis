@@ -22,10 +22,10 @@ class CashInSafeStatement extends Model
             ]);
         });
 
-        static::deleting(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
-            $cleanOverdraftBankStatement->debit = 0;
-            $cleanOverdraftBankStatement->credit = 0;
-            $cleanOverdraftBankStatement->save();
+        static::deleting(function (CashInSafeStatement $model) {
+            $model->debit = 0;
+            $model->credit = 0;
+            $model->save();
         });
     }
 

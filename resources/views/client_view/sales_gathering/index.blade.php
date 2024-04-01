@@ -404,7 +404,7 @@ $date = now()->format('d-m-Y')
 
             @if ($name == 'date' || $name=='invoice_due_date' || $name == 'invoice_date')
             <td class="text-center">{{ isset($item->$name) ? date('d-M-Y',strtotime($item->$name)):  '-' }}</td>
-            @elseif($name == 'invoice_amount' || $name == 'vat_amount' || $name == 'withhold_amount' || $name == 'collected_amount' || $name=='net_balance'|| $name=='net_invoice_amount')
+            @elseif($name == 'invoice_amount' || $name == 'vat_amount' || $name == 'withhold_amount' || $name == 'collected_amount' || $name == 'paid_amount' || $name=='net_balance'|| $name=='net_invoice_amount')
             <td class="text-center">{{ number_format($item->$name?:0 ,2 ) }}</td>
             @else
             <td @if($modelName == 'LabelingItem') data-css-col-name="{{ $name??'' }}" @endif class="text-center">

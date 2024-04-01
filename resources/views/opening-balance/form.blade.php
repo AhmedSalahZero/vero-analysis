@@ -43,7 +43,7 @@ use App\Models\MoneyReceived ;
         flex: initial !important;
     }
 
-   
+
 
     .width-15 {
         max-width: 170px !important;
@@ -90,10 +90,10 @@ use App\Models\MoneyReceived ;
 </style>
 
 <style>
- .show-class-js.js-parent-to-table {
+    .show-class-js.js-parent-to-table {
         overflow: scroll !important;
     }
-	
+
 </style>
 <style>
 
@@ -906,18 +906,13 @@ use App\Models\MoneyReceived ;
                             , minViewMode: "year"
                             , todayHighlight: false
                             , clearBtn: true,
-
-
                             autoclose: true
                             , format: "mm/01/yyyy"
                         , })
                         .datepicker('setDate', new Date(currentDate))
                         .datepicker('setStartDate', new Date(startDate))
                         .datepicker('setEndDate', new Date(endDate))
-
-
                 }
-
             </script>
             <!--begin::Page Scripts(used by this page) -->
             <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>

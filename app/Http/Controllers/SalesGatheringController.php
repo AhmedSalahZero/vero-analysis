@@ -26,7 +26,7 @@ class SalesGatheringController extends Controller
 		if(!$fieldName){
 			return null;
 		}
-		if($modelName == 'CustomerInvoice'){
+		if($modelName == 'CustomerInvoice' || $modelName == 'SupplierInvoice'){
 			if($fieldName == 'invoice_due_date'){
 				return 'invoice_due_date';
 			}
@@ -75,7 +75,7 @@ class SalesGatheringController extends Controller
 		})
         ->orderBy($mainDateOrderBy, $orderByDirection)->paginate($pageLength);
         $exportableFields  = (new ExportTable)->customizedTableField($company, $uploadType, 'selected_fields');
-        if($modelName == 'CustomerInvoice') {
+        if($modelName == 'CustomerInvoice' || 'SupplierName'==$modelName) {
             unset($exportableFields['withhold_amount']);
         }
         $viewing_names = array_values($exportableFields);
@@ -425,28 +425,9 @@ class SalesGatheringController extends Controller
 		if($labeling->first() && ($labeling->first()->code || $labeling->first()->Code)){
 			$hasCodeColumnForLabelingItem= true ; 
 		}
-		// $labeling = $labeling->chunk($rowsPerPage);
-	
-		
 		return (new LabelingItemExportAsPdf($labeling))->download('Labeling Item.pdf','Dompdf');
 		
-        // return view('client_view.printing.custom-printing',[
-		// 	'db_names'=>$db_names,
-		// 	'company'=>$company,
-		// 	'exportables'=>$exportableFields,
-		// 	'hasCodeColumnForLabelingItem'=>$hasCodeColumnForLabelingItem,
-		// 	'modelName'=>'LabelingItem',
-		// 	'viewing_names'=>$viewing_names,
-		// 	'labeling'=>$labeling,
-		// 	'printPaper'=>$printPaper,
-		// 	'reportTitle'=>$reportTitle
-		// ]);
-		
-	
-		
-		// return view('client_view.printing.custom-printing',[
-		// 	'hasCodeColumnForLabelingItem'
-		// ])
+     
 	}
 	
 }

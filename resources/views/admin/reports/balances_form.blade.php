@@ -137,7 +137,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Balances') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $title }}</x-main-form-title>
 @endsection
 @section('content')
 
@@ -230,31 +230,21 @@
                         border: 1.5px solid white !important;
                         background-color: #0e96cd !important;
                         color: white !important;
-
-
                         background-color: #E2EFFE !important;
                         color: black !important
                     }
-
-
-
                     .sub-numeric-bg {
                         text-align: center;
 
                     }
-
-
-
                     th.dtfc-fixed-left {
                         background-color: #074FA4 !important;
                         color: white !important;
                     }
-
                     .header-tr,
                         {
                         background-color: #046187 !important;
                     }
-
                     .dt-buttons.btn-group {
                         display: flex;
                         align-items: flex-start;
@@ -298,15 +288,13 @@
                     @php
                     $index = 0 ;
                     @endphp
-					{{-- {{dd($cardNetBalances['currencies'])}} --}}
                     @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
-					
-                    <x-money-card :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
+                    <x-money-card :invoiceType="$modelType" :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
                     @php
                     $index++;
                     @endphp
                     @if($loop->last && isset($cardNetBalances['main_currency']))
-                    <x-money-card :show-report="0" :color="'success'" :currencyName="'Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']'" :total="$cardNetBalances['main_currency'][$mainCurrency] ?? 0"></x-money-card>
+                    <x-money-card :invoiceType="$modelType" :show-report="0" :color="'success'" :currencyName="'Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']'" :total="$cardNetBalances['main_currency'][$mainCurrency] ?? 0"></x-money-card>
                     @endif
                     @endforeach
 
@@ -326,7 +314,7 @@
                         @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
                         <li class="nav-item">
                             <a class="nav-link {{ $loop->first ? 'active':'' }}" onclick="return false;" data-toggle="tab" href="#{{ $currencyName.'report__table' }}" role="tab">
-                                <i class="flaticon2-checking"></i> &nbsp; {{ __('Customer Balance In').' ' .__($currencyName) }}
+                                <i class="flaticon2-checking"></i> &nbsp; {{ __('Balance In').' ' .__($currencyName) }}
                             </a>
                         </li>
                         @endforeach
@@ -394,21 +382,21 @@
                                             </script>
                                             @php
                                             @endphp
-                                            @foreach($customerInvoicesBalances as $index=>$customerInvoicesBalancesAsStdClass)
-                                            @if( $currencyName == $customerInvoicesBalancesAsStdClass->currency)
+                                            @foreach($invoicesBalances as $index=>$invoicesBalancesAsStdClass)
+                                            @if( $currencyName == $invoicesBalancesAsStdClass->currency)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $customerInvoicesBalancesAsStdClass->customer_name }}</td>
+                                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $invoicesBalancesAsStdClass->{$clientNameColumnName} }}</td>
                                                 <td class="sub-text-bg text-center max-w-currency">{{ $currencyName }}</td>
-                                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($customerInvoicesBalancesAsStdClass->net_balance) }}</td>
+                                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($invoicesBalancesAsStdClass->net_balance) }}</td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
-                                                    @if($currencyName && $customerInvoicesBalancesAsStdClass->customer_name)
-                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$customerInvoicesBalancesAsStdClass->customer_id,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
+                                                    @if($currencyName && $invoicesBalancesAsStdClass->{$clientNameColumnName})
+                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
                                                     @endif
                                                 </td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
-                                                    @if($customerInvoicesBalancesAsStdClass->customer_name && $customerInvoicesBalancesAsStdClass->currency)
-                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$customerInvoicesBalancesAsStdClass->customer_id,'currency'=>$customerInvoicesBalancesAsStdClass->currency]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
+                                                    @if($invoicesBalancesAsStdClass->{$clientNameColumnName} && $invoicesBalancesAsStdClass->currency)
+                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
                                                     @endif
                                                 </td>
                                             </tr>

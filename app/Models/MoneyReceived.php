@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Helpers\HHelpers;
 use App\Models\OpeningBalance;
+use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class MoneyReceived extends Model
 {
+	use IsMoney ;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
@@ -17,10 +20,6 @@ class MoneyReceived extends Model
 	const CHEQUE_REJECTED  = 'cheque-rejected';
 	const CHEQUE_COLLECTED = 'cheque-collected';
 	
-	public function getId()
-	{
-		return $this->id ;
-	}	
 	public static function getAllTypes()
 	{
 		return [
@@ -173,12 +172,6 @@ class MoneyReceived extends Model
         return $incomingTransfer ? $incomingTransfer->getReceivingBankName() : __('N/A') ;
 	}
 	
-	
-	
-	
-	
-	
-	
 	public function cashInBank()
 	{
 		return $this->hasOne(CashInBank::class,'money_received_id','id');
@@ -199,16 +192,6 @@ class MoneyReceived extends Model
 		return $cashInBank ? $cashInBank->receivingBank() : null ;
 	}
 	
-	
-	// public function getReceivingBankNameIn(string $lang)
-	// {
-	// 	 return $this->receivingBank ? $this->receivingBank['name_'.$lang] : __('N/A');
-	// }
-    // public function getAccountNumber()
-    // {
-	// 	// if statement here for type
-    //     return $this->account_number;
-    // }
 	/**
 	 * * For Money Received Only
 	 */
@@ -402,7 +385,7 @@ class MoneyReceived extends Model
 	}
 	public function unappliedAmounts()
 	{
-		return $this->hasMany(UnappliedAmount::class ,'money_received_id','id');	
+		return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
 	}
 	public function cleanOverdraftBankStatement()
 	{

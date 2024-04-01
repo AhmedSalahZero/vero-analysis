@@ -11,7 +11,6 @@ use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\UnappliedAmount;
-use App\Models\User;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -112,7 +111,7 @@ class UnappliedAmountController
 		$customerInvoiceId = $request->get('customer_id');
 		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
 		$invoiceNumber = $customerInvoice->getInvoiceNumber();
-		$customerName = $customerInvoice->getCustomerName();
+		$customerName = $customerInvoice->getName();
 		$totalWithholdAmount= 0 ;
 		$unappliedAmount = UnappliedAmount::create([
 			'company_id'=>$company->id ,

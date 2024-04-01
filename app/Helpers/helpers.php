@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\LgTypes;
+use App\Helpers\HHelpers;
 use App\Http\Controllers\Analysis\SalesGathering\BranchesAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\BusinessSectorsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\CategoriesAgainstAnalysisReport;
@@ -68,6 +69,13 @@ const uploadCustomerInvoiceData ='upload customer invoice analysis data';
 const exportCustomerInvoiceData ='export customer invoice analysis data';
 const deleteCustomerInvoiceData ='delete customer invoice analysis data';
 const viewCustomerInvoiceData ='view customer invoice analysis data';
+
+
+const uploadSupplierInvoiceData ='upload supplier invoice analysis data';
+const exportSupplierInvoiceData ='export supplier invoice analysis data';
+const deleteSupplierInvoiceData ='delete supplier invoice analysis data';
+const viewSupplierInvoiceData ='view supplier invoice analysis data';
+
 
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
@@ -2910,6 +2918,24 @@ function getPermissions():array
         [
             'name'=>deleteCustomerInvoiceData
         ],
+		
+		[
+            'name'=>viewSupplierInvoiceData
+        ],
+        [
+            'name'=>uploadSupplierInvoiceData
+        ],
+        [
+            'name'=>exportSupplierInvoiceData
+        ],
+        
+        [
+            'name'=>deleteSupplierInvoiceData
+        ],
+		
+		
+		
+		
         
         [
             'name'=>'view cash flow analysis'
@@ -3001,8 +3027,13 @@ function getPermissions():array
         [
             'name'=>'view customer aging'
         ],
+		[
+            'name'=>'view supplier aging'
+        ],
         [
             'name'=>'view customer balances'
+        ],  [
+            'name'=>'view supplier balances'
         ], 
 		[
             'name'=>'view letter of guarantee issuance'
@@ -3038,7 +3069,9 @@ function getPermissions():array
         [
             'name'=>'view money received'
         ],
-		
+		[
+            'name'=>'view money payment'
+        ],
 		[
             'name'=>'view internal money transfer'
         ],
@@ -3655,7 +3688,20 @@ function getUploadParamsFromType(string $type = null):array
             'exportPermissionName'=>exportCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
             'deletePermissionName'=>deleteCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Customer Invoice Import'),
+		],
+		
+		'SupplierInvoice'=>[
+            'fullModel'=>'\App\Models\SupplierInvoice',
+            'dbName'=>'supplier_invoices',
+            'typePrefixName'=>__('Supplier Invoice'),
+            'orderByDateField'=>'invoice_date',
+            'viewPermissionName'=>viewSupplierInvoiceData,
+            'uploadPermissionName'=>uploadSupplierInvoiceData, // important:add this also into permission function names [getPermissions()]
+            'exportPermissionName'=>exportSupplierInvoiceData,// important:add this also into permission function names[getPermissions()]
+            'deletePermissionName'=>deleteSupplierInvoiceData,// important:add this also into permission function names[getPermissions()]
+            'importHeaderText'=>__('Supplier Invoice Import'),
         ]
+		
     ] ;
     if($type) {
         return $params[$type];
@@ -4193,8 +4239,15 @@ function getHeaderMenu()
 		
 		'customer-aging'=>[
 			'title'=>__('Customer Aging'),
-			'link'=>route('view.customer.aging.analysis', ['company'=>$companyId]),
+			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
 			'show'=>$user->can('view customer aging'),
+			'submenu'=>[
+			]
+		],
+		'supplier-aging'=>[
+			'title'=>__('Supplier Aging'),
+			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
+			'show'=>$user->can('view supplier aging'),
 			'submenu'=>[
 			]
 		],
@@ -4202,6 +4255,12 @@ function getHeaderMenu()
 			'title'=>__('Money Received'),
 			'link'=>route('view.money.receive', ['company'=>$companyId]),
 			'show'=>$user->can('view money received'),
+			'submenu'=>[]
+		],
+		'money-payment'=>[
+			'title'=>__('Money Payment'),
+			'link'=>route('view.money.payment', ['company'=>$companyId]),
+			'show'=>$user->can('view money payment'),
 			'submenu'=>[]
 		],
 		'internal-money-transfer'=>[
@@ -4218,10 +4277,18 @@ function getHeaderMenu()
 		// ],
 		'customer-balances'=>[
 			'title'=>__('Customer Balances'),
-			'link'=>route('view.customer.balances', ['company'=>$companyId]),
+			'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
 			'show'=>$user->can('view customer balances'),
 			'submenu'=>[]
-		],'view letter of guarantee issuance'=>[
+		],
+		'supplier-balances'=>[
+			'title'=>__('Supplier Balances'),
+			'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
+			'show'=>$user->can('view supplier balances'),
+			'submenu'=>[]
+		],
+		
+		'view letter of guarantee issuance'=>[
 			'title'=>__('LG Issuance'),
 			'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
 			'show'=>$user->can('view letter of guarantee issuance'),
@@ -4266,6 +4333,12 @@ function getHeaderMenu()
                             'title'=>__('Upload New Customer Invoice Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
                             'show'=>$user->can(uploadCustomerInvoiceData),
+                            'submenu'=>[]
+						],
+						'upload new supplier invoice data'=>[
+                            'title'=>__('Upload New Supplier Invoice Data'),
+                            'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice']),
+                            'show'=>$user->can(uploadSupplierInvoiceData),
                             'submenu'=>[]
 						],
 						'upload-new-labeling-data'=>[
@@ -4709,4 +4782,8 @@ function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSub
 function hasMiddleware(string $middlewareName)
 {
 	return in_array($middlewareName,array_values(Route::current()->gatherMiddleware()) );
+}
+function getModelNameWithoutNamespace($object)
+{
+	return HHelpers::getClassNameWithoutNameSpace($object);
 }

@@ -60,6 +60,15 @@ class ExportTable extends Controller
 			$fields[] = 'customer_name';
 			$fields[] = 'customer_amount';
 		}
+		if('supplierInvoice' ==getLastSegmentInRequest()){
+			$fields[] = 'invoice_status';
+			$fields[] = 'paid_amount';
+			$fields[] = 'net_balance';
+			$fields[] = 'invoice_date';
+			$fields[] = 'invoice_number';
+			$fields[] = 'supplier_name';
+			$fields[] = 'supplier_amount';
+		}
 		$request['fields'] = $fields;
 
 		$modelExportableFields = CustomizedFieldsExportation::where('model_name', $model)
@@ -73,9 +82,6 @@ class ExportTable extends Controller
 			if(isset($columnsWithViewingNames['invoice_status'])){
 				unset($columnsWithViewingNames['invoice_status']);
 			}
-			// if(isset($columnsWithViewingNames['collected_amount'])){
-			// 	unset($columnsWithViewingNames['collected_amount']);
-			// }
 			if(isset($columnsWithViewingNames['net_balance'])){
 				unset($columnsWithViewingNames['net_balance']);
 			}

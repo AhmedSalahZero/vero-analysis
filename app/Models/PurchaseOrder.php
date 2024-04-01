@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Models\IsOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,10 +10,7 @@ class PurchaseOrder extends Model
 {
 	protected $guarded = ['id'];
 	
-	public function getId()
-	{
-		return $this->id ;
-	}
+	use IsOrder ;
 	
 	
 	public function getName()

@@ -374,8 +374,8 @@
                                             {{ $invoice->getAging() }}
                                         </td>
                                         <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->isCollected())
-                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'customerInvoice'=>$invoice->id ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" @if($invoice->dueDateHistories->count())
+                                            @if(!$invoice->$isCollectedOrPaid())
+                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>getModelNameWithoutNamespace($invoice) ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" @if($invoice->dueDateHistories->count())
                                                 style="background-color:orange !important;color:black !important;border-color:white !important;"
                                                 @else
                                                 style="background-color:green !important; border-color:white !important;"
@@ -385,14 +385,14 @@
                                         </td>
 
                                         <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->isCollected())
-                                            <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ __('Money Received') }}" class="btn btn-sm btn-primary">{{ __('money Received') }}</a>
+                                            @if(!$invoice->$isCollectedOrPaid())
+                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
                                             @endif
                                         </td>
 										
 										
                                         <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->isCollected())
+                                            @if(!$invoice->$isCollectedOrPaid())
                                             <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id ]) }}" title="{{ __('Settlement') }}" class="btn btn-sm btn-primary">{{ __('Settlement') }}</a>
                                             @endif
                                         </td>

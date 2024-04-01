@@ -176,11 +176,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                         justify-content: center;
                     }
 
-                    /* table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before, table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before,
-    .dataTables_wrapper table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td:first-child::before
-    {
-        content:none ;
-    } */
+            
                     .modal-backdrop {
                         display: none !important;
                     }

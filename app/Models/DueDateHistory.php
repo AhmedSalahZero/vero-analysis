@@ -16,9 +16,12 @@ class DueDateHistory extends Model
 	}
 	public function customerInvoice()
 	{
-		return $this->belongsTo(CustomerInvoice::class,'customer_invoice_id','id');
+		return $this->belongsTo(CustomerInvoice::class,'model_id','id')->where('model_type','CustomerInvoice');
 	}
-	
+	public function supplierInvoice()
+	{
+		return $this->belongsTo(SupplierInvoice::class,'customer_invoice_id','id')->where('model_type','SupplierInvoice');
+	}
 	public function getDueDate()
     {
         return $this->due_date ;

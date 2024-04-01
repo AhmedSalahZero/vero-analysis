@@ -1,7 +1,6 @@
 @extends('layouts.dashboard')
 @section('css')
 <x-styles.commons></x-styles.commons>
-{{-- {{dd($customerAgings['grand_customers_total'])}} --}}
 
 <style>
 [data-chart-name="Total-Aging-Analysis-Chart"]{
@@ -282,7 +281,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 
         @php
-        $grandTotal = $customerAgings['grand_total'] ??0
+        $grandTotal = $agings['grand_total'] ??0
         @endphp
         <div class="tab-content">
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_1" role="tabpanel">
@@ -389,40 +388,40 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                         @php
                                         $rowIndex = 0 ;
                                         @endphp
-                                        @foreach($customerAgings as $customerName=> $customerAging)
-                                        @if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='invoice_count' || $customerName=='total_customers_due' || $customerName=='grand_customers_total' || $customerName=='charts')
+                                        @foreach($agings as $clientName=> $aging)
+                                        @if($clientName == 'total' || $clientName =='grand_total' || $clientName =='total_of_due' || $clientName =='invoice_count' || $clientName=='total_clients_due' || $clientName=='grand_clients_total' || $clientName=='charts')
                                         @continue ;
                                         @endif
                                         @php
-                                        $hasSubRows = count($customerAging['invoices']??[]) ;
-                                        $currentTotal = $customerAging['total'] ?? 0 ;
+                                        $hasSubRows = count($aging['invoices']??[]) ;
+                                        $currentTotal = $aging['total'] ?? 0 ;
                                         @endphp
                                         <tr class=" parent-tr  reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
                                             <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif</td>
-                                            <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAging['past_due'][$moreThan150] ?? 0 ,0) }}</td>
+                                            <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $clientName }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($aging['past_due'][$moreThan150] ?? 0 ,0) }}</td>
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
                                             @php
-                                            $currentValue = $customerAging['past_due'][$daysIntervalInInverseOrder] ?? 0 ;
+                                            $currentValue = $aging['past_due'][$daysIntervalInInverseOrder] ?? 0 ;
                                             $currentPercentage = $currentValue && $currentTotal ? $currentValue/ $currentTotal * 100 : 0 ;
                                             @endphp
                                             <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue  ,0) }} @if($currentPercentage) @endif </td>
                                             @endforeach
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAging['past_due']['total'] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($aging['past_due']['total'] ?? 0 ,0) }}</td>
 
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAging['current_due'][0] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($aging['current_due'][0] ?? 0 ,0) }}</td>
                                             @foreach(getInvoiceDayIntervals() as $daysInterval )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAging['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($aging['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
                                             @endforeach
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAging['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAging['coming_due']['total'] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($aging['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($aging['coming_due']['total'] ?? 0 ,0) }}</td>
                                             <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentTotal ,0) }}</td>
                                         </tr>
 
 
 
 
-                                        @foreach($customerAging['invoices'] as $invoiceNumber=>$invoiceDetailArr)
+                                        @foreach($aging['invoices'] as $invoiceNumber=>$invoiceDetailArr)
                                         <tr class="edit-info-row add-sub maintable-1-row-class{{ $rowIndex }} is-sub-row d-none">
                                             <td class=" reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize is-close "></td>
 
@@ -458,20 +457,20 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             <td class=" reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close "></td>
 
                                             <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{ __('Total') }}</td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['total']['past_due'][$moreThan150] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['total']['past_due'][$moreThan150] ?? 0 ,0) }}</td>
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['total']['past_due'][$daysIntervalInInverseOrder] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['total']['past_due'][$daysIntervalInInverseOrder] ?? 0 ,0) }}</td>
                                             @endforeach
                                             <td class="  sub-numeric-bg text-center editable-date">
-                                                {{ number_format($customerAgings['total_of_due']['past_due']??0) }}
+                                                {{ number_format($agings['total_of_due']['past_due']??0) }}
                                             </td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['total']['current_due'][0] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['total']['current_due'][0] ?? 0 ,0) }}</td>
                                             @foreach(getInvoiceDayIntervals() as $daysInterval )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['total']['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['total']['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
                                             @endforeach
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['total']['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['total']['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
                                             <td class="  sub-numeric-bg text-center editable-date">
-                                                {{ number_format($customerAgings['total_of_due']['coming_due']??0) }}
+                                                {{ number_format($agings['total_of_due']['coming_due']??0) }}
                                             </td>
                                             <td class="sub-numeric-bg text-center editable-date">{{ number_format($grandTotal ,0) }}</td>
 
@@ -485,21 +484,21 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             <td class=" reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close "></td>
 
                                             <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{ __('Percentage From Grand Total %') }}</td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{$grandTotal && isset($customerAgings['total']['past_due'][$moreThan150]) ?  number_format($customerAgings['total']['past_due'][$moreThan150] / $grandTotal *100 ,2) . ' %' : 0 }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{$grandTotal && isset($agings['total']['past_due'][$moreThan150]) ?  number_format($agings['total']['past_due'][$moreThan150] / $grandTotal *100 ,2) . ' %' : 0 }}</td>
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($customerAgings['total']['past_due'][$daysIntervalInInverseOrder]) ? number_format($customerAgings['total']['past_due'][$daysIntervalInInverseOrder] /$grandTotal * 100 ,2) . ' %' : 0 }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($agings['total']['past_due'][$daysIntervalInInverseOrder]) ? number_format($agings['total']['past_due'][$daysIntervalInInverseOrder] /$grandTotal * 100 ,2) . ' %' : 0 }}</td>
                                             @endforeach
                                             <td class="  sub-numeric-bg text-center editable-date">
-                                                {{ $grandTotal && isset($customerAgings['total_of_due']['past_due']) ?   number_format($customerAgings['total_of_due']['past_due']/ $grandTotal * 100 ,2) . ' %' : 0 }}
+                                                {{ $grandTotal && isset($agings['total_of_due']['past_due']) ?   number_format($agings['total_of_due']['past_due']/ $grandTotal * 100 ,2) . ' %' : 0 }}
                                             </td>
 
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($customerAgings['total']['current_due'][0]) ?  number_format($customerAgings['total']['current_due'][0]  / $grandTotal * 100 ,2). ' %' : 0 }} </td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($agings['total']['current_due'][0]) ?  number_format($agings['total']['current_due'][0]  / $grandTotal * 100 ,2). ' %' : 0 }} </td>
                                             @foreach(getInvoiceDayIntervals() as $daysInterval )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($customerAgings['total']['coming_due'][$daysInterval])?  number_format($customerAgings['total']['coming_due'][$daysInterval]  / $grandTotal *100 ,2) . ' %' : 0 }} </td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($agings['total']['coming_due'][$daysInterval])?  number_format($agings['total']['coming_due'][$daysInterval]  / $grandTotal *100 ,2) . ' %' : 0 }} </td>
                                             @endforeach
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($customerAgings['total']['coming_due'][$moreThan150]) ? number_format($customerAgings['total']['coming_due'][$moreThan150]  / $grandTotal *100  ,2) . ' %':0 }} </td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ $grandTotal && isset($agings['total']['coming_due'][$moreThan150]) ? number_format($agings['total']['coming_due'][$moreThan150]  / $grandTotal *100  ,2) . ' %':0 }} </td>
                                             <td class="  sub-numeric-bg text-center editable-date">
-                                                {{ $grandTotal && isset($customerAgings['total_of_due']['coming_due']) ?  number_format($customerAgings['total_of_due']['coming_due'] / $grandTotal * 100 ,2) . ' %' : 0 }}
+                                                {{ $grandTotal && isset($agings['total_of_due']['coming_due']) ?  number_format($agings['total_of_due']['coming_due'] / $grandTotal * 100 ,2) . ' %' : 0 }}
                                             </td>
                                             <td class="sub-numeric-bg text-center editable-date">{{ $grandTotal ? number_format($grandTotal / $grandTotal * 100 ) . ' %' : 0 }}</td>
 
@@ -512,27 +511,27 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             <td class=" reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close "></td>
 
                                             <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{ __('Invoice Count') }}</td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['invoice_count']['past_due'][$moreThan150] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['invoice_count']['past_due'][$moreThan150] ?? 0 ,0) }}</td>
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['invoice_count']['past_due'][$daysIntervalInInverseOrder] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['invoice_count']['past_due'][$daysIntervalInInverseOrder] ?? 0 ,0) }}</td>
                                             @endforeach
                                             <td class="  sub-numeric-bg text-center editable-date">
                                                 @php
-                                                $totalInvoiceForPastDue = array_sum($customerAgings['invoice_count']['past_due'] ?? []);
+                                                $totalInvoiceForPastDue = array_sum($agings['invoice_count']['past_due'] ?? []);
                                                 @endphp
                                                 {{ number_format($totalInvoiceForPastDue) }}
                                             </td>
                                             @php
-                                            $totalInvoiceForCurrentDue = $customerAgings['invoice_count']['current_due'][0] ?? 0;
+                                            $totalInvoiceForCurrentDue = $agings['invoice_count']['current_due'][0] ?? 0;
                                             @endphp
                                             <td class="  sub-numeric-bg text-center editable-date">{{ number_format( $totalInvoiceForCurrentDue,0) }}</td>
                                             @foreach(getInvoiceDayIntervals() as $daysInterval )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['invoice_count']['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['invoice_count']['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
                                             @endforeach
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($customerAgings['invoice_count']['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format($agings['invoice_count']['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
                                             <td class="  sub-numeric-bg text-center editable-date">
                                                 @php
-                                                $totalInvoiceForComingDue = array_sum($customerAgings['invoice_count']['coming_due'] ?? [])
+                                                $totalInvoiceForComingDue = array_sum($agings['invoice_count']['coming_due'] ?? [])
                                                 @endphp
                                                 {{ number_format($totalInvoiceForComingDue) }}
                                             </td>
@@ -550,24 +549,24 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             <td class=" reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close "></td>
 
                                             <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{ __('Customers Count') }}</td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($customerAgings['invoice_count']['past_due']['customers'][$moreThan150] ?? [])) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($agings['invoice_count']['past_due']['clients'][$moreThan150] ?? [])) }}</td>
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format( count($customerAgings['invoice_count']['past_due']['customers'][$daysIntervalInInverseOrder]?? [])  ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format( count($agings['invoice_count']['past_due']['clients'][$daysIntervalInInverseOrder]?? [])  ,0) }}</td>
                                             @endforeach
                                             <td class="  sub-numeric-bg text-center editable-date">
 
-                                                {{ number_format(count($customerAgings['total_customers_due']['past_due'] ?? [])) }}
+                                                {{ number_format(count($agings['total_clients_due']['past_due'] ?? [])) }}
                                             </td>
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($customerAgings['invoice_count']['current_due']['customers'][0] ?? []) ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($agings['invoice_count']['current_due']['clients'][0] ?? []) ,0) }}</td>
                                             @foreach(getInvoiceDayIntervals() as $daysInterval )
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($customerAgings['invoice_count']['coming_due']['customers'][$daysInterval] ?? []) ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($agings['invoice_count']['coming_due']['clients'][$daysInterval] ?? []) ,0) }}</td>
                                             @endforeach
-                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($customerAgings['invoice_count']['coming_due']['customers'][$moreThan150] ?? []) ,0) }}</td>
+                                            <td class="  sub-numeric-bg text-center editable-date">{{ number_format(count($agings['invoice_count']['coming_due']['clients'][$moreThan150] ?? []) ,0) }}</td>
                                             <td class="  sub-numeric-bg text-center editable-date">
-                                                {{ number_format(count($customerAgings['total_customers_due']['coming_due'] ?? [])) }}
+                                                {{ number_format(count($agings['total_clients_due']['coming_due'] ?? [])) }}
                                             </td>
                                             <td class="sub-numeric-bg text-center editable-date">
-                                                {{ number_format(count($customerAgings['grand_customers_total']??[])) }}</td>
+                                                {{ number_format(count($agings['grand_clients_total']??[])) }}</td>
                                         </tr>
 
 
@@ -599,7 +598,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
             </div>
             <div class="tab-pane" id="kt_apps_contacts_view_tab_2" role="tabpanel">
 
-                @foreach($customerAgings['charts']??[] as $chartName =>$chartArr)
+                @foreach($agings['charts']??[] as $chartName =>$chartArr)
                 {{-- <div class="kt-portlet"> --}}
                     
                         <div class="row">
@@ -671,7 +670,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                         </div>
                             @endforeach
 
-                            @foreach($customerAgings['charts']??[] as $chartName => $chartArr)
+                            @foreach($agings['charts']??[] as $chartName => $chartArr)
                             <input type="hidden" id="total_{{ convertStringToClass($chartName) }}" data-total="{{ json_encode(
       							      $chartArr
         					) }}">
@@ -904,7 +903,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 <!-- Chart code -->
 
-@foreach($customerAgings['charts']??[] as $chartName => $chartArr)
+@foreach($agings['charts']??[] as $chartName => $chartArr)
 <script>
     am4core.ready(function() {
 
