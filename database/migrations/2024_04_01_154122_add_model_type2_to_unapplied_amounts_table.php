@@ -14,7 +14,7 @@ class AddModelType2ToUnappliedAmountsTable extends Migration
     public function up()
     {
         Schema::table('unapplied_amounts', function (Blueprint $table) {
-			$table->string('model_type')->after('model_id')->comment('وليكن مثلا MoneyReceived , MoneyPayment');
+			$table->string('model_type')->comment('وليكن مثلا MoneyReceived , MoneyPayment');
 		});
     }
 
