@@ -15,9 +15,16 @@ class CustomerInvoiceDashboardController extends Controller
 	public function viewForecastDashboard(Company $company , Request $request ){
 		return view('admin.dashboard.forecast',['company'=>$company]);
 	}
-	public function showInvoiceReport(Company $company , Request $request , int  $partnerId,string $currency){
-		$invoices = CustomerInvoice::where('company_id',$company->id)
-		->where('customer_id',$partnerId)
+	public function showInvoiceReport(Company $company , Request $request , int  $partnerId,string $currency,$modelType){
+		$fullClassName = ('\App\Models\\'.$modelType) ;
+	
+		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+		$isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
+		$moneyReceivedOrPaidText  =(new ($fullClassName)) ->getMoneyReceivedOrPaidText();
+		$moneyReceivedOrPaidUrlName  =(new ($fullClassName)) ->getMoneyReceivedOrPaidUrlName();
+		
+		$invoices = ('App\Models\\'.$modelType)::where('company_id',$company->id)
+		->where($clientIdColumnName,$partnerId)
 		->where('currency',$currency)
 		->get();
 		$customer = Partner::find($partnerId);
@@ -29,7 +36,11 @@ class CustomerInvoiceDashboardController extends Controller
 			'invoices'=>$invoices,
 			'partnerName'=>$customer->getName(),
 			'partnerId'=>$customer->getId() ,
-			'currency'=>$currency
+			'currency'=>$currency,
+			'isCollectedOrPaid'=>'is'.ucfirst($isCollectedOrPaid),
+			'moneyReceivedOrPaidText'=>$moneyReceivedOrPaidText,
+			'moneyReceivedOrPaidUrlName'=>$moneyReceivedOrPaidUrlName
+			
 		]);
 	}	
 	

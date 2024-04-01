@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CustomerInvoiceTestRequest extends FormRequest
+class StoreMoneyPaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class CustomerInvoiceTestRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer_name' => 'required'
+            //
         ];
     }
 }

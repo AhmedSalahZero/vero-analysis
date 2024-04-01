@@ -20,7 +20,6 @@ $factory->define(CustomerInvoice::class, function (Faker $faker) {
 		'withhold_amount'=>$withholdAmount=(0.03 * $invoiceAmount),
 		'net_invoice_amount'=>$netInvoiceAmount = $invoiceAmount + $vatAmount-$withholdAmount,
 		'collected_amount'=>$collectedAmount = 0,
-		// 'collected_amount'=>$collectedAmount = $faker->numberBetween(50,100) / 100 * $netInvoiceAmount,
 		'net_balance'=>$netInvoiceAmount - $collectedAmount,
 		'invoice_due_date'=>Carbon::make($invoiceDate)->addDays($faker->numberBetween(30,45))->format('Y-m-d')
     ];

@@ -207,9 +207,9 @@ use App\Models\MoneyReceived ;
 
 
                 <div class="col-md-1">
-                    <label>{{__('Currency')}} 
-					@include('star')
-					</label>
+                    <label>{{__('Currency')}}
+                        @include('star')
+                    </label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="currency" name="currency" class="form-control ajax-get-contracts-for-customer current-currency ajax-get-sales-orders-for-contract">
@@ -478,24 +478,10 @@ use App\Models\MoneyReceived ;
 
 
 
-                    {{-- <div class="col-md-4">
-                        <label>{{__('Select Currency')}} <span class="required">*</span></label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select name="currency" class="form-control">
-                                <option value="" selected>{{__('Select')}}</option>
-                                <option>EGP</option>
-                                <option>USD</option>
-                                <option>EURO</option>
-                                <option>GBP</option>
-                            </select>
-                        </div>
-                    </div>
-                </div> --}}
+                </div>
             </div>
-        </div>
 
-    </div>
+        </div>
     </div>
 
     {{-- Incoming Transfer Information--}}
@@ -594,80 +580,42 @@ use App\Models\MoneyReceived ;
                 <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
                         <div class="form-group row align-items-end">
-                            {{--
-                            <div class="col-md-1 width-10">
-                                <label>{{__('Invoice Number')}} </label>
-                            <div class="kt-input-icon">
+
+                            <div class="col-md-4">
+                                <label>{{__('SO Number')}} </label>
                                 <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
-                                    </div>
+                                    <input name="sales_orders_amounts[][sales_order_id]" type="text" readonly class="form-control js-sales-order-number">
                                 </div>
                             </div>
-                        </div> --}}
 
-
-                        {{-- <div class="col-md-1 width-12">
-                                <label>{{__('Invoice Date')}}</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <i class="la la-calendar-check-o"></i>
-                                    </span>
+                            <div class="col-md-2">
+                                <label>{{__('Amount')}} </label>
+                                <div class="kt-input-icon">
+                                    <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
                                 </div>
                             </div>
+
+
+
+
+
+
+                            <div class="col-md-2">
+                                <label>{{__('Received Amount')}} <span class="required">*</span></label>
+                                <div class="kt-input-icon">
+                                    <input name="sales_orders_amounts[][received_amounts]" placeholder="{{ __('Received Amount') }}" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+                                </div>
+                            </div>
+
+
                         </div>
-                    </div> --}}
 
-                    <div class="col-md-4">
-                        <label>{{__('SO Number')}} </label>
-                        <div class="kt-input-icon">
-                            <input name="sales_orders_amounts[][sales_order_id]" type="text" readonly class="form-control js-sales-order-number">
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label>{{__('Amount')}} </label>
-                        <div class="kt-input-icon">
-                            <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
-                        </div>
-                    </div>
-
-
-                    {{-- <div class="col-md-2 width-12">
-                                <label>{{__('Collected Amount')}} </label>
-                    <div class="kt-input-icon">
-                        <input name="settlements[][collected_amount]" type="text" disabled class="form-control js-collected-amount">
                     </div>
                 </div>
-
-                <div class="col-md-2 width-12">
-                    <label>{{__('Net Balance')}} </label>
-                    <div class="kt-input-icon">
-                        <input name="settlements[][net_balance]" type="text" disabled class="form-control js-net-balance">
-                    </div>
-                </div> --}}
-
-
-
-                <div class="col-md-2">
-                    <label>{{__('Received Amount')}} <span class="required">*</span></label>
-                    <div class="kt-input-icon">
-                        <input name="sales_orders_amounts[][received_amounts]" placeholder="{{ __('Received Amount') }}" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                    </div>
-                </div>
-
-
             </div>
 
-        </div>
-    </div>
-    </div>
-
-    {{-- <hr> --}}
-    {{-- <div class="row">
+            {{-- <hr> --}}
+            {{-- <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-2"></div>
                 <div class="col-md-2"></div>
@@ -675,8 +623,8 @@ use App\Models\MoneyReceived ;
                 <div class="col-md-2"></div>
                 <div class="col-md-2 width-12 ml-auto mr-4">
                     <label class="label">{{ __('Unapplied Amount') }}</label>
-    <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
-    </div>
+            <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
+        </div>
     </div> --}}
     </div>
     </div>
@@ -737,26 +685,27 @@ use App\Models\MoneyReceived ;
 
 </script>
 <script>
-$(document).on('change','.ajax-get-contracts-for-customer',function(e){
-	e.preventDefault()
-	const customerId = $('#customer_name').val()
-	const currency = $('#currency').val()
-	if(customerId && currency){
-		$.ajax({
-			url:"{{ route('get.contracts.for.customer',['company'=>$company->id]) }}",
-			data:{
-				customerId,
-				currency
-			},
-			success:function(res){
-				let options='';
-				for(id in res.contracts){
-					options+= `<option value="${id}">${res.contracts[id]}</option>`
-				}
-				$('#contract-id').empty().append(options)
-			}
-		})
-	}
-})
+    $(document).on('change', '.ajax-get-contracts-for-customer', function(e) {
+        e.preventDefault()
+        const customerId = $('#customer_name').val()
+        const currency = $('#currency').val()
+        if (customerId && currency) {
+            $.ajax({
+                url: "{{ route('get.contracts.for.customer',['company'=>$company->id]) }}"
+                , data: {
+                    customerId
+                    , currency
+                }
+                , success: function(res) {
+                    let options = '';
+                    for (id in res.contracts) {
+                        options += `<option value="${id}">${res.contracts[id]}</option>`
+                    }
+                    $('#contract-id').empty().append(options)
+                }
+            })
+        }
+    })
+
 </script>
 @endsection

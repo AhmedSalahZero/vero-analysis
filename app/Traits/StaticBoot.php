@@ -9,12 +9,10 @@ trait StaticBoot
         parent::boot();
 
         static::updating(function ($model) {
-
             $model->updated_by = 1; 
         });
 
         static::creating(function ($model) {
-
             $model->created_by = 1;
         });
 

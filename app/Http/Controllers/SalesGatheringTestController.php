@@ -7,7 +7,6 @@ use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerNatureCashingJob;
 use App\Jobs\Caches\RemoveIntervalYearCashingJob;
-use App\Jobs\CalculateNetBalanceWithMonthlyDebits;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\Jobs\RemoveCachingCompaniesData;
 use App\Jobs\SalesGatheringTestJob;
@@ -144,13 +143,7 @@ class SalesGatheringTestController extends Controller
 			])->dispatch($company->id,$modelName);
 			
 		}
-		elseif($modelName == 'CustomerInvoice'){
-			SalesGatheringTestJob::withChain([
-				new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id,$modelName),
-				new CalculateNetBalanceWithMonthlyDebits($company->id,$modelName),
-				new RemoveCachingCompaniesData($company->id,$modelName),
-			])->dispatch($company->id,$modelName);
-		}
+	
 		else{
 			SalesGatheringTestJob::withChain([
 				// new RemoveIntervalYearCashingJob($company),

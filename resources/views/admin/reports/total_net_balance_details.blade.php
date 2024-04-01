@@ -314,7 +314,7 @@
                                 </th>
 
                                 <th class="view-table-th max-w-name   header-th  align-middle text-center">
-                                    {{ __('Customer Name') }}
+                                    {{ $clientNameText }}
                                 </th>
 
                                 <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
@@ -351,16 +351,16 @@
 
                             </script>
 							
-                            @foreach($customerInvoicesBalances as $index=>$customerInvoiceStdClass)
+                            @foreach($invoicesBalances as $index=>$invoiceStdClass)
                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                 <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $customerInvoiceStdClass->customer_name }}</td>
-                                <td class="sub-text-bg text-center max-w-invoice-number">{{ $customerInvoiceStdClass->invoice_number }}</td>
-                                <td class="sub-text-bg text-center max-w-invoice-date">{{ $customerInvoiceStdClass->invoice_date }}</td>
-                                <td class="sub-text-bg text-center max-w-currency">{{ $customerInvoiceStdClass->currency }}</td>
-                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($customerInvoiceStdClass->net_balance) }}</td>
+                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $invoiceStdClass->{$clientNameColumnName} }}</td>
+                                <td class="sub-text-bg text-center max-w-invoice-number">{{ $invoiceStdClass->invoice_number }}</td>
+                                <td class="sub-text-bg text-center max-w-invoice-date">{{ $invoiceStdClass->invoice_date }}</td>
+                                <td class="sub-text-bg text-center max-w-currency">{{ $invoiceStdClass->currency }}</td>
+                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($invoiceStdClass->net_balance) }}</td>
                                 <td class="sub-text-bg max-w-report-btn text-center">
-                                    <a href="{{ route('create.money.receive',['company'=>$company->id,'model'=>$customerInvoiceStdClass->id ]) }}" class="btn btn-sm btn-primary">{{ __('Money Receive') }}</a>
+                                    <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoiceStdClass->id ]) }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
                                 </td>
                 
                             </tr>

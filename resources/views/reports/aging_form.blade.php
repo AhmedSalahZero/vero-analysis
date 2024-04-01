@@ -9,7 +9,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Customer Aging Form') }}
+{{ $title }}
 @endsection
 @section('content')
 <div class="row">
@@ -18,16 +18,11 @@
 
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action="{{ route('result.customer.aging.analysis',['company'=>$company->id ]) }}" enctype="multipart/form-data">
+        <form class="kt-form kt-form--label-right" method="POST" action="{{ route('result.aging.analysis',['company'=>$company->id ,'modelType'=>$modelType ]) }}" enctype="multipart/form-data">
             @csrf
             <div class="kt-portlet" style="overflow-x:hidden">
-
                 <div class="kt-portlet__body">
-                
-
-
                     <div class="form-group row">
-					
 					 <div class="col-md-3 mb-4">
                             <label>{{ __('Aging Date') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
@@ -96,12 +91,12 @@
                         </div>
 
                         <div class="col-md-3 mb-4">
-                            <label>{{ __('Select Customers') }} <span class="multi_selection"></span>  </label>
+                            <label>{{ $customersOrSupplierText }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
-                                    <select  data-live-search="true" data-actions-box="true" name="customers[]" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
-									@foreach($customerInvoices as $customerInvoice)
-									<option value="{{ $customerInvoice->getId() }}">{{ $customerInvoice->getName() }}</option>
+                                    <select  data-live-search="true" data-actions-box="true" name="clients[]" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
+									@foreach($invoices as $invoice)
+									<option value="{{ $invoice->getId() }}">{{ $invoice->getName() }}</option>
 									@endforeach 
                                     </select>
                                 </div>
@@ -139,7 +134,6 @@
         <!--end::Portlet-->
     </div>
 </div>
-{{-- @dd(get_defined_vars()) --}}
 @endsection
 @section('js')
 <!--begin::Page Scripts(used by this page) -->
@@ -166,7 +160,7 @@
 		const currencies = $('select.currency-js').val();
 
 		$.ajax({
-			url:"{{ route('get.customers.from.business.units.currencies',['company'=>$company->id]) }}",
+			url:"{{ route('get.customers.or.suppliers.from.business.units.currencies',['company'=>$company->id,'modelType'=>$modelType]) }}",
 			data:{
 				business_units:businessUnits,
 				business_sectors:businessSectors,

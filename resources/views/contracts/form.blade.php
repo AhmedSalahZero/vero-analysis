@@ -128,7 +128,6 @@ use App\Models\MoneyReceived ;
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
-                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($customers as $index => $customer )
                                                     <option @if(isset($model) && $model->getCustomerName() == $customer->getName() ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
                                                     @endforeach

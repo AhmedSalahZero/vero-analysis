@@ -12,7 +12,6 @@ use App\Models\MoneyReceived;
 use App\Models\NetBalance;
 use App\Models\Section;
 use App\Models\User;
-use App\Observers\CustomerInvoiceObserver;
 use App\Providers\ProductionArtisanServiceProvider;
 use Auth;
 use Carbon\Carbon;
@@ -56,7 +55,6 @@ class AppServiceProvider extends ServiceProvider
 
 		// dd(NetBalance::create($formattedRows));
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
-		 CustomersInvoice::observe(CustomerInvoiceObserver::class);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
 		Collection::macro('formattedForSelect',function(bool $isFunction , string $idAttrOrFunction ,string $titleAttrOrFunction ){
@@ -76,6 +74,15 @@ class AppServiceProvider extends ServiceProvider
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
 				return $items->where('receiving_date','>=',$startDate)->where('receiving_date','<=',$endDate);
+			}) ;
+		});
+		
+		Collection::macro('filterByDeliveryDate',function(?string $startDate, ?string $endDate  ){
+			/**
+			 * @var Collection $this 
+			 */
+			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
+				return $items->where('delivery_date','>=',$startDate)->where('delivery_date','<=',$endDate);
 			}) ;
 		});
 		

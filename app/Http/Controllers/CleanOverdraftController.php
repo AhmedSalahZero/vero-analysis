@@ -4,7 +4,6 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -107,12 +106,11 @@ class CleanOverdraftController
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		 $customers = CustomerInvoice::getAllUniqueCustomerNames($company->id);;
         return view('reports.clean-overdraft.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			'customers'=>$customers,
+			// 'customers'=>$customers,
 			'model'=>$cleanOverdraft
 		]);
 		

@@ -1,5 +1,5 @@
 @props([
-'currencyName','total','color','customerName','showReport'
+'currencyName','total','color','customerName','showReport','invoiceType'
 ])
 @once
 <style>
@@ -26,7 +26,7 @@
 			@if($showReport && $currencyName)
 			
             <div class="kt-align-right ">
-                <a href="{{ route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName   ]) }}" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </a>
+                <a href="{{ route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName ,'modelType'=>$invoiceType   ]) }}" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </a>
             </div>
 			@endif
 

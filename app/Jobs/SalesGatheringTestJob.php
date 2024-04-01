@@ -72,9 +72,9 @@ class SalesGatheringTestJob implements ShouldQueue
 				if($this->modelName == 'CustomerInvoice'){
 					$customerId = 0 ;
 					$customerName = $value['customer_name'] ;
-					$customerFound = $customerId ? true : DB::table('partners')->where('name',$customerName)->exists();
+					$customerFound = $customerId ? true : DB::table('partners')->where('is_customer',1)->where('name',$customerName)->exists();
 					if($customerFound){
-						$customerId = DB::table('partners')->where('name',$customerName)->first()->id;
+						$customerId = DB::table('partners')->where('is_customer',1)->where('name',$customerName)->first()->id;
 					}else{
 						$customer = Partner::create([
 							'name'=>$customerName,
@@ -90,6 +90,34 @@ class SalesGatheringTestJob implements ShouldQueue
 				'customer_id'=>$customerId
 			]);
 			}
+			
+			
+			
+			
+			if($modelName == 'SupplierInvoice' && is_array($value)){
+				$supplierId = null ;
+				if($this->modelName == 'SupplierInvoice'){
+					$supplierId = 0 ;
+					$supplierName = $value['supplier_name'] ;
+					$supplierFound = $supplierId ? true : DB::table('partners')->where('is_supplier',1)->where('name',$supplierName)->exists();
+					if($supplierFound){
+						$supplierId = DB::table('partners')->where('is_supplier',1)->where('name',$supplierName)->first()->id;
+					}else{
+						$supplier = Partner::create([
+							'name'=>$supplierName,
+							'company_id'=>$this->company_id,
+							'is_customer'=>0 ,
+							'is_supplier'=>1 
+						]);
+						$supplierId = $supplier->id ;
+					}
+					;
+				}
+			$newItems[$key] = array_merge($value , [
+				'supplier_id'=>$supplierId
+			]);
+			}
+			
 			
 		}
 		/**

@@ -6,11 +6,9 @@ use App\Models\Branch;
 use App\Models\CleanOverdraft;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\InternalMoneyTransfer;
 use App\Traits\GeneralFunctions;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

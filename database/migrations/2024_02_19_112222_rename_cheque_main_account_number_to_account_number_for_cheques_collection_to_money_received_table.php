@@ -14,10 +14,6 @@ class RenameChequeMainAccountNumberToAccountNumberForChequesCollectionToMoneyRec
     public function up()
     {
         Schema::table('money_received', function (Blueprint $table) {
-            // $table->renameColumn('cheque_main_account_number','account_number_for_cheques_collection');
-			// $table->dropColumn('main_account_number');
-			// $table->dropColumn('sub_account_number');
-			// $table->dropColumn('cheque_main_account_number');
 			$table->dropColumn('cheque_sub_account_number');
         });
 		

@@ -5,6 +5,11 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * * هي عباره عن ال 
+ * * down payment  Settlements
+ * * الخاصة بال money received
+ */
 class DownPaymentSettlement extends Model
 {
 	protected $guarded = ['id'];

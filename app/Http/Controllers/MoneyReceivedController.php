@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Helpers\HHelpers;
 use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -296,43 +298,16 @@ class MoneyReceivedController
 	}
 	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId,?string $selectedCurrency=null)
 	{
-	//	$inEditMode = $request->get('inEditMode');
 		$downPaymentId = $request->get('down_payment_id');
 		$moneyReceived = MoneyReceived::find($downPaymentId);
-	
-		
-	//	$downPayment = MoneyReceived::find($downPaymentId);
-	//	$contract = Contract::find($contractId);
-
-
-	
 		$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
-		
-		// if(!$inEditMode){
-		// 	$invoices->where('net_balance','>',0);
-		// }
-		
-		// $allCurrencies = $invoices->pluck('currency','currency')->mapWithKeys(function($value,$key){
-		// 	return [
-		// 		strtolower($key)=>strtolower($value) 
-		// 	];
-		// });		
-		// if($selectedCurrency){
-		// 	$invoices = $invoices->where('currency','=',$selectedCurrency);	
-		// }
-		// $invoices = $invoices->orderBy('invoice_date','asc')
-		// ->get(['invoice_number','invoice_date','net_invoice_amount','collected_amount','net_balance','currency'])
-		// ->toArray();
-		
 		$formattedSalesOrders = [];
 		foreach($salesOrders as $index=>$salesOrder){
 			$receivedAmount = $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() ;
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
-			
 		}
-
 			return response()->json([
 				'status'=>true , 
 				'sales_orders'=>$formattedSalesOrders,
@@ -408,6 +383,9 @@ class MoneyReceivedController
 		$customerId = $customerInvoice->getCustomerId();
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency']);
+		$isDownPayment = $request->has('sales_orders_amounts');
+		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
+		$data['customer_name'] = $customerName;
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -476,7 +454,9 @@ class MoneyReceivedController
 				'partner_id'=>$customer->id,
 				'settlement_date'=>$request->get('receiving_date'),
 				'company_id'=>$company->id,
-				'net_balance_until_date'=>0
+				'net_balance_until_date'=>0,
+				'model_id'=>$moneyReceived->id,
+				'model_type'=>HHelpers::getClassNameWithoutNameSpace($moneyReceived)
 			]);
 		}
 		/**

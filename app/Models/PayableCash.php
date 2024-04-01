@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\Models\IsCashInSafe;
+use Illuminate\Database\Eloquent\Model;
 
 class CashInSafe extends Model
 {

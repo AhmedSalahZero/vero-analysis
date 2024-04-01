@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -15,64 +14,71 @@ use Illuminate\Support\Facades\DB;
  * * هو عباره عن الفواتير اللي لسه مفتوحة ( اعمار الديون) .. سواء الدين لسه جايه او المتاخر او حق اليوم
  * * وبالتالي بمجرد ما تندفع مش بتيجي هنا (لو النت بلانس اكبر من صفر يبقي لسه ما استدتش كاملا)
  */
-class CustomerAgingController
+class AgingController
 {
     use GeneralFunctions;
-    public function index(Company $company)
+    public function index(Company $company,string $modelType)
 	{
-		$exportables = getExportableFieldsForModel($company->id,'CustomerInvoice') ; 
+		$customersOrSupplierText = (new ('\App\Models\\'.$modelType))->getClientDisplayName();
+		$title = (new ('\App\Models\\'.$modelType))->getAgingTitle();
+		$clientNameColumnName = ('\App\Models\\'.$modelType)::CLIENT_NAME_COLUMN_NAME ;
+		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
+		$exportables = getExportableFieldsForModel($company->id,$modelType) ; 
 		$salesPersons = [];
 		$businessUnits = [];
 		$businessSectors = [];
 		if(isset($exportables['business_unit'])){
-			$businessUnits = DB::table('customer_invoices')
+			$businessUnits = DB::table($invoiceTableName)
 			->where('company_id',$company->id)->where('business_unit','!=',null)
 			->where('business_unit','!=',null)
 			->where('business_unit','!=','')
 			->selectRaw('business_unit')->get()->pluck('business_unit')->unique()->values()->toArray();
 		}
 		if(isset($exportables['sales_person'])){
-			$salesPersons = DB::table('customer_invoices')->where('company_id',$company->id)->where('sales_person','!=',null)->where('sales_person','!=','')
+			$salesPersons = DB::table($invoiceTableName)->where('company_id',$company->id)->where('sales_person','!=',null)->where('sales_person','!=','')
 			->selectRaw('sales_person')->get()->pluck('sales_person')->unique()->values()->toArray();
 		}
 		if(isset($exportables['business_sector'])){
-			$businessSectors = DB::table('customer_invoices')->where('company_id',$company->id)->where('business_sector','!=',null)->where('business_sector','!=','')
+			$businessSectors = DB::table($invoiceTableName)->where('company_id',$company->id)->where('business_sector','!=',null)->where('business_sector','!=','')
 			->selectRaw('business_sector')->get()->pluck('business_sector')->unique()->values()->toArray();
 		}
 	
-		$currencies = DB::table('customer_invoices')
+		$currencies = DB::table($invoiceTableName)
 		
 		->where('company_id',$company->id)->where('currency','!=',null)->where('currency','!=','')
 		->selectRaw('currency')->get()->pluck('currency')->unique()->values()->toArray();
-	
 		
-		$customerInvoices = CustomerInvoice::where('customer_name','!=',null)->where('customer_name','!=','')->onlyCompany($company->id)->get();
-        return view('reports.customer_aging_form', [
+		$invoices = ('\App\Models\\'.$modelType)::where($clientNameColumnName,'!=',null)->where($clientNameColumnName,'!=','')->onlyCompany($company->id)->get();
+        return view('reports.aging_form', [
 			'businessUnits'=>$businessUnits,
 			'company'=>$company,
-			'customerInvoices'=>$customerInvoices ,
+			'invoices'=>$invoices ,
 			'salesPersons'=>$salesPersons,
 			'businessSectors'=>$businessSectors,
-			'currencies'=>$currencies
+			'currencies'=>$currencies,
+			'customersOrSupplierText'=>$customersOrSupplierText,
+			'title'=>$title,
+			'modelType'=>$modelType
 		]);
     }
-	public function result(Company $company , Request $request){
+	public function result(Company $company , Request $request,string $modelType){
 		
 		$aginDate = $request->get('again_date');
-		$customerNames = $request->get('customers');
+		$clientNames = $request->get('clients');
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
-		$customerAgings  = $invoiceAgingService->__execute($customerNames) ;
+		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
 		$weeksDates = formatWeeksDatesFromStartDate($aginDate);
-		return view('admin.reports.customer-invoices-aging',['customerAgings'=>$customerAgings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
+		return view('admin.reports.invoices-aging',['agings'=>$agings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
 	}
 
-	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request)
+	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)
 	{
+		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
 		$currency = $request->get('currencies');
 		$businessUnits = $request->get('business_units',[]);
 		$salesPersons = $request->get('sales_persons',[]);
 		$businessSectors = $request->get('business_sectors',[]);
-		$query = DB::table('customer_invoices')->select('customer_name','currency')->where('currency',$currency)->where('company_id',$company->id)->where('net_balance','>',0);
+		$query = DB::table($invoiceTableName)->select('customer_name','currency')->where('currency',$currency)->where('company_id',$company->id)->where('net_balance','>',0);
 		if(count($businessUnits)){
 			$query = $query->whereIn('business_unit',$businessUnits);
 		}
