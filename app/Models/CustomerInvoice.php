@@ -41,6 +41,10 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return __('Customers');
 	}
+	public function getCustomerOrSupplierAgingText()
+	{
+		return __('Customers Invoice Aging');
+	}
 	public function getAgingTitle()
 	{
 		return __('Customer Aging Form');

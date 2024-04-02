@@ -40,6 +40,10 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return __('Suppliers');
 	}
+	public function getCustomerOrSupplierAgingText()
+	{
+		return __('Suppliers Invoice Aging');
+	}
 	public function getAgingTitle()
 	{
 		return __('Supplier Aging Form');

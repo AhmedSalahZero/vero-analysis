@@ -16,12 +16,13 @@ class CustomerInvoiceDashboardController extends Controller
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$date=  $request->get('date',now()->format('Y-m-d'));
 		$cashInSafeStatementStd = DB::table('cash_in_safe_statements')->where('date','<=',$date)->where('company_id',$company->id)->orderBy('id','desc')->first();
-		$cashInSafeStatementAmount =  $cashInSafeStatementStd->end_balance ;
+
+		$cashInSafeStatementAmount =  $cashInSafeStatementStd ? $cashInSafeStatementStd->end_balance : 0 ;
 		
 		// علي حسب البنوك اللي اختارها وباي دي فولت هيكونوا كلهم
 		$currentAccountInBanks = 0 ;
 		$totalCashAndBanks = $cashInSafeStatementAmount + $currentAccountInBanks ; 
-		foreach($request->get('financial_institution_ids') as $financialInstitutionId){
+		foreach($request->get('financial_institution_ids',[]) as $financialInstitutionId){
 			
 		}
 		

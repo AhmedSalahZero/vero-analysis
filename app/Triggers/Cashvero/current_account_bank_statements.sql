@@ -6,6 +6,7 @@ begin
 	declare _previous_date date default null ;
 		declare _count_all_rows integer default 0 ; 
 		if new.id then 
+		
 		-- في حاله التعديل
 		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id and id < new.id order by id desc limit 1 ;
 		set _count_all_rows = 1 ;
