@@ -341,7 +341,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 @php
                                 $rowIndex = 0 ;
                                 @endphp
-                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Customers Invoices Under Collection','Customers Checks Under Collection','Sales Forecast Collections','Total Cash Inflow','Raw Materils Payable Checks','Suppliers Payable','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
+                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Customers Invoices Under Collection','Customers Checks Under Collection','Sales Forecast Collections','Total Cash Inflow','Payable Checks','Suppliers Payable','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
                                 @if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due')
                                 @continue ;
                                 @endif

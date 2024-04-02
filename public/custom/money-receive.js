@@ -259,10 +259,9 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
 	const moneyType = $(this).closest('form').attr('data-money-type')
 	const data = []
-	let currency = $(this).closest('form').find('.current-currency').val()
+	let currency = $(this).closest('form').find('select.current-currency').val()
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
-
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
@@ -292,6 +291,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 
 })
 $(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
+
 	$(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type').trigger('change')
 })
 $(function () {

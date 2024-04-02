@@ -69,7 +69,7 @@
                     <div class="input-group date ">
                         <select data-live-search="true" data-actions-box="true" js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_ids[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple required>
                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
+                            <option value="{{ $financialInstitutionBank->id }}" {{ in_array($financialInstitutionBank->id , $selectedFinancialInstitutionsIds) ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                             @endforeach
                         </select>
 
@@ -82,9 +82,9 @@
                     @include('star')
                 </label>
                 <div class="input-group">
-                    <select data-live-search="true" data-actions-box="true" name="currency" class="form-control current-currency select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple js-when-change-trigger-change-account-type>
+                    <select data-live-search="true" data-actions-box="true" name="currencies[]" class="form-control current-currency select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple js-when-change-trigger-change-account-type>
                         @foreach(getCurrencies() as $currencyName => $currencyValue )
-                        <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @elseif(strtolower($currencyName) == 'egp' ) selected @endif > {{ $currencyValue }}</option>
+                        <option value="{{ $currencyName }}" @if( in_array($currencyName,$currencies) ) selected @elseif(strtolower($currencyName) == 'egp' ) selected @endif > {{ $currencyValue }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -103,35 +103,29 @@
     </div>
     <div class="kt-portlet__body  kt-portlet__body--fit">
         <div class="row row-no-padding row-col-separator-xl">
+            @foreach($currencies as $currency)
             <div class="col-md-6 col-lg-3 col-xl-3">
 
                 <!--begin::Total Profit-->
                 <div class="kt-widget24 text-center">
                     <div class="kt-widget24__details">
                         <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Cash & Banks') }}
+                            <h4 class="kt-widget24__title font-size text-uppercase">
+                                {{ __('Cash & Banks' )  . ' [ ' . $currency . ' ]' }}
                             </h4>
 
                         </div>
                     </div>
                     <div class="kt-widget24__details">
                         <span class="kt-widget24__stats kt-font-brand">
-                            {{ number_format($totalCashAndBanks) }}
+                            {{ number_format($reports['cash_and_banks'][$currency] ?? 0 ) }}
                         </span>
                     </div>
 
                     <div class="progress progress--sm">
                         <div class="progress-bar kt-bg-brand" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {{-- <div class="kt-widget24__action">
-                        <span class="kt-widget24__change">
-                            {{ __('Change') }}
-                        </span>
-                        <span class="kt-widget24__number">
-                            78%
-                        </span>
-                    </div> --}}
+
                 </div>
 
                 <!--end::Total Profit-->
@@ -142,27 +136,20 @@
                 <div class="kt-widget24">
                     <div class="kt-widget24__details">
                         <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Time & Certificate Of Deposit') }}
+                            <h4 class="kt-widget24__title font-size  text-uppercase">
+                                {{ __('Time & Certificate Of Deposit') . ' [ ' . $currency . ' ]' }}
                             </h4>
                         </div>
                     </div>
                     <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-warning">
-                            8.25M
+                        <span class="kt-widget24__stats kt-font-warning text-uppercase">
+                            {{ number_format($reports['certificate_of_deposits'][$currency] ?? 0 ) }}
                         </span>
                     </div>
                     <div class="progress progress--sm">
                         <div class="progress-bar kt-bg-warning" role="progressbar" style="width: 84%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {{-- <div class="kt-widget24__action">
-                        <span class="kt-widget24__change">
-                            {{ __('Change') }}
-                        </span>
-                        <span class="kt-widget24__number">
-                            84%
-                        </span>
-                    </div> --}}
+
                 </div>
 
                 <!--end::New Feedbacks-->
@@ -173,28 +160,21 @@
                 <div class="kt-widget24">
                     <div class="kt-widget24__details">
                         <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Credit Facilities Room') }}
+                            <h4 class="kt-widget24__title font-size text-uppercase">
+                                {{ __('Credit Facilities Room') . ' [ ' . $currency . ' ] ' }}
                             </h4>
 
                         </div>
                     </div>
                     <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-danger">
-                            22.25M
+                        <span class="kt-widget24__stats kt-font-danger text-uppercase">
+                            {{ number_format($reports['credit_facilities_room'][$currency] ?? 0 ) }}
                         </span>
                     </div>
                     <div class="progress progress--sm">
                         <div class="progress-bar kt-bg-danger" role="progressbar" style="width: 69%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {{-- <div class="kt-widget24__action">
-                        <span class="kt-widget24__change">
-                            {{ __('Change') }}
-                        </span>
-                        <span class="kt-widget24__number">
-                            69%
-                        </span>
-                    </div> --}}
+
                 </div>
 
                 <!--end::New Orders-->
@@ -212,25 +192,19 @@
                         </div>
                     </div>
                     <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-success">
-                            22.25M
+                        <span class="kt-widget24__stats kt-font-success text-uppercase">
+                            {{ number_format($reports['total'][$currency] ?? 0 ) }}
                         </span>
                     </div>
                     <div class="progress progress--sm">
                         <div class="progress-bar kt-bg-success" role="progressbar" style="width: 90%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {{-- <div class="kt-widget24__action">
-                        <span class="kt-widget24__change">
-                            {{ __('Change') }}
-                        </span>
-                        <span class="kt-widget24__number">
-                            90%
-                        </span>
-                    </div> --}}
+
                 </div>
 
                 <!--end::New Users-->
             </div>
+            @endforeach
         </div>
     </div>
 </div>
@@ -279,7 +253,7 @@
                                             <a class="kt-link" href="#">Limit</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>50,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -295,7 +269,7 @@
                                             <a class="kt-link" href="#">Outstanding</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>30,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -313,7 +287,7 @@
                                             <a class="kt-link" href="#">Available</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>20,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -329,7 +303,7 @@
                                             <a class="kt-link" href="#">Interest Rate %</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>12.25 %</h4>
+                                            <h4>0 %</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -369,10 +343,10 @@
                                 <div class="kt-iconbox__body">
                                     <div class="kt-iconbox__desc">
                                         <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Limit</a>
+                                            <a class="kt-link" href="#">{{ __('Limit') }}</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>50,000,000</h4>
+                                            <h4>{{ number_format($cleanOverdraftCardData['limit'] ?? 0,0) }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -385,10 +359,10 @@
                                 <div class="kt-iconbox__body">
                                     <div class="kt-iconbox__desc">
                                         <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Outstanding</a>
+                                            <a class="kt-link" href="#">{{ __('Outstanding') }}</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>30,000,000</h4>
+                                            <h4> {{ number_format($cleanOverdraftCardData['outstanding']??0,0) }} </h4>
                                         </div>
                                     </div>
                                 </div>
@@ -403,10 +377,10 @@
                                 <div class="kt-iconbox__body">
                                     <div class="kt-iconbox__desc">
                                         <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Available</a>
+                                            <a class="kt-link" href="#">{{ __('Room') }}</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>20,000,000</h4>
+                                            <h4>{{ number_format($cleanOverdraftCardData['room']??0,0) }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -422,7 +396,7 @@
                                             <a class="kt-link" href="#">Interest Rate %</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>12.25 %</h4>
+                                            <h4>0 %</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -465,7 +439,7 @@
                                             <a class="kt-link" href="#">Limit</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>50,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -481,7 +455,7 @@
                                             <a class="kt-link" href="#">Outstanding</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>30,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -499,7 +473,7 @@
                                             <a class="kt-link" href="#">Available</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>20,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -515,7 +489,7 @@
                                             <a class="kt-link" href="#">Interest Rate %</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>12.25 %</h4>
+                                            <h4>0 %</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -562,7 +536,7 @@
                                             <a class="kt-link" href="#">Limit</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>50,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -578,7 +552,7 @@
                                             <a class="kt-link" href="#">Outstanding</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>30,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -596,7 +570,7 @@
                                             <a class="kt-link" href="#">Available</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>20,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -612,7 +586,7 @@
                                             <a class="kt-link" href="#">Interest Rate %</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>12.25 %</h4>
+                                            <h4>0 %</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -655,7 +629,7 @@
                                             <a class="kt-link" href="#">Limit</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>50,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -671,7 +645,7 @@
                                             <a class="kt-link" href="#">Outstanding</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>30,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -689,7 +663,7 @@
                                             <a class="kt-link" href="#">Available</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>20,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -705,7 +679,7 @@
                                             <a class="kt-link" href="#">Interest Rate %</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>12.25 %</h4>
+                                            <h4>0 %</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -748,7 +722,7 @@
                                             <a class="kt-link" href="#">Limit</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>50,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -764,7 +738,7 @@
                                             <a class="kt-link" href="#">Outstanding</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>30,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -782,7 +756,7 @@
                                             <a class="kt-link" href="#">Available</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>20,000,000</h4>
+                                            <h4>0</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -798,7 +772,7 @@
                                             <a class="kt-link" href="#">Interest Rate %</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
-                                            <h4>12.25 %</h4>
+                                            <h4>0 %</h4>
                                         </div>
                                     </div>
                                 </div>

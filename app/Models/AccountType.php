@@ -27,6 +27,10 @@ class AccountType extends Model
 	{
 		return $this->slug === self::CLEAN_OVERDRAFT ;
 	}
+	public function isCurrentAccount():bool 
+	{
+		return $this->slug === self::CURRENT_ACCOUNT ;
+	}
 	public function getModelName()
 	{
 		return $this->model_name;

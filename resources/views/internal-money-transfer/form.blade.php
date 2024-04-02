@@ -134,7 +134,7 @@
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                    <select name="currency" class="form-control current-from-currency" js-from-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @elseif(strtolower($currencyName) == 'egp' ) selected @endif > {{ $currencyValue }}</option>
@@ -148,8 +148,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-
-                                                        <select js-when-change-trigger-change-account-type data-financial-institution-id name="from_bank_id" class="form-control ">
+                                                        <select js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -168,7 +167,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="from_account_type_id" class="form-control js-update-account-number-based-on-account-type">
+                                                        <select name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -184,7 +183,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-account-number">
+                                                        <select data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                         </select>
                                                     </div>
@@ -198,7 +197,7 @@
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
 
-                                                        <select js-when-change-trigger-change-account-type data-financial-institution-id name="to_bank_id" class="form-control ">
+                                                        <select js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -213,7 +212,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="to_account_type_id" class="form-control js-update-account-number-based-on-account-type">
+                                                        <select name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getToAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -229,7 +228,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-account-number">
+                                                        <select data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                         </select>
                                                     </div>
@@ -363,9 +362,101 @@
             $('input[name="borrowing_rate"]').trigger('change')
 
         </script>
-        <script src="/custom/money-receive.js">
+    <script>
+	
+	
+$(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
+	const val = $(this).val()
+	const lang = $('body').attr('data-lang')
+	const companyId = $('body').attr('data-current-company-id')
+	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+	const data = []
+	let currency = $(this).closest('form').find('select.current-from-currency').val()
+	let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
+	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	if (!val || !currency || !financialInstitutionBankId) {
+		return
+	}
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+	$.ajax({
+		url,
+		data,
+		success: function (res) {
+			options = ''
+			var selectToAppendInto = $(parent).find('.js-from-account-number')
 
-        </script>
+			for (key in res.data) {
+				var val = res.data[key]
+				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+			}
+
+			selectToAppendInto.empty().append(options)
+		}
+	})
+
+
+
+
+
+
+})
+$(document).on('change', '[js-from-when-change-trigger-change-account-type]', function () {
+
+	$(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
+})
+$(function () {
+	$('.js-from-update-account-number-based-on-account-type').trigger('change')
+})
+
+
+$(document).on('change', '.js-to-update-account-number-based-on-account-type', function () {
+	const val = $(this).val()
+	const lang = $('body').attr('data-lang')
+	const companyId = $('body').attr('data-current-company-id')
+	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+	const data = []
+	let currency = $(this).closest('form').find('select.current-from-currency').val()
+	let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
+	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	if (!val || !currency || !financialInstitutionBankId) {
+		return
+	}
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+	$.ajax({
+		url,
+		data,
+		success: function (res) {
+			options = ''
+			var selectToAppendInto = $(parent).find('.js-to-account-number')
+
+			for (key in res.data) {
+				var val = res.data[key]
+				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+			}
+
+			selectToAppendInto.empty().append(options)
+		}
+	})
+
+
+
+
+
+
+})
+$(document).on('change', '[js-to-when-change-trigger-change-account-type]', function () {
+
+	$(this).closest('.kt-portlet__body').find('.js-to-update-account-number-based-on-account-type').trigger('change')
+})
+$(function () {
+	$('.js-to-update-account-number-based-on-account-type').trigger('change')
+})
+
+	</script>
 
 
         @endsection

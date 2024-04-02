@@ -89,8 +89,6 @@
                                     <th>{{ __('To Bank') }}</th>
                                     <th>{{ __('To Account Type') }}</th>
                                     <th>{{ __('To Account Number') }}</th>
-                                    {{-- <th>{{ __('Max Lending Limit Per Customer') }}</th> --}}
-                                    {{-- <th>{{ __('Max Settlement Days') }}</th> --}}
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -111,8 +109,7 @@
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
 
-                                    {{-- <td>{{ $model->getMaxLendingLimitPerCustomer() }}</td> --}}
-                                    {{-- <td>{{ $model->getMaxSettlementDays() }}</td> --}}
+                                 
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 

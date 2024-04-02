@@ -413,7 +413,7 @@ class MoneyPaymentController
 			$moneyPayment->storeCurrentAccountBankStatement($data['delivery_date'],$paidAmount,$financialInstitutionAccount->id);
 		}
 		if($moneyPayment->isCashPayment()){
-			$moneyPayment->storeCashInSafeStatement($data['delivery_date'],$paidAmount,$data['currency']);
+			$moneyPayment->storeCashInSafeStatement($data['delivery_date'],$paidAmount,$data['currency'],$relationData['delivery_branch_id']);
 		}
 		$relationData['company_id'] = $company->id ;  
 		$moneyPayment->$relationName()->create($relationData);

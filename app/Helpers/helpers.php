@@ -3276,6 +3276,10 @@ function formatDateForView($date)
 {
     return Carbon::make($date)->format('M\'Y');
 }
+function formatDateForViewWithDay($date)
+{
+    return Carbon::make($date)->format('d M\'Y');
+}
 function getTypesForValues():array
 {
     return [
@@ -4193,7 +4197,6 @@ function getHeaderMenu()
 				],
 				
 			]
-	
 			
 		]
 		,
@@ -4287,17 +4290,18 @@ function getHeaderMenu()
 			'show'=>true ,
 			'submenu'=>[
 				[
-					'title'=>__('Money Payment'),
-					'link'=>route('view.money.payment', ['company'=>$companyId]),
-					'show'=>$user->can('view money payment'),
-					'submenu'=>[]
-				],
-				[
 					'title'=>__('Money Received'),
 					'link'=>route('view.money.receive', ['company'=>$companyId]),
 					'show'=>$user->can('view money received'),
 					'submenu'=>[]
 				],
+				[
+					'title'=>__('Money Payment'),
+					'link'=>route('view.money.payment', ['company'=>$companyId]),
+					'show'=>$user->can('view money payment'),
+					'submenu'=>[]
+				],
+				
 				[
 			'title'=>__('Internal Money Transfer'),
 			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
@@ -4306,13 +4310,13 @@ function getHeaderMenu()
 				],
 				[
 					'title'=>__('Safe Statement'),
-					'link'=>'#',
+					'link'=>route('view.safe.statement',['company'=>$company->id]),
 					'show'=>true,
 					'submenu'=>[]
 				],
 				[
 					'title'=>__('Bank Statement'),
-					'link'=>'#',
+					'link'=>route('view.bank.statement',['company'=>$company->id]),
 					'show'=>true,
 					'submenu'=>[]
 				],
