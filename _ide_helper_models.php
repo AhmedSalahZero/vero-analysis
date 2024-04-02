@@ -479,6 +479,7 @@ namespace App\Models{
  * App\Models\CashInSafeStatement
  *
  * @property int $id
+ * @property string|null $currency
  * @property int $is_debit
  * @property int $is_credit
  * @property int $company_id
@@ -499,6 +500,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCredit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereEndBalance($value)

@@ -122,8 +122,8 @@ class MoneyPayment extends Model
 		if($this->isCashPayment()){
 			return $this->getCashPaymentBranchName();
 		}
-		if($this->isCheque()){
-			return $this->cheque->getDraweeBankName();
+		if($this->isPayableCheque()){
+			return $this->payableCheque->getDeliveryBankName();
 		}
 		if($this->isOutgoingTransfer()){
 			return $this->getOutgoingTransferDeliveryBankName(app()->getLocale());
