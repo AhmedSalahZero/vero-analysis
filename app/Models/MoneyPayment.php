@@ -326,9 +326,13 @@ class MoneyPayment extends Model
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_payment_id','id');
 	}
-	public function cashPaymentStatement()
+	public function cashInSafeStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_payment_id','id');
+	}
+	public function currentAccountBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'money_payment_id','id');
 	}
 	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount )
 	{
@@ -343,14 +347,24 @@ class MoneyPayment extends Model
 			'credit'=>$paidAmount 
 		]) ;
 	}
-	public function storeCashPaymentStatement(string $date , $paidAmount )
+	public function storeCashInSafeStatement(string $date , $paidAmount , string $currencyName)
 	{
-		return $this->cashPaymentStatement()->create([
+		return $this->cashInSafeStatement()->create([
+			'currency'=>$currencyName ,
 			'company_id'=>$this->company_id ,
 			'credit'=>$paidAmount,
 			'date'=>$date
 		]);
-	}		
+	}	
+	public function storeCurrentAccountBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId)
+	{
+		return $this->currentAccountBankStatement()->create([
+			'financial_institution_account_id'=>$financialInstitutionAccountId ,
+			'company_id'=>$this->company_id ,
+			'credit'=>$paidAmount,
+			'date'=>$date
+		]);
+	}	
 	public function openingBalance()
 	{
 		return $this->belongsTo(OpeningBalance::class,'opening_balance_id');
@@ -385,6 +399,7 @@ class MoneyPayment extends Model
 			$settlement->delete();
 		});
 		$this->cleanOverdraftBankStatement ? $this->cleanOverdraftBankStatement->delete() : null ;
-		$this->cashPaymentStatement ? $this->cashPaymentStatement->delete() : null ;
+		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
+		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
 	}
 }

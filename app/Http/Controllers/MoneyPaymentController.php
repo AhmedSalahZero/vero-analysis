@@ -11,6 +11,7 @@ use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\Contract;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyPayment;
 use App\Models\Partner;
 use App\Models\PayableCheque;
@@ -407,8 +408,12 @@ class MoneyPaymentController
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType));
 			$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['delivery_date'],$paidAmount);
 		}
+		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType));
+			$moneyPayment->storeCurrentAccountBankStatement($data['delivery_date'],$paidAmount,$financialInstitutionAccount->id);
+		}
 		if($moneyPayment->isCashPayment()){
-			$moneyPayment->storeCashPaymentStatement($data['delivery_date'],$paidAmount);
+			$moneyPayment->storeCashInSafeStatement($data['delivery_date'],$paidAmount,$data['currency']);
 		}
 		$relationData['company_id'] = $company->id ;  
 		$moneyPayment->$relationName()->create($relationData);

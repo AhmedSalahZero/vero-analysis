@@ -492,6 +492,7 @@ namespace App\Models{
  * @property string $end_balance
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MoneyPayment|null $moneyPayment
  * @property-read \App\Models\MoneyReceived $moneyReceived
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement newQuery()
@@ -1051,6 +1052,47 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Currency whereUpdatedAt($value)
  */
 	class Currency extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\CurrentAccountBankStatement
+ *
+ * @property int $id
+ * @property int $financial_institution_account_id
+ * @property int $company_id
+ * @property int $money_received_id
+ * @property int $money_payment_id
+ * @property int $is_debit
+ * @property int $is_credit
+ * @property string|null $date
+ * @property string $beginning_balance
+ * @property string $debit
+ * @property string $credit
+ * @property string $end_balance
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MoneyPayment $moneyPayment
+ * @property-read \App\Models\MoneyReceived $moneyReceived
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereBeginningBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereCredit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereEndBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereFinancialInstitutionAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereIsCredit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereIsDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereMoneyPaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereMoneyReceivedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereUpdatedAt($value)
+ */
+	class CurrentAccountBankStatement extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -2544,9 +2586,10 @@ namespace App\Models{
  * @property int|null $company_id
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\CashInSafeStatement|null $cashInSafeStatement
  * @property-read \App\Models\CashPayment|null $cashPayment
- * @property-read \App\Models\CashInSafeStatement|null $cashPaymentStatement
  * @property-read \App\Models\CleanOverdraftBankStatement|null $cleanOverdraftBankStatement
+ * @property-read \App\Models\CurrentAccountBankStatement|null $currentAccountBankStatement
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DownPaymentMoneyPaymentSettlement[] $downPaymentSettlements
  * @property-read int|null $down_payment_settlements_count
  * @property-read \App\Models\OpeningBalance|null $openingBalance
@@ -2607,6 +2650,7 @@ namespace App\Models{
  * @property-read \App\Models\Cheque|null $cheque
  * @property-read \App\Models\Bank $chequeDrawlBank
  * @property-read \App\Models\CleanOverdraftBankStatement|null $cleanOverdraftBankStatement
+ * @property-read \App\Models\CurrentAccountBankStatement|null $currentAccountBankStatement
  * @property-read \App\Models\CustomerInvoice|null $customerInvoice
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DownPaymentSettlement[] $downPaymentSettlements
  * @property-read int|null $down_payment_settlements_count

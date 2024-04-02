@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class CashInSafeStatement extends Model
+class CurrentAccountBankStatement extends Model
 {
     protected $guarded = [
         'id'
@@ -16,13 +16,13 @@ class CashInSafeStatement extends Model
         // دي علشان نشغل التريجرز
         // mysql
         // علشان تروح تحدث كل الروز اللي تحتها
-        static::updated(function (CashInSafeStatement $model) {
-            DB::table('cash_in_safe_statements')->where('id', '>=', $model->id)->orderBy('id')->where('company_id', $model->company_id)->update([
+        static::updated(function (CurrentAccountBankStatement $model) {
+            DB::table('current_account_bank_statements')->where('id', '>=', $model->id)->orderBy('id')->where('company_id', $model->company_id)->update([
                 'updated_at' => now()
             ]);
         });
 
-        static::deleting(function (CashInSafeStatement $model) {
+        static::deleting(function (CurrentAccountBankStatement $model) {
             $model->debit = 0;
             $model->credit = 0;
             $model->save();
@@ -37,7 +37,6 @@ class CashInSafeStatement extends Model
     {
         return $this->belongsTo(MoneyPayment::class, 'money_payment_id', 'id');
     }
-
     public function getId()
     {
         return $this->id ;

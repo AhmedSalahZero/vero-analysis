@@ -395,6 +395,10 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
 	}
+	public function currentAccountBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'money_received_id','id');
+	}
 	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $receivedAmount )
 	{
 		return $this->cleanOverdraftBankStatement()->create([
@@ -408,9 +412,19 @@ class MoneyReceived extends Model
 			'credit'=>0 
 		]) ;
 	}
-	public function storeCashInSafeStatement(string $date , $receivedAmount )
+	public function storeCashInSafeStatement(string $date , $receivedAmount , string $currencyName)
 	{
 		return $this->cashInSafeStatement()->create([
+			'currency'=>$currencyName ,
+			'company_id'=>$this->company_id ,
+			'debit'=>$receivedAmount,
+			'date'=>$date
+		]);
+	}	
+	public function storeCurrentAccountBankStatement(string $date , $receivedAmount , int $financialInstitutionAccountId)
+	{
+		return $this->currentAccountBankStatement()->create([
+			'financial_institution_account_id'=>$financialInstitutionAccountId,
 			'company_id'=>$this->company_id ,
 			'debit'=>$receivedAmount,
 			'date'=>$date
@@ -454,5 +468,6 @@ class MoneyReceived extends Model
 		});
 		$this->cleanOverdraftBankStatement ? $this->cleanOverdraftBankStatement->delete() : null ;
 		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
+		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
 	}
 }

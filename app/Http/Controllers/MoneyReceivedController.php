@@ -12,6 +12,7 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
@@ -440,8 +441,12 @@ class MoneyReceivedController
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType));
 			$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['receiving_date'],$receivedAmount);
 		}
+		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType));
+			$moneyReceived->storeCurrentAccountBankStatement($data['receiving_date'],$receivedAmount,$financialInstitutionAccount->id);
+		}
 		if($moneyReceived->isCashInSafe()){
-			$moneyReceived->storeCashInSafeStatement($data['receiving_date'],$receivedAmount);
+			$moneyReceived->storeCashInSafeStatement($data['receiving_date'],$receivedAmount,$data['currency']);
 		}
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
