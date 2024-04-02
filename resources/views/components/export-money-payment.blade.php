@@ -79,7 +79,7 @@ use App\Models\MoneyPayment ;
 
 
             <div class="modal fade" id="send-to-under-collection-modal{{ $moneyPaymentType }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-dialog  modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <form  data-money-type="{{ $moneyPaymentType }}" id="ajax-send-cheques-to-collection-id{{ $moneyPaymentType }}" class="ajax-send-cheques-to-collection" action="{{ route('payable.cheque.mark.as.paid',['company'=>$company->id]) }}" method="post">
                             <input type="hidden" id="single-or-multi{{ $moneyPaymentType }}" value="single">
@@ -94,8 +94,8 @@ use App\Models\MoneyPayment ;
                             </div>
                             <div class="modal-body">
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
-                                        <label>{{__('Actual Deposit Date')}}</label>
+                                    <div class="col-md-12">
+                                        <label>{{__('Actual Payment Date')}}</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <input required type="text" name="actual_deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />

@@ -84,12 +84,12 @@ trait IsInvoice
 	}
 	public function getWithholdAmount()
 	{
-		return $this->withhold_amount ; 
+		return (float)$this->withhold_amount ; 
 	}
 	public function getNetInvoiceAmount()
     {
 		$netInvoiceAmount = $this->net_invoice_amount ?:0 ; 
-		return $netInvoiceAmount;
+		return (float)$netInvoiceAmount;
     }
 	public function getNetInvoiceInMainCurrencyAmount()
     {

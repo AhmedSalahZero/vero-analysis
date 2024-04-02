@@ -64,13 +64,19 @@ class AgingController
     }
 	public function result(Company $company , Request $request,string $modelType){
 		
+		$fullClassName = ('\App\Models\\'.$modelType) ;
+		$customersOrSupplierAgingText = (new $fullClassName)->getCustomerOrSupplierAgingText();
+		
 		$aginDate = $request->get('again_date');
 		$clientNames = $request->get('clients');
 		
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
 		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
 		$weeksDates = formatWeeksDatesFromStartDate($aginDate);
-		return view('admin.reports.invoices-aging',['agings'=>$agings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
+		
+		
+		
+		return view('admin.reports.invoices-aging',['agings'=>$agings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates,'customersOrSupplierAgingText'=>$customersOrSupplierAgingText]);
 	}
 
 	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)

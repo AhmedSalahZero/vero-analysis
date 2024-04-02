@@ -103,7 +103,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customers Invoice Aging') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $customersOrSupplierAgingText }}</x-main-form-title>
 @endsection
 @section('content')
 @php
