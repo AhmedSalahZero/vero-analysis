@@ -3050,10 +3050,11 @@ function getPermissions():array
         ]
 		,
 		[
-            'name'=>'view contracts'
+            'name'=>'view customers contracts'
         ]
 		,
 		
+	
 		
 		[
             'name'=>'view cashvero settings'
@@ -4211,9 +4212,15 @@ function getHeaderMenu()
 			'show'=>$user->can('view cashvero settings'),
 			'submenu'=>[
 				[
-					'title'=>__('Contracts'),
-				'link'=>route('contracts.index', ['company'=>$companyId]),
-				'show'=>$user->can('view contracts'),
+					'title'=>__('Customer Contracts'),
+				'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
+				'show'=>$user->can('view customers contracts'),
+				
+				],
+				[
+					'title'=>__('Supplier Contracts'),
+				'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Supplier']),
+				'show'=>$user->can('view suppliers contracts'),
 				
 				],
 				[

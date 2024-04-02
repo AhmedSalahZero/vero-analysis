@@ -45,6 +45,11 @@ class Partner extends Model
 			$q->where('is_customer',1);
 		});
 	}
+	public function scopeOnlySuppliers(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_supplier',1);
+		});
+	}
 	public function unappliedAmounts()
 	{
 		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	

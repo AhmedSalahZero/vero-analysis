@@ -27,6 +27,9 @@ trait IsOrder {
 	public function getExecutionPercentage(int $index){
 		return $this['execution_percentage_'.$index];
 	}
+	public function getActualAmount(int $index){
+		return $this->getExecutionPercentage($index) / 100 * $this->getAmount();
+	}
 	public function getExecutionDays(int $index){
 		return $this['execution_days_'.$index];
 	}

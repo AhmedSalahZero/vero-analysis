@@ -221,7 +221,7 @@
 @endsection
 
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Contracts') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $customerOrSupplierContractsText }}</x-main-form-title>
 @endsection
 
 @section('content')
@@ -241,7 +241,7 @@
                 <span class="visibility-hidden">/</span>
 
 
-                <a href="{{ route('contracts.create',['company'=>$company->id]) }}" class="btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto">
+                <a href="{{ route('contracts.create',['company'=>$company->id,'type'=>$type]) }}" class="btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto">
                     <span class="plus-class">+</span>{{ __('Create') }}"
                 </a>
             </div>
@@ -258,7 +258,7 @@
                 @slot('table_body')
                 <tr class=" text-center first-tr-bg ">
                     <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
-                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Customer Name') }}</b></td>
+                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
                     <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Start Date') }}</b></td>
                     <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('End Date') }}</b></td>
                     <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Amount') }}</b></td>
@@ -288,7 +288,7 @@
                     </td>
                     <td>
                         <b class="text-capitalize ">
-                            <b class="text-capitalize ">{{ $parent['customer_name'] }}</b>
+                            <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
                         </b>
 
                     </td>
@@ -316,7 +316,7 @@
 
                     <td class="text-left text-capitalize"><b class="ml-3">
                             <span style="overflow: visible; position: relative; width: 110px;">
-                                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('contracts.edit', ['company'=>$company->id , 'contract'=>$mainItemId]) }}"><i class="fa fa-pen-alt"></i></a>
+                                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('contracts.edit', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}"><i class="fa fa-pen-alt"></i></a>
                                 <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
                                 </a>
 
@@ -329,7 +329,7 @@
                                             <div class="modal-body">
                                                 <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
                                             </div>
-                                            <form action="{{ route('contracts.destroy',['company'=>$company->id , 'contract'=> $mainItemId ]) }}" method="post" id="delete_form">
+                                            <form action="{{ route('contracts.destroy',['company'=>$company->id , 'contract'=> $mainItemId,'type'=>$type ]) }}" method="post" id="delete_form">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
                                                 <div class="modal-footer">
