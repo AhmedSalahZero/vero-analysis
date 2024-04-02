@@ -15,21 +15,104 @@ class CustomerInvoiceDashboardController extends Controller
     public function viewCashDashboard(Company $company , Request $request ){
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$date=  $request->get('date',now()->format('Y-m-d'));
-		$cashInSafeStatementStd = DB::table('cash_in_safe_statements')->where('date','<=',$date)->where('company_id',$company->id)->orderBy('id','desc')->first();
-
-		$cashInSafeStatementAmount =  $cashInSafeStatementStd ? $cashInSafeStatementStd->end_balance : 0 ;
+		$currencies = $request->get('currencies',['egp','usd']) ;
+		$selectedFinancialInstitutionsIds = $request->get('financial_institution_ids',$financialInstitutionBanks->pluck('id')->toArray());
+		$reports = [];
+		$reports =[];
 		
-		// علي حسب البنوك اللي اختارها وباي دي فولت هيكونوا كلهم
-		$currentAccountInBanks = 0 ;
-		$totalCashAndBanks = $cashInSafeStatementAmount + $currentAccountInBanks ; 
-		foreach($request->get('financial_institution_ids',[]) as $financialInstitutionId){
+		foreach($currencies as $currencyName){
+			$cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')->where('date','<=',$date)->where('company_id',$company->id)->where('currency',$currencyName)->orderBy('id','desc')->limit(1)->first();
+			$cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
 			
+			$currentAccountInBanks = 0 ;
+			$totalCleanOverdraftRoom = 0 ;
+			$totalCleanOverdraftAgainstCommercialRoom = 0 ;
+			$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount = 0 ;
+			foreach($selectedFinancialInstitutionsIds as $financialInstitutionBankId ){
+				/**
+				 * * حساب ال current account 
+				 */
+				$currentAccountEndBalanceForCurrency = DB::table('current_account_bank_statements')
+				->join('financial_institution_accounts','financial_institution_account_id','=','financial_institution_accounts.id')
+				->where('financial_institution_accounts.company_id',$company->id)
+				->where('currency',$currencyName)
+				->where('date','<=',$date)
+				->where('financial_institution_accounts.financial_institution_id','=',$financialInstitutionBankId)
+				->orderBy('current_account_bank_statements.id','desc')
+				->limit(1)
+				->first();
+				$currentAccountEndBalanceForCurrency = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance:0;
+				
+				$currentAccountInBanks += $currentAccountEndBalanceForCurrency ;
+				
+				/**
+				 * * حساب certificates_of_deposits
+				 */
+				
+				 $certificateOfDepositsForCurrentFinancialInstitutionAmount =DB::table('certificates_of_deposits')->where('company_id',$company->id)->where('financial_institution_id',$financialInstitutionBankId)->where('currency',$currencyName)->first();
+				 $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitutionAmount ? $certificateOfDepositsForCurrentFinancialInstitutionAmount->amount :0;
+				
+				 /**
+				  * * حساب ال clean_overdraft
+				  */
+				 $cleanOverdraftRoom = DB::table('clean_overdraft_bank_statements')
+				 ->where('clean_overdraft_bank_statements.company_id',$company->id)->where('date','<=',$date)
+				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
+				 ->where('clean_overdrafts.currency','=',$currencyName)
+				 ->orderBy('clean_overdraft_bank_statements.id')
+				 ->limit(1)
+				 ->first() ;
+				 $cleanOverdraftRoom = $cleanOverdraftRoom ? $cleanOverdraftRoom->room : 0 ;
+				 $totalCleanOverdraftRoom +=$cleanOverdraftRoom ;
+				 
+				 
+				  /**
+				  * * حساب ال clean_overdraft
+				  * * مؤجلة لحساب الكلين اوفردرافت 
+				  * * aginst commerical
+				  */
+				//   $cleanOverdraftOverCommercialRoom = DB::table('clean_overdraft_against_commercial_bank_statements')
+				//   ->where('clean_overdraft_against_commercial_bank_statements.company_id',$company->id)->where('date','<=',$date)
+				//   ->join('clean_overdraft_against_commercials','clean_overdraft_against_commercial_bank_statements.clean_overdraft_id','=','clean_overdraft_against_commercials.id')
+				//   ->where('clean_overdraft_against_commercials.currency','=',$currencyName)
+				//   ->orderBy('clean_overdraft_against_commercial_bank_statements.id')
+				//   ->limit(1)
+				//   ->first() ;
+				//   $cleanOverdraftOverCommercialRoom = $cleanOverdraftOverCommercialRoom ? $cleanOverdraftOverCommercialRoom->room : 0 ;
+				//   $totalCleanOverdraftAgainstCommercialRoom +=$cleanOverdraftOverCommercialRoom ;
+				  
+			
+			}
+			$reports['cash_and_banks'][$currencyName] = $cashInSafeStatementAmountForCurrency + $currentAccountInBanks ;
+			$reports['certificate_of_deposits'][$currencyName] = $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount ; 
+			$reports['credit_facilities_room'][$currencyName] = $totalCleanOverdraftRoom + $totalCleanOverdraftAgainstCommercialRoom ; 
+			
+			$currentTotal = $reports['cash_and_banks'][$currencyName] + $reports['certificate_of_deposits'][$currencyName] + $reports['credit_facilities_room'][$currencyName] ;
+			$reports['total'][$currencyName] = isset($reports['total'][$currencyName]) ? $reports['total'][$currencyName]+ $currentTotal : $currentTotal ;
 		}
+		
+		$cleanOverdraftCardCommonQuery = DB::table('clean_overdraft_bank_statements')
+		->where('clean_overdraft_bank_statements.company_id',$company->id)->where('date','<=',$date)
+		->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
+		->where('clean_overdrafts.currency','=','egp')
+		->orderBy('clean_overdraft_bank_statements.id');
+		// ->first() ;
+		
+		$cleanOverdraftCardData = [
+			'limit'=>$cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.limit'),
+			'outstanding'=>$cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.end_balance'),
+			'room'=>$cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.room'),
+		];
+	
+		
 		
 		return view('admin.dashboard.cash',[
 			'company'=>$company,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
-			'totalCashAndBanks'=>$totalCashAndBanks
+			'reports'=>$reports,
+			'currencies'=>$currencies,
+			'selectedFinancialInstitutionsIds'=>$selectedFinancialInstitutionsIds,
+			'cleanOverdraftCardData'=>$cleanOverdraftCardData
 		]);
 	} 
 	public function viewForecastDashboard(Company $company , Request $request ){

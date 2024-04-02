@@ -476,9 +476,37 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\CashInSafe
+ *
+ * @property int $id
+ * @property int $money_received_id
+ * @property int|null $receiving_branch_id
+ * @property string|null $receipt_number
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $company_id
+ * @property-read \App\Models\MoneyReceived $moneyReceived
+ * @property-read \App\Models\Branch|null $receivingBranch
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereMoneyReceivedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereReceiptNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereReceivingBranchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereUpdatedAt($value)
+ */
+	class CashInSafe extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\CashInSafeStatement
  *
  * @property int $id
+ * @property int|null $branch_id
  * @property string|null $currency
  * @property int $is_debit
  * @property int $is_credit
@@ -498,6 +526,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement query()
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereBeginningBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereBranchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereCredit($value)
@@ -2646,6 +2675,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CashInBank|null $cashInBank
+ * @property-read \App\Models\CashInSafe|null $cashInSafe
  * @property-read \App\Models\CashInSafeStatement|null $cashInSafeStatement
  * @property-read \App\Models\Cheque|null $cheque
  * @property-read \App\Models\Bank $chequeDrawlBank

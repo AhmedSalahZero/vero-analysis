@@ -33,6 +33,7 @@ CREATE TRIGGER `insert_net_invoice_amount` BEFORE INSERT
 		set new.withhold_amount_in_main_currency = (new.withhold_amount * new.exchange_rate);
 end//
 delimiter ;
+
 delimiter // 
 	-- 1-1
 CREATE TRIGGER `update_net_invoice_amount` BEFORE
@@ -67,3 +68,10 @@ UPDATE
 	set new.withhold_amount_in_main_currency = (new.withhold_amount * new.exchange_rate);
 		
 END//
+
+
+
+create trigger remove_customer_after_delete_its_invoice  before delete 	ON `customer_invoices` FOR EACH ROW
+begin 
+	delete from `partners` where  id = old.customer_id; 
+end //  

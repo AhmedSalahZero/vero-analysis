@@ -347,10 +347,11 @@ class MoneyPayment extends Model
 			'credit'=>$paidAmount 
 		]) ;
 	}
-	public function storeCashInSafeStatement(string $date , $paidAmount , string $currencyName)
+	public function storeCashInSafeStatement(string $date , $paidAmount , string $currencyName,int $branchId)
 	{
 		return $this->cashInSafeStatement()->create([
-			'currency'=>$currencyName ,
+			'branch_id'=>$branchId,
+			'currency'=>strtolower($currencyName) ,
 			'company_id'=>$this->company_id ,
 			'credit'=>$paidAmount,
 			'date'=>$date

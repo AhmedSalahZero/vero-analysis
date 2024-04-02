@@ -446,7 +446,7 @@ class MoneyReceivedController
 			$moneyReceived->storeCurrentAccountBankStatement($data['receiving_date'],$receivedAmount,$financialInstitutionAccount->id);
 		}
 		if($moneyReceived->isCashInSafe()){
-			$moneyReceived->storeCashInSafeStatement($data['receiving_date'],$receivedAmount,$data['currency']);
+			$moneyReceived->storeCashInSafeStatement($data['receiving_date'],$receivedAmount,$data['currency'],$relationData['receiving_branch_id']);
 		}
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);

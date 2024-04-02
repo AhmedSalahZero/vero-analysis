@@ -412,13 +412,14 @@ class MoneyReceived extends Model
 			'credit'=>0 
 		]) ;
 	}
-	public function storeCashInSafeStatement(string $date , $receivedAmount , string $currencyName)
+	public function storeCashInSafeStatement(string $date , $receivedAmount , string $currencyName,int $branchId)
 	{
 		return $this->cashInSafeStatement()->create([
-			'currency'=>$currencyName ,
+			'branch_id'=>$branchId,
+			'currency'=>strtolower($currencyName) ,
 			'company_id'=>$this->company_id ,
 			'debit'=>$receivedAmount,
-			'date'=>$date
+			'date'=>$date,
 		]);
 	}	
 	public function storeCurrentAccountBankStatement(string $date , $receivedAmount , int $financialInstitutionAccountId)

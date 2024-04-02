@@ -387,21 +387,21 @@ Route::middleware([])->group(function () {
                     Route::get('aging-analysis/{modelType}', 'AgingController@index')->name('view.aging.analysis');
                     Route::post('aging-analysis/{modelType}', 'AgingController@result')->name('result.aging.analysis');
 
+					
+					Route::get('safe-statement', 'SafeStatementController@index')->name('view.safe.statement');
+                    Route::post('safe-statement', 'SafeStatementController@result')->name('result.safe.statement');
+					
+					Route::get('bank-statement', 'BankStatementController@index')->name('view.bank.statement');
+                    Route::post('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
+
+					
+						
                     Route::get('customer-balances/{modelType}', 'BalancesController@index')->name('view.balances');
                     Route::get('/invoices-dashboard/cash', 'CustomerInvoiceDashboardController@viewCashDashboard')->name('view.customer.invoice.dashboard.cash');
                     Route::get('/invoices-dashboard/forecast', 'CustomerInvoiceDashboardController@viewForecastDashboard')->name('view.customer.invoice.dashboard.forecast');
                     Route::get('/customer-balances/invoices-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showInvoiceReport')->name('view.invoice.report');
                     Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
-
-					// Route::get('down-payments', 'DownPaymentController@index')->name('view.down.payment');
-                    // Route::get('down-payments/create/{model?}', 'DownPaymentController@create')->name('create.down.payment');
-                    // Route::post('down-payments/create', 'DownPaymentController@store')->name('store.down.payment');
-                    // Route::get('down-payments/edit/{downPayment}', 'DownPaymentController@edit')->name('edit.down.payment');
-                    // Route::put('down-payments/update/{downPayment}', 'DownPaymentController@update')->name('update.down.payment');
-                    // Route::delete('down-payments/delete/{downPayment}', 'DownPaymentController@destroy')->name('delete.down.payment');
-
-					
 					
 					Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 					Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');

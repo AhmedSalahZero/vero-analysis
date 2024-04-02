@@ -67,3 +67,9 @@ UPDATE
 	set new.withhold_amount_in_main_currency = (new.withhold_amount * new.exchange_rate);
 		
 END//
+
+
+create trigger remove_supplier_after_delete_its_invoice  before delete 	ON `supplier_invoices` FOR EACH ROW
+begin 
+	delete from `partners` where  id = old.supplier_id; 
+end //  

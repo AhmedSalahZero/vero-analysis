@@ -23,6 +23,7 @@ class DueInvoiceNotification extends Notification
 		$this->message_en = $messageEn;
 		$this->message_ar = $messageAr;
 		$this->type = $type;
+
     }
 
     /**
@@ -62,6 +63,7 @@ class DueInvoiceNotification extends Notification
 			'type'=>$this->type,
 			'message_en'=>$this->message_en,
 			'message_ar'=>$this->message_ar,
+	
         ];
     }
 }
