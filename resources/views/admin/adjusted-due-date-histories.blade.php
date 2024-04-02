@@ -307,7 +307,7 @@ use Carbon\Carbon;
 
 
                         <!--begin::Form-->
-                        <form method="post" action="{{ isset($model) ? route('update.adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>$modeType , 'dueDateHistory'=>$model->id]) :route('store.adjust.due.dates',['company'=>$company->id , 'modelId'=>$invoice->getId(),'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
+                        <form method="post" action="{{ isset($model) ? route('update.adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>$modelType , 'dueDateHistory'=>$model->id]) :route('store.adjust.due.dates',['company'=>$company->id , 'modelId'=>$invoice->getId(),'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
                             @csrf
                             @if(isset($model))
                             @method('patch')

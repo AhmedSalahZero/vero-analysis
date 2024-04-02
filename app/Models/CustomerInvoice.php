@@ -61,6 +61,10 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return __('Money Received');
 	}
+	public function getCustomerOrSupplierStatementText()
+	{
+		return __('Customer Statement');
+	}
    
 	public function getCustomerName()
     {

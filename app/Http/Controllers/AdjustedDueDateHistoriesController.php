@@ -14,8 +14,9 @@ class AdjustedDueDateHistoriesController
 		/**
 		 * @var IInvoice $invoice ;
 		 */
+		$fullClassName = 'App\Models\\'.$invoiceModelName;
 		$invoice = ('App\Models\\'.$invoiceModelName)::find($invoiceId);
-		$customerNameOrSupplierNameText  =(new ('App\Models\\'.$invoiceModelName)) ->getClientNameText();
+		$customerNameOrSupplierNameText  =(new $fullClassName) ->getClientNameText();
 		$dueDateHistories = $invoice->dueDateHistories;
 		
         return view('admin.adjusted-due-date-histories', [
@@ -65,22 +66,24 @@ class AdjustedDueDateHistoriesController
 	public function edit(Request $request , Company $company ,  $invoiceId , $invoiceModelName, DueDateHistory $dueDateHistory){
 		$invoice = ('App\Models\\'.$invoiceModelName)::find($invoiceId); 
 		$dueDateHistories = $invoice->dueDateHistories;
-		
+		$fullClassName = 'App\Models\\'.$invoiceModelName;
+		$customerNameOrSupplierNameText  =(new $fullClassName) ->getClientNameText();
         return view('admin.adjusted-due-date-histories', [
 			'company'=>$company,
 			'invoice'=>$invoice,
 			'dueDateHistories'=>$dueDateHistories,
 			'model'=>$dueDateHistory,
-			'modeType'=>$invoiceModelName
+			'modelType'=>$invoiceModelName,
+			'customerNameOrSupplierNameText'=>$customerNameOrSupplierNameText,
 		]);
 	}
-	public function update(Request $request , Company $company ,  $customerInvoice , $invoiceModelName , DueDateHistory $dueDateHistory){
+	public function update(Request $request , Company $company ,  $InvoiceId , $invoiceModelName , DueDateHistory $dueDateHistory){
 		$date = $request->get('due_date') ;
 		$date = explode('/',$date);
 		$month = $date[0];
 		$day = $date[1];
 		$year = $date[2];
-		
+		$customerInvoice = ('App\Models\\'.$invoiceModelName)::find($InvoiceId);
 		$dueDate = $year.'-'.$month.'-'.$day ;
 		
 		$dueDateHistory->update([

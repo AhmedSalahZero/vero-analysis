@@ -96,7 +96,7 @@
                                 <div class="input-group date" >
                                     <select  data-live-search="true" data-actions-box="true" name="clients[]" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
 									@foreach($invoices as $invoice)
-									<option value="{{ $invoice->getId() }}">{{ $invoice->getName() }}</option>
+									<option value="{{ $invoice->getName() }}">{{ $invoice->getName() }}</option>
 									@endforeach 
                                     </select>
                                 </div>

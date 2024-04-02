@@ -28,7 +28,7 @@ class SupplierInvoice extends Model implements IInvoice
 	const CLIENT_NAME_COLUMN_NAME = 'supplier_name';
 	const CLIENT_ID_COLUMN_NAME = 'supplier_id';
 	const RECEIVED_OR_PAYMENT_AMOUNT = 'paid_amount';
-	const RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME = 'payment_date';
+	const RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME = 'delivery_date';
 	const MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME = 'money_payments';
 	const TABLE_NAME = 'supplier_invoices';
 	const COLLETED_OR_PAID = 'paid';
@@ -59,6 +59,10 @@ class SupplierInvoice extends Model implements IInvoice
 	public function getMoneyReceivedOrPaidText()
 	{
 		return __('Money Payments');
+	}
+	public function getCustomerOrSupplierStatementText()
+	{
+		return __('Supplier Statement');
 	}
    
 	public function getSupplierName()
@@ -143,7 +147,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index] = $currentData;
-			$allMoneyPayments =  MoneyReceived::
+			$allMoneyPayments =  MoneyPayment::
 			where('company_id',getCurrentCompanyId())
 			->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
 			->where('currency',$currency)

@@ -63,13 +63,14 @@ class BalancesController
 		$title = (new $fullClassName )->getBalancesTitle();
 		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+		$tableName = $fullClassName::TABLE_NAME ;
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();
 		$moneyReceivedOrPaidUrlName = (new $fullClassName)->getMoneyReceivedOrPaidUrlName();
 		$moneyReceivedOrPaidText = (new $fullClassName)->getMoneyReceivedOrPaidText();
 		$clientNameText = (new $fullClassName)->getClientNameText();
 		// Money Receive
-		$invoicesBalances=DB::select(DB::raw('select id,'. $clientNameColumnName .' ,invoice_number,DATE_FORMAT(invoice_date,"%d-%m-%Y") as invoice_date, currency , net_balance   from customer_invoices where net_balance > 0  and currency = "'. $currency .'" and company_id = '. $company->id .' order by '.$clientNameColumnName.' asc;'));
+		$invoicesBalances=DB::select(DB::raw('select id,'. $clientNameColumnName .' ,invoice_number,DATE_FORMAT(invoice_date,"%d-%m-%Y") as invoice_date, currency , net_balance   from '. $tableName .' where net_balance > 0  and currency = "'. $currency .'" and company_id = '. $company->id .' order by '.$clientNameColumnName.' asc;'));
         return view('admin.reports.total_net_balance_details', compact('company','invoicesBalances','currency','moneyReceivedOrPaidUrlName','moneyReceivedOrPaidText','clientNameColumnName','clientNameText'));
     }
 
