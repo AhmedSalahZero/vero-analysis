@@ -131,7 +131,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Customer Statement Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $customerStatementText . ' '.__('Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
 @endsection
 @section('content')
 
@@ -290,7 +290,7 @@
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{ __('Customer Statement') }}
+                    {{ $customerStatementText }}
                 </h3>
             </div>
         </div>

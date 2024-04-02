@@ -20,8 +20,8 @@ class CustomerInvoiceDashboardController extends Controller
 	
 		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
 		$isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
-		$moneyReceivedOrPaidText  =(new ($fullClassName)) ->getMoneyReceivedOrPaidText();
-		$moneyReceivedOrPaidUrlName  =(new ($fullClassName)) ->getMoneyReceivedOrPaidUrlName();
+		$moneyReceivedOrPaidText  =(new $fullClassName) ->getMoneyReceivedOrPaidText();
+		$moneyReceivedOrPaidUrlName  =(new $fullClassName) ->getMoneyReceivedOrPaidUrlName();
 		
 		$invoices = ('App\Models\\'.$modelType)::where('company_id',$company->id)
 		->where($clientIdColumnName,$partnerId)
@@ -44,16 +44,23 @@ class CustomerInvoiceDashboardController extends Controller
 		]);
 	}	
 	
-	public function showCustomerInvoiceStatementReport(Company $company , Request $request , int $partnerId,string $currency){
+	public function showCustomerInvoiceStatementReport(Company $company , Request $request , int $partnerId,string $currency,string $modelType){
+		$fullClassName = ('\App\Models\\'.$modelType) ;
+	
+		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+		$isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
+		$moneyReceivedOrPaidText  =(new $fullClassName) ->getMoneyReceivedOrPaidText();
+		$moneyReceivedOrPaidUrlName  =(new $fullClassName) ->getMoneyReceivedOrPaidUrlName();
+		$customerStatementText = (new $fullClassName)->getCustomerOrSupplierStatementText();
 		$startDate= $request->get('start_date',now()->subMonths(4)->format('Y-m-d'));
 		$endDate  = $request->get('end_date',now()->format('Y-m-d'));
-		$invoices = CustomerInvoice::where('company_id',$company->id)
+		$invoices = ('\App\Models\\'.$modelType)::where('company_id',$company->id)
 		->where('currency',$currency)
 		->whereBetween('invoice_date',[$startDate , $endDate ])
-		->where('customer_id','=',$partnerId)->get();
+		->where($clientIdColumnName,'=',$partnerId)->get();
 		$partner = Partner::find($partnerId);
 		$partnerName = $partner->getName() ;
-		$invoicesWithItsReceivedMoney = CustomerInvoice::formatForStatementReport($invoices,$partnerName,$startDate,$endDate,$currency);
+		$invoicesWithItsReceivedMoney = ('App\Models\\'.$modelType)::formatForStatementReport($invoices,$partnerName,$startDate,$endDate,$currency);
 		if(count($invoicesWithItsReceivedMoney) <= 1){
 			return  redirect()->back()->with('fail',__('No Data Found'));
 		}
@@ -63,7 +70,8 @@ class CustomerInvoiceDashboardController extends Controller
 			'partnerId'=>$partnerId,
 			'currency'=>$currency ,
 			'startDate'=>$startDate ,
-			'endDate'=>$endDate
+			'endDate'=>$endDate,
+			'customerStatementText'=>$customerStatementText
 		]);
 	}
 	

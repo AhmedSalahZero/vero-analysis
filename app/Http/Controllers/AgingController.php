@@ -19,9 +19,10 @@ class AgingController
     use GeneralFunctions;
     public function index(Company $company,string $modelType)
 	{
-		$customersOrSupplierText = (new ('\App\Models\\'.$modelType))->getClientDisplayName();
-		$title = (new ('\App\Models\\'.$modelType))->getAgingTitle();
-		$clientNameColumnName = ('\App\Models\\'.$modelType)::CLIENT_NAME_COLUMN_NAME ;
+		$fullClassName = ('\App\Models\\'.$modelType) ;
+		$customersOrSupplierText = (new $fullClassName)->getClientDisplayName();
+		$title = (new $fullClassName)->getAgingTitle();
+		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
 		$exportables = getExportableFieldsForModel($company->id,$modelType) ; 
 		$salesPersons = [];
@@ -65,6 +66,7 @@ class AgingController
 		
 		$aginDate = $request->get('again_date');
 		$clientNames = $request->get('clients');
+		
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
 		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
 		$weeksDates = formatWeeksDatesFromStartDate($aginDate);

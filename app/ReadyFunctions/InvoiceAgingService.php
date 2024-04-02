@@ -29,16 +29,19 @@ class InvoiceAgingService
 		$clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
 		$result = [];
 		$invoices = $fullModelName::where('invoice_date' ,'<=' , $this->aging_date)->where('company_id',$this->company_id);
+// dd($clientNameColumnName,$clientNames);
 		if(count($clientNames)){
 			$invoices->whereIn($clientNameColumnName,$clientNames);
 		}
 		$invoices = $invoices->get();
-
+// dd($invoices);
 		/**
 		 * @var CustomerInvoice[] $invoices
 		 */
+	
 		foreach($invoices as $index => $invoice){
 			$clientName = $invoice[$clientNameColumnName] ;
+		
 			$invoiceNumber = $invoice->invoice_number;
 			$invoiceDueDate = $invoice->invoice_due_date;
 			$netBalance = $invoice->getNetBalanceUntil($this->aging_date) ;
