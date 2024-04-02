@@ -65,7 +65,7 @@ use App\Models\MoneyReceived ;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ? route('contracts.update',['company'=>$company->id,'contract'=>$model->id]) : route('contracts.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ isset($model) ? route('contracts.update',['company'=>$company->id,'contract'=>$model->id,'type'=>$type]) : route('contracts.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
             @csrf
             @if(isset($model))
             @method('put')
@@ -94,6 +94,7 @@ use App\Models\MoneyReceived ;
                         </div>
                         <div class="kt-portlet__body">
                             <input type="hidden" name="company_id" value="{{ $company->id }}">
+							<input type="hidden" name="model_type" value="{{ $type }}">
                             <div class="form-group row">
 
                                 <div class="col-md-4 ">
@@ -121,15 +122,15 @@ use App\Models\MoneyReceived ;
 
                                 <div class="col-md-5">
 
-                                    <label>{{__('Customer Name')}}
+                                    <label>{{__('Partner Name')}}
                                         @include('star')
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
-                                                    @foreach($customers as $index => $customer )
-                                                    <option @if(isset($model) && $model->getCustomerName() == $customer->getName() ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
+                                                    @foreach($clients as $index => $customer )
+                                                    <option @if(isset($model) && $model->getClientName() == $customer->getName() ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -241,7 +242,7 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{__('Sales Order Information')}}
+                                    {{$salesOrderOrPurchaseOrderInformationText}}
                                 </h3>
                             </div>
                         </div>
@@ -257,7 +258,7 @@ use App\Models\MoneyReceived ;
 
                                 {{-- start of fixed monthly repeating amount --}}
                                 @php
-                                $tableId = 'salesOrders';
+                                $tableId = $salesOrderOrPurchaseOrderRelationName;
                                 $repeaterId = 'm_repeater_6';
 
                                 @endphp
@@ -265,7 +266,7 @@ use App\Models\MoneyReceived ;
                                 <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
-                                        __('SO Number')=>'col-md-1',
+                                        $salesOrderOrPurchaseNumberText =>'col-md-1',
                                         __('Amount')=>'col-md-1',
 
 
@@ -279,11 +280,11 @@ use App\Models\MoneyReceived ;
                                     </x-slot>
                                     <x-slot name="trs">
                                         @php
-                                        $rows = isset($model) ? $model->salesOrders :[-1] ;
+                                        $rows = isset($model) ? $model->{$salesOrderOrPurchaseOrderRelationName} :[-1] ;
                                         @endphp
                                         @foreach( count($rows) ? $rows : [-1] as $salesOrder)
                                         @php
-                                        if( !($salesOrder instanceof \App\Models\SalesOrder) ){
+                                        if( !($salesOrder instanceof $salesOrderOrPurchaseOrderObject) ){
                                         unset($salesOrder);
                                         }
                                         @endphp
@@ -300,7 +301,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="so_number" type="text" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getNumber() : old('salesOrders.so_number',0) }}">
+                                                        <input name="{{ $salesOrderOrPurchaseNoText }}" type="text" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getNumber() : old('salesOrders.'.$salesOrderOrPurchaseNoText,0) }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -690,7 +691,7 @@ use App\Models\MoneyReceived ;
     $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
         const customerName = $('#new_customer_name').val()
         console.log(customerName)
-        const url = "{{ route('add.new.customer',['company'=>$company->id]) }}"
+        const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>$type]) }}"
         if (customerName) {
             $.ajax({
                 url

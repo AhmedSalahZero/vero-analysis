@@ -315,10 +315,22 @@ Route::middleware([])->group(function () {
 				 // Route::put('financial-institutions/{financialInstitution}/bank-accounts/update/{certificatesOfDeposit}','CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
 				 // Route::delete('financial-institutions/{financialInstitution}/bank-accounts/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
  
-				 Route::post('add-new-customer','AddNewCustomerController@addNew')->name('add.new.customer');
+				 Route::post('add-new-partner','AddNewCustomerController@addNew')->name('add.new.partner');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
 				 Route::resource('internal-money-transfers', 'InternalMoneyTransferController');
-				 Route::resource('contracts', 'ContractsController');
+				//  Route::resource('contracts', 'ContractsController');
+				
+				 Route::get('contracts/{type}','ContractsController@index')->name('contracts.index');
+				 Route::get('contracts/create/{type}','ContractsController@create')->name('contracts.create');
+				 Route::post('contracts/{type}','ContractsController@store')->name('contracts.store');
+				 Route::get('contracts/{contract}/edit/{type}','ContractsController@edit')->name('contracts.edit');
+				 Route::put('contracts/{contract}/{type}','ContractsController@update')->name('contracts.update');
+				 Route::delete('contracts/{contract}/{type}','ContractsController@destroy')->name('contracts.destroy');
+
+
+
+
+
 				 Route::resource('notifications-settings', 'NotificationSettingsController');
 				 Route::get('mark-notifications-as-read', 'NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
  

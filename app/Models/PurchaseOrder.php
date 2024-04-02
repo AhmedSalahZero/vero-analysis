@@ -12,7 +12,10 @@ class PurchaseOrder extends Model
 	
 	use IsOrder ;
 	
-	
+	public function getNumber()
+	{
+		return $this->po_number;
+	}
 	public function getName()
 	{
 		return $this->name ;
@@ -24,6 +27,10 @@ class PurchaseOrder extends Model
 	public function scopeOnlyForCompany(Builder $builder , int $companyId)
 	{
 		return $builder->where('company_id',$companyId);
+	}
+	public function getOrderColumnName()
+	{
+		return 'po_number';
 	}	
 	
 	

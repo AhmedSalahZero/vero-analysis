@@ -10,7 +10,9 @@ class AddNewCustomerController extends Controller
 {
 	public function addNew(Company $company , Request $request){
 		$customerName = $request->get('customerName');
-		$isExist = Partner::where('is_customer',1)->where('name',$customerName)->where('company_id',$company->id)->exists();
+		$isCustomer = (int)($request->get('type','Customer') == 'Customer') ;
+		$isSupplier = (int)($request->get('type','Customer') == 'Supplier')  ;
+		$isExist = Partner::where('is_customer',$isCustomer)->where('is_supplier',$isSupplier)->where('name',$customerName)->where('company_id',$company->id)->exists();
 		if($isExist){
 			return response()->json([
 				'status'=>false ,
@@ -19,7 +21,8 @@ class AddNewCustomerController extends Controller
 		}
 		$partner = Partner::create([
 			'name'=>$customerName ,
-			'is_customer'=>1 ,
+			'is_customer'=>$isCustomer ,
+			'is_supplier'=>$isSupplier ,
 			'company_id'=>$company->id 
 		]);
 		return response()->json([

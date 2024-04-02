@@ -9,6 +9,10 @@ class SalesOrder extends Model
 {
 	use IsOrder ;
 	protected $guarded = ['id'];
+		public function getOrderColumnName()
+		{
+			return 'so_number';
+		}
 		
 	
 	

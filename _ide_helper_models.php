@@ -959,6 +959,7 @@ namespace App\Models{
  * App\Models\Contract
  *
  * @property int $id
+ * @property string|null $model_type اما Customer or Supplier
  * @property int|null $partner_id
  * @property string|null $name
  * @property string|null $code
@@ -973,9 +974,11 @@ namespace App\Models{
  * @property string $amount
  * @property string|null $currency
  * @property string|null $exchange_rate
- * @property-read \App\Models\Partner|null $customer
+ * @property-read \App\Models\Partner|null $client
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\LetterOfGuaranteeIssuance[] $letterOfGuaranteeIssuances
  * @property-read int|null $letter_of_guarantee_issuances_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PurchaseOrder[] $purchasesOrders
+ * @property-read int|null $purchases_orders_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SalesOrder[] $salesOrders
  * @property-read int|null $sales_orders_count
  * @method static \Illuminate\Database\Eloquent\Builder|Contract newModelQuery()
@@ -992,6 +995,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Contract whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Contract whereExchangeRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Contract whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Contract whereModelType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Contract whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Contract wherePartnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Contract whereStartDate($value)
@@ -2887,6 +2891,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Partner onlyCompany($companyId)
  * @method static \Illuminate\Database\Eloquent\Builder|Partner onlyCustomers()
  * @method static \Illuminate\Database\Eloquent\Builder|Partner onlyForCompany($companyId)
+ * @method static \Illuminate\Database\Eloquent\Builder|Partner onlySuppliers()
  * @method static \Illuminate\Database\Eloquent\Builder|Partner query()
  * @method static \Illuminate\Database\Eloquent\Builder|Partner whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Partner whereCreatedAt($value)

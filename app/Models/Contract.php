@@ -25,13 +25,13 @@ class Contract extends Model
 	{
 		return $this->id ;
 	}
-	public function customer()
+	public function client()
 	{
 		return $this->belongsTo(Partner::class,'partner_id','id');
 	}
-	public function getCustomerName()
+	public function getClientName()
 	{
-		return $this->customer ? $this->customer->getName() :__('N/A');
+		return $this->client ? $this->client->getName() :__('N/A');
 	}
 	public function getName()
 	{
@@ -93,6 +93,26 @@ class Contract extends Model
 	public function salesOrders()
 	{
 		return $this->hasMany(SalesOrder::class,'contract_id','id');
+	}
+	public function purchasesOrders()
+	{
+		return $this->hasMany(PurchaseOrder::class,'contract_id','id');
+	}
+	public function forCustomer()
+	{
+		return $this->model_type === 'Customer';
+	}
+	public function forSupplier()
+	{
+		return $this->model_type === 'Supplier';
+	}
+	/**
+	 * * اما 
+	 * *sales order or purchase order
+	 */
+	public function getOrders()
+	{
+		return $this->forSupplier() ? $this->purchasesOrders() : $this->salesOrders() ;
 	}
 	
 	public function letterOfGuaranteeIssuances()

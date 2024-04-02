@@ -468,7 +468,7 @@
  $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
         const customerName = $('#new_customer_name').val()
         console.log(customerName)
-        const url = "{{ route('add.new.customer',['company'=>$company->id]) }}"
+        const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>'Customer']) }}"
         if (customerName) {
             $.ajax({
                 url
