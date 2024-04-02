@@ -142,7 +142,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-5 width-45">
+                                            <div class="col-md-6">
                                                 <label>{{__('From Bank')}}
                                                     @include('star')
                                                 </label>
@@ -191,7 +191,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-5 width-45">
+                                            <div class="col-md-6">
                                                 <label>{{__('To Bank')}}
                                                     @include('star')
                                                 </label>

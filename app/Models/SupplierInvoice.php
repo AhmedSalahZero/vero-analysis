@@ -167,14 +167,14 @@ class SupplierInvoice extends Model implements IInvoice
 			$formattedData[$index]=$currentData;
 		}
 		foreach($allMoneyPayments as $moneyPayment) {
-			$dateReceiving = $moneyPayment->getReceivingDateFormatted() ;
+			$deliveryDate = $moneyPayment->getDeliveryDateFormatted() ;
 			$moneyPaymentType = $moneyPayment->getType();
 			$bankName = $moneyPayment->getBankName();
 			$docNumber = $moneyPayment->getNumber();
 				$moneyPaymentAmount = $moneyPayment->getReceivedAmount() ;
 				if($moneyPaymentAmount){
 					$currentData = []; 
-					$currentData['date'] = $dateReceiving;
+					$currentData['date'] = $deliveryDate;
 					$currentData['document_type'] = $moneyPaymentType;
 					$currentData['document_no'] = $docNumber  ;
 					$currentData['debit'] = 0;
@@ -186,7 +186,7 @@ class SupplierInvoice extends Model implements IInvoice
 					
 					if($totalWithholdAmount){
 						$currentData = []; 
-					$currentData['date'] = $dateReceiving;
+					$currentData['date'] = $deliveryDate;
 					$currentData['document_type'] = __('Withhold Taxes');
 					$currentData['document_no'] =  $docNumber ;
 					$currentData['debit'] = 0;

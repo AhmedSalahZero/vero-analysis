@@ -30,7 +30,6 @@ class ContractsController
 					'end_date'=>$contract->getEndDateFormatted(),
 					'amount'=>$contract->getAmountFormatted()
 				];
-				
 				foreach($contract->getOrders() as $order){
 					$items[$contractId]['sub_items'][$order->id][$order->getOrderColumnName()] =$order->getNumber() ;
 					$items[$contractId]['sub_items'][$order->id]['amount'] =$order->getAmountFormatted() ;

@@ -2937,9 +2937,7 @@ function getPermissions():array
 		
 		
         
-        [
-            'name'=>'view cash flow analysis'
-        ],
+     
         
         [
             'name'=>'view financial statement',
@@ -3038,6 +3036,7 @@ function getPermissions():array
 		[
             'name'=>'view letter of guarantee issuance'
         ],
+		
 		[
             'name'=>'view cash dashboard'
         ],
@@ -3051,11 +3050,7 @@ function getPermissions():array
 		,
 		[
             'name'=>'view customers contracts'
-        ]
-		,
-		
-	
-		
+        ],
 		[
             'name'=>'view cashvero settings'
         ],
@@ -4086,23 +4081,7 @@ function getSalesAnalysisReportSubmenu($user, int $companyId):array
 ];
 
 }
-function getCashFlowAnalysisSubmenu($user, int $companyId):array
-{
-    return 
-	[
-     
-    'weekly-cash-flow-report'=>[
-        'title'=>__('Weekly Cash Flow Report'),
-        'link'=>route('view.weekly.cashflow.report', ['company'=>$companyId]),
-        'show'=>$user->can('view weekly cash flow report'),
-        'submenu'=>[]
-    ],
-    
-    
-    
-];
 
-}
 function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
 {
 	return [
@@ -4193,36 +4172,178 @@ function getHeaderMenu()
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
 
 	$cashManagementSubItems = [
+		
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
 		'cash-dashboard'=>[
 			'title'=>__('Cash Dashboard'),
-			'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
-			'show'=>$user->can('view cash dashboard'),
+			'show'=>true ,
+			'link'=>'#',
+			'submenu'=>[
+				[
+					'title'=>__('Cash Status'),
+					'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
+					'show'=>$user->can('view cash dashboard'),
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Cash Forecast'),
+					'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+					'show'=>$user->can('view cash Forecast dashboard'),
+					'submenu'=>[]
+				],
+				
+			]
+	
+			
+		]
+		,
+
+		'financial-institution'=>[
+			'title'=>__('Financial Institutions'),
+			'link'=>route('view.financial.institutions',['company'=>$companyId]),
+			'show'=>$user->can('view financial institutions')
+		],
+		'customer-sections'=>[
+			'title'=>__('Customer Sections'),
+			'link'=>'#',
+			'show'=>true,
+			'submenu'=>[
+				
+				[
+					'title'=>__('Customer Balances'),
+					'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
+					'show'=>$user->can('view customer balances'),
+					'submenu'=>[]
+				],
+				[
+			'title'=>__('Customer Aging'),
+			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
+			'show'=>$user->can('view customer aging'),
+			'submenu'=>[]
+			],
+			[
+				'title'=>__('Customer Contracts'),
+			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
+			'show'=>$user->can('view customers contracts'),
+			
+			],
+			[
+				'title'=>__('Upload New Customer Invoice Data'),
+				'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
+				'show'=>$user->can(uploadCustomerInvoiceData),
+				'submenu'=>[]
+			]
+			
+			
+			
+			
+			
+			
+				
+			]
+		],
+		'supplier-sections'=>[
+			'title'=>__('Supplier Sections'),
+			'link'=>'#',
+			'show'=>true,
+			'submenu'=>[
+				
+				[
+					'title'=>__('Supplier Balances'),
+					'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
+					'show'=>$user->can('view supplier balances'),
+					'submenu'=>[]
+				],
+				[
+			'title'=>__('Supplier Aging'),
+			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
+			'show'=>$user->can('view supplier aging'),
+			'submenu'=>[]
+			],
+			[
+				'title'=>__('Supplier Contracts'),
+			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Supplier']),
+			'show'=>$user->can('view suppliers contracts'),
+			
+			],
+			[
+				'title'=>__('Upload New Supplier Invoice Data'),
+				'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice']),
+				'show'=>$user->can(uploadSupplierInvoiceData),
+				'submenu'=>[]
+			]
+			
+			
+			
+			
+			
+			
+				
+			]
+		],
+		'money-transactions'=>[
+			'title'=>__('Money Transactions'),
+			'link'=>'#',
+			'show'=>true ,
+			'submenu'=>[
+				[
+					'title'=>__('Money Payment'),
+					'link'=>route('view.money.payment', ['company'=>$companyId]),
+					'show'=>$user->can('view money payment'),
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Money Received'),
+					'link'=>route('view.money.receive', ['company'=>$companyId]),
+					'show'=>$user->can('view money received'),
+					'submenu'=>[]
+				],
+				[
+			'title'=>__('Internal Money Transfer'),
+			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
+			'show'=>$user->can('view internal money transfer'),
+			'submenu'=>[]
+				],
+				[
+					'title'=>__('Safe Statement'),
+					'link'=>'#',
+					'show'=>true,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Bank Statement'),
+					'link'=>'#',
+					'show'=>true,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Weekly Cash Flow Report'),
+					'link'=>route('view.weekly.cashflow.report', ['company'=>$companyId]),
+					'show'=>$user->can('view weekly cash flow report'),
+					'submenu'=>[]
+				]
+			]
+		]
+		,
+		'view letter of guarantee issuance'=>[
+			'title'=>__('LG Issuance'),
+			'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
+			'show'=>$user->can('view letter of guarantee issuance'),
 			'submenu'=>[]
 		],
-		'cash-forecast-dashboard'=>[
-			'title'=>__('Cash Forecast Dashboard'),
-			'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-			'show'=>$user->can('view cash Forecast dashboard'),
+		'view le'=>[
+			'title'=>__('LC Issuance'),
+			'link'=>'#',
+			'show'=>true,
 			'submenu'=>[]
-		],
+		]
+		,
 		'settings'=>[
 			'title'=>__('Settings'),
 			'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
 			'show'=>$user->can('view cashvero settings'),
 			'submenu'=>[
-				[
-					'title'=>__('Customer Contracts'),
-				'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
-				'show'=>$user->can('view customers contracts'),
-				
-				],
-				[
-					'title'=>__('Supplier Contracts'),
-				'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Supplier']),
-				'show'=>$user->can('view suppliers contracts'),
-				
-				],
+			
 				[
 					'title'=>__('Opening Balance'),
 				'link'=>route('opening-balance.index', ['company'=>$companyId]),
@@ -4238,69 +4359,17 @@ function getHeaderMenu()
 				]
 			]
 		],
-		'financial-institution'=>[
-			'title'=>__('Financial Institutions'),
-			'link'=>route('view.financial.institutions',['company'=>$companyId]),
-			'show'=>$user->can('view financial institutions')
-		],
 		
-		'customer-aging'=>[
-			'title'=>__('Customer Aging'),
-			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
-			'show'=>$user->can('view customer aging'),
-			'submenu'=>[
-			]
-		],
-		'supplier-aging'=>[
-			'title'=>__('Supplier Aging'),
-			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
-			'show'=>$user->can('view supplier aging'),
-			'submenu'=>[
-			]
-		],
-		'money-received'=>[
-			'title'=>__('Money Received'),
-			'link'=>route('view.money.receive', ['company'=>$companyId]),
-			'show'=>$user->can('view money received'),
-			'submenu'=>[]
-		],
-		'money-payment'=>[
-			'title'=>__('Money Payment'),
-			'link'=>route('view.money.payment', ['company'=>$companyId]),
-			'show'=>$user->can('view money payment'),
-			'submenu'=>[]
-		],
-		'internal-money-transfer'=>[
-			'title'=>__('Internal Money Transfer'),
-			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
-			'show'=>$user->can('view internal money transfer'),
-			'submenu'=>[]
-		],
-		// 'down-payments'=>[
-		// 	'title'=>__('Down Payments'),
-		// 	'link'=>route('view.down.payment', ['company'=>$companyId]),
-		// 	'show'=>$user->can('view down payments'),
-		// 	'submenu'=>[]
-		// ],
-		'customer-balances'=>[
-			'title'=>__('Customer Balances'),
-			'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
-			'show'=>$user->can('view customer balances'),
-			'submenu'=>[]
-		],
-		'supplier-balances'=>[
-			'title'=>__('Supplier Balances'),
-			'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
-			'show'=>$user->can('view supplier balances'),
-			'submenu'=>[]
-		],
 		
-		'view letter of guarantee issuance'=>[
-			'title'=>__('LG Issuance'),
-			'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
-			'show'=>$user->can('view letter of guarantee issuance'),
-			'submenu'=>[]
-		]
+		
+		
+		
+		
+		
+	
+	
+		
+		
 		];
 		if(hasMiddleware('isCashManagement')){
 			return $cashManagementSubItems ;
@@ -4372,12 +4441,7 @@ function getHeaderMenu()
 									'link'=>route('sales.export.analysis', ['company'=>$companyId]),
 									'show'=>$user->can('view export analysis data')
 								],
-                                'cash-flow-analysis'=>[
-                                    'title'=>__('Cash Flow Analysis'),
-                                    'show'=>$user->can('view cash flow analysis'),
-                                    'link'=>'#',
-                                    'submenu'=>getCashFlowAnalysisSubmenu($user, $companyId)
-								],
+                               
 								
                                 
                             ]

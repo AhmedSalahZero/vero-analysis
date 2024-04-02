@@ -7,9 +7,7 @@
         display: none !important;
     }
 
-    .max-w-80 {
-        width: 80% !important;
-    }
+   
 
     .kt-portlet__body {
         padding-top: 0 !important;
@@ -251,17 +249,17 @@
 
 
                 <tr class=" text-center second-tr-bg">
-                    <th class="text-center absorbing-column max-w-80"></th>
+                    <th class="text-center absorbing-column "></th>
                     <th></th>
                 </tr>
                 @endslot
                 @slot('table_body')
                 <tr class=" text-center first-tr-bg ">
-                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
-                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
-                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Start Date') }}</b></td>
-                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('End Date') }}</b></td>
-                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Amount') }}</b></td>
+                    <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
+                    <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
+                    <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Start Date') }}</b></td>
+                    <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('End Date') }}</b></td>
+                    <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Amount') }}</b></td>
 
 
                     <td style="color:white !important" class="text-center view-table-th ">
@@ -277,7 +275,7 @@
                 $subItems =$parnetAndSubData['sub_items'] ?? [];
                 @endphp
                 <tr class="group-color main-row-tr">
-                    <td class="black-text max-w-80" style="cursor: pointer;" onclick="toggleRow('{{ $mainItemId }}')">
+                    <td class="black-text " style="cursor: pointer;" onclick="toggleRow('{{ $mainItemId }}')">
 
                         <div class="d-flex align-items-center ">
                             @if(count($subItems))
@@ -286,29 +284,29 @@
                             <b class="text-capitalize ">{{ $parent['name'] }}</b>
                         </div>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <b class="text-capitalize ">
                             <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
                         </b>
 
                     </td>
-                    <td>
-                        <b class="text-capitalize ">
+                    <td class="text-center">
+                        <b class="text-capitalize  ">
                             <b class="text-capitalize ">{{ $parent['start_date'] }}</b>
                         </b>
 
 
                     </td>
-                    <td>
-                        <b class="text-capitalize ">
-                            <b class="text-capitalize ">{{ $parent['end_date'] }}</b>
+                    <td class="text-center">
+                        <b class="text-capitalize">
+                            <b class="text-capitalize">{{ $parent['end_date'] }}</b>
                         </b>
 
 
                     </td>
-                    <td>
-                        <b class="text-capitalize ">
-                            <b class="text-capitalize ">{{ $parent['amount'] }}</b>
+                    <td class="text-center">
+                        <b class="text-capitalize  ">
+                            <b class="text-capitalize">{{ $parent['amount'] }}</b>
                         </b>
 
                     </td>
@@ -361,7 +359,7 @@
 
 
                 <tr class="row{{ $mainItemId }}  text-center sub-item-row" style="display: none">
-                    <td colspan="5" class="text-left max-w-80 text-capitalize">
+                    <td colspan="5" class="text-left  text-capitalize">
                         <table class="table ml-3 table-borderless">
 
 
