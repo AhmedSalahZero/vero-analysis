@@ -2,15 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashInSafeStatement;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
+use App\Models\FinancialInstitution;
 use App\Models\Partner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerInvoiceDashboardController extends Controller
 {
     public function viewCashDashboard(Company $company , Request $request ){
-		return view('admin.dashboard.cash',['company'=>$company]);
+		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		$date=  $request->get('date',now()->format('Y-m-d'));
+		$cashInSafeStatementStd = DB::table('cash_in_safe_statements')->where('date','<=',$date)->where('company_id',$company->id)->orderBy('id','desc')->first();
+		$cashInSafeStatementAmount =  $cashInSafeStatementStd->end_balance ;
+		
+		// علي حسب البنوك اللي اختارها وباي دي فولت هيكونوا كلهم
+		$currentAccountInBanks = 0 ;
+		$totalCashAndBanks = $cashInSafeStatementAmount + $currentAccountInBanks ; 
+		foreach($request->get('financial_institution_ids') as $financialInstitutionId){
+			
+		}
+		
+		return view('admin.dashboard.cash',[
+			'company'=>$company,
+			'financialInstitutionBanks'=>$financialInstitutionBanks,
+			'totalCashAndBanks'=>$totalCashAndBanks
+		]);
 	} 
 	public function viewForecastDashboard(Company $company , Request $request ){
 		return view('admin.dashboard.forecast',['company'=>$company]);

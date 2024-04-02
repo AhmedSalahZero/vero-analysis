@@ -100,6 +100,8 @@
     </div>
 </div>
 @endsection
+
+
 @section('js')
     <!--begin::Page Scripts(used by this page) -->
     <script src="{{url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}" type="text/javascript"></script>

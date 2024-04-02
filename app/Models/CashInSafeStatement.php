@@ -38,6 +38,15 @@ class CashInSafeStatement extends Model
     {
         return $this->id ;
     }
+	
+	public function getEndBalance()
+	{
+		return $this->end_balance ?: 0 ;
+	}
+	public function getEndBalanceFormatted()
+	{
+		return number_format($this->getEndBalance()) ;
+	}
 
     public function setDateAttribute($value)
     {

@@ -16,7 +16,7 @@ class Contract extends Model
     {
         parent::boot();
         self::saving(function($model){
-			$model->end_date = $model->start_date && $model->duration ? Carbon::make($model->start_date)->addMonths($model->duration)->format('Y-m-d') : null;  
+			$model->end_date = $model->start_date && $model->duration ? Carbon::make($model->start_date)->addDays($model->duration)->format('Y-m-d') : null;  
         });
 
     }
@@ -112,7 +112,7 @@ class Contract extends Model
 	 */
 	public function getOrders()
 	{
-		return $this->forSupplier() ? $this->purchasesOrders() : $this->salesOrders() ;
+		return $this->forSupplier() ? $this->purchasesOrders : $this->salesOrders ;
 	}
 	
 	public function letterOfGuaranteeIssuances()

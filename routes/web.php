@@ -401,6 +401,12 @@ Route::middleware([])->group(function () {
                     // Route::put('down-payments/update/{downPayment}', 'DownPaymentController@update')->name('update.down.payment');
                     // Route::delete('down-payments/delete/{downPayment}', 'DownPaymentController@destroy')->name('delete.down.payment');
 
+					
+					
+					Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
+					Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
+					
+					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
@@ -498,8 +504,7 @@ Route::middleware([])->group(function () {
                 Route::get('down-payments/get-contracts-for-customer', 'MoneyReceivedController@getContractsForCustomer')->name('get.contracts.for.customer'); // ajax request
                 Route::get('down-payments/get-contracts-for-supplier', 'MoneyPaymentController@getContractsForCustomer')->name('get.contracts.for.supplier'); // ajax request
                 Route::get('down-payments/get-sales-orders-for-contract/{contract_id}/{currency?}', 'MoneyReceivedController@getSalesOrdersForContract'); // ajax request
-                 Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
-                Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
+               
                 Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');
                 Route::get('/create-labeling-items', 'DynamicItemsController@createLabelingItems')->name('create.labeling.items');
                 Route::get('/create-labeling-form', 'DynamicItemsController@createLabelingForm')->name('create.labeling.form');
