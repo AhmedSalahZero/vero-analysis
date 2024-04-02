@@ -476,33 +476,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\CashInSafe
- *
- * @property int $id
- * @property int $money_received_id
- * @property int|null $receiving_branch_id
- * @property string|null $receipt_number
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $company_id
- * @property-read \App\Models\MoneyReceived $moneyReceived
- * @property-read \App\Models\Branch|null $receivingBranch
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe query()
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereMoneyReceivedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereReceiptNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereReceivingBranchId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CashInSafe whereUpdatedAt($value)
- */
-	class CashInSafe extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\CashInSafeStatement
  *
  * @property int $id
@@ -510,6 +483,7 @@ namespace App\Models{
  * @property int $is_credit
  * @property int $company_id
  * @property int $money_received_id
+ * @property int|null $money_payment_id
  * @property string|null $date
  * @property string $beginning_balance
  * @property string $debit
@@ -531,10 +505,36 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereIsCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereIsDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereMoneyPaymentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereMoneyReceivedId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereUpdatedAt($value)
  */
 	class CashInSafeStatement extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * * هو عباره عن الكاش اللي بدفعه للمورد
+ *
+ * @property int $id
+ * @property int $money_payment_id
+ * @property int|null $delivery_branch_id
+ * @property string|null $receipt_number
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Branch|null $deliveryBranch
+ * @property-read \App\Models\MoneyPayment $moneyPayment
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment whereDeliveryBranchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment whereMoneyPaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment whereReceiptNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashPayment whereUpdatedAt($value)
+ */
+	class CashPayment extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -744,6 +744,7 @@ namespace App\Models{
  * @property int $priority عباره عن اولويه التسديد بمعني لما يحين وقت التسديد مين هيتسدد الاول لان الفؤائد بتسدد الاول
  * @property int $clean_overdraft_id
  * @property int $money_received_id
+ * @property int|null $money_payment_id
  * @property int|null $internal_money_transfer_id
  * @property int $company_id
  * @property string $date
@@ -761,6 +762,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CleanOverdraft $cleanOverDraft
+ * @property-read \App\Models\MoneyPayment|null $moneyPayment
  * @property-read \App\Models\MoneyReceived $moneyReceived
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CleanOverdraftWithdrawal[] $withdrawals
  * @property-read int|null $withdrawals_count
@@ -785,6 +787,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereIsCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereIsDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereLimit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereMoneyPaymentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereMoneyReceivedId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement wherePriority($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereRoom($value)
@@ -1204,7 +1207,23 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\DownPaymentSettlement
+ * * هي عباره عن ال
+ * * down payment  Settlements
+ * * الخاصة بال money Payment
+ *
+ * @property-read \App\Models\MoneyPayment $moneyPayment
+ * @method static \Illuminate\Database\Eloquent\Builder|DownPaymentMoneyPaymentSettlement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|DownPaymentMoneyPaymentSettlement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|DownPaymentMoneyPaymentSettlement query()
+ */
+	class DownPaymentMoneyPaymentSettlement extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * * هي عباره عن ال
+ * * down payment  Settlements
+ * * الخاصة بال money received
  *
  * @property int $id
  * @property int|null $contract_id
@@ -1247,6 +1266,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Company $company
  * @property-read \App\Models\CustomerInvoice $customerInvoice
+ * @property-read \App\Models\SupplierInvoice $supplierInvoice
  * @method static \Illuminate\Database\Eloquent\Builder|DueDateHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DueDateHistory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DueDateHistory query()
@@ -2501,25 +2521,56 @@ namespace App\Models{
 /**
  * App\Models\MoneyPayment
  *
- * @property-read \App\Models\CashInBank|null $cashInBank
- * @property-read \App\Models\CashInSafe|null $cashInSafe
- * @property-read \App\Models\CashInSafeStatement|null $cashInSafeStatement
- * @property-read \App\Models\Cheque|null $cheque
- * @property-read \App\Models\Bank $chequeDrawlBank
+ * @property int $id
+ * @property string $money_type
+ * @property int|null $contract_id
+ * @property int|null $opening_balance_id
+ * @property string|null $type
+ * @property string|null $supplier_name
+ * @property string|null $delivery_date
+ * @property string|null $paid_amount
+ * @property float $total_withhold_amount
+ * @property float|null $total_withhold_amount_in_main_currency
+ * @property float|null $paid_amount_in_main_currency
+ * @property string|null $currency
+ * @property float|null $exchange_rate
+ * @property int|null $user_id
+ * @property int|null $company_id
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\CashPayment|null $cashPayment
+ * @property-read \App\Models\CashInSafeStatement|null $cashPaymentStatement
  * @property-read \App\Models\CleanOverdraftBankStatement|null $cleanOverdraftBankStatement
- * @property-read \App\Models\CustomerInvoice $customerInvoice
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DownPaymentSettlement[] $downPaymentSettlements
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DownPaymentMoneyPaymentSettlement[] $downPaymentSettlements
  * @property-read int|null $down_payment_settlements_count
- * @property-read \App\Models\IncomingTransfer|null $incomingTransfer
- * @property-read \App\Models\OpeningBalance $openingBalance
- * @property-write mixed $receiving_date
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Settlement[] $settlements
+ * @property-read \App\Models\OpeningBalance|null $openingBalance
+ * @property-read \App\Models\OutgoingTransfer|null $outgoingTransfer
+ * @property-read \App\Models\PayableCheque|null $payableCheque
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentSettlement[] $settlements
  * @property-read int|null $settlements_count
+ * @property-read \App\Models\SupplierInvoice|null $supplierInvoice
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnappliedAmount[] $unappliedAmounts
  * @property-read int|null $unapplied_amounts_count
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereContractId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereDeliveryDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereExchangeRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereMoneyType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereOpeningBalanceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment wherePaidAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment wherePaidAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereSupplierName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereTotalWithholdAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereTotalWithholdAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MoneyPayment whereUserId($value)
  */
 	class MoneyPayment extends \Eloquent {}
 }
@@ -2546,7 +2597,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CashInBank|null $cashInBank
- * @property-read \App\Models\CashInSafe|null $cashInSafe
  * @property-read \App\Models\CashInSafeStatement|null $cashInSafeStatement
  * @property-read \App\Models\Cheque|null $cheque
  * @property-read \App\Models\Bank $chequeDrawlBank
@@ -2639,6 +2689,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MoneyReceived[] $cashInSafe
  * @property-read int|null $cash_in_safe_count
  * @property-read \App\Models\Company $company
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MoneyPayment[] $moneyPayments
+ * @property-read int|null $money_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MoneyReceived[] $moneyReceived
  * @property-read int|null $money_received_count
  * @method static \Illuminate\Database\Eloquent\Builder|OpeningBalance newModelQuery()
@@ -2727,6 +2779,34 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|OtherVariableManpowerExpense whereUpdatedAt($value)
  */
 	class OtherVariableManpowerExpense extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\OutgoingTransfer
+ *
+ * @property int $id
+ * @property int $money_payment_id
+ * @property int|null $delivery_bank_id
+ * @property string|null $account_type
+ * @property int|null $account_number
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\AccountType|null $accountType
+ * @property-read \App\Models\FinancialInstitution|null $deliveryBank
+ * @property-read \App\Models\MoneyPayment $moneyPayment
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer query()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereDeliveryBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereMoneyPaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutgoingTransfer whereUpdatedAt($value)
+ */
+	class OutgoingTransfer extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -2823,16 +2903,74 @@ namespace App\Models{
 /**
  * * دا الشيك اللي بدفعه للموردين
  *
+ * @property int $id
+ * @property string|null $cheque_number
+ * @property string $status
+ * @property int $money_payment_id
+ * @property int|null $delivery_bank_id هو البنك اللي انا طلعت منة الشيك للمورد وبالتالي لازم يكون من بنوكي
+ * @property string $account_type نوع الحساب اللي هسحب منة الشيك علشان ادية للمورد
+ * @property string $account_number رقم الحساب اللي هسحب منة الشيك علشان ادية للمورد
+ * @property string|null $due_date هو تاريخ استحقاق الشيك .. يعني اقدر اسحبة امتة
+ * @property string|null $delivery_date هو تاريخ الي اديت فيه الشيك للمورد
+ * @property string|null $actual_payment_date هو تاريخ التسليم الفعلي لان لازم ياكد
+ * @property string $account_balance دي اجمالي اللي معايا في الحساب بعد اما الشيك مثلا انسحب ودي احنا اللي بنجسبها افتراضيا
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\AccountType $accountType
+ * @property-read \App\Models\FinancialInstitution|null $deliveryBank
  * @property-read \App\Models\MoneyPayment $moneyPayment
- * @property-read \App\Models\FinancialInstitution $paymentBank
- * @property-write mixed $actual_payment_date
- * @property-write mixed $delivery_date
- * @property-write mixed $due_date
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereAccountBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereAccountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereActualPaymentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereChequeNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereDeliveryBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereDeliveryDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereDueDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereMoneyPaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereUpdatedAt($value)
  */
 	class PayableCheque extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\PaymentSettlement
+ *
+ * @property int $id
+ * @property string|null $invoice_number
+ * @property string|null $supplier_name
+ * @property string|null $withhold_amount
+ * @property string|null $settlement_amount
+ * @property int|null $unapplied_amount_id
+ * @property int|null $money_payment_id
+ * @property int|null $company_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MoneyReceived|null $moneyPayment
+ * @property-read \App\Models\MoneyPayment|null $supplierInvoice
+ * @property-read \App\Models\UnappliedAmount|null $unappliedAmount
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereInvoiceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereMoneyPaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereSettlementAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereSupplierName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereUnappliedAmountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentSettlement whereWithholdAmount($value)
+ */
+	class PaymentSettlement extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -3028,18 +3166,85 @@ namespace App\Models{
  * @property int|null $updated_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $contract_id
+ * @property string|null $po_number purchase order number
+ * @property string|null $amount
+ * @property string|null $start_date_1
+ * @property string|null $end_date_1
+ * @property string|null $execution_percentage_1
+ * @property int|null $execution_days_1
+ * @property int|null $collection_days_1
+ * @property string|null $start_date_2
+ * @property string|null $end_date_2
+ * @property string|null $execution_percentage_2
+ * @property int|null $execution_days_2
+ * @property int|null $collection_days_2
+ * @property string|null $start_date_3
+ * @property string|null $end_date_3
+ * @property string|null $execution_percentage_3
+ * @property int|null $execution_days_3
+ * @property int|null $collection_days_3
+ * @property string|null $start_date_4
+ * @property string|null $end_date_4
+ * @property string|null $execution_percentage_4
+ * @property int|null $execution_days_4
+ * @property int|null $collection_days_4
+ * @property string|null $start_date_5
+ * @property string|null $end_date_5
+ * @property string|null $execution_percentage_5
+ * @property int|null $execution_days_5
+ * @property int|null $collection_days_5
+ * @property-read \App\Models\Contract|null $contract
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\LetterOfGuaranteeIssuance[] $letterOfGuaranteeIssuances
  * @property-read int|null $letter_of_guarantee_issuances_count
+ * @property-write mixed $end_date1
+ * @property-write mixed $end_date2
+ * @property-write mixed $end_date3
+ * @property-write mixed $end_date4
+ * @property-write mixed $end_date5
+ * @property-write mixed $start_date1
+ * @property-write mixed $start_date2
+ * @property-write mixed $start_date3
+ * @property-write mixed $start_date4
+ * @property-write mixed $start_date5
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder onlyForCompany(int $companyId)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCollectionDays1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCollectionDays2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCollectionDays3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCollectionDays4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCollectionDays5($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereContractId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereEndDate1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereEndDate2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereEndDate3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereEndDate4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereEndDate5($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionDays1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionDays2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionDays3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionDays4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionDays5($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionPercentage1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionPercentage2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionPercentage3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionPercentage4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereExecutionPercentage5($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder wherePoNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereStartDate1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereStartDate2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereStartDate3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereStartDate4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereStartDate5($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchaseOrder whereUpdatedBy($value)
  */
@@ -4548,6 +4753,100 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\SupplierInvoice
+ *
+ * @property int $id
+ * @property int $company_id
+ * @property string|null $supplier_code
+ * @property string|null $sales_person
+ * @property int $supplier_id
+ * @property string|null $supplier_name
+ * @property string|null $business_sector
+ * @property string|null $project_name
+ * @property string|null $site_name
+ * @property \Illuminate\Support\Carbon|null $invoice_date
+ * @property string|null $invoice_month
+ * @property int|null $invoice_year
+ * @property string|null $invoice_number
+ * @property string|null $invoice_amount
+ * @property string $currency
+ * @property string $exchange_rate
+ * @property float|null $invoice_amount_in_main_currency
+ * @property string|null $vat_amount
+ * @property float|null $vat_amount_in_main_currency
+ * @property string|null $withhold_amount
+ * @property float|null $withhold_amount_in_main_currency
+ * @property string|null $net_invoice_amount
+ * @property float|null $net_invoice_amount_in_main_currency
+ * @property string|null $contracted_payment_days
+ * @property string|null $invoice_due_date
+ * @property string|null $invoice_status
+ * @property string|null $paid_amount
+ * @property float|null $paid_amount_in_main_currency
+ * @property string|null $net_balance
+ * @property float|null $net_balance_in_main_currency
+ * @property int|null $is_period_closed
+ * @property int|null $is_canceled
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $discount_amount
+ * @property string|null $discount_amount_in_main_currency
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DueDateHistory[] $dueDateHistories
+ * @property-read int|null $due_date_histories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MoneyPayment[] $moneyPayment
+ * @property-read int|null $money_payment_count
+ * @property-read \App\Models\Partner $supplier
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice company()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice onlyCompany($companyId)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereBusinessSector($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereContractedPaymentDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereDiscountAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereDiscountAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereExchangeRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceDueDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereInvoiceYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereIsCanceled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereIsPeriodClosed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereNetBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereNetBalanceInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereNetInvoiceAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereNetInvoiceAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice wherePaidAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice wherePaidAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereProjectName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereSalesPerson($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereSiteName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereSupplierCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereSupplierName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereVatAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereVatAmountInMainCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereWithholdAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierInvoice whereWithholdAmountInMainCurrency($value)
+ */
+	class SupplierInvoice extends \Eloquent implements \App\Interfaces\Models\IInvoice {}
+}
+
+namespace App\Models{
+/**
  * App\Models\TablesField
  *
  * @property int $id
@@ -4695,6 +4994,8 @@ namespace App\Models{
  * @property-read int|null $logs_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|\Spatie\MediaLibrary\MediaCollections\Models\Media[] $media
  * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MoneyPayment[] $moneyPayments
+ * @property-read int|null $money_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MoneyReceived[] $moneyReceived
  * @property-read int|null $money_received_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
@@ -4799,5 +5100,16 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|OutstandingBreakdown whereUpdatedAt($value)
  */
 	class OutstandingBreakdown extends \Eloquent {}
+}
+
+namespace App{
+/**
+ * App\VerificationCode
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|VerificationCode newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|VerificationCode newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|VerificationCode query()
+ */
+	class VerificationCode extends \Eloquent {}
 }
 
