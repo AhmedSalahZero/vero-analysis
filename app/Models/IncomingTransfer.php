@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\Models\IsIncomingTransfer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class IncomingTransfer extends Model
 {
-	use IsIncomingTransfer ;
 	 
     protected $guarded = ['id'];
 	
