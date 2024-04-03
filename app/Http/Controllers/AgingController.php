@@ -50,6 +50,7 @@ class AgingController
 		->selectRaw('currency')->get()->pluck('currency')->unique()->values()->toArray();
 		
 		$invoices = ('\App\Models\\'.$modelType)::where($clientNameColumnName,'!=',null)->where($clientNameColumnName,'!=','')->onlyCompany($company->id)->get();
+		$invoices = $invoices->unique('customer_name')->values() ;
         return view('reports.aging_form', [
 			'businessUnits'=>$businessUnits,
 			'company'=>$company,
