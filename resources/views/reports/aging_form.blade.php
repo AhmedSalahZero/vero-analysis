@@ -75,8 +75,7 @@
                         </div>
 						@endif
 						
-						
-						
+					
 						 <div class="col-md-3 mb-4">
                             <label>{{ __('Select Currency') }}   </label>
                             <div class="kt-input-icon">

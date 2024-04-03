@@ -111,7 +111,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Bank In Safe Statement ['  ) . ' ' . __($currency) . ' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Bank Statement ['  ) . ' ' . __($currency) . ' ]' }}</x-main-form-title>
 @endsection
 @section('content')
 
