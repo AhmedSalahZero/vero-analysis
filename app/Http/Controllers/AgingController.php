@@ -82,11 +82,13 @@ class AgingController
 	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)
 	{
 		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
+		$fullClassName = 'App\Models\\'.$invoiceTableName ;
+		$customer_or_supplier_name=$fullClassName::CLIENT_NAME_COLUMN_NAME;
 		$currency = $request->get('currencies');
 		$businessUnits = $request->get('business_units',[]);
 		$salesPersons = $request->get('sales_persons',[]);
 		$businessSectors = $request->get('business_sectors',[]);
-		$query = DB::table($invoiceTableName)->select('customer_name','currency')->where('currency',$currency)->where('company_id',$company->id)->where('net_balance','>',0);
+		$query = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')->where('currency',$currency)->where('company_id',$company->id)->where('net_balance','>',0);
 		if(count($businessUnits)){
 			$query = $query->whereIn('business_unit',$businessUnits);
 		}
@@ -101,7 +103,7 @@ class AgingController
 		/**
 		 * @var Collection $data ;
 		 */
-		$customers = $data->unique('customer_name')->pluck('customer_name');
+		$customers = $data->unique($customer_or_supplier_name)->pluck($customer_or_supplier_name);
 		$currencies = $data->unique('currency')->pluck('currency');
 		return response()->json([
 			'status'=>true ,
