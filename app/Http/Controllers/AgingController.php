@@ -82,7 +82,7 @@ class AgingController
 	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)
 	{
 		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
-		$fullClassName = 'App\Models\\'.$invoiceTableName ;
+		$fullClassName = 'App\Models\\'.$modelType ;
 		$customer_or_supplier_name=$fullClassName::CLIENT_NAME_COLUMN_NAME;
 		$currency = $request->get('currencies');
 		$businessUnits = $request->get('business_units',[]);
@@ -105,6 +105,9 @@ class AgingController
 		 */
 		$customers = $data->unique($customer_or_supplier_name)->pluck($customer_or_supplier_name);
 		$currencies = $data->unique('currency')->pluck('currency');
+		
+	
+		
 		return response()->json([
 			'status'=>true ,
 			'message'=>__('Success'),
