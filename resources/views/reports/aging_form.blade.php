@@ -181,7 +181,7 @@
 			$('select.currency-js').selectpicker('destroy');
 			$('select.currency-js').empty().append(currenciesOptions)
 			$('select.currency-js').selectpicker("refresh")
-			
+			console.log($('select.customers-js').length)
 			$('select.customers-js').selectpicker('destroy');
 			$('select.customers-js').empty().append(customersOptions)
 			$('select.customers-js').selectpicker("refresh")
