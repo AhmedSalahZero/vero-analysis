@@ -389,7 +389,8 @@ class MoneyPaymentController
 				'cheque_number'=>$request->input('cheque_number'),
 				'delivery_bank_id'=>$request->input('delivery_bank_id.'.MoneyPayment::PAYABLE_CHEQUE),
 				'account_number'=>$request->input('account_number.'.MoneyPayment::PAYABLE_CHEQUE),
-				'account_type'=>$request->input('account_type.'.MoneyPayment::PAYABLE_CHEQUE)
+				'account_type'=>$request->input('account_type.'.MoneyPayment::PAYABLE_CHEQUE),
+				'company_id'=>$company->id
 			];
 		}
 		$isDownPayment = $request->has('purchases_orders_amounts') ;

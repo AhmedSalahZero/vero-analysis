@@ -48,6 +48,10 @@ class MoneyPayment extends Model
     {
         return $this->supplier_name;
     }
+	public function getName()
+	{
+		return $this->getSupplierName();
+	}
     public function getDeliveryDate()
     {
         return $this->delivery_date;
@@ -61,6 +65,11 @@ class MoneyPayment extends Model
     {
         return  $this->paid_amount?:0 ;
     }
+	public function getAmount()
+	{
+		return $this->getPaidAmount();
+	}
+	
 	public function getPayableChequeDueDate(){
 		return $this->payableCheque ? $this->payableCheque->getDueDate(): null;
 	}

@@ -2985,6 +2985,7 @@ namespace App\Models{
  * * دا الشيك اللي بدفعه للموردين
  *
  * @property int $id
+ * @property int|null $company_id
  * @property string|null $cheque_number
  * @property string $status
  * @property int $money_payment_id
@@ -3008,6 +3009,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereAccountType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereActualPaymentDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereChequeNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereDeliveryBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PayableCheque whereDeliveryDate($value)

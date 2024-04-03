@@ -34,9 +34,10 @@ class CustomerInvoice extends Model implements IInvoice
 	const TABLE_NAME = 'customer_invoices';
 	const COLLETED_OR_PAID = 'collected';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_collected_and_past_due';
-
+	const MONEY_MODEL_NAME = 'MoneyReceived';
+	const AGING_CHEQUE_MODEL_NAME = 'Cheque';
     protected $guarded = [];
-	
+
 	public function getClientDisplayName()
 	{
 		return __('Customers');
@@ -56,6 +57,10 @@ class CustomerInvoice extends Model implements IInvoice
 	public function getClientNameText()
 	{
 		return __('Customer Name');
+	}
+	public function getMoneyModelName()
+	{
+		return 'MoneyReceived';
 	}
 	public function getMoneyReceivedOrPaidUrlName()
 	{

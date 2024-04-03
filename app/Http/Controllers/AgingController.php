@@ -72,9 +72,9 @@ class AgingController
 		
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
 		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
-		$weeksDates = formatWeeksDatesFromStartDate($aginDate);
+		$weeksDates =formatWeeksDatesFromStartDate($aginDate);
 		
-		
+
 		
 		return view('admin.reports.invoices-aging',['agings'=>$agings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates,'customersOrSupplierAgingText'=>$customersOrSupplierAgingText]);
 	}

@@ -543,8 +543,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 
 
-
-                                        {{-- {{ dd($result) }} --}}
                                         <tr class="edit-info-row add-sub is-total-row is-sub-row ">
                                             <td class=" reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close "></td>
 
