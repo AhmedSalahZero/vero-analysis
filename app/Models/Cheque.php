@@ -69,13 +69,13 @@ class Cheque extends Model
 	}
 	public function getDrawlBankId()
 	{
-		$drawlBank = $this->draweeBank ;
+		$drawlBank = $this->drawlBank ;
 		return $drawlBank  ? $drawlBank->id : 0 ;
 	}
 	
 	public function getDrawlBankName()
 	{
-		$drawlBank = $this->draweeBank ;
+		$drawlBank = $this->drawlBank ;
 		return $drawlBank  ? $drawlBank->getName() :__('N/A') ;
 	}
 	public function getChequeNumber()

@@ -436,18 +436,13 @@ class MoneyReceivedController
 		$moneyReceived = MoneyReceived::create($data);
 		
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
+		$accountNumber = $request->input('account_number.'.$moneyType) ;
+		$receivingDate = $data['receiving_date'] ?? null ; 
+		$currency = $data['currency'] ?? null ; 
+		$receivingBranchId = $relationData['receiving_branch_id'] ?? null ;
 		
-		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType));
-			$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['receiving_date'],$receivedAmount);
-		}
-		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType));
-			$moneyReceived->storeCurrentAccountBankStatement($data['receiving_date'],$receivedAmount,$financialInstitutionAccount->id);
-		}
-		if($moneyReceived->isCashInSafe()){
-			$moneyReceived->storeCashInSafeStatement($data['receiving_date'],$receivedAmount,$data['currency'],$relationData['receiving_branch_id']);
-		}
+		$moneyReceived->handleStatement($accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,$receivingBranchId);
+		
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
 		/**
@@ -613,16 +608,19 @@ class MoneyReceivedController
 			'actual_collection_date'=>$request->get('actual_collection_date') 
 		]);
 		$accountType = AccountType::find($moneyReceived->cheque->account_type) ;
+		$currency = $moneyReceived->getCurrency();
 		$receivedAmount = $moneyReceived->getReceivedAmount();
 		$receivingDate = $moneyReceived->getReceivingDate();
 		$moneyType = MoneyReceived::CHEQUE;
+		$accountNumber = $moneyReceived->cheque->account_number ;
 		/**
 		 * @var AccountType $accountType ;
 		 */
-		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($moneyReceived->cheque->account_number);
-			$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
-		}
+		// if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
+		// 	$cleanOverdraft  = CleanOverdraft::findByAccountNumber();
+		// 	$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
+		// }
+		$moneyReceived->handleStatement($accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
 		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}

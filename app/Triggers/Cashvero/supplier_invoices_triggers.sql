@@ -68,8 +68,13 @@ UPDATE
 		
 END//
 
-
-create trigger remove_supplier_after_delete_its_invoice  before delete 	ON `supplier_invoices` FOR EACH ROW
+delimiter //
+create trigger remove_supplier_after_delete_its_invoice  after delete 	ON `supplier_invoices` FOR EACH ROW
 begin 
+	declare _length integer default 0 ;
+	select count(*) into _length from `supplier_invoices` where supplier_id=old.supplier_id   ;
+	if _length = 0  
+	then 
 	delete from `partners` where  id = old.supplier_id; 
+	end if ;
 end //  
