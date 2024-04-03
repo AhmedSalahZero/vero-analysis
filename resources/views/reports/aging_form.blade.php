@@ -81,7 +81,7 @@
                             <label>{{ __('Select Currency') }}   </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
-                                    <select  data-live-search="true" data-actions-box="true" name="currencies[]" required class="form-control currency-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name" >
+                                    <select  data-live-search="true" data-actions-box="true" name="currencies[]" required class="form-control currency-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name ajax-refresh-customers" >
 										@foreach($currencies as $currencyName)
 										<option value="{{ $currencyName }}">{{ touppercase($currencyName) }}</option>
 										@endforeach 
