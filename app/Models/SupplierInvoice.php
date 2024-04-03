@@ -33,6 +33,8 @@ class SupplierInvoice extends Model implements IInvoice
 	const TABLE_NAME = 'supplier_invoices';
 	const COLLETED_OR_PAID = 'paid';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_paid_and_past_due';
+	const MONEY_MODEL_NAME = 'MoneyPayment';
+	const AGING_CHEQUE_MODEL_NAME = 'PayableCheque';
 
     protected $guarded = [];
 	
@@ -40,6 +42,7 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return __('Suppliers');
 	}
+	
 	public function getCustomerOrSupplierAgingText()
 	{
 		return __('Suppliers Invoice Aging');

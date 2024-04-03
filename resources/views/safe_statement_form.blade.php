@@ -3,9 +3,10 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
-.kt-portlet{
-	overflow:visible !important ;
-}
+    .kt-portlet {
+        overflow: visible !important;
+    }
+
 </style>
 @endsection
 @section('sub-header')
@@ -23,67 +24,67 @@
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-					 <div class="col-md-3 mb-4">
+                        <div class="col-md-3 mb-4">
                             <label>{{ __('Start Date') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" >
+                                <div class="input-group date">
                                     <input required type="date" class="form-control" name="start_date" value="{{ now() }}">
                                 </div>
                             </div>
                         </div>
-						
-						<div class="col-md-3 mb-4">
+
+                        <div class="col-md-3 mb-4">
                             <label>{{ __('End Date') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" >
+                                <div class="input-group date">
                                     <input required type="date" class="form-control" name="end_date" value="{{ now()->addYear() }}">
                                 </div>
                             </div>
                         </div>
-						
-						
-						
-						
-						
-						 <div class="col-md-3 mb-4">
-                            <label>{{ __('Select Currency') }}   </label>
+
+
+
+
+
+                        <div class="col-md-3 mb-4">
+                            <label>{{ __('Select Currency') }} </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" >
-                                    <select  data-live-search="true" data-actions-box="true" name="currency" required class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name" >
-										@foreach(getCurrency() as $currency=>$currencyName)
-										<option value="{{ $currency }}">{{ touppercase($currencyName) }}</option>
-										@endforeach 
+                                <div class="input-group date">
+                                    <select data-live-search="true" data-actions-box="true" name="currency" required class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name">
+                                        @foreach(getCurrency() as $currency=>$currencyName)
+                                        <option value="{{ $currency }}">{{ touppercase($currencyName) }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <label>{{ __('Branch') }} <span class="multi_selection"></span>  </label>
+                            <label>{{ __('Branch') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
-                                <div class="input-group date" >
-                                    <select  data-live-search="true" data-actions-box="true" name="branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" >
-									@foreach($selectedBranches as $id => $name)
-									<option value="{{ $id }}">{{ $name }}</option>
-									@endforeach 
+                                <div class="input-group date">
+                                    <select data-live-search="true" data-actions-box="true" name="branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
+                                        @foreach($selectedBranches as $id => $name)
+                                        <option value="{{ $id }}">{{ $name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
-						
-						     
-						
-						
-						
-						
-						
-                <x-submitting />
-						
-						
-						
-				
-						
-                        
-						
+
+
+
+
+
+
+
+                        <x-submitting />
+
+
+
+
+
+
+
                     </div>
 
                 </div>

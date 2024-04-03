@@ -3908,86 +3908,7 @@ function convertModelToTableName(string $modelName)
 {
     return Str::plural(strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $modelName))) ;
 }
-function formatWeeksDatesFromStartDate(string $agingDate, string $format ='d-m-Y')
-{
-    return [
-            'past_due'=>[
-                '1-7'=>[
-                    'start_date'=>$startDate = Carbon::make($agingDate)->subDay()->format($format) ,
-                    'end_date'=>$endDate = Carbon::make($startDate)->subDays(6)->format($format)
-                ] ,
-            '8-15'=>[
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(7)->format($format)
-            ] ,
-            '16-30'=>[
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(14)->format($format)
-            ],
-            '31-45'=>[
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(14)->format($format)
-            ],
-            '46-60'=>[
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(14)->format($format)
-            ],
-            '61-90'=>
-            [
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(29)->format($format)
-            ],
-            '91-120'=>[
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(29)->format($format)
-            ],
-            '121-150'=>[
-                'start_date'=>$startDate = Carbon::make($endDate)->subDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->subDays(29)->format($format)
-            ],
-        ],
-        
-        
-        
-        'coming_due'=>[
-            '1-7'=>[
-                'start_date'=>$startDate = Carbon::make($agingDate)->addDay()->format($format) ,
-                'end_date'=>$endDate = Carbon::make($startDate)->addDays(6)->format($format)
-            ] ,
-        '8-15'=>[
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(7)->format($format)
-        ] ,
-        '16-30'=>[
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(14)->format($format)
-        ],
-        '31-45'=>[
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(14)->format($format)
-        ],
-        '46-60'=>[
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(14)->format($format)
-        ],
-        '61-90'=>
-        [
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(29)->format($format)
-        ],
-        '91-120'=>[
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(29)->format($format)
-        ],
-        '121-150'=>[
-            'start_date'=>$startDate = Carbon::make($endDate)->addDay()->format($format) ,
-            'end_date'=>$endDate = Carbon::make($startDate)->addDays(29)->format($format)
-        ],
-        ]
-        
-        
-    ];
-}
+
 function getBanksCurrencies():array
 {
     return getCurrencies();
@@ -4862,3 +4783,78 @@ function getModelNameWithoutNamespace($object)
 {
 	return HHelpers::getClassNameWithoutNameSpace($object);
 }
+function formatWeeksDatesFromStartDate(string $agingDate, string $format = 'd-m-Y')
+    {
+        return [
+            'past_due' => [
+                '1-7' => [
+                    'start_date' => $startDate = Carbon::make($agingDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(6)->format($format)
+                ],
+                '8-15' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(7)->format($format)
+                ],
+                '16-30' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
+                ],
+                '31-45' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
+                ],
+                '46-60' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
+                ],
+                '61-90' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
+                ],
+                '91-120' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
+                ],
+                '121-150' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
+                ],
+            ],
+
+            'coming_due' => [
+                '1-7' => [
+                    'start_date' => $startDate = Carbon::make($agingDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(6)->format($format)
+                ],
+                '8-15' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(7)->format($format)
+                ],
+                '16-30' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
+                ],
+                '31-45' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
+                ],
+                '46-60' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
+                ],
+                '61-90' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
+                ],
+                '91-120' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
+                ],
+                '121-150' => [
+                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                    'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
+                ],
+            ]
+
+        ];
+    }

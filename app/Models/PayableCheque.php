@@ -19,6 +19,12 @@ class PayableCheque extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id');
 	}
+	public static function getChequeTypesForAging():array
+	{
+		return [
+			self::PENDING,
+		];
+	}
 	public function getDeliveryDate()
 	{
 		return $this->delivery_date ; 
@@ -66,7 +72,10 @@ class PayableCheque extends Model
 	{
 		return $this->cheque_number ;
 	}
-	
+	public function getNumber()
+	{
+		return $this->getChequeNumber();
+	}
 	public function setActualPaymentDateAttribute($value)
 	{
 		if(!$value){

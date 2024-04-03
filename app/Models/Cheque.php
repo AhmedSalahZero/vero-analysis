@@ -19,6 +19,13 @@ class Cheque extends Model
 	{
 		return $this->belongsTo(MoneyReceived::class,'money_received_id');
 	}
+	public static function getChequeTypesForAging():array
+	{
+		return [
+			self::IN_SAFE,
+			self::UNDER_COLLECTION
+		];
+	}
 	public function getDepositDate()
 	{
 		return $this->deposit_date ; 
@@ -81,6 +88,10 @@ class Cheque extends Model
 	public function getChequeNumber()
 	{
 		return $this->cheque_number ;
+	}
+	public function getNumber()
+	{
+		return $this->getChequeNumber();
 	}
 	
 	

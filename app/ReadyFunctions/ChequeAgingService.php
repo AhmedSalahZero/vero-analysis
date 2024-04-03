@@ -11,9 +11,9 @@ use Exception;
  * * هو عباره عن الفواتير اللي لسه مفتوحة ( اعمار الديون) .. سواء الدين لسه جايه او المتاخر او حق اليوم
  * * وبالتالي بمجرد ما تندفع مش بتيجي هنا (لو النت بلانس اكبر من صفر يبقي لسه ما استدتش كاملا)
  */
-class InvoiceAgingService
+class ChequeAgingService
 {
-    use IsAgingService;
+	use IsAgingService ;
     public const MORE_THAN_150 = 'More Than 150';
     protected $company_id ;
     protected $aging_date ;
@@ -27,16 +27,23 @@ class InvoiceAgingService
         $this->aging_date = $agingDate ;
     }
 
-
-	
-    public function __execute(array $clientNames, string $modelType)
+	public function __execute(array $clientNames, string $modelType)
     {
+
         $fullModelName = ("\App\Models\\" . $modelType) ;
         $clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
+        $modelModelName = $fullModelName::MONEY_MODEL_NAME ;
+		$chequeModelName = $fullModelName::AGING_CHEQUE_MODEL_NAME;
+		 $chequeTypesForSafe = ('\App\Models\\'.$chequeModelName)::getChequeTypesForAging() ;
         $result = [];
-        $invoices = $fullModelName::where('invoice_date', '<=', $this->aging_date)->where('company_id', $this->company_id);
+		/**
+		 * * هنا شرط الديو ديت اكبر من او يساوي
+		 */
+        $invoices = ('\App\Models\\'.$chequeModelName)::whereIn('status',$chequeTypesForSafe)->where('due_date', '>=', $this->aging_date)->where('company_id', $this->company_id);
         if (count($clientNames)) {
-            $invoices->whereIn($clientNameColumnName, $clientNames);
+            $invoices->whereHas($modelModelName,function($q) use($clientNames,$clientNameColumnName){
+                $q->whereIn($clientNameColumnName,$clientNames);
+            });
         }
         $invoices = $invoices->get();
         /**
@@ -44,11 +51,11 @@ class InvoiceAgingService
          */
 
         foreach ($invoices as $index => $invoice) {
-            $clientName = $invoice[$clientNameColumnName] ;
+            $clientName = $invoice->{$modelModelName}->getName() ;
 
-            $invoiceNumber = $invoice->invoice_number;
-            $invoiceDueDate = $invoice->invoice_due_date;
-            $netBalance = $invoice->getNetBalanceUntil($this->aging_date) ;
+            $invoiceNumber = $invoice->getNumber();
+            $invoiceDueDate = $invoice->getDueDate();
+            $netBalance = $invoice->{$modelModelName}->getAmount() ;
             if (!$netBalance) {
                 continue;
             }
@@ -81,7 +88,9 @@ class InvoiceAgingService
                 $result['grand_clients_total'][$clientName] = $clientName ;
             }
             $result['total_of_due'][$dueName] = isset($result['total_of_due'][$dueName]) ? $result['total_of_due'][$dueName] + $netBalance : $netBalance ;
-
+			if($dueName == 'coming_due'){
+				$result['total_per_date_for_coming'][$invoiceDueDate] =  isset($result['total_per_date_for_coming'][$invoiceDueDate]) ? $result['total_per_date_for_coming'][$invoiceDueDate] + $netBalance :$netBalance;  
+			}
             if ($netBalance) {
                 $result['total_clients_due'][$dueName][$clientName] = $clientName ;
             }
@@ -106,6 +115,7 @@ class InvoiceAgingService
                         $chartKeyName = 'Total Coming Dues Aging Analysis Chart';
                     }
                     $totalOfAllValues = isset($result['total'][$dueName]) ? array_sum($result['total'][$dueName]) : 0 ;
+					
                     $result['charts'][$chartKeyName][] = [
                         'item' => $dayInterval . ' ' . __('Days'),
                         'value' => $currentValue = $result['total'][$dueName][$dayInterval] ?? 0,
@@ -128,31 +138,10 @@ class InvoiceAgingService
 		$formattedForTable = $totalsArray ;
 		$formattedForChat = [];
 
-		foreach($totalsArray as $dueType => $dueIntervalAndDueTotal){
-			foreach($dueIntervalAndDueTotal as $dueInterval => $dueTotal){
-				$minus = '';
-				if($dueType == 'past_due' ){
-					$minus = '-';
-				}
-				if($modelType == 'CustomerInvoice'){
-					
-					$formattedForChat[] = [
-						'region'=>camelizeWithSpace($dueType,'_') ,
-						'state'=>$minus . $dueInterval . ' ' .  __('Days'),
-						'sales'=>$dueTotal
-					];
-				}
-				if($modelType == 'SupplierInvoice'){
-					// dd($agings['charts']);
-				
-					$formattedForChat[] = [
-						'region'=>camelizeWithSpace($dueType,'_') ,
-						'state'=>$minus . $dueInterval . ' ' .  __('Days'),
-						'sales'=>$dueTotal
-					];
-				}
-			}
+		foreach($agings['total_per_date_for_coming'] ?? [] as $date => $value){
+			$formattedForChat[]  =['date'=>$date , 'value'=>$value];
 		}
+	
 		return [
 				'table'=>$formattedForTable,
 				'chart'=>$formattedForChat
@@ -161,4 +150,5 @@ class InvoiceAgingService
 		
 	}
 
+   
 }

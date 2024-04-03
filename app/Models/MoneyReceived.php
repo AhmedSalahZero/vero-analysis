@@ -64,6 +64,10 @@ class MoneyReceived extends Model
     {
         return $this->customer_name;
     }
+    public function getName()
+    {
+    	return $this->getCustomerName();
+    }
     public function getReceivingDate()
     {
         return $this->receiving_date;
@@ -77,6 +81,10 @@ class MoneyReceived extends Model
     {
         return  $this->received_amount?:0 ;
     }
+	public function getAmount()
+	{
+		return $this->getReceivedAmount();
+	}
 	public function getChequeDueDate(){
 		return $this->cheque ? $this->cheque->getDueDate(): null;
 	}
@@ -330,6 +338,8 @@ class MoneyReceived extends Model
 		$cheque = $this->cheque ;
 		return $cheque ? $cheque->getAccountType() : null ;
 	}
+	
+	
 	
 	public function getChequeAccountNumber()
 	{
