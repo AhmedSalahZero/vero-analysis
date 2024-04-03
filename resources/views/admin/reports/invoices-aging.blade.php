@@ -424,7 +424,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                         @foreach($aging['invoices'] as $invoiceNumber=>$invoiceDetailArr)
                                         <tr class="edit-info-row add-sub maintable-1-row-class{{ $rowIndex }} is-sub-row d-none">
                                             <td class=" reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize is-close "></td>
-
                                             <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{ $invoiceNumber }}</td>
                                             <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['past_due'][$moreThan150] ?? 0 ,0) }}</td>
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
