@@ -471,4 +471,23 @@ class MoneyReceived extends Model
 		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
 		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
 	}
+	/**
+	 * * هنا لو اليوزر ضاف فلوس في الحساب
+	 * * بنحطها في الاستيت منت
+	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
+	 */
+	public function handleStatement(?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $receivedAmount = null,?string $currencyName = null,?int $receivingBranchId = null)
+	{
+		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber);
+			$this->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
+		}
+		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber);
+			$this->storeCurrentAccountBankStatement($receivingDate,$receivedAmount,$financialInstitutionAccount->id);
+		}
+		if($this->isCashInSafe()){
+			$this->storeCashInSafeStatement($receivingDate,$receivedAmount,$currencyName,$receivingBranchId);
+		}
+	}
 }

@@ -431,7 +431,6 @@ $(document).on('change', '.js-to-update-account-number-based-on-account-type', f
 		success: function (res) {
 			options = ''
 			var selectToAppendInto = $(parent).find('.js-to-account-number')
-
 			for (key in res.data) {
 				var val = res.data[key]
 				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''

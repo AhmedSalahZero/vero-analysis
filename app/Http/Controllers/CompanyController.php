@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Company;
 use App\Traits\ImageSave;
 use Illuminate\Http\Request;
@@ -41,6 +42,10 @@ class CompanyController extends Controller
     {
         toastr()->success('Created Successfully');
         $companySection = Company::create($request->except('image'));
+		Branch::create([
+			'company_id'=>$companySection->id,
+			'name'=>'Head Office'
+		]);
         ImageSave::saveIfExist('image',$companySection);
         return redirect()->back();
     }

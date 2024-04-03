@@ -48,9 +48,8 @@ class CleanOverdraftController
 		
 		$user = $request->user()->load('cleanOverdraft') ;
 		
-		$cleanOverdrafts = $user->cleanOverdraft ;
+		$cleanOverdrafts = $user->cleanOverdraft->where('financial_institution_id',$financialInstitution->id) ;
 		$cleanOverdrafts =   $this->applyFilter($request,$cleanOverdrafts) ;
-		
 		$searchFields = [
 			'contract_start_date'=>__('Contract Start Date'),
 			'contract_end_date'=>__('Contract End Date'),

@@ -49,8 +49,7 @@ class OverdraftAgainstCommercialPaperController
 		
 		$user = $request->user()->load('overdraftAgainstCommercialPaper') ;
 		
-		$overdraftAgainstCommercialPapers = $user->overdraftAgainstCommercialPaper ;
-		// dd($overdraftAgainstCommercialPapers);
+		$overdraftAgainstCommercialPapers = $user->overdraftAgainstCommercialPaper->where('financial_institution_id',$financialInstitution->id) ;
 		$overdraftAgainstCommercialPapers =   $this->applyFilter($request,$overdraftAgainstCommercialPapers) ;
 		
 		$searchFields = [

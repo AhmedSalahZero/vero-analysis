@@ -15,16 +15,7 @@
 }
 
 </style>	
-<ul class="kt-menu__nav ">
-    <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{route('forecast.report',$company)}}" class="kt-menu__link "><span class="kt-menu__link-text">{{__('Sales Target Dashboard')}}</span></a></li>
-    <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('breakdown.forecast.report',$company)}}" class="kt-menu__link active-button"><span class="kt-menu__link-text active-text">{{__("Target Breakdown Dashboard")}}</span></a></li>
-    @if ((App\Models\CollectionSetting::where('company_id', $company->id)->first()) !== null))
-        <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a
-            href="{{ route('collection.forecast.report', $company) }}" class="kt-menu__link "><span
-                class="kt-menu__link-text">{{__('Target Collection Dashboard')}}</span></a>
-        </li>
-    @endif
-</ul>
+
 @endsection
 @section('css')
     <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
@@ -34,7 +25,6 @@
         table {
             white-space: nowrap;
         }
-        /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
     </style>
 @endsection
 @section('content')
@@ -69,7 +59,6 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                {{-- Chart --}}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="chartdivchart" id="chartdivmulti"></div>
