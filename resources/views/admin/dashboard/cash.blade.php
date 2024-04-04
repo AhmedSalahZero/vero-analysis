@@ -896,7 +896,7 @@
                     </div>
                     <div class="kt-widget24__details">
                         <span class="kt-widget24__stats kt-font-success">
-                            01-October-2021
+                            01-October-2024
                         </span>
                     </div>
                 </div>
@@ -998,7 +998,7 @@
                     </div>
                     <div class="kt-widget24__details">
                         <span class="kt-widget24__stats kt-font-success">
-                            01-June-2021
+                            01-June-2024
                         </span>
                     </div>
                 </div>
