@@ -127,7 +127,6 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-number')
 				domSalesOrder.val(salesOrderId)
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_id]').val(salesOrderId)
-				console.log(onlyOneSalesOrder)
 				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
 				//	$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))
@@ -147,13 +146,16 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				}
 
 			}
+			if(res.purchases_orders.length == 0){
+				$('.js-append-to').append(lastNode)
+			}
 		//	$('.js-append-to').find('.js-settlement-amount:first-of-type').trigger('change')
 
 		})
 	}
 })
 
-$(document).on('change', '.ajax-get-invoice-numbers', function () {
+$(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	let inEditMode = +$('#js-in-edit-mode').val()
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
@@ -180,11 +182,11 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 			var selectedCurrency = res.selectedCurrency
 			for (var currencyName in res.currencies) {
 				var currencyFormattedName = res.currencies[currencyName].toUpperCase()
-				currenciesOptions += `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
+				currenciesOptions += `<option ${currencyName == currency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
 			}
 
 
-			$('.current-currency').empty().append(currenciesOptions)
+			// $('.current-currency').empty().append(currenciesOptions)
 			// second add settlements repeater 
 			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
 			$('.js-append-to').empty()
@@ -223,8 +225,8 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 		})
 	}
 })
-$('.ajax-get-invoice-numbers').trigger('change')
-$('.ajax-get-purchases-orders-for-contract').trigger('change')
+$('select.ajax-get-invoice-numbers').trigger('change')
+$('select.ajax-get-purchases-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
