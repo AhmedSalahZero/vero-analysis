@@ -98,9 +98,9 @@ use App\Models\MoneyReceived ;
                                 <div class="input-group date">
                                     <select readonly name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                         <option value="" selected>{{__('Select')}}</option>
-                                        @foreach(getBanksCurrencies() as $currencyId=>$currentName)
-                                        <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                        @endforeach
+                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -135,6 +135,13 @@ use App\Models\MoneyReceived ;
                 <div class="kt-portlet__body">
 
                     <div class="js-append-to">
+                        <div class="col-md-12 js-duplicate-node">
+                          
+                        </div>
+                    </div>
+
+
+                    <div class="js-template hidden">
                         <div class="col-md-12 js-duplicate-node">
                             <div class=" kt-margin-b-10 border-class">
                                 <div class="form-group row align-items-end">
@@ -211,7 +218,7 @@ use App\Models\MoneyReceived ;
 
                                 </div>
 
-                            </div>
+                            </div> 
                         </div>
                     </div>
 
@@ -224,19 +231,19 @@ use App\Models\MoneyReceived ;
                         <div class="col-md-2"></div>
                         {{-- <div class="col-md-2 width-12 ml-auto mr-4">
                             <label class="label">{{ __('Unapplied Amount') }}</label>
-                            <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
-                        </div> --}}
-                    </div>
+                        <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
+                    </div> --}}
                 </div>
             </div>
-
-            <x-submitting />
-
-        </form>
-        <!--end::Form-->
-
-        <!--end::Portlet-->
     </div>
+
+    <x-submitting />
+
+    </form>
+    <!--end::Form-->
+
+    <!--end::Portlet-->
+</div>
 </div>
 @endsection
 @section('js')

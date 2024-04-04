@@ -214,7 +214,7 @@ use App\Models\MoneyReceived ;
                         <div class="input-group date">
                             <select id="currency" name="currency" class="form-control ajax-get-contracts-for-customer current-currency ajax-get-sales-orders-for-contract">
                                 <option value="" selected>{{__('Select')}}</option>
-                                @foreach(getBanksCurrencies() as $currencyId=>$currentName)
+                               @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                 <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
                             </select>
@@ -578,6 +578,12 @@ use App\Models\MoneyReceived ;
 
             <div class="js-append-to">
                 <div class="col-md-12 js-duplicate-node">
+
+                </div>
+            </div>
+
+            <div class="js-template hidden">
+                <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
                         <div class="form-group row align-items-end">
 
@@ -701,7 +707,8 @@ use App\Models\MoneyReceived ;
                     for (id in res.contracts) {
                         options += `<option value="${id}">${res.contracts[id]}</option>`
                     }
-                    $('#contract-id').empty().append(options)
+                    $('#contract-id').empty().append(options);
+					$('#contract-id').trigger('change')
                 }
             })
         }

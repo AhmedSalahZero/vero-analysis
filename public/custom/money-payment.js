@@ -93,8 +93,8 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-purchases-orders-for-contract/' + contractId + '/' + currency
-	console.log(contractId)
-	if (contractId) {
+
+
 		$.ajax({
 			url,
 			data: {
@@ -112,7 +112,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 //
 		//	$('.current-currency').empty().append(currenciesOptions)
 			// second add settlements repeater 
-			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+			var lastNode = $('.js-template .js-duplicate-node').clone(true)
 			$('.js-append-to').empty()
 		
 			for (var i = 0; i < res.purchases_orders.length; i++) {
@@ -141,7 +141,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 					domPaidAmount.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][paid_amount]')
 					//domWithholdAmount.attr('name', 'purchases_orders_amounts[' + invoiceNumber + '][withhold_amount]')
 					$('.js-append-to').append(lastNode)
-					lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+					var lastNode = $('.js-template .js-duplicate-node').clone(true)
 					
 				}
 
@@ -149,10 +149,10 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 			if(res.purchases_orders.length == 0){
 				$('.js-append-to').append(lastNode)
 			}
-		//	$('.js-append-to').find('.js-settlement-amount:first-of-type').trigger('change')
+
 
 		})
-	}
+	
 })
 
 $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
@@ -188,7 +188,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 
 			// $('.current-currency').empty().append(currenciesOptions)
 			// second add settlements repeater 
-			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+			var lastNode = $('.js-template .js-duplicate-node').clone(true)
 			$('.js-append-to').empty()
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
@@ -216,9 +216,12 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					$('.js-append-to').append(lastNode)
-					lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+					var lastNode = $('.js-template .js-duplicate-node').clone(true)
 				}
 
+			}
+			if(res.invoices.length == 0){
+				$('.js-append-to').append(lastNode)
 			}
 			$('.js-append-to').find('.js-settlement-amount:first-of-type').trigger('change')
 
