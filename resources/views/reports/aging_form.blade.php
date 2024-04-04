@@ -171,7 +171,7 @@
 		}).then(function(res){
 			let currenciesOptions = '';
 			for (var currencyName of res.data.currencies_names){
-				currenciesOptions += `<option ${res.data.selected_currency == currencyName ? 'selected' : '' } value="${currencyName}">${currencyName}</option>`
+				currenciesOptions += `<option ${currencies == currencyName ? 'selected' : '' } value="${currencyName}">${currencyName}</option>`
 			}
 			let customersOptions = '';
 	

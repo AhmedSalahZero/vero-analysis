@@ -295,14 +295,14 @@ class MoneyPaymentController
 		$supplierName = $supplier->supplier_name ;
 		$invoices = SupplierInvoice::where('supplier_name',$supplierName)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
-		
+	
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
 		
-		$allCurrencies = $invoices->pluck('currency','currency')->mapWithKeys(function($value,$key){
+		$allCurrencies =$invoices->where('company_id',$company->id)->pluck('currency','currency')->mapWithKeys(function($value,$key){
 			return [
-				strtolower($key)=>strtolower($value) 
+				$key=>$value 
 			];
 		});		
 		if($selectedCurrency){

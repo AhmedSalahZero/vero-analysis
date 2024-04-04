@@ -88,7 +88,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	const downPaymentId = +$('#js-down-payment-id').val()
 	let contractId = $('#contract-id').val()
 	contractId = contractId ? contractId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
-	let currency = $('.current-currency').val()
+	let currency = $('select.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
@@ -153,7 +153,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	}
 })
 
-$(document).on('change', '.ajax-get-invoice-numbers', function () {
+$(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	let inEditMode = +$('#js-in-edit-mode').val()
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
@@ -161,8 +161,9 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 	const moneyReceivedId = +$('#js-money-received-id').val()
 	let customerInvoiceId = $('#customer_name').val()
 	customerInvoiceId = customerInvoiceId ? customerInvoiceId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
-	let currency = $('.current-currency').val()
+	let currency = $('select.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
+
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId + '/' + currency
@@ -179,14 +180,16 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 			let currenciesOptions = ''
 			var selectedCurrency = res.selectedCurrency
 			for (var currencyName in res.currencies) {
-				var currencyFormattedName = res.currencies[currencyName].toUpperCase()
-				currenciesOptions += `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
+				var currencyFormattedName = res.currencies[currencyName]
+				currenciesOptions += `<option ${currencyName == currency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
 			}
 
 
-			$('.current-currency').empty().append(currenciesOptions)
+		//	$('.current-currency').empty().append(currenciesOptions)
+		
 			// second add settlements repeater 
 			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+		
 			$('.js-append-to').empty()
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
@@ -216,15 +219,18 @@ $(document).on('change', '.ajax-get-invoice-numbers', function () {
 					$('.js-append-to').append(lastNode)
 					lastNode = $('.js-duplicate-node:last-of-type').clone(true)
 				}
-
+				
+			}
+			if(res.invoices.length == 0){
+				$('.js-append-to').append(lastNode)
 			}
 			$('.js-append-to').find('.js-settlement-amount:first-of-type').trigger('change')
 
 		})
 	}
 })
-$('.ajax-get-invoice-numbers').trigger('change')
-$('.ajax-get-sales-orders-for-contract').trigger('change')
+$('select.ajax-get-invoice-numbers').trigger('change')
+$('select.ajax-get-sales-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {

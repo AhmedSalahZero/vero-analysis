@@ -3052,6 +3052,9 @@ function getPermissions():array
             'name'=>'view customers contracts'
         ],
 		[
+			'name'=>'view suppliers contracts'
+		],
+		[
             'name'=>'view cashvero settings'
         ],
 		

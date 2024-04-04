@@ -21,6 +21,7 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MoneyReceivedController
 {
@@ -257,6 +258,12 @@ class MoneyReceivedController
 	public function create(Company $company,$singleModel = null)
 	{
 		$isDownPayment = Request()->has('type');
+		$currencies = DB::table('customer_invoices')
+		->select('currency')
+		->where('company_id',$company->id)
+		->get()
+		->unique('currency')->pluck('currency','currency');
+		
 		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
@@ -281,7 +288,8 @@ class MoneyReceivedController
 			'banks'=>$banks,
 			'accountTypes'=>$accountTypes,
 			'customers'=>$customers,
-			'contracts'=>$contracts
+			'contracts'=>$contracts,
+			'currencies'=>$currencies
 		]);
     }
 	
@@ -331,11 +339,12 @@ class MoneyReceivedController
 			$invoices->where('net_balance','>',0);
 		}
 		
-		$allCurrencies = $invoices->pluck('currency','currency')->mapWithKeys(function($value,$key){
+		$allCurrencies =$invoices->pluck('currency','currency')->mapWithKeys(function($value,$key){
 			return [
-				strtolower($key)=>strtolower($value) 
+				$key=>$value 
 			];
-		});		
+		});	
+	
 		if($selectedCurrency){
 			$invoices = $invoices->where('currency','=',$selectedCurrency);	
 		}
@@ -508,6 +517,11 @@ class MoneyReceivedController
 
 	}
 	public function edit(Company $company , Request $request , moneyReceived $moneyReceived ,$singleModel = null){
+		$currencies = DB::table('customer_invoices')
+		->select('currency')
+		->where('company_id',$company->id)
+		->get()
+		->unique('currency')->pluck('currency','currency');
 		$viewName = $moneyReceived->isDownPayment()  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
@@ -527,7 +541,8 @@ class MoneyReceivedController
 				'model'=>$moneyReceived,
 				'singleModel'=>$singleModel,
 				'accountTypes'=>$accountTypes,
-				'financialInstitutionBanks'=>$financialInstitutionBanks
+				'financialInstitutionBanks'=>$financialInstitutionBanks,
+				'currencies'=>$currencies
 			]); 
 		}
         return view($viewName,[
@@ -540,7 +555,8 @@ class MoneyReceivedController
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'selectedBanks'=>$selectedBanks,
 			'model'=>$moneyReceived,
-			'singleModel'=>$singleModel
+			'singleModel'=>$singleModel,
+			'currencies'=>$currencies
 		]);
 		
 	}

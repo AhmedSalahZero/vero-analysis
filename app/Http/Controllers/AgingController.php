@@ -121,7 +121,6 @@ class AgingController
 			'data'=>[
 				'customer_names'=>$customers,
 				'currencies_names'=>$currencies,
-				'selected_currency'=>$currency
 			]
 		]);
 		
