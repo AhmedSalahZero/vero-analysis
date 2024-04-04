@@ -207,9 +207,9 @@ $selectedBanks = [];
             <div class="input-group date">
                 <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                     <option value="" selected>{{__('Select')}}</option>
-                    @foreach(getBanksCurrencies() as $currencyId=>$currentName)
-                    <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                    @endforeach
+                    @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                @endforeach
                 </select>
             </div>
         </div>
@@ -421,7 +421,7 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-					
+
 
                     <div class="col-md-2 width-12">
                         <label>{{__('Account Number')}} <span class="required">*</span></label>
@@ -587,6 +587,13 @@ $selectedBanks = [];
         <div class="kt-portlet__body">
 
             <div class="js-append-to">
+                <div class="col-md-12 js-duplicate-node">
+
+                </div>
+            </div>
+
+
+            <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
                         <div class="form-group row align-items-end">

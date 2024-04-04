@@ -566,7 +566,10 @@ use App\Models\MoneyReceived ;
         <div class="kt-portlet__body">
 
             <div class="js-append-to">
-                <div class="col-md-12 js-duplicate-node">
+               
+            </div>
+			<div class="js-template hidden">
+			 <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
                         <div class="form-group row align-items-end">
 
@@ -644,7 +647,7 @@ use App\Models\MoneyReceived ;
 
                     </div>
                 </div>
-            </div>
+			</div>
 
             <hr>
             <div class="row">

@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\CustomerInvoice;
+use App\Models\Partner;
+use App\Models\SupplierInvoice;
 use App\Models\TablesField;
 use Illuminate\Console\Command;
 
@@ -39,12 +41,35 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		TablesField::where('model_name','CustomerInvoice')->each(function(TablesField $model){
-			$model->model_name = 'SupplierInvoice';
-			$data = $model->toArray();
-			unset($data['id']);
-			TablesField::create($data);
+		CustomerInvoice::where('company_id',85)->each(function($model){
+			if(!Partner::where('company_id',85)->where('is_customer',1)->where('name',$model->customer_name)->exists()){
+				Partner::create([
+					'is_customer'=>1 ,
+					'is_supplier'=> 0,
+					'company_id'=>85 , 
+					'name'=>$model->customer_name
+				]);
+			}
 		});
+		
+		
+		SupplierInvoice::where('company_id',85)->each(function($model){
+			if(!Partner::where('company_id',85)->where('is_supplier',1)->where('name',$model->supplier_name)->exists()){
+				Partner::create([
+					'is_customer'=>0 ,
+					'is_supplier'=> 1,
+					'company_id'=>85 , 
+					'name'=>$model->supplier_name
+				]);
+			}
+		});
+		
+		// TablesField::where('model_name','CustomerInvoice')->each(function(TablesField $model){
+		// 	$model->model_name = 'SupplierInvoice';
+		// 	$data = $model->toArray();
+		// 	unset($data['id']);
+		// 	TablesField::create($data);
+		// });
 		// CashInSafeStatement::first()->update([
 		// 	'credit'=>10
 		// ]);

@@ -93,8 +93,8 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-sales-orders-for-contract/' + contractId + '/' + currency
-	console.log(contractId)
-	if (contractId) {
+
+
 		$.ajax({
 			url,
 			data: {
@@ -102,17 +102,10 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 				, down_payment_id: downPaymentId
 			}
 		}).then(function (res) {
-			// first append currencies 
-		//	let currenciesOptions = ''
-		//	var selectedCurrency = res.selectedCurrency
-		//	for (var currencyName in res.currencies) {
-		//		var currencyFormattedName = res.currencies[currencyName].toUpperCase()
-		//		currenciesOptions += `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
-		//	}
-//
-		//	$('.current-currency').empty().append(currenciesOptions)
+	
 			// second add settlements repeater 
-			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+			var lastNode = $('.js-template .js-duplicate-node').clone(true)
+			
 			$('.js-append-to').empty()
 		
 			for (var i = 0; i < res.sales_orders.length; i++) {
@@ -127,7 +120,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 				var domSalesOrder = $(lastNode).find('.js-sales-order-number')
 				domSalesOrder.val(salesOrderId)
 				domSalesOrder.attr('name', 'sales_orders_amounts[' + salesOrderId + '][sales_order_id]').val(salesOrderId)
-				console.log(onlyOneSalesOrder)
+
 				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
 				//	$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))
@@ -141,16 +134,20 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 					// domWithholdAmount.val(withholdAmount)
 					domReceivedAmount.attr('name', 'sales_orders_amounts[' + salesOrderId + '][received_amount]')
 					//domWithholdAmount.attr('name', 'sales_orders_amounts[' + invoiceNumber + '][withhold_amount]')
+				
 					$('.js-append-to').append(lastNode)
-					lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+					var lastNode = $('.js-template .js-duplicate-node').clone(true)
 					
 				}
 
 			}
-		//	$('.js-append-to').find('.js-settlement-amount:first-of-type').trigger('change')
+			
+			if(res.sales_orders.length == 0){
+				$('.js-append-to').append(lastNode)
+			}
 
 		})
-	}
+	
 })
 
 $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
@@ -188,7 +185,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 		//	$('.current-currency').empty().append(currenciesOptions)
 		
 			// second add settlements repeater 
-			var lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+			var lastNode = $('.js-template .js-duplicate-node').clone(true)
 		
 			$('.js-append-to').empty()
 			for (var i = 0; i < res.invoices.length; i++) {
@@ -216,11 +213,14 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domWithholdAmount.val(withholdAmount)
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
+				
 					$('.js-append-to').append(lastNode)
-					lastNode = $('.js-duplicate-node:last-of-type').clone(true)
+					var lastNode = $('.js-template .js-duplicate-node').clone(true)
+				
 				}
 				
 			}
+
 			if(res.invoices.length == 0){
 				$('.js-append-to').append(lastNode)
 			}
@@ -240,7 +240,7 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	const receivedAmount = $('.js-' + currentType + '-received-amount').val()
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
-	console.log(totalRemaining)
+
 	$('#remaining-settlement-js').val(totalRemaining)
 
 })

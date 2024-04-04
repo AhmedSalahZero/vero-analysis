@@ -22,6 +22,7 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MoneyPaymentController
 {
@@ -227,6 +228,11 @@ class MoneyPaymentController
 	
 	public function create(Company $company,$singleModel = null)
 	{
+		$currencies = DB::table('customer_invoices')
+		->select('currency')
+		->where('company_id',$company->id)
+		->get()
+		->unique('currency')->pluck('currency','currency');
 		$isDownPayment = Request()->has('type');
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 
@@ -247,7 +253,7 @@ class MoneyPaymentController
 			'selectedBranches'=>$selectedBranches,
 			'singleModel'=>$singleModel,
 			'invoiceNumber'=>$invoiceNumber,
-			
+			'currencies'=>$currencies,
 			'accountTypes'=>$accountTypes,
 			'suppliers'=>$suppliers,
 			'contracts'=>$contracts
@@ -266,14 +272,14 @@ class MoneyPaymentController
 			'contracts'=>$contracts
 		]);
 	}
-	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId,?string $selectedCurrency=null)
+	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId  = 0,?string $selectedCurrency=null)
 	{
 		$downPaymentId = $request->get('down_payment_id');
 		$moneyPayment = MoneyPayment::find($downPaymentId);
 		$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
 		$formattedSalesOrders = [];
 		foreach($salesOrders as $index=>$salesOrder){
-			$paidAmount = $moneyPayment->downPaymentSettlements->where('purchases_order_id',$salesOrder->id)->first() ;
+			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('purchases_order_id',$salesOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['paid_amount'] = $paidAmount && $paidAmount->down_payment_amount ? $paidAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
@@ -482,6 +488,12 @@ class MoneyPaymentController
 
 	}
 	public function edit(Company $company , Request $request , moneyPayment $moneyPayment ,$singleModel = null){
+		$currencies = DB::table('customer_invoices')
+		->select('currency')
+		->where('company_id',$company->id)
+		->get()
+		->unique('currency')->pluck('currency','currency');
+		
 		$viewName = $moneyPayment->isDownPayment()  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
@@ -510,7 +522,8 @@ class MoneyPaymentController
 			'accountTypes'=>$accountTypes,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'model'=>$moneyPayment,
-			'singleModel'=>$singleModel
+			'singleModel'=>$singleModel,
+			'currencies'=>$currencies
 		]);
 		
 	}

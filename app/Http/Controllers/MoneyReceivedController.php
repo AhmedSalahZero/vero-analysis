@@ -272,6 +272,7 @@ class MoneyReceivedController
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$customerInvoices =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$invoiceNumber = $singleModel ? CustomerInvoice::where('id',$singleModel)->first()->getInvoiceNumber():null;
+		// dd($customerInvoices);
 		/**
 		 * * for contracts
 		 */
@@ -305,14 +306,14 @@ class MoneyReceivedController
 			'contracts'=>$contracts
 		]);
 	}
-	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId,?string $selectedCurrency=null)
+	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId = 0,?string $selectedCurrency=null)
 	{
 		$downPaymentId = $request->get('down_payment_id');
 		$moneyReceived = MoneyReceived::find($downPaymentId);
 		$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
 		$formattedSalesOrders = [];
 		foreach($salesOrders as $index=>$salesOrder){
-			$receivedAmount = $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() ;
+			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
