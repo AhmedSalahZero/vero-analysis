@@ -178,7 +178,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$moneyPaymentType = $moneyPayment->getType();
 			$bankName = $moneyPayment->getBankName();
 			$docNumber = $moneyPayment->getNumber();
-				$moneyPaymentAmount = $moneyPayment->getReceivedAmount() ;
+				$moneyPaymentAmount = $moneyPayment->getPaidAmount() ;
 				if($moneyPaymentAmount){
 					$currentData = []; 
 					$currentData['date'] = $deliveryDate;
