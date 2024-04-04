@@ -276,7 +276,7 @@ class MoneyReceivedController
 		/**
 		 * * for contracts
 		 */
-		$customers =  $singleModel ?  Partner::where('id',$singleModel)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_customer',1)->has('contracts')->pluck('name','id')->toArray(); 
+		$customers =  $singleModel ?  Partner::where('id',$singleModel)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_customer',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
 		$contracts = [];
 
         return view($viewName,[
@@ -369,19 +369,7 @@ class MoneyReceivedController
 		
 	}
 	protected function formatInvoices(array $invoices,int $inEditMode){
-		$result = [];
-		foreach($invoices as $index=>$invoiceArr){
-			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
-			$result[$index]['currency'] = $invoiceArr['currency'];
-			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
-
-			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
-			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
-			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
-			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
-			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
-		}
-		return $result;
+		return CustomerInvoice::formatInvoices($invoices , $inEditMode);
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request){

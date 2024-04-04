@@ -192,8 +192,8 @@ $selectedBanks = [];
                     <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  ajax-get-invoice-numbers ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
                         <option value="" selected>{{__('Select')}}</option>
                         {{-- {{  }} --}}
-                        @foreach($supplierInvoices as $supplierInvoiceId => $supplierName)
-                        <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierInvoiceId }}">{{$supplierName}}</option>
+                        @foreach($suppliers as $supplierId => $supplierName)
+                        <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
                         @endforeach
                     </select>
                 </div>

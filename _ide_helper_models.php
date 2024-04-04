@@ -2958,8 +2958,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Contract[] $contracts
  * @property-read int|null $contracts_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Settlement[] $settlementForUnappliedAmounts
- * @property-read int|null $settlement_for_unapplied_amounts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnappliedAmount[] $unappliedAmounts
  * @property-read int|null $unapplied_amounts_count
  * @method static \Illuminate\Database\Eloquent\Builder|Partner newModelQuery()
@@ -5022,6 +5020,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\MoneyReceived $moneyReceived
  * @property-read \App\Models\Partner $partner
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentSettlement[] $paymentSettlements
+ * @property-read int|null $payment_settlements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Settlement[] $settlements
  * @property-read int|null $settlements_count
  * @method static \Illuminate\Database\Eloquent\Builder|UnappliedAmount newModelQuery()

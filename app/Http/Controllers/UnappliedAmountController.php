@@ -15,6 +15,7 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class UnappliedAmountController
 {
@@ -59,6 +60,7 @@ class UnappliedAmountController
 		$startDate = $request->has('startDate') ? $request->input('startDate') : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 		$endDate = $request->has('endDate') ? $request->input('endDate') : now()->format('Y-m-d');
 		$customer = Partner::find($partnerId);
+
 		$unappliedAmountSettlements = $customer->getSettlementForUnappliedAmounts($startDate ,$endDate) ;
 		$unappliedAmountSettlements =$this->applyFilter($request,$unappliedAmountSettlements);
 		$searchFields = [
@@ -76,59 +78,76 @@ class UnappliedAmountController
 		]);
     }
 	
-	public function create(Company $company,$customerInvoiceId)
+	public function create(Company $company,$customerInvoiceId,$modelType)
 	{
-		$customerInvoices =  CustomerInvoice::where('id',$customerInvoiceId)->pluck('customer_name','id') ; 
-		$invoiceNumber =CustomerInvoice::where('id',$customerInvoiceId)->first()->getInvoiceNumber();
-        return view('unapplied-amounts.form',[
+		
+        return view('unapplied-amounts.form',$this->getCommonVars($modelType,$company,$customerInvoiceId));
+    }
+	public function getCommonVars($modelType ,$company  , $invoiceId , $model = null )
+	{
+		$fullClassName = ('\App\Models\\' . $modelType) ;
+        $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+        $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
+		$customerNameText = (new $fullClassName)->getClientNameText();
+        $tableName = $fullClassName::TABLE_NAME ;
+        $jsFile = $fullClassName::JS_FILE ;
+		$currencies = DB::table($tableName)
+		->select('currency')
+		->where('company_id',$company->id )
+		->get()
+		->unique('currency')->pluck('currency','currency');
+
+		$customerInvoices =  $fullClassName::where('id',$invoiceId)->pluck($clientNameColumnName,'id') ; 
+		$invoiceNumber =$fullClassName::where('id',$invoiceId)->first()->getInvoiceNumber();
+		
+		return [
 			'customerInvoices'=>$customerInvoices ,
 			'invoiceNumber'=>$invoiceNumber,
-		]);
-    }
+			'currencies'=>$currencies,
+			'model'=>$model,
+			'company'=>$company,
+			'jsFile'=>$jsFile,
+			'modelType'=>$modelType,
+			'customerNameText'=>$customerNameText,
+			'customerNameColumnName'=>$clientNameColumnName,
+			'customerIdColumnName'=>$clientIdColumnName,
+		] ;
+	}
 	
-	public function result(Company $company , Request $request){
+
+	
+	
+	public function store(Company $company , Request $request,string $modelType){
 		
-		return view('reports.moneyReceived.form',[
-		]);
-	}
+		$fullClassName = ('\App\Models\\' . $modelType) ;
+        $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+        $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
+        $unappliedSettlementTable = $fullClassName::UNAPPLIED_SETTLEMENT_TABLE ;
+        $moneyModelName = $fullClassName::MONEY_MODEL_NAME ;
+		
+		$customerInvoiceId = $request->get($clientIdColumnName);
 	
-	protected function formatInvoices(array $invoices,int $inEditMode){
-		$result = [];
-		foreach($invoices as $index=>$invoiceArr){
-			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
-			$result[$index]['currency'] = $invoiceArr['currency'];
-			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
-			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
-			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
-			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
-			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
-			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
-		}
-		return $result;
-	}
-	
-	public function store(Company $company , Request $request){
-		$customerInvoiceId = $request->get('customer_id');
-		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
+		$customerInvoice = $fullClassName::find($customerInvoiceId);
+		$partnerId = $customerInvoice[$clientIdColumnName] ;
 		$invoiceNumber = $customerInvoice->getInvoiceNumber();
 		$customerName = $customerInvoice->getName();
 		$totalWithholdAmount= 0 ;
 		$unappliedAmount = UnappliedAmount::create([
 			'company_id'=>$company->id ,
-			'partner_id'=>$customerInvoice->customer_id ,
+			'partner_id'=>$partnerId ,
 			'settlement_date'=>now()->format('Y-m-d'),
 			'amount'=>$request->input('settlements.'.$invoiceNumber.'.settlement_amount') * -1 ,
 			'net_balance_until_date'=>0 ,
+			// 'model_type'=>$moneyModelName
 		]);
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{
 				$settlementArr['company_id'] = $company->id ;
-				$settlementArr['customer_name'] = $customerName ;
-				$totalWithholdAmount += $settlementArr['withhold_amount']  ;
-				$unappliedAmount->settlements()->create($settlementArr);
+				$settlementArr[$clientNameColumnName] = $customerName ;
+				$totalWithholdAmount += ($settlementArr['withhold_amount'] ?? 0)  ;
+				$unappliedAmount->$unappliedSettlementTable()->create($settlementArr);
 		}
-		dd('good');
-		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]);
 		
 	}
 	protected function getActiveTab(string $moneyType)

@@ -26,12 +26,14 @@ class CustomerInvoice extends Model implements IInvoice
     ];
 	
 	
+	const UNAPPLIED_SETTLEMENT_TABLE = 'settlements';
 	const CLIENT_NAME_COLUMN_NAME = 'customer_name';
 	const CLIENT_ID_COLUMN_NAME = 'customer_id';
 	const RECEIVED_OR_PAYMENT_AMOUNT = 'received_amount';
 	const RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME = 'receiving_date';
 	const MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME = 'money_received';
 	const TABLE_NAME = 'customer_invoices';
+	const JS_FILE = 'money-receive.js';
 	const COLLETED_OR_PAID = 'collected';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_collected_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyReceived';
@@ -212,5 +214,92 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return $this->belongsTo(Partner::class,self::CLIENT_ID_COLUMN_NAME,'id');
 	}
-	
+	public static function formatInvoices(array $invoices,int $inEditMode):array 
+	{
+		$result = [];
+		foreach($invoices as $index=>$invoiceArr){
+			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
+			$result[$index]['currency'] = $invoiceArr['currency'];
+			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
+
+			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
+			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
+			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
+			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
+			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
+		}
+		return $result;
+	}
+	public static function getSettlementsTemplate()
+	{
+		return  '<div class="col-md-12 js-duplicate-node">
+		<div class=" kt-margin-b-10 border-class">
+			<div class="form-group row align-items-end">
+				<div class="col-md-1 width-10">
+					<label>'. __('Invoice Number') .'</label>
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+								<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1 width-12">
+					<label>'.__('Invoice Date').'</label>
+					<div class="kt-input-icon">
+						<div class="input-group date">
+							<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
+							<div class="input-group-append">
+								<span class="input-group-text">
+									<i class="la la-calendar-check-o"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1 width-8">
+					<label> '. __('Currency') .' </label>
+					<div class="kt-input-icon">
+						<input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
+					</div>
+				</div>
+				<div class="col-md-1 width-12">
+					<label> '. __('Net Invoice Amount') .' </label>
+					<div class="kt-input-icon">
+						<input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
+					</div>
+				</div>
+				<div class="col-md-2 width-12">
+					<label> '. __('Collected Amount') .'</label>
+					<div class="kt-input-icon">
+						<input name="settlements[][collected_amount]" type="text" disabled class="form-control js-collected-amount">
+					</div>
+				</div>
+		
+				<div class="col-md-2 width-12">
+					<label> '. __('Net Balance') .' </label>
+					<div class="kt-input-icon">
+						<input name="settlements[][net_balance]" type="text" disabled class="form-control js-net-balance">
+					</div>
+				</div>
+		
+				<div class="col-md-2 width-12">
+					<label> '. __('Settlement Amount') .' <span class="required">*</span></label>
+					<div class="kt-input-icon">
+						<input name="settlements[][settlement_amount]" placeholder="'.__("Settlement Amount").'" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+					</div>
+				</div>
+				<div class="col-md-2 width-12">
+					<label> '. __('Withhold Amount') .' <span class="required">*</span></label>
+					<div class="kt-input-icon">
+						<input name="settlements[][withhold_amount]" placeholder="'. __('Withhold Amount') .'" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
+					</div>
+				</div>
+		
+			</div>
+		
+		</div>
+		</div>' ;
+	}
 }

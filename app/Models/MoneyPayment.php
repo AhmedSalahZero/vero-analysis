@@ -412,4 +412,5 @@ class MoneyPayment extends Model
 		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
 		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
 	}
+	
 }

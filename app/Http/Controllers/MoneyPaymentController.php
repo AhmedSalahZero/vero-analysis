@@ -10,6 +10,7 @@ use App\Models\Cheque;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyPayment;
@@ -244,7 +245,9 @@ class MoneyPaymentController
 		/**
 		 * * for contracts
 		 */
-		$suppliers =  $singleModel ?  Partner::where('id',$singleModel)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->has('contracts')->pluck('name','id')->toArray(); 
+		$suppliers =  $singleModel ?  Partner::where('id',$singleModel)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
+		// dd($suppliers);
+		// dd($suppliers);
 		$contracts = [];
 
         return view($viewName,[
@@ -334,19 +337,7 @@ class MoneyPaymentController
 		
 	}
 	protected function formatInvoices(array $invoices,int $inEditMode){
-		$result = [];
-		foreach($invoices as $index=>$invoiceArr){
-			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
-			$result[$index]['currency'] = $invoiceArr['currency'];
-			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
-
-			$result[$index]['paid_amount'] = $inEditMode 	?  (double)$invoiceArr['paid_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['paid_amount'];
-			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
-			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
-			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
-			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
-		}
-		return $result;
+		return SupplierInvoice::formatInvoices($invoices,$inEditMode);
 	}
 	
 	public function store(Company $company , StoreMoneyPaymentRequest $request){

@@ -2,6 +2,7 @@
 @section('css')
 @php
 use App\Models\MoneyReceived ;
+use App\Models\CustomerInvoice;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -206,7 +207,7 @@ use App\Models\MoneyReceived ;
                     <label>{{__('Select Currency')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select  name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                            <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                 <option value="" selected>{{__('Select')}}</option>
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                 <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
@@ -286,7 +287,7 @@ use App\Models\MoneyReceived ;
 
 
     {{-- Bank Deposit Information--}}
-     {{-- Incoming Transfer Information--}}
+    {{-- Incoming Transfer Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ MoneyReceived::CASH_IN_BANK }}">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -326,7 +327,7 @@ use App\Models\MoneyReceived ;
                         <label>{{__('Account Type')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select  name="account_type[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control js-update-account-number-based-on-account-type">
+                                <select name="account_type[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control js-update-account-number-based-on-account-type">
                                     <option value="" selected>{{__('Select')}}</option>
                                     @foreach($accountTypes as $index => $accountType)
                                     <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -490,7 +491,7 @@ use App\Models\MoneyReceived ;
                         <label>{{__('Select Receiving Bank')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-					
+
                                 <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control ">
                                     @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                     <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getIncomingTransferReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
@@ -513,7 +514,7 @@ use App\Models\MoneyReceived ;
                         <label>{{__('Account Type')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select  name="account_type[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control js-update-account-number-based-on-account-type">
+                                <select name="account_type[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control js-update-account-number-based-on-account-type">
                                     <option value="" selected>{{__('Select')}}</option>
                                     @foreach($accountTypes as $index => $accountType)
                                     <option value="{{ $accountType->id }}" @if(isset($model) && $model->getIncomingTransferAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -565,89 +566,15 @@ use App\Models\MoneyReceived ;
         </div>
         <div class="kt-portlet__body">
 
+
             <div class="js-append-to">
-               
+
             </div>
-			<div class="js-template hidden">
-			 <div class="col-md-12 js-duplicate-node">
-                    <div class=" kt-margin-b-10 border-class">
-                        <div class="form-group row align-items-end">
-
-                            <div class="col-md-1 width-10">
-                                <label>{{__('Invoice Number')}} </label>
-                                <div class="kt-input-icon">
-                                    <div class="kt-input-icon">
-                                        <div class="input-group date">
-                                            <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-1 width-12">
-                                <label>{{__('Invoice Date')}}</label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                <i class="la la-calendar-check-o"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-1 width-8">
-                                <label>{{__('Currency')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
-                                </div>
-                            </div>
-
-                            <div class="col-md-1 width-12">
-                                <label>{{__('Net Invoice Amount')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Collected Amount')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][collected_amount]" type="text" disabled class="form-control js-collected-amount">
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Net Balance')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][net_balance]" type="text" disabled class="form-control js-net-balance">
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Settlement Amount')}} <span class="required">*</span></label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][settlement_amount]" placeholder="{{ __('Settlement Amount') }}" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                                </div>
-                            </div>
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Withhold Amount')}} <span class="required">*</span></label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-			</div>
+            <div class="js-template hidden">
+			     <div class="col-md-12 js-duplicate-node">
+                {!! CustomerInvoice::getSettlementsTemplate() !!}
+				</div>
+            </div>
 
             <hr>
             <div class="row">

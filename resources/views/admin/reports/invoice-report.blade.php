@@ -393,7 +393,7 @@
 										
                                         <td class="sub-text-bg  text-center">
                                             @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id ]) }}" title="{{ __('Settlement') }}" class="btn btn-sm btn-primary">{{ __('Settlement') }}</a>
+                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn btn-sm btn-primary">{{ __('Settlement') }}</a>
                                             @endif
                                         </td>
 										

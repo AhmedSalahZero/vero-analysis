@@ -60,6 +60,10 @@ class UnappliedAmount extends Model
 	{
 		return $this->hasMany(Settlement::class,'unapplied_amount_id','id');
 	}
+	public function paymentSettlements()
+    {
+        return $this->hasMany(PaymentSettlement::class, 'unapplied_amount_id', 'id');
+    }
 	
 	
 }
