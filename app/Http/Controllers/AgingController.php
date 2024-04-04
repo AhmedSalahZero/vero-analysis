@@ -89,7 +89,9 @@ class AgingController
 		$businessUnits = $request->get('business_units',[]);
 		$salesPersons = $request->get('sales_persons',[]);
 		$businessSectors = $request->get('business_sectors',[]);
-		$query = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')->where('currency',$currency)->where('company_id',$company->id)->where('net_balance','>',0);
+		$query = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')
+		->where('currency',$currency)->where('company_id',$company->id)
+		->where('net_balance','>',0);
 		if(count($businessUnits)){
 			$query = $query->whereIn('business_unit',$businessUnits);
 		}
@@ -105,7 +107,11 @@ class AgingController
 		 * @var Collection $data ;
 		 */
 		$customers = $data->unique($customer_or_supplier_name)->pluck($customer_or_supplier_name);
-		$currencies = $data->unique('currency')->pluck('currency');
+		$currencies = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')
+		->where('company_id',$company->id)
+		->where('net_balance','>',0)
+		->get()
+		->unique('currency')->pluck('currency');
 		
 	
 		
