@@ -58,19 +58,32 @@ class Partner extends Model
 	{
 		return $this->unappliedAmounts->load('settlements')->has('settlements')->whereBetween('settlement_date',[$startDate,$endDate]);
 	}
+	public function isCustomer()
+	{
+		return $this->is_customer == 1 ;
+	}
+	
+	public function isSupplier()
+	{
+		return $this->is_supplier == 1 ;
+	}
+	
 	public function settlementForUnappliedAmounts()
 	{
-		return $this->hasMany(Settlement::class,'customer_name','name')->whereNotNull('unapplied_amount_id');
+		if($this->isCustomer()){
+			return $this->hasMany(Settlement::class,'customer_name','name')->whereNotNull('unapplied_amount_id');
+		}
+		if($this->isSupplier()){
+			return $this->hasMany(PaymentSettlement::class,'supplier_name','name')->whereNotNull('unapplied_amount_id');
+		}
 	}
 	public function getSettlementForUnappliedAmounts(string $startDate , string $endDate)
 	{
-		// dd($this);
 		return $this->settlementForUnappliedAmounts()
 		->whereHas('unappliedAmount',function(Builder $q) use ($startDate,$endDate){
 			$q->where('settlement_date','>=',$startDate)->where('settlement_date','<=',$endDate);
 		})
-		->
-		get();
+		->get();
 	}
 	
 }

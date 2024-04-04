@@ -2,6 +2,9 @@
 @section('css')
 @php
 use App\Models\MoneyReceived ;
+use App\Models\CustomerInvoice;
+use App\Models\SupplierInvoice;
+$fullClassName = '\App\Models\\'.$modelType ;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -54,7 +57,7 @@ use App\Models\MoneyReceived ;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ 1 }}" value="{{ $invoiceNumber }}">
@@ -77,11 +80,11 @@ use App\Models\MoneyReceived ;
 
                         <div class="col-md-5">
 
-                            <label>{{__('Customer Name')}} <span class="required">*</span></label>
+                            <label>{{$customerNameText}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="customer_name" name="customer_id" class="form-control ajax-get-invoice-numbers">
+                                        <select id="{{ $customerNameColumnName }}" name="{{ $customerIdColumnName }}" class="form-control ajax-get-invoice-numbers">
                                             @foreach($customerInvoices as $customerInvoiceId => $customerName)
                                             <option selected value="{{ $customerInvoiceId }}">{{$customerName}}</option>
                                             @endforeach
@@ -99,8 +102,8 @@ use App\Models\MoneyReceived ;
                                     <select readonly name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                         <option value="" selected>{{__('Select')}}</option>
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-                                <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
+                                        <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -136,90 +139,14 @@ use App\Models\MoneyReceived ;
 
                     <div class="js-append-to">
                         <div class="col-md-12 js-duplicate-node">
-                          
+
                         </div>
                     </div>
 
-
                     <div class="js-template hidden">
-                        <div class="col-md-12 js-duplicate-node">
-                            <div class=" kt-margin-b-10 border-class">
-                                <div class="form-group row align-items-end">
-
-                                    <div class="col-md-1 width-10">
-                                        <label>{{__('Invoice Number')}} </label>
-                                        <div class="kt-input-icon">
-                                            <div class="kt-input-icon">
-                                                <div class="input-group date">
-                                                    <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-1 width-12">
-                                        <label>{{__('Invoice Date')}}</label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">
-                                                        <i class="la la-calendar-check-o"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-1 width-8">
-                                        <label>{{__('Currency')}} </label>
-                                        <div class="kt-input-icon">
-                                            <input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-1 width-12">
-                                        <label>{{__('Net Invoice Amount')}} </label>
-                                        <div class="kt-input-icon">
-                                            <input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-2 width-12">
-                                        <label>{{__('Collected Amount')}} </label>
-                                        <div class="kt-input-icon">
-                                            <input name="settlements[][collected_amount]" type="text" disabled class="form-control js-collected-amount">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 width-12">
-                                        <label>{{__('Net Balance')}} </label>
-                                        <div class="kt-input-icon">
-                                            <input name="settlements[][net_balance]" type="text" disabled class="form-control js-net-balance">
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="col-md-2 width-12">
-                                        <label>{{__('Settlement Amount')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <input name="settlements[][settlement_amount]" placeholder="{{ __('Settlement Amount') }}" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 width-12">
-                                        <label>{{__('Withhold Amount')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <input name="settlements[][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div> 
-                        </div>
+					     <div class="col-md-12 js-duplicate-node">
+                          {!! $fullClassName::getSettlementsTemplate() !!}
+						  </div>
                     </div>
 
                     <hr>
@@ -229,10 +156,7 @@ use App\Models\MoneyReceived ;
                         <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
-                        {{-- <div class="col-md-2 width-12 ml-auto mr-4">
-                            <label class="label">{{ __('Unapplied Amount') }}</label>
-                        <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
-                    </div> --}}
+                        
                 </div>
             </div>
     </div>
@@ -279,7 +203,7 @@ use App\Models\MoneyReceived ;
     $('#type').trigger('change')
 
 </script>
-<script src="/custom/money-receive.js">
+<script src="/custom/{{ $jsFile }}">
 
 </script>
 
@@ -301,4 +225,10 @@ use App\Models\MoneyReceived ;
     })
 
 </script> --}}
+<script>
+$(function(){
+
+	$('select.ajax-get-invoice-numbers').trigger('change')
+})
+</script>
 @endsection

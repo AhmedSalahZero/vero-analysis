@@ -440,8 +440,8 @@ Route::middleware([])->group(function () {
 			   
 					
                     Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
-                    Route::get('unapplied-amounts/create/{customerInvoiceId}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
-                    Route::post('unapplied-amounts/create', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
+                    Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
+                    Route::post('unapplied-amounts/create/{modelType}', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
                 });
 
                 /**

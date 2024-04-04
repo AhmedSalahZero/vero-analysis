@@ -130,12 +130,9 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
 				//	$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))
-					//$(lastNode).find('.js-currency').val(currency)
-					//$(lastNode).find('.js-net-balance').val(number_format(netBalance, 2))
-					//$(lastNode).find('.js-paid-amount').val(number_format(paidAmount, 2))
+					
 
 					var domPaidAmount = $(lastNode).find('.js-paid-amount')
-			//		var domWithholdAmount = $(lastNode).find('.js-withhold-amount')
 					domPaidAmount.val(paidAmount)
 					// domWithholdAmount.val(withholdAmount)
 					domPaidAmount.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][paid_amount]')
@@ -165,6 +162,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	supplierInvoiceId = supplierInvoiceId ? supplierInvoiceId : $(this).closest('[data-repeater-item]').find('select.supplier-name-js').val()
 	let currency = $('.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
+
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-payment/get-invoice-numbers/' + supplierInvoiceId + '/' + currency
@@ -190,6 +188,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			// second add settlements repeater 
 			var lastNode = $('.js-template .js-duplicate-node').clone(true)
 			$('.js-append-to').empty()
+	
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
 				var currency = res.invoices[i].currency
@@ -217,6 +216,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					$('.js-append-to').append(lastNode)
 					var lastNode = $('.js-template .js-duplicate-node').clone(true)
+		
 				}
 
 			}

@@ -2,6 +2,7 @@
 @section('css')
 @php
 use App\Models\MoneyPayment ;
+use App\Models\SupplierInvoice;
 $banks =[];
 $selectedBanks = [];
 @endphp
@@ -595,82 +596,7 @@ $selectedBanks = [];
 
             <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
-                    <div class=" kt-margin-b-10 border-class">
-                        <div class="form-group row align-items-end">
-
-                            <div class="col-md-1 width-10">
-                                <label>{{__('Invoice Number')}} </label>
-                                <div class="kt-input-icon">
-                                    <div class="kt-input-icon">
-                                        <div class="input-group date">
-                                            <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-1 width-12">
-                                <label>{{__('Invoice Date')}}</label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                <i class="la la-calendar-check-o"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-1 width-8">
-                                <label>{{__('Currency')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
-                                </div>
-                            </div>
-
-                            <div class="col-md-1 width-12">
-                                <label>{{__('Net Invoice Amount')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Paid Amount')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][paid_amount]" type="text" disabled class="form-control {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}">
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Net Balance')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][net_balance]" type="text" disabled class="form-control js-net-balance">
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Settlement Amount')}} <span class="required">*</span></label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][settlement_amount]" placeholder="{{ __('Settlement Amount') }}" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                                </div>
-                            </div>
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Withhold Amount')}} <span class="required">*</span></label>
-                                <div class="kt-input-icon">
-                                    <input name="settlements[][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
+                    {!! SupplierInvoice::getSettlementsTemplate() !!}
                 </div>
             </div>
 
