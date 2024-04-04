@@ -357,15 +357,19 @@
 
 
 
-
                 <tr class="row{{ $mainItemId }}  text-center sub-item-row" style="display: none">
                     <td colspan="5" class="text-left  text-capitalize">
                         <table class="table ml-3 table-borderless">
 
 
                             <tr>
+								@if(isset($titleAndValue['so_number'] ))
                                 <td>{{ __('So Number') }}</td>
                                 <td>{{ $titleAndValue['so_number'] }}</td>
+								@elseif(isset($titleAndValue['po_number'] ))
+								    <td>{{ __('Po Number') }}</td>
+                                <td>{{ $titleAndValue['po_number'] }}</td>
+								@endif 
 
                                 <td>{{ __('Amount') }}</td>
                                 <td>{{ $titleAndValue['amount'] }}</td>
