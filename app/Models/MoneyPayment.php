@@ -360,7 +360,7 @@ class MoneyPayment extends Model
 	{
 		return $this->cashInSafeStatement()->create([
 			'branch_id'=>$branchId,
-			'currency'=>strtolower($currencyName) ,
+			'currency'=>$currencyName ,
 			'company_id'=>$this->company_id ,
 			'credit'=>$paidAmount,
 			'date'=>$date

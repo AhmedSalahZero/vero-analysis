@@ -123,7 +123,7 @@ class FinancialInstitution extends Model
 				'account_number'=>$accountArr['account_number'],
 				'balance_amount'=>$accountArr['balance_amount'],
 				'exchange_rate'=>$accountArr['exchange_rate'],
-				'currency'=>$isMainAccount ?'egp': strtolower($accountArr['currency']),
+				'currency'=>$isMainAccount ?'EGP': $accountArr['currency'],
 				'iban'=>$accountArr['iban'],
 				'company_id'=>getCurrentCompanyId(),
 				'is_main_account'=>$isMainAccount // الحساب المصري

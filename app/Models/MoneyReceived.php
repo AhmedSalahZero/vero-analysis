@@ -426,7 +426,7 @@ class MoneyReceived extends Model
 	{
 		return $this->cashInSafeStatement()->create([
 			'branch_id'=>$branchId,
-			'currency'=>strtolower($currencyName) ,
+			'currency'=>$currencyName ,
 			'company_id'=>$this->company_id ,
 			'debit'=>$receivedAmount,
 			'date'=>$date,
@@ -489,11 +489,11 @@ class MoneyReceived extends Model
 	public function handleStatement(?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $receivedAmount = null,?string $currencyName = null,?int $receivingBranchId = null)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber);
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId());
 			$this->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber);
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId());
 			$this->storeCurrentAccountBankStatement($receivingDate,$receivedAmount,$financialInstitutionAccount->id);
 		}
 		if($this->isCashInSafe()){

@@ -119,9 +119,9 @@ class CleanOverdraft extends Model
 	{
 		return $this->hasMany(CleanOverdraftBankStatement::class,'clean_overdraft_id','id');
 	}
-	public static function findByAccountNumber($accountNumber)
+	public static function findByAccountNumber($accountNumber,$companyId)
 	{
-		return self::where('account_number',$accountNumber)->first();
+		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
 	}
 	
 	public function bankStatements()

@@ -15,45 +15,52 @@ class CustomerInvoiceDashboardController extends Controller
 {
     public function viewCashDashboard(Company $company, Request $request)
     {
-		
-		$currencies = DB::table('customer_invoices')
-		->select('currency')
-		->where('company_id',$company->id)
-		->get()
-		->unique('currency')->pluck('currency','currency');
-		
+	
+	
         $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
+		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
+		
         $date = $request->get('date', now()->format('Y-m-d'));
-        $currencies = $request->get('currencies', ['egp', 'usd']) ;
-        $selectedFinancialInstitutionsIds = $request->get('financial_institution_ids', $financialInstitutionBanks->pluck('id')->toArray());
+		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
+	
+        $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
         $reports = [];
 
-        foreach ($currencies as $currencyName) {
-            $cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')->where('date', '<=', $date)->where('company_id', $company->id)
-			// ->where('currency', $currencyName)
-			->whereRaw('LOWER(`currency`) = ? ',strtolower($currencyName))
+        foreach ($selectedCurrencies as $currencyName) {
+            $cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')
+			->where('date', '<=', $date)
+			->where('company_id', $company->id)
+			->where('currency', $currencyName)
 			->orderBy('id', 'desc')->limit(1)->first();
+			// dd($cashInSafeStatementAmountForCurrency);
+
             $cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
 
             $currentAccountInBanks = 0 ;
             $totalCleanOverdraftRoom = 0 ;
             $totalCleanOverdraftAgainstCommercialRoom = 0 ;
             $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount = 0 ;
-            foreach ($selectedFinancialInstitutionsIds as $financialInstitutionBankId) {
+            foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
                 /**
                  * * حساب ال current account
                  */
+				
+			
                 $currentAccountEndBalanceForCurrency = DB::table('current_account_bank_statements')
                 ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
                 ->where('financial_institution_accounts.company_id', $company->id)
-				->whereRaw('LOWER(`currency`) = ? ',strtolower($currencyName))
-                // ->where('currency', $currencyName)
+                ->where('currency', $currencyName)
                 ->where('date', '<=', $date)
                 ->where('financial_institution_accounts.financial_institution_id', '=', $financialInstitutionBankId)
                 ->orderBy('current_account_bank_statements.id', 'desc')
                 ->limit(1)
                 ->first();
+				// start testing
+						
+				// end testing 
+				
 				// dd($currentAccountEndBalanceForCurrency);
                 $currentAccountEndBalanceForCurrency = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0;
 
@@ -64,8 +71,7 @@ class CustomerInvoiceDashboardController extends Controller
                  */
 
                 $certificateOfDepositsForCurrentFinancialInstitutionAmount = DB::table('certificates_of_deposits')->where('company_id', $company->id)->where('financial_institution_id', $financialInstitutionBankId)
-				->whereRaw('LOWER(`currency`) = ? ',strtolower($currencyName))
-				// ->where('currency', $currencyName)
+				->where('currency', $currencyName)
 				->first();
                 $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitutionAmount ? $certificateOfDepositsForCurrentFinancialInstitutionAmount->amount : 0;
 
@@ -75,8 +81,7 @@ class CustomerInvoiceDashboardController extends Controller
                 $cleanOverdraftRoom = DB::table('clean_overdraft_bank_statements')
                 ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
                 ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
-				// ->whereRaw('LOWER(`clean_overdrafts.currency`) = ? ',strtolower($currencyName))
-                ->where('clean_overdrafts.currency', '=', strtolower($currencyName))
+                ->where('clean_overdrafts.currency', '=', $currencyName)
                 ->orderBy('clean_overdraft_bank_statements.id')
                 ->limit(1)
                 ->first() ;
@@ -109,8 +114,7 @@ class CustomerInvoiceDashboardController extends Controller
         $cleanOverdraftCardCommonQuery = DB::table('clean_overdraft_bank_statements')
         ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
         ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
-        ->where('clean_overdrafts.currency', '=', strtolower($currencyName))
-		// ->whereRaw('LOWER(`clean_overdrafts.currency`) = ? ',strtolower($currencyName))
+        ->where('clean_overdrafts.currency', '=', $currencyName)
         ->orderBy('clean_overdraft_bank_statements.id');
 
         $cleanOverdraftCardData = [
@@ -123,8 +127,9 @@ class CustomerInvoiceDashboardController extends Controller
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
             'reports' => $reports,
-            'currencies' => $currencies,
-            'selectedFinancialInstitutionsIds' => $selectedFinancialInstitutionsIds,
+            'selectedCurrencies' => $selectedCurrencies,
+			'allCurrencies'=>$allCurrencies,
+            'selectedFinancialInstitutionsIds' => $selectedFinancialInstitutionBankIds,
             'cleanOverdraftCardData' => $cleanOverdraftCardData
         ]);
     }
@@ -165,7 +170,6 @@ class CustomerInvoiceDashboardController extends Controller
 			'invoiceTypesModels'=>$invoiceTypesModels,
 			'startDate'=>$startDate,
 			'endDate'=>$endDate
-            // 'customerAgingFormatted'=>$customerAgingFormatted
         ]);
 
         return view('admin.dashboard.forecast', ['company' => $company]);
@@ -173,13 +177,13 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function showInvoiceReport(Company $company, Request $request, int $partnerId, string $currency, $modelType)
     {
+	
         $fullClassName = ('\App\Models\\' . $modelType) ;
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
         $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
         $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
-
         $invoices = ('App\Models\\' . $modelType)::where('company_id', $company->id)
         ->where($clientIdColumnName, $partnerId)
         ->where('currency', $currency)
