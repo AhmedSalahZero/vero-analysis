@@ -48,12 +48,14 @@
         </div>
     </div>
     <div class="kt-portlet__body">
-        <div class="form-group row">
+       <form action="{{ route('view.customer.invoice.dashboard.cash',['company'=>$company->id]) }}" >
+	   
+	    <div class="form-group row">
             <div class="col-md-3">
                 <label>{{ __('Date') }}</label>
                 <div class="kt-input-icon">
                     <div class="input-group date">
-                        <input type="text" value="{{ date('d/m/Y') }}" name="invoice_date" class="form-control" max="{{ date('d/m/Y') }}" readonly placeholder="Select date" id="kt_datepicker_2" />
+                        <input type="text" value="{{ date('d/m/Y') }}" name="date" class="form-control" max="{{ date('d/m/Y') }}" readonly placeholder="Select date" id="kt_datepicker_2" />
                         <div class="input-group-append">
                             <span class="input-group-text">
                                 <i class="la la-calendar-check-o"></i>
@@ -83,13 +85,15 @@
                 </label>
                 <div class="input-group">
                     <select data-live-search="true" data-actions-box="true" name="currencies[]" class="form-control current-currency select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple js-when-change-trigger-change-account-type>
-                        @foreach(getCurrencies() as $currencyName => $currencyValue )
-                        <option value="{{ $currencyName }}" @if( in_array($currencyName,$currencies) ) selected @elseif(strtolower($currencyName) == 'egp' ) selected @endif > {{ $currencyValue }}</option>
+                        @foreach($allCurrencies as $currencyName => $currencyValue )
+                        <option value="{{ $currencyName }}" @if( in_array($currencyName,$selectedCurrencies) ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
+			              <x-submitting />
         </div>
+	   </form>
     </div>
 </div>
 <!--begin:: Widgets/Stats-->
@@ -103,7 +107,7 @@
     </div>
     <div class="kt-portlet__body  kt-portlet__body--fit">
         <div class="row row-no-padding row-col-separator-xl">
-            @foreach($currencies as $currency)
+            @foreach($selectedCurrencies as $currency)
             <div class="col-md-6 col-lg-3 col-xl-3">
 
                 <!--begin::Total Profit-->

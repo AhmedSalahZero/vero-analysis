@@ -38,7 +38,7 @@ class BankStatementController
 		$results = [];
 		$accountType = AccountType::find($accountTypeId);
 		if($accountType->isCurrentAccount()){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber);
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$company->id);
 			$results = DB::table('current_account_bank_statements')
 			->where('date', '>=', $startDate)
 			->where('date', '<=', $endDate)
@@ -54,7 +54,7 @@ class BankStatementController
 			
 		}
 		elseif($accountType->isCleanOverDraftAccount()){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber);
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$company->id);
 			
 			$results = DB::table('clean_overdraft_bank_statements')
 				 ->where('clean_overdraft_bank_statements.company_id',$company->id)

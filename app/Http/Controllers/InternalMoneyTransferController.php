@@ -103,7 +103,7 @@ class InternalMoneyTransferController
 			 * @var CleanOverdraft $fromCleanOverDraft
 			 */
 
-			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('from_account_number'));
+			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('from_account_number'),$company->id);
 			CleanOverdraftBankStatement::create([
 				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
 				// 'is_debit'=>0,
@@ -121,7 +121,7 @@ class InternalMoneyTransferController
 			/**
 			 * @var CleanOverdraft $fromCleanOverDraft
 			 */
-			$toCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('to_account_number'));
+			$toCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('to_account_number'),$company->id);
 			CleanOverdraftBankStatement::create([
 				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
 				// 'is_debit'=>0,

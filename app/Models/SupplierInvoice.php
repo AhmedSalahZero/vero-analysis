@@ -312,5 +312,15 @@ class SupplierInvoice extends Model implements IInvoice
 		
 		';
 	}
+
+	public static function getCurrencies():array 
+	{
+		return DB::table('supplier_invoices')
+		->select('currency')
+		->where('currency','!=','')
+		->where('company_id',getCurrentCompanyId())
+		->get()
+		->unique('currency')->pluck('currency','currency')->toArray();
+	}
 	
 }

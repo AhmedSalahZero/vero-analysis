@@ -19,6 +19,7 @@ use App\Models\CashFlowStatement;
 use App\Models\CollectionSetting;
 use App\Models\Company;
 use App\Models\Country;
+use App\Models\CustomerInvoice;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
 use App\Models\IncomeStatement;
@@ -36,6 +37,7 @@ use App\Models\SalesGathering;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
+use App\Models\SupplierInvoice;
 use App\Models\User;
 use App\Services\Caching\CashingService;
 use App\Services\IntervalSummationOperations;
@@ -3934,15 +3936,22 @@ function getEndYearMonthFrom(int $month, int $year)
     
 
 }
+function getCurrenciesForSuppliersAndCustomers():array 
+{
+	return array_merge(
+		CustomerInvoice::getCurrencies(),
+		SupplierInvoice::getCurrencies()
+	);
+}
 function getCurrencies()
 {
     return [
-        'egp' => __('EGP'),
-        'usd' => __('USD'),
-        'euro' => __('EURO'),
-        'sar' => __('SAR'),
-        'aed' => __('AED'),
-        'gbp' => __('GBP')
+        'EGP' => __('EGP'),
+        'USD' => __('USD'),
+        'EURO' => __('EURO'),
+        'SAR' => __('SAR'),
+        'AED' => __('AED'),
+        'GBP' => __('GBP')
     ];
 }
 function formatDateForDatePicker(?string $date)

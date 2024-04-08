@@ -258,11 +258,7 @@ class MoneyReceivedController
 	public function create(Company $company,$singleModel = null)
 	{
 		$isDownPayment = Request()->has('type');
-		$currencies = DB::table('customer_invoices')
-		->select('currency')
-		->where('company_id',$company->id)
-		->get()
-		->unique('currency')->pluck('currency','currency');
+		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies();
 		
 		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
@@ -272,7 +268,6 @@ class MoneyReceivedController
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$customerInvoices =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$invoiceNumber = $singleModel ? CustomerInvoice::where('id',$singleModel)->first()->getInvoiceNumber():null;
-		// dd($customerInvoices);
 		/**
 		 * * for contracts
 		 */
@@ -290,7 +285,7 @@ class MoneyReceivedController
 			'accountTypes'=>$accountTypes,
 			'customers'=>$customers,
 			'contracts'=>$contracts,
-			'currencies'=>$currencies
+			'currencies'=>$customerInvoiceCurrencies
 		]);
     }
 	
@@ -431,10 +426,13 @@ class MoneyReceivedController
 		/**
 		 * @var MoneyReceived $moneyReceived ;
 		 */
-		$moneyReceived = MoneyReceived::create($data);
-		
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
+		/**
+		 * @var MoneyReceived $moneyReceived
+		 */
+		$moneyReceived = MoneyReceived::create($data);
+		
 		$receivingDate = $data['receiving_date'] ?? null ; 
 		$currency = $data['currency'] ?? null ; 
 		$receivingBranchId = $relationData['receiving_branch_id'] ?? null ;
@@ -621,10 +619,7 @@ class MoneyReceivedController
 		/**
 		 * @var AccountType $accountType ;
 		 */
-		// if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-		// 	$cleanOverdraft  = CleanOverdraft::findByAccountNumber();
-		// 	$moneyReceived->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
-		// }
+		
 		$moneyReceived->handleStatement($accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
 		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));

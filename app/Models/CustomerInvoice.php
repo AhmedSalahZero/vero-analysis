@@ -302,4 +302,13 @@ class CustomerInvoice extends Model implements IInvoice
 		</div>
 		</div>' ;
 	}
+	public static function getCurrencies()
+	{
+		return DB::table('customer_invoices')
+		->select('currency')
+		->where('currency','!=','')
+		->where('company_id',getCurrentCompanyId())
+		->get()
+		->unique('currency')->pluck('currency','currency')->toArray();
+	}
 }

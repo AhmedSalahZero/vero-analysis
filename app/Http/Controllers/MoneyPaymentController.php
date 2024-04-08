@@ -231,6 +231,7 @@ class MoneyPaymentController
 	{
 		$currencies = DB::table('customer_invoices')
 		->select('currency')
+		->where('currency','!=','')
 		->where('company_id',$company->id)
 		->get()
 		->unique('currency')->pluck('currency','currency');
@@ -342,6 +343,7 @@ class MoneyPaymentController
 	
 	public function store(Company $company , StoreMoneyPaymentRequest $request){
 		$moneyType = $request->get('type');
+		
 		$contractId = $request->get('contract_id');
 		$supplierInvoiceId = $request->get('supplier_id');
 		$supplierInvoice = SupplierInvoice::find($supplierInvoiceId);
@@ -403,11 +405,12 @@ class MoneyPaymentController
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType));
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id);
 			$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['delivery_date'],$paidAmount);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType));
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id);
+			// dd($financialInstitutionAccount);
 			$moneyPayment->storeCurrentAccountBankStatement($data['delivery_date'],$paidAmount,$financialInstitutionAccount->id);
 		}
 		if($moneyPayment->isCashPayment()){
