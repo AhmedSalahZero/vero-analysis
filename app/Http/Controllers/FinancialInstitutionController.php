@@ -109,11 +109,9 @@ class FinancialInstitutionController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
         return view('reports.financial-institution.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
-			// 'selectedBanks'=>$selectedBanks
 		]);
     }
 	
@@ -136,6 +134,9 @@ class FinancialInstitutionController
 			$data[$name] = $request->get($name);
 		}
 		$data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
+		/**
+		 * @var FinancialInstitution $financialInstitution
+		 */
 		$financialInstitution = FinancialInstitution::create($data);
 		$financialInstitution->storeNewAccounts($accounts,$data['balance_date']);
 		$activeTab = $this->getActiveTab($type);
@@ -181,8 +182,6 @@ class FinancialInstitutionController
 		$financialInstitution->update($data);
 		 $activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
-		
 	}
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution)

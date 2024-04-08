@@ -115,5 +115,10 @@ class FinancialInstitutionAccount extends Model
 	{
 		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
 	}
+	public function currentAccountBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'financial_institution_account_id','id');
+	}
+	
 	
 }
