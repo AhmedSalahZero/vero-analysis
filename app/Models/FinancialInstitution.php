@@ -118,17 +118,37 @@ class FinancialInstitution extends Model
 	public function storeNewAccounts(array $accounts,string $startDate = null,$inAddAdditionalAccountForm = false)
 	{
 		foreach($accounts as $index=>$accountArr){
+			$balanceAmount = $accountArr['balance_amount'] ?? 0 ;
 			$isMainAccount = $inAddAdditionalAccountForm ? false : $index == 0 ;
 			$account = $this->accounts()->create([
 				'account_number'=>$accountArr['account_number'],
-				'balance_amount'=>$accountArr['balance_amount'],
+				'balance_amount'=>$balanceAmount ,
 				'exchange_rate'=>$accountArr['exchange_rate'],
 				'currency'=>$isMainAccount ?'EGP': $accountArr['currency'],
 				'iban'=>$accountArr['iban'],
 				'company_id'=>getCurrentCompanyId(),
 				'is_main_account'=>$isMainAccount // الحساب المصري
 			]);
+			/**
+			 * * لو ال 
+			 * * balance amount > 0 
+			 * * هنضفله قيمة في ال
+			 * * current account bank Statement
+			 */
 			$startDate = isset($accountArr['start_date']) && $accountArr['start_date'] ? Carbon::make($accountArr['start_date'])->format('Y-m-d') : $startDate;
+			if($balanceAmount != 0){
+				$account->currentAccountBankStatements()->create([
+					'company_id'=>getCurrentCompanyId() ,
+					'beginning_balance'=>$balanceAmount,
+					'is_debit'=>$isDebit =$balanceAmount > 0 ,
+					'is_credit' => !$isDebit,
+					'date'=>$startDate ,
+				]);
+					
+			}
+			
+			
+			
 			$account->accountInterests()->create([
 				'interest_rate'=>$accountArr['interest_rate'],
 				'min_balance'=>$accountArr['min_balance'],

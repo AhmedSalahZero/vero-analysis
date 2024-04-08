@@ -65,4 +65,8 @@ class CurrentAccountBankStatement extends Model
 
         $this->attributes['date'] = $year . '-' . $month . '-' . $day;
     }
+	public function financialInstitutionAccount()
+	{
+		return $this->belongsTo(CurrentAccountBankStatement::class,'financial_institution_account_id','id');
+	}
 }

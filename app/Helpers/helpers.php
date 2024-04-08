@@ -4308,7 +4308,8 @@ function getHeaderMenu()
 		
 		
 		];
-		if(hasMiddleware('isCashManagement')){
+		$isCustomerOrSupplierUploading = in_array('CustomerInvoice',Request()->segments()) || in_array('SupplierInvoice',Request()->segments());
+		if(hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading ){
 			return $cashManagementSubItems ;
 		}
     return [

@@ -26,7 +26,6 @@ class CustomerInvoiceDashboardController extends Controller
 	
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
-        $reports = [];
 
         foreach ($selectedCurrencies as $currencyName) {
             $cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')
