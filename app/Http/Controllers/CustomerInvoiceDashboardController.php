@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HDate;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\Partner;
@@ -20,10 +21,14 @@ class CustomerInvoiceDashboardController extends Controller
         $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
 		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
+		// dd($selectedFinancialInstitutionBankIds,$financialInstitutionBanks->pluck('id')->toArray());
+		$currentDate = now()->format('Y-m-d') ;
+        $date = $request->get('date');
+		$date = $date ? HDate::formatDateFromDatePicker($date) : $currentDate;
 		
-        $date = $request->get('date', now()->format('Y-m-d'));
+		$date = Carbon::make($date)->format('Y-m-d');
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
-	
+
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
 
@@ -110,17 +115,39 @@ class CustomerInvoiceDashboardController extends Controller
             $reports['total'][$currencyName] = isset($reports['total'][$currencyName]) ? $reports['total'][$currencyName] + $currentTotal : $currentTotal ;
         }
 
-        $cleanOverdraftCardCommonQuery = DB::table('clean_overdraft_bank_statements')
+        // $cleanOverdraftCardCommonQuery = DB::table('clean_overdraft_bank_statements')
+        // ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
+        // ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
+        // ->where('clean_overdrafts.currency', '=', $currencyName)
+        // ->orderBy('clean_overdraft_bank_statements.id');
+
+        // $cleanOverdraftCardData = [
+        //     'limit' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.limit'),
+        //     'outstanding' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.end_balance'),
+        //     'room' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.room'),
+        // ];
+		
+	
+		$cleanOverdraftCardCommonQuery = DB::table('clean_overdrafts')
+        ->where('currency', '=', $currencyName)
+        ->where('company_id', $company->id)->where('contract_start_date', '<=', $date)
+        ->orderBy('clean_overdraft_bank_statements.id');
+		
+		$outstandingQuery = DB::table('clean_overdraft_bank_statements')
         ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
         ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
         ->where('clean_overdrafts.currency', '=', $currencyName)
-        ->orderBy('clean_overdraft_bank_statements.id');
-
+		->groupBy('clean_overdraft_id')
+        ->orderBy('clean_overdraft_bank_statements.id')
+		->selectRaw('max(clean_overdraft_bank_statements.date) , clean_overdraft_bank_statements.end_balance');
+	
+		
         $cleanOverdraftCardData = [
-            'limit' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.limit'),
-            'outstanding' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.end_balance'),
-            'room' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.room'),
+            'limit' => $limit = $cleanOverdraftCardCommonQuery->sum('limit'),
+            'outstanding' => $outstanding = $outstandingQuery->sum('end_balance'),
+            'room' => $limit + $outstanding ,
         ];
+		
 
         return view('admin.dashboard.cash', [
             'company' => $company,
@@ -203,7 +230,40 @@ class CustomerInvoiceDashboardController extends Controller
 			'modelType'=>$modelType
         ]);
     }
+	
+	
+	public function viewLGLCDashboard(Company $company, Request $request)
+    {
+		return view('admin.reports.lglc-report');
+		// dd('view dashboard here');
+	
+        // $fullClassName = ('\App\Models\\' . $modelType) ;
 
+        // $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+        // $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
+        // $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
+        // $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
+        // $invoices = ('App\Models\\' . $modelType)::where('company_id', $company->id)
+        // ->where($clientIdColumnName, $partnerId)
+        // ->where('currency', $currency)
+        // ->get();
+        // $customer = Partner::find($partnerId);
+        // if (!count($invoices)) {
+        //     return  redirect()->back()->with('fail', __('No Data Found'));
+        // }
+
+        // return view('admin.reports.invoice-report', [
+        //     'invoices' => $invoices,
+        //     'partnerName' => $customer->getName(),
+        //     'partnerId' => $customer->getId(),
+        //     'currency' => $currency,
+        //     'isCollectedOrPaid' => 'is' . ucfirst($isCollectedOrPaid),
+        //     'moneyReceivedOrPaidText' => $moneyReceivedOrPaidText,
+        //     'moneyReceivedOrPaidUrlName' => $moneyReceivedOrPaidUrlName,
+		// 	'modelType'=>$modelType
+        // ]);
+    }
+	
     public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType)
     {
         $fullClassName = ('\App\Models\\' . $modelType) ;
