@@ -3064,6 +3064,9 @@ function getPermissions():array
 		[
             'name'=>'view cash Forecast dashboard'
         ],
+		[
+            'name'=>'view lg & lc dashboard'
+        ],
         [
             'name'=>'view weekly cash flow report'
         ],
@@ -4128,7 +4131,12 @@ function getHeaderMenu()
 					'show'=>$user->can('view cash Forecast dashboard'),
 					'submenu'=>[]
 				],
-				
+				[
+					'title'=>__('LG & LC Dashboard'),
+					'link'=>route('view.lglc.dashboard', ['company'=>$companyId]),
+					'show'=>$user->can('view lg & lc dashboard'),
+					'submenu'=>[]
+				],
 			]
 			
 		]
@@ -4296,11 +4304,6 @@ function getHeaderMenu()
 				]
 			]
 		],
-		
-		
-		
-		
-		
 		
 		
 	

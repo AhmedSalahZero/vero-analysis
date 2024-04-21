@@ -1,12 +1,13 @@
 @extends('layouts.dashboard')
 @section('dash_nav')
+
 <ul class="kt-menu__nav ">
-    <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{route('dashboard.cash')}}" class="kt-menu__link "><span class="kt-menu__link-text">Cash Dashboard</span></a></li>
-    <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.lglc')}}" class="kt-menu__link active-button"><span class="kt-menu__link-text">LGs & LCs Dashboard</span></a></li>
+    {{-- <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{route('dashboard.cash')}}" class="kt-menu__link "><span class="kt-menu__link-text">Cash Dashboard</span></a></li> --}}
+    {{-- <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.lglc')}}" class="kt-menu__link active-button"><span class="kt-menu__link-text">LGs & LCs Dashboard</span></a></li> --}}
     {{-- <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.ltl')}}" class="kt-menu__link "><span class="kt-menu__link-text">Long Term Facilities Dashboard</span></a></li> --}}
-    <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.forecast')}}" class="kt-menu__link "><span class="kt-menu__link-text">Forecast Dashboard</span></a></li>
-    <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.contractResult') }}"
-        class="kt-menu__link "><span class="kt-menu__link-text">Contract Result Dashboard</span></a></li>
+    {{-- <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.forecast')}}" class="kt-menu__link "><span class="kt-menu__link-text">Forecast Dashboard</span></a></li> --}}
+    {{-- <li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.contractResult') }}"
+        class="kt-menu__link "><span class="kt-menu__link-text">Contract Result Dashboard</span></a></li> --}}
 </ul>
 @endsection
 

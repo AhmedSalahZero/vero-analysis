@@ -74,8 +74,6 @@
                             <option value="{{ $financialInstitutionBank->id }}" {{ in_array($financialInstitutionBank->id , $selectedFinancialInstitutionsIds) ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                             @endforeach
                         </select>
-
-
                     </div>
                 </div>
             </div>
@@ -86,7 +84,7 @@
                 <div class="input-group">
                     <select data-live-search="true" data-actions-box="true" name="currencies[]" class="form-control current-currency select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple js-when-change-trigger-change-account-type>
                         @foreach($allCurrencies as $currencyName => $currencyValue )
-                        <option value="{{ $currencyName }}" @if( in_array($currencyName,$selectedCurrencies) ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                        <option value="{{ $currencyName }}" @if( in_array($currencyName,$selectedCurrencies) ) selected  @endif > {{ $currencyValue }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -381,7 +379,7 @@
                                 <div class="kt-iconbox__body">
                                     <div class="kt-iconbox__desc">
                                         <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">{{ __('Room') }}</a>
+                                            <a class="kt-link" href="#">{{ __('Available') }}</a>
                                         </h3>
                                         <div class="kt-iconbox__content text-primary  ">
                                             <h4>{{ number_format($cleanOverdraftCardData['room']??0,0) }}</h4>
