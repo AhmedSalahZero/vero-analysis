@@ -16,7 +16,6 @@ class FinancialInstitutionAccountController
 
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
         return view('reports.financial-institution-accounts.edit',[
-			// 'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'model'=>$financialInstitutionAccount
 		]);

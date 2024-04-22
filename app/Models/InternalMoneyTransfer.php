@@ -19,7 +19,11 @@ class InternalMoneyTransfer extends Model
     {
         return $this->transfer_days ?: 0 ;
     }
-
+	public function getReceivingDateFormatted()
+	{
+		
+		return Carbon::make($this->getTransferDate())->addDay($this->getTransferDays())->format('d-m-Y') ;
+	}
     public function setTransferDateAttribute($value)
     {
         if (!$value) {
@@ -87,7 +91,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->currency ;
     }
-
+	public function getCurrencyFormatted()
+    {
+        return $this->getCurrency() ;
+    }
     public function getAmount()
     {
         return $this->amount ?: 0;
@@ -125,7 +132,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->to_account_number ;
     }
-
+	public function currentAccountBankStatements()
+    {
+        return $this->hasMany(CurrentAccountBankStatement::class, 'internal_money_transfer_id', 'id');
+    }
     public function cleanOverdraftBankStatements()
     {
         return $this->hasMany(CleanOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
@@ -136,5 +146,9 @@ class InternalMoneyTransfer extends Model
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
 			$cleanOverdraftBankStatement->delete();
 		});
+		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
+			$currentAccountBankStatement->delete();
+		});
+		
     }
 }

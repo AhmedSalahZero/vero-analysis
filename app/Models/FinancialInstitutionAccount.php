@@ -111,9 +111,9 @@ class FinancialInstitutionAccount extends Model
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
 	}
-	public static function findByAccountNumber($accountNumber,$companyId)
+	public static function findByAccountNumber($accountNumber,int $companyId,int $financialInstitutionId)
 	{
-		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
+		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->where('financial_institution_id',$financialInstitutionId)->first();
 	}
 	public function currentAccountBankStatements()
 	{

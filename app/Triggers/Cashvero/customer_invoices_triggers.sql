@@ -2,7 +2,7 @@
 
 -- 1-1
 delimiter //
-CREATE TRIGGER `insert_net_invoice_amount` BEFORE INSERT
+CREATE TRIGGER `insert_net_invoice_amount_for_customers` BEFORE INSERT
 	ON `customer_invoices` FOR EACH ROW
 	begin
 		set @totalInvoiceAmount := ifnull(new.invoice_amount,0)  + ifnull(new.vat_amount,0) - ifnull(new.discount_amount,0) ;

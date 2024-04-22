@@ -82,7 +82,9 @@
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Transfer Date') }}</th>
                                     <th>{{ __('Transfer Days') }}</th>
+                                    <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Amount') }}</th>
+                                    <th>{{ __('Currency') }}</th>
                                     <th>{{ __('From Bank') }}</th>
                                     <th>{{ __('From Account Type') }}</th>
                                     <th>{{ __('From Account Number') }}</th>
@@ -101,7 +103,9 @@
 							
                                     <td>{{ $model->getTransferDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getTransferDays() }}</td>
+                                    <td class="text-nowrap">{{ $model->getReceivingDateFormatted() }}</td>
 											<td>{{ $model->getAmountFormatted() }}</td>
+											<td>{{ $model->getCurrencyFormatted() }}</td>
                                     <td>{{ $model->getFromBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>

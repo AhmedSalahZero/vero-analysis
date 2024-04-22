@@ -568,7 +568,6 @@ use App\Models\CustomerInvoice;
 
 
             <div class="js-append-to">
-
             </div>
             <div class="js-template hidden">
 			     <div class="col-md-12 js-duplicate-node">

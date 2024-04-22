@@ -343,7 +343,7 @@ class MoneyPaymentController
 	
 	public function store(Company $company , StoreMoneyPaymentRequest $request){
 		$moneyType = $request->get('type');
-		
+		$bankId = null;
 		$contractId = $request->get('contract_id');
 		$supplierInvoiceId = $request->get('supplier_id');
 		$supplierInvoice = SupplierInvoice::find($supplierInvoiceId);
@@ -374,8 +374,9 @@ class MoneyPaymentController
 		}
 		elseif($moneyType ==MoneyPayment::OUTGOING_TRANSFER ){
 			$relationName = 'outgoingTransfer';
+			$bankId = $request->input('delivery_bank_id.'.MoneyPayment::OUTGOING_TRANSFER) ;
 			$relationData = [
-				'delivery_bank_id'=>$request->input('delivery_bank_id.'.MoneyPayment::OUTGOING_TRANSFER),
+				'delivery_bank_id'=>$bankId,
 				'account_number'=>$request->input('account_number.'.MoneyPayment::OUTGOING_TRANSFER),
 				'account_type'=>$request->input('account_type.'.MoneyPayment::OUTGOING_TRANSFER)
 			];
@@ -383,10 +384,11 @@ class MoneyPaymentController
 		
 		elseif($moneyType ==MoneyPayment::PAYABLE_CHEQUE ){
 			$relationName = 'payableCheque';
+			$bankId = $request->input('delivery_bank_id.'.MoneyPayment::PAYABLE_CHEQUE) ;
 			$relationData = [
 				'due_date'=>$request->input('due_date'),
 				'cheque_number'=>$request->input('cheque_number'),
-				'delivery_bank_id'=>$request->input('delivery_bank_id.'.MoneyPayment::PAYABLE_CHEQUE),
+				'delivery_bank_id'=>$bankId,
 				'account_number'=>$request->input('account_number.'.MoneyPayment::PAYABLE_CHEQUE),
 				'account_type'=>$request->input('account_type.'.MoneyPayment::PAYABLE_CHEQUE),
 				'company_id'=>$company->id
@@ -405,11 +407,11 @@ class MoneyPaymentController
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id);
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id,$bankId);
 			$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$data['delivery_date'],$paidAmount);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id);
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id,$bankId);
 			// dd($financialInstitutionAccount);
 			$moneyPayment->storeCurrentAccountBankStatement($data['delivery_date'],$paidAmount,$financialInstitutionAccount->id);
 		}

@@ -120,31 +120,18 @@ class CustomerInvoice extends Model implements IInvoice
 	}
 	
 
-	public static function getBeginningBalanceUntil( string $currencyName, string $customerName,string $date)
-	{
-		$totalInvoicesPlusVatAmount  = self::getTotalInvoicesPlusVatAmountUntilDate($currencyName,$customerName,$date);
-		$totalMoneyReceivedAmountPlusWithhold = self::getTotalMoneyAmountPlusWithhold($currencyName,$customerName,$date);
-		return $totalInvoicesPlusVatAmount - $totalMoneyReceivedAmountPlusWithhold;
-		
-	}
+
 
 	
-	public static function getTotalMoneyAmountPlusWithhold( string $currencyName, string $customerName,string $date)
-	{
-		
-		return DB::table(self::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME)
-		->where('company_id',getCurrentCompanyId())
-		->where(self::CLIENT_NAME_COLUMN_NAME,$customerName)
-		->where('currency',$currencyName)
-		->where(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,'<=',$date)
-		->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
-	}
+
 	public static function formatForStatementReport(Collection $customerInvoices,string $customerName,string $startDate,string $endDate,string $currency){
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
-			$firstCustomerInvoice = $customerInvoices->first() ?: null; 
-			$oneDayBeforeStartDate = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$beginningBalance = $firstCustomerInvoice ? $customerInvoices->first()->getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate) : 0; 
+			/**
+			 * @var CustomerInvoice $firstCustomerInvoice
+			 */
+			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
+			$beginningBalance = self::getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate,$startDate) ; 
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
@@ -161,6 +148,7 @@ class CustomerInvoice extends Model implements IInvoice
 			->where('currency',$currency)
 			->where(self::CLIENT_NAME_COLUMN_NAME,$customerName)
 			->get() ; 
+		
 		foreach($customerInvoices as $customerInvoice){
 			$currentData = [];
 			$invoiceDate = $customerInvoice->getInvoiceDateFormatted() ;
@@ -232,7 +220,7 @@ class CustomerInvoice extends Model implements IInvoice
 	}
 	public static function getSettlementsTemplate()
 	{
-		return  '<div class="col-md-12 js-duplicate-node">
+		return  '
 		<div class=" kt-margin-b-10 border-class">
 			<div class="form-group row align-items-end">
 				<div class="col-md-1 width-10">
@@ -300,7 +288,7 @@ class CustomerInvoice extends Model implements IInvoice
 			</div>
 		
 		</div>
-		</div>' ;
+		' ;
 	}
 	public static function getCurrencies()
 	{
@@ -308,6 +296,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->select('currency')
 		->where('currency','!=','')
 		->where('company_id',getCurrentCompanyId())
+		->orderBy('currency')
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}

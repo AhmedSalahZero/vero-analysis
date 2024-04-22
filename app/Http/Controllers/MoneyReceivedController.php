@@ -12,7 +12,6 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
-use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
@@ -370,6 +369,7 @@ class MoneyReceivedController
 	public function store(Company $company , StoreMoneyReceivedRequest $request){
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
+		$financialInstitutionId = null;
 		$customerInvoiceId = $request->get('customer_id');
 		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
 		$customer = $customerInvoice->customer ;
@@ -396,16 +396,18 @@ class MoneyReceivedController
 		}
 		elseif($moneyType ==MoneyReceived::INCOMING_TRANSFER ){
 			$relationName = 'incomingTransfer';
+			$financialInstitutionId = $request->input('receiving_bank_id.'.MoneyReceived::INCOMING_TRANSFER);
 			$relationData = [
-				'receiving_bank_id'=>$request->input('receiving_bank_id.'.MoneyReceived::INCOMING_TRANSFER),
+				'receiving_bank_id'=>$financialInstitutionId,
 				'account_number'=>$request->input('account_number.'.MoneyReceived::INCOMING_TRANSFER),
 				'account_type'=>$request->input('account_type.'.MoneyReceived::INCOMING_TRANSFER)
 			];
 		}
 		elseif($moneyType ==MoneyReceived::CASH_IN_BANK ){
 			$relationName = 'cashInBank';
+			$financialInstitutionId = $request->input('receiving_bank_id.'.MoneyReceived::CASH_IN_BANK) ;
 			$relationData = [
-				'receiving_bank_id'=>$request->input('receiving_bank_id.'.MoneyReceived::CASH_IN_BANK),
+				'receiving_bank_id'=>$financialInstitutionId,
 				'account_number'=>$request->input('account_number.'.MoneyReceived::CASH_IN_BANK),
 				'account_type'=>$request->input('account_type.'.MoneyReceived::CASH_IN_BANK)
 			];
@@ -437,7 +439,7 @@ class MoneyReceivedController
 		$currency = $data['currency'] ?? null ; 
 		$receivingBranchId = $relationData['receiving_branch_id'] ?? null ;
 		
-		$moneyReceived->handleStatement($accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,$receivingBranchId);
+		$moneyReceived->handleStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,$receivingBranchId);
 		
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
@@ -616,11 +618,12 @@ class MoneyReceivedController
 		$receivingDate = $moneyReceived->getReceivingDate();
 		$moneyType = MoneyReceived::CHEQUE;
 		$accountNumber = $moneyReceived->cheque->account_number ;
+		$financialInstitutionId = $moneyReceived->cheque->getDrawlBankId();
 		/**
 		 * @var AccountType $accountType ;
 		 */
 		
-		$moneyReceived->handleStatement($accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
+		$moneyReceived->handleStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
 		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}

@@ -149,13 +149,14 @@ trait IsInvoice
 		return self::where('company_id',$companyId)
 		->get()->pluck(self::CLIENT_NAME_COLUMN_NAME,self::CLIENT_NAME_COLUMN_NAME)->toArray();
 	}
-	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, string $customerName,string $date):float
+	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, string $customerName,string $startDate , string $endDate):float
 	{
+
 		return DB::table(self::TABLE_NAME)
 		->where('company_id',getCurrentCompanyId())
 		->where(self::CLIENT_NAME_COLUMN_NAME,$customerName)
 		->where('currency',$currencyName)
-		->where('invoice_date','<=',$date)
+		->whereBetween('invoice_date',[$startDate,$endDate])
 		->sum(DB::raw('invoice_amount + vat_amount'));
 
 	}
@@ -163,6 +164,23 @@ trait IsInvoice
 	{
 		return $this->hasMany(DueDateHistory::class,'model_id','id')->where('model_type',getModelNameWithoutNamespace($this));
 	}
+
+	public static function getBeginningBalanceUntil( string $currencyName, string $customerName,string $startDate ,string $endDate)
+	{
+		$totalInvoicesPlusVatAmount  = self::getTotalInvoicesPlusVatAmountUntilDate($currencyName,$customerName,$startDate,$endDate);
+		$totalMoneyReceivedAmountPlusWithhold = self::getTotalMoneyAmountPlusWithhold($currencyName,$customerName,$startDate  , $endDate);
+		return $totalInvoicesPlusVatAmount - $totalMoneyReceivedAmountPlusWithhold;
+	}
+	public static function getTotalMoneyAmountPlusWithhold( string $currencyName, string $customerName,string $startDate , string $endDate)
+	{
 		
+		return DB::table(self::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME)
+		->where('company_id',getCurrentCompanyId())
+		->where(self::CLIENT_NAME_COLUMN_NAME,$customerName)
+		->where('currency',$currencyName)
+		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
+		->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
+	}
+	
 	
 }
