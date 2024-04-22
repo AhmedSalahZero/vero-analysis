@@ -21,7 +21,7 @@ class SupplierInvoice extends Model implements IInvoice
      */
     
     protected $dates = [
-       'invoice_date'
+		
     ];
 	
 	const UNAPPLIED_SETTLEMENT_TABLE = 'paymentSettlements';

@@ -20,10 +20,7 @@ class CustomerInvoice extends Model implements IInvoice
      *
      * @var array
      */
-    
-    protected $dates = [
-       'invoice_date'
-    ];
+
 	
 	
 	const UNAPPLIED_SETTLEMENT_TABLE = 'settlements';
@@ -205,6 +202,7 @@ class CustomerInvoice extends Model implements IInvoice
 	public static function formatInvoices(array $invoices,int $inEditMode):array 
 	{
 		$result = [];
+
 		foreach($invoices as $index=>$invoiceArr){
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
