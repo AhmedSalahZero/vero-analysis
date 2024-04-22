@@ -48,968 +48,998 @@
         </div>
     </div>
     <div class="kt-portlet__body">
-       <form action="{{ route('view.customer.invoice.dashboard.cash',['company'=>$company->id]) }}" >
-	   
-	    <div class="form-group row">
-            <div class="col-md-3">
-                <label>{{ __('Date') }}</label>
-                <div class="kt-input-icon">
-                    <div class="input-group date">
-                        <input type="text" value="{{ date('d/m/Y') }}" name="date" class="form-control" max="{{ date('d/m/Y') }}" readonly placeholder="Select date" id="kt_datepicker_2" />
-                        <div class="input-group-append">
-                            <span class="input-group-text">
-                                <i class="la la-calendar-check-o"></i>
-                            </span>
+        <form action="{{ route('view.customer.invoice.dashboard.cash',['company'=>$company->id]) }}">
+
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <label>{{ __('Date') }}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="text" value="{{ date('d/m/Y') }}" name="date" class="form-control" max="{{ date('d/m/Y') }}" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="la la-calendar-check-o"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 mb-3">
-                <label>{{__('Financial Institution')}} @include('star') </label>
-                <div class="kt-input-icon">
-                    <div class="input-group date ">
-                        <select data-live-search="true" data-actions-box="true" js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_ids[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple required>
-                            @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                            <option value="{{ $financialInstitutionBank->id }}" {{ in_array($financialInstitutionBank->id , $selectedFinancialInstitutionsIds) ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
+                <div class="col-md-6 mb-3">
+                    <label>{{__('Financial Institution')}} @include('star') </label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date ">
+                            <select data-live-search="true" data-actions-box="true" js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_ids[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple required>
+                                @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
+                                <option value="{{ $financialInstitutionBank->id }}" {{ in_array($financialInstitutionBank->id , $selectedFinancialInstitutionsIds) ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>{{__('Currency')}}
+                        @include('star')
+                    </label>
+                    <div class="input-group">
+                        <select data-live-search="true" data-actions-box="true" name="currencies[]" class="form-control current-currency select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple js-when-change-trigger-change-account-type>
+                            @foreach($allCurrencies as $currencyName => $currencyValue )
+                            <option value="{{ $currencyName }}" @if( in_array($currencyName,$selectedCurrencies) ) selected @endif> {{ $currencyValue }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
+                <x-submitting />
             </div>
-            <div class="col-md-3">
-                <label>{{__('Currency')}}
-                    @include('star')
-                </label>
-                <div class="input-group">
-                    <select data-live-search="true" data-actions-box="true" name="currencies[]" class="form-control current-currency select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple js-when-change-trigger-change-account-type>
-                        @foreach($allCurrencies as $currencyName => $currencyValue )
-                        <option value="{{ $currencyName }}" @if( in_array($currencyName,$selectedCurrencies) ) selected  @endif > {{ $currencyValue }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-			              <x-submitting />
-        </div>
-	   </form>
+        </form>
     </div>
 </div>
 <!--begin:: Widgets/Stats-->
 <div class="kt-portlet">
     <div class="kt-portlet__head">
-        <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
-                {{ __('Current Cash Position') }}
-            </h3>
-        </div>
-    </div>
-    <div class="kt-portlet__body  kt-portlet__body--fit">
-        <div class="row row-no-padding row-col-separator-xl">
-            @foreach($selectedCurrencies as $currency)
-            <div class="col-md-6 col-lg-3 col-xl-3">
+        <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+            @foreach($selectedCurrencies as $index=>$currency)
 
-                <!--begin::Total Profit-->
-                <div class="kt-widget24 text-center">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size text-uppercase">
-                                {{ __('Cash & Banks' )  . ' [ ' . $currency . ' ]' }}
-                            </h4>
+            <li class="nav-item @if($index ==0 ) active @endif">
+                <a class="nav-link @if($index ==0 ) active @endif" data-toggle="tab" href="#kt_apps_contacts_view_tab_{{ $index }}" role="tab">
+                    <i class="flaticon2-checking"></i>{{ $currency }}
+                </a>
+            </li>
 
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-brand">
-                            {{ number_format($reports['cash_and_banks'][$currency] ?? 0 ) }}
-                        </span>
-                    </div>
 
-                    <div class="progress progress--sm">
-                        <div class="progress-bar kt-bg-brand" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
 
-                </div>
 
-                <!--end::Total Profit-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
 
-                <!--begin::New Feedbacks-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size  text-uppercase">
-                                {{ __('Time & Certificate Of Deposit') . ' [ ' . $currency . ' ]' }}
-                            </h4>
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-warning text-uppercase">
-                            {{ number_format($reports['certificate_of_deposits'][$currency] ?? 0 ) }}
-                        </span>
-                    </div>
-                    <div class="progress progress--sm">
-                        <div class="progress-bar kt-bg-warning" role="progressbar" style="width: 84%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
 
-                </div>
 
-                <!--end::New Feedbacks-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Orders-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size text-uppercase">
-                                {{ __('Credit Facilities Room') . ' [ ' . $currency . ' ] ' }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-danger text-uppercase">
-                            {{ number_format($reports['credit_facilities_room'][$currency] ?? 0 ) }}
-                        </span>
-                    </div>
-                    <div class="progress progress--sm">
-                        <div class="progress-bar kt-bg-danger" role="progressbar" style="width: 69%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-
-                </div>
-
-                <!--end::New Orders-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Users-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Total') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-success text-uppercase">
-                            {{ number_format($reports['total'][$currency] ?? 0 ) }}
-                        </span>
-                    </div>
-                    <div class="progress progress--sm">
-                        <div class="progress-bar kt-bg-success" role="progressbar" style="width: 90%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-
-                </div>
-
-                <!--end::New Users-->
-            </div>
             @endforeach
-        </div>
+        </ul>
     </div>
 </div>
-<!--end:: Widgets/Stats-->
+<div class="tab-content  kt-margin-t-20">
+    @foreach($selectedCurrencies as $index=>$currency)
 
-{{-- Title --}}
-<div class="row">
-    <div class="col-md-12">
-        <div class="kt-portlet ">
+    <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_{{ $index }}" role="tabpanel">
+        <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Short Term Cash Facilities Position') }}
+                        {{ __('Current Cash Position') }}
                     </h3>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl">
 
-{{-- First Section --}}
-<div class="row">
-    {{-- Total Facilities --}}
-    <div class="col-md-4">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label col-8">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Total Cash Facilities') }}
-                    </h3>
-                </div>
-                <div class="kt-portlet__head-label col-4">
-                    <div class="kt-align-right">
-                        <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Limit</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Outstanding</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Available</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Interest Rate %</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0 %</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- Chart --}}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chartdiv" id="chartdiv1"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Clean Overdraft --}}
-    <div class="col-md-4">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label col-8">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Clean Overdraft') }}
-                    </h3>
-                </div>
-                <div class="kt-portlet__head-label col-4">
-                    <div class="kt-align-right">
-                        <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">{{ __('Limit') }}</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>{{ number_format($cleanOverdraftCardData['limit'] ?? 0,0) }}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">{{ __('Outstanding') }}</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4> {{ number_format($cleanOverdraftCardData['outstanding']??0,0) }} </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">{{ __('Available') }}</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>{{ number_format($cleanOverdraftCardData['room']??0,0) }}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Interest Rate %</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0 %</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- Chart --}}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chartdiv" id="chartdiv2"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Overdraft Aganist Commercial Papers --}}
-    <div class="col-md-4">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label col-8">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Overdraft Aganist Commercial Papers') }}
-                    </h3>
-                </div>
-                <div class="kt-portlet__head-label col-4">
-                    <div class="kt-align-right">
-                        <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Limit</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Outstanding</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Available</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Interest Rate %</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0 %</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- Chart --}}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chartdiv" id="chartdiv3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
 
-{{-- Second Section --}}
-<div class="row">
-    {{-- Overdraft Aganist Contract Assignment --}}
-    <div class="col-md-4">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label col-8">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Overdraft Aganist Contract Assignment') }}
-                    </h3>
-                </div>
-                <div class="kt-portlet__head-label col-4">
-                    <div class="kt-align-right">
-                        <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Limit</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Outstanding</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Available</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Interest Rate %</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0 %</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- Chart --}}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chartdiv" id="chartdiv4"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Discounting Cheques --}}
-    <div class="col-md-4">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label col-8">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Discounting Cheques') }}
-                    </h3>
-                </div>
-                <div class="kt-portlet__head-label col-4">
-                    <div class="kt-align-right">
-                        <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Limit</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Outstanding</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Available</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Interest Rate %</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0 %</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- Chart --}}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chartdiv" id="chartdiv5"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Invoices Factoring --}}
-    <div class="col-md-4">
-        <div class="kt-portlet ">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label col-8">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Invoices Factoring') }}
-                    </h3>
-                </div>
-                <div class="kt-portlet__head-label col-4">
-                    <div class="kt-align-right">
-                        <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet__body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Limit</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Outstanding</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Available</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
-                            <div class="kt-portlet__body">
-                                <div class="kt-iconbox__body">
-                                    <div class="kt-iconbox__desc">
-                                        <h3 class="kt-iconbox__title">
-                                            <a class="kt-link" href="#">Interest Rate %</a>
-                                        </h3>
-                                        <div class="kt-iconbox__content text-primary  ">
-                                            <h4>0 %</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- Chart --}}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chartdiv" id="chartdiv6"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        <!--begin::Total Profit-->
+                        <div class="kt-widget24 text-center">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size text-uppercase">
+                                        {{ __('Cash & Banks' )  . ' [ ' . $currency . ' ]' }}
+                                    </h4>
 
-{{-- Title --}}
-<div class="row">
-    <div class="col-md-12">
-        <div class="kt-portlet ">
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-brand">
+                                    {{ number_format($reports['cash_and_banks'][$currency] ?? 0 ) }}
+                                </span>
+                            </div>
+
+                            <div class="progress progress--sm">
+                                <div class="progress-bar kt-bg-brand" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </div>
+
+                        <!--end::Total Profit-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Feedbacks-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size  text-uppercase">
+                                        {{ __('Time & Certificate Of Deposit') . ' [ ' . $currency . ' ]' }}
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-warning text-uppercase">
+                                    {{ number_format($reports['certificate_of_deposits'][$currency] ?? 0 ) }}
+                                </span>
+                            </div>
+                            <div class="progress progress--sm">
+                                <div class="progress-bar kt-bg-warning" role="progressbar" style="width: 84%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Feedbacks-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Orders-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size text-uppercase">
+                                        {{ __('Credit Facilities Room') . ' [ ' . $currency . ' ] ' }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-danger text-uppercase">
+                                    {{ number_format($reports['credit_facilities_room'][$currency] ?? 0 ) }}
+                                </span>
+                            </div>
+                            <div class="progress progress--sm">
+                                <div class="progress-bar kt-bg-danger" role="progressbar" style="width: 69%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Orders-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Users-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Total') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-success text-uppercase">
+                                    {{ number_format($reports['total'][$currency] ?? 0 ) }}
+                                </span>
+                            </div>
+                            <div class="progress progress--sm">
+                                <div class="progress-bar kt-bg-success" role="progressbar" style="width: 90%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Users-->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--end:: Widgets/Stats-->
+
+        {{-- Title --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Short Term Cash Facilities Position') }}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- First Section --}}
+        <div class="row">
+            {{-- Total Facilities --}}
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Total Cash Facilities') }}
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-label col-4">
+                            <div class="kt-align-right">
+                                <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Limit') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($totalCard[$currency]['limit'] ?? 0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Outstanding') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4> {{ number_format($totalCard[$currency]['outstanding']??0,0) }} </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Available') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($totalCard[$currency]['room']??0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+				
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Interest Amount') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($totalCard[$currency]['interest_amount']??0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Chart --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chartdiv" id="chartdiv1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Clean Overdraft --}}
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Clean Overdraft') }}
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-label col-4">
+                            <div class="kt-align-right">
+                                <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Limit') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($cleanOverdraftCardData[$currency]['limit'] ?? 0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Outstanding') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4> {{ number_format($cleanOverdraftCardData[$currency]['outstanding']??0,0) }} </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Available') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($cleanOverdraftCardData[$currency]['room']??0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">{{ __('Interest Amount') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($cleanOverdraftCardData[$currency]['interest_amount']??0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Chart --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chartdiv" id="chartdiv2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Overdraft Aganist Commercial Papers --}}
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Overdraft Aganist Commercial Papers') }}
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-label col-4">
+                            <div class="kt-align-right">
+                                <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Limit</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Outstanding</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Available</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Interest Amount</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Chart --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chartdiv" id="chartdiv3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Second Section --}}
+        <div class="row">
+            {{-- Overdraft Aganist Contract Assignment --}}
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Overdraft Aganist Contract Assignment') }}
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-label col-4">
+                            <div class="kt-align-right">
+                                <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Limit</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Outstanding</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Available</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Interest Amount</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Chart --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chartdiv" id="chartdiv4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Discounting Cheques --}}
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Discounting Cheques') }}
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-label col-4">
+                            <div class="kt-align-right">
+                                <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Limit</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Outstanding</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Available</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--success kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Interest Amount</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0 </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Chart --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chartdiv" id="chartdiv5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Invoices Factoring --}}
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Invoices Factoring') }}
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-label col-4">
+                            <div class="kt-align-right">
+                                <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Limit</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Outstanding</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Available</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--warning kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" href="#">Interest Amount</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>0 </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Chart --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chartdiv" id="chartdiv6"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Title --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Long Term Cash Facilities Position') }}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--begin:: Widgets/Stats-->
+        <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Long Term Cash Facilities Position') }}
+                        {{ __('Medium Term Loans Position') }}
                     </h3>
                 </div>
             </div>
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl">
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::Limit-->
+                        <div class="kt-widget24 text-center">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Limit') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-brand">
+                                    25,000,000
+                                </span>
+                            </div>
+
+
+                        </div>
+
+                        <!--end::Total Profit-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Feedbacks-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Outstanding') }}
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-warning">
+                                    15,000,000
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Feedbacks-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Orders-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Next Due Amount') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-danger">
+                                    750,000
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Orders-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Users-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Date') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-success">
+                                    01-October-2024
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Users-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end:: Widgets/Stats-->
+
+        <!--begin:: Widgets/Stats-->
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title head-title text-primary">
+                        {{ __('Leasing Facilitiess Position') }}
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl">
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::Total Profit-->
+                        <div class="kt-widget24 text-center">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Limit') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-brand">
+                                    50,000,000
+                                </span>
+                            </div>
+
+
+                        </div>
+
+                        <!--end::Total Profit-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Feedbacks-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Outstanding') }}
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-warning">
+                                    42,500,000
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Feedbacks-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Orders-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Next Due Amount') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-danger">
+                                    1,250,000
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Orders-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Users-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Date') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-success">
+                                    01-June-2024
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Users-->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    @endforeach
 </div>
 
-<!--begin:: Widgets/Stats-->
-<div class="kt-portlet">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
-                {{ __('Medium Term Loans Position') }}
-            </h3>
-        </div>
-    </div>
-    <div class="kt-portlet__body  kt-portlet__body--fit">
-        <div class="row row-no-padding row-col-separator-xl">
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::Limit-->
-                <div class="kt-widget24 text-center">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Limit') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-brand">
-                            25,000,000
-                        </span>
-                    </div>
-
-
-                </div>
-
-                <!--end::Total Profit-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Feedbacks-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Outstanding') }}
-                            </h4>
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-warning">
-                            15,000,000
-                        </span>
-                    </div>
-
-                </div>
-
-                <!--end::New Feedbacks-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Orders-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Next Due Amount') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-danger">
-                            750,000
-                        </span>
-                    </div>
-                </div>
-
-                <!--end::New Orders-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Users-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Date') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-success">
-                            01-October-2024
-                        </span>
-                    </div>
-                </div>
-
-                <!--end::New Users-->
-            </div>
-        </div>
-    </div>
-</div>
-<!--end:: Widgets/Stats-->
-
-<!--begin:: Widgets/Stats-->
-<div class="kt-portlet">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
-                {{ __('Leasing Facilitiess Position') }}
-            </h3>
-        </div>
-    </div>
-    <div class="kt-portlet__body  kt-portlet__body--fit">
-        <div class="row row-no-padding row-col-separator-xl">
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::Total Profit-->
-                <div class="kt-widget24 text-center">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Limit') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-brand">
-                            50,000,000
-                        </span>
-                    </div>
-
-
-                </div>
-
-                <!--end::Total Profit-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Feedbacks-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Outstanding') }}
-                            </h4>
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-warning">
-                            42,500,000
-                        </span>
-                    </div>
-
-                </div>
-
-                <!--end::New Feedbacks-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Orders-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Next Due Amount') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-danger">
-                            1,250,000
-                        </span>
-                    </div>
-                </div>
-
-                <!--end::New Orders-->
-            </div>
-            <div class="col-md-6 col-lg-3 col-xl-3">
-
-                <!--begin::New Users-->
-                <div class="kt-widget24">
-                    <div class="kt-widget24__details">
-                        <div class="kt-widget24__info">
-                            <h4 class="kt-widget24__title font-size">
-                                {{ __('Date') }}
-                            </h4>
-
-                        </div>
-                    </div>
-                    <div class="kt-widget24__details">
-                        <span class="kt-widget24__stats kt-font-success">
-                            01-June-2024
-                        </span>
-                    </div>
-                </div>
-
-                <!--end::New Users-->
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 @section('js')
 <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>

@@ -189,6 +189,7 @@ class MoneyReceived extends Model
 		$cashInBank = $this->cashInBank ;
         return $cashInBank ? $cashInBank->getReceivingBankName() : 0 ;
     }
+
     public function getCashInBankReceivingBankId()
     {
 		$cashInBank = $this->cashInBank ;
@@ -198,6 +199,18 @@ class MoneyReceived extends Model
 	{
 		$cashInBank = $this->cashInBank ;
 		return $cashInBank ? $cashInBank->receivingBank() : null ;
+	}
+	public function getFinancialInstitutionId()
+	{
+		if($this->isCashInBank()){
+			return $this->getCashInBankReceivingBankId();
+		}
+		if($this->isIncomingTransfer()){
+			return $this->getIncomingTransferReceivingBankId();
+		}
+		if($this->isCheque()){
+			return $this->cheque ? $this->cheque->getDrawlBankId() : 0;
+		}
 	}
 	
 	/**
@@ -486,14 +499,14 @@ class MoneyReceived extends Model
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleStatement(?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $receivedAmount = null,?string $currencyName = null,?int $receivingBranchId = null)
+	public function handleStatement(?int $financialInstitutionId ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $receivedAmount = null,?string $currencyName = null,?int $receivingBranchId = null)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId());
+			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
 			$this->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId());
+			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
 			$this->storeCurrentAccountBankStatement($receivingDate,$receivedAmount,$financialInstitutionAccount->id);
 		}
 		if($this->isCashInSafe()){

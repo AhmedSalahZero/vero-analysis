@@ -21,24 +21,29 @@ class CustomerInvoiceDashboardController extends Controller
         $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
 		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
-		// dd($selectedFinancialInstitutionBankIds,$financialInstitutionBanks->pluck('id')->toArray());
 		$currentDate = now()->format('Y-m-d') ;
         $date = $request->get('date');
 		$date = $date ? HDate::formatDateFromDatePicker($date) : $currentDate;
-		
+		$year = explode('-',$date)[0];
 		$date = Carbon::make($date)->format('Y-m-d');
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
 
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
 
+		$totalCard = [];
         foreach ($selectedCurrencies as $currencyName) {
-            $cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')
+			$cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')
 			->where('date', '<=', $date)
 			->where('company_id', $company->id)
 			->where('currency', $currencyName)
 			->orderBy('id', 'desc')->limit(1)->first();
-			// dd($cashInSafeStatementAmountForCurrency);
+			
+			$cleanOverdraftCardCommonQuery = DB::table('clean_overdrafts')
+        ->where('currency', '=', $currencyName)
+        ->where('company_id', $company->id)->where('contract_start_date', '<=', $date)
+        ->orderBy('clean_overdrafts.id');
+		$cleanOverdraftIds = $cleanOverdraftCardCommonQuery->pluck('id')->toArray() ;
 
             $cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
 
@@ -65,7 +70,7 @@ class CustomerInvoiceDashboardController extends Controller
 						
 				// end testing 
 				
-				// dd($currentAccountEndBalanceForCurrency);
+
                 $currentAccountEndBalanceForCurrency = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0;
 
                 $currentAccountInBanks += $currentAccountEndBalanceForCurrency ;
@@ -82,15 +87,22 @@ class CustomerInvoiceDashboardController extends Controller
                 /**
                  * * حساب ال clean_overdraft
                  */
-                $cleanOverdraftRoom = DB::table('clean_overdraft_bank_statements')
-                ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
-                ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
-                ->where('clean_overdrafts.currency', '=', $currencyName)
-                ->orderBy('clean_overdraft_bank_statements.id')
-                ->limit(1)
-                ->first() ;
-                $cleanOverdraftRoom = $cleanOverdraftRoom ? $cleanOverdraftRoom->room : 0 ;
-                $totalCleanOverdraftRoom += $cleanOverdraftRoom ;
+				foreach($cleanOverdraftIds as $cleanOverdraftId){
+					$cleanOverdraftRoom = DB::table('clean_overdraft_bank_statements')
+						->where('clean_overdraft_bank_statements.company_id', $company->id)
+						->where('date', '<=', $date)
+						->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
+						->where('clean_overdrafts.currency', '=', $currencyName)
+						->where('clean_overdraft_id',$cleanOverdraftId)
+						->orderByRaw('date desc , clean_overdraft_bank_statements.id desc')
+						->first();
+						$cleanOverdraftRoom = $cleanOverdraftRoom ? $cleanOverdraftRoom->room : 0 ;
+						$totalCleanOverdraftRoom += $cleanOverdraftRoom ;
+				}
+                
+// rrrr
+	
+               
 
                 /**
                  * * حساب ال clean_overdraft
@@ -113,40 +125,47 @@ class CustomerInvoiceDashboardController extends Controller
 
             $currentTotal = $reports['cash_and_banks'][$currencyName] + $reports['certificate_of_deposits'][$currencyName] + $reports['credit_facilities_room'][$currencyName] ;
             $reports['total'][$currencyName] = isset($reports['total'][$currencyName]) ? $reports['total'][$currencyName] + $currentTotal : $currentTotal ;
-        }
-
-        // $cleanOverdraftCardCommonQuery = DB::table('clean_overdraft_bank_statements')
-        // ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
-        // ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
-        // ->where('clean_overdrafts.currency', '=', $currencyName)
-        // ->orderBy('clean_overdraft_bank_statements.id');
-
-        // $cleanOverdraftCardData = [
-        //     'limit' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.limit'),
-        //     'outstanding' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.end_balance'),
-        //     'room' => $cleanOverdraftCardCommonQuery->sum('clean_overdraft_bank_statements.room'),
-        // ];
+			
+			$outstanding = 0 ;
+		$room = 0 ;
 		
-	
-		$cleanOverdraftCardCommonQuery = DB::table('clean_overdrafts')
-        ->where('currency', '=', $currencyName)
-        ->where('company_id', $company->id)->where('contract_start_date', '<=', $date)
-        ->orderBy('clean_overdraft_bank_statements.id');
-		
-		$outstandingQuery = DB::table('clean_overdraft_bank_statements')
-        ->where('clean_overdraft_bank_statements.company_id', $company->id)->where('date', '<=', $date)
+		 
+		foreach($cleanOverdraftIds as $cleanOverdraftId){
+			$totalRoomForCleanOverdraftId = DB::table('clean_overdraft_bank_statements')
+        ->where('clean_overdraft_bank_statements.company_id', $company->id)
+		->where('date', '<=', $date)
         ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
         ->where('clean_overdrafts.currency', '=', $currencyName)
-		->groupBy('clean_overdraft_id')
-        ->orderBy('clean_overdraft_bank_statements.id')
-		->selectRaw('max(clean_overdraft_bank_statements.date) , clean_overdraft_bank_statements.end_balance');
+		->where('clean_overdraft_id',$cleanOverdraftId)
+		->orderByRaw('date desc , clean_overdraft_bank_statements.id desc')
+		->first();
+		$outstanding = $totalRoomForCleanOverdraftId ? $outstanding + $totalRoomForCleanOverdraftId->end_balance : $outstanding ;
+		$room = $totalRoomForCleanOverdraftId ? $room + $totalRoomForCleanOverdraftId->room : $room ;
+		
+		}
+		$interestAmount = DB::table('clean_overdraft_bank_statements')
+        ->where('clean_overdraft_bank_statements.company_id', $company->id)
+		->whereRaw('year(date) = '.$year)
+        ->join('clean_overdrafts', 'clean_overdraft_bank_statements.clean_overdraft_id', '=', 'clean_overdrafts.id')
+        ->where('clean_overdrafts.currency', '=', $currencyName)
+		->where('clean_overdraft_id',$cleanOverdraftId)
+		->orderByRaw('date desc , clean_overdraft_bank_statements.id desc')
+		->sum('credit');
+
+		
+        $cleanOverdraftCardData[$currencyName] = [
+            'limit' =>  $cleanOverdraftCardCommonQuery->sum('limit'),
+            'outstanding' => $outstanding,
+            'room' => $room ,
+			'interest_amount'=>$interestAmount 
+        ];
+		#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
+		$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],$cleanOverdraftCardData[$currencyName]); 
+	}
+
 	
 		
-        $cleanOverdraftCardData = [
-            'limit' => $limit = $cleanOverdraftCardCommonQuery->sum('limit'),
-            'outstanding' => $outstanding = $outstandingQuery->sum('end_balance'),
-            'room' => $limit + $outstanding ,
-        ];
+		
 		
 
         return view('admin.dashboard.cash', [
@@ -156,9 +175,16 @@ class CustomerInvoiceDashboardController extends Controller
             'selectedCurrencies' => $selectedCurrencies,
 			'allCurrencies'=>$allCurrencies,
             'selectedFinancialInstitutionsIds' => $selectedFinancialInstitutionBankIds,
-            'cleanOverdraftCardData' => $cleanOverdraftCardData
+            'cleanOverdraftCardData' => $cleanOverdraftCardData,
+			'totalCard'=>$totalCard
         ]);
     }
+	public function sumForTotalCard(array $oldArr  , array $newItems ):array{
+		foreach($newItems as $key => $value){
+			$oldArr[$key]   =  isset($oldArr[$key]) ? $oldArr[$key] + $value : $value ; 
+		}
+		return $oldArr;
+	}
 
     public function viewForecastDashboard(Company $company, Request $request)
     {
@@ -235,7 +261,6 @@ class CustomerInvoiceDashboardController extends Controller
 	public function viewLGLCDashboard(Company $company, Request $request)
     {
 		return view('admin.reports.lglc-report');
-		// dd('view dashboard here');
 	
         // $fullClassName = ('\App\Models\\' . $modelType) ;
 
@@ -281,8 +306,9 @@ class CustomerInvoiceDashboardController extends Controller
         ->where($clientIdColumnName, '=', $partnerId)->get();
         $partner = Partner::find($partnerId);
         $partnerName = $partner->getName() ;
+	
         $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
-        if (count($invoicesWithItsReceivedMoney) <= 1) {
+        if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
 

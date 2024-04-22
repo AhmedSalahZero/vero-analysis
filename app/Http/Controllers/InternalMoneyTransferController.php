@@ -6,9 +6,12 @@ use App\Models\Branch;
 use App\Models\CleanOverdraft;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
+use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\InternalMoneyTransfer;
 use App\Traits\GeneralFunctions;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -92,22 +95,54 @@ class InternalMoneyTransferController
 	
 		$internalMoneyTransfer = new InternalMoneyTransfer ;
 		$transferDate = $request->get('transfer_date') ;
+		$receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
 		$transferAmount = $request->get('amount') ;
 		$internalMoneyTransfer->storeBasicForm($request);
+		$fromFinancialInstitutionId = $request->get('from_bank_id');
+		$toFinancialInstitutionId = $request->get('to_bank_id');
 		$fromAccountTypeId = $request->get('from_account_type_id');
 		$toAccountTypeId = $request->get('to_account_type_id');
 		$fromAccountType = AccountType::find($fromAccountTypeId);
 		$toAccountType = AccountType::find($toAccountTypeId);
+		
+		if($fromAccountType && $fromAccountType->isCurrentAccount()){
+			/**
+			 * @var CleanOverdraft $fromCleanOverDraft
+			 */
+			$fromCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($request->get('from_account_number'),$company->id,$fromFinancialInstitutionId);
+			CurrentAccountBankStatement::create([
+				'financial_institution_account_id'=>$fromCurrentAccount->id ,
+				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
+				'company_id'=>$company->id ,
+				'date' => $transferDate , 
+				'credit'=>$transferAmount
+			]);
+		}
+		
+		if($toAccountType && $toAccountType->isCurrentAccount()){
+			/**
+			 * @var CleanOverdraft $fromCleanOverDraft
+			 */
+			$toCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($request->get('to_account_number'),$company->id,$toFinancialInstitutionId);
+			CurrentAccountBankStatement::create([
+				'financial_institution_account_id'=>$toCurrentAccount->id ,
+				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
+				'company_id'=>$company->id ,
+				'date' => $receivingDate , 
+				'debit'=>$transferAmount,
+			]);
+		}
+		
+		//////////////////////////
+		
 		if($fromAccountType && $fromAccountType->isCleanOverDraftAccount()){
 			/**
 			 * @var CleanOverdraft $fromCleanOverDraft
 			 */
 
-			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('from_account_number'),$company->id);
+			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('from_account_number'),$company->id,$fromFinancialInstitutionId);
 			CleanOverdraftBankStatement::create([
 				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
-				// 'is_debit'=>0,
-				// 'is_credit'=>1 ,
 				'clean_overdraft_id'=>$fromCleanOverDraft->id ,
 				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
 				'company_id'=>$company->id ,
@@ -121,20 +156,17 @@ class InternalMoneyTransferController
 			/**
 			 * @var CleanOverdraft $fromCleanOverDraft
 			 */
-			$toCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('to_account_number'),$company->id);
+			$toCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('to_account_number'),$company->id,$toFinancialInstitutionId);
 			CleanOverdraftBankStatement::create([
 				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
-				// 'is_debit'=>0,
-				// 'is_credit'=>1 ,
 				'clean_overdraft_id'=>$toCleanOverDraft->id ,
 				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
 				'company_id'=>$company->id ,
-				'date' => $transferDate , 
+				'date' => $receivingDate , 
 				'limit' =>$toCleanOverDraft->getLimit(),
 				'debit'=>$transferAmount
 			]);
 		}
-		// dd('g');
 		
 		$type = $request->get('type','internal-money-transfer');
 		$activeTab = $type ; 

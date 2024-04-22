@@ -185,8 +185,10 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 		//	$('.current-currency').empty().append(currenciesOptions)
 		
 			// second add settlements repeater 
+	
 			var lastNode = $('.js-template .js-duplicate-node').clone(true)
-		
+	
+	
 			$('.js-append-to').empty()
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
@@ -213,7 +215,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domWithholdAmount.val(withholdAmount)
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
-				
+		
 					$('.js-append-to').append(lastNode)
 					var lastNode = $('.js-template .js-duplicate-node').clone(true)
 				

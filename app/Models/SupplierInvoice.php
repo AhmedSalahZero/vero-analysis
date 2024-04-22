@@ -120,31 +120,15 @@ class SupplierInvoice extends Model implements IInvoice
 	}
 	
 
-	public static function getBeginningBalanceUntil( string $currencyName, string $supplierName,string $date)
-	{
-		$totalInvoicesPlusVatAmount  = self::getTotalInvoicesPlusVatAmountUntilDate($currencyName,$supplierName,$date);
-		$totalMoneyReceivedAmountPlusWithhold = self::getTotalMoneyAmountPlusWithhold($currencyName,$supplierName,$date);
-		return $totalInvoicesPlusVatAmount - $totalMoneyReceivedAmountPlusWithhold;
-		
-	}
 
-	
-	public static function getTotalMoneyAmountPlusWithhold( string $currencyName, string $supplierName,string $date)
-	{
-		
-		return DB::table(self::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME)
-		->where('company_id',getCurrentCompanyId())
-		->where(self::CLIENT_NAME_COLUMN_NAME,$supplierName)
-		->where('currency',$currencyName)
-		->where(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,'<=',$date)
-		->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
-	}
+
+
 	public static function formatForStatementReport(Collection $supplierInvoices,string $supplierName,string $startDate,string $endDate,string $currency){
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
 			$firstSupplierInvoice = $supplierInvoices->first() ?: null; 
-			$oneDayBeforeStartDate = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$beginningBalance = $firstSupplierInvoice ? $supplierInvoices->first()->getBeginningBalanceUntil($currency,$supplierName,$oneDayBeforeStartDate) : 0; 
+			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
+			$beginningBalance = self::getBeginningBalanceUntil($currency,$supplierName,$oneDayBeforeStartDate,$startDate) ;
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
