@@ -190,6 +190,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	
 	
 			$('.js-append-to').empty()
+
 			for (var i = 0; i < res.invoices.length; i++) {
 				var invoiceNumber = res.invoices[i].invoice_number
 				var currency = res.invoices[i].currency

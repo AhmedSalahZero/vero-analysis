@@ -327,9 +327,10 @@ class MoneyReceivedController
 		$customer = CustomerInvoice::find($customerInvoiceId);
 
 		$customerName = $customer->customer_name ;
-		$invoices = CustomerInvoice::where('customer_name',$customerName)->where('company_id',$company->id)
+		$invoices = CustomerInvoice::where('customer_name',$customerName)
+		->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
-		
+	
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}

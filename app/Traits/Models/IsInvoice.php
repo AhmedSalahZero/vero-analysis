@@ -134,7 +134,7 @@ trait IsInvoice
     }
     public function getInvoiceDate()
 	{
-		return $this->invoice_date->format('Y-m-d');
+		return $this->invoice_date ? Carbon::make($this->invoice_date)->format('Y-m-d') : null;
 	}
 	public function getInvoiceDateFormatted()
 	{
