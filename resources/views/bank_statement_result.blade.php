@@ -6,8 +6,15 @@
         width: 5% !important;
         min-width: 5% !important;
         max-width: 5% !important;
+		
     }
-
+	.z-index-6{
+		position:relative;
+		z-index:1;	
+	}
+.mt--30{
+	margin-top:-30px;
+}
 
 
 
@@ -109,7 +116,8 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Bank Statement ['  ) . ' ' . __($currency) . ' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Bank Statement ['  ) . $financialInstitutionName . ' ] [' . $accountTypeName . ' ] [ ' . $accountNumber . ' ] [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
+
 @endsection
 @section('content')
 
@@ -265,8 +273,18 @@
 
 
                 <div class="table-custom-container position-relative  ">
+
+                    <div class="d-flex z-index-6" style="justify-content:right">
+					<a href="#" class="btn active-style btn-icon-sm align-self-center">
+                        <i class="fas fa-book"></i>
+                        {{ __('Withdrawals Settlement Report') }}
+                    </a>
+					</div>
+
                     <div>
-                        <div class="responsive">
+
+
+                        <div class="responsive mt--30">
                             <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                                 <thead>
 
@@ -279,7 +297,11 @@
                                         <th class="view-table-th   header-th  align-middle text-center">
                                             {{ __('Date') }}
                                         </th>
-
+                                        @if(! $isCurrentAccount)
+                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                            {{ __('Limit') }}
+                                        </th>
+                                        @endif
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Beginning Balance') }}
                                         </th>
@@ -296,17 +318,23 @@
                                             {{ __('End Balance') }}
                                         </th>
 
+                                        @if(! $isCurrentAccount)
+                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                            {{ __('Room') }}
+                                        </th>
+                                        @endif
 
-   <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
                                             {{ __('Comment') }}
                                         </th>
 
+                                        @if(! $isCurrentAccount)
 
+                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                            {{ __('Settlement Status') }}
+                                        </th>
 
-
-
-
-
+                                        @endif
 
                                     </tr>
 
@@ -316,16 +344,25 @@
                                         let currentTable = null;
 
                                     </script>
-{{-- {{ dd($results) }} --}}
                                     @foreach($results as $index=>$modelAsStdClass)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y') }}</td>
+                                        @if(! $isCurrentAccount)
+                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->limit) }}</td>
+                                        @endif
                                         <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($modelAsStdClass->beginning_balance) }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>
                                         <td class="sub-text-bg text-center max-w-currency">{{ number_format($modelAsStdClass->credit) }}</td>
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->end_balance) }}</td>
+                                        @if(! $isCurrentAccount)
+                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->room) }}</td>
+                                        @endif
                                         <td class="sub-text-bg text-center max-w-amount">{{ __('Comment ') }}</td>
+
+                                        @if(! $isCurrentAccount)
+                                        <td class="sub-text-bg text-center max-w-amount">{{ __('Settlement Status To Be Here') }}</td>
+                                        @endif
 
 
                                     </tr>

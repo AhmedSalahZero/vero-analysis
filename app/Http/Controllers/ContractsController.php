@@ -36,6 +36,7 @@ class ContractsController
 					$items[$contractId]['sub_items'][$order->id]['id'] =$order->id ;
 				}
 		}
+		
         return view('contracts.index',compact('company','items','type','customerOrSupplierContractsText'));
     }
 	public function create(Request $request,Company $company,string $type)

@@ -487,6 +487,7 @@ class MoneyPaymentController
 		$currencies = DB::table('customer_invoices')
 		->select('currency')
 		->where('company_id',$company->id)
+		->where('currency','!=','')
 		->get()
 		->unique('currency')->pluck('currency','currency');
 		
@@ -572,61 +573,6 @@ class MoneyPaymentController
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE]);
 		
 	}
-	/**
-	 * * تحديد ان الشيك دا تم بالفعل صرفة من البنك ونزل في حسابك
-	 */
-	// public function applyCollection(Company $company,Request $request,MoneyPayment $moneyPayment)
-	// {
-	// 	$moneyPayment->cheque->update([
-	// 		'status'=>Cheque::COLLECTED,
-	// 		'collection_fees'=>$request->get('collection_fees'),
-	// 		'actual_collection_date'=>$request->get('actual_collection_date') 
-	// 	]);
-	// 	$accountType = AccountType::find($moneyPayment->cheque->account_type) ;
-	// 	$paidAmount = $moneyPayment->getReceivedAmount();
-	// 	$receivingDate = $moneyPayment->getReceivingDate();
-	// 	$moneyType = MoneyPayment::CHEQUE;
-	// 	/**
-	// 	 * @var AccountType $accountType ;
-	// 	 */
-	// 	if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-	// 		$cleanOverdraft  = CleanOverdraft::findByAccountNumber($moneyPayment->cheque->account_number);
-	// 		$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$paidAmount);
-	// 	}
-		
-	// 	return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
-	// }
-	
-	// public function sendToSafe(Company $company,Request $request,MoneyPayment $moneyPayment)
-	// {
-	// 	$moneyPayment->cheque->update([
-	// 		'status'=>Cheque::IN_SAFE,
-	// 		'delivery_date'=>null ,
-	// 		'delivery_bank_id'=>null ,
-	// 		'account_type'=>null ,
-	// 		'account_number'=>null ,
-	// 		'account_balance'=>null ,
-	// 		'expected_collection_date'=>null ,
-	// 		'clearance_days'=>null
-	// 	]);
-	// 	return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::CHEQUE])->with('success',__('Cheque Is Returned To Safe'));
-	// }
-	// public function sendToSafeAsRejected(Company $company,Request $request,MoneyPayment $moneyPayment)
-	// {
-		
-	// 	$moneyPayment->cheque->update([
-	// 		'status'=>Cheque::REJECTED,
-	// 		'delivery_date'=>null ,
-	// 		'delivery_bank_id'=>null ,
-	// 		'account_type'=>null ,
-	// 		'account_number'=>null ,
-	// 		'account_balance'=>null ,
-	// 		'expected_collection_date'=>null ,
-	// 		'clearance_days'=>null
-	// 	]);
-	// 	return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::CHEQUE_REJECTED])->with('success',__('Cheque Is Returned To Safe'));
-		
-	// }
 
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);

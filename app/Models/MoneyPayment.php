@@ -345,6 +345,7 @@ class MoneyPayment extends Model
 	}
 	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount )
 	{
+		
 		return $this->cleanOverdraftBankStatement()->create([
 			'type'=>$moneyType ,
 			'clean_overdraft_id'=>$cleanOverdraft->id ,

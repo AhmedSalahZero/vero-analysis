@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PayableCheque extends Model
 {
+
 	const PENDING = 'pending';
 	const PAID = 'paid';
 		 

@@ -13,23 +13,39 @@ class CleanOverdraftBankStatement extends Model
 		'id'
 	];
 	const MONEY_TRANSFER  = 'money-transfer';
-
+	public static function updateNextRows(CleanOverdraftBankStatement $model)
+	{
+		if($model->cleanOverDraft){
+			$model->cleanOverDraft->update([
+				'start_settlement_from_bank_statement_date'=>$model->date
+			]);
+		}
+			
+		DB::table('clean_overdraft_bank_statements')
+		// ->where('id','>=',$model->id)->orderBy('id')
+		->where('date', '>=', $model->date )
+		->orderByRaw('date asc , created_at asc')
+		
+		->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
+			'updated_at'=>now()
+		]);
+		
+	}
 		protected static function booted(): void
 		{
+			static::creating(function(CleanOverdraftBankStatement $model){
+				$model->created_at = now();
+			});
+			
+			static::created(function(CleanOverdraftBankStatement $model){
+				self::updateNextRows($model);
+			});
 			# دي علشان نشغل التريجرز 
 			// mysql
 			// علشان تروح تحدث كل الروز اللي تحتها
 			static::updated(function (CleanOverdraftBankStatement $model) {
 				
-				if($model->cleanOverDraft){
-					$model->cleanOverDraft->update([
-						'start_settlement_from_bank_statement_id'=>$model->id
-					]);
-				}
-					
-				DB::table('clean_overdraft_bank_statements')->where('id','>=',$model->id)->orderBy('id')->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
-					'updated_at'=>now()
-				]);
+				self::updateNextRows($model);
 				
 				$isChanged = $model->isDirty('clean_overdraft_id') ;
 				/**
@@ -48,10 +64,16 @@ class CleanOverdraftBankStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						CleanOverdraft::find($oldCleanOverdraftId)->update([
-							'start_settlement_from_bank_statement_id'=>$id = CleanOverdraftBankStatement::where('clean_overdraft_id',$oldCleanOverdraftId)->where('id','!=',$oldBankStatementId)->first()->id
+							'start_settlement_from_bank_statement_date'=>$date = CleanOverdraftBankStatement::where('clean_overdraft_id',$oldCleanOverdraftId)->where('id','!=',$oldBankStatementId)->first()->date
 						]);
 
-						DB::table('clean_overdraft_bank_statements')->where('id','>=',$id)->orderBy('id')->where('clean_overdraft_id',$oldCleanOverdraftId)->update([
+						DB::table('clean_overdraft_bank_statements')
+						// ->where('id','!=',$model->id)
+						->where('date', '>=', $date)->orderByRaw('date asc , created_at asc')
+						// ->where('id','>=',$id)
+						// ->orderBy('id')
+						
+						->where('clean_overdraft_id',$oldCleanOverdraftId)->update([
 							'updated_at'=>now()
 						]);
 						

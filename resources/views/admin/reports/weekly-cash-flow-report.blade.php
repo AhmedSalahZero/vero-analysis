@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 @section('css')
 <x-styles.commons></x-styles.commons>
+{{-- {{ dd($weeks) }} --}}
 <style>
-
     .bg-lighter ,
     .bg-lighter * 
 	{
@@ -341,7 +341,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 @php
                                 $rowIndex = 0 ;
                                 @endphp
-                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Customers Invoices Under Collection','Customers Checks Under Collection','Sales Forecast Collections','Total Cash Inflow','Payable Checks','Suppliers Payable','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
+                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Customers Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Payable Cheques','Suppliers Invoices','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
                                 @if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due')
                                 @continue ;
                                 @endif
@@ -350,9 +350,16 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 $currentTotal = $customerAging['total'] ?? 0 ;
                                 @endphp
                                 <tr class=" @if($customerName == 'Total Cash Inflow' || $customerName == 'Total Cash Outflow') bg-lighter @else  @endif  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
-                                    <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif</td>
+                                    <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
                                     <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
-                                    <td class="  sub-numeric-bg text-center editable-date"></td>
+                                    <td class="  sub-numeric-bg text-center editable-date"> 
+										@if($customerName == 'Customers Invoices')
+										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('Past Due') }}</button>
+                                                <x-modal.due-invoices :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+										
+										@endif 
+									
+									 </td>
 									
                                     @foreach($weeks as $weekAndYear => $week)
                                     @php
@@ -639,7 +646,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
             currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
         }
     })
-
+ $(document).on('click', '.js-show-customer-due-invoices-modal', function(e) {
+        e.preventDefault();
+        $(this).closest('td').find('.modal-item-js').modal('show')
+    })
 </script>
 
 @endsection

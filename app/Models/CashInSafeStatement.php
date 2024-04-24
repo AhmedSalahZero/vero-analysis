@@ -16,8 +16,17 @@ class CashInSafeStatement extends Model
         // دي علشان نشغل التريجرز
         // mysql
         // علشان تروح تحدث كل الروز اللي تحتها
+		static::creating(function(CashInSafeStatement $model){
+			$model->created_at = now();
+		});
+		static::created(function (CashInSafeStatement $model) {
+            DB::table('cash_in_safe_statements')->where('id','!=',$model->id)->where('date', '>=', $model->date)->orderByRaw('date asc , created_at asc')->where('company_id', $model->company_id)->update([
+                'updated_at' => now()
+            ]);
+        });
+		
         static::updated(function (CashInSafeStatement $model) {
-            DB::table('cash_in_safe_statements')->where('id', '>=', $model->id)->orderBy('id')->where('company_id', $model->company_id)->update([
+            DB::table('cash_in_safe_statements')->where('id','!=',$model->id)->where('date', '>=', $model->date)->orderByRaw('date asc , created_at asc')->where('company_id', $model->company_id)->update([
                 'updated_at' => now()
             ]);
         });

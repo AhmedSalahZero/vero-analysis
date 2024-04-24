@@ -14,6 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
+	
     use Notifiable,HasRoles,InteractsWithMedia;
 	protected $connection = 'mysql';
     protected $fillable = [

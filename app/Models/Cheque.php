@@ -228,6 +228,7 @@ class Cheque extends Model
 	public function chequeExpectedCollectionDateFormatted()
 	{
 		$date  = $this->chequeExpectedCollectionDate() ;
+		// dd($this);
 		return $date ? Carbon::make($date)->format('d-m-Y') : null ;
 	}
 	public function chequeActualCollectionDate()
