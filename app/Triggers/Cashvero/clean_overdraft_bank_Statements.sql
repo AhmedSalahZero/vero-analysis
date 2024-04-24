@@ -12,14 +12,18 @@ begin
 	 declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 		if new.id then 
 		-- في حاله التعديل
-		select date,end_balance into _previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and id < new.id order by id desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and date <= new.date  and id != new.id order by date desc , created_at desc limit 1 ;
 		set _count_all_rows = 1 ;
+				insert into debugging (message) values (concat('salah',_previous_date,'--',_last_end_balance));
 		else
-		-- ف
-		select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id order by id desc limit 1 ;
-		select  count(*) into _count_all_rows from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id order by id desc limit 1 ;
+		-- في حالة الانشاء
+		set new.created_at = CURRENT_TIMESTAMP;
+		select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP ) order by date desc , created_at desc limit 1 ;
+		select  count(*) into _count_all_rows from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP ) order by date desc , created_at desc limit 1 ;
+		insert into debugging (message) values (concat('salah',_previous_date,'--',_last_end_balance));
 		end if;
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
+	 insert into debugging (message) values (concat('beg = ' , new.beginning_balance ));
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
     set new.room = new.limit +  new.end_balance ;
 	set new.is_debit = if(new.debit > 0 , 1 , 0);
@@ -62,7 +66,7 @@ delimiter ;
 drop trigger if exists  refresh_calculation_before_update ;
 drop procedure if exists resettlement_clean_overdraft_from ;
 delimiter // 
-create procedure resettlement_clean_overdraft_from(in _clean_overdraft_bank_statement_to_start_from integer , in _clean_overdraft_id integer )
+create procedure resettlement_clean_overdraft_from(in _clean_overdraft_bank_statement_to_start_from date , in _clean_overdraft_id integer )
 begin 
 	declare i integer default  0 ;
 	declare _current_bank_statement_id integer default 0 ;
@@ -73,11 +77,11 @@ begin
 	declare _current_date date default null ;
 	declare _bank_statements_debit_greater_than_or_equal_current_item_length integer default 0 ; 
 
-	 select count(_bank_statements_debit_greater_than_or_equal_current_item_length) into _bank_statements_debit_greater_than_or_equal_current_item_length from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and id >= _clean_overdraft_bank_statement_to_start_from   ;
+	 select count(_bank_statements_debit_greater_than_or_equal_current_item_length) into _bank_statements_debit_greater_than_or_equal_current_item_length from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and date >= _clean_overdraft_bank_statement_to_start_from   ;
 
 	if _bank_statements_debit_greater_than_or_equal_current_item_length > 0 then 
 		repeat
-			 select id , clean_overdraft_id,debit,credit,company_id,date into _current_bank_statement_id , _current_clean_overdraft_id,_current_debit,_current_credit,_current_company_id,_current_date from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and id >= _clean_overdraft_bank_statement_to_start_from order by id asc limit i , 1 ;
+			 select id , clean_overdraft_id,debit,credit,company_id,date into _current_bank_statement_id , _current_clean_overdraft_id,_current_debit,_current_credit,_current_company_id,_current_date from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and date >= _clean_overdraft_bank_statement_to_start_from order by date asc , created_at asc limit i , 1 ;
 
 			call start_settlement_process(_current_bank_statement_id , _current_clean_overdraft_id , _current_debit  , _current_credit , _current_company_id , _current_date);
 			set i = i + 1 ; 
@@ -142,7 +146,7 @@ create  trigger refresh_calculation_before_update before update on `clean_overdr
 begin 
 	-- الكود دا نفس الكود اللي في ال
 	-- before insert 
-	-- ما عدا #REMEMBER _last_bank_statement_id  , _bank_statement_start_from_id
+	-- ما عدا #REMEMBER _last_bank_statement_id  , _bank_statement_start_from_date
 	-- ومن اول ال
 	-- call reverse_clean_overdraft_settlements
 	-- فا لو عدلت ال
@@ -160,23 +164,24 @@ begin
 		declare _i integer default 0 ;
 		declare _bank_statements_greater_than_current_one_length integer default 0 ;
 		
-		declare _last_bank_statement_id integer default 0 ;
+		declare _last_bank_statement_date date default null ;
 			 declare _current_interest_amount decimal(14,2) default 0;
 			  declare _largest_end_balance decimal(14,2) default 0;
    	declare _highest_debt_balance_rate decimal(5,2) default 0 ;
-		declare _bank_statement_start_from_id integer default 0 ;
+		declare _bank_statement_start_from_date date default null ;
 
 		declare interest_type_text varchar(100) default 'interest';
 	 declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 		
 		if new.id then 
 		-- في حاله التعديل
-		select date,end_balance into _previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and id < new.id order by id desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and date <= new.date and id != new.id order by date desc , created_at desc limit 1 ;
 		set _count_all_rows =1 ;
 		else
 		-- في حاله الانشاء
-		select date , end_balance into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id order by id desc limit 1 ;
-		select count(*) into _count_all_rows  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id order by id desc limit 1 ;
+		set new.created_at = CURRENT_TIMESTAMP;
+		select date , end_balance into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP ) order by date desc , created_at desc limit 1 ;
+		select count(*) into _count_all_rows  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id order by date desc , created_at desc  limit 1 ;
 		end if;
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
@@ -222,14 +227,11 @@ begin
 	 
 	 -- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 	 -- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
-	 select id into _last_bank_statement_id from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by id desc limit 1 ;
+	 select date into _last_bank_statement_date from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by date desc , created_at desc limit 1 ;
 		-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
-	 if(_last_bank_statement_id = new.id) then 		
-			select start_settlement_from_bank_statement_id into _bank_statement_start_from_id from clean_overdrafts where id = new.clean_overdraft_id;
-	
-	 		 call resettlement_clean_overdraft_from(_bank_statement_start_from_id,new.clean_overdraft_id);
-	
-		 
+	 if(_last_bank_statement_date = new.date) then 		
+			select start_settlement_from_bank_statement_date into _bank_statement_start_from_date from clean_overdrafts where id = new.clean_overdraft_id;
+	 		 call resettlement_clean_overdraft_from(_bank_statement_start_from_date,new.clean_overdraft_id);
 	 end if;
 	 
 	 
@@ -246,7 +248,6 @@ begin
 				select highest_debt_balance_rate into _highest_debt_balance_rate from clean_overdrafts where id = new.clean_overdraft_id  ;
 				if new.type = interest_type_text then 
 				-- للفايدة الخاصة باخر الشهر
-				insert into debugging (message) values(concat(interest_type_text,'---',_current_interest_amount));
 					set new.credit = _current_interest_amount ;
 				elseif new.type = highest_debit_balance_text then 
 				  -- حساب ال highest debit balance
@@ -321,8 +322,6 @@ begin
 			-- بتاعته بصفر لهذا العنصر وقتها حدثه .. ودا بيحصل لما بنعمل 
 			-- resettlement ب
 			-- اي بعد التحديث .. ولو مش موجود يبقي احنا في حاله الانشاء يبقي ضيف عنصر جديد
-			
-				
 		 
 			if (select exists(select * from clean_overdraft_settlements where clean_overdraft_withdrawal_id = _clean_overdraft_withdrawal_id and settlement_amount = 0 and clean_overdraft_bank_statement_id = _bank_statement_id  )) then
 			update clean_overdraft_settlements set settlement_amount = _current_settlement_amount where clean_overdraft_withdrawal_id = _clean_overdraft_withdrawal_id and clean_overdraft_bank_statement_id = _bank_statement_id and settlement_amount = 0 order by id asc limit 1;

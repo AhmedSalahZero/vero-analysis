@@ -510,6 +510,7 @@ class MoneyReceivedController
 		$currencies = DB::table('customer_invoices')
 		->select('currency')
 		->where('company_id',$company->id)
+		->where('currency','!=','')
 		->get()
 		->unique('currency')->pluck('currency','currency');
 		$viewName = $moneyReceived->isDownPayment()  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
@@ -588,9 +589,6 @@ class MoneyReceivedController
 		foreach($moneyReceivedIds as $moneyReceivedId){
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
-			
-			
-			
 			$moneyReceived->cheque->update($data);
 		}
 		if($request->ajax()){

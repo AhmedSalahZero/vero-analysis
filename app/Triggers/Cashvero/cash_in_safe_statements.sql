@@ -7,17 +7,20 @@ begin
 		declare _count_all_rows integer default 0 ; 
 		if new.id then 
 		-- في حاله التعديل
-		select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency and id < new.id order by id desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency and branch_id = new.branch_id and id != new.id and date <= new.date and id != new.id  order by date desc , created_at desc limit 1 ;
 		set _count_all_rows = 1 ;
 		else
-		-- ف
-		select date , end_balance  into _previous_date,_last_end_balance  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency  order by id desc limit 1 ;
-		select  count(*) into _count_all_rows from cash_in_safe_statements where company_id = new.company_id  and currency = new.currency  order by id desc limit 1 ;
+		-- في حالة الانشاء
+		set new.created_at = CURRENT_TIMESTAMP;
+		select date , end_balance  into _previous_date,_last_end_balance  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency and branch_id = new.branch_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by date desc , created_at desc limit 1 ;
+		select  count(*) into _count_all_rows from cash_in_safe_statements where company_id = new.company_id and currency = new.currency and branch_id = new.branch_id and date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by date desc , created_at desc limit 1 ;
 		end if;
+		
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 	set new.is_debit = if(new.debit > 0 , 1 , 0);
 	set new.is_credit = if(new.debit > 0 , 0 , 1);
+	
 
 end //
 delimiter ; 
@@ -38,12 +41,13 @@ begin
 		 
 		if new.id then 
 		-- في حاله التعديل
-		select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency  and id < new.id order by id desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency and date <= new.date   and id != new.id order by date desc , created_at desc limit 1 ;
 		set _count_all_rows =1 ;
 		else
 		-- في حاله الانشاء
-		select date , end_balance into _previous_date,_last_end_balance  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency  order by id desc limit 1 ;
-		select count(*) into _count_all_rows  from cash_in_safe_statements where company_id = new.company_id and currency = new.currency  order by id desc limit 1 ;
+		set new.created_at = CURRENT_TIMESTAMP;
+		select date , end_balance into _previous_date,_last_end_balance  from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and   currency = new.currency and date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP ) order by date desc , created_at desc limit 1 ;
+		select count(*) into _count_all_rows  from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency  and date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP ) order by date desc , created_at desc limit 1 ;
 		end if;
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 

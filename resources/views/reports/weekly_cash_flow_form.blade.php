@@ -28,7 +28,7 @@
 
                     <div class="form-group row">
 					
-					 <div class="col-md-4">
+					 <div class="col-md-3">
                             <label>{{ __('Start Date') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="start_date">
@@ -38,25 +38,46 @@
                         </div>
 						
 						
-							 <div class="col-md-4">
+							 <div class="col-md-3">
                             <label>{{ __('End Date') }}</span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="end_date">
                                     <input type="date" class="form-control" name="end_date" value="{{ now() }}">
                                 </div>
                             </div>
+							
                         </div>
 						
+						 <div class="col-md-3">
+        <label>{{__('Select Currency')}} <span class="required">*</span></label>
+
+        <div class="kt-input-icon">
+            <div class="input-group date">
+                <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                    <option value="" selected>{{__('Select')}}</option>
+                    @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+								@php
+									$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
+									$selected = $selected ? 'selected':'';
+								@endphp
+                                <option  {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+	
 						
 						
-						<div class="col-md-4">
+						
+						{{-- <div class="col-md-4">
                             <label>{{ __('Cash Beginning Balance') }}  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="sales_persons">
                                    <input type="text" class="only-greater-than-zero-allowed form-control" name="cash_beginning_balance" value="0" >
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 						
 
                  
@@ -64,7 +85,6 @@
 						
 						
 						
-                <x-submitting />
 						
 						
 						
@@ -73,6 +93,7 @@
                         
 						
                     </div>
+                <x-submitting />
 
                 </div>
                 {{-- @dd($name_of_selector_label) --}}

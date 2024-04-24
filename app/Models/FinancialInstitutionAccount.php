@@ -120,5 +120,4 @@ class FinancialInstitutionAccount extends Model
 		return $this->hasMany(CurrentAccountBankStatement::class,'financial_institution_account_id','id');
 	}
 	
-	
 }

@@ -330,7 +330,6 @@ use App\Models\MoneyReceived ;
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-active js-show-execution-percentage-modal">{{ __('Insert Execution Details') }}</button>
                                                 <x-modal.execution-percentage :subModel="isset($salesOrder) ? $salesOrder : null " :subModel="isset($salesOrder) ? $salesOrder : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.execution-percentage>
-
                                             </td>
 
 

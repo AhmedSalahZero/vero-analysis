@@ -210,7 +210,11 @@ use App\Models\CustomerInvoice;
                             <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                 <option value="" selected>{{__('Select')}}</option>
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-                                <option {{ isset($model) && $model->getCurrency()  == $currencyId ? 'selected': (strtolower($currentName) == strtolower($company->getMainFunctionalCurrency()) ? 'selected':'' ) }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+								 @php
+								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
+									$selected = $selected ? 'selected':'';
+							   @endphp
+                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
                             </select>
                         </div>

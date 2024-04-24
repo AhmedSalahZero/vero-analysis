@@ -16,6 +16,11 @@ class CurrentAccountBankStatement extends Model
         // دي علشان نشغل التريجرز
         // mysql
         // علشان تروح تحدث كل الروز اللي تحتها
+		
+		static::creating(function(CurrentAccountBankStatement $model){
+			$model->created_at = now();
+		});
+		
         static::updated(function (CurrentAccountBankStatement $model) {
             DB::table('current_account_bank_statements')->where('id', '>=', $model->id)->orderBy('id')->where('company_id', $model->company_id)->update([
                 'updated_at' => now()

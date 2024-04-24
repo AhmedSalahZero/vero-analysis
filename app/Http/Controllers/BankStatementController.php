@@ -32,13 +32,16 @@ class BankStatementController
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
         $financialInstitutionId = $request->get('financial_institution_id');
+		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+		$financialInstitutionName = $financialInstitution->getName();
         $accountTypeId = $request->get('account_type');
         $accountNumber = $request->get('account_number');
         $currencyName = $request->get('currency');
 		$results = [];
 		$accountType = AccountType::find($accountTypeId);
-
-		if($accountType->isCurrentAccount()){
+		$accountTypeName = $accountType->getName() ;
+		$isCurrentAccount = $accountType->isCurrentAccount() ;
+		if($isCurrentAccount){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 			$results = DB::table('current_account_bank_statements')
 			->where('date', '>=', $startDate)
@@ -49,8 +52,9 @@ class BankStatementController
 			->where('currency',$currencyName)
 			->where('current_account_bank_statements.date', '>=', $startDate)
 			->where('current_account_bank_statements.date', '<', $endDate)
-			->orderBy('current_account_bank_statements.id', 'asc')
+			->orderByRaw('current_account_bank_statements.date asc , current_account_bank_statements.created_at asc')
 			->get();
+			
 			
 		}
 		elseif($accountType->isCleanOverDraftAccount()){
@@ -62,16 +66,27 @@ class BankStatementController
 				 ->where('clean_overdraft_id',$cleanOverdraft->id)
 				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
 				 ->where('clean_overdrafts.currency','=',$currencyName)
-				 ->orderBy('clean_overdraft_bank_statements.id')
+				 ->orderByRaw('date asc , created_at asc')
 				 ->get();
+			
+			
+			// $results = DB::table('clean_overdraft_bank_statements')
+		
+			// 	 ->get();
+				 
 		}
+
         if (!count($results)) {
             return redirect()->back()->with('fail', __('No Data Found'));
         }
 
         return view('bank_statement_result', [
             'results' => $results,
-            'currency' => $currencyName
+            'currency' => $currencyName,
+			'isCurrentAccount'=>$isCurrentAccount,
+			'financialInstitutionName'=>$financialInstitutionName,
+			'accountTypeName'=>$accountTypeName,
+			'accountNumber'=>$accountNumber
         ]);
     }
 }

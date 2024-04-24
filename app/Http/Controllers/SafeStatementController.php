@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Company;
-use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 
@@ -34,7 +32,7 @@ class SafeStatementController
 		->where('branch_id',$branchId)
 		->where('date','>=',$startDate)
 		->where('date','<=',$endDate)
-		->orderBy('id','asc')
+		->orderByRaw('date asc , created_at asc')
 		->get();
 if(!count($results)){
 	return redirect()
