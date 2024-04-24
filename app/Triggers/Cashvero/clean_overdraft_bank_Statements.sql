@@ -227,6 +227,7 @@ begin
 	 
 	 -- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 	 -- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
+	-- select date into _last_bank_statement_date from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by date desc , created_at desc limit 1 ;
 	 select date into _last_bank_statement_date from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by date desc , created_at desc limit 1 ;
 		-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
 	 if(_last_bank_statement_date = new.date) then 		

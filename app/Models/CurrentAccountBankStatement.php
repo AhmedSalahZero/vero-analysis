@@ -21,8 +21,19 @@ class CurrentAccountBankStatement extends Model
 			$model->created_at = now();
 		});
 		
+        static::created(function (CurrentAccountBankStatement $model) {
+            DB::table('current_account_bank_statements')
+            ->where('id','!=',$model->id)->where('date', '>=', $model->date)->orderByRaw('date asc , created_at asc')
+           ->orderBy('id')->where('company_id', $model->company_id)->update([
+                'updated_at' => now()
+            ]);
+        });
+
         static::updated(function (CurrentAccountBankStatement $model) {
-            DB::table('current_account_bank_statements')->where('id', '>=', $model->id)->orderBy('id')->where('company_id', $model->company_id)->update([
+            DB::table('current_account_bank_statements')
+            ->where('id','!=',$model->id)->where('date', '>=', $model->date)->orderByRaw('date asc , created_at asc')
+
+           ->orderBy('id')->where('company_id', $model->company_id)->update([
                 'updated_at' => now()
             ]);
         });
