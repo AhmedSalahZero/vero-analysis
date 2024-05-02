@@ -83,7 +83,60 @@ use App\Models\CustomerInvoice;
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-md-2">
+			
+			<div class="col-md-3">
+                    <label>{{__('Receiving Date')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="la la-calendar-check-o"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				
+				   <div class="col-md-2">
+                    <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                                <option value="" selected>{{__('Select')}}</option>
+                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+								 @php
+								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
+									$selected = $selected ? 'selected':'';
+							   @endphp
+                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+              
+
+                <div class="col-md-5">
+
+                    <label>{{__('Customer Name')}} <span class="required">*</span></label>
+                    <div class="kt-input-icon">
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers">
+                                    <option value="" selected>{{__('Select')}}</option>
+                                    {{-- {{  }} --}}
+                                    @foreach($customerInvoices as $customerInvoiceId => $customerName)
+                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerInvoiceId }}">{{$customerName}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+             
+  <div class="col-md-2">
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -184,56 +237,7 @@ use App\Models\CustomerInvoice;
 
 
                 </div>
-
-                <div class="col-md-5">
-
-                    <label>{{__('Customer Name')}} <span class="required">*</span></label>
-                    <div class="kt-input-icon">
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers">
-                                    <option value="" selected>{{__('Select')}}</option>
-                                    {{-- {{  }} --}}
-                                    @foreach($customerInvoices as $customerInvoiceId => $customerName)
-                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerInvoiceId }}">{{$customerName}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-2">
-                    <label>{{__('Select Currency')}} <span class="required">*</span></label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
-                                <option value="" selected>{{__('Select')}}</option>
-                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-								 @php
-								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-							   @endphp
-                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <label>{{__('Receiving Date')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="la la-calendar-check-o"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </div>

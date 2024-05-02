@@ -295,7 +295,7 @@
 
                                 <div class="" style="width:100%">
 
-                                    <div id="m_repeater_0" class="cash-and-banks-repeater">
+                                    <div id="m_repeater_1" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
                                             <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
                                                 @if(isset($model) && count($model->outstandingBreakdowns) )
@@ -438,7 +438,7 @@
         }
     })
 
-    $('#m_repeater_0').repeater({
+    $('#m_repeater_1').repeater({
         initEmpty: false
         , isFirstItemUndeletable: true
         , defaultValues: {

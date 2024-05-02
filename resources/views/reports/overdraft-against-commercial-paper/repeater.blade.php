@@ -30,7 +30,7 @@
                         <label>{{__('Select Customer')}} <span class="required">*</span></label>
                         <div class="input-group">
                             <select @if($isRepeater) name="customer_name" @else name="infos[0][customer_name]" @endif class="form-control repeater-select">
-                                <option selected>{{__('Select')}}</option>
+                                <option selected >{{__('Any Customer')}}</option>
                                 @foreach($customers as $customerName )
                                 <option value="{{ $customerName  }}" @if(isset($infos) && $infos->getCustomerName() == $customerName ) selected @endif > {{ $customerName }}</option>
                                 @endforeach

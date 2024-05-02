@@ -793,6 +793,7 @@ namespace App\Models{
  * @property string $interest_amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $full_date دا هنستخدمة علشان نرتب بيه ونجيب ال الرو السابق بناء علي التاريخ و الوقت
  * @property-read \App\Models\CleanOverdraft $cleanOverDraft
  * @property-read \App\Models\MoneyPayment|null $moneyPayment
  * @property-read \App\Models\MoneyReceived $moneyReceived
@@ -810,6 +811,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereDaysCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereEndBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereFullDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereInterestAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraftBankStatement whereInterestRateAnnually($value)

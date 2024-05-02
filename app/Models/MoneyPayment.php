@@ -401,6 +401,18 @@ class MoneyPayment extends Model
 	{
 		return $this->contract_id;
 	}
+	public function getCurrentStatement()
+	{
+		if($this->cleanOverdraftBankStatement){
+			return $this->cleanOverdraftBankStatement;
+		}	
+		if($this->cashInSafeStatement){
+			return $this->cashInSafeStatement ;
+		}
+		if($this->currentAccountBankStatement){
+			return $this->currentAccountBankStatement ;
+		}
+	}
 	public function deleteRelations()
 	{
 		$oldType = $this->getType();
@@ -409,9 +421,10 @@ class MoneyPayment extends Model
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
-		$this->cleanOverdraftBankStatement ? $this->cleanOverdraftBankStatement->delete() : null ;
-		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
-		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
+		$currentStatement = $this->getCurrentStatement() ;
+		if($currentStatement){
+			$currentStatement->delete();
+		}
 	}
 	
 }
