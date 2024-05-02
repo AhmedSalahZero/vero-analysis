@@ -15,7 +15,7 @@ class RemoveColumnToCleanOverdraftsTable extends Migration
     public function up()
     {
         Schema::table('clean_overdrafts', function (Blueprint $table) {
-			$table->removeColumn('start_settlement_from_bank_statement_date');
+			$table->removeColumn('start_settlement_from_bank_statement_date')->change();
         });
     }
 

@@ -161,7 +161,8 @@
 
                             <div class="col-md-2">
                                 <label class="label">{{ __('LG Type') }}</label>
-                                <input class="form-control" type="text" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lg_type]">
+                                <input class="form-control" type="hidden" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lg_type]">
+                                <input class="form-control" type="text" readonly value="{{ $nameFormatted }}" >
                             </div>
 
 
