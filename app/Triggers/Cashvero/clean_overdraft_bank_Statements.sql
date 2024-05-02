@@ -360,12 +360,21 @@
 	create  trigger insert_into_overdraft_withdrawal_after_insert after insert on `clean_overdraft_bank_statements` for each row 
 	begin 
 		declare _date_for_settlement date default new.date ;
+		declare _test_counter integer default 0 ;
 		if  new.type = 'payable_cheque'
 		then 
-	--	insert into debugging (message) values (concat('from if statement if type ' , new.type));
+		select count(*) into  _test_counter from payable_cheques join money_payments on 
+			money_payments.id = payable_cheques.money_payment_id 
+		where payable_cheques.money_payment_id = money_payments.id
+		and payable_cheques.money_payment_id = new.money_payment_id ;
+		insert into debugging (message) values (concat('counter ' , _test_counter));
+		
+		
 		select actual_payment_date into  _date_for_settlement from payable_cheques join money_payments on 
 			money_payments.id = payable_cheques.money_payment_id 
-		where payable_cheques.money_payment_id = money_payments.id;
+		where payable_cheques.money_payment_id = money_payments.id
+		and payable_cheques.money_payment_id = new.money_payment_id ; 
+	
 		end if  ;
 		-- set _date_for_settlement = if(payable_cheque = 'payable_cheque' , new , new. )
 		

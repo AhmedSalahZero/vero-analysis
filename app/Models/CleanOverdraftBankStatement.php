@@ -85,6 +85,7 @@ class CleanOverdraftBankStatement extends Model
 						// ]);
 
 						DB::table('clean_overdraft_bank_statements')
+						->where('full_date','>=',$model->date)
 						->orderByRaw('full_date asc')
 						->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
 							'updated_at'=>now()
