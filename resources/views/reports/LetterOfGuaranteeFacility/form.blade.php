@@ -109,7 +109,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-							
+
                                 <x-form.date :label="__('Contract Start Date')" :required="true" :model="$model??null" :name="'contract_start_date'" :placeholder="__('Select Contract Start Date')"></x-form.date>
                             </div>
                             <div class="col-md-2">
@@ -117,7 +117,7 @@
                             </div>
 
 
-                              <div class="col-md-2 ">
+                            <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                             </div>
 
@@ -125,7 +125,7 @@
                                 <label>{{__('Select Currency')}} <span class="required">*</span></label>
                                 <div class="input-group">
                                     <select name="currency" class="form-control repeater-select">
-                                        <option selected>{{__('Select')}}</option>
+                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
                                         @endforeach
@@ -139,7 +139,7 @@
                     </div>
                 </div>
 
-                    <div class="kt-portlet ">
+                <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
@@ -149,63 +149,85 @@
                     </div>
                     <div class="kt-portlet__body">
 
+                        @php
+                        $index = 0 ;
+                        @endphp
+
+                        @foreach(getLgTypes() as $name => $nameFormatted )
+                        @php
+                        $termAndCondition = isset($model) && isset($model->termAndConditions[$index]) ? $model->termAndConditions[$index] : null;
+                        @endphp
                         <div class="form-group row" style="flex:1;">
-                            <div class="col-md-12 mt-3">
 
-
-
-                                <div class="" style="width:100%;overflow:hidden">
-
-                                    <div id="m_repeater_0" class="cash-and-banks-repeater">
-                                        <div class="form-group  m-form__group row  ">
-                                            <div data-repeater-list="termAndConditions" class="col-md-12">
-                                                {{-- {{ dd($model->lendingInformation) }} --}}
-                                                @if(isset($model) )
-                                                @foreach($model->termAndConditions as $termAndCondition)
-                                                @include('reports.LetterOfGuaranteeFacility.repeater' , [
-                                                'termAndCondition'=>$termAndCondition,
-                                  
-
-                                                ])
-                                                @endforeach
-                                                @else
-                                                @include('reports.LetterOfGuaranteeFacility.repeater' , [
-                                          
-                                                ])
-                                                @endif
-
-
-
-
-
-
-                                            </div>
-                                        </div>
-                                        <div class="m-form__group form-group row">
-
-                                            <div class="col-md-6">
-                                                <div data-repeater-create="" class="btn btn btn-sm btn-success m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
-                                                    <span>
-                                                        <i class="fa fa-plus"> </i>
-                                                        <span>
-                                                            {{ __('Add') }}
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-
-
+                            <div class="col-md-2">
+                                <label class="label">{{ __('LG Type') }}</label>
+                                <input class="form-control" type="text" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lg_type]">
                             </div>
 
-                        </div>
 
+
+                            <div class="col-2">
+                                <label class="form-label font-weight-bold ">{{ __('Outstanding Balance') }}
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input placeholder="{{ __('Outstanding Balance') }}" type="text" class="form-control only-greater-than-zero-allowed" name="termAndConditions[{{ $index }}][outstanding_balance]" value="{{ isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0) }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <x-form.date :label="__('Outstanding Date')" :required="true" :model="$termAndCondition??null" :name="'termAndConditions['.$index.'][outstanding_date]'" :placeholder="__('Select Outstanding Date')"></x-form.date>
+                            </div>
+
+
+
+
+                            <div class="col-2">
+                                <label class="form-label font-weight-bold">{{ __('Cash Cover Rate (%) *') }}
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][cash_cover_rate]" type="text" class="form-control only-percentage-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->cash_cover_rate : old('cash_cover_rate',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <label class="form-label font-weight-bold">{{ __('Commission Rate (%) *') }}
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][commission_rate]" type="text" class="form-control only-percentage-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->commission_rate : old('commission_rate',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-lg-2">
+                                <label>{{__('Commission Interval')}} <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <select name="termAndConditions[{{ $index }}][commission_interval]" class="form-control repeater-select">
+                                        <option selected>{{__('Select')}}</option>
+                                        @foreach(getCommissionInterval() as $name => $nameFormatted )
+                                        {{ logger($name) }}
+                                        <option value="{{ $name  }}" @if(isset($termAndCondition) && ($termAndCondition->getCommissionInterval() == $name ) ) selected @elseif(!isset($termAndCondition) && $name == 'monthly') selected @endif > {{ $nameFormatted }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        @php
+                        $index = $index + 1 ;
+                        @endphp
+
+                        @endforeach
 
 
 
@@ -214,7 +236,7 @@
                     </div>
                 </div>
 
-              
+
                 <x-submitting />
             </form>
 

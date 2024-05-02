@@ -237,7 +237,8 @@ $('select.ajax-get-sales-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
-		total += parseFloat($(input).val())
+		var currentVal = $(input).val() ? $(input).val() : 0  ;
+		total += parseFloat(currentVal)
 	})
 	const currentType = $('#type').val()
 	const receivedAmount = $('.js-' + currentType + '-received-amount').val()

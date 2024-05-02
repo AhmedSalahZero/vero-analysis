@@ -83,7 +83,59 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-md-2">
+                 <div class="col-md-3">
+                    <label>{{__('Payment Date')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="la la-calendar-check-o"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				
+			 <div class="col-md-2">
+                    <label>{{__('Select Currency')}} <span class="required">*</span></label>
+
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                                <option value="" selected>{{__('Select')}}</option>
+                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                @php
+                                $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                $selected = $selected ? 'selected':'';
+                                @endphp
+                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+
+                    <label>{{__('Supplier Name')}} <span class="required">*</span></label>
+                    <div class="kt-input-icon">
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers">
+                                    <option value="" selected>{{__('Select')}}</option>
+                                    {{-- {{  }} --}}
+                                    @foreach($supplierInvoices as $supplierInvoiceId => $supplierName)
+                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierInvoiceId }}">{{$supplierName}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+             	<div class="col-md-2">
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -96,146 +148,38 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    {{-- <div class="modal fade" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+
+                    <div class="modal fade" id="js-choose-delivery-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Select Bank') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Add Branch') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" id="js-delivery-branch-names" class="form-control">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                    <button id="js-append-delivery-branch-name-if-not-exist" type="button" class="btn btn-primary">{{ __('Save') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <select js-when-change-trigger-change-account-type data-financial-institution-id name="from_bank_id" class="form-control ">
-                        @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                        <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
-                        @endforeach
-                    </select>
+
+
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                    <button id="js-append-bank-name-if-not-exist" type="button" class="btn btn-primary">{{ __('Save') }}</button>
-                </div>
+			 
+			   
+
+               
             </div>
         </div>
-    </div> --}}
-
-
-
-
-
-
-
-    {{-- <div class="modal fade" id="js-choose-delivery-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Select Delivery Bank') }}</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-    </div>
-    <div class="modal-body">
-        <select name="delivery_bank_id" class="form-control ">
-            @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-            <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
-            @endforeach
-        </select>
-
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-        <button id="js-append-delivery-bank-name-if-not-exist" type="button" class="btn btn-primary">{{ __('Save') }}</button>
-    </div>
-    </div>
-    </div>
-    </div> --}}
-
-
-
-
-
-
-    <div class="modal fade" id="js-choose-delivery-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Add Branch') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" id="js-delivery-branch-names" class="form-control">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                    <button id="js-append-delivery-branch-name-if-not-exist" type="button" class="btn btn-primary">{{ __('Save') }}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    </div>
-
-    <div class="col-md-5">
-
-        <label>{{__('Supplier Name')}} <span class="required">*</span></label>
-        <div class="kt-input-icon">
-            <div class="kt-input-icon">
-                <div class="input-group date">
-                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers">
-                        <option value="" selected>{{__('Select')}}</option>
-                        {{-- {{  }} --}}
-                        @foreach($supplierInvoices as $supplierInvoiceId => $supplierName)
-                        <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierInvoiceId }}">{{$supplierName}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="col-md-2">
-        <label>{{__('Select Currency')}} <span class="required">*</span></label>
-
-        <div class="kt-input-icon">
-            <div class="input-group date">
-                <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
-                    <option value="" selected>{{__('Select')}}</option>
-                    @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-								@php
-									$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-								@endphp
-                                <option  {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <label>{{__('Payment Date')}}</label>
-        <div class="kt-input-icon">
-            <div class="input-group date">
-                <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
-                <div class="input-group-append">
-                    <span class="input-group-text">
-                        <i class="la la-calendar-check-o"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-    </div>
     </div>
 
     {{-- Cash In Safe Information--}}
@@ -453,7 +397,7 @@ $selectedBanks = [];
                         <label>{{__('Due Date')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="la la-calendar-check-o"></i>
@@ -467,7 +411,7 @@ $selectedBanks = [];
                     <div class="col-md-2">
                         <label>{{__('Cheque Number')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
-                            <input type="text" name="cheque_number" value="{{ isset($model) && $model->cheque ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
+                            <input type="text" name="cheque_number" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                         </div>
                     </div>
 

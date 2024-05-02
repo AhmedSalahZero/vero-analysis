@@ -120,7 +120,7 @@
                                 <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                             </div>
 
-                            <div class="col-md-2">
+                          <div class="col-md-2">
                                 <label>{{__('Select Currency')}} <span class="required">*</span></label>
                                 <div class="input-group">
                                     <select name="currency" class="form-control repeater-select">

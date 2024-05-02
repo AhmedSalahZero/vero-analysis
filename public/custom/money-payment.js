@@ -196,7 +196,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var netBalance = res.invoices[i].net_balance
 				var paidAmount = res.invoices[i].paid_amount
 				var invoiceDate = res.invoices[i].invoice_date
-				var settlementAmount = res.invoices[i].settlement_amount
+				var settlementAmount = res.invoices[i].paid_amount
+				console.log(res.invoices,settlementAmount,'---','qq');
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
 				domInvoiceNumber.val(invoiceNumber)
@@ -212,8 +213,9 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					var domWithholdAmount = $(lastNode).find('.js-withhold-amount')
 					domSettlementAmount.val(settlementAmount)
 					domWithholdAmount.val(withholdAmount)
-					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
+					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][paid_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
+					
 					$('.js-append-to').append(lastNode)
 					var lastNode = $('.js-template .js-duplicate-node').clone(true)
 		
@@ -233,7 +235,8 @@ $('select.ajax-get-purchases-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
-		total += parseFloat($(input).val())
+		var currentVal = $(input).val() ? $(input).val() : 0  ;
+		total += parseFloat(currentVal)
 	})
 	const currentType = $('#type').val()
 	const paidAmount = $('.js-' + currentType + '-paid-amount').val()

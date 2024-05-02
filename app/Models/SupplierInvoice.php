@@ -264,7 +264,7 @@ class SupplierInvoice extends Model implements IInvoice
 			<div class="col-md-2 width-12">
 				<label> '. __('Paid Amount') .' </label>
 				<div class="kt-input-icon">
-					<input name="settlements[][paid_amount]" type="text" disabled class="form-control ">
+					<input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
 				</div>
 			</div>
 

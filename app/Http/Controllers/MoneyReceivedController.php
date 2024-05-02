@@ -8,10 +8,12 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Cheque;
 use App\Models\CleanOverdraft;
+use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
+use App\Models\IncomingTransfer;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
@@ -368,6 +370,15 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request){
+		// IncomingTransfer::where('id','!=',1)->delete();
+		// CleanOverdraftBankStatement::where('type','incoming-transfer')->delete();
+		// DB::table('clean_overdraft_settlements')->delete();
+		// DB::table('debugging')->delete();
+		// DB::table('clean_overdraft_withdrawals')->update([
+		// 	'settlement_amount'=>0,
+		// 	'net_balance'=>2000
+		// ]);
+		
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
 		$financialInstitutionId = null;

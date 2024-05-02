@@ -66,7 +66,7 @@ class BankStatementController
 				 ->where('clean_overdraft_id',$cleanOverdraft->id)
 				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
 				 ->where('clean_overdrafts.currency','=',$currencyName)
-				 ->orderByRaw('date asc , created_at asc')
+				 ->orderByRaw('date asc , clean_overdraft_bank_statements.created_at asc')
 				 ->get();
 			
 			
