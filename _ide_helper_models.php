@@ -514,6 +514,7 @@ namespace App\Models{
  * @property int $money_received_id
  * @property int|null $money_payment_id
  * @property string|null $date
+ * @property string|null $full_date
  * @property string $beginning_balance
  * @property string $debit
  * @property string $credit
@@ -534,6 +535,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereEndBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereFullDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereIsCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashInSafeStatement whereIsDebit($value)
@@ -727,6 +729,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $to_be_setteled_max_within_days
  * @property string|null $start_settlement_from_bank_statement_date
+ * @property string|null $oldest_full_date
+ * @property int|null $origin_update_row_is_debit دلوقت احنا لما بنحدث وليكن ماني ريسيفد .. عايز نعرف ان الرو الاصلي اللي عدلناه كان ماني ريسيفد
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CleanOverdraftBankStatement[] $bankStatements
  * @property-read int|null $bank_statements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CleanOverdraftBankStatement[] $cleanOverdraftBankStatements
@@ -756,6 +760,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereInterestRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereMinInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereOldestFullDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereOriginUpdateRowIsDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereOutstandingBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereStartSettlementFromBankStatementDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CleanOverdraft whereToBeSetteledMaxWithinDays($value)
@@ -1100,6 +1106,7 @@ namespace App\Models{
  * @property int $is_debit
  * @property int $is_credit
  * @property string|null $date
+ * @property string|null $full_date
  * @property string $beginning_balance
  * @property string $debit
  * @property string $credit
@@ -1120,6 +1127,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereEndBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereFinancialInstitutionAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereFullDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereInternalMoneyTransferId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CurrentAccountBankStatement whereIsCredit($value)

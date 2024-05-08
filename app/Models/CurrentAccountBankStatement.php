@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -11,39 +12,97 @@ class CurrentAccountBankStatement extends Model
         'id'
     ];
 
-    protected static function booted(): void
-    {
-        // دي علشان نشغل التريجرز
-        // mysql
-        // علشان تروح تحدث كل الروز اللي تحتها
+	public static function updateNextRows(CurrentAccountBankStatement $model):string 
+	{
+		$minDate  = $model->full_date ;
+	
 		
-		static::creating(function(CurrentAccountBankStatement $model){
-			$model->created_at = now();
+		/**
+		 * * ليه بنستخدم ال 
+		 * * min date
+		 * * علشان لو عدلنا العنصر الحالي وخلينا التاريخ بتاعه اكبر من التاريخ القديم وقتها العناصر اللي ما بين التاريخ مش هيتعدلوا
+		 * * مع انهم كان مفروض يتعدلوا بس انت قولتله عدلي العناصر اللي التاريخ بتاعها اكبر من او يساوي التاريخ الجديد
+		 * * ودا غلط مفروض التاريخ الاقل ما بين التاريخ الجديد و القديم للعنصر بحيث دايما يبدا يحدث من عنده
+		 */
+
+		 DB::table('current_account_bank_statements')
+		->where('full_date','>=',$minDate)
+		->orderByRaw('full_date asc , id asc')
+		->where('financial_institution_account_id',$model->financial_institution_account_id)
+		->each(function($cleanOverdraftBankStatement){
+			DB::table('current_account_bank_statements')->where('id',$cleanOverdraftBankStatement->id)->update([
+				'updated_at'=>now()
+			]);
 		});
 		
-        static::created(function (CurrentAccountBankStatement $model) {
-            DB::table('current_account_bank_statements')
-            ->where('id','!=',$model->id)->where('date', '>=', $model->date)->orderByRaw('date asc , created_at asc')
-           ->orderBy('id')->where('company_id', $model->company_id)->update([
-                'updated_at' => now()
-            ]);
-        });
+		return $minDate;
 
-        static::updated(function (CurrentAccountBankStatement $model) {
-            DB::table('current_account_bank_statements')
-            ->where('id','!=',$model->id)->where('date', '>=', $model->date)->orderByRaw('date asc , created_at asc')
-
-           ->orderBy('id')->where('company_id', $model->company_id)->update([
-                'updated_at' => now()
-            ]);
-        });
-
-        static::deleting(function (CurrentAccountBankStatement $model) {
-            $model->debit = 0;
-            $model->credit = 0;
-            $model->save();
-        });
-    }
+	}
+		protected static function booted(): void
+		{
+			static::creating(function(CurrentAccountBankStatement $model){
+				$model->created_at = now();
+				$date = $model->date ;
+				$time  = now()->format('H:i:s');
+				$model->full_date = date('Y-m-d H:i:s', strtotime("$date $time"));
+			});
+			
+			static::created(function(CurrentAccountBankStatement $model){
+				self::updateNextRows($model,'created');
+			});
+			
+			static::updated(function (CurrentAccountBankStatement $model) {
+				
+				$minDate = self::updateNextRows($model,'from update');
+				
+				
+				$isChanged = $model->isDirty('financial_institution_account_id') ;
+				/**
+				 * * دي علشان لو غيرت ال
+				 * * financial_institution_account_id
+				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
+				 */
+				if($isChanged){
+					$oldAccountIdId=$model->getRawOriginal('financial_institution_account_id');
+					$oldBankStatementId=$model->getRawOriginal('id');
+					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
+					$firstBankStatementForOldCleanOverdraft = CurrentAccountBankStatement::where('financial_institution_account_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
+					if(!$firstBankStatementForOldCleanOverdraft){
+						// CleanOverdraftWithdrawal::where('financial_institution_account_id',$oldCleanOverdraftId)->delete();
+						// وتلقائي هيحذف السحوبات settlements
+					}else{
+						DB::table('current_account_bank_statements')
+						->where('full_date','>=',$minDate)
+						->orderByRaw('full_date asc , id asc')
+						->where('financial_institution_account_id',$model->financial_institution_account_id)->update([
+							'updated_at'=>now()
+						]);
+						
+					}
+					
+				}
+				
+			});
+			
+			static::deleting(function(CurrentAccountBankStatement $cleanOverdraftBankStatement){
+				$oldDate = null ;
+				if($cleanOverdraftBankStatement->is_debit && Request('receiving_date')||$cleanOverdraftBankStatement->is_credit && Request('delivery_date')){
+						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
+						$time  = now()->format('H:i:s');
+						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $cleanOverdraftBankStatement->full_date ;
+						$cleanOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+				}
+			
+				
+				$cleanOverdraftBankStatement->debit = 0;
+				$cleanOverdraftBankStatement->credit = 0;
+				$cleanOverdraftBankStatement->save();
+				
+			});
+		}
+		
 
     public function moneyReceived()
     {

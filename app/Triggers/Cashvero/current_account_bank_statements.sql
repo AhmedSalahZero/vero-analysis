@@ -8,13 +8,13 @@ begin
 		if new.id then 
 		
 		-- في حاله التعديل
-		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id and  date <= new.date and id != new.id  order by date desc , created_at desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id and  date <= new.date and id != new.id  order by full_date desc , id desc limit 1 ;
 		set _count_all_rows = 1 ;
 		else
 		-- ف
 		set new.created_at = CURRENT_TIMESTAMP;
-		select date , end_balance  into _previous_date,_last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by date desc , created_at desc  limit 1 ;
-		select  count(*) into _count_all_rows from current_account_bank_statements where company_id = new.company_id  and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by date desc , created_at desc limit 1 ;
+		select date , end_balance  into _previous_date,_last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by full_date desc , id desc  limit 1 ;
+		select  count(*) into _count_all_rows from current_account_bank_statements where company_id = new.company_id  and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by full_date desc , id desc limit 1 ;
 		end if;
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
@@ -40,13 +40,13 @@ begin
 		 
 		if new.id then 
 		-- في حاله التعديل
-		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and id != new.id   order by date desc , created_at desc limit 1 ;
+		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and id != new.id   order by full_date desc , id desc limit 1 ;
 		set _count_all_rows =1 ;
 		else
 		-- في حاله الانشاء
 		set new.created_at = CURRENT_TIMESTAMP;
-		select date , end_balance into _previous_date,_last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by date desc , created_at desc limit 1 ;
-		select count(*) into _count_all_rows  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by date desc , created_at desc limit 1 ;
+		select date , end_balance into _previous_date,_last_end_balance  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by full_date desc , id desc limit 1 ;
+		select count(*) into _count_all_rows  from current_account_bank_statements where company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date and created_at <= ifnull(new.created_at , CURRENT_TIMESTAMP )  order by full_date desc , id desc limit 1 ;
 		end if;
 	 set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 

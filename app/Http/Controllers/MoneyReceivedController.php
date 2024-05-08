@@ -570,6 +570,8 @@ class MoneyReceivedController
 		$moneyReceived->delete();
 		$this->store($company,$request);
 		 $activeTab = $newType;
+
+		  
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
 	
