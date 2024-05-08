@@ -9,6 +9,7 @@ use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MoneyPayment extends Model
 {
@@ -345,8 +346,8 @@ class MoneyPayment extends Model
 	}
 	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount )
 	{
-		
-		return $this->cleanOverdraftBankStatement()->create([
+		$dateForCalculateDueDate = $date;
+		$cleanOverdraftBankStatement =  $this->cleanOverdraftBankStatement()->create([
 			'type'=>$moneyType ,
 			'clean_overdraft_id'=>$cleanOverdraft->id ,
 			'company_id'=>$this->company_id ,
@@ -356,6 +357,23 @@ class MoneyPayment extends Model
 			'debit'=>0,
 			'credit'=>$paidAmount 
 		]) ;
+		// $maxSettlementDays = $cleanOverdraft->getMaxSettlementDays();
+		// $dueDate = Carbon::make($dateForCalculateDueDate)->addDays($maxSettlementDays)->format('Y-m-d') ;
+		// $previousRaw = DB::table('clean_overdraft_withdrawals2')->orderByRaw('due_date desc , id desc ')->where('due_date','<',$dueDate)->first();
+		// $previousEndBalance = $previousRaw ? $previousRaw->end_balance : 1000 ; 
+		
+		// DB::table('clean_overdraft_withdrawals2')->insert([
+		// 	'clean_overdraft_bank_statement_id'=>$cleanOverdraftBankStatement->id ,
+		// 	'clean_overdraft_id'=>	$cleanOverdraft->id,
+		// 	'company_id'=>$this->company_id,
+		// 	'max_settlement_days'=>$maxSettlementDays,
+		// 	'due_date'=>$dueDate ,
+		// 	'beginning_balance'=>$previousEndBalance , 
+		// 	'credit_amount'=>$paidAmount,
+		// 	'settlement_amount'=>$min = min($previousEndBalance ,$paidAmount),
+		// 	'reminder_amount'=> $paidAmount - $min ,
+		// 	'end_balance'=> $previousEndBalance - $min
+		// ]);
 	}
 	public function storeCashInSafeStatement(string $date , $paidAmount , string $currencyName,int $branchId)
 	{

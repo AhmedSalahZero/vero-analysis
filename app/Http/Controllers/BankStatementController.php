@@ -52,7 +52,7 @@ class BankStatementController
 			->where('currency',$currencyName)
 			->where('current_account_bank_statements.date', '>=', $startDate)
 			->where('current_account_bank_statements.date', '<', $endDate)
-			->orderByRaw('current_account_bank_statements.full_date asc , current_account_bank_statements.priority asc')
+			->orderByRaw('current_account_bank_statements.full_date desc')
 			->get();
 			
 			
@@ -66,7 +66,7 @@ class BankStatementController
 				 ->where('clean_overdraft_id',$cleanOverdraft->id)
 				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
 				 ->where('clean_overdrafts.currency','=',$currencyName)
-				 ->orderByRaw('full_date asc , priority asc ')
+				 ->orderByRaw('full_date desc , priority asc ')
 				 ->get();
 			
 			

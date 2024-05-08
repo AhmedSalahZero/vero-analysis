@@ -83,8 +83,8 @@ use App\Models\CustomerInvoice;
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-			
-			<div class="col-md-3">
+
+                <div class="col-md-3">
                     <label>{{__('Receiving Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -97,25 +97,25 @@ use App\Models\CustomerInvoice;
                         </div>
                     </div>
                 </div>
-				
-				   <div class="col-md-2">
+
+                <div class="col-md-2">
                     <label>{{__('Select Currency')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                 <option value="" selected>{{__('Select')}}</option>
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-								 @php
-								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-							   @endphp
+                                @php
+                                $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                $selected = $selected ? 'selected':'';
+                                @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                 </div>
-              
+
 
                 <div class="col-md-5">
 
@@ -135,12 +135,13 @@ use App\Models\CustomerInvoice;
                     </div>
 
                 </div>
-             
-  <div class="col-md-2">
+
+                <div class="col-md-2">
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="type" id="type" class="form-control">
+                            <select name="type" id="type" class="form-control"
+							>
                                 <option value="" selected>{{__('Select')}}</option>
 
                                 <option @if(isset($model) && $model->isCashInSafe() ) selected @endif value="{{ MoneyReceived::CASH_IN_SAFE }}">{{__('Cash In Safe')}}</option>
@@ -237,7 +238,7 @@ use App\Models\CustomerInvoice;
 
 
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -578,9 +579,9 @@ use App\Models\CustomerInvoice;
             <div class="js-append-to">
             </div>
             <div class="js-template hidden">
-			     <div class="col-md-12 js-duplicate-node">
-                {!! CustomerInvoice::getSettlementsTemplate() !!}
-				</div>
+                <div class="col-md-12 js-duplicate-node">
+                    {!! CustomerInvoice::getSettlementsTemplate() !!}
+                </div>
             </div>
 
             <hr>

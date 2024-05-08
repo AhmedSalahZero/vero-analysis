@@ -14,9 +14,8 @@
 		
 			-- في حالة الانشاء
 			set new.created_at = CURRENT_TIMESTAMP;
-			select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
-			select  count(*) into _count_all_rows from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date ;
-					--	insert into debugging (message) values (concat('before insert'));
+			select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			select  count(*) into _count_all_rows from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date ;
 
 		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 		
@@ -46,7 +45,7 @@
 		set @dailyInterestRate = _current_interest_rate/365 ;
 		if _previous_date then 
 		set @dayCounts = DATEDIFF(new.date,_previous_date) ;
-		set @interestAmount = _last_end_balance * @dailyInterestRate * @dayCounts ;
+		set @interestAmount = if(_last_end_balance < 0 , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
 		end if ; 
 		set new.interest_rate_annually = _current_interest_rate ;
 		set new.interest_rate_daily = @dailyInterestRate ;
@@ -67,34 +66,26 @@
 		declare i integer default  0 ;
 		declare _type varchar(255) default null;
 		declare _current_bank_statement_id integer default 0 ;
-		declare _current_clean_overdraft_id integer default 0 ;
 		declare _current_company_id integer default 0 ;
 		declare _current_debit decimal(14,2) default 0 ;
-		declare _current_credit decimal(14,2) default 0 ;
 		declare _current_date_for_settlement date default null ;
 		declare _bank_statements_debit_greater_than_or_equal_current_item_length integer default 0 ; 
 
 		select count(_bank_statements_debit_greater_than_or_equal_current_item_length) into _bank_statements_debit_greater_than_or_equal_current_item_length from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and full_date >= _closing_date   ;
 		
-		-- insert into debugging (message) values (concat('1-start of loop ',_bank_statements_debit_greater_than_or_equal_current_item_length));
 		
 		if _bank_statements_debit_greater_than_or_equal_current_item_length > 0 then 
-	--	 insert into debugging (message) values (concat('step 4 if for length ' , _bank_statements_debit_greater_than_or_equal_current_item_length ));
 	
 			repeat
-		-- insert into debugging (message) values (concat('1-start settlement proceees loop ',_bank_statements_debit_greater_than_or_equal_current_item_length));
-				select id , clean_overdraft_id,debit,credit,company_id,date , type into _current_bank_statement_id , _current_clean_overdraft_id,_current_debit,_current_credit,_current_company_id,_current_date_for_settlement,_type from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and full_date >= _closing_date order by full_date asc  limit i , 1 ;
-	--	 insert into debugging (message) values (concat('step 4-loop if for bank id ' , _current_bank_statement_id,' and date' , _current_date_for_settlement ));
+				select id ,debit,company_id,date , type into _current_bank_statement_id ,_current_debit,_current_company_id,_current_date_for_settlement,_type from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0 and full_date >= _closing_date order by full_date asc  limit i , 1 ;
 
 		if  _type = 'payable_cheque'
 		then 
-	--	insert into debugging (message) values (concat('from if statement if type ' , _type));
 		select actual_payment_date into  _current_date_for_settlement from payable_cheques join money_payments on 
 			money_payments.id = payable_cheques.money_payment_id 
 			where payable_cheques.money_payment_id = money_payments.id;
 		end if ;
-			--		 insert into debugging (message) values (concat('step 5-loop if for bank id ' , _current_bank_statement_id,' and date' , _current_date_for_settlement ));
-				call start_settlement_process(_current_bank_statement_id , _current_clean_overdraft_id , _current_debit  , _current_credit , _current_company_id , _current_date_for_settlement);
+				call start_settlement_process(_current_bank_statement_id , _clean_overdraft_id , _current_debit  , 0 , _current_company_id , _current_date_for_settlement);
 				
 		
 				set i = i + 1 ; 
@@ -112,10 +103,8 @@
 		begin 
 			-- وظيفه التريجر دا بسيطة خالص .. بعد اما نعدل علي سحبة معينه لو قيمة التسديد فيها بصفر يبقي هندخل نحذف كل ال التسديدات المربوطة بيها
 
-	--		insert into debugging (message) values (concat('after update withdrawal   id ',new.id , 'and ammoubt',new.settlement_amount))  ;
 			if new.settlement_amount = 0  
 			then 
-	--		insert into debugging (message) values (concat('delete all settlement for witdrawal id ',new.id , 'and ammoubt',new.settlement_amount))  ;
 				delete  from clean_overdraft_settlements where clean_overdraft_withdrawal_id = new.id ;
 			end if ;
 		end //
@@ -127,11 +116,9 @@
 	create procedure reverse_clean_overdraft_settlements(in _closing_date date  , in _clean_overdraft_id integer )
 	begin 
 	
-		declare i INTEGER DEFAULT 0 ;
-		declare _clean_overdraft_withdrawal_id integer default 0 ;
+		-- declare i INTEGER DEFAULT 0 ;
+	--	declare _clean_overdraft_withdrawal_id integer default 0 ;
 	 -- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-		select count(id) into @n from  clean_overdraft_withdrawals where due_date > _closing_date  and clean_overdraft_id = _clean_overdraft_id ;
-	--	 insert into debugging (message) values (concat('step 3 for date ' , _closing_date  ));
 		update clean_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _closing_date  and clean_overdraft_id = _clean_overdraft_id ;
 	end //
 
@@ -162,14 +149,13 @@
 			declare interest_type_text varchar(100) default 'interest';
 		declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 
-						-- insert into debugging (message) values (concat('before update'));
 
 		if(new.type = 'payable_cheque') then
 		select to_be_setteled_max_within_days into _clean_overdraft_to_be_settled_after from clean_overdrafts where id = new.clean_overdraft_id ;
 		-- #QUESTION ?? new.date ? or new.actual_payment_date
 		update clean_overdraft_withdrawals set due_date =  ADDDATE(new.date,_clean_overdraft_to_be_settled_after) where clean_overdraft_bank_statement_id = new.id ;
 		 end if;
-			select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 			set _count_all_rows =1 ;
 		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 		
@@ -200,7 +186,7 @@
 		set @dailyInterestRate = _current_interest_rate/365 ;
 		if _previous_date then 
 		set @dayCounts = DATEDIFF(new.date,_previous_date) ;
-		set @interestAmount = _last_end_balance * @dailyInterestRate * @dayCounts ;
+		set @interestAmount = if(_last_end_balance < 0 , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
 		end if ; 
 		set new.interest_rate_annually = _current_interest_rate ;
 		set new.interest_rate_daily = @dailyInterestRate ;
@@ -223,12 +209,11 @@
 		-- select full_date into _last_bank_statement_date from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by full_date desc limit 1 ;
 			-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
 				-- select full_date  into _last_bank_statement_date_to_start_settlement_from from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id order by full_date desc , priority asc limit 1 ;
-				select full_date into _last_bank_statement_date_to_start_settlement_from from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id order by full_date desc , priority asc limit 1 ; 
+				select full_date into _last_bank_statement_date_to_start_settlement_from from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id order by full_date desc , priority asc , id asc limit 1 ; 
 --				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from clean_overdrafts where id = new.clean_overdraft_id ; 
 				-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 			
 		 if(_last_bank_statement_date_to_start_settlement_from = new.full_date) then 		
-		-- insert into debugging (message) values (concat('step 2 for id ' , new.id , 'and full_date ' , new.full_date , ' and max date ' ,  _last_bank_statement_date_to_start_settlement_from ));
 		-- if(new.full_date > _closing_date ) then 		 -- دي في حالة لو انت اشتغلت علي موضوع ال closing date 
 			--	delete from clean_overdraft_settlements where clean_overdraft_bank_statement_id = _last_id;
 			-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
@@ -263,6 +248,7 @@
 		
 		
 		
+		
 	end //
 
 	delimiter ;
@@ -291,7 +277,6 @@
 		-- 
 		
 		if  _clean_overdraft_to_be_settled_after > 0 and _credit > 0   then  -- في الحاله دي هنسجل سحبه جديدة
-	--	insert into debugging (message) values (concat('step 6 insert new credit for bank statement ',_bank_statement_id  ));
 			insert into clean_overdraft_withdrawals (clean_overdraft_bank_statement_id,clean_overdraft_id , company_id  , max_settlement_days , due_date , settlement_amount , net_balance,created_at) values(_bank_statement_id,_clean_overdraft_id,_company_id,_clean_overdraft_to_be_settled_after,_due_date,0,_credit,CURRENT_TIMESTAMP);
 		end if ; 
 		if _clean_overdraft_to_be_settled_after > 0 then  -- في الحاله دي هنضيف القيم في جداول clean_overdraft_settlements + clean_overdraft_withdrawals
@@ -299,8 +284,6 @@
 			select count(*) into _total_number_or_rows_to_be_settled from clean_overdraft_withdrawals where clean_overdraft_id = _clean_overdraft_id and net_balance > 0;
 			set _total_number_or_rows_to_be_settled = ifnull(_total_number_or_rows_to_be_settled , 0);
 			
-			-- insert into debugging (message) values (concat('step 7 before insert new settlement for bank statement ',_bank_statement_id  ));
-		-- insert into debugging (message) values (concat('2-start of loop debit available',current_available_debit,'rows to be settleted',_total_number_or_rows_to_be_settled));
 		
 			
 			while current_available_debit > 0 and _total_number_or_rows_to_be_settled > 0 DO  -- معناه ان معاه فلوس يسدد بيها وكمان عليه فلوس لسه ما اتسددتش
@@ -313,7 +296,7 @@
 				and clean_overdraft_bank_statements.credit > 0  -- علشان نجيب التسديدات فقط
 				and clean_overdraft_bank_statements.clean_overdraft_id = _clean_overdraft_id  -- لحساب الاوفر درافت دا
 				and clean_overdraft_withdrawals.net_balance > 0 -- اي متبقي عليها فلوس 
-				order by  clean_overdraft_withdrawals.due_date asc , clean_overdraft_bank_statements.priority asc  limit 1  ; --  بنرتب علي حس الاولويه علشان الفؤايد ليها الالويه ولو تساو في الاولويه هناخد الاقدم يعني اللي الاي دي بتاعه اصغر 
+				order by  clean_overdraft_withdrawals.due_date asc , clean_overdraft_bank_statements.priority asc , clean_overdraft_bank_statements.id asc  limit 1  ; --  بنرتب علي حس الاولويه علشان الفؤايد ليها الالويه ولو تساو في الاولويه هناخد الاقدم يعني اللي الاي دي بتاعه اصغر 
 			
 			
 				if(_first_item_to_be_settled_net_balance > current_available_debit) then   -- معناه ان الفلوس اللي عليه اكبر من الفلوس اللي معاه
@@ -329,13 +312,7 @@
 				-- resettlement ب
 				-- اي بعد التحديث .. ولو مش موجود يبقي احنا في حاله الانشاء يبقي ضيف عنصر جديد
 			
-	--			if (select exists(select * from clean_overdraft_settlements where clean_overdraft_withdrawal_id = _clean_overdraft_withdrawal_id and settlement_amount = 0 and clean_overdraft_bank_statement_id = _bank_statement_id  )) then
-	--				update clean_overdraft_settlements set settlement_amount = _current_settlement_amount where clean_overdraft_withdrawal_id = _clean_overdraft_withdrawal_id and clean_overdraft_bank_statement_id = _bank_statement_id and settlement_amount = 0 order by id asc limit 1;
-	--			else 
 				insert into clean_overdraft_settlements (clean_overdraft_bank_statement_id,clean_overdraft_withdrawal_id,clean_overdraft_id , company_id   , settlement_amount,created_at) values(_bank_statement_id,_clean_overdraft_withdrawal_id,_clean_overdraft_id,_company_id,_current_settlement_amount,CURRENT_TIMESTAMP);
-		--	insert into debugging (message) values (concat('step 7-loop insert new settlement for bank statement ',_bank_statement_id,'and value',  _current_settlement_amount));
-				
-		--		end if ;
 		
 				
 
@@ -345,7 +322,6 @@
 				update clean_overdraft_withdrawals set settlement_amount = _current_settlement_amount + ifnull(settlement_amount,0) , net_balance = _row_credit - settlement_amount where id = _clean_overdraft_withdrawal_id ;
 				
 				set current_available_debit = current_available_debit - _current_settlement_amount ;
-		--	insert into debugging (message) values (concat('step 7-loop inside loop ',_bank_statement_id,'and value',  _current_settlement_amount));
 				
 				select count(*) into _total_number_or_rows_to_be_settled from clean_overdraft_withdrawals where clean_overdraft_id = _clean_overdraft_id and net_balance > 0;
 				set _total_number_or_rows_to_be_settled = ifnull(_total_number_or_rows_to_be_settled , 0);
@@ -362,14 +338,19 @@
 		declare _date_for_settlement date default new.date ;
 		if  new.type = 'payable_cheque'
 		then 
-	--	insert into debugging (message) values (concat('from if statement if type ' , new.type));
+	
+		
+		
 		select actual_payment_date into  _date_for_settlement from payable_cheques join money_payments on 
 			money_payments.id = payable_cheques.money_payment_id 
-		where payable_cheques.money_payment_id = money_payments.id;
+		where payable_cheques.money_payment_id = money_payments.id
+		and payable_cheques.money_payment_id = new.money_payment_id ; 
+	
 		end if  ;
 		-- set _date_for_settlement = if(payable_cheque = 'payable_cheque' , new , new. )
-		
-		call start_settlement_process(new.id , new.clean_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
+		if new.is_credit > 0 then
+			call start_settlement_process(new.id , new.clean_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
+		 end if;
 	end //
 
 
@@ -393,7 +374,6 @@
 		select count(distinct(clean_overdraft_id)) into @n from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id;
 		set @n = ifnull(@n,0);
 		if @n > 0 then 
-		-- insert into debugging (message) values (concat('4-start of loop debit available',@n));
 		
 		repeat 
 					-- حساب الفايدة نهاية كل شهر

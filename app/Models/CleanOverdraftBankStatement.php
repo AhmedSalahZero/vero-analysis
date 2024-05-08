@@ -14,29 +14,36 @@ class CleanOverdraftBankStatement extends Model
 		'id'
 	];
 	const MONEY_TRANSFER  = 'money-transfer';
-	public static function updateNextRows(CleanOverdraftBankStatement $model)
+	public $oldFullDate = null;
+	public static function updateNextRows(CleanOverdraftBankStatement $model,$method):string 
 	{
-		// if($model->cleanOverDraft){
-		// 	$model->cleanOverDraft->update([
-		// 		'start_settlement_from_bank_statement_date'=> CleanOverdraftBankStatement::where('clean_overdraft_id',$model->clean_overdraft_id)->orderByRaw('full_date desc , priority asc')->first()->full_date ,
-		// 	]);
-		// }
-			// logger(	DB::table('clean_overdraft_bank_statements')
-			// // ->where('id','!=',$model->id)
-			// // ->where('id','>=',$model->id)->orderBy('id')
-			// # ->where('full_date', '>=', $model->full_date )
-			// ->orderByRaw('full_date asc')
-			// ->where('clean_overdraft_id',$model->clean_overdraft_id)->count());
-			
-		DB::table('clean_overdraft_bank_statements')
-		->where('full_date','>=',$model->date)
-		->orderByRaw('full_date asc , priority asc')
-		->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
-			'updated_at'=>now()
+		$minDate  = $model->full_date ;
+		
+		DB::table('clean_overdrafts')->where('id',$model->clean_overdraft_id)->update([
+			'oldest_full_date'=>$minDate,
+			'origin_update_row_is_debit'=>$model->is_debit  
 		]);
-		// $model->cleanOverDraft->update([
-		// 	'start_settlement_from_bank_statement_date'=>null
-		// ]);
+		
+		/**
+		 * * ليه بنستخدم ال 
+		 * * min date
+		 * * علشان لو عدلنا العنصر الحالي وخلينا التاريخ بتاعه اكبر من التاريخ القديم وقتها العناصر اللي ما بين التاريخ مش هيتعدلوا
+		 * * مع انهم كان مفروض يتعدلوا بس انت قولتله عدلي العناصر اللي التاريخ بتاعها اكبر من او يساوي التاريخ الجديد
+		 * * ودا غلط مفروض التاريخ الاقل ما بين التاريخ الجديد و القديم للعنصر بحيث دايما يبدا يحدث من عنده
+		 */
+
+		 DB::table('clean_overdraft_bank_statements')
+		->where('full_date','>=',$minDate)
+		->orderByRaw('full_date asc , priority asc , id asc')
+		->where('clean_overdraft_id',$model->clean_overdraft_id)
+		->each(function($cleanOverdraftBankStatement){
+			DB::table('clean_overdraft_bank_statements')->where('id',$cleanOverdraftBankStatement->id)->update([
+				'updated_at'=>now()
+			]);
+		});
+		
+		return $minDate;
+
 	}
 		protected static function booted(): void
 		{
@@ -48,20 +55,12 @@ class CleanOverdraftBankStatement extends Model
 			});
 			
 			static::created(function(CleanOverdraftBankStatement $model){
-				self::updateNextRows($model);
+				self::updateNextRows($model,'created');
 			});
-			// static::updating(function(CleanOverdraftBankStatement $model){
-			// 	if($model->type = MoneyPayment::PAYABLE_CHEQUE ){
-			// 		// $model->due_date = Carbon::make();
-			// 	}
-			// });
-			# دي علشان نشغل التريجرز 
-			// mysql
-			// علشان تروح تحدث كل الروز اللي تحتها
+			
 			static::updated(function (CleanOverdraftBankStatement $model) {
-				logger('from update');
 				
-				self::updateNextRows($model,$model->full_date);
+				$minDate = self::updateNextRows($model,'from update');
 				
 				
 				$isChanged = $model->isDirty('clean_overdraft_id') ;
@@ -80,13 +79,9 @@ class CleanOverdraftBankStatement extends Model
 						CleanOverdraftWithdrawal::where('clean_overdraft_id',$oldCleanOverdraftId)->delete();
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
-						// CleanOverdraft::find($oldCleanOverdraftId)->update([
-						// 	'start_settlement_from_bank_statement_date'=>$fullDate = CleanOverdraftBankStatement::where('clean_overdraft_id',$oldCleanOverdraftId)->where('id','!=',$oldBankStatementId)->orderByRaw('full_date desc , priority asc')->first()->full_date
-						// ]);
-
 						DB::table('clean_overdraft_bank_statements')
-						->where('full_date','>=',$model->date)
-						->orderByRaw('full_date asc , priority asc')
+						->where('full_date','>=',$minDate)
+						->orderByRaw('full_date asc , priority asc , id asc')
 						->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
 							'updated_at'=>now()
 						]);
@@ -98,7 +93,19 @@ class CleanOverdraftBankStatement extends Model
 			});
 			
 			static::deleting(function(CleanOverdraftBankStatement $cleanOverdraftBankStatement){
-			
+				$oldDate = null ;
+				if($cleanOverdraftBankStatement->is_debit && Request('receiving_date')||$cleanOverdraftBankStatement->is_credit && Request('delivery_date')){
+						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
+						$time  = now()->format('H:i:s');
+						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $cleanOverdraftBankStatement->full_date ;
+						$cleanOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+				}
+				DB::table('clean_overdrafts')->where('id',$cleanOverdraftBankStatement->clean_overdraft_id)->update([
+					'oldest_full_date'=>$cleanOverdraftBankStatement->full_date,
+					'origin_update_row_is_debit'=>$cleanOverdraftBankStatement->is_debit
+				]);
+				
 				$cleanOverdraftBankStatement->debit = 0;
 				$cleanOverdraftBankStatement->credit = 0;
 				$cleanOverdraftBankStatement->save();
