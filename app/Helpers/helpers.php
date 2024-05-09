@@ -32,6 +32,7 @@ use App\Models\ProductSeasonality;
 use App\Models\QuantityExistingProductAllocationBase;
 use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityProductSeasonality;
+use App\Models\QuantitySalesForecast;
 use App\Models\QuantitySecondExistingProductAllocationBase;
 use App\Models\SalesForecast;
 use App\Models\SalesGathering;
