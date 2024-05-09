@@ -33,13 +33,13 @@ class CollectionController extends Controller
 			} elseif ($request->collection_base == $first_allocation_setting_base) {
 
 
-				foreach ($request->first_allocation_collection as $base => $values) {
+				foreach ((array)$request->first_allocation_collection as $base => $values) {
 					$total[$base] = array_sum(array_column($values, 'rate'));
 					$validation['total_rate.' . $base] =  ($total[$base] != 100) ? 'required' :  '';
 				}
 			} elseif ($request->collection_base == $second_allocation_setting_base) {
 
-				foreach ($request->second_allocation_collection as $base => $values) {
+				foreach ((array)$request->second_allocation_collection as $base => $values) {
 					$total[$base] = array_sum(array_column($values, 'rate'));
 					$validation['total_rate.' . $base] =   ($total[$base] != 100) ? 'required' :  '';
 				}
@@ -99,14 +99,14 @@ class CollectionController extends Controller
 			// dd($total_company_sales_target);
 			$collection_data = $collection_settings->first_allocation_collection;
 
-			foreach ($total_company_sales_target as $base => $base_targets) {
+			foreach ((array)$total_company_sales_target as $base => $base_targets) {
 				$collection[$base] = $this->collectionCalculation($base_targets, ($collection_data[$base] ?? []));
 			}
 		} elseif ($collection_settings->collection_base == $second_allocation_setting_base) {
 
 			$total_company_sales_target = (new SecondAllocationsReport)->NewProductsSeasonality($request, $company, 'total_company_sales_target');
 			$collection_data = $collection_settings->second_allocation_collection;
-			foreach ($total_company_sales_target as $base => $base_targets) {
+			foreach ((array)$total_company_sales_target as $base => $base_targets) {
 				$collection[$base] = $this->collectionCalculation($base_targets, ($collection_data[$base] ?? []));
 			}
 		}
@@ -146,8 +146,8 @@ class CollectionController extends Controller
 	{
 
 		$collection = [];
-		foreach ($targets as $date => $target) {
-			foreach ($collection_data as $key => $data) {
+		foreach ((array)$targets as $date => $target) {
+			foreach ((array)$collection_data as $key => $data) {
 				$rate = ($data['rate'] ?? 0) / 100;
 
 				$daysNumber = $data['due_days'] ?? 0;
