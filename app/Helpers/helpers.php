@@ -4119,7 +4119,7 @@ function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId)
 		],
 		'summary-report'=>[
 			'title'=>__('Summary Report'),
-			'show'=> isset($modified_seasonality)  ,
+			'show'=> isset($modified_seasonality) && $sales_forecast ,
 			'link'=>route('forecast.quantity.report',['company'=>$companyId]),
 		]
 	];
