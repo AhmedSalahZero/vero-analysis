@@ -24,6 +24,7 @@ trait FinancialStatementAbleMutator
 
 	public function storeMainItems(Request $request)
 	{
+
 		foreach (($this->getMainItemTableClassName())::get() as $financialStatementAbleItem) {
 			$financialStatementAbleItemId = $financialStatementAbleItem->id;
 			$this->withMainItemsFor($financialStatementAbleItemId)->attach($financialStatementAbleItemId, [
@@ -39,7 +40,7 @@ trait FinancialStatementAbleMutator
 						'can_be_percentage_or_fixed' => 1,
 						'name' => 'Corporate Taxes',
 						'percentage_value' => 0,
-						'is_percentage_of' => ['Earning Before Taxes - EBT']
+						'is_percentage_of' => ['Earning Before Taxes - EBT'],
 					]));
 				}
 			}
@@ -217,10 +218,12 @@ trait FinancialStatementAbleMutator
 		$adjustedOrModified = $subType == 'adjusted' || $subType == 'modified' ;
 		$subItemName = $isQuantityRepeating ? html_entity_decode($options['name'] . __(quantityIdentifier)) : html_entity_decode($options['name']);
 		$percentageOf= $percentageOrFixed == 'percentage' ? json_encode((array)$options['is_percentage_of']) : null;
+		
 		$percentageOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($percentageOf,$subType)) : $percentageOf;
 		$costOfUnitOf = $percentageOrFixed == 'cost_of_unit' ? json_encode((array)$options['is_cost_of_unit_of']) : null;
+		// $isAllSelection = isAll($costOfUnitOf);
+		// $costOfUnitOf = $isAllSelection ?  getAllPercentageOfRevenuesIds($options['financial_statement_able_item_id'] , $subType,1) : null;
 		$costOfUnitOf = $adjustedOrModified  ? json_encode(getMappingFromForecastToAdjustedOrModified($costOfUnitOf,$subType)) : $costOfUnitOf;
-		
 		return [
 			'company_id' => \getCurrentCompanyId(),
 			'creator_id' => Auth::id(),
@@ -289,6 +292,7 @@ trait FinancialStatementAbleMutator
 		
 		if (!$request->has('new_sub_item_name')) {
 			foreach ((array)$request->sub_items as $index => $options) {
+				
 				if (isset($options['name']) && $options['name']  && !$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->exists()) {
 					foreach ($insertSubItems as $subType) {
 						$isQuantity = isQuantity($options) ;
@@ -303,7 +307,8 @@ trait FinancialStatementAbleMutator
 								$payload = $isQuantityRepeating ? $quantityVal : $val;
 								$name = $isQuantityRepeating ? $options['name'] . quantityIdentifier : $options['name'];
 								$subItemsValues[$financialStatementAble->id][$financialStatementAbleItemId][$name] = $payload;
-								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData($subType, $subItemType, $options, $isQuantityRepeating));
+								
+								$financialStatementAble->withSubItemsFor($financialStatementAbleItemId, $subItemType, $options['name'])->attach($financialStatementAbleItemId, $this->getFinancialStatementAbleData( $subType, $subItemType, $options, $isQuantityRepeating));
 							}
 						} else {
 							$financialStatementAbleItemOrCashFlowStatementItemId = get_class($this) != CashFlowStatement::class ? $financialStatementAbleItemId : $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($financialStatementAbleItemId, isset($options['is_financial_income']) && $options['is_financial_income']);
@@ -538,13 +543,18 @@ trait FinancialStatementAbleMutator
 				}
 				$percentageValue = $percentageValue / 100;
 				$percentagesOf = stringArrayToArray($subItem->pivot->is_percentage_of);
-				
+		
+				$isAllSelection = isAll($percentagesOf);
+			
+				$percentagesOf = $isAllSelection ?  getAllPercentageOfRevenuesIds($subItem->pivot->financial_statement_able_id, $subItem->pivot->sub_item_type,0) : $percentagesOf;
+
 				foreach ($dates as $date => $formattedDate) {
 					$totalPercentageOfValue = 0;
 					foreach ($percentagesOf as $percentageOf) {
 						$loopPercentageValueOfSalesRevenue = $salesRevenuesSubItemsArray[$percentageOf][$date] ?? 0;
 						$totalPercentageOfValue += $loopPercentageValueOfSalesRevenue;
 					}
+				
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = isset($payload->{$date}) ? $payload->{$date} : 0;
 					} else {
@@ -567,6 +577,8 @@ trait FinancialStatementAbleMutator
 				]);
 			} elseif ($isCostOfUnit) {
 				$costOfUnitsOf = stringArrayToArray($subItem->pivot->is_cost_of_unit_of);
+				$isAllSelection = isAll($costOfUnitsOf);
+				$costOfUnitsOf = $isAllSelection ?  getAllPercentageOfRevenuesIds($subItem->pivot->financial_statement_able_id, $subItem->pivot->sub_item_type,1) :$costOfUnitsOf;
 				$costOfUnitValue = $subItem->pivot->cost_of_unit_value ?: 0;
 				if ($isFinancialExpense && $costOfUnitValue >0) {
 					$costOfUnitValue = $costOfUnitValue * -1;
@@ -576,6 +588,7 @@ trait FinancialStatementAbleMutator
 					foreach ($costOfUnitsOf as $costOfUnitOf) {
 						$totalCostOfUnitValue += $salesRevenuesSubItemsArray[$costOfUnitOf][$date] ?? 0;
 					}
+				
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = $payload->{$date} ?: 0;
 					} else {

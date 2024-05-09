@@ -4787,8 +4787,27 @@ function dashesToCamelCase($string)
     $str[0] = strtolower($str[0]);
     return $str;
 }
+function isAll($percentageOf){
+	if(is_null($percentageOf)){
+		return false ;
+	}
+	$allItems  = is_array($percentageOf) ? $percentageOf : json_decode($percentageOf) ;
+	return in_array('all',$allItems);
+	
+}
+function getAllPercentageOfRevenuesIds(int $incomeStatementId , string $subItemType,int $isQuantity)
+{
+
+	return IncomeStatementSubItem::where('is_quantity',$isQuantity)
+	->where('financial_statement_able_item_id',IncomeStatementItem::SALES_REVENUE_ID)
+	->where('sub_item_type',$subItemType)
+	->where('financial_statement_able_id',$incomeStatementId)
+	->pluck('id')->toArray();
+	
+}
 function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSubItemType)
 {
+	
 	/**
 	 * @var IncomeStatement $incomeStatement
 	 * * 
