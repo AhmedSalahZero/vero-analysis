@@ -114,7 +114,6 @@ class IncomeStatementController extends Controller
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$incomeStatementItem = $incomeStatement->withMainItemsFor($incomeStatementItemId)->first();
 		$currentSubItemType = $request->get('sub_item_type'); 
-		// dd($incomeStatementId);
 		$subItem = $incomeStatementItem
 		->withSubItemsFor($incomeStatementId,$currentSubItemType, $request->get('sub_item_name'))
 		->first();

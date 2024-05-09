@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Interfaces\Models\Interfaces\IFinancialStatementAbleItem;
 use App\Models\Traits\Accessors\IncomeStatementItemAccessor;
 use App\Models\Traits\Relations\IncomeStatementItemRelation;
-use App\Models\Traits\Scopes\FinancialStatementAbleItemScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

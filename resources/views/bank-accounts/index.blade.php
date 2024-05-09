@@ -61,7 +61,6 @@
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'bank-accounts' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    {{-- {{ dd('e') }} --}}
 					<x-table-title.with-one-date :filterDate="$filterDate"></x-table-title.with-one-date>
                     <div class="kt-portlet__body">
 

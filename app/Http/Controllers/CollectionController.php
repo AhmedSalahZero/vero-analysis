@@ -80,8 +80,7 @@ class CollectionController extends Controller
 
 	public function collectionReport(Request $request, Company $company, $result = 'view')
 	{
-		// dd(get_defined_vars());
-		// 
+	
 		$collection_settings = CollectionSetting::company()->first();
 		$first_allocation_setting_base = AllocationSetting::company()->first()->allocation_base ?? null;
 		$second_allocation_setting_base = SecondAllocationSetting::company()->first()->allocation_base ?? null;
@@ -89,14 +88,14 @@ class CollectionController extends Controller
 		$collection = [];
 		if ($collection_settings->collection_base == 'general_collection_policy') {
 			$total_company_sales_target = (new SalesForecastReport)->productsAllocations($company, $request, 'total_company_sales_target');
-			// dd('d',$total_company_sales_target);
+	
 			$collection_data = $collection_settings->general_collection;
 
 			$collection = $this->collectionCalculation($total_company_sales_target, $collection_data);
 		} elseif ($collection_settings->collection_base == $first_allocation_setting_base) {
 
 			$total_company_sales_target = (new AllocationsReport)->NewProductsSeasonality($request, $company, 'total_company_sales_target');
-			// dd($total_company_sales_target);
+	
 			$collection_data = $collection_settings->first_allocation_collection;
 
 			foreach ((array)$total_company_sales_target as $base => $base_targets) {
@@ -120,7 +119,7 @@ class CollectionController extends Controller
 			$monthly_dates[$date] = '';
 			$counter++;
 		}
-		// dd($result);
+
 		$forecast_year = date('Y', strtotime($sales_forecast->start_date));
 		if ($result == 'view') {
 			return view(

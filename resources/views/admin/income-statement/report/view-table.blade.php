@@ -1971,8 +1971,8 @@ $tableId = 'kt_table_1';
 											
                                                 if (data.id == salesReveueId&& !data.duration) {
 											
-                                                    sales_revenues_sub_items_names = [];
-                                                    sales_revenues_quantity_sub_items_names = [];
+                                                    sales_revenues_sub_items_names = [{id:'all',name:'{{ __("All") }}'}];
+                                                    sales_revenues_quantity_sub_items_names = [{id:'all',name:"{{ __('All') }}"}];
 
                                                     if (data.sub_items ) {
 										
@@ -2491,9 +2491,19 @@ $tableId = 'kt_table_1';
                                                             if (data.id == corporateTaxesId) {
                                                                 sub_items_options = '<option value="Earning Before Taxes - EBT" selected>Earning Before Taxes - EBT</option>'
                                                             } else {
+															//	var all_options = [];
+															//	var all_options_quantity = [];
+															//	 window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
+															//		all_options.push(MainItemObject.id.toString());
+                                                            //    })
+																
                                                                 window['sales_revenues_sub_items_names'].forEach(function(MainItemObject) {
                                                                     sub_items_options += '<option value="' + MainItemObject.id.toString() + '">' + MainItemObject.name + '</option>'
                                                                 })
+															//	  window['sales_revenues_quantity_sub_items_names'].forEach(function(MainItemObject) {
+															//		all_options_quantity.push( MainItemObject.id.toString())
+                                                            //    })
+																
                                                                 window['sales_revenues_quantity_sub_items_names'].forEach(function(MainItemObject) {
                                                                     sub_items_of_unit_options += '<option value="' + MainItemObject.id.toString() + '">' + MainItemObject.name + '</option>'
                                                                 })
@@ -4230,7 +4240,6 @@ $tableId = 'kt_table_1';
                         collectionRates += `<div class="collection-rate-item mb-3">
 												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_policy][type][customize][value][rate][${i}]" style="width:100px;" value="${isCustom && valueOfCustom.rate && valueOfCustom.rate[i]?valueOfCustom.rate[i] :0 }">
 											</div>`
-
                         dueInDays += `<div class="collection-rate-item mb-3">
 												<select name="sub_items[0][collection_policy][type][customize][value][due_in_days][${i}]" class="form-control">
 													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==0?'selected':'' } value="0">0</option>
