@@ -3563,8 +3563,32 @@ function dueInDays()
         [
             'value'=> 180 ,
             'title'=>180
-        ]
-
+		],
+		[
+            'value'=> 210 ,
+            'title'=>210
+		],
+		[
+            'value'=>240 ,
+            'title'=>240
+		],
+		[
+            'value'=>270 ,
+            'title'=>270
+		],
+		
+		[
+            'value'=>300 ,
+            'title'=>300
+		],
+		[
+            'value'=>330 ,
+            'title'=>330
+		],
+		[
+            'value'=> 360 ,
+            'title'=>360
+		],
     ];
 }
 function formatRatesWithDueDays(array $ratesAndDueDays): array
