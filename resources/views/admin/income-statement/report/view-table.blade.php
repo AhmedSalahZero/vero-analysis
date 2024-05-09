@@ -2144,7 +2144,7 @@ $tableId = 'kt_table_1';
 																	
 																	<select multiple
 																	data-width="auto"
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
+																class="form-select select select2-select2 sub_select"   name="sub_items[0][is_percentage_of][]">
 																	${sub_items_options}
 																</select>
 																	</div>
@@ -2170,7 +2170,7 @@ $tableId = 'kt_table_1';
 																	<div class="d-flex flex-column align-items-center justify-content-center flex-wrap " style="width:100% !important">
 																		<label class="form-label flex-self-start">{{ __('Cost Per Unit Of') }}</label>
 																	<select multiple
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_cost_of_unit_of][]">
+																class="form-select select select2-select2 sub_select"   name="sub_items[0][is_cost_of_unit_of][]">
 																	${sub_items_quantity_options}
 																</select>
 																	</div>
@@ -2579,7 +2579,7 @@ $tableId = 'kt_table_1';
 																	
 																	<select multiple
 																	data-width="auto"
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_percentage_of][]">
+																class="form-select select select2-select2 sub_select"   name="sub_items[0][is_percentage_of][]">
 																	${sub_items_options}
 																</select>
 																	</div>
@@ -2604,7 +2604,7 @@ $tableId = 'kt_table_1';
 																		<label class="form-label flex-self-start">{{ __('Cost Per Unit Of') }}</label>
 																	
 																	<select multiple
-																class="form-select select select2-select sub_select" data-actions-box="true"  name="sub_items[0][is_cost_of_unit_of][]">
+																class="form-select select select2-select2 sub_select"   name="sub_items[0][is_cost_of_unit_of][]">
 																	${sub_items_of_unit_options}
 																</select>
 																	</div>
@@ -3487,7 +3487,7 @@ $tableId = 'kt_table_1';
                                                 }
 
                                                 if (v.closest('.dropdown.bootstrap-select')) {
-                                                    v.closest('.dropdown.bootstrap-select').outerHTML = `<select data-actions-box="true" multiple name="${name}" class="select select2-select ${name}"> ${name.includes('is_cost_of_unit_of') ? sub_items_quantity_options :sub_items_options} </select>`
+                                                    v.closest('.dropdown.bootstrap-select').outerHTML = `<select  multiple name="${name}" class="select select2-select2 ${name}"> ${name.includes('is_cost_of_unit_of') ? sub_items_quantity_options :sub_items_options} </select>`
                                                 } else {
                                                     if ($(v).attr('name')) {
                                                         $(v).attr('name', $(v).attr('name').replace(lastItemIndex, lastItemIndex + 1));
