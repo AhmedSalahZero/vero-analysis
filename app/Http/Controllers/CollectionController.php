@@ -112,6 +112,7 @@ class CollectionController extends Controller
 		}
 		// Months For Only First Year
 		$sales_forecast = SalesForecast::company()->first();
+	
 		$monthly_dates = [];
 		$counter = 1;
 		for ($month = 0; $month < 12; $month++) {

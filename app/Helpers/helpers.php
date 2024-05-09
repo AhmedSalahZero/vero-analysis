@@ -33,6 +33,7 @@ use App\Models\QuantityExistingProductAllocationBase;
 use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityProductSeasonality;
 use App\Models\QuantitySecondExistingProductAllocationBase;
+use App\Models\SalesForecast;
 use App\Models\SalesGathering;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
@@ -4048,6 +4049,9 @@ function getSalesAnalysisReportSubmenu($user, int $companyId):array
 
 function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
 {
+
+	// return SalesForecast::company()->first();
+	$salesForecast = SalesForecast::where('company_id',$companyId)->first() ;
 	return [
 		'sales-forecast-fact-sheet'=>[
 			'title'=>__('Sales forecast Fact Sheet'),
@@ -4056,27 +4060,27 @@ function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
 		],
 		'product-sales-target-report'=>[
 			'title'=>__('Product Sales Target Report'),
-			'show'=>$modified_seasonality = ModifiedSeasonality::where('company_id', $companyId)->first(),
+			'show'=>$modified_seasonality = ModifiedSeasonality::where('company_id', $companyId)->first() && $salesForecast,
 			'link'=>route('products.allocations',['company'=>$companyId]),
 		],
 		'first-allocation'=>[
 			'title'=>__('First Allocation'),
-			'show'=> isset($modified_seasonality) && ExistingProductAllocationBase::where('company_id', $companyId)->first() !== null ,
+			'show'=> isset($modified_seasonality) && ExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast,
 			'link'=>route('new.product.seasonality',['company'=>$companyId]),
 		],
 		'second-allocation'=>[
 			'title'=>__('Second Allocation'),
-			'show'=> isset($modified_seasonality) && SecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null ,
+			'show'=> isset($modified_seasonality) && SecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast,
 			'link'=>route('second.new.product.seasonality',['company'=>$companyId]),
 		],
 		'collection-report'=>[
 			'title'=>__('Collection Report'),
-			'show'=> isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null ,
+			'show'=> isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $salesForecast,
 			'link'=>route('collection.report',['company'=>$companyId]),
 		],
 		'summary-report'=>[
 			'title'=>__('Summary Report'),
-			'show'=> isset($modified_seasonality)  ,
+			'show'=> isset($modified_seasonality) && $salesForecast  ,
 			'link'=>route('forecast.report',['company'=>$companyId]),
 		],
 		
@@ -4084,6 +4088,8 @@ function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
 }
 function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId)
 {
+	
+		$sales_forecast = QuantitySalesForecast::where('company_id',$companyId)->first();
 	return [
 		'sales-forecast-fact-sheet'=>[
 			'title'=>__('Sales Forecast Fact Sheet'),
@@ -4092,22 +4098,22 @@ function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId)
 		],
 		'product-sales-target-report'=>[
 			'title'=>__('Product Sales Target Report'),
-			'show'=>$modified_seasonality = QuantityModifiedSeasonality::where('company_id', $companyId)->first(),
+			'show'=>$modified_seasonality = QuantityModifiedSeasonality::where('company_id', $companyId)->first() && $sales_forecast,
 			'link'=>route('products.allocations.quantity',['company'=>$companyId]),
 		],
 		'first-allocation'=>[
 			'title'=>__('First Allocation'),
-			'show'=> isset($modified_seasonality) && QuantityExistingProductAllocationBase::where('company_id', $companyId)->first() !== null ,
+			'show'=> isset($modified_seasonality) && QuantityExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast,
 			'link'=>route('new.product.seasonality.quantity',['company'=>$companyId]),
 		],
 		'second-allocation'=>[
 			'title'=>__('Second Allocation'),
-			'show'=> isset($modified_seasonality) && QuantitySecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null ,
+			'show'=> isset($modified_seasonality) && QuantitySecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast,
 			'link'=>route('second.new.product.seasonality.quantity',['company'=>$companyId]),
 		],
 		'collection-report'=>[
 			'title'=>__('Collection Report'),
-			'show'=> isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null ,
+			'show'=> isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $sales_forecast,
 			'link'=>route('collection.quantity.report',['company'=>$companyId]),
 		],
 		'summary-report'=>[
@@ -4415,7 +4421,7 @@ function getHeaderMenu()
 								'sales-forecast'=>[
 									'title'=>__('Sales Forecast'),
 									'link'=>'#',
-									'show'=>$user->can('view sales forecast') && $hasSalesGatheringDataUploadData,
+									'show'=>$user->can('view sales forecast') && $hasSalesGatheringDataUploadData ,
 									'submenu'=>[
 										'sales-forecast-value-base'=>[
 											'title'=>__('Sales Forecast Value Base'),
