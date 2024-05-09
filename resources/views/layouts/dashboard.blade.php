@@ -473,7 +473,20 @@
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[{{ __("Max:") }}' + maxOption + ']');
 
             })
+$(document).find('select.select2-select2').each(function(index, value) {
+                let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
 
+                if ($(this).selectpicker) {
+
+                    $(this).selectpicker({
+                        maxOptions: maxOption,
+                        //   maxOptions: $(this).data('max-options') || $(this).data('max-options') == 0   ? $(this).data('max-options') : window['maxOptions'],
+                    });
+                    $(this).data('max-options', maxOption);
+                }
+
+
+            })
             $(document).find('select.select2-select.select-all').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
                 $(this).selectpicker({
