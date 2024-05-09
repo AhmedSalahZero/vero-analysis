@@ -136,21 +136,23 @@ trait FinancialStatementAbleMutator
 	public function updatePivotForAdjustedSubItems(int $financialStatementAbleItemId, string $sub_item_origin_name,?string $isValueQuantityPrice ): void
 	{
 		$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'forecast', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
-		$payloadForSubRow = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->first() ;
-		$payloadForSubRow =  $payloadForSubRow && $payloadForSubRow->pivot ? (array) json_decode($payloadForSubRow->pivot->payload) : null;
-		if($payloadForSubRow){
-			$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
-		}
+		// $payloadForSubRow = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->first() ;
+		// $payloadForSubRow =  $payloadForSubRow && $payloadForSubRow->pivot ? (array) json_decode($payloadForSubRow->pivot->payload) : null;
+		// if($payloadForSubRow){
+		// 	$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'modified', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+		// }
 		$pivotForActual = $this->withSubItemsFor($financialStatementAbleItemId, 'actual', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
 		
 		$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 		$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 		$actualDates = [];
 		$pivotForModified = combineNoneZeroValuesBasedOnComingDates($pivotForForecast, $pivotForActual, $actualDates);
+	
 		$dataArr =  [
 			'payload' => json_encode($pivotForModified),
 			'actual_dates' => json_encode($actualDates),
 		];
+	
 		if($isValueQuantityPrice){
 			$dataArr['is_value_quantity_price'] = $isValueQuantityPrice ; 
 		}
@@ -459,7 +461,6 @@ trait FinancialStatementAbleMutator
 			}
 		}
 		if (get_class($this) == IncomeStatement::class || ($request->get('in_add_or_edit_modal') && $request->get('financial_statement_able_item_id') == IncomeStatementItem::SALES_REVENUE_ID)) {
-			// dd($insertSubItems);
 			foreach ($insertSubItems as $index=>$insertSubItem) {
 				if($index ==0 ) // current type
 				{
@@ -544,9 +545,6 @@ trait FinancialStatementAbleMutator
 						$loopPercentageValueOfSalesRevenue = $salesRevenuesSubItemsArray[$percentageOf][$date] ?? 0;
 						$totalPercentageOfValue += $loopPercentageValueOfSalesRevenue;
 					}
-					// if($debug){
-					// 	dd('debug',$salesRevenuesSubItemsArray,$percentageOf,$date);
-					// }
 					if (isActualDateInModifiedOrAdjusted($date, $subItemType)) {
 						$values[$financialStatementAbleItemId][$subItemName][$date] = isset($payload->{$date}) ? $payload->{$date} : 0;
 					} else {
@@ -586,10 +584,6 @@ trait FinancialStatementAbleMutator
 						if( $subItemType == 'forecast' && !$subItem->pivot->is_deductible && $financialStatementAbleItemId != IncomeStatementItem::SALES_REVENUE_ID){
 								$vatValue = $this->calculateVat($subItem->pivot->vat_rate) ;
 						}
-						// unreachable
-						// if($this instanceof CashFlowStatement && $subItemType =='forecast' ){
-						// 	$vatValue = $this->calculateVat($subItem->pivot->vat_rate) ;
-						// }
 						$values[$financialStatementAbleItemId][$subItemName][$date] = $costOfUnitValue * $totalCostOfUnitValue * $vatValue;
 					}
 				}
@@ -613,17 +607,9 @@ trait FinancialStatementAbleMutator
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
 			if($subItemType == 'adjusted' && $mainItem->id == 7){
 				$debug = true ;
-				// dd('good');
-				// dd($oldSubItemsForCurrentMainItem);
 			}
 			$this->updateCostOfUnitAndPercentagesOfSubItems($oldSubItemsForCurrentMainItem, $dates, $subItemType,$debug);
-			// dd($this);
-			// if($this->id == 7){
-			// 	// dd();
-			// 	dd( $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get());
-			// }
-			// dd($this->id == 7 ){
-			// }
+
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
