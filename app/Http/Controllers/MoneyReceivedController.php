@@ -370,14 +370,7 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request){
-		// IncomingTransfer::where('id','!=',1)->delete();
-		// CleanOverdraftBankStatement::where('type','incoming-transfer')->delete();
-		// DB::table('clean_overdraft_settlements')->delete();
-		// DB::table('debugging')->delete();
-		// DB::table('clean_overdraft_withdrawals')->update([
-		// 	'settlement_amount'=>0,
-		// 	'net_balance'=>2000
-		// ]);
+	
 		
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');

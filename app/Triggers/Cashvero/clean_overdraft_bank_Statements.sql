@@ -10,7 +10,7 @@
 				declare _count_all_rows integer default 0 ; 
 				declare _last_delete_id integer default 0 ; 
 				declare interest_type_text varchar(100) default 'interest';
-			declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+				declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 			
 				-- في حالة الانشاء
 				set new.created_at = CURRENT_TIMESTAMP;
