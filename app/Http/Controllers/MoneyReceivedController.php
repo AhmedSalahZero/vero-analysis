@@ -7,19 +7,15 @@ use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Cheque;
-use App\Models\CleanOverdraft;
-use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
-use App\Models\IncomingTransfer;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -440,14 +436,17 @@ class MoneyReceivedController
 		 */
 		$moneyReceived = MoneyReceived::create($data);
 		
-		$receivingDate = $data['receiving_date'] ?? null ; 
+		// $receivingDate = $data['receiving_date'] ?? null ; 
+		
+		$statementDate = $moneyReceived->getStatementDate(); 
+		
 		$currency = $data['currency'] ?? null ; 
 		$receivingBranchId = $relationData['receiving_branch_id'] ?? null ;
-		
-		$moneyReceived->handleStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,$receivingBranchId);
-		
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
+		
+		$moneyReceived->handleStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$receivedAmount,$currency,$receivingBranchId);
+		
 		/**
 		 * * For Money Received Only
 		 */

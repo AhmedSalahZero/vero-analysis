@@ -25,6 +25,10 @@ class FinancialInstitution extends Model
 	{
 		$builder->where('type',self::BANK);
 	}
+	public function scopeOnlyHasOverdrafts(Builder $builder){
+		$builder
+		->has('cleanOverdrafts');
+	}
 	/**
 	 * * نوع المؤسسة المالية وليكن مثلا بنك
 	 */
@@ -123,6 +127,7 @@ class FinancialInstitution extends Model
 			$account = $this->accounts()->create([
 				'account_number'=>$accountArr['account_number'],
 				'balance_amount'=>$balanceAmount ,
+				// 'account_type_id'=>,
 				'exchange_rate'=>$accountArr['exchange_rate'],
 				'currency'=>$isMainAccount ?'EGP': $accountArr['currency'],
 				'iban'=>$accountArr['iban'],

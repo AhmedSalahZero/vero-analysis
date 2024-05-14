@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 trait HasBasicStoreRequest 
 {
 	public function storeBasicForm(Request $request , array $except = ['_token','save','_method'] ):self{
+		dump('before',$this);
 		foreach($request->except($except) as $name => $value){
 			$columnExist = Schema::hasColumn($this->getTable(),$name);
 			if(is_object($value)){
@@ -18,7 +19,7 @@ trait HasBasicStoreRequest
 					$this->{$name} = $request->boolean($name);
 				}
 			}
-			elseif($columnExist){
+			elseif($columnExist ){
 				$this->{$name} = $request->get($name);
 			}
 		}

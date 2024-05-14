@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HDate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -27,7 +28,7 @@ class CashInSafeStatement extends Model
 		 DB::table('cash_in_safe_statements')
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , id asc')
-		->where('financial_institution_account_id',$model->financial_institution_account_id)
+		->where('branch_id',$model->branch_id)
 		->each(function($cleanOverdraftBankStatement){
 			DB::table('cash_in_safe_statements')->where('id',$cleanOverdraftBankStatement->id)->update([
 				'updated_at'=>now()
@@ -43,7 +44,18 @@ class CashInSafeStatement extends Model
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
-				$model->full_date = date('Y-m-d H:i:s', strtotime("$date $time"));
+				
+				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+				/**
+				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
+				 */
+				$fullDateTime = HDate::generateUniqueDateTimeForModel(self::class,'full_date',$fullDateTime,[
+					[
+						'company_id','=',$model->company_id ,
+					]
+				]) ;
+				$model->full_date = $fullDateTime;
+				
 			});
 			
 			static::created(function(CashInSafeStatement $model){
@@ -55,26 +67,26 @@ class CashInSafeStatement extends Model
 				$minDate = self::updateNextRows($model,'from update');
 				
 				
-				$isChanged = $model->isDirty('financial_institution_account_id') ;
+				$isChanged = $model->isDirty('branch_id') ;
 				/**
 				 * * دي علشان لو غيرت ال
-				 * * financial_institution_account_id
+				 * * branch_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
 				if($isChanged){
-					$oldAccountIdId=$model->getRawOriginal('financial_institution_account_id');
+					$oldAccountIdId=$model->getRawOriginal('branch_id');
 					$oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldCleanOverdraft = CashInSafeStatement::where('financial_institution_account_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					$firstBankStatementForOldCleanOverdraft = CashInSafeStatement::where('branch_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
 					if(!$firstBankStatementForOldCleanOverdraft){
-						// CleanOverdraftWithdrawal::where('financial_institution_account_id',$oldCleanOverdraftId)->delete();
+						// CleanOverdraftWithdrawal::where('branch_id',$oldCleanOverdraftId)->delete();
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('cash_in_safe_statements')
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , id asc')
-						->where('financial_institution_account_id',$model->financial_institution_account_id)->update([
+						->where('branch_id',$model->branch_id)->update([
 							'updated_at'=>now()
 						]);
 						

@@ -116,7 +116,7 @@ $banks = [];
             <div class="tab-pane {{ !Request('active') || Request('active') == MoneyPayment::PAYABLE_CHEQUE ?'active':'' }}" id="{{ MoneyPayment::PAYABLE_CHEQUE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="MoneyPayment::PAYABLE_CHEQUE" :title="__('Payable Cheques')" :startDate="$filterDates[MoneyPayment::PAYABLE_CHEQUE]['startDate']??''" :endDate="$filterDates[MoneyPayment::PAYABLE_CHEQUE]['endDate']??''">
-                        <x-export-money-payment :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$payableChequesTableSearchFields" :money-payment-type="MoneyPayment::PAYABLE_CHEQUE" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
+                        <x-export-money-payment :route-redirect="route('view.money.payment',['company'=>$company->id])" :route-action="route('payable.cheque.mark.as.paid',['company'=>$company->id])" :popup-title="__('Do You Want To Mark This Cheque / Cheques As Paid ?')" :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$payableChequesTableSearchFields" :money-payment-type="MoneyPayment::PAYABLE_CHEQUE" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
 
                     <div class="kt-portlet__body">
@@ -207,315 +207,7 @@ $banks = [];
 
 
 
-            {{-- <div class="tab-pane {{  Request('active') == MoneyPayment::CHEQUE_REJECTED ?'active':'' }}" id="{{ MoneyPayment::CHEQUE_REJECTED }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                    <x-table-title.with-two-dates :type="MoneyPayment::CHEQUE_REJECTED" :title="__('Rejected Cheques')" :startDate="$filterDates[MoneyPayment::CHEQUE_REJECTED]['startDate']??''" :endDate="$filterDates[MoneyPayment::CHEQUE_REJECTED]['endDate']??''">
-                        <x-export-money-payment :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesRejectedTableSearchFields" :money-payment-type="MoneyPayment::CHEQUE_REJECTED" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
-                    </x-table-title.with-two-dates>
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                            <thead>
-                                <tr class="table-standard-color">
-                                    <th>{{ __('Select') }}</th>
-
-                                    <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Supplier Name') }}</th>
-                                    <th>{{ __('Delivery Date') }}</th>
-                                    <th>{{ __('Cheque Number') }}</th>
-                                    <th>{{ __('Cheque Amount') }}</th>
-                                    <th>{{ __('Currency') }}</th>
-                                    <th class="bank-max-width">{{ __('Drawee Bank') }}</th>
-                                    <th>{{ __('Due Date') }}</th>
-                                    <th>{{ __('Status') }}</th>
-                                    <th>{{ __('Control') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($receivedRejectedChequesInSafe as $moneyPayment)
-                                <tr>
-                                    <td>
-                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyPayment->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyPayment->id }}" class="form-control checkbox js-send-to-collection" data-money-type="{{ MoneyPayment::CHEQUE_REJECTED }}">
-                                    </td>
-									   <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyPayment->getSupplierName() }}</td>
-                                    <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
-                                    <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
-                                    <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
-                                    <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
-                                    <td class="bank-max-width">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
-                                    <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
-                                    <td> {{ $moneyPayment->payableCheque->getStatusFormatted() }} </td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-											@if(!$moneyPayment->isOpenBalance())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-											@endif 
-                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-id="{{ $moneyPayment->id }}" data-money-type="{{ MoneyPayment::CHEQUE_REJECTED }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::CHEQUE_REJECTED }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
-											@if(!$moneyPayment->isOpenBalance())
-                                            <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyPayment->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('delete.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											@endif
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                        <!--end: Datatable -->
-                    </div>
-                </div>
-            </div> --}}
-
-
-
-
-
-
-            {{-- <div class="tab-pane {{ Request('active') == MoneyPayment::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" id="{{ MoneyPayment::CHEQUE_UNDER_COLLECTION }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                    <x-table-title.with-two-dates :type="MoneyPayment::CHEQUE_UNDER_COLLECTION" :title="__('Cheques Under Collection')" :startDate="$filterDates[MoneyPayment::CHEQUE_UNDER_COLLECTION]['startDate']??''" :endDate="$filterDates[MoneyPayment::CHEQUE_UNDER_COLLECTION]['endDate']??''">
-                        <x-export-money-payment :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$chequesUnderCollectionTableSearchFields" :money-payment-type="MoneyPayment::CHEQUE_UNDER_COLLECTION" :has-search="1" :has-batch-collection="0" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
-
-                    </x-table-title.with-two-dates>
-
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                            <thead>
-                                <tr class="table-standard-color">
-
-                                    <th class="align-middle">{!! __('Type') !!}</th>
-                                    <th class="align-middle">{!! __('Customer <br> Name') !!}</th>
-                                    <th class="align-middle">{!! __('Cheque <br> Number') !!}</th>
-                                    <th class="align-middle">{!! __('Cheque <br> Amount') !!}</th>
-                                    <th class="align-middle">{!! __('Deposit <br> Date') !!}</th>
-                                    <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
-                                    <th class="align-middle">{!! __('Account <br> Number') !!}</th>
-                                    <th class="align-middle">{!! __('Cheque <br> Due Date') !!}</th>
-                                    <th class="align-middle">{!! __('Clearance <br>Days') !!}</th>
-                                    <th class="align-middle">{!! __('Cheque Expected <br> Collection Date') !!}</th>
-                                    <th class="align-middle">{!! __('Status') !!}</th>
-                                    <th class="align-middle">{{ __('Control') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($receivedChequesUnderCollection as $moneyPayment)
-                                <tr>
-  									 <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyPayment->getSupplierName() }}</td>
-                                    <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
-                                    <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
-                                    <td class="text-nowrap"> {{$moneyPayment->payableCheque->getDepositDateFormatted()}} </td>
-                                    <td class="bank-max-width">{{ $moneyPayment->payableCheque->getDrawlBankName() }}</td>
-                                    <td>{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
-                                    <td> {{ $moneyPayment->payableCheque->getDueDateFormatted() }} </td>
-                                    <td> {{ $moneyPayment->payableCheque->getClearanceDays() }} </td>
-                                    <td> {{ $moneyPayment->payableCheque->payableChequeExpectedCollectionDateFormatted() }} </td>
-										@php
-										$dueStatus = $moneyPayment->payableCheque->getDueStatusFormatted() ;
-									@endphp
-                                    <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">{{ $dueStatus['status'] }}</td>
-                                
-
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-										@if(!$moneyPayment->isOpenBalance())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-											@endif 
-											@if($moneyPayment->payableCheque->getDueStatus())
-											@if(!$moneyPayment->isOpenBalance())
-                                            <a data-toggle="modal" data-target="#apply-collection-modal-{{ $moneyPayment->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Collection') }}" href="#"><i class="fa fa-coins"></i></a>
-                                            <div class="modal fade" id="apply-collection-modal-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('cheque.apply.collection',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id ]) }}" method="post">
-                                                            @csrf
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque To Be Collected  ?') }}</h5>
-                                                                <button type="button" class="close" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Customr Name')}} </label>
-                                                                        <div class="kt-input-icon">
-                                                                            <input value="{{ $moneyPayment->getSupplierName() }}" type="text" disabled class="form-control">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Cheque Number')}} </label>
-                                                                        <div class="kt-input-icon">
-                                                                            <input value="{{ $moneyPayment->payableCheque->getChequeNumber() }}" type="text" disabled class="form-control">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Cheque Amount')}} </label>
-                                                                        <div class="kt-input-icon">
-                                                                            <input value="{{ $moneyPayment->getPaidAmountFormatted() }}" type="text" disabled class="form-control">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Due Date')}} </label>
-                                                                        <div class="kt-input-icon">
-                                                                            <input value="{{ $moneyPayment->payableCheque->getDueDateFormatted() }}" type="text" disabled class="form-control">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Collection Date')}}</label>
-                                                                        <div class="kt-input-icon">
-                                                                            <div class="input-group date">
-                                                                                <input required type="text" name="actual_collection_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">
-                                                                                        <i class="la la-calendar-check-o"></i>
-                                                                                    </span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Collection Fees')}} <span class="required">*</span></label>
-                                                                        <div class="kt-input-icon">
-                                                                            <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
-                                                                        </div>
-                                                                    </div>
-
-
-
-                                                                </div>
-
-
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											@endif 
-											@endif 
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id ]) }}"><i class="fa fa-sync-alt"></i></a>
-											@if($moneyPayment->payableCheque->getDueStatus())
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id ]) }}"><i class="fa fa-undo"></i></a>
-                                            <div class="modal fade" id="delete-cheque-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('delete.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                           
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											@endif
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                        <!--end: Datatable -->
-                    </div>
-                </div>
-            </div> --}}
-
-
-{{-- 
-            <div class="tab-pane {{ Request('active') == MoneyPayment::CHEQUE_COLLECTED ? 'active':''  }}" id="{{ MoneyPayment::CHEQUE_COLLECTED }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="MoneyPayment::CHEQUE_COLLECTED" :title="__('Collected Cheques')" :startDate="$filterDates[MoneyPayment::CHEQUE_COLLECTED]['startDate']??''" :endDate="$filterDates[MoneyPayment::CHEQUE_COLLECTED]['endDate']??''">
-                        <x-export-money-payment :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$collectedChequesTableSearchFields" :money-payment-type="MoneyPayment::CHEQUE_COLLECTED" :has-search="1" :has-batch-collection="0" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
-
-                    </x-table-title.with-two-dates>
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                            <thead>
-                                <tr class="table-standard-color">
-
-                                    <th class="align-middle">{{ __('Type') }}</th>
-                                    <th class="align-middle">{{ __('Supplier Name') }}</th>
-                                    <th class="align-middle">{{ __('Cheque Number') }}</th>
-                                    <th class="align-middle">{{ __('Cheque Amount') }}</th>
-                                    <th class="align-middle">{{ __('Due Date') }}</th>
-                                    <th class="align-middle">{{ __('Deposit Date') }}</th>
-                                    <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
-                                    <th class="align-middle">{{ __('Account Number') }}</th>
-                                    <th class="align-middle">{{ __('Collection Fees') }}</th>
-                                    <th class="align-middle">{!! __('Cheque Actual <br> Collection Date') !!}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($collectedCheques as $moneyPayment)
-                                <tr>
- 									  <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyPayment->getSupplierName() }}</td>
-                                    <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
-                                    <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
-                                    <td class="text-nowrap"> {{$moneyPayment->payableCheque->getDueDateFormatted()}} </td>
-                                    <td class="text-nowrap"> {{$moneyPayment->payableCheque->getDepositDateFormatted()}} </td>
-                                    <td class="bank-max-width">{{ $moneyPayment->payableCheque->getDrawlBankName() }}</td>
-                                    <td>{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
-                                    <td> {{ $moneyPayment->payableCheque->getCollectionFeesFormatted() }} </td>
-                                    <td> {{ $moneyPayment->payableCheque->payableChequeExpectedCollectionDateFormatted() }} </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                        <!--end: Datatable -->
-                    </div>
-                </div>
-            </div> --}}
+        
 
 
 
@@ -528,7 +220,8 @@ $banks = [];
                 <div class="kt-portlet kt-portlet--mobile">
 
                     <x-table-title.with-two-dates :type="MoneyPayment::OUTGOING_TRANSFER" :title="__('Outgoing Transfer')" :startDate="$filterDates[MoneyPayment::OUTGOING_TRANSFER]['startDate']??''" :endDate="$filterDates[MoneyPayment::OUTGOING_TRANSFER]['endDate']??''">
-                        <x-export-money-payment :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$outgoingTransferTableSearchFields" :money-payment-type="MoneyPayment::OUTGOING_TRANSFER" :has-search="1" :has-batch-collection="0" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
+                        <x-export-money-payment :route-redirect="route('view.money.payment',['company'=>$company->id])" :route-action="route('outgoing.transfer.mark.as.paid',['company'=>$company->id])" :popup-title="__('Do You Want To Mark This Outcoming Transfer/s As Paid ?')"  :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$outgoingTransferTableSearchFields" :money-payment-type="MoneyPayment::OUTGOING_TRANSFER" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
+					
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -536,6 +229,8 @@ $banks = [];
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
+                                    <th class="align-middle">{{ __('Select') }}</th>
+								
                                     <th>{{ __('Type') }}</th>
                                     <th>{{ __('Supplier Name') }}</th>
                                     <th>{{ __('Delivery Date') }}</th>
@@ -552,6 +247,9 @@ $banks = [];
                                 @foreach($outgoingTransfer as $money)
 
                                 <tr>
+								<td>
+                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $money->id }}" type="checkbox" name="second_to_collection[]" value="{{ $money->id }}" data-money-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
+                                    </td>
 								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getSupplierName() }}</td>
                                     <td>{{ $money->getDeliveryDateFormatted() }}</td>
@@ -695,88 +393,6 @@ $banks = [];
 
 
 
-            <!--Begin:: Tab Content-->
-            {{-- <div class="tab-pane {{ Request('active') == MoneyPayment::CASH_IN_BANK ? 'active':''  }}" id="{{ MoneyPayment::CASH_IN_BANK }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-
-                    <x-table-title.with-two-dates :type="MoneyPayment::CASH_IN_BANK" :title="__('Bank Deposit')" :startDate="$filterDates[MoneyPayment::CASH_IN_BANK]['startDate']??''" :endDate="$filterDates[MoneyPayment::CASH_IN_BANK]['endDate']??''">
-                        <x-export-money-payment :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$cashInBankTableSearchFields" :money-payment-type="MoneyPayment::CASH_IN_BANK" :has-search="1" :has-batch-collection="0" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
-
-                    </x-table-title.with-two-dates>
-
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                            <thead>
-                                <tr class="table-standard-color">
-                                    <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Supplier Name') }}</th>
-                                    <th>{{ __('Delivery Date') }}</th>
-                                    <th class="bank-max-width">{{ __('Delivery Bank') }}</th>
-                                    <th>{{ __('Deposit Amount') }}</th>
-                                    <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('Account Type') }}</th>
-                                    <th>{{ __('Account Number') }}</th>
-                                    <th>{{ __('Control') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @foreach($receivedCashesInBanks as $money)
-
-                                <tr>
-								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $money->getSupplierName() }}</td>
-                                    <td>{{ $money->getDeliveryDateFormatted() }}</td>
-                                    <td>{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
-                                    <td>{{ $money->getPaidAmountFormatted() }}</td>
-                                    <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
-                                    <td>{{ $money->getCashInBankAccountTypeName() }}</td>
-                                    <td>{{ $money->getCashInBankAccountNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-										@if(!$moneyPayment->isOpenBalance())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
-
-                                            <a data-toggle="modal" data-target="#delete-cash-in-bank-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-cash-in-bank-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('delete.money.payment',['company'=>$company->id,'moneyPayment'=>$money->id]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											@endif 
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-
-
-                            </tbody>
-                        </table>
-
-                        <!--end: Datatable -->
-                    </div>
-                </div>
-            </div> --}}
 
             <!--End:: Tab Content-->
 

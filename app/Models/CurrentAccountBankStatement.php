@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HDate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,17 @@ class CurrentAccountBankStatement extends Model
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
-				$model->full_date = date('Y-m-d H:i:s', strtotime("$date $time"));
+				
+				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+				/**
+				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
+				 */
+				$fullDateTime = HDate::generateUniqueDateTimeForModel(self::class,'full_date',$fullDateTime,[
+					[
+						'company_id','=',$model->company_id ,
+					]
+				]) ;
+				$model->full_date = $fullDateTime;
 			});
 			
 			static::created(function(CurrentAccountBankStatement $model){
