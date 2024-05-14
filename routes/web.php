@@ -339,7 +339,17 @@ Route::middleware([])->group(function () {
 				 Route::get('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@edit')->name('edit.adjust.due.dates');
 				 Route::patch('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@update')->name('update.adjust.due.dates');
 				 Route::delete('delete-adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@destroy')->name('delete.adjust.due.dates');
+
+				 
+				 
+				 Route::get('foreign-exchange-rate', 'ForeignExchangeRateController@index')->name('view.foreign.exchange.rate');
+				 Route::post('foreign-exchange-rate', 'ForeignExchangeRateController@store')->name('store.foreign.exchange.rate');
+				 Route::get('foreign-exchange-rate/edit/{foreignExchangeRate}', 'ForeignExchangeRateController@edit')->name('edit.foreign.exchange.rate');
+				 Route::patch('foreign-exchange-rate/edit/{foreignExchangeRate}', 'ForeignExchangeRateController@update')->name('update.foreign.exchange.rate');
+				 Route::delete('delete-foreign-exchange-rate/edit/{foreignExchangeRate}', 'ForeignExchangeRateController@destroy')->name('delete.foreign.exchange.rate');
  
+ 
+				 
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft', 'CleanOverdraftController@index')->name('view.clean.overdraft');
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/create', 'CleanOverdraftController@create')->name('create.clean.overdraft');
 				 Route::post('financial-institutions/{financialInstitution}/clean-overdraft/create', 'CleanOverdraftController@store')->name('store.clean.overdraft');
@@ -407,6 +417,9 @@ Route::middleware([])->group(function () {
 					Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 					Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
 					
+					Route::get('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@index')->name('view.withdrawals.settlement.report');
+					Route::post('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@result')->name('result.withdrawals.settlement.report');
+					
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
@@ -437,9 +450,10 @@ Route::middleware([])->group(function () {
                     Route::delete('money-payment/delete/{moneyPayment}', 'MoneyPaymentController@destroy')->name('delete.money.payment');
 					Route::get('money-payment/get-invoice-numbers/{supplier_name}/{currency?}', 'MoneyPaymentController@getInvoiceNumber'); // ajax request
 					Route::get('money-payment/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyPaymentController@getAccountNumbersForAccountType'); // ajax request
-					Route::post('mark-payable-cheques-as-paid', 'MoneyPaymentController@markAsPaid')->name('payable.cheque.mark.as.paid');
+					Route::post('mark-payable-cheques-as-paid', 'MoneyPaymentController@markChequesAsPaid')->name('payable.cheque.mark.as.paid');
+					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
 			   
-					
+					Route::post('adjust-customer-due-invoices','WeeklyCashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
                     Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
                     Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
                     Route::post('unapplied-amounts/create/{modelType}', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
@@ -454,6 +468,17 @@ Route::middleware([])->group(function () {
                 // Route::get('shareable-paginate', 'SharingLinkController@paginate')->name('admin.get.sharing.links');
                 // Route::get('export-shareable-link', 'SharingLinkController@export')->name('admin.export.sharing.link');
 
+				Route::get('fixed-payments-at-end-php/{financialInstitution}', 'Loans2Controller@viewTestLoanAtEndPhp')->name('fixed.loan.fixed.at.end.php');
+				Route::post('loan-by-php/{financialInstitution}','Loans2Controller@calculateByPhp')->name('loan2.store.php');
+				Route::post('save-fixed-at-end', 'SaveFixedAtEndController@__invoke')->name('save.fixed.at.end');
+				Route::post('save-loan-dates', 'SaveLoanDatesController@__invoke')->name('save.loan.dates');
+				Route::get('fixed-payments-at-end', 'Loans2Controller@create')->name('fixed.loan.fixed.at.end');
+				Route::get('calculate-loan-amount', 'Loans2Controller@create')->name('calc.loan.amount');
+				Route::get('calculate-interest-percentage', 'Loans2Controller@create')->name('calc.interest.percentage');
+				Route::get('fixed-payments-at-beginning', 'Loans2Controller@create')->name('fixed.loan.fixed.at.beginning');
+				Route::get('variable-payments', 'Loans2Controller@create')->name('variable.payments');
+				
+				
                 Route::post('edit-table-cell', [EditTableCellsController::class, '__invoke'])->name('admin.edit.table.cell');
                 Route::delete('delete-revenue-business-line/{revenueBusinessLine}', [RevenueBusinessLineController::class, 'deleteRevenueBusinessLine'])->name('admin.delete.revenue.business.line');
                 Route::delete('delete-service-category/{serviceCategory}', [RevenueBusinessLineController::class, 'deleteServiceCategory'])->name('admin.delete.service.category');
@@ -694,6 +719,10 @@ Route::middleware([])->group(function () {
                     Route::any('/BreakdownSummaryReport', 'SummaryController@breakdownForecastReport')->name('breakdown.forecast.report');
                     Route::any('/CollectionSummaryReport', 'SummaryController@collectionForecastReport')->name('collection.forecast.report');
 
+					
+				
+
+
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////
                     // Sales Forecast Quantity
 
@@ -752,19 +781,6 @@ Route::get('{lang}/remove-company-image/{company}', function ($lang, Company $co
     return redirect()->back()->with('success', __('Company Image Has Been Deleted Successfully'));
 })->name('remove.company.image');
 
-// Route::get('irr', function () {
-// 	$yearsAndFreeCash  = [
-// 		0 => -5980364,
-// 		1 => -12935560,
-// 		2 => 72229784,
-// 		3 => 21733457,
-// 		4 => 340092719,
-// 		5 => 1545132872
-// 	];
-// 	$requiredInvestmentReturn = 25 / 100;
-// 	$result = CalculatedIrrController::calculateIrr($yearsAndFreeCash, $requiredInvestmentReturn);
-// 	dd($result);
-// });
 Route::get('getStartDateAndEndDateOfIncomeStatementForCompany', 'HomeController@getIncomeStatementStartDateAndEndDate');
 Route::get('removeSessionForRedirect', function () {
     if (session()->has('redirectTo')) {

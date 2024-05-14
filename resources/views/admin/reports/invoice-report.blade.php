@@ -369,6 +369,7 @@
                                         <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getNetInvoiceAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getDueDateFormatted() }}</td>
                                         <td class="sub-text-bg text-center ">{{ $invoice->getNetBalanceFormatted() }}</td>
+										{{-- {{ dd($invoice->getStatusFormatted()) }} --}}
                                         <td class="sub-text-bg text-center">{{ $invoice->getStatusFormatted() }}</td>
                                         <td class="sub-text-bg  text-center">
                                             {{ $invoice->getAging() }}

@@ -143,7 +143,6 @@ class InvoiceAgingService
 					];
 				}
 				if($modelType == 'SupplierInvoice'){
-					// dd($agings['charts']);
 				
 					$formattedForChat[] = [
 						'region'=>camelizeWithSpace($dueType,'_') ,

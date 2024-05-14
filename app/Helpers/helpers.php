@@ -3072,6 +3072,9 @@ function getPermissions():array
         [
             'name'=>'view weekly cash flow report'
         ],
+		[
+			'name'=>'view withdrawals settlement report'
+		],
         [
             'name'=>'view money received'
         ],
@@ -3081,6 +3084,18 @@ function getPermissions():array
 		[
             'name'=>'view internal money transfer'
         ],
+		[
+			'name'=>'view buy or sell foreign currency'
+		],
+		[
+			'name'=>'view foreign exchange rate'
+		],
+		[
+			'name'=>'view safe statement report'
+		],	
+		[
+			'name'=>'view bank statement report'
+		],
 		[
 			'name'=>'view income statement planning'
 		]
@@ -4141,7 +4156,10 @@ function getHeaderMenu()
     $hasSelectSalesPersonInTemplate = isset($exportablesForSalesGathering['sales_person']);
     $hasSelectCustomerNameInTemplate = isset($exportablesForSalesGathering['customer_name']);
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
-
+	$canViewSafeStatement = $user->can('view safe statement report');
+	$canViewBankStatement = $user->can('view bank statement report') ;
+	$canViewWeeklyCashFlow = $user->can('view weekly cash flow report');
+	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
 	$cashManagementSubItems = [
 		
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
@@ -4281,23 +4299,49 @@ function getHeaderMenu()
 			'submenu'=>[]
 				],
 				[
-					'title'=>__('Safe Statement'),
-					'link'=>route('view.safe.statement',['company'=>$company->id]),
-					'show'=>true,
+					'title'=>__('Buy Or Sell Foreign Currency'),
+					'link'=>'#',
+					'show'=>$user->can('view buy or sell foreign currency'),
 					'submenu'=>[]
 				],
 				[
-					'title'=>__('Bank Statement'),
-					'link'=>route('view.bank.statement',['company'=>$company->id]),
-					'show'=>true,
+					'title'=>__('Foreign Exchange Rate'),
+					'link'=>route('view.foreign.exchange.rate',['company'=>$company->id]),
+					'show'=>$user->can('view foreign exchange rate'),
 					'submenu'=>[]
 				],
 				[
-					'title'=>__('Weekly Cash Flow Report'),
-					'link'=>route('view.weekly.cashflow.report', ['company'=>$companyId]),
-					'show'=>$user->can('view weekly cash flow report'),
-					'submenu'=>[]
+					'title'=>__('Reports'),
+					'link'=>'#',
+					'show'=>$canViewWeeklyCashFlow ||  $canViewSafeStatement || $canViewBankStatement || $canViewWithdrawalsSettlementReport ,
+					'submenu'=>[
+						[
+							'title'=>__('Safe Statement'),
+							'link'=>route('view.safe.statement',['company'=>$company->id]) ,
+							'show'=>$canViewSafeStatement,
+							'submenu'=>[]
+						],
+						[
+							'title'=>__('Bank Statement'),
+							'link'=>route('view.bank.statement',['company'=>$company->id]),
+							'show'=>$canViewBankStatement,
+							'submenu'=>[]
+						],
+						[
+							'title'=>__('Weekly Cash Flow Report'),
+							'link'=>route('view.weekly.cashflow.report', ['company'=>$companyId]),
+							'show'=>$canViewWeeklyCashFlow ,
+							'submenu'=>[]
+						],
+						[
+							'title'=>__('Withdrawals Settlement Report'),
+							'link'=>route('view.withdrawals.settlement.report',['company'=>$companyId]),
+							'show'=>$canViewWithdrawalsSettlementReport ,
+							'submenu'=>[]
+						]
+					]
 				]
+				
 			]
 		]
 		,
@@ -4924,3 +4968,26 @@ function formatWeeksDatesFromStartDate(string $agingDate, string $format = 'd-m-
 
         ];
     }
+	
+	
+
+if (!function_exists('str_to_upper')) {
+	function str_to_upper($str)
+	{
+		return ucwords(str_replace(['_', '-'], ' ', $str));
+	}
+}
+if (!function_exists('getFixedLoanTypes')) {
+	function getFixedLoanTypes()
+	{
+		return [
+			'normal', 'step-up', 'step-down', 'grace_period_with_capitalization', 'grace_period_without_capitalization', 'grace_step-up_with_capitalization', 'grace_step-up_without_capitalization',
+			'grace_step-down_with_capitalization', 'grace_step-down_without_capitalization',
+		];
+	}
+}
+	function getDifferenceBetweenTwoDatesInDays(Carbon $firstDate, Carbon $secondDate)
+	{
+		return $secondDate->diffInDays($firstDate);
+	}
+	

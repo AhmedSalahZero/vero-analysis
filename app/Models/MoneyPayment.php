@@ -9,7 +9,6 @@ use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class MoneyPayment extends Model
 {
@@ -73,6 +72,9 @@ class MoneyPayment extends Model
 	
 	public function getPayableChequeDueDate(){
 		return $this->payableCheque ? $this->payableCheque->getDueDate(): null;
+	}
+	public function getOutgoingTransferDueDate(){
+		return $this->outgoingTransfer ? $this->outgoingTransfer->actualPaymentDate(): null;
 	}
 	public function getPayableChequeNumber()
 	{
@@ -444,5 +446,20 @@ class MoneyPayment extends Model
 			$currentStatement->delete();
 		}
 	}
-	
+	/**
+	 * * دا عباره عن التاريخ اللي هنستخدمة في ال
+	 * * statements 
+	 * * سواء بانك او كاش الخ
+	 */
+	public function getStatementDate()
+	{
+		// dd($this->isOutgoingTransfer(),$this->getOutgoingTransferDueDate());
+		if($this->isPayableCheque()){
+			return $this->getPayableChequeDueDate();
+		}
+		if($this->isOutgoingTransfer()){
+			return $this->getOutgoingTransferDueDate();
+		}
+		return $this->getDeliveryDate();
+	}	
 }

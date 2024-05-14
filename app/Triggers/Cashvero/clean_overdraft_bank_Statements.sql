@@ -68,7 +68,6 @@
 
 			select sum(debit) into _current_debit from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0    ;
 			select sum(settlement_amount) into _total_settlements from clean_overdraft_withdrawals where clean_overdraft_id =  _clean_overdraft_id ;
-		--	insert into debugging (message) values (concat('current debit ' , _current_bank_statement_debit));
 			set _current_debit = _current_debit - _total_settlements ;
 			
 					call start_settlement_process(0 , _clean_overdraft_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
@@ -100,11 +99,37 @@
 		-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
 			update clean_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and clean_overdraft_id = _clean_overdraft_id ;
 		end //
+		
+		delimiter ; 
+		drop procedure if exists reverse_clean_overdraft_settlements_by_specific_debit ;
+		delimiter // 
+		create procedure reverse_clean_overdraft_settlements_by_specific_debit(in _start_update_from_date_time date  , in _clean_overdraft_id integer , in _current_debit decimal(14,2) )
+		begin 
+			-- هنا لو الدبت بالسالب هنجيب السحوبات اللي اتسددت ونشيل منها القيم دي من تحت لفوق
+			declare i INTEGER DEFAULT 0 ;
+			declare _clean_overdraft_withdrawal_id integer default 0 ;
+			declare _current_settlement decimal(14,2) default 0 ; -- دي قيمه ال settlement من السحوبات وهي عباره عن القيمة اللي اتسددت  
+			declare _settlement_amount decimal(14,2) default 0 ; -- دي القيمة اللي هنعكس بيها السداد وهي عباره عن القيمة الاصفر ما بين ال settlement and _current_debit
+			set _current_debit = abs(_current_debit);
+		-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
+			
+			
+			  repeat 
+				select id , settlement_amount into _clean_overdraft_withdrawal_id , _current_settlement from clean_overdraft_withdrawals where 
+			-- due_date > _start_update_from_date_time and
+			  clean_overdraft_id = _clean_overdraft_id  and settlement_amount > 0 order by due_date desc , id desc limit 1 ;
+			  set _settlement_amount = IIF(_current_settlement >_current_debit, _current_debit, _current_settlement) ;
+			  update clean_overdraft_withdrawals set net_balance = net_balance + _settlement_amount , settlement_amount = settlement_amount - _settlement_amount where id =  _clean_overdraft_withdrawal_id ;
+			  set _current_debit = _current_debit - _settlement_amount  ; 
+			  until _current_debit <= 0 end repeat ;
+			-- update clean_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and clean_overdraft_id = _clean_overdraft_id ;
+		end //
 
 		create trigger refresh_calculation_before_update before update on `clean_overdraft_bank_statements` for each row 
 		begin 
 
-				
+				declare _current_debit decimal(14,2) default 0 ;
+				declare _total_settlements decimal(14,2) default 0 ;
 				declare _last_end_balance decimal(14,2) default 0 ;
 				declare _start_update_from_date_time date default '2000-01-01' ;
 				declare _previous_date date default null ;
@@ -132,8 +157,13 @@
 
 			if(new.type = 'payable_cheque') then
 			select to_be_setteled_max_within_days into _clean_overdraft_to_be_settled_after from clean_overdrafts where id = new.clean_overdraft_id ;
-			-- #QUESTION ?? new.date ? or new.actual_payment_date
 				update clean_overdraft_withdrawals set due_date =  ADDDATE(new.date,_clean_overdraft_to_be_settled_after) where clean_overdraft_bank_statement_id = new.id ;
+				
+			elseif (new.type = 'outgoing-transfer') then
+			select to_be_setteled_max_within_days into _clean_overdraft_to_be_settled_after from clean_overdrafts where id = new.clean_overdraft_id ;
+				update clean_overdraft_withdrawals set due_date =  ADDDATE(new.date,_clean_overdraft_to_be_settled_after) where clean_overdraft_bank_statement_id = new.id ;
+				
+				
 			end if;
 				select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 				set _count_all_rows =1 ;
@@ -195,13 +225,27 @@
 					-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 				
 			if(_last_bank_statement_date_to_start_settlement_from = new.full_date) then 		
+			
+				select sum(debit) into _current_debit from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and is_debit > 0    ;
+				select sum(settlement_amount) into _total_settlements from clean_overdraft_withdrawals where clean_overdraft_id =  new.clean_overdraft_id ;
+				set _current_debit = _current_debit - _total_settlements ;
+				
+			
 			-- if(new.full_date > _start_update_from_date_time ) then 		 -- دي في حالة لو انت اشتغلت علي موضوع ال closing date 
 				--	delete from clean_overdraft_settlements where clean_overdraft_bank_statement_id = _last_id;
 				-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
 				if(_origin_update_row_is_debit > 0 ) then 
 					call reverse_clean_overdraft_settlements(_start_update_from_date_time,new.clean_overdraft_id);	
+					call resettlement_clean_overdraft_from(_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
+					elseif  _origin_update_row_is_debit > 0 and _current_debit < 0  then 
+					call reverse_clean_overdraft_settlements_by_specific_debit(_start_update_from_date_time,new.clean_overdraft_id,_current_debit);	
+				
+				else 
+				
+			
+					call resettlement_clean_overdraft_from(_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
+				 
 				end if;
-				call resettlement_clean_overdraft_from(_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
 			
 					-- call resettlement_clean_overdraft_from(_bank_statement_start_from_date,new.clean_overdraft_id);
 			end if;
@@ -294,8 +338,7 @@
 					-- resettlement ب
 					-- اي بعد التحديث .. ولو مش موجود يبقي احنا في حاله الانشاء يبقي ضيف عنصر جديد
 				
-					insert into clean_overdraft_settlements (clean_overdraft_bank_statement_id,clean_overdraft_withdrawal_id,clean_overdraft_id , company_id   , settlement_amount,created_at) values(0,_clean_overdraft_withdrawal_id,_clean_overdraft_id,_company_id,_current_settlement_amount,CURRENT_TIMESTAMP);
-				--	insert into clean_overdraft_settlements (clean_overdraft_bank_statement_id,clean_overdraft_withdrawal_id,clean_overdraft_id , company_id   , settlement_amount,created_at) values(_bank_statement_id,_clean_overdraft_withdrawal_id,_clean_overdraft_id,_company_id,_current_settlement_amount,CURRENT_TIMESTAMP);
+					-- insert into clean_overdraft_settlements (clean_overdraft_bank_statement_id,clean_overdraft_withdrawal_id,clean_overdraft_id , company_id   , settlement_amount,created_at) values(0,_clean_overdraft_withdrawal_id,_clean_overdraft_id,_company_id,_current_settlement_amount,CURRENT_TIMESTAMP);
 			
 					
 
@@ -321,16 +364,19 @@
 			declare _date_for_settlement date default new.date ;
 			if  new.type = 'payable_cheque'
 			then 
-		
-			
-			
 			select actual_payment_date into  _date_for_settlement from payable_cheques join money_payments on 
 				money_payments.id = payable_cheques.money_payment_id 
 			where payable_cheques.money_payment_id = money_payments.id
 			and payable_cheques.money_payment_id = new.money_payment_id ; 
-		
+			elseif new.type = 'outgoing-transfer' then 
+			
+			select actual_payment_date into  _date_for_settlement from outgoing_transfers join money_payments on 
+				money_payments.id = outgoing_transfers.money_payment_id 
+			where outgoing_transfers.money_payment_id = money_payments.id
+			and outgoing_transfers.money_payment_id = new.money_payment_id ; 
+			
+			
 			end if  ;
-			-- set _date_for_settlement = if(payable_cheque = 'payable_cheque' , new , new. )
 			if new.is_credit > 0 then
 				call start_settlement_process(new.id , new.clean_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
 			end if;
@@ -382,3 +428,20 @@
 		call recalculate_end_of_month_clean_overdraft_interests();
 		END$$
 		DELIMITER ;
+		drop event if exists refresh_customer_invoices_status_event ;
+		DELIMITER $$
+		CREATE EVENT `refresh_customer_invoices_status_event`
+		ON SCHEDULE EVERY  1 day
+		STARTS '2022-03-31 23:30:00'
+		ON COMPLETION PRESERVE
+		DO BEGIN
+		call refresh_customer_invoices_status();
+		END$$
+		DELIMITER ;
+		drop procedure if exists refresh_customer_invoices_status ;
+		delimiter // 
+		create procedure refresh_customer_invoices_status() 
+		begin
+				update customer_invoices set updated_at = CURRENT_TIMESTAMP where net_balance > 0 ;
+				update supplier_invoices set updated_at = CURRENT_TIMESTAMP where net_balance > 0 ;
+		end // 

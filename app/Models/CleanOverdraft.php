@@ -75,6 +75,10 @@ class CleanOverdraft extends Model
 	{
 		return $this->max_lending_limit_per_customer?:0;
 	}
+	public static function findByFinancialInstitutionIds(array $cleanOverdraftIds):array
+	{
+		return CleanOverdraft::where('financial_institution_id',$cleanOverdraftIds)->pluck('id')->toArray();
+	}
 	/**
 	 * * هو عدد الايام اللي اجباري تسدد السحبات فيها 
 	 * * وليكن مثلا لو سحبت النهاردا الف جنية فا مفروض اسددها بعد كام يوم 

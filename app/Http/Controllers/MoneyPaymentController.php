@@ -14,6 +14,7 @@ use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyPayment;
+use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\SalesOrder;
@@ -356,7 +357,6 @@ class MoneyPaymentController
 
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency']);
-		$actualMoneyMovementDate = $data['delivery_date'] ;
 		$data['supplier_name'] = $supplierName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -379,6 +379,7 @@ class MoneyPaymentController
 			$bankId = $request->input('delivery_bank_id.'.MoneyPayment::OUTGOING_TRANSFER) ;
 			$relationData = [
 				'delivery_bank_id'=>$bankId,
+				'actual_payment_date'=>$data['delivery_date'],
 				'account_number'=>$request->input('account_number.'.MoneyPayment::OUTGOING_TRANSFER),
 				'account_type'=>$request->input('account_type.'.MoneyPayment::OUTGOING_TRANSFER)
 			];
@@ -388,7 +389,6 @@ class MoneyPaymentController
 			$relationName = 'payableCheque';
 			$bankId = $request->input('delivery_bank_id.'.MoneyPayment::PAYABLE_CHEQUE) ;
 			$dueDate = $request->input('due_date') ;
-			$actualMoneyMovementDate = $dueDate ;
 			$relationData = [
 				'due_date'=>$dueDate ,
 				'actual_payment_date'=>$dueDate,
@@ -407,24 +407,27 @@ class MoneyPaymentController
 		/**
 		 * @var MoneyPayment $moneyPayment ;
 		 */
-		$moneyPayment = MoneyPayment::create($data);
 		
+		
+		 $moneyPayment = MoneyPayment::create($data);
+		 $relationData['company_id'] = $company->id ;  
+		 $moneyPayment->$relationName()->create($relationData);
+		$statementDate = $moneyPayment->getStatementDate();
+		// dd($statementDate);
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id,$bankId);
-			$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$actualMoneyMovementDate,$paidAmount);
+			$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$statementDate,$paidAmount);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id,$bankId);
-			// dd($financialInstitutionAccount);
-			$moneyPayment->storeCurrentAccountBankStatement($actualMoneyMovementDate,$paidAmount,$financialInstitutionAccount->id);
+			$moneyPayment->storeCurrentAccountBankStatement($statementDate,$paidAmount,$financialInstitutionAccount->id);
 		}
 		if($moneyPayment->isCashPayment()){
-			$moneyPayment->storeCashInSafeStatement($actualMoneyMovementDate,$paidAmount,$data['currency'],$relationData['delivery_branch_id']);
+			$moneyPayment->storeCashInSafeStatement($statementDate,$paidAmount,$data['currency'],$relationData['delivery_branch_id']);
 		}
-		$relationData['company_id'] = $company->id ;  
-		$moneyPayment->$relationName()->create($relationData);
+	
 		/**
 		 * * For Money Received Only
 		 */
@@ -560,7 +563,7 @@ class MoneyPaymentController
 			}
 			return $branch->id ;
 	}
-	public function markAsPaid(Company $company,Request $request)
+	public function markChequesAsPaid(Company $company,Request $request)
 	{
 		$moneyPaymentIds = $request->get('cheques') ;
 		$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
@@ -577,9 +580,7 @@ class MoneyPaymentController
 					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
 					'updated_at'=>now()
 				]);
-				// $moneyPayment->cleanOverdraftBankStatement->cleanOverDraft->update([
-				// 	'start_settlement_from_bank_statement_date'=> $chequeDueDate
-				// ]);
+		
 			}
 			
 		}
@@ -591,6 +592,37 @@ class MoneyPaymentController
 			]);	
 		}
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE]);
+		
+	}	
+	public function markOutgoingTransfersAsPaid(Company $company,Request $request)
+	{
+		$moneyPaymentIds = $request->get('cheques') ;
+		$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
+		$data = $request->only(['actual_payment_date']);
+		$data['status'] = OutgoingTransfer::PAID;
+		foreach($moneyPaymentIds as $moneyPaymentId){
+			$moneyPayment = MoneyPayment::find($moneyPaymentId) ;
+			// $chequeDueDate = $moneyPayment->outgoingTransfer->due_date;
+			$moneyPayment->outgoingTransfer->update($data);
+			if($moneyPayment->getCurrentStatement()){
+				$time = now()->format('H:i:s');
+				$moneyPayment->getCurrentStatement()->update([
+					'date'=>$actualPaymentDate = $data['actual_payment_date'],
+					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
+					'updated_at'=>now()
+				]);
+		
+			}
+			
+		}
+		if($request->ajax()){
+			return response()->json([
+				'status'=>true ,
+				'msg'=>__('Good'),
+				'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER])
+			]);	
+		}
+		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER]);
 		
 	}
 

@@ -2,7 +2,10 @@
 'selectedBanks','banks','hasBatchCollection','hasSearch','moneyPaymentType','searchFields'
 ,'financialInstitutionBanks',
 'isFirstExportMoney'=>false,
-'accountTypes'
+'accountTypes',
+'popupTitle'=>'',
+'routeAction'=>'#',
+'routeRedirect'=>route('view.money.payment',['company'=>$company->id])
 ])
 @php
 use App\Models\MoneyPayment ;
@@ -18,7 +21,7 @@ use App\Models\MoneyPayment ;
             </a>
             @endif
             @if($hasSearch)
-            <a data-type="multi" data-toggle="modal" data-target="#search-money-modal-{{ $moneyPaymentType }}" id="js-search-money-received" href="#" title="{{ __('Search Money Received') }}" class="btn  active-style btn-icon-sm  ">
+            <a data-type="multi" data-toggle="modal" data-target="#search-money-modal-{{ $moneyPaymentType }}" id="js-search-money-received" href="#" title="{{ __('Search Money Payments') }}" class="btn  active-style btn-icon-sm  ">
                 <i class="fas fa-search"></i>
                 {{ __('Advanced Filter') }}
             </a>
@@ -34,7 +37,7 @@ use App\Models\MoneyPayment ;
                         </div>
                         <div class="modal-body">
                             @csrf
-                            <form action="{{ route('view.money.receive',['company'=>$company->id]) }}" class="row ">
+                            <form action="{{ $routeRedirect }}" class="row ">
                                 <input name="active" type="hidden" value="{{ $moneyPaymentType }}">
                                 <div class="form-group col-4">
                                     <label for="Select Field " class="label">{{ __('Field Name') }}</label>
@@ -81,13 +84,13 @@ use App\Models\MoneyPayment ;
             <div class="modal fade" id="send-to-under-collection-modal{{ $moneyPaymentType }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog  modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <form  data-money-type="{{ $moneyPaymentType }}" id="ajax-send-cheques-to-collection-id{{ $moneyPaymentType }}" class="ajax-send-cheques-to-collection" action="{{ route('payable.cheque.mark.as.paid',['company'=>$company->id]) }}" method="post">
+                        <form  data-money-type="{{ $moneyPaymentType }}" id="ajax-send-cheques-to-collection-id{{ $moneyPaymentType }}" class="ajax-send-cheques-to-collection" action="{{ $routeAction }}" method="post">
                             <input type="hidden" id="single-or-multi{{ $moneyPaymentType }}" value="single">
                             <input type="hidden" id="current-single-item{{ $moneyPaymentType }}" value="0">
                             <input type="hidden" id="current-currency{{ $moneyPaymentType }}" class="current-currency"  value="">
                             @csrf
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Cheque / Cheques As Paid ?') }}</h5>
+                                <h5 class="modal-title" id="exampleModalLongTitle">{{ $popupTitle }}</h5>
                                 <button type="button" class="close" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -107,63 +110,6 @@ use App\Models\MoneyPayment ;
                                             </div>
                                         </div>
                                     </div>
-{{-- 
-                                    <div class="col-md-9 mb-3">
-                                        <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date ">
-                                                <select js-when-change-trigger-change-account-type data-financial-institution-id required name="drawl_bank_id" class="form-control js-drawl-bank">
-                                                    @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                                    <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->cheque && $model->cheque->getDraweeBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="row mb-3">
-
-
-                                    <div class="col-md-3 ">
-                                        <label>{{__('Account Type')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                    @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label>{{__('Account Number')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select name="account_number" class="form-control js-account-number">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3 mb-3">
-                                        <label>{{__('Account Balance')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <input readonly required value="0" type="text" name="account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <label>{{__('Clearance Days')}} <span class="required">*</span></label>
-                                        <div class="kt-input-icon">
-                                            <input value="0" required name="clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
-                                            <x-tool-tip title="{{__('Kash Vero')}}" />
-                                        </div>
-                                    </div> --}}
-
 
 
                                 </div>

@@ -290,7 +290,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     @foreach($weeks as $weekAndYear => $week)
 									@php
 										$year = explode('-',$weekAndYear)[1];
-										
 									@endphp
                                     <th class="view-table-th bg-lighter header-th max-w-weeks align-middle text-center">
 										<span class="d-block">{{ __('Week ' .  $week ) }}</span>
@@ -341,7 +340,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 @php
                                 $rowIndex = 0 ;
                                 @endphp
-                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Customers Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Payable Cheques','Suppliers Invoices','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
+                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
                                 @if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due')
                                 @continue ;
                                 @endif
@@ -353,18 +352,41 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
                                     <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
                                     <td class="  sub-numeric-bg text-center editable-date"> 
-										@if($customerName == 'Customers Invoices')
-										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('Past Due') }}</button>
-                                                <x-modal.due-invoices :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+										@if($customerName == 'Customers Past Due Invoices')
+										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+                                                <x-modal.due-invoices :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 										@endif 
+										
+											@if($customerName == 'Suppliers Past Due Invoices')
+										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+                                                <x-modal.due-invoices :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+										
+										@endif 
+										
+										
 									
 									 </td>
 									
                                     @foreach($weeks as $weekAndYear => $week)
+									
                                     @php
 									$year = explode('-',$weekAndYear)[1];
                                     $currentValue = $result[$customerName][$weekAndYear] ?? 0 ;
+									if($customerName == 'Customers Past Due Invoices' )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$currentRow = $customerDueInvoices->where('week_start_date',$startDate)->first() ;
+										$currentValue =$currentRow ?  $currentRow->amount : 0;
+										
+									}
+									if($customerName == 'Suppliers Past Due Invoices' )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$currentRow = $supplierDueInvoices->where('week_start_date',$startDate)->first() ;
+										$currentValue =$currentRow ?  $currentRow->amount : 0;
+										
+									}
                                     $currentPercentage = $currentValue && $currentTotal ? $currentValue/ $currentTotal * 100 : 0 ;
                                     @endphp
                                     <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
@@ -372,32 +394,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td>
 
                                 </tr>
-
-
-
-
-                                {{-- @foreach($customerAging['invoices'] as $invoiceNumber=>$invoiceDetailArr)
-                                <tr class="edit-info-row add-sub maintable-1-row-class{{ $rowIndex }} is-sub-row d-none">
-                                <td class=" reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize is-close "></td>
-
-                                <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{ $invoiceNumber }}</td>
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['past_due'][$moreThan150] ?? 0 ,0) }}</td>
-                                @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder )
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['past_due'][$daysIntervalInInverseOrder] ?? 0 ,0) }}</td>
-                                @endforeach
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['past_due']['total'] ?? 0 ,0) }}</td>
-
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['current_due'][0] ?? 0 ,0) }}</td>
-                                @foreach(getInvoiceDayIntervals() as $daysInterval )
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['coming_due'][$daysInterval] ?? 0 ,0) }}</td>
-                                @endforeach
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['coming_due'][$moreThan150] ?? 0 ,0) }}</td>
-                                <td class="  sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['coming_due']['total'] ?? 0 ,0) }}</td>
-                                <td class="sub-numeric-bg text-center editable-date">{{ number_format($invoiceDetailArr['total']??0 , 0) }}</td>
-
-                                </tr>
-                                @endforeach --}}
-
 
 
 

@@ -513,4 +513,16 @@ class MoneyReceived extends Model
 			$this->storeCashInSafeStatement($receivingDate,$receivedAmount,$currencyName,$receivingBranchId);
 		}
 	}
+	/**
+	 * * دا عباره عن التاريخ اللي هنستخدمة في ال
+	 * * statements 
+	 * * سواء بانك او كاش الخ
+	 */
+	public function getStatementDate()
+	{
+		if($this->isCheque()){
+			return $this->getChequeDueDate();
+		}
+		return $this->getReceivingDate();
+	}
 }

@@ -2,13 +2,28 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class OutgoingTransfer extends Model
 {
-	 
+
+	const PENDING = 'pending';
+	const PAID = 'paid';
+	
     protected $guarded = ['id'];
+	
+	public function getStatus()
+	{
+		return $this->status ;
+	}
+	
+	public function getStatusFormatted()
+	{
+		return snakeToCamel($this->getStatus());
+	}
 	
 	public function moneyPayment()
 	{
@@ -53,6 +68,29 @@ class OutgoingTransfer extends Model
 	{
 		return $this->account_number;
 	}
-	
+	public function actualPaymentDate()
+	{
+		return $this->actual_payment_date ;
+	}
+	public function actualPaymentDateFormatted()
+	{
+		$date  = $this->actualPaymentDate() ;
+		return $date ? Carbon::make($date)->format('d-m-Y') : null ;
+	}
+	public function setActualPaymentDateAttribute($value)
+	{
+		if(!$value){
+			return null ;
+		}
+		$date = explode('/',$value);
+		if(count($date) != 3){
+			$this->attributes['actual_payment_date'] = $value;
+			return  ;
+		}
+		$month = $date[0];
+		$day = $date[1];
+		$year = $date[2];
+		$this->attributes['actual_payment_date'] = $year.'-'.$month.'-'.$day;
+	}
 	
 }

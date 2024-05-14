@@ -322,6 +322,11 @@
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Room') }}
                                         </th>
+										<th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+										{!! __('Calculated <br> Interest') !!}
+                                        </th>
+										
+										
                                         @endif
 
                                         <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
@@ -357,6 +362,7 @@
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->end_balance) }}</td>
                                         @if(! $isCurrentAccount)
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->room) }}</td>
+                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->interest_amount) }}</td>
                                         @endif
                                         <td class="sub-text-bg text-center max-w-amount">{{ __('Comment ') }}</td>
 
