@@ -1,14 +1,17 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
+use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CertificatesOfDepositsController
 {
@@ -49,31 +52,80 @@ class CertificatesOfDepositsController
 	}
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
-
-		$filterEndDate = $request->has('filter_end_date') ? $request->get('filter_end_date'):  now()->format('Y-m-d');
-		$filterStartDate = $request->has('filter_start_date') ? $request->get('filter_start_date'):now()->subMonths(3)->format('Y-m-d');
-		
-		$user = $request->user()->load('certificatesOfDeposits') ;
 		/**
-		 * @var Collection $certificatesOfDeposits 
+		 * @var Collection $runningCertificatesOfDeposits 
 		 */
-		$certificatesOfDeposits = $user->certificatesOfDeposits ;
-		$certificatesOfDeposits = $certificatesOfDeposits->where('start_date','>=',$filterStartDate)->where('start_date','<=',$filterEndDate) ;
-		$certificatesOfDeposits =   $this->applyFilter($request,$certificatesOfDeposits) ;
+		
+		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
+		$currentType = $request->get('active',CertificatesOfDeposit::RUNNING);
+		$filterDates = [];
+		foreach(CertificatesOfDeposit::getAllTypes() as $type){
+			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
+			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
+			
+			$filterDates[$type] = [
+				'startDate'=>$startDate,
+				'endDate'=>$endDate
+			];
+		}
+		/**
+		 * * start of running certificates deposits 
+		 */
+		$runningCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::RUNNING]['startDate'] ?? null ;
+		$runningCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::RUNNING]['endDate'] ?? null ;
+		$runningCertificatesOfDeposits = $company->runningCertificatesOfDeposits ;
+		$runningCertificatesOfDeposits =  $runningCertificatesOfDeposits->filterByStartDate($runningCertificatesOfDepositsStartDate,$runningCertificatesOfDepositsEndDate) ;
+		$runningCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::RUNNING ? $this->applyFilter($request,$runningCertificatesOfDeposits):$runningCertificatesOfDeposits ;
+		/**
+		 * * end of running certificates deposits 
+		 */
+		
+		 
+		 
+		 /**
+		 * * start of running certificates deposits 
+		 */
+		$maturedCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::MATURED]['startDate'] ?? null ;
+		$maturedCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::MATURED]['endDate'] ?? null ;
+		$maturedCertificatesOfDeposits = $company->maturedCertificatesOfDeposits ;
+		$maturedCertificatesOfDeposits =  $maturedCertificatesOfDeposits->filterByStartDate($maturedCertificatesOfDepositsStartDate,$maturedCertificatesOfDepositsEndDate) ;
+		$maturedCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::MATURED ? $this->applyFilter($request,$maturedCertificatesOfDeposits):$maturedCertificatesOfDeposits ;
+		/**
+		 * * end of running certificates deposits 
+		 */
+		 
 		
 		$searchFields = [
-			'start_date'=>__('Start Date'),
-			'end_date'=>__('End Date'),
-			'account_number'=>__('Account Number'),
-			'currency'=>__('Currency'),
+			CertificatesOfDeposit::RUNNING=>[
+				'start_date'=>__('Start Date'),
+				'end_date'=>__('End Date'),
+				'account_number'=>__('Account Number'),
+				'currency'=>__('Currency'),
+			],
+			CertificatesOfDeposit::MATURED=>[
+				'start_date'=>__('Start Date'),
+				'end_date'=>__('End Date'),
+				'account_number'=>__('Account Number'),
+				'currency'=>__('Currency'),
+			]
 		];
+		
+		
+		$models = [
+			CertificatesOfDeposit::RUNNING =>$runningCertificatesOfDeposits ,
+			CertificatesOfDeposit::MATURED =>$maturedCertificatesOfDeposits ,
+			
+		];
+		// $maturedSearchFields = ;
+		
         return view('reports.certificates-of-deposit.index', [
 			'company'=>$company,
-			'searchFields'=>$searchFields,
+			'filterDates'=>$filterDates,
 			'financialInstitution'=>$financialInstitution,
-			'certificatesOfDeposits'=>$certificatesOfDeposits,
-			'filterEndDate'=>$filterEndDate,
-			'filterStartDate'=>$filterStartDate
+			'searchFields'=>$searchFields,
+			'models'=>$models
+			
+			
 		]);
     }
 	
@@ -81,7 +133,9 @@ class CertificatesOfDepositsController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		
+		/**
+		 * * عباره عن حساب جاري فقط
+		 */
 		$accounts = $financialInstitution->accounts ;
         return view('reports.certificates-of-deposit.form',[
 			'banks'=>$banks,
@@ -143,4 +197,77 @@ class CertificatesOfDepositsController
 		$certificatesOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
+	
+	/**
+	 * * هنا اليوزر هياكد انه نزله الفايدة المستحقة وبالتالي هنزلها في حسابه الجاري اللي هو اختارة من الفورمة
+	 */
+	public function applyDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	{
+		$actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
+		$actualInterestAmount  = $request->get('actual_interest_amount') ;
+		$certificateType = CertificatesOfDeposit::MATURED ;
+		$certificatesOfDeposit->update([
+			'actual_deposit_date'=>$actualDepositDate,
+			'actual_interest_amount'=>$actualInterestAmount,
+			'status'=>$certificateType
+		]);
+		
+		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
+		if($actualInterestAmount > 0){
+			$certificatesOfDeposit->handleStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getAccountNumber() , null , $actualDepositDate,$actualInterestAmount);
+		}
+		$certificatesOfDeposit->handleStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getAccountNumber() , null , $actualDepositDate,$certificatesOfDeposit->getAmount());
+		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+	}
+	
+	
+	
+		/**
+	 * * هنا اليوزر هيعكس عملية التاكيد اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال 
+	 * * current account bank statements
+	 */
+	public function reverseDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	{
+		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
+		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
+		$certificateType = CertificatesOfDeposit::MATURED ;
+		$certificatesOfDeposit->update([
+			'actual_deposit_date'=>null,
+			'actual_interest_amount'=>null,
+			'status'=>CertificatesOfDeposit::RUNNING
+		]);
+		/**
+		 * * هنشيل قيم ال
+		 * * current account bank statement
+		 */
+		$currentAccountBankStatements = $certificatesOfDeposit->currentAccountBankStatements ;
+		$length = count($currentAccountBankStatements);
+		$currentAccountBankStatements->each(function(CurrentAccountBankStatement $currentAccountBankStatement,$index) use ($length){
+			/**
+			 * * لو هو اخر عنصر اللي هو تاريخ الاصغر ما بينهم .. في الحاله دي هنحذفه بالطريقة اللي بتشغل ال
+			 * * observers
+			 * * علشان لو عندك خمسين عنصر مثلا هيتحذفوا ما يروحش يترجر مع كل واحد
+			 * * انما لما هيترجر مع الاصفر تاريخ منهم فا في الحاله دي هيعمل مرة واحدة بس ترجر ياحدث من اول التاريخ الصغير دا وانت نازل .. و وانت نازل دي
+			 * * معناه انه هيحدث العناصر اللي المفروض يحدثها كلها
+			 * * وخلي بالك انك مرتب 
+			 * * currentAccountBankStatements 
+			 * * من الكبير للصغير من حيث ال 
+			 * * full_date 
+			 * * فا الاخير هيكون هو الاصغر اللي هنبدا نشكل ال
+			 * * observer 
+			 * * من عندة
+			 */
+			if($index == $length-1){
+				logger('last loop');
+				$currentAccountBankStatement->delete();
+			}else{
+				logger('start');
+				DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatement->id)->delete();
+			}
+			// DB::table('current_account_bank_statements')->where('id',);
+		});
+		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+	}
+	
+	
 }

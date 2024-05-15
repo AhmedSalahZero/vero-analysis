@@ -154,6 +154,18 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(InternalMoneyTransfer::class,'company_id','id');
 	}
+	public function runningCertificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
+		->where('status',CertificatesOfDeposit::RUNNING);
+	}
+	public function maturedCertificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
+		->where('status',CertificatesOfDeposit::MATURED);
+	}
+	
+	
 	
 
 }

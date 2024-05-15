@@ -59,12 +59,12 @@ class CurrentAccountBankStatement extends Model
 			});
 			
 			static::created(function(CurrentAccountBankStatement $model){
-				self::updateNextRows($model,'created');
+				self::updateNextRows($model);
 			});
 			
 			static::updated(function (CurrentAccountBankStatement $model) {
 				
-				$minDate = self::updateNextRows($model,'from update');
+				$minDate = self::updateNextRows($model);
 				
 				
 				$isChanged = $model->isDirty('financial_institution_account_id') ;
@@ -118,6 +118,10 @@ class CurrentAccountBankStatement extends Model
     public function moneyReceived()
     {
         return $this->belongsTo(MoneyReceived::class, 'money_received_id', 'id');
+    }
+	public function certificateOfDeposit()
+    {
+        return $this->belongsTo(CertificatesOfDeposit::class, 'certificate_of_deposit_id', 'id');
     }
 	public function moneyPayment()
     {

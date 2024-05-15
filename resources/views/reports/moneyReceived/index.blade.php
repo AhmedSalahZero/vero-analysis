@@ -470,7 +470,6 @@ use App\Models\MoneyReceived;
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="MoneyReceived::CHEQUE_COLLECTED" :title="__('Collected Cheques')" :startDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE_COLLECTED]['endDate']??''">
                         <x-export-money :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$collectedChequesTableSearchFields" :money-received-type="MoneyReceived::CHEQUE_COLLECTED" :has-search="1" :has-batch-collection="0" :banks="$banks" :selectedBanks="$selectedBanks" href="{{route('create.money.receive',['company'=>$company->id])}}" />
-
                     </x-table-title.with-two-dates>
 
                     <div class="kt-portlet__body">

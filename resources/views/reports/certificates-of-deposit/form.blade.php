@@ -106,8 +106,7 @@
                                     <div class="col-md-3">
                                         <label>{{__('Select Currency')}} </label>
                                         <div class="input-group">
-                                            <select name="currency" class="form-control repeater-select">
-                                                <option selected>{{__('Select')}}</option>
+                                            <select name="currency" class="form-control repeater-select js-update-current-accounts">
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
                                                 @endforeach
@@ -135,14 +134,13 @@
                                     <div class="col-md-2 ">
                                         <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-
                                     <div class="col-md-2">
                                         <label>{{__('Add Maturity Amount To Account')}} <span class="required">*</span></label>
                                         <div class="input-group">
-                                            <select required name="maturity_amount_added_to_account_id" class="form-control repeater-select">
+                                            <select required name="maturity_amount_added_to_account_id" class="form-control repeater-select js-append-current-accounts">
                                                 <option selected>{{__('Select')}}</option>
 												@foreach($accounts as $account)
-                                                <option value="{{ $account->id  }}" @if(isset($model) && ($account->id == $model->getMaturityAmountAddedToAccountId())) selected @endif  >{{$account->getAccountNumber()}} - {{ $account->getCurrencyFormatted() }} </option>
+                                                <option value="{{ $account->id  }}" @if(isset($model) && ($account->id == $model->getMaturityAmountAddedToAccountId())) selected @endif  >{{$account->getAccountNumber()}}  </option>
 												@endforeach 
                                             </select>
                                         </div>
@@ -291,4 +289,28 @@
 					$('#start-date-id').trigger('change')
 				})
             </script>
+			<script>
+			$(document).on('change','select.js-update-current-accounts',function(e){
+				const currency = $(this).val();
+				if(currency){
+				$.ajax({
+					url:"{{ route('update.current.account.based.on.currency',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ]) }}",
+					data:{
+						"currency":currency 
+					},
+					success:function(res){
+						let options = '';
+						for(var i = 0  ; i < res.data.length ; i++){
+							id = Object.keys(res.data[i])[0];
+							accountNumber = res.data[i][id]
+							options+=' <option value="'+ id +'">'+accountNumber+'</option> '
+						}
+						$('select.js-append-current-accounts').empty().append(options)
+					}
+				})
+					
+				}
+			})
+			$('select.js-update-current-accounts').trigger('change');
+			</script>
             @endsection
