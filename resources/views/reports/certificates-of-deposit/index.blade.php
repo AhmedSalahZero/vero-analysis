@@ -2,7 +2,9 @@
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
-
+@php
+use \App\Models\CertificatesOfDeposit;
+@endphp
 <style>
     input[type="checkbox"] {
         cursor: pointer;
@@ -38,10 +40,17 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'certificates-of-deposit' ?'active':'' }}" data-toggle="tab" href="#certificates-of-deposit" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Certificates Of Deposit Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == CertificatesOfDeposit::RUNNING ?'active':'' }}" data-toggle="tab" href="#{{ CertificatesOfDeposit::RUNNING }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Running Certificates Of Deposit') }}
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ Request('active') == CertificatesOfDeposit::MATURED ?'active':'' }}" data-toggle="tab" href="#{{ CertificatesOfDeposit::MATURED }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Matured Certificates Of Deposit') }}
+                    </a>
+                </li>
+
 
             </ul>
 
@@ -55,24 +64,17 @@
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') || Request('active') == 'certificates-of-deposit' ?'active':'' }}" id="bank" role="tabpanel">
+			@php
+				$currentType = CertificatesOfDeposit::RUNNING ;
+			@endphp
+            <div class="tab-pane {{ !Request('active') || Request('active') == $currentType  ? 'active'  :  '' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                        <div class="kt-portlet__head-label">
-                            <span class="kt-portlet__head-icon">
-                                <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                            </span>
-                            <h3 class="kt-portlet__head-title">
-                                {{ __('Certificates Of Deposit Table') }}
-                            </h3>
 
-                        </div>
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Running Certificates Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-certificates-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                    </x-table-title.with-two-dates>
 
-                    <x-filter-by-date :start-date="$filterStartDate" :end-date="$filterEndDate"></x-filter-by-date>
 
-                        {{-- Export --}}
-                        <x-export-certificates-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'certificates-of-deposit'" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
-                    </div>
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -91,28 +93,85 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($certificatesOfDeposits as $index=>$certificatesOfDeposit)
+                                @foreach($models[$currentType] as $index=>$model)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $certificatesOfDeposit->getStartDateFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $certificatesOfDeposit->getEndDateFormatted() }}</td>
-                                    <td>{{ $certificatesOfDeposit->getAccountNumber() }}</td>
-                                    <td>{{ $certificatesOfDeposit->getAmountFormatted() }}</td>
-                                    <td class="text-uppercase">{{ $certificatesOfDeposit->getCurrency() }}</td>
-                                    <td>{{ $certificatesOfDeposit->getInterestRateFormatted() }}</td>
-                                    <td>{{ $certificatesOfDeposit->getInterestAmountFormatted() }}</td>
+                                    <td>{{ $model->getStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getEndDateFormatted() }}</td>
+                                    <td>{{ $model->getAccountNumber() }}</td>
+                                    <td>{{ $model->getAmountFormatted() }}</td>
+                                    <td class="text-uppercase">{{ $model->getCurrency() }}</td>
+                                    <td>{{ $model->getInterestRateFormatted() }}</td>
+                                    <td>{{ $model->getInterestAmountFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$certificatesOfDeposit->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $certificatesOfDeposit->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $certificatesOfDeposit->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Deposit') }}" href="#"><i class="fa fa-coins"></i></a>
+                                            <div class="modal fade" id="apply-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('apply.deposit.to.certificate.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) }}" method="post">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Apply Deposit To This Certificate ?') }}</h5>
+                                                                <button type="button" class="close" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row mb-3">
+
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Interest Amount')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{ is_null($model->actual_interest_amount) ? $model->getInterestAmount() : $model->actual_interest_amount }}" type="text" name="actual_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Deposit Date')}}</label>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group date">
+                                                                                <input required type="text" name="actual_deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">
+                                                                                        <i class="la la-calendar-check-o"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+
+
+                                                                </div>
+
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-certificate-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+
+
+
+                                            <div class="modal fade" id="delete-certificate-of-deposits-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$certificatesOfDeposit]) }}" method="post">
+                                                        <form action="{{ route('delete.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -141,6 +200,154 @@
                     </div>
                 </div>
             </div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+					@php
+				$currentType = CertificatesOfDeposit::MATURED ;
+			@endphp
+            <div class="tab-pane {{  Request('active') == $currentType  ? 'active'  :  '' }}" id="{{ $currentType }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Matured Certificates Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-certificates-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                    </x-table-title.with-two-dates>
+
+
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+                                    <th>{{ __('#') }}</th>
+                                    <th>{{ __('Start Date') }}</th>
+                                    <th>{{ __('End Date') }}</th>
+                                    <th>{{ __('Account Number') }}</th>
+                                    <th>{{ __('Amount') }}</th>
+                                    <th>{{ __('Currency') }}</th>
+                                    <th>{{ __('Intreset Rate') }}</th>
+                                    <th>{{ __('Interest Amount') }}</th>
+                                    <th>{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($models[$currentType] as $index=>$model)
+                                <tr>
+                                    <td>
+                                        {{ $index+1 }}
+                                    </td>
+                                    <td>{{ $model->getStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getEndDateFormatted() }}</td>
+                                    <td>{{ $model->getAccountNumber() }}</td>
+                                    <td>{{ $model->getAmountFormatted() }}</td>
+                                    <td class="text-uppercase">{{ $model->getCurrency() }}</td>
+                                    <td>{{ $model->getInterestRateFormatted() }}</td>
+                                    <td>{{ $model->getInterestAmountFormatted() }}</td>
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+
+
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a data-toggle="modal" data-target="#reverse-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Reverse Deposit') }}" href="#"><i class="fa fa-undo"></i></a>
+                                            <div class="modal fade" id="reverse-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('reverse.deposit.to.certificate.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) }}" method="post">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Certificate To Running ?') }}</h5>
+                                                                <button type="button" class="close" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            {{-- <div class="modal-body">
+                                                                <div class="row mb-3">
+
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Interest Amount')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{ is_null($model->actual_interest_amount) ? $model->getInterestAmount() : $model->actual_interest_amount }}" type="text" name="actual_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4 mb-4">
+                                                                        <label>{{__('Deposit Date')}}</label>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group date">
+                                                                                <input required type="text" name="actual_deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">
+                                                                                        <i class="la la-calendar-check-o"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+
+
+                                                                </div>
+
+
+                                                            </div> --}}
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-certificate-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+
+
+
+                                            <div class="modal fade" id="delete-certificate-of-deposits-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('delete.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+			
+			
 
 
 

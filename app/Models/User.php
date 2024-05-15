@@ -184,10 +184,7 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->hasMany(CleanOverdraft::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
 	}
-	public function certificatesOfDeposits()
-	{
-		return $this->hasMany(CertificatesOfDeposit::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
-	}
+
 	public function letterOfGuaranteeFacilities()
 	{
 		return $this->hasMany(LetterOfGuaranteeFacility::class , 'created_by','id')->where('company_id',getCurrentCompanyId());

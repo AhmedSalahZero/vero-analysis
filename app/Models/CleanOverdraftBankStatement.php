@@ -16,7 +16,7 @@ class CleanOverdraftBankStatement extends Model
 	];
 	const MONEY_TRANSFER  = 'money-transfer';
 	public $oldFullDate = null;
-	public static function updateNextRows(CleanOverdraftBankStatement $model,$method):string 
+	public static function updateNextRows(CleanOverdraftBankStatement $model):string 
 	{
 		$minDate  = $model->full_date ;
 		
@@ -65,12 +65,12 @@ class CleanOverdraftBankStatement extends Model
 			});
 			
 			static::created(function(CleanOverdraftBankStatement $model){
-				self::updateNextRows($model,'created');
+				self::updateNextRows($model);
 			});
 			
 			static::updated(function (CleanOverdraftBankStatement $model) {
 				
-				$minDate = self::updateNextRows($model,'from update');
+				$minDate = self::updateNextRows($model);
 				
 				
 				$isChanged = $model->isDirty('clean_overdraft_id') ;

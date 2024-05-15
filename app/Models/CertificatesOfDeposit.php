@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\Models\HasStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,8 +14,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	 */
 class CertificatesOfDeposit extends Model
 {
-	
+	use HasStatements ;
     protected $guarded = ['id'];
+	const RUNNING = 'running';
+	const MATURED = 'matured';
+	public static function getAllTypes()
+	{
+		return [
+			self::RUNNING,
+			self::MATURED
+		];
+	}
 	public function getStartDate()
 	{
 		return $this->start_date;
@@ -84,6 +94,15 @@ class CertificatesOfDeposit extends Model
 		$interestAmount = $this->getInterestAmount();
 		return number_format($interestAmount,0); 
 	}
+	public function getActualInterestAmount()
+	{
+		return $this->actual_interest_amount ?:0;
+	}
+	
+	public function getActualInterestAmountFormatted()
+	{
+		return number_format($this->getActualInterestAmount(),0); 
+	}
 	
 	public function getCurrency()
 	{
@@ -93,4 +112,14 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->belongsTo(FinancialInstitution::class , 'financial_institution_id','id');
 	}
+	public function currentAccountBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id');
+	}
+	public function currentAccountBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->orderBy('full_date','desc');
+	}
+	
+	
 }

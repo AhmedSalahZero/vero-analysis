@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HHelpers;
 use App\Models\OpeningBalance;
+use App\Traits\Models\HasStatements;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ;
+	use IsMoney ,HasStatements;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
@@ -422,38 +423,7 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'money_received_id','id');
 	}
-	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $receivedAmount )
-	{
-		return $this->cleanOverdraftBankStatement()->create([
-			'type'=>$moneyType ,
-			'clean_overdraft_id'=>$cleanOverdraft->id ,
-			'company_id'=>$this->company_id ,
-			'date'=>$date,
-			'limit'=>$cleanOverdraft->getLimit(),
-			'beginning_balance'=>0 ,
-			'debit'=>$receivedAmount,
-			'credit'=>0 
-		]) ;
-	}
-	public function storeCashInSafeStatement(string $date , $receivedAmount , string $currencyName,int $branchId)
-	{
-		return $this->cashInSafeStatement()->create([
-			'branch_id'=>$branchId,
-			'currency'=>$currencyName ,
-			'company_id'=>$this->company_id ,
-			'debit'=>$receivedAmount,
-			'date'=>$date,
-		]);
-	}	
-	public function storeCurrentAccountBankStatement(string $date , $receivedAmount , int $financialInstitutionAccountId)
-	{
-		return $this->currentAccountBankStatement()->create([
-			'financial_institution_account_id'=>$financialInstitutionAccountId,
-			'company_id'=>$this->company_id ,
-			'debit'=>$receivedAmount,
-			'date'=>$date
-		]);
-	}		
+		
 	public function openingBalance()
 	{
 		return $this->belongsTo(OpeningBalance::class,'opening_balance_id');
@@ -494,25 +464,8 @@ class MoneyReceived extends Model
 		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
 		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
 	}
-	/**
-	 * * هنا لو اليوزر ضاف فلوس في الحساب
-	 * * بنحطها في الاستيت منت
-	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
-	 */
-	public function handleStatement(?int $financialInstitutionId ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $receivedAmount = null,?string $currencyName = null,?int $receivingBranchId = null)
-	{
-		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
-		}
-		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCurrentAccountBankStatement($receivingDate,$receivedAmount,$financialInstitutionAccount->id);
-		}
-		if($this->isCashInSafe()){
-			$this->storeCashInSafeStatement($receivingDate,$receivedAmount,$currencyName,$receivingBranchId);
-		}
-	}
+
+	
 	/**
 	 * * دا عباره عن التاريخ اللي هنستخدمة في ال
 	 * * statements 

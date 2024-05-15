@@ -87,6 +87,7 @@ Route::middleware([])->group(function () {
             Route::get('/', 'HomeController@index')->name('home');
 
             Route::prefix('{company}')->group(function () {
+				Route::get('update-currency-account-based-on-currency/{financialInstitution}','UpdateCurrentAccountBasedOnCurrencyController@index')->name('update.current.account.based.on.currency');
                 Route::post('save-labeling-data', 'CompanyController@saveLabelingData')->name('save.labeling.item');
 
                 Route::post('get-type-based-on-dates', [FilterMainTypeBasedOnDatesController::class, '__invoke'])->name('get.type.based.on.dates');
@@ -372,7 +373,9 @@ Route::middleware([])->group(function () {
                     Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit/edit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@edit')->name('edit.certificates.of.deposit');
                     Route::put('financial-institutions/{financialInstitution}/certificates-of-deposit/update/{certificatesOfDeposit}', 'CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
                     Route::delete('financial-institutions/{financialInstitution}/certificates-of-deposit/delete/{certificatesOfDeposit}', 'CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
-
+                    Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyDeposit')->name('apply.deposit.to.certificate.of.deposit');
+                    Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseDeposit')->name('reverse.deposit.to.certificate.of.deposit');
+					// Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility', 'LetterOfGuaranteeFacilityController@index')->name('view.letter.of.guarantee.facility');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/create', 'LetterOfGuaranteeFacilityController@create')->name('create.letter.of.guarantee.facility');
                     Route::post('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/create', 'LetterOfGuaranteeFacilityController@store')->name('store.letter.of.guarantee.facility');
