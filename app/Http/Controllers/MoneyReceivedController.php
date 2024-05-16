@@ -16,13 +16,14 @@ use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
+use App\Traits\Models\HasStatements;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class MoneyReceivedController
 {
-    use GeneralFunctions;
+    use GeneralFunctions,HasStatements;
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;
@@ -611,6 +612,9 @@ class MoneyReceivedController
 	 */
 	public function applyCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
+		/**
+		 * @var MoneyReceived $moneyReceived
+		 */
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::COLLECTED,
 			'collection_fees'=>$request->get('collection_fees'),

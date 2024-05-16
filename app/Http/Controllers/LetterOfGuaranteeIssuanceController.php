@@ -98,7 +98,7 @@ class LetterOfGuaranteeIssuanceController
 			'beneficiaries'=>Partner::onlyCustomers()->onlyForCompany($company->id)->get(),
 			'contracts'=>Contract::onlyForCompany($company->id)->get(),
 			'purchaseOrders'=>PurchaseOrder::onlyForCompany($company->id)->get(),
-			'accountTypes'=> AccountType::onlyCashAccounts()->get()
+			'accountTypes'=> AccountType::onlyCurrentAccount()->get()
 		];
 		
 	}

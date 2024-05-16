@@ -12,7 +12,6 @@ class VatCalculation
 {
 	private function calculateVatAdditions(array $salesRevenueDateAndValue , float $vatRate ){
 		$vatAdditions = [];
-		// dump($salesRevenueDateAndValue);
 		foreach($salesRevenueDateAndValue as $date => $value){
 			$vatAdditions[$date] = $vatRate/100 * $value;
 		}

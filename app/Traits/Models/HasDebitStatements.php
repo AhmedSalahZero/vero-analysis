@@ -3,61 +3,61 @@ namespace App\Traits\Models;
 
 use App\Models\AccountType;
 use App\Models\CleanOverdraft;
-use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 
-trait HasStatements 
+trait HasDebitStatements 
 {
 		/**
 	 * * هنا لو اليوزر ضاف فلوس في الحساب
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleStatement(?int $financialInstitutionId ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $receivedAmount = null,?string $currencyName = null,?int $receivingBranchId = null)
+	public function handleDebitStatement(?int $financialInstitutionId ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$receivingDate,$receivedAmount);
+			$this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$receivingDate,$debit);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCurrentAccountBankStatement($receivingDate,$receivedAmount,$financialInstitutionAccount->id);
+			$this->storeCurrentAccountDebitBankStatement($receivingDate,$debit,$financialInstitutionAccount->id);
 		}
 		elseif($this->isCashInSafe()){
-			$this->storeCashInSafeStatement($receivingDate,$receivedAmount,$currencyName,$receivingBranchId);
+			$this->storeCashInSafeDebitStatement($receivingDate,$debit,$currencyName,$receivingBranchId);
 		}
 	}
 	
-	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $receivedAmount )
+	public function storeCleanOverdraftDebitBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $debit )
 	{
-		return $this->cleanOverdraftBankStatement()->create([
+		return $this->cleanOverdraftDebitBankStatement()->create([
 			'type'=>$moneyType ,
 			'clean_overdraft_id'=>$cleanOverdraft->id ,
 			'company_id'=>$this->company_id ,
 			'date'=>$date,
 			'limit'=>$cleanOverdraft->getLimit(),
 			'beginning_balance'=>0 ,
-			'debit'=>$receivedAmount,
-			'credit'=>0 
+			'debit'=>$debit,
+			'credit'=>0
 		]) ;
 	}
-	public function storeCashInSafeStatement(string $date , $receivedAmount , string $currencyName,int $branchId)
+	public function storeCashInSafeDebitStatement(string $date , $debit , string $currencyName,int $branchId)
 	{
-		return $this->cashInSafeStatement()->create([
+		return $this->cashInSafeDebitStatement()->create([
 			'branch_id'=>$branchId,
 			'currency'=>$currencyName ,
 			'company_id'=>$this->company_id ,
-			'debit'=>$receivedAmount,
+			'debit'=>$debit,
+			'credit'=>0,
 			'date'=>$date,
 		]);
 	}	
-	public function storeCurrentAccountBankStatement(string $date , $receivedAmount , int $financialInstitutionAccountId)
+	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId)
 	{
-		// dump($date);
-		return $this->currentAccountBankStatement()->create([
+		return $this->currentAccountDebitBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
 			'company_id'=>$this->company_id ,
-			'debit'=>$receivedAmount,
+			'credit'=>0,
+			'debit'=>$debit,
 			'date'=>$date
 		]);
 	}	

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HHelpers;
 use App\Models\OpeningBalance;
-use App\Traits\Models\HasStatements;
+use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ,HasStatements;
+	use IsMoney ,HasDebitStatements;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
@@ -391,10 +391,6 @@ class MoneyReceived extends Model
 		$incomingTransfer = $this->incomingTransfer;
 		return $incomingTransfer ? $incomingTransfer->getAccountNumber() : 0 ;
 	}
-	
-	
-	
-	
 	public function getCashInBankAccountTypeId(){
 		$cashInBank = $this->cashInBank;
 		return $cashInBank ? $cashInBank->getAccountTypeId() : 0 ;
@@ -411,15 +407,15 @@ class MoneyReceived extends Model
 	{
 		return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
 	}
-	public function cleanOverdraftBankStatement()
+	public function cleanOverdraftDebitBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
 	}
-	public function cashInSafeStatement()
+	public function cashInSafeDebitStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
 	}
-	public function currentAccountBankStatement()
+	public function currentAccountDebitBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'money_received_id','id');
 	}
@@ -460,9 +456,9 @@ class MoneyReceived extends Model
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
-		$this->cleanOverdraftBankStatement ? $this->cleanOverdraftBankStatement->delete() : null ;
-		$this->cashInSafeStatement ? $this->cashInSafeStatement->delete() : null ;
-		$this->currentAccountBankStatement ? $this->currentAccountBankStatement->delete() : null ;
+		$this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() : null ;
+		$this->cashInSafeDebitStatement ? $this->cashInSafeDebitStatement->delete() : null ;
+		$this->currentAccountDebitBankStatement ? $this->currentAccountDebitBankStatement->delete() : null ;
 	}
 
 	

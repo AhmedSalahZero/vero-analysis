@@ -222,7 +222,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-3 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond">
 
                                         <label> {{ __('Purchase Order') }}
                                             @include('star')
@@ -235,7 +235,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-3 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond">
 
                                         <x-form.date :label="__('Purchase Order Date')" :required="true" :model="$model??null" :name="'purchase_order_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
@@ -324,7 +324,7 @@
                                         </label>
                                         <div class="input-group">
                                             <select name="lg_commission_interval" class="form-control repeater-select">
-                                                <option selected>{{__('Select')}}</option>
+                                                {{-- <option selected>{{__('Select')}}</option> --}}
                                                 @foreach(MonthAndQuarterlyIntervals() as $intervalArr )
                                                 <option value="{{ $intervalArr['value'] }}" @if(isset($model) && $model->getLgCommissionInterval() == $intervalArr['value'] ) selected @endif > {{ $intervalArr['title'] }}</option>
                                                 @endforeach
@@ -342,7 +342,7 @@
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
-                                                    <option value="" selected>{{__('Select')}}</option>
+                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
                                                     <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                     @endforeach
@@ -531,7 +531,9 @@
                     const duration = $('.lg-duration-months-js').val();
                     if (issuanceDate || duration == '0') {
                         const numberOfMonths = duration
+						
                         let renewalDate = issuanceDate.addMonths(numberOfMonths)
+					
                         renewalDate = formatDateForSelect2(renewalDate)
                         $('.renewal-date-js').val(renewalDate).trigger('change')
                     }

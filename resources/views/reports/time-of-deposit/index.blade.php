@@ -3,7 +3,7 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 @php
-use \App\Models\CertificatesOfDeposit;
+use \App\Models\TimeOfDeposit;
 @endphp
 <style>
     input[type="checkbox"] {
@@ -31,7 +31,7 @@ use \App\Models\CertificatesOfDeposit;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Certificates Of Deposit ' ) }} [{{ $financialInstitution->getName() }}]
+{{ __('Time Of Deposit ' ) }} [{{ $financialInstitution->getName() }}]
 @endsection
 @section('content')
 
@@ -40,21 +40,21 @@ use \App\Models\CertificatesOfDeposit;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == CertificatesOfDeposit::RUNNING ?'active':'' }}" data-toggle="tab" href="#{{ CertificatesOfDeposit::RUNNING }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Running Certificates Of Deposit') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == TimeOfDeposit::RUNNING ?'active':'' }}" data-toggle="tab" href="#{{ TimeOfDeposit::RUNNING }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Running Time Of Deposit') }}
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == CertificatesOfDeposit::MATURED ?'active':'' }}" data-toggle="tab" href="#{{ CertificatesOfDeposit::MATURED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Matured Certificates Of Deposit') }}
+                    <a class="nav-link {{ Request('active') == TimeOfDeposit::MATURED ?'active':'' }}" data-toggle="tab" href="#{{ TimeOfDeposit::MATURED }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Matured Time Of Deposit') }}
                     </a>
                 </li>
 				
 				
 				 <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == CertificatesOfDeposit::BROKEN ?'active':'' }}" data-toggle="tab" href="#{{ CertificatesOfDeposit::BROKEN }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Broken Certificates Of Deposit') }}
+                    <a class="nav-link {{ Request('active') == TimeOfDeposit::BROKEN ?'active':'' }}" data-toggle="tab" href="#{{ TimeOfDeposit::BROKEN }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Broken Time Of Deposit') }}
                     </a>
                 </li>
 				
@@ -62,7 +62,7 @@ use \App\Models\CertificatesOfDeposit;
 
             </ul>
 
-            <a href="{{ route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+            <a href="{{ route('create.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
@@ -73,13 +73,13 @@ use \App\Models\CertificatesOfDeposit;
 
             <!--Begin:: Tab Content-->
 			@php
-				$currentType = CertificatesOfDeposit::RUNNING ;
+				$currentType = TimeOfDeposit::RUNNING ;
 			@endphp
             <div class="tab-pane {{ !Request('active') || Request('active') == $currentType  ? 'active'  :  '' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
 
-                    <x-table-title.with-two-dates :type="$currentType" :title="__('Running Certificates Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-certificates-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Running Time Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-time-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
                     </x-table-title.with-two-dates>
 
 
@@ -121,10 +121,10 @@ use \App\Models\CertificatesOfDeposit;
                                             <div class="modal fade" id="apply-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('apply.deposit.to.certificate.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('apply.deposit.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Apply Deposit To This Certificate ?') }}</h5>
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Apply Deposit To This Time Of Deposit ?') }}</h5>
                                                                 <button type="button" class="close" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
@@ -180,10 +180,10 @@ use \App\Models\CertificatesOfDeposit;
                                             <div class="modal fade" id="apply-break-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('apply.break.to.certificate.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('apply.break.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Break This Certificate ?') }}</h5>
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Break This Time Of Deposit ?') }}</h5>
                                                                 <button type="button" class="close" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
@@ -251,15 +251,15 @@ use \App\Models\CertificatesOfDeposit;
 											
 
 
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-toggle="modal" data-target="#delete-certificate-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-time-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
 
 
 
-                                            <div class="modal fade" id="delete-certificate-of-deposits-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal fade" id="delete-time-of-deposits-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model]) }}" method="post">
+                                                        <form action="{{ route('delete.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -299,13 +299,13 @@ use \App\Models\CertificatesOfDeposit;
 			
 			
 					@php
-				$currentType = CertificatesOfDeposit::MATURED ;
+				$currentType = TimeOfDeposit::MATURED ;
 			@endphp
             <div class="tab-pane {{  Request('active') == $currentType  ? 'active'  :  '' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
 
-                    <x-table-title.with-two-dates :type="$currentType" :title="__('Matured Certificates Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-certificates-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Matured Time Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-time-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
                     </x-table-title.with-two-dates>
 
 
@@ -352,10 +352,10 @@ use \App\Models\CertificatesOfDeposit;
                                             <div class="modal fade" id="reverse-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('reverse.deposit.to.certificate.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('reverse.deposit.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Certificate To Running ?') }}</h5>
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Time To Running ?') }}</h5>
                                                                 <button type="button" class="close" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
@@ -402,15 +402,15 @@ use \App\Models\CertificatesOfDeposit;
                                             </div>
 
 	
-                                            {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-toggle="modal" data-target="#delete-certificate-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a> --}}
+                                            {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-time-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a> --}}
 
 
 
-                                            {{-- <div class="modal fade" id="delete-certificate-of-deposits-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            {{-- <div class="modal fade" id="delete-time-of-deposits-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model]) }}" method="post">
+                                                        <form action="{{ route('delete.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -451,13 +451,13 @@ use \App\Models\CertificatesOfDeposit;
 			
 			
 			@php
-				$currentType = CertificatesOfDeposit::BROKEN ;
+				$currentType = TimeOfDeposit::BROKEN ;
 			@endphp
             <div class="tab-pane {{  Request('active') == $currentType  ? 'active'  :  '' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
 
-                    <x-table-title.with-two-dates :type="$currentType" :title="__('Broken Certificates Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-certificates-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Broken Time Of Deposit')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-time-of-deposit :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
                     </x-table-title.with-two-dates>
 
 
@@ -504,10 +504,10 @@ use \App\Models\CertificatesOfDeposit;
                                             <div class="modal fade" id="reverse-broken-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('reverse.broken.to.certificate.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('reverse.broken.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Certificate To Running ?') }}</h5>
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Time To Running ?') }}</h5>
                                                                 <button type="button" class="close" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>

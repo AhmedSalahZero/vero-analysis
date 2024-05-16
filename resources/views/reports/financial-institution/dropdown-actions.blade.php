@@ -10,7 +10,7 @@
         {{-- <a class="dropdown-item" href="#">{{__('Saving Account')}}</a> --}}
         <a class="dropdown-item" href="{{ route('financial.institution.add.account',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Add Current Account')}}</a>
         <a class="dropdown-item" href="{{ route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Certificate Of Deposit "CDs"')}}</a>
-        <a class="dropdown-item" href="#">{{__('Time Deposit "TDs"')}}</a>
+        <a class="dropdown-item" href="{{ route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Time Deposit "TDs"')}}</a>
 
     </div>
 </div>

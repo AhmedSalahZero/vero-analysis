@@ -111,7 +111,6 @@ class WeeklyCashFlowReportController
 			return [];
 		}
 		foreach($weeks as $date => $weekNumber){
-			// dump($date);
 			$currentDate =Carbon::make($date);
 				$year = $currentDate->year ;
 				if($currentDate->greaterThanOrEqualTo($startDate)){

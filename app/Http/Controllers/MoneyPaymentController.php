@@ -6,13 +6,9 @@ use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
-use App\Models\Cheque;
-use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\Contract;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
-use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyPayment;
 use App\Models\OutgoingTransfer;
 use App\Models\Partner;
@@ -21,6 +17,7 @@ use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
+use App\Traits\Models\HasCreditStatements;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -28,7 +25,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyPaymentController
 {
-    use GeneralFunctions;
+    use GeneralFunctions , HasCreditStatements;
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;
@@ -357,6 +354,7 @@ class MoneyPaymentController
 
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency']);
+		$currencyName = $data['currency'];
 		$data['supplier_name'] = $supplierName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -413,21 +411,10 @@ class MoneyPaymentController
 		 $relationData['company_id'] = $company->id ;  
 		 $moneyPayment->$relationName()->create($relationData);
 		$statementDate = $moneyPayment->getStatementDate();
-		// dd($statementDate);
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
-		
-		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
-			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id,$bankId);
-			$moneyPayment->storeCleanOverdraftBankStatement($moneyType,$cleanOverdraft,$statementDate,$paidAmount);
-		}
-		if($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
-			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($request->input('account_number.'.$moneyType),$company->id,$bankId);
-			$moneyPayment->storeCurrentAccountBankStatement($statementDate,$paidAmount,$financialInstitutionAccount->id);
-		}
-		if($moneyPayment->isCashPayment()){
-			$moneyPayment->storeCashInSafeStatement($statementDate,$paidAmount,$data['currency'],$relationData['delivery_branch_id']);
-		}
-	
+		$accountNumber = $request->input('account_number.'.$moneyType) ;
+		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
+		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,0,$paidAmount,$deliveryBranchId,$currencyName);
 		/**
 		 * * For Money Received Only
 		 */

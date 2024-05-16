@@ -13,10 +13,12 @@ function hasAttribute(attr) {
 Date.prototype.addMonths = function(value) {
 	var n = this.getDate();
 	this.setDate(1);
-	this.setMonth(this.getMonth() + value);
+	this.setMonth(this.getMonth() + parseInt(value));
+	console.log('value',value,this,'end of',this.getMonth()	);
 	this.setDate(Math.min(n, this.getDaysInMonth()));
 	return this;
 };
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -66,15 +68,14 @@ function formatDate(date) {
 }
 function formatDateForSelect2(date) {
 	var d = new Date(date)
-		, month = '' + (d.getMonth() + 1)
-		, day = '' + d.getDate()
-		, year = d.getFullYear();
+	, month = '' + (d.getMonth() + 1)
+	, day = '' + d.getDate()
+	, year = d.getFullYear();
 
 	if (month.length < 2)
 		month = '0' + month;
 	if (day.length < 2)
 		day = '0' + day;
-
 	return [year  , month, day].join('-');
 }
 function subDays(date,numberOfDays)

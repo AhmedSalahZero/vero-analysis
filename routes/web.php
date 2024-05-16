@@ -365,7 +365,9 @@ Route::middleware([])->group(function () {
 				 Route::put('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/update/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@update')->name('update.overdraft.against.commercial.paper');
 				 Route::delete('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@destroy')->name('delete.overdraft.against.commercial.paper');
 
-
+					/**
+					 * * start certificates of deposit
+					 */
 				 
                     Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit', 'CertificatesOfDepositsController@index')->name('view.certificates.of.deposit');
                     Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit/create', 'CertificatesOfDepositsController@create')->name('create.certificates.of.deposit');
@@ -374,7 +376,40 @@ Route::middleware([])->group(function () {
                     Route::put('financial-institutions/{financialInstitution}/certificates-of-deposit/update/{certificatesOfDeposit}', 'CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
                     Route::delete('financial-institutions/{financialInstitution}/certificates-of-deposit/delete/{certificatesOfDeposit}', 'CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyDeposit')->name('apply.deposit.to.certificate.of.deposit');
+                    Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-break/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyBreak')->name('apply.break.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseDeposit')->name('reverse.deposit.to.certificate.of.deposit');
+                    Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-broken/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseBroken')->name('reverse.broken.to.certificate.of.deposit');
+					
+					/**
+					 * * end certificates of deposit
+					 */
+					
+					 
+					 
+					 
+					 
+					 	/**
+					 * * start time of deposit
+					 */
+				 
+					 Route::get('financial-institutions/{financialInstitution}/time-of-deposit', 'TimeOfDepositsController@index')->name('view.time.of.deposit');
+					 Route::get('financial-institutions/{financialInstitution}/time-of-deposit/create', 'TimeOfDepositsController@create')->name('create.time.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/create', 'TimeOfDepositsController@store')->name('store.time.of.deposit');
+					 Route::get('financial-institutions/{financialInstitution}/time-of-deposit/edit/{timeOfDeposit}', 'TimeOfDepositsController@edit')->name('edit.time.of.deposit');
+					 Route::put('financial-institutions/{financialInstitution}/time-of-deposit/update/{timeOfDeposit}', 'TimeOfDepositsController@update')->name('update.time.of.deposit');
+					 Route::delete('financial-institutions/{financialInstitution}/time-of-deposit/delete/{timeOfDeposit}', 'TimeOfDepositsController@destroy')->name('delete.time.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/apply-deposit/{timeOfDeposit}', 'TimeOfDepositsController@applyDeposit')->name('apply.deposit.to.time.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/apply-break/{timeOfDeposit}', 'TimeOfDepositsController@applyBreak')->name('apply.break.to.time.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-deposit/{timeOfDeposit}', 'TimeOfDepositsController@reverseDeposit')->name('reverse.deposit.to.time.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-broken/{timeOfDeposit}', 'TimeOfDepositsController@reverseBroken')->name('reverse.broken.to.time.of.deposit');
+					 
+					 /**
+					  * * end time of deposit
+					  */
+					  
+					
+					
+					
 					// Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility', 'LetterOfGuaranteeFacilityController@index')->name('view.letter.of.guarantee.facility');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/create', 'LetterOfGuaranteeFacilityController@create')->name('create.letter.of.guarantee.facility');
