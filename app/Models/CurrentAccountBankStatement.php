@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -38,6 +39,35 @@ class CurrentAccountBankStatement extends Model
 		
 		return $minDate;
 
+	}
+	/**
+	 * * هنا لما نعوز نحذف اكثر من واحدة .. فا مش هنشغل التريجر غير مع اللي اقل تاريخ فيهم
+	 */
+	public static function deleteButTriggerChangeOnLastElement(Collection $currentAccountBankStatements):void
+	{
+		$length = count($currentAccountBankStatements);
+		$currentAccountBankStatements->each(function(CurrentAccountBankStatement $currentAccountBankStatement,$index) use ($length){
+			/**
+			 * * لو هو اخر عنصر اللي هو تاريخ الاصغر ما بينهم .. في الحاله دي هنحذفه بالطريقة اللي بتشغل ال
+			 * * observers
+			 * * علشان لو عندك خمسين عنصر مثلا هيتحذفوا ما يروحش يترجر مع كل واحد
+			 * * انما لما هيترجر مع الاصفر تاريخ منهم فا في الحاله دي هيعمل مرة واحدة بس ترجر ياحدث من اول التاريخ الصغير دا وانت نازل .. و وانت نازل دي
+			 * * معناه انه هيحدث العناصر اللي المفروض يحدثها كلها
+			 * * وخلي بالك انك مرتب 
+			 * * currentAccountBankStatements 
+			 * * من الكبير للصغير من حيث ال 
+			 * * full_date 
+			 * * فا الاخير هيكون هو الاصغر اللي هنبدا نشكل ال
+			 * * observer 
+			 * * من عندة
+			 */
+			if($index == $length-1){
+				$currentAccountBankStatement->delete();
+			}else{
+				DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatement->id)->delete();
+			}
+		});
+		
 	}
 		protected static function booted(): void
 		{
@@ -159,4 +189,5 @@ class CurrentAccountBankStatement extends Model
 	{
 		return $this->belongsTo(CurrentAccountBankStatement::class,'financial_institution_account_id','id');
 	}
+	
 }

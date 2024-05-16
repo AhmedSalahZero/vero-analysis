@@ -3,17 +3,16 @@ namespace App\Http\Controllers;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
-use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
+use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
-class CertificatesOfDepositsController
+class TimeOfDepositsController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -53,13 +52,13 @@ class CertificatesOfDepositsController
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
 		/**
-		 * @var Collection $runningCertificatesOfDeposits 
+		 * @var Collection $runningTimeOfDeposits 
 		 */
 		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		$currentType = $request->get('active',CertificatesOfDeposit::RUNNING);
+		$currentType = $request->get('active',TimeOfDeposit::RUNNING);
 		$filterDates = [];
-		foreach(CertificatesOfDeposit::getAllTypes() as $type){
+		foreach(TimeOfDeposit::getAllTypes() as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
@@ -69,61 +68,61 @@ class CertificatesOfDepositsController
 			];
 		}
 		/**
-		 * * start of running certificates deposits 
+		 * * start of running time deposits 
 		 */
-		$runningCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::RUNNING]['startDate'] ?? null ;
-		$runningCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::RUNNING]['endDate'] ?? null ;
-		$runningCertificatesOfDeposits = $company->runningCertificatesOfDeposits ;
-		$runningCertificatesOfDeposits =  $runningCertificatesOfDeposits->filterByStartDate($runningCertificatesOfDepositsStartDate,$runningCertificatesOfDepositsEndDate) ;
-		$runningCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::RUNNING ? $this->applyFilter($request,$runningCertificatesOfDeposits):$runningCertificatesOfDeposits ;
+		$runningTimeOfDepositsStartDate = $filterDates[TimeOfDeposit::RUNNING]['startDate'] ?? null ;
+		$runningTimeOfDepositsEndDate = $filterDates[TimeOfDeposit::RUNNING]['endDate'] ?? null ;
+		$runningTimeOfDeposits = $company->runningTimeOfDeposits ;
+		$runningTimeOfDeposits =  $runningTimeOfDeposits->filterByStartDate($runningTimeOfDepositsStartDate,$runningTimeOfDepositsEndDate) ;
+		$runningTimeOfDeposits =  $currentType == TimeOfDeposit::RUNNING ? $this->applyFilter($request,$runningTimeOfDeposits):$runningTimeOfDeposits ;
 		/**
-		 * * end of running certificates deposits 
+		 * * end of running time deposits 
 		 */
 		
 		 
 		 
 		 /**
-		 * * start of matured certificates deposits 
+		 * * start of matured time deposits 
 		 */
-		$maturedCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::MATURED]['startDate'] ?? null ;
-		$maturedCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::MATURED]['endDate'] ?? null ;
-		$maturedCertificatesOfDeposits = $company->maturedCertificatesOfDeposits ;
-		$maturedCertificatesOfDeposits =  $maturedCertificatesOfDeposits->filterByStartDate($maturedCertificatesOfDepositsStartDate,$maturedCertificatesOfDepositsEndDate) ;
-		$maturedCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::MATURED ? $this->applyFilter($request,$maturedCertificatesOfDeposits):$maturedCertificatesOfDeposits ;
+		$maturedTimeOfDepositsStartDate = $filterDates[TimeOfDeposit::MATURED]['startDate'] ?? null ;
+		$maturedTimeOfDepositsEndDate = $filterDates[TimeOfDeposit::MATURED]['endDate'] ?? null ;
+		$maturedTimeOfDeposits = $company->maturedTimeOfDeposits ;
+		$maturedTimeOfDeposits =  $maturedTimeOfDeposits->filterByStartDate($maturedTimeOfDepositsStartDate,$maturedTimeOfDepositsEndDate) ;
+		$maturedTimeOfDeposits =  $currentType == TimeOfDeposit::MATURED ? $this->applyFilter($request,$maturedTimeOfDeposits):$maturedTimeOfDeposits ;
 		/**
-		 * * end of matured certificates deposits 
+		 * * end of matured time deposits 
 		 */
 		
 		 
 		 
 		 	 /**
-		 * * start of broken certificates deposits 
+		 * * start of broken time deposits 
 		 */
-		$brokenCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::BROKEN]['startDate'] ?? null ;
-		$brokenCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::BROKEN]['endDate'] ?? null ;
-		$brokenCertificatesOfDeposits = $company->brokenCertificatesOfDeposits ;
-		$brokenCertificatesOfDeposits =  $brokenCertificatesOfDeposits->filterByStartDate($brokenCertificatesOfDepositsStartDate,$brokenCertificatesOfDepositsEndDate) ;
-		$brokenCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::BROKEN ? $this->applyFilter($request,$brokenCertificatesOfDeposits):$brokenCertificatesOfDeposits ;
+		$brokenTimeOfDepositsStartDate = $filterDates[TimeOfDeposit::BROKEN]['startDate'] ?? null ;
+		$brokenTimeOfDepositsEndDate = $filterDates[TimeOfDeposit::BROKEN]['endDate'] ?? null ;
+		$brokenTimeOfDeposits = $company->brokenTimeOfDeposits ;
+		$brokenTimeOfDeposits =  $brokenTimeOfDeposits->filterByStartDate($brokenTimeOfDepositsStartDate,$brokenTimeOfDepositsEndDate) ;
+		$brokenTimeOfDeposits =  $currentType == TimeOfDeposit::BROKEN ? $this->applyFilter($request,$brokenTimeOfDeposits):$brokenTimeOfDeposits ;
 		/**
-		 * * end of broken certificates deposits 
+		 * * end of broken time deposits 
 		 */
 		
 		 
 		
 		$searchFields = [
-			CertificatesOfDeposit::RUNNING=>[
+			TimeOfDeposit::RUNNING=>[
 				'start_date'=>__('Start Date'),
 				'end_date'=>__('End Date'),
 				'account_number'=>__('Account Number'),
 				'currency'=>__('Currency'),
 			],
-			CertificatesOfDeposit::MATURED=>[
+			TimeOfDeposit::MATURED=>[
 				'start_date'=>__('Start Date'),
 				'end_date'=>__('End Date'),
 				'account_number'=>__('Account Number'),
 				'currency'=>__('Currency'),
 			],
-			CertificatesOfDeposit::BROKEN=>[
+			TimeOfDeposit::BROKEN=>[
 				'start_date'=>__('Start Date'),
 				'end_date'=>__('End Date'),
 				'account_number'=>__('Account Number'),
@@ -133,12 +132,12 @@ class CertificatesOfDepositsController
 		
 		 
 		$models = [
-			CertificatesOfDeposit::RUNNING =>$runningCertificatesOfDeposits ,
-			CertificatesOfDeposit::MATURED =>$maturedCertificatesOfDeposits ,
-			CertificatesOfDeposit::BROKEN =>$brokenCertificatesOfDeposits ,
+			TimeOfDeposit::RUNNING =>$runningTimeOfDeposits ,
+			TimeOfDeposit::MATURED =>$maturedTimeOfDeposits ,
+			TimeOfDeposit::BROKEN =>$brokenTimeOfDeposits ,
 		];
 		
-        return view('reports.certificates-of-deposit.index', [
+        return view('reports.time-of-deposit.index', [
 			'company'=>$company,
 			'filterDates'=>$filterDates,
 			'financialInstitution'=>$financialInstitution,
@@ -155,7 +154,7 @@ class CertificatesOfDepositsController
 		 * * عباره عن حساب جاري فقط
 		 */
 		$accounts = $financialInstitution->accounts ;
-        return view('reports.certificates-of-deposit.form',[
+        return view('reports.time-of-deposit.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
@@ -175,25 +174,25 @@ class CertificatesOfDepositsController
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
-		$financialInstitution->certificatesOfDeposits()->create($data);
-		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
+		$financialInstitution->timeOfDeposits()->create($data);
+		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ; 
 		
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
 	
-	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CertificatesOfDeposit $certificatesOfDeposit){
+	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , TimeOfDeposit $timeOfDeposit){
 		$accounts = $financialInstitution->accounts ;
-        return view('reports.certificates-of-deposit.form',[
+        return view('reports.time-of-deposit.form',[
 			'financialInstitution'=>$financialInstitution,
-			'model'=>$certificatesOfDeposit,
+			'model'=>$timeOfDeposit,
 			'accounts'=>$accounts
 		]);
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit){
+	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit){
 		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
@@ -201,37 +200,37 @@ class CertificatesOfDepositsController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
-		$certificatesOfDeposit->update($data);
-		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
+		$timeOfDeposit->update($data);
+		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ;
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}
-	public function destroy(Company $company , FinancialInstitution $financialInstitution , CertificatesOFDeposit $certificatesOfDeposit)
+	public function destroy(Company $company , FinancialInstitution $financialInstitution , TimeOFDeposit $timeOfDeposit)
 	{
-		$certificatesOfDeposit->delete();
+		$timeOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	
 	/**
 	 * * هنا اليوزر هياكد انه نزله الفايدة المستحقة وبالتالي هنزلها في حسابه الجاري اللي هو اختارة من الفورمة
 	 */
-	public function applyDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	public function applyDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
 		$actualDepositDate = Carbon::make($request->get('deposit_date'))->format('Y-m-d') ;
 		$actualInterestAmount  = $request->get('actual_interest_amount') ;
-		$certificateType = CertificatesOfDeposit::MATURED ;
-		$certificatesOfDeposit->update([
+		$type = TimeOfDeposit::MATURED ;
+		$timeOfDeposit->update([
 			'deposit_date'=>$actualDepositDate,
 			'actual_interest_amount'=>$actualInterestAmount,
-			'status'=>$certificateType
+			'status'=>$type
 		]);
 		
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		if($actualInterestAmount > 0){
-			$certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount);
+			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount);
 		}
-		$certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$certificatesOfDeposit->getAmount());
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+		$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$timeOfDeposit->getAmount());
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 	
 	
@@ -240,39 +239,39 @@ class CertificatesOfDepositsController
 	 * * هنا اليوزر هيعكس عملية التاكيد اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال 
 	 * * current account bank statements
 	 */
-	public function reverseDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	public function reverseDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
 		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
 		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
-		$certificateType = CertificatesOfDeposit::RUNNING ;
-		$certificatesOfDeposit->update([
+		$type = TimeOfDeposit::RUNNING ;
+		$timeOfDeposit->update([
 			'deposit_date'=>null,
 			'actual_interest_amount'=>null,
-			'status'=>CertificatesOfDeposit::RUNNING
+			'status'=>TimeOfDeposit::RUNNING
 		]);
 		/**
 		 * * هنشيل قيم ال
 		 * * current account bank statement
 		 */
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements);
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements);
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 	
 	
 	/**
 	 * * لو انت عملت شهادة ايداع في البنك تقدر تكسرها وتاخد قيمة الشهادة بتاعتك بس بيطبق عليك غرامة
 	 */
-	public function applyBreak(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	public function applyBreak(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
 		$breakDate = Carbon::make($request->get('break_date'))->format('Y-m-d') ;
 		$breakInterestAmount  = $request->get('break_interest_amount') ;
 		$breakChargeAmount  = $request->get('break_charge_amount') ;
 		$amount  = $request->get('amount') ;
-		$certificateType = CertificatesOfDeposit::BROKEN ;
-		$certificatesOfDeposit->update([
+		$type = TimeOfDeposit::BROKEN ;
+		$timeOfDeposit->update([
 			'break_date'=>$breakDate,
 			'break_interest_amount'=>$breakInterestAmount,
-			'status'=>$certificateType,
+			'status'=>$type,
 			'break_charge_amount'=>$breakChargeAmount
 		]);
 		
@@ -281,22 +280,22 @@ class CertificatesOfDepositsController
 		 * * اول حاجه هنضيف دبت بقيمة الشهادة 
 		 */
 		if($amount > 0){
-			$certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$amount);
+			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$amount);
 		}
 		/**
 		 * * تاني حاجه هنضيف دبت بقيمة الفايدة
 		 */
 		if($breakInterestAmount > 0){
-			$certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakInterestAmount);
+			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakInterestAmount);
 		}
 		/**
 		 * * واخيرا هنضيف كريدت بقيمة الرسوم الادارية
 		 */
 		if($breakChargeAmount){
-			$certificatesOfDeposit->handleCreditStatement($company->id,$financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakChargeAmount);
+			$timeOfDeposit->handleCreditStatement($company->id,$financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakChargeAmount);
 		}
 		
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 	
 	
@@ -304,26 +303,26 @@ class CertificatesOfDepositsController
 	 * * هنا اليوزر هيعكس عملية الكسر اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال 
 	 * * current account bank statements
 	 */
-	public function reverseBroken(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	public function reverseBroken(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
 		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
 		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
-		$certificateType = CertificatesOfDeposit::RUNNING ;
-		$certificatesOfDeposit->update([
+		$type = TimeOfDeposit::RUNNING ;
+		$timeOfDeposit->update([
 			'break_date'=>null,
 			'break_interest_amount'=>null,
-			'status'=>$certificateType,
+			'status'=>$type,
 			'break_charge_amount'=>null,
-			'status'=>CertificatesOfDeposit::RUNNING
+			'status'=>TimeOfDeposit::RUNNING
 		]);
 		/**
 		 * * هنشيل قيم ال
 		 * * current account bank statement
 		 */
 		
-		 CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements);
+		 CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements);
 		 
 		 
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 }

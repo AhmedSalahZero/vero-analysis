@@ -2060,14 +2060,15 @@ function getDurationIntervalTypesForSelect(): array
 function MonthAndQuarterlyIntervals(): array
 {
     return [
-        [
-            'value' => 'monthly',
-            'title' => __('Monthly')
-        ],
-        [
-            'value' => 'quarterly',
+		[
+			'value' => 'monthly',
+			'title' => __('Monthly')
+		],
+		[
+			'value' => 'quarterly',
             'title' => __('Quarterly')
-        ]
+		],
+			
     ];
 }
 

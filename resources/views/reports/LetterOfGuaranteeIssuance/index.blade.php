@@ -85,15 +85,16 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                         <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th>{{ __('#') }}</th>
-                                    <th>{{ __('Transaction Name') }}</th>
-                                    <th>{{ __('Bank Name') }}</th>
-                                    <th>{{ __('Lg Code') }}</th>
-                                    <th>{{ __('Transaction Reference') }}</th>
-                                    <th>{{ __('Transaction Order Date') }}</th>
-                                    <th>{{ __('Issuance Date') }}</th>
-                                    <th>{{ __('Renewal Date') }}</th>
-                                    <th>{{ __('Control') }}</th>
+                                    <th class="text-center align-middle">{{ __('#') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
+                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th>
+                                    <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,6 +107,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
+                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
@@ -171,14 +173,15 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                         <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th>{{ __('#') }}</th>
-                                    <th>{{ __('Transaction Name') }}</th>
-                                    <th>{{ __('Bank Name') }}</th>
-                                    <th>{{ __('Lg Code') }}</th>
-                                    <th>{{ __('Purchase Order Date') }}</th>
-                                    <th>{{ __('Issuance Date') }}</th>
-                                    <th>{{ __('Renewal Date') }}</th>
-                                    <th>{{ __('Control') }}</th>
+                                    <th class="text-center align-middle">{{ __('#') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
+                                    <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -190,6 +193,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+									  <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
@@ -252,14 +256,15 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                         <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th>{{ __('#') }}</th>
-                                    <th>{{ __('Transaction Name') }}</th>
-                                    <th>{{ __('Bank Name') }}</th>
-                                    <th>{{ __('Lg Code') }}</th>
-                                    <th>{{ __('Purchase Order Date') }}</th>
-                                    <th>{{ __('Issuance Date') }}</th>
-                                    <th>{{ __('Renewal Date') }}</th>
-                                    <th>{{ __('Control') }}</th>
+                                    <th class="text-center align-middle">{{ __('#') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
+                                    <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -271,6 +276,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+									  <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
@@ -334,14 +340,15 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                     <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                         <thead>
                             <tr class="table-standard-color">
-                                <th>{{ __('#') }}</th>
-                                <th>{{ __('Transaction Name') }}</th>
-                                <th>{{ __('Bank Name') }}</th>
-                                <th>{{ __('Lg Code') }}</th>
-                                <th>{{ __('Purchase Order Date') }}</th>
-                                <th>{{ __('Issuance Date') }}</th>
-                                <th>{{ __('Renewal Date') }}</th>
-                                <th>{{ __('Control') }}</th>
+                                <th class="text-center align-middle">{{ __('#') }}</th>
+                                <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!}  </th>
+                                <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                <th class="text-center align-middle">{!! __('Purchase <br> Order Date') !!} </th>
+                                <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
+                                <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                <th class="text-center align-middle">{{ __('Control') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -353,6 +360,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <td>{{ $model->getTransactionName() }}</td>
                                 <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                 <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+								<td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+								
                                 <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                 <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
                                 <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>

@@ -107,6 +107,10 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id');
 	}
+	public function timeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'financial_institution_id','id');
+	}
 	public function cleanOverdrafts()
 	{
 		return $this->hasMany(CleanOverdraft::class , 'financial_institution_id','id');

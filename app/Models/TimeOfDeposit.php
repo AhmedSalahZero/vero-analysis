@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
-	 * * توفر شهادات الإيداع ) (CDsللمدخر ين طر يقة لكسب معدل فائدة أعلى على مدخراتك مقابل الموافقة على حجز
-	**    أموالك لفترة زمنية محددة - مع الحفاظ على أموالك آمنة بفضل حمايتها من البنك المركزي 	
+	 * * الوديعه لاجل هي عباره عن مبلغ معين من المال بيتمجد لفتره محددة وبينزل عليه فؤائد 
+	 * * وبيختلف عن الشهادة بان مدة بتكون اقل وبالتالي فايدة اقل
+	 * * يعني الوديعه بتكون من اسبوع لسنه مثلا اما الشهادة فا بتبدا من ثلاث سنين وانت طالع 
 	 */
-class CertificatesOfDeposit extends Model
+class TimeOfDeposit extends Model
 {
 	use HasDebitStatements,HasCreditStatements ;
     protected $guarded = ['id'];
@@ -191,28 +192,28 @@ class CertificatesOfDeposit extends Model
 	
 	public function currentAccountDebitBankStatement()
 	{
-		return $this->hasOne(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_debit',1);
+		return $this->hasOne(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_debit',1);
 	}
 	public function currentAccountDebitBankStatements()
 	{
-		return $this->hasMany(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_debit',1)->orderBy('full_date','desc');
+		return $this->hasMany(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_debit',1)->orderBy('full_date','desc');
 	}
 	
 	
 	public function currentAccountCreditBankStatement()
 	{
-		return $this->hasOne(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_credit',1);
+		return $this->hasOne(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_credit',1);
 	}
 	public function currentAccountCreditBankStatements()
 	{
-		return $this->hasMany(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_credit',1)->orderBy('full_date','desc');
+		return $this->hasMany(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_credit',1)->orderBy('full_date','desc');
 	}
 	/**
 	 * * علشان نجيب الاتنين مع بعض مرة واحدة
 	 */
 	public function currentAccountBankStatements()
 	{
-		return $this->hasMany(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->orderBy('full_date','desc');
+		return $this->hasMany(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->orderBy('full_date','desc');
 	}
 	
 	

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Helpers\HHelpers;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
+use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class MoneyPayment extends Model
 {
-	use IsMoney ;
+	use IsMoney ,HasCreditStatements;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
@@ -334,68 +335,19 @@ class MoneyPayment extends Model
 	{
 		return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
 	}
-	public function cleanOverdraftBankStatement()
+	public function cleanOverdraftCreditBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_payment_id','id');
 	}
-	public function cashInSafeStatement()
+	public function cashInSafeCreditStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_payment_id','id');
 	}
-	public function currentAccountBankStatement()
+	public function currentAccountCreditBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'money_payment_id','id');
 	}
-	public function storeCleanOverdraftBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount )
-	{
-		$dateForCalculateDueDate = $date;
-		$cleanOverdraftBankStatement =  $this->cleanOverdraftBankStatement()->create([
-			'type'=>$moneyType ,
-			'clean_overdraft_id'=>$cleanOverdraft->id ,
-			'company_id'=>$this->company_id ,
-			'date'=>$date,
-			'limit'=>$cleanOverdraft->getLimit(),
-			'beginning_balance'=>0 ,
-			'debit'=>0,
-			'credit'=>$paidAmount 
-		]) ;
-		// $maxSettlementDays = $cleanOverdraft->getMaxSettlementDays();
-		// $dueDate = Carbon::make($dateForCalculateDueDate)->addDays($maxSettlementDays)->format('Y-m-d') ;
-		// $previousRaw = DB::table('clean_overdraft_withdrawals2')->orderByRaw('due_date desc , id desc ')->where('due_date','<',$dueDate)->first();
-		// $previousEndBalance = $previousRaw ? $previousRaw->end_balance : 1000 ; 
-		
-		// DB::table('clean_overdraft_withdrawals2')->insert([
-		// 	'clean_overdraft_bank_statement_id'=>$cleanOverdraftBankStatement->id ,
-		// 	'clean_overdraft_id'=>	$cleanOverdraft->id,
-		// 	'company_id'=>$this->company_id,
-		// 	'max_settlement_days'=>$maxSettlementDays,
-		// 	'due_date'=>$dueDate ,
-		// 	'beginning_balance'=>$previousEndBalance , 
-		// 	'credit_amount'=>$paidAmount,
-		// 	'settlement_amount'=>$min = min($previousEndBalance ,$paidAmount),
-		// 	'reminder_amount'=> $paidAmount - $min ,
-		// 	'end_balance'=> $previousEndBalance - $min
-		// ]);
-	}
-	public function storeCashInSafeStatement(string $date , $paidAmount , string $currencyName,int $branchId)
-	{
-		return $this->cashInSafeStatement()->create([
-			'branch_id'=>$branchId,
-			'currency'=>$currencyName ,
-			'company_id'=>$this->company_id ,
-			'credit'=>$paidAmount,
-			'date'=>$date
-		]);
-	}	
-	public function storeCurrentAccountBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId)
-	{
-		return $this->currentAccountBankStatement()->create([
-			'financial_institution_account_id'=>$financialInstitutionAccountId ,
-			'company_id'=>$this->company_id ,
-			'credit'=>$paidAmount,
-			'date'=>$date
-		]);
-	}	
+	
 	public function openingBalance()
 	{
 		return $this->belongsTo(OpeningBalance::class,'opening_balance_id');
@@ -423,14 +375,14 @@ class MoneyPayment extends Model
 	}
 	public function getCurrentStatement()
 	{
-		if($this->cleanOverdraftBankStatement){
-			return $this->cleanOverdraftBankStatement;
+		if($this->cleanOverdraftCreditBankStatement){
+			return $this->cleanOverdraftCreditBankStatement;
 		}	
-		if($this->cashInSafeStatement){
-			return $this->cashInSafeStatement ;
+		if($this->cashInSafeCreditStatement){
+			return $this->cashInSafeCreditStatement ;
 		}
-		if($this->currentAccountBankStatement){
-			return $this->currentAccountBankStatement ;
+		if($this->currentAccountCreditBankStatement){
+			return $this->currentAccountCreditBankStatement ;
 		}
 	}
 	public function deleteRelations()

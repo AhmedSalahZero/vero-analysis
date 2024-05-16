@@ -164,6 +164,32 @@ class Company extends Model implements HasMedia
 		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
 		->where('status',CertificatesOfDeposit::MATURED);
 	}
+	public function brokenCertificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
+		->where('status',CertificatesOfDeposit::BROKEN);
+	}
+	
+	
+	
+	
+	
+	public function runningTimeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
+		->where('status',TimeOfDeposit::RUNNING);
+	}
+	public function maturedTimeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
+		->where('status',TimeOfDeposit::MATURED);
+	}
+	public function brokenTimeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
+		->where('status',TimeOfDeposit::BROKEN);
+	}
+	
 	
 	
 	
