@@ -446,7 +446,7 @@ class MoneyReceivedController
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
 		
-		$moneyReceived->handleStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$receivedAmount,$currency,$receivingBranchId);
+		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$receivedAmount,$currency,$receivingBranchId);
 		
 		/**
 		 * * For Money Received Only
@@ -631,7 +631,7 @@ class MoneyReceivedController
 		 * @var AccountType $accountType ;
 		 */
 		
-		$moneyReceived->handleStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
+		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
 		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
