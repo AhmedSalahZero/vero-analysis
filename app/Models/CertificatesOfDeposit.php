@@ -214,7 +214,11 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->orderBy('full_date','desc');
 	}
-	
+	public function isDueTodayOrGreater()
+	{
+		$endDate = $this->getEndDate() ;
+		return  $endDate && Carbon::make($endDate)->greaterThanOrEqualTo(now());
+	}
 	
 	
 	
