@@ -40,8 +40,9 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
         DB::table('notifications')->delete();
         foreach (Company::get() as $company) {
             $companyId = $company->id;
-            $exportables = getExportableFieldsForModel($companyId, 'CustomerInvoice') ;
-            if (count($exportables)) {
+            $customerInvoiceExportables = getExportableFieldsForModel($companyId, 'CustomerInvoice') ;
+            $supplierInvoiceExportables = getExportableFieldsForModel($companyId, 'SupplierInvoice') ;
+            if (count($customerInvoiceExportables)) {
                 $customerInvoicePastDueDays = $company->getCustomerComingDuesInvoicesNotificationsDays()  ;
                 $customerInvoiceComingDueDays = $company->getCustomerPastDuesInvoicesNotificationsDays() ;
 				
@@ -119,7 +120,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                     $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
                     $messageEn = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays . ' ' . 'days For Customer ' . $customerName ;
                     $messageAr = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays . ' ' . 'days For Customer ' . $customerName ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_past_due'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_past_due','customer'));
                 }
                 foreach ($currentDueCustomerInvoices as $customerInvoice) {
                     $invoiceDueDate = $customerInvoice->invoice_due_date ;
@@ -128,7 +129,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                     $messageEn = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Due Now For Customer') . ' ' . $customerName ;
                     $messageAr = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Due Now For Customer') . ' ' . $customerName ;
                     $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_current_due'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_current_due','customer'));
                 }
 
                 foreach ($upcomingDueCustomerInvoices as $customerInvoice) {
@@ -138,7 +139,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                     $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
                     $messageEn = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Coming Due For ') . ' ' . $dueDays . ' ' . 'days For Customer ' . $customerName ;
                     $messageAr = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Coming Due For ') . ' ' . $dueDays . ' ' . 'days For Customer ' . $customerName ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_coming_due'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_coming_due','customer'));
                 } 
 				
 				/**
@@ -150,7 +151,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                     $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($chequeDueDate));
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_past_due'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_past_due','cheque'));
                 }
 				
 				/**
@@ -160,7 +161,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$chequeNumber = $cheque->cheque_number;
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Due Today ')  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Due Today ')  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_current_due'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_current_due','cheque'));
                 }
 				
 				
@@ -171,7 +172,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$chequeNumber = $cheque->cheque_number;
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Be Collected Today')  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Be Collected Today ')  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_today'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_today','cheque'));
                 }
 				
 				/**
@@ -184,10 +185,141 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($expectedCollectionDate));
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Have Collected Since').' ' . $dueDays .  __('Days')  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Have Collected Since ').' ' . $dueDays .  __('Days')  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_since_days'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_since_days','cheque'));
                 }
 				
             }
+			
+			
+			
+			if (count($supplierInvoiceExportables)) {
+				
+				
+				
+			
+                $supplierInvoicePastDueDays = $company->getCustomerComingDuesInvoicesNotificationsDays()  ;
+                $supplierInvoiceComingDueDays = $company->getCustomerPastDuesInvoicesNotificationsDays() ;
+				
+				$chequesPastDueDays = $company->getChequesInSafeNotificationDays() ;
+				$chequesUnderCollectionDays = $company->getChequesUnderCollectionNotificationDays() ;
+				
+
+                $dayDate = Carbon::make(now()->format($dateFormat))->format($dateFormat);
+                $dayBeforeDayDate = Carbon::make(now()->format($dateFormat))->subDay()->format($dateFormat);
+                $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($supplierInvoicePastDueDays)->format($dateFormat);
+				
+				/**
+                 * * سيكون مستحق الدفع بعد عدة ايام
+                 */
+				
+                $pastDueSupplierInvoices = DB::table('supplier_invoices')->where('company_id', $companyId)
+                ->where('net_balance', '>', 0)
+                ->whereBetween('invoice_due_date', [$beforeIntervalDate, $dayBeforeDayDate])->get();
+
+                /**
+                 * * مستحق الدفع اليوم
+                 */
+                $currentDueSupplierInvoices = DB::table('supplier_invoices')->where('company_id', $companyId)
+                ->where('net_balance', '>', 0)
+                ->where('invoice_due_date', $dayDate)->get();
+
+                /**
+                 * * القادم
+                 */
+                $dayAfterNowDate = Carbon::make(now()->format($dateFormat))->addDay()->format($dateFormat);
+                $afterIntervalDate = Carbon::make(now()->format($dateFormat))->addDays($supplierInvoiceComingDueDays)->format($dateFormat);
+                $upcomingDueSupplierInvoices = DB::table('supplier_invoices')->where('company_id', $companyId)
+                ->where('net_balance', '>', 0)
+                ->whereBetween('invoice_due_date', [$dayAfterNowDate, $afterIntervalDate])->get();
+				
+				
+				
+				/**
+                 * * شيكات سيكون من المستحق الدفع بعد عدة ايام
+                 */
+				//  $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($chequesPastDueDays)->format($dateFormat);
+				//  $pastDueCheques = DB::table('cheques')->where('company_id', $companyId)
+				//  ->where('status',Cheque::IN_SAFE)
+				//  ->whereBetween('due_date', [$beforeIntervalDate, $dayBeforeDayDate])->get();
+				 
+				 
+				/**
+                 * * شيكات سيكون من المستحق الدفع   اليوم
+                 */
+			//	$currentDueCheques = DB::table('payable_cheques')->where('company_id', $companyId)
+			//	->where('status',PayableCheque::PAID)
+				// ->where('due_date', $dayDate)->get();
+				
+			
+				
+				
+				/**
+				 * * الشيكات  التي ذهبت الي البنك ولكنها لاتزال تحت التحصيل وكان يجب ان تحصل منذ عدد من الايام ولكن لم تحصل بعد
+				 */
+				// $afterIntervalDate = Carbon::make(now()->format($dateFormat))->addDays($chequesUnderCollectionDays)->format($dateFormat);
+			
+				
+				
+					
+			foreach ($pastDueSupplierInvoices as $supplierInvoice) {
+				$invoiceDueDate = $supplierInvoice->invoice_due_date ;
+				$invoiceNumber = $supplierInvoice->invoice_number;
+				$supplierName = $supplierInvoice->supplier_name ;
+				$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
+				$messageEn = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays . ' ' . 'days For Supplier ' . $supplierName ;
+				$messageAr = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays . ' ' . 'days For Supplier ' . $supplierName ;
+				$company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_past_due','supplier'));
+			}
+			foreach ($currentDueSupplierInvoices as $supplierInvoice) {
+				$invoiceDueDate = $supplierInvoice->invoice_due_date ;
+				$invoiceNumber = $supplierInvoice->invoice_number;
+				$supplierName = $supplierInvoice->supplier_name ;
+				$messageEn = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Due Now For Supplier') . ' ' . $supplierName ;
+				$messageAr = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Due Now For Supplier') . ' ' . $supplierName ;
+				$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
+				$company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_current_due','supplier'));
+			}
+
+			foreach ($upcomingDueSupplierInvoices as $supplierInvoice) {
+				$invoiceDueDate = $supplierInvoice->invoice_due_date ;
+				$invoiceNumber = $supplierInvoice->invoice_number;
+				$supplierName = $supplierInvoice->supplier_name ;
+				$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
+				$messageEn = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Coming Due For ') . ' ' . $dueDays . ' ' . 'days For Supplier ' . $supplierName ;
+				$messageAr = __('Invoice Number ') . $invoiceNumber . ' ' . __('Is Coming Due For ') . ' ' . $dueDays . ' ' . 'days For Supplier ' . $supplierName ;
+				$company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'invoice_coming_due','supplier'));
+			} 
+			
+			
+
+              
+				/**
+				 * * الشيكات المتاخرة التي اوشكت علي الاستحقاق وبالتالي تذهب للبنك
+				 */
+				// foreach ($pastDueCheques as $cheque) {
+                //     $chequeDueDate = $cheque->due_date ;
+                //     $chequeNumber = $cheque->cheque_number;
+                //     $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($chequeDueDate));
+                //     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays  ;
+                //     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays  ;
+                //     $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_past_due','cheques'));
+                // }
+				
+				/**
+				 * * الشيكات  التي تستحق الذهاب للبنك اليوم
+				 */
+				// foreach ($currentDueCheques as $cheque) {
+				// 	$chequeNumber = $cheque->cheque_number;
+                //     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Due Today ')  ;
+                //     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Due Today ')  ;
+                //     $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_current_due','cheque'));
+                // }
+				
+				
+				
+            }
+			
+			
         }
     }
 }
