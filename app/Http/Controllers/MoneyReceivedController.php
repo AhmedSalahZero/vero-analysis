@@ -16,14 +16,14 @@ use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
-use App\Traits\Models\HasStatements;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Traits\Models\HasDebitStatements;
 
 class MoneyReceivedController
 {
-    use GeneralFunctions,HasStatements;
+    use GeneralFunctions,HasDebitStatements;
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;

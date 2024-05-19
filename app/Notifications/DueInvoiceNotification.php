@@ -16,13 +16,17 @@ class DueInvoiceNotification extends Notification
      *
      * @return void
      */
-	protected $message_en , $message_ar ,$type; 
-    public function __construct($messageEn , $messageAr,$type)
+	protected $message_en , $message_ar ,$type,$tapType; 
+	/**
+	 * * tapType => هي عباره عن الرو دا هيتحط في انهي تابه ؟ هل تابه ال كاستمرز ولا ولا
+	 */
+    public function __construct($messageEn , $messageAr,$type,$tapType)
     {
    
 		$this->message_en = $messageEn;
 		$this->message_ar = $messageAr;
 		$this->type = $type;
+		$this->tapType = $tapType;
 
     }
 
@@ -63,6 +67,7 @@ class DueInvoiceNotification extends Notification
 			'type'=>$this->type,
 			'message_en'=>$this->message_en,
 			'message_ar'=>$this->message_ar,
+			'tap_type'=>$this->tapType
 	
         ];
     }
