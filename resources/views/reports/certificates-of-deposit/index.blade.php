@@ -117,7 +117,17 @@ use \App\Models\CertificatesOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Deposit') }}" href="#"><i class="fa fa-coins"></i></a>
+										
+											
+											
+											
+                                            <a data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn
+											
+											@if($model->isDueTodayOrGreater())
+											 disabled 
+											@endif 
+											 
+											 btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Deposit') }}" href="#"><i class="fa fa-coins"></i></a>
                                             <div class="modal fade" id="apply-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -176,7 +186,7 @@ use \App\Models\CertificatesOfDeposit;
 											
 											
 											
-											<a data-toggle="modal" data-target="#apply-break-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Break') }}" href="#"><i class="fa fa-times"></i></a>
+											<a data-toggle="modal" data-target="#apply-break-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Break') }}" href="#"><i class="fa fa-ban"></i></a>
                                             <div class="modal fade" id="apply-break-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                     <div class="modal-content">

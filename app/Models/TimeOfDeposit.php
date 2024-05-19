@@ -215,9 +215,10 @@ class TimeOfDeposit extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->orderBy('full_date','desc');
 	}
-	
-	
-	
-	
+	public function isDueTodayOrGreater()
+	{
+		$endDate = $this->getEndDate() ;
+		return  $endDate && Carbon::make($endDate)->greaterThanOrEqualTo(now());
+	}	
 	
 }
