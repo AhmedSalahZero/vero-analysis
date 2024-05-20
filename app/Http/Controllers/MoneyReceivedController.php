@@ -74,6 +74,7 @@ class MoneyReceivedController
 	}
 	public function index(Company $company,Request $request)
 	{
+		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$moneyType = $request->get('active',MoneyReceived::CHEQUE) ;
 		$filterDates = [];
