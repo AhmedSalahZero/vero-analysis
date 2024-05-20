@@ -313,27 +313,40 @@
                                     {{ __('#') }}
                                 </th>
 
-                                <th class="view-table-th max-w-name   header-th  align-middle text-center">
+                                <th class="view-table-th    header-th  align-middle text-center">
                                     {{ $clientNameText }}
                                 </th>
 
-                                <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                <th class="view-table-th   header-th  align-middle text-center">
                                     {{ __('Invoice Number') }}
                                 </th>
-                                <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                <th class="view-table-th max-w-invoice-date     header-th  align-middle text-center">
                                     {{ __('Invoice Date') }}
                                 </th>
 
-							  <th class="view-table-th max-w-currency    header-th  align-middle text-center">
+							  <th class="view-table-th     header-th  align-middle text-center">
                                     {{ __('Currency') }}
                                 </th>
 								
-									  <th class="view-table-th max-w-amount    header-th  align-middle text-center">
+									  <th class="view-table-th header-th  align-middle text-center">
                                     {{ __('Net Balance') }}
                                 </th>
 								
 								
-								  <th class="view-table-th max-w-amount    header-th  align-middle text-center">
+								 <th class="view-table-th     header-th  align-middle text-center">
+                                    {{ __('Invoice Due Date') }}
+                                </th>
+								
+								
+								 <th class="view-table-th     header-th  align-middle text-center">
+                                    {{ __('Status') }}
+                                </th>
+								
+								
+								
+								
+								
+								  <th class="view-table-th     header-th  align-middle text-center">
                                     {{ __('Actions') }}
                                 </th>
 								
@@ -354,12 +367,14 @@
                             @foreach($invoicesBalances as $index=>$invoiceStdClass)
                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                 <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                <td class="sub-text-bg  max-w-name is-name-cell ">{{ $invoiceStdClass->{$clientNameColumnName} }}</td>
-                                <td class="sub-text-bg text-center max-w-invoice-number">{{ $invoiceStdClass->invoice_number }}</td>
-                                <td class="sub-text-bg text-center max-w-invoice-date">{{ $invoiceStdClass->invoice_date }}</td>
-                                <td class="sub-text-bg text-center max-w-currency">{{ $invoiceStdClass->currency }}</td>
-                                <td class="sub-text-bg text-center max-w-amount">{{ number_format($invoiceStdClass->net_balance) }}</td>
-                                <td class="sub-text-bg max-w-report-btn text-center">
+                                <td class="sub-text-bg  is-name-cell ">{{ $invoiceStdClass->{$clientNameColumnName} }}</td>
+                                <td class="sub-text-bg text-center">{{ $invoiceStdClass->invoice_number }}</td>
+                                <td class="sub-text-bg text-center ">{{ $invoiceStdClass->invoice_date }}</td>
+                                <td class="sub-text-bg text-center ">{{ $invoiceStdClass->currency }}</td>
+                                <td class="sub-text-bg text-center ">{{ number_format($invoiceStdClass->net_balance) }}</td>
+                                <td class="sub-text-bg text-center ">{{ \Carbon\Carbon::make($invoiceStdClass->invoice_due_date)->format('d-m-Y') }}</td>
+                                <td class="sub-text-bg text-center ">{{ snakeToCamel($invoiceStdClass->invoice_status) }}</td>
+                                <td class="sub-text-bg  text-center">
                                     <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoiceStdClass->id ]) }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
                                 </td>
                 
