@@ -269,9 +269,9 @@ class MoneyReceivedController
 		/**
 		 * * for contracts
 		 */
-		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_customer',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
+		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_customer',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
 		$contracts = [];
-
+		
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'customers'=>$customers ,
