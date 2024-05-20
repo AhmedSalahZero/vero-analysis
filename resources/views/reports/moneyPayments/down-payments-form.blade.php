@@ -207,7 +207,7 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="input-group date">
                 <select name="currency" class="form-control current-currency ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract ajax-get-invoice-numbers">
-                    <option value="" selected>{{__('Select')}}</option>
+                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
                     @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
 
                     @php

@@ -213,7 +213,7 @@ use App\Models\MoneyReceived ;
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="currency" name="currency" class="form-control ajax-get-contracts-for-customer current-currency ajax-get-sales-orders-for-contract">
-                                <option value="" selected>{{__('Select')}}</option>
+                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
 							   @php
 								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
