@@ -101,7 +101,7 @@ class SalesGatheringTestJob implements ShouldQueue
 					$supplierId = 0 ;
 					$supplierName = $value['supplier_name'] ;
 					$value['currency'] = isset($value['currency']) ? strtoupper($value['currency']) : null;
-					$supplierFound = $supplierId ? true : DB::table('partners')->where('is_supplier',1)->where('name',$supplierName)->exists();
+					$supplierFound = $supplierId ? true : DB::table('partners')->where('company_id',$this->company_id)->where('is_supplier',1)->where('name',$supplierName)->exists();
 					if($supplierFound){
 						$supplierId = DB::table('partners')->where('company_id',$this->company_id)->where('is_supplier',1)->where('name',$supplierName)->first()->id;
 					}else{
