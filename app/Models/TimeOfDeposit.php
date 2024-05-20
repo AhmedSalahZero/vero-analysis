@@ -109,7 +109,7 @@ class TimeOfDeposit extends Model
 	
 	public function getEndDateFormatted()
 	{
-		$endDate = $this->getStartDate() ;
+		$endDate = $this->getEndDate() ;
 		return $endDate ? Carbon::make($endDate)->format('d-m-Y'):null ;
 	}
 	public function getAccountNumber()

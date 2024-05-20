@@ -74,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
 				return $items->where('receiving_date','>=',$startDate)->where('receiving_date','<=',$endDate);
-			}) ;
+			})->sortByDesc('receiving_date') ;
 		});
 		
 		

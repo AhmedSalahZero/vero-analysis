@@ -89,11 +89,9 @@ class UnappliedAmountController
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$customerNameText = (new $fullClassName)->getClientNameText();
-        // $tableName = $fullClassName::TABLE_NAME ;
         $jsFile = $fullClassName::JS_FILE ;
 		$currencies = $fullClassName::getCurrencies();
-
-		$customerInvoices =  $fullClassName::where('id',$invoiceId)->pluck($clientNameColumnName,'id') ; 
+		$customerInvoices =  $fullClassName::where('id',$invoiceId)->pluck($clientNameColumnName,$clientIdColumnName) ; 
 		$invoiceNumber =$fullClassName::where('id',$invoiceId)->first()->getInvoiceNumber();
 		
 		return [

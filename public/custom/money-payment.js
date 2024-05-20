@@ -117,6 +117,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 		
 			for (var i = 0; i < res.purchases_orders.length; i++) {
 				 var salesOrderId = res.purchases_orders[i].id
+				 var salesOrderNumber = res.purchases_orders[i].so_number
 				// var currency = res.invoices[i].currency
 				var amount = res.purchases_orders[i].amount
 			//	var netBalance = res.invoices[i].net_balance
@@ -127,6 +128,11 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-number')
 				domSalesOrder.val(salesOrderId)
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_id]').val(salesOrderId)
+				
+				var domSalesOrder = $(lastNode).find('.js-purchases-order-name')
+				domSalesOrder.val(salesOrderId)
+				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_name]').val(salesOrderNumber)
+				
 				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
 				//	$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))

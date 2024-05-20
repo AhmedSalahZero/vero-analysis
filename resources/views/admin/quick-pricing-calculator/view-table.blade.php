@@ -292,14 +292,7 @@ $tableId = 'kt_table_1';
 
                 </ul>
 
-                {{-- <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
-                </a> --}}
-                {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-                </a> --}}
+                
             </div>
         </div>
     </div>

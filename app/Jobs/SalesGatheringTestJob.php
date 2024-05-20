@@ -75,7 +75,7 @@ class SalesGatheringTestJob implements ShouldQueue
 					$value['currency'] = isset($value['currency']) ? strtoupper($value['currency']) : null;
 					$customerFound = $customerId ? true : DB::table('partners')->where('is_customer',1)->where('name',$customerName)->exists();
 					if($customerFound){
-						$customerId = DB::table('partners')->where('is_customer',1)->where('name',$customerName)->first()->id;
+						$customerId = DB::table('partners')->where('company_id',$this->company_id)->where('is_customer',1)->where('name',$customerName)->first()->id;
 					}else{
 						$customer = Partner::create([
 							'name'=>$customerName,
@@ -103,7 +103,7 @@ class SalesGatheringTestJob implements ShouldQueue
 					$value['currency'] = isset($value['currency']) ? strtoupper($value['currency']) : null;
 					$supplierFound = $supplierId ? true : DB::table('partners')->where('is_supplier',1)->where('name',$supplierName)->exists();
 					if($supplierFound){
-						$supplierId = DB::table('partners')->where('is_supplier',1)->where('name',$supplierName)->first()->id;
+						$supplierId = DB::table('partners')->where('company_id',$this->company_id)->where('is_supplier',1)->where('name',$supplierName)->first()->id;
 					}else{
 						$supplier = Partner::create([
 							'name'=>$supplierName,
@@ -120,14 +120,8 @@ class SalesGatheringTestJob implements ShouldQueue
 			]);
 			}
 			
-			
 		}
-		/**
-		 * * add additional fields to be stored
-		 */
-		// logger($key . );
 		
-
 		return $newItems ;
 	}
 }

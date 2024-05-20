@@ -85,8 +85,8 @@ $fullClassName = '\App\Models\\'.$modelType ;
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select id="{{ $customerNameColumnName }}" name="{{ $customerIdColumnName }}" class="form-control ajax-get-invoice-numbers">
-                                            @foreach($customerInvoices as $customerInvoiceId => $customerName)
-                                            <option selected value="{{ $customerInvoiceId }}">{{$customerName}}</option>
+                                            @foreach($customerInvoices as $partnerId => $customerName)
+                                            <option selected value="{{ $partnerId }}">{{$customerName}}</option>
                                             @endforeach
                                         </select>
                                     </div>

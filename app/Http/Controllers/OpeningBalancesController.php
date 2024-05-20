@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\AccountType;
 use App\Models\Bank;
+use App\Models\CashInSafeStatement;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
@@ -9,11 +10,12 @@ use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
 use App\Models\OpeningBalance;
 use App\Traits\GeneralFunctions;
+use App\Traits\Models\HasDebitStatements;
 use Illuminate\Http\Request;
 
 class OpeningBalancesController
 {
-    use GeneralFunctions;
+    use GeneralFunctions, HasDebitStatements;
 	public function index(Company $company,Request $request)
 	{
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
@@ -39,16 +41,34 @@ class OpeningBalancesController
 			'company_id'=>$company->id 
 		]);
 		foreach($request->get('cash-in-safe') as $index => $cashInSaveArr){
-			$openingBalance->moneyReceived()->create([
-				
-				'received_amount'=>$cashInSaveArr['received_amount'] ?: 0 ,
-				'currency'=>$cashInSaveArr['currency'],
-				'receiving_date'=>$openingBalanceDate,
+			/**
+			 * @var MoneyReceived $moneyReceived
+			 */
+			$amount = $cashInSaveArr['received_amount'] ?: 0 ;
+			$receivingBranchId = $cashInSaveArr['received_branch_id'] ?: null ;
+			$exchangeRate = isset($cashInSaveArr['exchange_rate']) ? $cashInSaveArr['exchange_rate'] : 1  ;
+			// $moneyReceived = $openingBalance->moneyReceived()->create([
+			// 	'received_amount'=>$amount  ,
+			// 	'currency'=>$cashInSaveArr['currency'],
+			// 	'receiving_date'=>$openingBalanceDate,
+			// 	'company_id'=>$company->id ,
+			// 	'type'=>MoneyReceived::CASH_IN_SAFE,
+			// 	'user_id'=>auth()->id(),
+			// 	'exchange_rate'=>isset($cashInSaveArr['exchange_rate']) ? $cashInSaveArr['exchange_rate'] : 1 
+			// ]);
+			CashInSafeStatement::create([
+				'branch_id'=>$receivingBranchId,
+				'currency'=>$cashInSaveArr['currency'] ,
+				'exchangeRate'=>$exchangeRate,
 				'company_id'=>$company->id ,
-				'type'=>MoneyReceived::CASH_IN_SAFE,
-				'user_id'=>auth()->id(),
-				'exchange_rate'=>isset($cashInSaveArr['exchange_rate']) ? $cashInSaveArr['exchange_rate'] : 1 
+				'debit'=>$amount,
+				'credit'=>0,
+				'date'=>$openingBalanceDate,
 			]);
+			
+
+			
+			
 		}
 		foreach($request->get(MoneyReceived::CHEQUE) as $index => $cheque){
 			$customerInvoice = CustomerInvoice::find($cheque['customer_name'] ?: null);

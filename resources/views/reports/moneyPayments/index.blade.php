@@ -132,7 +132,7 @@ $banks = [];
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
                                     <th class="align-middle">{{ __('Currency') }}</th>
-                                    <th class="align-middle" class="bank-max-width">{{ __('Delivery Bank') }}</th>
+                                    <th class="align-middle" class="bank-max-width">{{ __('Payment Bank') }}</th>
                                     <th class="align-middle">{!! __('Due<br>Date') !!}</th>
                                     <th class="align-middle">{!! __('Due <br> After Days') !!}</th>
                                     <th class="align-middle">{!! __('Status') !!}</th>
@@ -233,8 +233,8 @@ $banks = [];
 								
                                     <th>{{ __('Type') }}</th>
                                     <th>{{ __('Supplier Name') }}</th>
-                                    <th>{{ __('Delivery Date') }}</th>
-                                    <th class="bank-max-width">{{ __('Delivery Bank') }}</th>
+                                    <th>{{ __('Payment Date') }}</th>
+                                    <th class="bank-max-width">{{ __('Payment Bank') }}</th>
                                     <th>{{ __('Transfer Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Account Type') }}</th>
@@ -322,7 +322,7 @@ $banks = [];
                                 <tr class="table-standard-color">
                                     <th>{{ __('Type') }}</th>
                                     <th>{{ __('Supplier Name') }}</th>
-                                    <th>{{ __('Delivery Date') }}</th>
+                                    <th>{{ __('Payment Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th>{{ __('Delivery Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
@@ -501,10 +501,10 @@ $banks = [];
             modal.find(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else if (searchFieldName == 'receiving_date') {
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-            modal.find('.data-type-span').html('[ {{ __("Delivery Date") }} ]')
+            modal.find('.data-type-span').html('[ {{ __("Payment Date") }} ]')
         } else if (searchFieldName == 'delivery_date') {
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-            modal.find('.data-type-span').html('[ {{ __("Delivery Date") }} ]')
+            modal.find('.data-type-span').html('[ {{ __("Payment Date") }} ]')
         } else {
             $(modal).find('.search-field').prop('disabled', false);
         }

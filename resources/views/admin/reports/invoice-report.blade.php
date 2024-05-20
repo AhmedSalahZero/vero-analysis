@@ -360,8 +360,8 @@
                                     </script>
                                     @php
                                     @endphp
+									
                                     @foreach($invoices as $index=>$invoice)
-
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                         <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceDateFormatted() }}</td>
@@ -384,10 +384,9 @@
                                                 >{{ $invoice->dueDateHistories->count() ? __('Adjusted') : __('Adjust Due Date') }}</a>
                                             @endif
                                         </td>
-
                                         <td class="sub-text-bg  text-center">
                                             @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
+                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->{$clientIdColumnName} ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
                                             @endif
                                         </td>
 										

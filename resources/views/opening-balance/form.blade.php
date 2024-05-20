@@ -170,7 +170,7 @@ use App\Models\MoneyReceived ;
                                 @php
                                 $tableId = MoneyReceived::CASH_IN_SAFE;
                                 $repeaterId = 'm_repeater_6';
-
+								// dd($model->cashInSafe(),'1');
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                                 <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
@@ -187,12 +187,12 @@ use App\Models\MoneyReceived ;
                                     </x-slot>
                                     <x-slot name="trs">
                                         @php
-                                        $rows = isset($model) ? $model->cashInSafe :[-1] ;
+                                        $rows = isset($model) ? $model->cashesInSafe() :[-1] ;
                                         @endphp
-                                        @foreach( count($rows) ? $rows : [-1] as $cashInSafe)
+                                        @foreach( count($rows) ? $rows : [-1] as $cashInSafeStatement)
                                         @php
-                                        if( !($cashInSafe instanceof \App\Models\MoneyReceived) ){
-                                        unset($cashInSafe);
+                                        if( !($cashInSafeStatement instanceof \App\Models\CashInSafeStatement) ){
+                                        unset($cashInSafeStatement);
                                         }
                                         @endphp
                                         <tr @if($isRepeater) data-repeater-item @endif>
@@ -205,12 +205,13 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($cashInSafe) ? $cashInSafe->getReceivedAmount() : old('amount',0)) }}">
+														<input type="hidden" name="received_branch_id" value="{{ $company->getHeadOfficeId() }}" >
+                                                        <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($cashInSafeStatement) ? $cashInSafeStatement->getDebitAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <input type="hidden" name="id" value="{{ isset($cashInSafe) ? $cashInSafe->id : 0 }}">
+                                                <input type="hidden" name="id" value="{{ isset($cashInSafeStatement) ? $cashInSafeStatement->id : 0 }}">
 
 
 
@@ -220,7 +221,7 @@ use App\Models\MoneyReceived ;
                                                     <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                        <option value="{{ $currencyName }}" @if(isset($cashInSafe) && $cashInSafe->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                        <option value="{{ $currencyName }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -230,7 +231,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ number_format(isset($cashInSafe) ? $cashInSafe->getExchangeRate() : old('amount',0)) }}">
+                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ number_format(isset($cashInSafeStatement) ? $cashInSafeStatement->getExchangeRate() : old('exchange_rate',1)) }}">
                                                     </div>
                                                 </div>
 

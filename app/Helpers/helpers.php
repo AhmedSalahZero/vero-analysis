@@ -4341,7 +4341,13 @@ function getHeaderMenu()
 							'submenu'=>[]
 						]
 					]
-				]
+						],
+						[
+							'title'=>__('Opening Balance'),
+						'link'=>route('opening-balance.index', ['company'=>$companyId]),
+						'show'=>$user->can('view opening balances'),
+						
+						]
 				
 			]
 		]
@@ -4365,14 +4371,9 @@ function getHeaderMenu()
 			'show'=>$user->can('view cashvero settings'),
 			'submenu'=>[
 			
+				
+				
 				[
-					'title'=>__('Opening Balance'),
-				'link'=>route('opening-balance.index', ['company'=>$companyId]),
-				'show'=>$user->can('view opening balances'),
-				
-				]
-				
-				,[
 					'title'=>__('Notification Settings'),
 				'link'=>route('notifications-settings.index', ['company'=>$companyId]),
 				'show'=>$user->can('view notification settings'),

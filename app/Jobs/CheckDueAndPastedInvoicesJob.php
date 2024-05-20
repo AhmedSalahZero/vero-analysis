@@ -151,7 +151,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                     $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($chequeDueDate));
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Past Due Since ') . ' ' . $dueDays  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_past_due','cheque'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_past_due','receivable_cheque'));
                 }
 				
 				/**
@@ -161,7 +161,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$chequeNumber = $cheque->cheque_number;
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Due Today ')  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Is Due Today ')  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_current_due','cheque'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_current_due','receivable_cheque'));
                 }
 				
 				
@@ -172,7 +172,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$chequeNumber = $cheque->cheque_number;
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Be Collected Today')  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Be Collected Today ')  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_today','cheque'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_today','receivable_cheque'));
                 }
 				
 				/**
@@ -185,7 +185,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($expectedCollectionDate));
                     $messageEn = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Have Collected Since').' ' . $dueDays .  __('Days')  ;
                     $messageAr = __('Cheque Number ') . $chequeNumber . ' ' . __('Should Have Collected Since ').' ' . $dueDays .  __('Days')  ;
-                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_since_days','cheque'));
+                    $company->notify(new DueInvoiceNotification($messageEn, $messageAr, 'cheque_under_collection_since_days','receivable_cheque'));
                 }
 				
             }
