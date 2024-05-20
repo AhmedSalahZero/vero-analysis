@@ -1,5 +1,9 @@
 <!-- begin:: Header -->
+@php
+	$notificationTypes=['customer'=>__('Customer'),'receivable_cheque'=>__('Receivable Cheques'),'supplier'=>__('Supplier')];
+@endphp
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
+{{-- {{ dd() }} --}}
 
 
     <div class="kt-container ">
@@ -58,23 +62,27 @@
                                     <span class="btn btn-success btn-sm btn-bold btn-font-md">{{ $company->unreadNotifications->count() . ' '.__(' new') }}</span>
                                 </h3>
                                 <ul class="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-success kt-notification-item-padding-x" role="tablist">
+								@php
+									$notificationTypeIndex = 0 ;
+								@endphp
+									@foreach($notificationTypes as $notificationTypeId => $notificationTypeTitle )
                                     <li class="nav-item">
-                                        <a class="nav-link active show" data-toggle="tab" href="#topbar_notifications_notifications" role="tab" aria-selected="true">{{ __('Past') }}</a>
+                                        <a class="nav-link active show" data-toggle="tab" href="#topbar_{{ convertStringToClass($notificationTypeId) }}" role="tab" aria-selected="true">{{ __('Customer') }}</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#topbar_notifications_events" role="tab" aria-selected="false">{{ __('Now') }}</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#topbar_notifications_logs" role="tab" aria-selected="false">{{ __('Next') }}</a>
-                                    </li>
+									@endforeach 
+                                
+									
                                 </ul>
                             </div>
-
                             <!--end: Head -->
                             <div class="tab-content">
-                                <div class="tab-pane active show" id="topbar_notifications_notifications" role="tabpanel">
+								@php
+									$notificationTypeIndex = 0 ;
+								@endphp
+										@foreach($notificationTypes as $notificationTypeId => $notificationTypeTitle )
+                                <div class="tab-pane @if($notificationTypeIndex == 0) active show @endif " id="topbar_{{ convertStringToClass($notificationTypeId) }}" role="tabpanel">
                                     <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll overflow-auto" data-scroll="true" data-height="300" data-mobile-height="200">
-                                        @foreach($company->notifications as $notification)
+                                        @foreach($company->notifications->where('data.tap_type',$notificationTypeId) as $notification)
                                         <a href="#" class="kt-notification__item @if($notification->read()) kt-notification__item--read @endif">
                                             <div class="kt-notification__item-icon">
                                                 <i class="flaticon2-favourite kt-font-danger"></i>
@@ -89,22 +97,11 @@
                                             </div>
                                         </a>
                                         @endforeach
-                                        {{-- <a href="#" class="kt-notification__item kt-notification__item--read">
-															<div class="kt-notification__item-icon">
-																<i class="flaticon2-safe kt-font-primary"></i>
-															</div>
-															<div class="kt-notification__item-details">
-																<div class="kt-notification__item-title">
-																	Company meeting canceled
-																</div>
-																<div class="kt-notification__item-time">
-																	19 hrs ago
-																</div>
-															</div>
-														</a> --}}
-
+										
+                              
                                     </div>
                                 </div>
+                                        @endforeach
 
                             </div>
                         </form>

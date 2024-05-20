@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\MoneyReceived;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class OpeningBalance extends Model
 {
@@ -32,9 +33,9 @@ class OpeningBalance extends Model
 	{
 		return $this->hasMany(MoneyPayment::class,'opening_balance_id');
 	}
-	public function cashInSafe()
+	public function cashesInSafe()
 	{
-		return $this->hasMany(MoneyReceived::class,'opening_balance_id','id')->where('type',MoneyReceived::CASH_IN_SAFE);
+		return CashInSafeStatement::where('company_id',$this->company_id)->where('type','opening-balance')->get();
 	}
 	
 	public function chequeInSafe()

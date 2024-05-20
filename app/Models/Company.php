@@ -6,6 +6,7 @@ use App\NotificationSetting;
 use App\Traits\StaticBoot;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -189,7 +190,10 @@ class Company extends Model implements HasMedia
 		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
 		->where('status',TimeOfDeposit::BROKEN);
 	}
-	
+	public function getHeadOfficeId()
+	{
+		return DB::table('branch')->where('company_id',$this->id)->orderByRaw('created_at asc')->first()->id;
+	}	
 	
 	
 	

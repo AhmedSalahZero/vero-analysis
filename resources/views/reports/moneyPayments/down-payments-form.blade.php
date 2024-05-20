@@ -76,7 +76,7 @@ $selectedBanks = [];
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{__('Money Received')}}
+                    {{__('Money Payment')}}
                 </h3>
             </div>
         </div>
@@ -86,7 +86,7 @@ $selectedBanks = [];
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="type" id="type" class="form-control">
+                            <select required name="type" id="type" class="form-control">
                                 <option value="" selected>{{__('Select')}}</option>
 
                                 <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ MoneyPayment::CASH_PAYMENT }}">{{__('Cash In Safe')}}</option>
@@ -532,7 +532,7 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Delivery Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Payment Bank')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
@@ -627,14 +627,16 @@ $selectedBanks = [];
                             <div class="col-md-4">
                                 <label>{{__('SO Number')}} </label>
                                 <div class="kt-input-icon">
-                                    <input name="sales_orders_amounts[][sales_order_id]" type="text" readonly class="form-control js-sales-order-number">
+									                                    <input name="purchases_orders_amounts[][purchases_order_name]" type="text" readonly class="form-control js-purchases-order-name">
+
+                                    <input name="purchases_orders_amounts[][purchases_order_id]" type="hidden" readonly class="form-control js-purchases-order-number">
                                 </div>
                             </div>
 
                             <div class="col-md-2">
                                 <label>{{__('Amount')}} </label>
                                 <div class="kt-input-icon">
-                                    <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
+                                    <input name="purchases_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
                                 </div>
                             </div>
 
@@ -750,5 +752,7 @@ $selectedBanks = [];
     })
 
 </script>
-
+<script>
+$('select#supplier_name').trigger('change')
+</script>
 @endsection

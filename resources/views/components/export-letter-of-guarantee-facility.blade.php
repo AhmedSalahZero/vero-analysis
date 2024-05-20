@@ -72,14 +72,6 @@
 
         
 
-            {{-- <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  active-style btn-icon-sm ">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
-            </a> --}}
-
-
-
-            {{-- @endif --}}
 
         </div>
     </div>

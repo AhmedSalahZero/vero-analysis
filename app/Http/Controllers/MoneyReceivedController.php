@@ -16,10 +16,10 @@ use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
+use App\Traits\Models\HasDebitStatements;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Traits\Models\HasDebitStatements;
 
 class MoneyReceivedController
 {
@@ -253,7 +253,7 @@ class MoneyReceivedController
         return view('reports.moneyReceived.index', compact('financialInstitutionBanks','accountTypes'));
     }
 	
-	public function create(Company $company,$singleModel = null)
+	public function create(Company $company,$customerInvoiceId = null)
 	{
 		$isDownPayment = Request()->has('type');
 		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies();
@@ -264,20 +264,20 @@ class MoneyReceivedController
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$customerInvoices =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
-		$invoiceNumber = $singleModel ? CustomerInvoice::where('id',$singleModel)->first()->getInvoiceNumber():null;
+		// $partnerOrPartners =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->pluck('name','id') :Partner::where('company_id',$company->id)->pluck('name','id')->unique()->toArray(); 
+		$invoiceNumber = $customerInvoiceId ? CustomerInvoice::where('id',$customerInvoiceId)->first()->getInvoiceNumber():null;
 		/**
 		 * * for contracts
 		 */
-		$customers =  $singleModel ?  Partner::where('id',$singleModel)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_customer',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
+		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_customer',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
 		$contracts = [];
 
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
-			'customerInvoices'=>$customerInvoices ,
+			'customers'=>$customers ,
 			'selectedBranches'=>$selectedBranches,
 			'selectedBanks'=>$selectedBanks,
-			'singleModel'=>$singleModel,
+			'singleModel'=>$customerInvoiceId,
 			'invoiceNumber'=>$invoiceNumber,
 			'banks'=>$banks,
 			'accountTypes'=>$accountTypes,
@@ -308,6 +308,7 @@ class MoneyReceivedController
 		foreach($salesOrders as $index=>$salesOrder){
 			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
+			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
@@ -318,14 +319,14 @@ class MoneyReceivedController
 			]);
 		
 	}
-	public function getInvoiceNumber(Company $company ,  Request $request , int $customerInvoiceId,?string $selectedCurrency=null)
+	public function getInvoiceNumber(Company $company ,  Request $request , int $customerId,?string $selectedCurrency=null)
 	{
 		$inEditMode = $request->get('inEditMode');
 		$moneyReceivedId = $request->get('money_received_id');
 		$moneyReceived = MoneyReceived::find($moneyReceivedId);
-		$customer = CustomerInvoice::find($customerInvoiceId);
+		$partner = Partner::find($customerId);
 
-		$customerName = $customer->customer_name ;
+		$customerName = $partner->getName() ;
 		$invoices = CustomerInvoice::where('customer_name',$customerName)
 		->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
@@ -372,11 +373,10 @@ class MoneyReceivedController
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
 		$financialInstitutionId = null;
-		$customerInvoiceId = $request->get('customer_id');
-		$customerInvoice = CustomerInvoice::find($customerInvoiceId);
-		$customer = $customerInvoice->customer ;
-		$customerName = $customerInvoice->getCustomerName();
-		$customerId = $customerInvoice->getCustomerId();
+		$partnerId = $request->get('customer_id');
+		$customer = Partner::find($partnerId);
+		$customerName = $customer->getName();
+		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency']);
 		$isDownPayment = $request->has('sales_orders_amounts');
@@ -471,7 +471,8 @@ class MoneyReceivedController
 			if(isset($settlementArr['settlement_amount'])&&$settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $company->id ;
 				$settlementArr['customer_name'] = $customerName ;
-				$totalWithholdAmount += $settlementArr['withhold_amount']  ;
+				$withholdAmount = $settlementArr['withhold_amount'] ?? 0 ;
+				$totalWithholdAmount += $withholdAmount  ;
 				$moneyReceived->settlements()->create($settlementArr);
 			}
 		}
@@ -521,16 +522,16 @@ class MoneyReceivedController
 		$banks = Bank::pluck('view_name','id');
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customerInvoices = CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
+		// $customerInvoices = CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
-		$customers =  $singleModel ?  CustomerInvoice::where('id',$singleModel)->pluck('customer_name','customer_id') :CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','customer_id')->unique()->toArray(); 
+		$customers =  $singleModel ?  Partner::where('id',$singleModel)->pluck('name','id') :Partner::where('company_id',$company->id)->pluck('name','id')->unique()->toArray(); 
 		$contracts = Contract::where('company_id',$company->id)->get();
 		if($moneyReceived->isChequeUnderCollection()){
 			return view('reports.moneyReceived.edit-cheque-under-collection',[
 				'banks'=>$banks,
-				'customerInvoices'=>$customerInvoices ,
+				// 'customerInvoices'=>$customerInvoices ,
 				'selectedBranches'=>$selectedBranches,
 				'selectedBanks'=>$selectedBanks,
 				'model'=>$moneyReceived,
@@ -544,7 +545,7 @@ class MoneyReceivedController
 			'banks'=>$banks,
 			'customers'=>$customers,
 			'contracts'=>$contracts,
-			'customerInvoices'=>$customerInvoices ,
+			// 'customerInvoices'=>$customerInvoices ,
 			'selectedBranches'=>$selectedBranches,
 			'accountTypes'=>$accountTypes,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,

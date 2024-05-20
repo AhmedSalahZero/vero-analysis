@@ -148,7 +148,8 @@ class FinancialInstitution extends Model
 			if($balanceAmount != 0){
 				$account->currentAccountBankStatements()->create([
 					'company_id'=>getCurrentCompanyId() ,
-					'beginning_balance'=>$balanceAmount,
+					'beginning_balance'=>0,
+					'debit'=>$balanceAmount,
 					'is_debit'=>$isDebit =$balanceAmount > 0 ,
 					'is_credit' => !$isDebit,
 					'date'=>$startDate ,

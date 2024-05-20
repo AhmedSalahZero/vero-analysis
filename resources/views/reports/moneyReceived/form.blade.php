@@ -126,8 +126,8 @@ use App\Models\CustomerInvoice;
                                 <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers">
                                     <option value="" selected>{{__('Select')}}</option>
                                     {{-- {{  }} --}}
-                                    @foreach($customerInvoices as $customerInvoiceId => $customerName)
-                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerInvoiceId }}">{{$customerName}}</option>
+                                    @foreach($customers as $customerId => $customerName)
+                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -140,7 +140,7 @@ use App\Models\CustomerInvoice;
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="type" id="type" class="form-control"
+                            <select required name="type" id="type" class="form-control"
 							>
                                 <option value="" selected>{{__('Select')}}</option>
 

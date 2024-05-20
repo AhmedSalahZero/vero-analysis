@@ -151,4 +151,12 @@ class CashInSafeStatement extends Model
 
         $this->attributes['date'] = $year . '-' . $month . '-' . $day;
     }
+	public function getDebitAmount()
+	{
+		return $this->debit ?: 0 ;
+	}
+	public function getCurrency()
+	{
+		return $this->currency ; 
+	}
 }

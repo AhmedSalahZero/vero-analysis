@@ -123,10 +123,10 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers">
-                                    <option value="" selected>{{__('Select')}}</option>
+                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                     {{-- {{  }} --}}
-                                    @foreach($supplierInvoices as $supplierInvoiceId => $supplierName)
-                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierInvoiceId }}">{{$supplierName}}</option>
+                                    @foreach($suppliers as $supplierId => $supplierName)
+                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -139,7 +139,7 @@ $selectedBanks = [];
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="type" id="type" class="form-control">
+                            <select required name="type" id="type" class="form-control">
                                 <option value="" selected>{{__('Select')}}</option>
                                 <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ MoneyPayment::CASH_PAYMENT }}">{{__('Cash In Safe')}}</option>
                                 <option @if(isset($model) && $model->isPayableCheque() ) selected @endif value="{{ MoneyPayment::PAYABLE_CHEQUE }}">{{__('Payable Cheques')}}</option>
@@ -458,7 +458,7 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Delivery Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Payment Bank')}} <span class="required">*</span></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 

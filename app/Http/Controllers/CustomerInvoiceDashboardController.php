@@ -253,7 +253,8 @@ class CustomerInvoiceDashboardController extends Controller
             'isCollectedOrPaid' => 'is' . ucfirst($isCollectedOrPaid),
             'moneyReceivedOrPaidText' => $moneyReceivedOrPaidText,
             'moneyReceivedOrPaidUrlName' => $moneyReceivedOrPaidUrlName,
-			'modelType'=>$modelType
+			'modelType'=>$modelType,
+			'clientIdColumnName'=>$clientIdColumnName
         ]);
     }
 	

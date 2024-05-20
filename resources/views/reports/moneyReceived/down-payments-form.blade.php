@@ -86,7 +86,7 @@ use App\Models\MoneyReceived ;
                     <label>{{__('Select Money Type')}} <span class="required">*</span></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="type" id="type" class="form-control">
+                            <select required name="type" id="type" class="form-control">
                                 <option value="" selected>{{__('Select')}}</option>
 
                                 <option @if(isset($model) && $model->isCashInSafe() ) selected @endif value="{{ MoneyReceived::CASH_IN_SAFE }}">{{__('Cash In Safe')}}</option>
@@ -594,7 +594,8 @@ use App\Models\MoneyReceived ;
                             <div class="col-md-4">
                                 <label>{{__('SO Number')}} </label>
                                 <div class="kt-input-icon">
-                                    <input name="sales_orders_amounts[][sales_order_id]" type="text" readonly class="form-control js-sales-order-number">
+                                    <input name="sales_orders_amounts[][sales_order_name]" type="text" readonly class="form-control js-sales-order-name">
+                                    <input name="sales_orders_amounts[][sales_order_id]" type="hidden" readonly class="form-control js-sales-order-number">
                                 </div>
                             </div>
 
@@ -718,5 +719,9 @@ use App\Models\MoneyReceived ;
         }
     })
 
+</script>
+
+<script>
+$('select#customer_name').trigger('change')
 </script>
 @endsection
