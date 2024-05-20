@@ -456,6 +456,7 @@ class MoneyReceived extends Model
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
+		$this->unappliedAmounts()->delete();
 		$this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() : null ;
 		$this->cashInSafeDebitStatement ? $this->cashInSafeDebitStatement->delete() : null ;
 		$this->currentAccountDebitBankStatement ? $this->currentAccountDebitBankStatement->delete() : null ;

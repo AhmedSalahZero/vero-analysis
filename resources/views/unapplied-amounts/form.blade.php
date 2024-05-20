@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 @section('css')
 @php
-use App\Models\MoneyReceived ;
 use App\Models\CustomerInvoice;
+use App\Models\MoneyReceived ;
 use App\Models\SupplierInvoice;
 $fullClassName = '\App\Models\\'.$modelType ;
 @endphp
@@ -58,6 +58,8 @@ $fullClassName = '\App\Models\\'.$modelType ;
     <div class="col-md-12">
 
         <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
+							<input type="hidden" name="invoiceId" value="{{ $invoiceId }}">
+		
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ 1 }}" value="{{ $invoiceNumber }}">
@@ -79,7 +81,6 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
 
                         <div class="col-md-5">
-
                             <label>{{$customerNameText}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">

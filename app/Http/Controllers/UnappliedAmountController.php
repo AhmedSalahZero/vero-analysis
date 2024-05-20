@@ -67,7 +67,6 @@ class UnappliedAmountController
 			'invoice_number'=>__('Invoice Number'),
 			'settlement_date'=>__('Settlement Date'),
 		];
-		
         return view('unapplied-amounts.index', [
 			'company'=>$company ,
 			'filterStartDate'=>$startDate,
@@ -80,7 +79,6 @@ class UnappliedAmountController
 	
 	public function create(Company $company,$customerInvoiceId,$modelType)
 	{
-		
         return view('unapplied-amounts.form',$this->getCommonVars($modelType,$company,$customerInvoiceId));
     }
 	public function getCommonVars($modelType ,$company  , $invoiceId , $model = null )
@@ -105,6 +103,7 @@ class UnappliedAmountController
 			'customerNameText'=>$customerNameText,
 			'customerNameColumnName'=>$clientNameColumnName,
 			'customerIdColumnName'=>$clientIdColumnName,
+			'invoiceId'=>$invoiceId
 		] ;
 	}
 	
@@ -118,13 +117,19 @@ class UnappliedAmountController
         $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
         $unappliedSettlementTable = $fullClassName::UNAPPLIED_SETTLEMENT_TABLE ;
         $moneyModelName = $fullClassName::MONEY_MODEL_NAME ;
+		$partnerId = $request->get($clientIdColumnName);
 		
-		$customerInvoiceId = $request->get($clientIdColumnName);
-	
-		$customerInvoice = $fullClassName::find($customerInvoiceId);
-		$partnerId = $customerInvoice[$clientIdColumnName] ;
+		/**
+		 * @var CustomerInvoice $customerInvoice
+		 */
+		
+		$customerInvoice = $fullClassName::find($request->get('invoiceId'));
 		$invoiceNumber = $customerInvoice->getInvoiceNumber();
 		$customerName = $customerInvoice->getName();
+		$currency = $customerInvoice->getCurrency();
+		
+		
+		
 		$totalWithholdAmount= 0 ;
 		$unappliedAmount = UnappliedAmount::create([
 			'company_id'=>$company->id ,
@@ -132,8 +137,10 @@ class UnappliedAmountController
 			'settlement_date'=>now()->format('Y-m-d'),
 			'amount'=>$request->input('settlements.'.$invoiceNumber.'.settlement_amount') * -1 ,
 			'net_balance_until_date'=>0 ,
-			// 'model_type'=>$moneyModelName
+			'model_type'=>$moneyModelName , 
+			'currency' => $currency  
 		]);
+		
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{
 				$settlementArr['company_id'] = $company->id ;
