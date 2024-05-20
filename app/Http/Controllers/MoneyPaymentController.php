@@ -19,6 +19,7 @@ use App\Models\SupplierInvoice;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -248,7 +249,15 @@ class MoneyPaymentController
 		/**
 		 * * for contracts
 		 */
-		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
+		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
+		->when($isDownPayment,function(Builder $q){
+			$q->has('contracts');
+		})
+		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)
+		->when($isDownPayment,function(Builder $q){
+			$q->has('contracts');
+		})
+		->pluck('name','id')->toArray(); 
 		$contracts = [];
 
         return view($viewName,[
@@ -422,7 +431,8 @@ class MoneyPaymentController
 				'company_id'=>$company->id,
 				'net_balance_until_date'=>0,
 				'model_id'=>$moneyPayment->id,
-				'model_type'=>HHelpers::getClassNameWithoutNameSpace($moneyPayment)
+				'model_type'=>HHelpers::getClassNameWithoutNameSpace($moneyPayment),
+				'currency'=>$currencyName
 			]);
 		}
 		/**

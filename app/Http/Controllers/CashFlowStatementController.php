@@ -10,9 +10,7 @@ use App\Models\CashFlowStatementItem;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
-use App\Models\ReceivableAndPayment;
 use App\Models\Repositories\CashFlowStatementRepository;
-use App\Models\User;
 use App\ReadyFunctions\CollectionPolicyService;
 use App\Services\VatCalculation;
 use Carbon\Carbon;
@@ -44,9 +42,7 @@ class CashFlowStatementController extends Controller
 	{
 		// if first time
 		$dates = array_keys($cashFlowStatement->getIntervalFormatted());
-		// $cashFlowStatement->receivables_and_payments->count()
 		if (false&& env('APP_ENV') == 'local'
-			// && !$cashFlowStatement->entered_receivables_and_payments_table
 			||
 			Request()->route()->getName() == 'admin.show-cash-and-banks'
 		) {

@@ -94,8 +94,8 @@
                                         <label>{{__('Select Financial Institution Type')}} <span class="required">*</span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="type" class="form-control" id="type">
-                                                    <option value="">{{__('Select')}}</option>
+                                                <select name="type" class="form-control select2-select" data-live-search="true" data-actions-box="true" id="type">
+                                                    {{-- <option value="">{{__('Select')}}</option> --}}
                                                     <option @if(isset($model) && $model->isBank() ) selected @endif value="bank">{{__('Banks')}}</option>
                                                     <option @if(isset($model) && $model->isLeasingCompanies() ) selected @endif value="leasing_companies">{{__('Leasing Companies')}}</option>
                                                     <option @if(isset($model) && $model->isFactoringCompanies() ) selected @endif value="factoring_companies">{{__('Factoring Companies')}}</option>
@@ -108,8 +108,8 @@
                                         <label>{{__('Select Bank ')}} <span class="required">*</span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="bank_id" class="form-control ">
-                                                    <option value="">{{__('Select')}}</option>
+                                                <select name="bank_id" data-live-search="true" data-actions-box="true" class="form-control select2-select ">
+                                                    {{-- <option value="">{{__('Select')}}</option> --}}
                                                     @foreach($banks as $bankId=>$bankName)
                                                     <option @if(isset($model) && $bankId==$model->bank_id ) selected @endif value="{{ $bankId }}">{{ $bankName}}</option>
                                                     @endforeach
