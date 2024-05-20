@@ -111,7 +111,8 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 			for (var i = 0; i < res.sales_orders.length; i++) {
 				 var salesOrderId = res.sales_orders[i].id
 				 var salesOrderNumber = res.sales_orders[i].so_number
-				 console.log('eee',res.sales_orders[i])
+				 console.log(salesOrderNumber ,res.sales_orders )
+
 				// var currency = res.invoices[i].currency
 				var amount = res.sales_orders[i].amount
 			//	var netBalance = res.invoices[i].net_balance

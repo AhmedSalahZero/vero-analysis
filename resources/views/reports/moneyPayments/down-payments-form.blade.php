@@ -209,13 +209,13 @@ $selectedBanks = [];
                 <select name="currency" class="form-control current-currency ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract ajax-get-invoice-numbers">
                     <option value="" selected>{{__('Select')}}</option>
                     @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-					
-							@php
-								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-							   @endphp
-                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
+
+                    @php
+                    $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                    $selected = $selected ? 'selected':'';
+                    @endphp
+                    <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -612,23 +612,22 @@ $selectedBanks = [];
 
             <div class="js-append-to">
                 <div class="col-md-12 js-duplicate-node">
-                   
+
                 </div>
             </div>
 
 
 
 
-	<div class="js-template hidden">
-			 <div class="col-md-12 js-duplicate-node">
-                  <div class=" kt-margin-b-10 border-class">
+            <div class="js-template hidden">
+                <div class="col-md-12 js-duplicate-node">
+                    <div class=" kt-margin-b-10 border-class">
                         <div class="form-group row align-items-end">
 
                             <div class="col-md-4">
                                 <label>{{__('SO Number')}} </label>
                                 <div class="kt-input-icon">
-									                                    <input name="purchases_orders_amounts[][purchases_order_name]" type="text" readonly class="form-control js-purchases-order-name">
-
+                                    <input name="purchases_orders_amounts[][purchases_order_name]" type="text" readonly class="form-control js-purchases-order-name">
                                     <input name="purchases_orders_amounts[][purchases_order_id]" type="hidden" readonly class="form-control js-purchases-order-number">
                                 </div>
                             </div>
@@ -653,7 +652,7 @@ $selectedBanks = [];
 
                     </div>
                 </div>
-			</div>
+            </div>
 
             {{-- <hr>
             <div class="row">
@@ -664,10 +663,10 @@ $selectedBanks = [];
                 <div class="col-md-2"></div>
                 <div class="col-md-2 width-12 ml-auto mr-4">
                     <label class="label">{{ __('Unapplied Amount') }}</label>
-                    <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
-                </div>
-            </div> --}}
+            <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
         </div>
+    </div> --}}
+    </div>
     </div>
 
     <x-submitting />
@@ -745,7 +744,7 @@ $selectedBanks = [];
                         options += `<option value="${id}">${res.contracts[id]}</option>`
                     }
                     $('#contract-id').empty().append(options)
-					$('#contract-id').trigger('change')
+                    $('#contract-id').trigger('change')
                 }
             })
         }
@@ -753,6 +752,7 @@ $selectedBanks = [];
 
 </script>
 <script>
-$('select#supplier_name').trigger('change')
+    $('select#supplier_name').trigger('change')
+
 </script>
 @endsection
