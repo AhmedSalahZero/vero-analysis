@@ -257,7 +257,7 @@ class MoneyReceivedController
 	public function create(Company $company,$customerInvoiceId = null)
 	{
 		$isDownPayment = Request()->has('type');
-		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies();
+		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies($customerInvoiceId);
 		
 		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
@@ -265,14 +265,12 @@ class MoneyReceivedController
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		// $partnerOrPartners =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->pluck('name','id') :Partner::where('company_id',$company->id)->pluck('name','id')->unique()->toArray(); 
 		$invoiceNumber = $customerInvoiceId ? CustomerInvoice::where('id',$customerInvoiceId)->first()->getInvoiceNumber():null;
 		/**
 		 * * for contracts
 		 */
 		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_customer',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
 		$contracts = [];
-		
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'customers'=>$customers ,

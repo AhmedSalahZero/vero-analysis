@@ -228,6 +228,9 @@ class MoneyPaymentController
 	public function create(Company $company,$supplierInvoiceId = null)
 	{
 		$currencies = DB::table('supplier_invoices')
+		->when($supplierInvoiceId,function($q) use($supplierInvoiceId) {
+			$q->where('id',$supplierInvoiceId);
+		})
 		->select('currency')
 		->where('currency','!=','')
 		->where('company_id',$company->id)
