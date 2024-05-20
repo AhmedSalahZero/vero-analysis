@@ -125,7 +125,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 				domSalesOrder.attr('name', 'sales_orders_amounts[' + salesOrderId + '][sales_order_id]').val(salesOrderId)
 
 				var domSalesOrder = $(lastNode).find('.js-sales-order-name')
-				domSalesOrder.val(salesOrderId)
+				domSalesOrder.val(salesOrderNumber)
 				domSalesOrder.attr('name', 'sales_orders_amounts[' + salesOrderId + '][sales_order_name]').val(salesOrderNumber)
 
 				
