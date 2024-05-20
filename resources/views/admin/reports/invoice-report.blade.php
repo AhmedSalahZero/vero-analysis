@@ -386,7 +386,7 @@
                                         </td>
                                         <td class="sub-text-bg  text-center">
                                             @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->{$clientIdColumnName} ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
+                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
                                             @endif
                                         </td>
 										
