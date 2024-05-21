@@ -49,6 +49,14 @@ class MoneyPayment extends Model
     {
         return $this->supplier_name;
     }
+	public function supplier()
+	{
+		return $this->belongsTo(Partner::class,'supplier_name','name')->where('is_supplier',1)->where('company_id',getCurrentCompanyId());
+	}
+	public function getSupplierId()
+	{
+		return $this->supplier ? $this->supplier->id : 0 ;
+	}
 	public function getName()
 	{
 		return $this->getSupplierName();

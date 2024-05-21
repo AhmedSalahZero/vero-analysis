@@ -317,6 +317,7 @@ Route::middleware([])->group(function () {
 				 // Route::delete('financial-institutions/{financialInstitution}/bank-accounts/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
  
 				 Route::post('add-new-partner','AddNewCustomerController@addNew')->name('add.new.partner');
+				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
 				 Route::resource('internal-money-transfers', 'InternalMoneyTransferController');
 				//  Route::resource('contracts', 'ContractsController');

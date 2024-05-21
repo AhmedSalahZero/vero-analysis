@@ -5,7 +5,8 @@
 'value'=>$value ?? null,
 'required'=>true,
 'showLabel'=>true,
-'onlyMonth'=>true
+'onlyMonth'=>true,
+'classes'=>''
 ])
 
 @if($label && $showLabel)
@@ -19,6 +20,6 @@
 <div class="kt-input-icon">
     <div class="input-group date">
 
-        <input type="text" name="{{ $name }}" class="@if($onlyMonth)  only-month-year-picker @endif datepicker-input date-input form-control recalc-end-date start-date " value="{{$value}} " />
+        <input type="text" name="{{ $name }}" class="@if($onlyMonth)  only-month-year-picker @endif datepicker-input date-input form-control recalc-end-date start-date {{ $classes }} " value="{{$value}} " />
     </div>
 </div>

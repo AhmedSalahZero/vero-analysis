@@ -76,7 +76,6 @@ $basicClasses = $isSelect2 ? "form-control mb-1 select select2-select" :"form-co
 	@endif
 	 title="{{ $option['title']  }}" @foreach($option as $name=>$val)
         {{ $name .'='.$val }}
-        {{-- {{ logger($val == $selectedValue) }} --}}
         @if($name == 'value' && $val == $selectedValue )
         selected
         @endif
