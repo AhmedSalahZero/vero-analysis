@@ -1,5 +1,6 @@
 @php
 use App\Models\MoneyReceived ;
+use App\Models\MoneyPayment ;
 @endphp
 @extends('layouts.dashboard')
 @section('css')
@@ -170,7 +171,6 @@ use App\Models\MoneyReceived ;
                                 @php
                                 $tableId = MoneyReceived::CASH_IN_SAFE;
                                 $repeaterId = 'm_repeater_6';
-								// dd($model->cashInSafe(),'1');
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                                 <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
@@ -178,16 +178,14 @@ use App\Models\MoneyReceived ;
                                         @foreach([
                                         __('Amount')=>'col-md-1',
                                         __('Currency')=>'col-md-1',
-                                        __('Exchange <br> Rate')=>'col-md-1',
-
-
+                                        __('Exchange <br> Rate')=>'col-md-1'
                                         ] as $title=>$classes)
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
                                     </x-slot>
                                     <x-slot name="trs">
                                         @php
-                                        $rows = isset($model) ? $model->cashesInSafe() :[-1] ;
+                                        $rows = isset($model) ? $model->cashInSafes :[-1] ;
                                         @endphp
                                         @foreach( count($rows) ? $rows : [-1] as $cashInSafeStatement)
                                         @php
@@ -205,7 +203,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-														<input type="hidden" name="received_branch_id" value="{{ $company->getHeadOfficeId() }}" >
+                                                        <input type="hidden" name="received_branch_id" value="{{ $company->getHeadOfficeId() }}">
                                                         <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($cashInSafeStatement) ? $cashInSafeStatement->getDebitAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
@@ -219,7 +217,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="input-group">
                                                     <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        <option selected>{{__('Select')}}</option>
+                                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -236,12 +234,6 @@ use App\Models\MoneyReceived ;
                                                 </div>
 
                                             </td>
-
-
-
-
-
-
                                         </tr>
                                         @endforeach
 
@@ -371,7 +363,7 @@ use App\Models\MoneyReceived ;
                                 $repeaterId = 'm_repeater_7';
 
                                 @endphp
-                                <div class="modal fade" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal fade " data-type="" id="js-choose-bank-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -396,12 +388,12 @@ use App\Models\MoneyReceived ;
                                         </div>
                                     </div>
                                 </div>
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-customer-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Customer <br> Name')=>'customer-name-width',
-                                        __('Currency')=>'col-md-1',
-                                        __('Due <br> Date')=>'col-md-1',
+                                        __('Currency')=>'width-8',
+                                        __('Due <br> Date')=>'width-12',
                                         __('Drawee <br> Bank')=>'drawee-bank-width',
                                         __('Amount')=>'col-md-1',
                                         __('Cheque <br> Number')=>'col-md-1',
@@ -431,13 +423,9 @@ use App\Models\MoneyReceived ;
 
 
                                             <input type="hidden" name="id" value="{{ isset($chequeInSafe) ? $chequeInSafe->id : 0 }}">
-
-
-
                                             <td>
-
                                                 <div class="input-group css-fix-plus-direction">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customerInvoicesFormatted" :add-new="false" :label="' '" class="customer_name_class" data-filter-type="{{ 'create' }}" :all="false" name="customer_name" :selected-value="isset($chequeUnderCollection) ? $chequeUnderCollection->getCustomerName() : 0"></x-form.select>
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeInSafe) ? $chequeInSafe->getCustomerId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
@@ -445,8 +433,8 @@ use App\Models\MoneyReceived ;
                                             <td>
 
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        <option selected>{{__('Select')}}</option>
+                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers width-8" js-when-change-trigger-change-account-type>
+                                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($chequeInSafe) && $chequeInSafe->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -456,7 +444,7 @@ use App\Models\MoneyReceived ;
                                             </td>
 
                                             <td>
-                                                <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($chequeInSafe) ?  formatDateForDatePicker($chequeInSafe->getChequeDueDate()) : formatDateForDatePicker(now())" :label="__('Due Date')" :id="'due_date'" name="due_date"></x-calendar>
+                                                <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($chequeInSafe) ?  formatDateForDatePicker($chequeInSafe->getChequeDueDate()) : formatDateForDatePicker(now())" :label="__('Due Date')" :id="'due_date'" :class="'width-12'" name="due_date" :classes="'width-12'"></x-calendar>
 
                                             </td>
 
@@ -466,7 +454,7 @@ use App\Models\MoneyReceived ;
 
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             @foreach($selectedBanks as $bankId=>$bankName)
-                                                            <option value="{{ $bankId }}" {{ isset($model) && $model->cheque && $model->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+                                                            <option value="{{ $bankId }}" {{ isset($chequeInSafe) && $chequeInSafe->cheque && $chequeInSafe->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                                             @endforeach
                                                         </select>
                                                         <button class="btn btn-sm btn-primary js-drawee-bank-class">{{ __('Add New Bank') }}</button>
@@ -633,7 +621,7 @@ use App\Models\MoneyReceived ;
 
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-customer-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Customer <br> Name')=>'customer-name-width',
@@ -679,7 +667,7 @@ use App\Models\MoneyReceived ;
                                             <td>
 
                                                 <div class="input-group css-fix-plus-direction">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customerInvoicesFormatted" :add-new="false" :label="' '" class="customer_name_class" data-filter-type="{{ 'create' }}" :all="false" name="customer_name" :selected-value="isset($chequeUnderCollection) ? $chequeUnderCollection->getCustomerName() : 0"></x-form.select>
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeUnderCollection) ? $chequeUnderCollection->getCustomerId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
@@ -688,7 +676,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="input-group">
                                                     <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        <option selected>{{__('Select')}}</option>
+                                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($chequeUnderCollection) && $chequeUnderCollection->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -708,7 +696,8 @@ use App\Models\MoneyReceived ;
 
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             @foreach($selectedBanks as $bankId=>$bankName)
-                                                            <option value="{{ $bankId }}" {{ isset($model) && $model->cheque && $model->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+
+                                                            <option value="{{ $bankId }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                                             @endforeach
                                                         </select>
                                                         <button class="btn btn-sm btn-primary js-drawee-bank-class">{{ __('Add New Bank') }}</button>
@@ -888,6 +877,265 @@ use App\Models\MoneyReceived ;
 
 
 
+
+
+
+
+                    <div class="kt-portlet">
+
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title head-title text-primary">
+                                    {{__('Payable Cheques Opening Balance')}}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="kt-portlet__body">
+
+
+                            <div class="form-group row justify-content-center">
+                                @php
+                                $index = 0 ;
+                                @endphp
+
+
+
+                                {{-- start of Cheques Under Collection --}}
+                                @php
+                                $tableId = MoneyPayment::PAYABLE_CHEQUE;
+                                $repeaterId = 'm_repeater_9';
+
+                                @endphp
+                                <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
+                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-supplier-class'"  :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                    <x-slot name="ths">
+                                        @foreach([
+                                        __('Supplier <br> Name')=>'customer-name-width',
+                                        __('Currency')=>'width-8',
+                                        __('Due <br> Date')=>'width-12',
+                                        __('Amount')=>'width-15',
+                                        __('Cheque <br> Number')=>'width-15',
+                                        __('Exchange <br> Rate')=>'width-8',
+                                        __('Pament <br> Bank')=>'drawee-bank-width',
+                                        __('Account <br> Type')=>'customer-name-width',
+                                        __('Account <br> Number')=>'customer-name-width',
+
+
+                                        ] as $title=>$classes)
+                                        <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                        @endforeach
+                                    </x-slot>
+                                    <x-slot name="trs">
+                                        @php
+                                        $rows = isset($model) ? $model->payableCheques :[-1] ;
+                                        @endphp
+                                        @foreach( count($rows) ? $rows : [-1] as $payableCheques)
+                                        @php
+                                        if( !($payableCheques instanceof \App\Models\MoneyPayment) ){
+                                        unset($payableCheques);
+                                        }
+                                        @endphp
+                                        <tr @if($isRepeater) data-repeater-item @endif>
+                                            <td class="text-center">
+                                                <div class="">
+                                                    <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                    </i>
+                                                </div>
+                                            </td>
+
+
+                                            <input type="hidden" name="id" value="{{ isset($payableCheques) ? $payableCheques->id : 0 }}">
+
+
+
+                                            <td>
+
+                                                <div class="input-group css-fix-plus-direction">
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Supplier Name')" :options="$suppliersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="supplier_id" :selected-value="isset($payableCheques) ? $payableCheques->getSupplierId() : 0"></x-form.select>
+                                                </div>
+
+                                            </td>
+
+                                            <td>
+
+                                                <div class="input-group">
+                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
+                                                        {{-- <option selected>{{__('Select')}}</option> --}}
+                                                        @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                        <option value="{{ $currencyName }}" @if(isset($payableCheques) && $payableCheques->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                            </td>
+
+                                            <td>
+                                                <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($payableCheques) ?  formatDateForDatePicker($payableCheques->getChequeDueDate()) : formatDateForDatePicker(now())" :label="__('Due Date')" :id="'due_date'" name="due_date"></x-calendar>
+
+                                            </td>
+
+
+                                            <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="paid_amount" type="text" class="form-control " value="{{ number_format(isset($payableCheques) ? $payableCheques->getPaidAmount() : old('paid_amount',0)) }}">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ number_format(isset($payableCheques) ? $payableCheques->getChequeNumber() : old('cheuqe_number',0)) }}">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ number_format(isset($payableCheques) ? $payableCheques->getExchangeRate() : old('amount',0)) }}">
+                                                    </div>
+                                                </div>
+
+                                            </td>
+
+                                          
+
+                                            <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group date ">
+                                                        <select js-when-change-trigger-change-account-type data-financial-institution-id required name="delivery_bank_id" class="form-control">
+                                                            @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
+                                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($payableCheques) && $payableCheques && $payableCheques->getChequeAccountType() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group date">
+                                                        <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            @foreach($accountTypes as $index => $accountType)
+                                                            <option value="{{ $accountType->id }}" @if(isset($payableCheques) && $payableCheques->getChequeAccountType() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group date">
+                                                        <select data-current-selected="{{ isset($payableCheques) ? $payableCheques->getChequeAccountNumber(): 0 }}" name="account_number" class="form-control js-account-number">
+                                                            <option value="" selected>{{__('Select')}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+                                     
+
+
+                                        </tr>
+                                        @endforeach
+
+                                    </x-slot>
+
+
+
+
+                                </x-tables.repeater-table>
+                                {{-- end of fixed monthly repeating amount --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
                 </div>
             </div>
             <x-submitting />
@@ -906,14 +1154,15 @@ use App\Models\MoneyReceived ;
                             viewMode: "year"
                             , minViewMode: "year"
                             , todayHighlight: false
-                            , clearBtn: true,
-                            autoclose: true
+                            , clearBtn: true
+                            , autoclose: true
                             , format: "mm/01/yyyy"
                         , })
                         .datepicker('setDate', new Date(currentDate))
                         .datepicker('setStartDate', new Date(startDate))
                         .datepicker('setEndDate', new Date(endDate))
                 }
+
             </script>
             <!--begin::Page Scripts(used by this page) -->
             <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
@@ -929,7 +1178,8 @@ use App\Models\MoneyReceived ;
             <script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
             </script>
             <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
-            <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
+            {{-- <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script> --}}
+            {{-- <script src="{{asset('assets/form-repeater.js')}}" type="text/javascript"></script> --}}
             <script>
 
             </script>
@@ -939,46 +1189,6 @@ use App\Models\MoneyReceived ;
                     dateFormat: 'mm-dd-yy'
                     , autoclose: true
                 })
-                $('.repeater-js').repeater({
-                    initEmpty: false
-                    , isFirstItemUndeletable: true
-                    , defaultValues: {
-                        'text-input': 'foo'
-                    },
-
-                    show: function() {
-                        $(this).slideDown();
-
-                        $('input.trigger-change-repeater').trigger('change')
-                        $(document).find('.datepicker-input:not(.only-month-year-picker)').datepicker({
-                            dateFormat: 'mm-dd-yy'
-                            , autoclose: true
-                        })
-
-                        $('input:not([type="hidden"])').trigger('change');
-                        $(this).find('.dropdown-toggle').remove();
-                        $(this).find('select.repeater-select').selectpicker("refresh");
-
-                    },
-
-                    hide: function(deleteElement) {
-                        if ($('#first-loading').length) {
-                            $(this).slideUp(deleteElement, function() {
-                                deleteElement();
-                                //   $('select.main-service-item').trigger('change');
-                            });
-                        } else {
-                            if (confirm('Are you sure you want to delete this element?')) {
-                                $(this).slideUp(deleteElement, function() {
-
-                                    deleteElement();
-                                    $('input.trigger-change-repeater').trigger('change')
-
-                                });
-                            }
-                        }
-                    }
-                });
 
             </script>
 
@@ -1067,18 +1277,18 @@ use App\Models\MoneyReceived ;
 
                     const additionalColumn = $(this).attr('data-additional-column')
                     const additionalColumnValue = $(this).attr('data-additional-column-value')
-
+					let route = "{{ route('add.new.partner.type',['company'=>$company->id , 'type'=>'replace_with_actual_type']) }}"
+					let isSupplier = $(this).closest('.modal-parent--js.is-supplier-class').length ;  
+					let isCustomer = $(this).closest('.modal-parent--js.is-customer-class').length ;
+					let type = isSupplier > 0 ?'Supplier':'Customer';
+					console.log(type)
+					route = 	route.replace('replace_with_actual_type',modalName);
+					
                     $.ajax({
-                        url: "{{ route('admin.store.new.modal',['company'=>$company->id ?? 0  ]) }}"
+                        url: route
                         , data: {
-                            "_token": "{{ csrf_token() }}"
-                            , "modalName": modalName
-                            , "modalType": modalType
-                            , "value": value
-                            , "previousSelectorNameInDb": previousSelectorNameInDb
-                            , "previousSelectorValue": previousSelectorValue
-                            , 'additionalColumn': additionalColumn
-                            , "additionalColumnValue": additionalColumnValue
+							value,
+							type
                         }
                         , type: "POST"
                         , success: function(response) {

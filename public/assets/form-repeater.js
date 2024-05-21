@@ -10,7 +10,6 @@ var FormRepeater = function () {
 			},
 			show: function () {
 				$('select.repeater-select').selectpicker('refresh')
-				// $('.main-service-item').trigger('change');
 				$(this).slideDown()
 				appendNewOptionsToAllSelects(this)
 
@@ -237,6 +236,7 @@ var FormRepeater = function () {
 			},
 
 			show: function () {
+				$('select.repeater-select').selectpicker('refresh')
 				$(this).slideDown()
 				appendNewOptionsToAllSelects(this)
 
@@ -275,6 +275,7 @@ var FormRepeater = function () {
 			},
 
 			show: function () {
+				$('select.repeater-select').selectpicker('refresh')
 				$(this).slideDown()
 			},
 
@@ -308,6 +309,8 @@ var FormRepeater = function () {
 			},
 
 			show: function () {
+				$(this).find('.dropdown-toggle').remove();
+				$(this).find('select.repeater-select').selectpicker("refresh");
 				$(this).slideDown()
 			},
 
@@ -330,6 +333,43 @@ var FormRepeater = function () {
 			},
 		})
 	}
+	
+	
+	var demo9 = function () {
+		$("#m_repeater_9").repeater({
+			initEmpty: false,
+			isFirstItemUndeletable: true,
+
+			defaultValues: {
+				"text-input": "foo",
+			},
+
+			show: function () {
+				$(this).find('.dropdown-toggle').remove();
+				$(this).find('select.repeater-select').selectpicker("refresh");
+				$(this).slideDown()
+			},
+
+			hide: function (deleteElement) {
+				if ($("#first-loading").length) {
+					$(this).slideUp(deleteElement, function () {
+						deleteElement()
+						//   $('select.main-service-item').trigger('change');
+					})
+				} else {
+					if (
+						confirm("Are you sure you want to delete this element?")
+					) {
+						$(this).slideUp(deleteElement, function () {
+							deleteElement()
+							//$('select.main-service-item').trigger('change');
+						})
+					}
+				}
+			},
+		})
+	}
+	
 
 
 
@@ -346,6 +386,7 @@ var FormRepeater = function () {
 			demo6()
 			demo7()
 			demo8()
+			demo9()
 		}
 	}
 }()

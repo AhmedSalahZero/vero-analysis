@@ -65,6 +65,14 @@ class MoneyReceived extends Model
     {
         return $this->customer_name;
     }
+	public function customer()
+	{
+		return $this->belongsTo(Partner::class,'customer_name','name')->where('is_customer',1)->where('company_id',getCurrentCompanyId());
+	}
+	public function getCustomerId()
+	{
+		return $this->customer ? $this->customer->id : 0 ;
+	}
     public function getName()
     {
     	return $this->getCustomerName();

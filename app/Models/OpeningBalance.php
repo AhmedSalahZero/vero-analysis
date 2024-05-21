@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class OpeningBalance extends Model
 {
     protected $guarded = ['id'];
-	
+	const OPEN_BALANCE  = 'opening-balance';
 	public function getId()
 	{
 		return $this->id;
@@ -33,9 +33,9 @@ class OpeningBalance extends Model
 	{
 		return $this->hasMany(MoneyPayment::class,'opening_balance_id');
 	}
-	public function cashesInSafe()
+	public function cashInSafes()
 	{
-		return CashInSafeStatement::where('company_id',$this->company_id)->where('type','opening-balance')->get();
+		return $this->hasMany(CashInSafeStatement::class , 'opening_balance_id','id');
 	}
 	
 	public function chequeInSafe()
@@ -50,6 +50,12 @@ class OpeningBalance extends Model
 	{
 		return $this->hasMany(MoneyReceived::class,'opening_balance_id','id')->where('type',MoneyReceived::CHEQUE)->whereHas('cheque',function(Builder $builder){
 			$builder->where('status',Cheque::UNDER_COLLECTION);
+		});
+	}
+	public function payableCheques()
+	{
+		return $this->hasMany(MoneyPayment::class,'opening_balance_id','id')->where('type',MoneyPayment::PAYABLE_CHEQUE)->whereHas('payableCheque',function(Builder $builder){
+			$builder->where('status',PayableCheque::PENDING);
 		});
 	}
 	

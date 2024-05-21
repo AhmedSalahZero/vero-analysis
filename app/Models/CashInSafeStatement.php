@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CashInSafeStatement extends Model
@@ -158,5 +159,13 @@ class CashInSafeStatement extends Model
 	public function getCurrency()
 	{
 		return $this->currency ; 
+	}
+	public function cashInSafes()
+	{
+		return $this->belongsTo(OpeningBalance::class,'opening_balance_id','id') ;
+	}
+	public function getExchangeRate()
+	{
+		return $this->exchange_rate ?:1 ;
 	}
 }
