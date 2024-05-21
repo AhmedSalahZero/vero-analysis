@@ -333,8 +333,7 @@
 </tr>
 @php
 $totalCount = isset($customers_natures['stops']) ? array_sum(array_map("count", $customers_natures['stops'])) : 0 ;
-foreach( $customers_natures['stops']??[] as $key => $val ){
-}
+
 @endphp
 @foreach ($customers_natures['stops']??[] as $name => $vals)
 @php
