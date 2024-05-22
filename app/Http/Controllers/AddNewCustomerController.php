@@ -37,6 +37,7 @@ class AddNewCustomerController extends Controller
 		
 	}
 	public function addNew2(Company $company , Request $request){
+		
 		$customerName = $request->get('customerName',$request->get('value'));
 		$type = $request->get('type','Customer');
 		$isCustomer = (int)( $type == 'Customer') ;

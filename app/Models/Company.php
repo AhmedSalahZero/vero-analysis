@@ -196,6 +196,5 @@ class Company extends Model implements HasMedia
 	}	
 	
 	
-	
 
 }

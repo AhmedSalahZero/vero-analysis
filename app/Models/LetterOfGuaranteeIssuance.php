@@ -2,15 +2,38 @@
 
 namespace App\Models;
 
-use App\Models\LetterOfGuaranteeFacilityTermAndCondition;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class LetterOfGuaranteeIssuance extends Model
 {
-	use HasBasicStoreRequest;
+	use HasBasicStoreRequest,HasLetterOfGuaranteeStatements;
+	const LG_FACILITY = 'lg-facility';
+	const AGAINST_CD_OR_TD ='against-cd-or-td';
+	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
+	const RUNNING = 'running';
+	const CANCELLED = 'cancelled';
+	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
     protected $guarded = ['id'];
+	public function isRunning()
+	{
+		return $this->getStatus() === self::RUNNING;
+	}
+	public function isCancelled()
+	{
+		return $this->getStatus() === self::CANCELLED;
+	}
+	
+	public function getStatus()
+	{
+		return $this->status ;
+	}
+	public function getSource()
+	{
+		return $this->source ?: self::LG_FACILITY ;
+	}
 	public function getTransactionName()
 	{
 		return $this->transaction_name;
@@ -253,4 +276,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->lg_commission_interval ;
 	}
+	public function letterOfGuaranteeStatements()
+	{
+		return $this->hasMany(LetterOfGuaranteeStatement::class,'letter_of_guarantee_issuance_id','id');
+	}
+	
+
 }

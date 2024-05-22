@@ -92,4 +92,18 @@ class ContractsController
 		$contract->delete();
 		return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);  
 	}
+	public function updateContractsBasedOnCustomer(Request $request , Company $company ){
+		$customer = Partner::find($request->get('customerId'));
+		$contracts = $customer->contracts->pluck('name','id')->toArray();
+		return response()->json([
+			'contracts'=>$contracts
+		]);
+	}
+	public function updatePurchaseOrdersBasedOnContract(Request $request , Company $company ){
+		$contract = Contract::find($request->get('contractId'));
+		$purchaseOrders = $contract->salesOrders->pluck('so_number','id')->toArray();
+		return response()->json([
+			'purchase_orders'=>$purchaseOrders
+		]);
+	}
 }

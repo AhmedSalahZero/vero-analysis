@@ -208,6 +208,7 @@ class CertificatesOfDepositsController
 	}
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , CertificatesOFDeposit $certificatesOfDeposit)
 	{
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements);
 		$certificatesOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
@@ -242,8 +243,6 @@ class CertificatesOfDepositsController
 	 */
 	public function reverseDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
 	{
-		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
-		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
 		$certificateType = CertificatesOfDeposit::RUNNING ;
 		$certificatesOfDeposit->update([
 			'deposit_date'=>null,
@@ -306,8 +305,6 @@ class CertificatesOfDepositsController
 	 */
 	public function reverseBroken(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
 	{
-		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
-		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
 		$certificateType = CertificatesOfDeposit::RUNNING ;
 		$certificatesOfDeposit->update([
 			'break_date'=>null,

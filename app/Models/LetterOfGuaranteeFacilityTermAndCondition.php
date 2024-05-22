@@ -12,6 +12,10 @@ class LetterOfGuaranteeFacilityTermAndCondition extends Model
 	{
 		return $this->lg_type;
 	}
+	public function getLgTypeFormatted()
+	{
+		return camelizeWithSpace($this->getLgType());
+	} 
 	public function getOutstandingBalance()
 	{
 		return $this->outstanding_balance ?: 0 ;
@@ -26,6 +30,14 @@ class LetterOfGuaranteeFacilityTermAndCondition extends Model
 	public function getCashCoverRate()
 	{
 		return $this->cash_cover_rate ?: 0 ;
+	}
+	public function getMinCommissionFees()
+	{
+		return $this->min_commission_fees ?: 0 ;
+	}
+	public function getIssuanceFees()
+	{
+		return $this->issuance_fees ?: 0 ;
 	}
 	public function getCommissionRate()
 	{

@@ -44,10 +44,10 @@ class LetterOfCreditFacilityController
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
 		
-		$user = $request->user()->load('letterOfCreditFacilities') ;
+		// $user = $request->user()->load('letterOfCreditFacilities') ;
 		
-		$letterOfCreditFacilities = $user->letterOfCreditFacilities ;
-		// dd($letterOfCreditFacilities);
+		$letterOfCreditFacilities = $financialInstitution->letterOfCreditFacilities ;
+		
 		$letterOfCreditFacilities =   $this->applyFilter($request,$letterOfCreditFacilities) ;
 		
 		$searchFields = [

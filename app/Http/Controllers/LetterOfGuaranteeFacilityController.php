@@ -1,12 +1,15 @@
 <?php
 namespace App\Http\Controllers;
+use App\Enums\LgTypes;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeFacility;
+use App\Models\LetterOfGuaranteeIssuance;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class LetterOfGuaranteeFacilityController
 {
@@ -44,10 +47,9 @@ class LetterOfGuaranteeFacilityController
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
 		
-		$user = $request->user()->load('letterOfGuaranteeFacilities') ;
 		
-		$letterOfGuaranteeFacilities = $user->letterOfGuaranteeFacilities ;
-		// dd($letterOfGuaranteeFacilities);
+		$letterOfGuaranteeFacilities = $financialInstitution->letterOfGuaranteeFacilities ;
+		
 		$letterOfGuaranteeFacilities =   $this->applyFilter($request,$letterOfGuaranteeFacilities) ;
 		
 		$searchFields = [
@@ -73,24 +75,34 @@ class LetterOfGuaranteeFacilityController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','contract_end_date','currency','limit'];
+		return ['contract_start_date','contract_end_date','outstanding_date','currency','limit','outstanding_amount'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		
 		$data = $request->only( $this->getCommonDataArr());
-		foreach(['contract_start_date','contract_end_date'] as $dateField){
+		foreach(['contract_start_date','contract_end_date','outstanding_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$termAndConditions = $request->get('termAndConditions',[]) ; 
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-					$letterOfGuaranteeFacility = $financialInstitution->LetterOfGuaranteeFacilities()->create($data);
+		/**
+		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
+		 */
+		$letterOfGuaranteeFacility = $financialInstitution->LetterOfGuaranteeFacilities()->create($data);
+		$currencyName = $letterOfGuaranteeFacility->getCurrency();
+		$source = LetterOfGuaranteeIssuance::LG_FACILITY;
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
-			if(isset($termAndConditionArr['outstanding_balance'])){
+			$termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
+			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			$currentLgType = $termAndConditionArr['lg_type'] ;
+			if($currentOutstandingBalance){
 				$letterOfGuaranteeFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
 			}
+			$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,'beginning-balance');
+			
 		}
 		$type = $request->get('type','letter-of-guarantee-facilities');
 		$activeTab = $type ; 
@@ -114,7 +126,7 @@ class LetterOfGuaranteeFacilityController
 		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
-		foreach(['contract_start_date','contract_end_date'] as $dateField){
+		foreach(['contract_start_date','contract_end_date','outstanding_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		// $additionalData = [];
@@ -156,6 +168,37 @@ class LetterOfGuaranteeFacilityController
 		});
 		$letterOfGuaranteeFacility->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
+	}
+	public function updateOutstandingBalanceAndLimits(Request $request , Company $company ){
+		$financialInstitutionId = $request->get('financialInstitutionId') ;
+		$selectedLgType = $request->get('lgType');
+		$currentLgOutstanding = 0 ;
+		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+		/**
+		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
+		 */
+		$letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
+		$totalLastOutstandingBalanceOfFourTypes = 0 ;
+		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
+			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
+			->where('company_id',$company->id)
+			->where('financial_institution_id',$financialInstitutionId)
+			->where('lg_type',$lgTypeId)
+			->orderByRaw('full_date desc')
+			->first();
+			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
+			if($lgTypeId == $selectedLgType ){
+				$currentLgOutstanding = $letterOfGuaranteeStatementEndBalance;
+			}
+			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
+		}
+		$limit = $letterOfGuaranteeFacility->getLimit();
+		return response()->json([
+			'limit'=>number_format($limit) ,
+			'total_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
+			'total_room'=>number_format($limit - abs($totalLastOutstandingBalanceOfFourTypes)),
+			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgOutstanding))
+		]);
 	}
 
 	

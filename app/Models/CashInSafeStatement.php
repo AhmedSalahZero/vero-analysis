@@ -30,8 +30,8 @@ class CashInSafeStatement extends Model
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , id asc')
 		->where('branch_id',$model->branch_id)
-		->each(function($cleanOverdraftBankStatement){
-			DB::table('cash_in_safe_statements')->where('id',$cleanOverdraftBankStatement->id)->update([
+		->each(function($cashInSafeStatement){
+			DB::table('cash_in_safe_statements')->where('id',$cashInSafeStatement->id)->update([
 				'updated_at'=>now()
 			]);
 		});
@@ -60,12 +60,12 @@ class CashInSafeStatement extends Model
 			});
 			
 			static::created(function(CashInSafeStatement $model){
-				self::updateNextRows($model,'created');
+				self::updateNextRows($model);
 			});
 			
 			static::updated(function (CashInSafeStatement $model) {
 				
-				$minDate = self::updateNextRows($model,'from update');
+				$minDate = self::updateNextRows($model);
 				
 				
 				$isChanged = $model->isDirty('branch_id') ;
@@ -97,20 +97,20 @@ class CashInSafeStatement extends Model
 				
 			});
 			
-			static::deleting(function(CashInSafeStatement $cleanOverdraftBankStatement){
+			static::deleting(function(CashInSafeStatement $cashInSafeStatement){
 				$oldDate = null ;
-				if($cleanOverdraftBankStatement->is_debit && Request('receiving_date')||$cleanOverdraftBankStatement->is_credit && Request('delivery_date')){
+				if($cashInSafeStatement->is_debit && Request('receiving_date')||$cashInSafeStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $cleanOverdraftBankStatement->full_date ;
-						$cleanOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+						$currentDate = $cashInSafeStatement->full_date ;
+						$cashInSafeStatement->full_date = min($oldDate,$currentDate);
 				}
 			
 				
-				$cleanOverdraftBankStatement->debit = 0;
-				$cleanOverdraftBankStatement->credit = 0;
-				$cleanOverdraftBankStatement->save();
+				$cashInSafeStatement->debit = 0;
+				$cashInSafeStatement->credit = 0;
+				$cashInSafeStatement->save();
 				
 			});
 		}
