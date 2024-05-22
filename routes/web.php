@@ -328,7 +328,9 @@ Route::middleware([])->group(function () {
 				 Route::get('contracts/{contract}/edit/{type}','ContractsController@edit')->name('contracts.edit');
 				 Route::put('contracts/{contract}/{type}','ContractsController@update')->name('contracts.update');
 				 Route::delete('contracts/{contract}/{type}','ContractsController@destroy')->name('contracts.destroy');
-
+				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
+				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
+				 
 
 
 
@@ -418,13 +420,16 @@ Route::middleware([])->group(function () {
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/edit/{letterOfGuaranteeFacility}', 'LetterOfGuaranteeFacilityController@edit')->name('edit.letter.of.guarantee.facility');
                     Route::put('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/update/{letterOfGuaranteeFacility}', 'LetterOfGuaranteeFacilityController@update')->name('update.letter.of.guarantee.facility');
                     Route::delete('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/delete/{letterOfGuaranteeFacility}', 'LetterOfGuaranteeFacilityController@destroy')->name('delete.letter.of.guarantee.facility');
+                    Route::get('financial-institutions/update-outstanding-balance-and-limits', 'LetterOfGuaranteeFacilityController@updateOutstandingBalanceAndLimits')->name('update.letter.of.guarantee.outstanding.balance.and.limit');
 
                     Route::get('letter-of-guarantee-issuance', 'LetterOfGuaranteeIssuanceController@index')->name('view.letter.of.guarantee.issuance');
-                    Route::get('letter-of-guarantee-issuance/create', 'LetterOfGuaranteeIssuanceController@create')->name('create.letter.of.guarantee.issuance');
-                    Route::post('letter-of-guarantee-issuance/create', 'LetterOfGuaranteeIssuanceController@store')->name('store.letter.of.guarantee.issuance');
-                    Route::get('letter-of-guarantee-issuance/edit/{letterOfGuaranteeIssuance}', 'LetterOfGuaranteeIssuanceController@edit')->name('edit.letter.of.guarantee.issuance');
-                    Route::put('letter-of-guarantee-issuance/update/{letterOfGuaranteeIssuance}', 'LetterOfGuaranteeIssuanceController@update')->name('update.letter.of.guarantee.issuance');
-                    Route::delete('letter-of-guarantee-issuance/delete/{letterOfGuaranteeIssuance}', 'LetterOfGuaranteeIssuanceController@destroy')->name('delete.letter.of.guarantee.issuance');
+                    Route::get('letter-of-guarantee-issuance/create/{source}', 'LetterOfGuaranteeIssuanceController@create')->name('create.letter.of.guarantee.issuance');
+                    Route::post('letter-of-guarantee-issuance/create/{source}', 'LetterOfGuaranteeIssuanceController@store')->name('store.letter.of.guarantee.issuance');
+                    Route::get('letter-of-guarantee-issuance/edit/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@edit')->name('edit.letter.of.guarantee.issuance');
+                    Route::put('letter-of-guarantee-issuance/update/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@update')->name('update.letter.of.guarantee.issuance');
+                    Route::delete('letter-of-guarantee-issuance/delete/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@destroy')->name('delete.letter.of.guarantee.issuance');
+                    Route::post('letter-of-guarantee-issuance/cancel/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@cancel')->name('cancel.letter.of.guarantee.issuance');
+                    Route::post('letter-of-guarantee-issuance/back-to-running/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@bankToRunningStatus')->name('back.to.running.letter.of.guarantee.issuance');
 
                     Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility', 'LetterOfCreditFacilityController@index')->name('view.letter.of.credit.facility');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility/create', 'LetterOfCreditFacilityController@create')->name('create.letter.of.credit.facility');

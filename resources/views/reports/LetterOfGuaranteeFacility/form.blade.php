@@ -133,6 +133,16 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-2">
+                                <x-form.date :label="__('Outstanding Date')" :required="true" :model="$model??null" :name="'outstanding_date'" :placeholder="__('Select Outstanding Date')"></x-form.date>
+                            </div>
+
+
+                            <div class="col-md-2 ">
+                                <x-form.input :model="$model??null" :label="__('Outstanding Amount')" :type="'text'" :placeholder="__('Outstanding Amount')" :name="'outstanding_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                            </div>
+
+
 
 
                         </div>
@@ -160,15 +170,16 @@
                         <div class="form-group row" style="flex:1;">
 
                             <div class="col-md-2">
-                                <label class="label">{{ __('LG Type') }}</label>
+                                <label class="label">{!! __('LG  <br> Type') !!}</label>
                                 <input class="form-control" type="hidden" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lg_type]">
-                                <input class="form-control" type="text" readonly value="{{ $nameFormatted }}" >
+                                <input class="form-control" type="text" readonly value="{{ $nameFormatted }}">
                             </div>
 
 
 
                             <div class="col-2">
-                                <label class="form-label font-weight-bold ">{{ __('Outstanding Balance') }}
+                                <label class="form-label font-weight-bold ">
+								{!! __('Outstanding  <br> Balance') !!}
                                 </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -177,15 +188,15 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <x-form.date :label="__('Outstanding Date')" :required="true" :model="$termAndCondition??null" :name="'termAndConditions['.$index.'][outstanding_date]'" :placeholder="__('Select Outstanding Date')"></x-form.date>
-                            </div>
 
 
 
 
-                            <div class="col-2">
-                                <label class="form-label font-weight-bold">{{ __('Cash Cover Rate (%) *') }}
+
+                            <div class="col-1">
+                                <label class="form-label font-weight-bold text-center">
+								{!! __('Cash <br> Cover (%)') !!}
+                                    @include('star')
                                 </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -195,8 +206,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-2">
-                                <label class="form-label font-weight-bold">{{ __('Commission Rate (%) *') }}
+                            <div class="col-1">
+                                <label class="form-label font-weight-bold text-center "> 
+								{!! __('Commission <br> Rate (%)') !!}
+                                    @include('star')
                                 </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -209,10 +222,13 @@
 
 
                             <div class="col-lg-2">
-                                <label>{{__('Commission Interval')}} <span class="required">*</span></label>
+                                <label >
+								{!! __('Commission <br> Interval') !!}
+                                    @include('star')
+                                </label>
                                 <div class="input-group">
                                     <select name="termAndConditions[{{ $index }}][commission_interval]" class="form-control repeater-select">
-                                        <option selected>{{__('Select')}}</option>
+                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                         @foreach(getCommissionInterval() as $name => $nameFormatted )
                                         {{ logger($name) }}
                                         <option value="{{ $name  }}" @if(isset($termAndCondition) && ($termAndCondition->getCommissionInterval() == $name ) ) selected @elseif(!isset($termAndCondition) && $name == 'monthly') selected @endif > {{ $nameFormatted }}</option>
@@ -220,6 +236,34 @@
                                     </select>
                                 </div>
                             </div>
+							
+							
+							   <div class="col-2">
+                                <label class="form-label font-weight-bold">	{!! __('Min Commissions <br> Fees Amount') !!}
+                                 
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][min_commission_fees]" type="text" class="form-control only-greater-than-or-equal-zero-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->min_commission_fees : old('min_commission_fees',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+								   <div class="col-2">
+                                <label class="form-label font-weight-bold">{!! __('Issuance <br> Fees Amount') !!}
+                                 
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][issuance_fees]" type="text" class="form-control only-greater-than-or-equal-zero-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->issuance_fees : old('issuance_fees',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+							
+							
 
 
 

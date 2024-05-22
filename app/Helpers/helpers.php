@@ -4343,10 +4343,30 @@ function getHeaderMenu()
 					]
 						],
 						[
-							'title'=>__('Opening Balance'),
+							'title'=>__('Cash & Cheques Opening Balance'),
 						'link'=>route('opening-balance.index', ['company'=>$companyId]),
 						'show'=>$user->can('view opening balances'),
 						
+						],
+						[
+							
+					'title'=>__('LGs Opening Balances'),
+					'link'=>'#',
+					'show'=>true ,
+					'submenu'=>[
+						[
+							'title'=>__('100% Cash Cover LGs'),
+							'link'=>route('view.safe.statement',['company'=>$company->id]) ,
+							'show'=>true,
+							'submenu'=>[]
+						],
+						[
+							'title'=>__('LGs Against CDs Or TDs'),
+							'link'=>route('view.bank.statement',['company'=>$company->id]),
+							'show'=>true,
+							'submenu'=>[]
+						]
+					]
 						]
 				
 			]
@@ -4556,8 +4576,8 @@ function getLgTypes():array
 function getCommissionInterval():array
 {
 	return [
-		'monthly'=>__('Monthly'),
-		'quarterly'=>__('Quarterly')
+		'quarterly'=>__('Quarterly'),
+		'annually'=>__('Annually')
 	];
 }
 

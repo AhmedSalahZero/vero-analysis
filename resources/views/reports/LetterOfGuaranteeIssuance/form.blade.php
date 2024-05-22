@@ -58,10 +58,11 @@
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id]) :route('store.letter.of.guarantee.issuance',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ isset($model) ?  route('update.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
+			<input type="hidden" name="source" value="{{ $source }}">
             @csrf
             @if(isset($model))
             @method('put')
@@ -93,22 +94,29 @@
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label> {{ __('Financial Bank') }}
                                             @include('star')
                                         </label>
-                                        <select js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="col-md-4 ">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'" :placeholder="__('Total LGs Outstanding Balance')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+									
+                                    <div class="col-md-4">
+                                        <x-form.input :id="'limit-id'" :default-value="0" :model="$model??null" :label="__('LG Limit')" :type="'text'" :placeholder="__('Total LGs Outstanding Balance')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                    </div>
+									
+                                    <div class="col-md-4">
+                                        <x-form.input :id="'total-lg-for-all-types-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'"  :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                    </div>
+									 <div class="col-md-4">
+                                        <x-form.input :id="'total-room-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Room')" :type="'text'" :placeholder="__('Total LGs Outstanding Balance')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-4">
@@ -116,8 +124,8 @@
                                             @include('star')
                                         </label>
 
-                                        <select name="lg_type" class="form-control js-toggle-bond">
-                                            <option selected>{{__('Select')}}</option>
+                                        <select js-update-outstanding-balance-and-limits id="lg-type" name="lg_type" class="form-control js-toggle-bond">
+                                            {{-- <option selected>{{__('Select')}}</option> --}}
                                             @foreach(getLgTypes() as $name => $nameFormatted )
                                             <option value="{{ $name  }}" @if(isset($model) && $model->getLgType() == $name ) selected @endif > {{ $nameFormatted }}</option>
                                             @endforeach
@@ -125,7 +133,7 @@
                                     </div>
 
                                     <div class="col-md-4 ">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :id="'current-lg-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('LG Code')" :type="'text'" :placeholder="__('LG Code')" :name="'lg_code'" :class="''" :required="true"></x-form.input>
@@ -159,7 +167,7 @@
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                      @foreach($beneficiaries as $customer)
                                             <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option>
@@ -215,10 +223,10 @@
                                         <label> {{ __('Contract Reference') }}
                                             @include('star')
                                         </label>
-                                        <select name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            @foreach($contracts as $contract)
+                                        <select  js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="{{ isset($model) ?  $model->getContractId() : 0 }}" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
+                                            {{-- @foreach($contracts as $contract)
                                             <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->getId() }}">{{ $contract->getName() }}</option>
-                                            @endforeach
+                                            @endforeach --}}
                                         </select>
                                     </div>
 
@@ -228,10 +236,10 @@
                                             @include('star')
                                         </label>
 
-                                        <select name="purchase_order_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            @foreach($purchaseOrders as $purchaseOrder)
+                                        <select id="purchase-order-id" data-current-selected="{{ isset($model) ? $model->getPurchaseOrderId() : 0 }}" name="purchase_order_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
+                                            {{-- @foreach($purchaseOrders as $purchaseOrder)
                                             <option @if(isset($model) && $model->getPurchaseOrderId() == $purchaseOrder->getId() ) selected @endif value="{{ $purchaseOrder->getId() }}">{{ $purchaseOrder->getName() }}</option>
-                                            @endforeach
+                                            @endforeach --}}
                                         </select>
                                     </div>
 
@@ -316,6 +324,13 @@
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
+									 <div class="col-md-3">
+                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
+                                    </div>
+									     <div class="col-md-3">
+                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
+                                    </div>
+									
 
 
                                     <div class="col-md-3">
@@ -325,8 +340,8 @@
                                         <div class="input-group">
                                             <select name="lg_commission_interval" class="form-control repeater-select">
                                                 {{-- <option selected>{{__('Select')}}</option> --}}
-                                                @foreach(MonthAndQuarterlyIntervals() as $intervalArr )
-                                                <option value="{{ $intervalArr['value'] }}" @if(isset($model) && $model->getLgCommissionInterval() == $intervalArr['value'] ) selected @endif > {{ $intervalArr['title'] }}</option>
+                                                @foreach(getCommissionInterval() as $key => $title )
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -366,9 +381,9 @@
 
 
 
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Number')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
-                                    </div>
+                                    </div> --}}
 
 
                                 </div>
@@ -467,7 +482,6 @@
 
  $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
         const customerName = $('#new_customer_name').val()
-        console.log(customerName)
         const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>'Customer']) }}"
         if (customerName) {
             $.ajax({
@@ -571,4 +585,83 @@
 			})
 			$('.js-toggle-bond').trigger('change')
 			</script>
+			<script>
+			$(document).on('change','[js-update-outstanding-balance-and-limits]',function(e){
+				e.preventDefault()
+				const financialInstitutionId = $('select#financial-instutition-id').val()
+				const lgType = $('select#lg-type').val()
+				$.ajax({
+					url:"{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}",
+					data:{financialInstitutionId , lgType},
+					type:"GET",
+					success:function(res){
+						$('#limit-id').val(res.limit).prop('disabled',true)
+						$('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled',true)
+						$('#total-room-id').val(res.total_room).prop('disabled',true)
+						$('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled',true)
+						$('[js-update-contracts-based-on-customers]').trigger('change')
+					}
+				})
+			})
+			$('[js-update-outstanding-balance-and-limits]').trigger('change')
+			</script>
+			
+			<script>
+			$(document).on('change','[js-update-contracts-based-on-customers]',function(e){
+				const customerId = $('select#customer_name').val()
+				if(!customerId){
+					return ;
+				}
+				$.ajax({
+					url:"{{route('update.contracts.based.on.customer',['company'=>$company->id])}}",
+					data:{
+						customerId ,
+					},
+					type:"GET",
+					success:function(res){
+						var contractsOptions = '';
+						var currentSelectedId = $('select#contract-id').attr('data-current-selected')
+						for(var contractId in res.contracts){
+							var contractName = res.contracts[contractId];
+							contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+						}
+							$('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
+							$('select#contract-id').trigger('change')
+					}
+				})
+			})
+			$('[js-update-contracts-based-on-customers]').trigger('change')
+			
+			</script>
+			
+			
+			
+			
+			
+			<script>
+			$(document).on('change','[js-update-purchase-orders-based-on-contract]',function(e){
+				const contractId = $('select#contract-id').val()
+				if(!contractId){
+					return 
+				}
+				$.ajax({
+					url:"{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}",
+					data:{
+						contractId ,
+					},
+					type:"GET",
+					success:function(res){
+						var purchaseOrdersOptions = '';
+						var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
+						for(var purchaseOrderId in res.purchase_orders){
+							var contractName = res.purchase_orders[purchaseOrderId];
+							purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+						}
+							$('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
+					}
+				})
+			})
+			$('[js-update-purchase-orders-based-on-contract]').trigger('change')
+			</script>
+			
             @endsection

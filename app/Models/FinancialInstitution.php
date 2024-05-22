@@ -21,6 +21,21 @@ class FinancialInstitution extends Model
 		return $builder->where('company_id',$companyId);
 	}
 	
+	public function scopeOnlyForSource(Builder $builder , string $source)
+	{
+		if($source === LetterOfGuaranteeIssuance::LG_FACILITY){
+			return $builder->has('LetterOfGuaranteeFacilities');
+		}
+		if($source === LetterOfGuaranteeIssuance::AGAINST_CD_OR_TD){
+			return $builder->has('certificatesOfDeposits')->orHas('timeOfDeposits');
+		}
+		if($source === LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ){
+			return $builder;
+		}
+		
+		dd('invalid source for financial insiutution');
+	}
+	
 	public function scopeOnlyBanks(Builder $builder)
 	{
 		$builder->where('type',self::BANK);
@@ -115,9 +130,16 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(CleanOverdraft::class , 'financial_institution_id','id');
 	}
+	/**
+	 * * use getCurrentAvailableLetterOfGuaranteeFacility instead 
+	 */
 	public function LetterOfGuaranteeFacilities()
 	{
 		return $this->hasMany(LetterOfGuaranteeFacility::class , 'financial_institution_id','id');
+	}
+	public function getCurrentAvailableLetterOfGuaranteeFacility():?LetterOfGuaranteeFacility
+	{
+		return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
 	}
 	public function LetterOfCreditFacilities()
 	{
@@ -166,6 +188,9 @@ class FinancialInstitution extends Model
 			]);
 		}
 	}
+
+
+
 	
 	
 }

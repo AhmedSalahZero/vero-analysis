@@ -207,6 +207,7 @@ class TimeOfDepositsController
 	}
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , TimeOFDeposit $timeOfDeposit)
 	{
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements);
 		$timeOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
