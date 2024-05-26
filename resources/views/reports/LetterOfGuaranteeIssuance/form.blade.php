@@ -321,7 +321,7 @@
 
 
                                     <div class="col-md-3">
-                                        <x-form.input  :default-value="0" :model="$model??null" :label="__('LG Commission Rate %')" :type="'text'" :placeholder="__('LG Commission Rate %')" :name="'lg_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lg-commission-amount-js lg-commission-rate-js'" :required="true"></x-form.input>
+                                        <x-form.input :id="'lg_commission_rate-id'"  :default-value="0" :model="$model??null" :label="__('LG Commission Rate %')" :type="'text'" :placeholder="__('LG Commission Rate %')" :name="'lg_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lg-commission-amount-js lg-commission-rate-js'" :required="true"></x-form.input>
                                     </div>
 
 
@@ -604,6 +604,7 @@
 						$('#total-room-id').val(res.total_room).prop('disabled',true)
 						$('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled',true)
                         $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
+						$('#lg_commission_rate').val(res.lg_commission_rate).trigger('change');
                         $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
                         $('#cash-cover-rate-id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
 						$('[js-update-contracts-based-on-customers]').trigger('change')

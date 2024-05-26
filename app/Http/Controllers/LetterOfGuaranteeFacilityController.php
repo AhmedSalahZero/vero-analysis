@@ -191,6 +191,7 @@ class LetterOfGuaranteeFacilityController
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
         $letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
         $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
+        $lgCommissionRate  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
         $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
         $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
 
@@ -220,6 +221,7 @@ class LetterOfGuaranteeFacilityController
 			'total_room'=>number_format($limit - abs($totalLastOutstandingBalanceOfFourTypes)),
 			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgOutstanding)),
             'min_lg_commission_rate'=>$minLgCommissionRateForCurrentLgType,
+			'lg_commission_rate'=>$lgCommissionRate , 
             'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,
             'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType
 
