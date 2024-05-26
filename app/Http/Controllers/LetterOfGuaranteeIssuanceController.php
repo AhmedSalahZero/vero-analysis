@@ -22,8 +22,8 @@ class LetterOfGuaranteeIssuanceController
 			return $collection;
 		}
 		$searchFieldName = $request->get('field');
-		$dateFieldName =  'issuance_date' ; // change it 
-		// $dateFieldName = $searchFieldName === 'balance_date' ? 'balance_date' : 'created_at'; 
+		$dateFieldName =  'issuance_date' ; // change it
+		// $dateFieldName = $searchFieldName === 'balance_date' ? 'balance_date' : 'created_at';
 		$from = $request->get('from');
 		$to = $request->get('to');
 		$value = $request->query('value');
@@ -32,7 +32,7 @@ class LetterOfGuaranteeIssuanceController
 			return $collection->filter(function($letterOfGuaranteeIssuance) use ($value,$searchFieldName){
 				$currentValue = $letterOfGuaranteeIssuance->{$searchFieldName} ;
 				// if($searchFieldName == 'bank_id'){
-				// 	$currentValue = $letterOfGuaranteeIssuance->getBankName() ;  
+				// 	$currentValue = $letterOfGuaranteeIssuance->getBankName() ;
 				// }
 				return false !== stristr($currentValue , $value);
 			});
@@ -44,15 +44,15 @@ class LetterOfGuaranteeIssuanceController
 			return $collection->where($dateFieldName,'<=',$to);
 		})
 		->when($filterStartDate , function($collection) use ($filterStartDate,$filterEndDate){
-			return $collection->filterByIssuanceDate($filterStartDate,$filterEndDate);	
+			return $collection->filterByIssuanceDate($filterStartDate,$filterEndDate);
 		})
 		->sortByDesc('id');
-		
+
 		return $collection;
 	}
 	public function index(Company $company,Request $request)
 	{
-		
+
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$activeLgType = $request->get('active',LgTypes::BID_BOND) ;
 		$filterDates = [];
@@ -66,7 +66,7 @@ class LetterOfGuaranteeIssuanceController
 				'endDate'=>$endDate
 			];
 			$models[$type]   = $company->letterOfGuaranteeIssuances->where('lg_type',$type) ;
-			
+
 			if($type == $activeLgType ){
 				$models[$type]   = $this->applyFilter($request,$models[$type],$filterDates[$type]['startDate'] , $filterDates[$type]['endDate']) ;
 			}
@@ -76,10 +76,10 @@ class LetterOfGuaranteeIssuanceController
 				'purchase_order_date'=>__('Purchase Order Date'),
 				'issuance_date'=>__('Issuance Date')
 			];
-			
+
 		}
-		
-		
+
+
         return view('reports.LetterOfGuaranteeIssuance.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
@@ -97,22 +97,22 @@ class LetterOfGuaranteeIssuanceController
 			'contracts'=>Contract::onlyForCompany($company->id)->get(),
 			'purchaseOrders'=>PurchaseOrder::onlyForCompany($company->id)->get(),
 			'accountTypes'=> AccountType::onlyCurrentAccount()->get(),
-			'source'=>$source
+			'source'=>$source,
 		];
-		
+
 	}
 	public function create(Company $company,string $source)
-	
+
 	{
 		// dd();
         return view('reports.LetterOfGuaranteeIssuance.form',array_merge(
 			$this->commonViewVars($company,$source) ,
 			[
-				
+
 			]
 		));
     }
-	public function getCommonDataArr():array 
+	public function getCommonDataArr():array
 	{
 		return ['contract_start_date','contract_end_date','currency','limit'];
 	}
@@ -128,9 +128,9 @@ class LetterOfGuaranteeIssuanceController
 		$currency = $request->get('lg_currency',0);
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,'credit-lg-amount');
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
-		
+
 	}
-	
+
 	public function edit(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
         return view('reports.LetterOfGuaranteeIssuance.form',array_merge(
 			$this->commonViewVars($company,$source) ,
@@ -138,34 +138,34 @@ class LetterOfGuaranteeIssuanceController
 				'model'=>$letterOfGuaranteeIssuance
 			]
 		));
-		
+
 	}
-	
+
 	public function update(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements);
 		$letterOfGuaranteeIssuance->delete();
 		$this->store($company,$request,$source);
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
-	
+
 	/**
-	 * * هنا اليوزر هيعكس عملية الكسر اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال 
+	 * * هنا اليوزر هيعكس عملية الكسر اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال
 	 * * letter of guarantee statements
 	 */
 	public function cancel(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
 	{
 		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::CANCELLED ;
-		
+
 		/**
 		 * * هنشيل قيم ال
 		 * * letter of guarantee statement
 		 */
 		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
-		
+
 		$cancellationDate = $request->get('cancellation_date',now()->format('Y-m-d')) ;
 		 $letterOfGuaranteeIssuance->update([
 			'status' => $letterOfGuaranteeIssuanceStatus,
-			'cancellation_date'=>$cancellationDate 
+			'cancellation_date'=>$cancellationDate
 		]);
 		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
@@ -173,11 +173,11 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
-	
-	
+
+
 		/**
 		 * * هنرجعه تاني لل
-		 * * running 
+		 * * running
 		 * * اكنه كان عامله انه اتلغى بالغلط
 	 */
 	public function bankToRunningStatus(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
@@ -189,21 +189,20 @@ class LetterOfGuaranteeIssuanceController
 		 * * letter of guarantee statement
 		 */
 		// $financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
-		
+
 		 $letterOfGuaranteeIssuance->update([
 			'status' => $letterOfGuaranteeIssuanceStatus,
-			'cancellation_date'=>null 
+			'cancellation_date'=>null
 		]);
 		// $letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
 		// $lgType = $letterOfGuaranteeIssuance->getLgType();
 		// $amount = $letterOfGuaranteeIssuance->getLgAmount();
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
-		// $letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency());
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
-	
-	
-	
+
+
+
 	public function destroy(Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance)
 	{
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements);
@@ -212,6 +211,6 @@ class LetterOfGuaranteeIssuanceController
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgType]);
 	}
 
-	
-	
+
+
 }

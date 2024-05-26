@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
 	 * * توفر شهادات الإيداع ) (CDsللمدخر ين طر يقة لكسب معدل فائدة أعلى على مدخراتك مقابل الموافقة على حجز
-	**    أموالك لفترة زمنية محددة - مع الحفاظ على أموالك آمنة بفضل حمايتها من البنك المركزي 	
+	**    أموالك لفترة زمنية محددة - مع الحفاظ على أموالك آمنة بفضل حمايتها من البنك المركزي
 	 */
 class CertificatesOfDeposit extends Model
 {
@@ -28,7 +28,7 @@ class CertificatesOfDeposit extends Model
 			self::BROKEN
 		];
 	}
-	
+
 	public function getStatus()
 	{
 		return $this->status ;
@@ -51,7 +51,7 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->getStatus() === self::BROKEN;
 	}
-	
+
 	public function getStartDate()
 	{
 		return $this->start_date;
@@ -82,9 +82,9 @@ class CertificatesOfDeposit extends Model
 		$breakDate = $this->break_date ;
 		return $breakDate ? Carbon::make($breakDate)->format('d-m-Y'):null ;
 	}
-	
+
 	/**
-	 * * تاريخ استحقاق الايداع بس مش شرط يكون هو دا الفعلي لو التاريخ دا كان يوم جمعه مثلا فاهيكون اجازة 
+	 * * تاريخ استحقاق الايداع بس مش شرط يكون هو دا الفعلي لو التاريخ دا كان يوم جمعه مثلا فاهيكون اجازة
 	 */
 	public function getEndDate()
 	{
@@ -95,7 +95,7 @@ class CertificatesOfDeposit extends Model
 	 */
 	public function getMaturityAmountAddedToAccountId():int
 	{
-		return $this->maturity_amount_added_to_account_id ; 
+		return $this->maturity_amount_added_to_account_id ;
 	}
 	public function getMaturityAmountAddedToAccountNumber()
 	{
@@ -105,7 +105,7 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->belongsTo(FinancialInstitutionAccount::class,'maturity_amount_added_to_account_id','id');
 	}
-	
+
 	public function getEndDateFormatted()
 	{
 		$endDate = $this->getEndDate() ;
@@ -115,7 +115,7 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->account_number ;
 	}
-	
+
 	public function getAmount()
 	{
 		return $this->amount ;
@@ -125,60 +125,60 @@ class CertificatesOfDeposit extends Model
 		$amount = $this->getAmount();
 		return number_format($amount) ;
 	}
-	
+
 	public function getInterestRate()
 	{
 		return $this->interest_rate?:0;
 	}
-	
+
 	public function getInterestRateFormatted()
 	{
 		return $this->getInterestRate() .' %';
 	}
-	
-	
-	
-		
+
+
+
+
 	public function getInterestAmount()
 	{
 		return $this->interest_amount?:0;
 	}
-	
+
 	public function getInterestAmountFormatted()
 	{
 		$interestAmount = $this->getInterestAmount();
-		return number_format($interestAmount,0); 
+		return number_format($interestAmount,0);
 	}
-	
+
 	public function getBreakInterestAmount()
 	{
 		return $this->break_interest_amount?:0;
 	}
-	
+
 	public function getBreakInterestAmountFormatted()
 	{
-		return number_format($this->getBreakInterestAmount(),0); 
+		return number_format($this->getBreakInterestAmount(),0);
 	}
 	public function getBreakChargeAmount()
 	{
 		return $this->break_charge_amount?:0;
 	}
-	
+
 	public function getBreakChargeAmountFormatted()
 	{
-		return number_format($this->getBreakChargeAmount(),0); 
+		return number_format($this->getBreakChargeAmount(),0);
 	}
-	
+
 	public function getActualInterestAmount()
 	{
 		return $this->actual_interest_amount ?:0;
 	}
-	
+
 	public function getActualInterestAmountFormatted()
 	{
-		return number_format($this->getActualInterestAmount(),0); 
+		return number_format($this->getActualInterestAmount(),0);
 	}
-	
+
 	public function getCurrency()
 	{
 		return $this->currency ;
@@ -187,8 +187,8 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->belongsTo(FinancialInstitution::class , 'financial_institution_id','id');
 	}
-	
-	
+
+
 	public function currentAccountDebitBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_debit',1);
@@ -197,8 +197,8 @@ class CertificatesOfDeposit extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_debit',1)->orderBy('full_date','desc');
 	}
-	
-	
+
+
 	public function currentAccountCreditBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'certificate_of_deposit_id','id')->where('is_credit',1);
@@ -219,8 +219,13 @@ class CertificatesOfDeposit extends Model
 		$endDate = $this->getEndDate() ;
 		return  $endDate && Carbon::make($endDate)->greaterThanOrEqualTo(now());
 	}
-	
-	
-	
-	
+
+    public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	{
+		return self::where('company_id',$companyId)->where('currency',$currencyName)
+		->where('financial_institution_id',$financialInstitutionId)
+		->pluck('account_number','account_number')->toArray();
+	}
+
+
 }

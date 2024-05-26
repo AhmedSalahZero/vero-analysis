@@ -29,7 +29,7 @@ class LetterOfGuaranteeFacility extends Model
 		$contractEndDate = $this->getContractEndDate() ;
 		return $contractEndDate ? Carbon::make($contractEndDate)->format('d-m-Y'):null ;
 	}
-	
+
 	public function getOutstandingDate()
 	{
 		return $this->outstanding_date;
@@ -39,12 +39,12 @@ class LetterOfGuaranteeFacility extends Model
 		$outstandingDate = $this->getOutstandingDate() ;
 		return $outstandingDate ? Carbon::make($outstandingDate)->format('d-m-Y'):null ;
 	}
-	
+
 	public function getLimit()
 	{
 		return $this->limit ?: 0 ;
 	}
-	
+
 	public function getLimitFormatted()
 	{
 		return number_format($this->getLimit()) ;
@@ -53,13 +53,13 @@ class LetterOfGuaranteeFacility extends Model
 	{
 		return $this->outstanding_amount ?: 0 ;
 	}
-	
+
 	public function getOutstandingAmountFormatted()
 	{
 		return number_format($this->getOutstandingAmount()) ;
 	}
-	
-	
+
+
 	public function getCurrency()
 	{
 		return $this->currency ;
@@ -72,11 +72,13 @@ class LetterOfGuaranteeFacility extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeFacilityTermAndCondition::class , 'letter_of_guarantee_facility_id','id');
 	}
-
+    public function termAndConditionForLgType(string $lgType){
+        return $this->termAndConditions->where('lg_type',$lgType)->first();
+    }
 	public function letterOfGuaranteeStatements()
 	{
 		return $this->hasMany(LetterOfGuaranteeStatement::class,'lg_facility_id','id');
-	}	
-	
-	
+	}
+
+
 }

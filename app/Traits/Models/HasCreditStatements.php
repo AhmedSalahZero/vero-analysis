@@ -1,17 +1,18 @@
-<?php 
+<?php
 namespace App\Traits\Models;
 
 use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
 
-trait HasCreditStatements 
+trait HasCreditStatements
 {
 		/**
 	 * * هنا لو اليوزر ضاف فلوس في الحساب
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
+    // $company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,0,$paidAmount,$deliveryBranchId,$currencyName
 	public function handleCreditStatement(int $companyId , $bankId = null ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $statementDate = null,?float $paidAmount = null,$deliveryBranchId=null,?string $currencyName = null)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
@@ -26,11 +27,11 @@ trait HasCreditStatements
 			$this->storeCashInSafeCreditStatement($statementDate,$paidAmount,$currencyName,$deliveryBranchId);
 		}
 	}
-	
+
 	public function storeCashInSafeCreditStatement(string $date , $paidAmount , string $currencyName,int $branchId)
 	{
 		/**
-		 * @var MoneyPayment $this 
+		 * @var MoneyPayment $this
 		 */
 		return $this->cashInSafeCreditStatement()->create([
 			'branch_id'=>$branchId,
@@ -39,8 +40,8 @@ trait HasCreditStatements
 			'credit'=>$paidAmount,
 			'date'=>$date
 		]);
-	}	
-	
+	}
+
 	public function storeCurrentAccountCreditBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId)
 	{
 		return $this->currentAccountCreditBankStatement()->create([
@@ -49,8 +50,8 @@ trait HasCreditStatements
 			'credit'=>$paidAmount,
 			'date'=>$date
 		]);
-	}	
-	
+	}
+
 	public function storeCleanOverdraftCreditBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount )
 	{
 		return  $this->cleanOverdraftCreditBankStatement()->create([
@@ -61,10 +62,10 @@ trait HasCreditStatements
 			'limit'=>$cleanOverdraft->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>0,
-			'credit'=>$paidAmount 
+			'credit'=>$paidAmount
 		]) ;
-		
-	}	
-		
-	
+
+	}
+
+
 }

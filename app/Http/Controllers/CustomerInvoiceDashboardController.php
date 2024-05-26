@@ -16,8 +16,8 @@ class CustomerInvoiceDashboardController extends Controller
 {
     public function viewCashDashboard(Company $company, Request $request)
     {
-	
-	
+
+        $cleanOverdraftCardData = [];
         $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
 		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
@@ -38,7 +38,7 @@ class CustomerInvoiceDashboardController extends Controller
 			->where('company_id', $company->id)
 			->where('currency', $currencyName)
 			->orderBy('id', 'desc')->limit(1)->first();
-			
+
 			$cleanOverdraftCardCommonQuery = DB::table('clean_overdrafts')
         ->where('currency', '=', $currencyName)
         ->where('company_id', $company->id)->where('contract_start_date', '<=', $date)
@@ -55,8 +55,8 @@ class CustomerInvoiceDashboardController extends Controller
                 /**
                  * * حساب ال current account
                  */
-				
-			
+
+
                 $currentAccountEndBalanceForCurrency = DB::table('current_account_bank_statements')
                 ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
                 ->where('financial_institution_accounts.company_id', $company->id)
@@ -67,9 +67,9 @@ class CustomerInvoiceDashboardController extends Controller
                 ->limit(1)
                 ->first();
 				// start testing
-						
-				// end testing 
-				
+
+				// end testing
+
 
                 $currentAccountEndBalanceForCurrency = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0;
 
@@ -99,10 +99,10 @@ class CustomerInvoiceDashboardController extends Controller
 						$cleanOverdraftRoom = $cleanOverdraftRoom ? $cleanOverdraftRoom->room : 0 ;
 						$totalCleanOverdraftRoom += $cleanOverdraftRoom ;
 				}
-                
+
 // rrrr
-	
-               
+
+
 
                 /**
                  * * حساب ال clean_overdraft
@@ -125,11 +125,11 @@ class CustomerInvoiceDashboardController extends Controller
 
             $currentTotal = $reports['cash_and_banks'][$currencyName] + $reports['certificate_of_deposits'][$currencyName] + $reports['credit_facilities_room'][$currencyName] ;
             $reports['total'][$currencyName] = isset($reports['total'][$currencyName]) ? $reports['total'][$currencyName] + $currentTotal : $currentTotal ;
-			
+
 			$outstanding = 0 ;
 		$room = 0 ;
-		
-		 
+
+
 		foreach($cleanOverdraftIds as $cleanOverdraftId){
 			$totalRoomForCleanOverdraftId = DB::table('clean_overdraft_bank_statements')
         ->where('clean_overdraft_bank_statements.company_id', $company->id)
@@ -141,7 +141,7 @@ class CustomerInvoiceDashboardController extends Controller
 		->first();
 		$outstanding = $totalRoomForCleanOverdraftId ? $outstanding + $totalRoomForCleanOverdraftId->end_balance : $outstanding ;
 		$room = $totalRoomForCleanOverdraftId ? $room + $totalRoomForCleanOverdraftId->room : $room ;
-		
+
 		}
 		$interestAmount = DB::table('clean_overdraft_bank_statements')
         ->where('clean_overdraft_bank_statements.company_id', $company->id)
@@ -152,21 +152,21 @@ class CustomerInvoiceDashboardController extends Controller
 		->orderByRaw('date desc , clean_overdraft_bank_statements.id desc')
 		->sum('credit');
 
-		
+
         $cleanOverdraftCardData[$currencyName] = [
             'limit' =>  $cleanOverdraftCardCommonQuery->sum('limit'),
             'outstanding' => $outstanding,
             'room' => $room ,
-			'interest_amount'=>$interestAmount 
+			'interest_amount'=>$interestAmount
         ];
 		#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
-		$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],$cleanOverdraftCardData[$currencyName]); 
+		$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],$cleanOverdraftCardData[$currencyName]);
 	}
 
-	
-		
-		
-		
+
+
+
+
 
         return view('admin.dashboard.cash', [
             'company' => $company,
@@ -181,7 +181,7 @@ class CustomerInvoiceDashboardController extends Controller
     }
 	public function sumForTotalCard(array $oldArr  , array $newItems ):array{
 		foreach($newItems as $key => $value){
-			$oldArr[$key]   =  isset($oldArr[$key]) ? $oldArr[$key] + $value : $value ; 
+			$oldArr[$key]   =  isset($oldArr[$key]) ? $oldArr[$key] + $value : $value ;
 		}
 		return $oldArr;
 	}
@@ -196,10 +196,10 @@ class CustomerInvoiceDashboardController extends Controller
         $aginDate = $startDate ;
 		$invoiceAgingService = new InvoiceAgingService($company->id, $aginDate);
 		$chequeAgingService = new ChequeAgingService($company->id, $aginDate);
-		
+
         foreach ($invoiceTypesModels as $modelType) {
             $clientNames = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id);
-          
+
             /**
              * * Customers Invoices Aging & Supplier Invoices Aging
              */
@@ -212,7 +212,7 @@ class CustomerInvoiceDashboardController extends Controller
             $agingsForCheques = $chequeAgingService->formatForDashboard($agingsForCheques,$modelType);
 
             $dashboardResult['invoices_aging'][$modelType] = $agingsForInvoices ;
-			
+
             $dashboardResult['cheques_aging'][$modelType] = $agingsForCheques ;
         }
 
@@ -229,7 +229,7 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function showInvoiceReport(Company $company, Request $request, int $partnerId, string $currency, $modelType)
     {
-	
+
         $fullClassName = ('\App\Models\\' . $modelType) ;
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
@@ -257,12 +257,12 @@ class CustomerInvoiceDashboardController extends Controller
 			'clientIdColumnName'=>$clientIdColumnName
         ]);
     }
-	
-	
+
+
 	public function viewLGLCDashboard(Company $company, Request $request)
     {
 		return view('admin.reports.lglc-report');
-	
+
         // $fullClassName = ('\App\Models\\' . $modelType) ;
 
         // $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
@@ -289,7 +289,7 @@ class CustomerInvoiceDashboardController extends Controller
 		// 	'modelType'=>$modelType
         // ]);
     }
-	
+
     public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType)
     {
         $fullClassName = ('\App\Models\\' . $modelType) ;
@@ -307,7 +307,7 @@ class CustomerInvoiceDashboardController extends Controller
         ->where($clientIdColumnName, '=', $partnerId)->get();
         $partner = Partner::find($partnerId);
         $partnerName = $partner->getName() ;
-	
+
         $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));

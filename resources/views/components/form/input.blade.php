@@ -1,3 +1,5 @@
+
+
 @props([
 	'label',
 	'type' ,
@@ -10,11 +12,13 @@
 	'id'=>'',
 	'defaultValue'=>''
 ])
-<label> {{ $label }} 
+
+
+<label> {{ $label }}
 @if($required)
 @include('star')
-@endif 
+@endif
 </label>
                                 <div class="kt-input-icon">
-                                    <input @if($readonly) readonly @endif @if($id) id="{{ $id }}" @endif name="{{ $name }}" value="{{ $model ?  $model->{$name} : $defaultValue  }}" type="{{ $type }}" class="form-control {{ $class }}" placeholder="{{$placeholder}}">
+                                    <input @if($readonly) readonly @endif @if($id) id="{{ $id }}" @endif name="{{ $name }}"  value="{{ $model  ?  $model->{$name} : $defaultValue  }}" type="{{ $type }}" class="form-control {{ $class }}" placeholder="{{$placeholder}}">
                                 </div>

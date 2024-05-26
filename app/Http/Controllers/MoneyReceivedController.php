@@ -518,14 +518,15 @@ class MoneyReceivedController
 		return $moneyType ;
 
 	}
-	public function edit(Company $company , Request $request , moneyReceived $moneyReceived ,$singleModel = null){
+	public function edit(Company $company , Request $request , moneyReceived $moneyReceived ,$customerInvoiceId = null){
+		$isDownPayment = $moneyReceived->isDownPayment();
 		$currencies = DB::table('customer_invoices')
 		->select('currency')
 		->where('company_id',$company->id)
 		->where('currency','!=','')
 		->get()
 		->unique('currency')->pluck('currency','currency');
-		$viewName = $moneyReceived->isDownPayment()  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
+		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
@@ -533,7 +534,18 @@ class MoneyReceivedController
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
-		$customers =  $singleModel ?  Partner::where('id',$singleModel)->pluck('name','id') :Partner::where('company_id',$company->id)->pluck('name','id')->unique()->toArray(); 
+		// $customers =  $singleModel ?  Partner::where('id',$singleModel)->pluck('name','id') :Partner::where('company_id',$company->id)->pluck('name','id')->unique()->toArray(); 
+		/**
+		 * * for contracts
+		 */
+		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)
+		->when($isDownPayment,function(Builder $q){
+			$q->has('contracts');
+		})
+		->pluck('name','id')->toArray() : Partner::where('is_customer',1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
+			$q->has('contracts');
+		})->pluck('name','id')->toArray(); 
+		
 		$contracts = Contract::where('company_id',$company->id)->get();
 		if($moneyReceived->isChequeUnderCollection()){
 			return view('reports.moneyReceived.edit-cheque-under-collection',[

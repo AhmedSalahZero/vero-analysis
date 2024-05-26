@@ -275,10 +275,10 @@ Route::middleware([])->group(function () {
                 Route::delete('delete-multi-rows', [HelpersController::class, 'deleteMulti'])->name('delete.multi');
                 Route::post('store-new-model', [HelpersController::class, 'storeNewModal'])->name('admin.store.new.modal');
 
-             
+
                 // bank certificate of deposit
                 Route::middleware('isCashManagement')->group(function () {
-					
+
 					   /**
                  * * Start Of Financial Institution Routes
                  */
@@ -289,22 +289,22 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/edit/{financialInstitution}', 'FinancialInstitutionController@edit')->name('edit.financial.institutions');
 				 Route::put('financial-institutions/update/{financialInstitution}', 'FinancialInstitutionController@update')->name('update.financial.institutions');
 				 Route::delete('financial-institutions/delete/{financialInstitution}', 'FinancialInstitutionController@destroy')->name('delete.financial.institutions');
- 
+
 				 Route::get('get-financial-institution-accounts-number-based-on-currency/{financialInstitution}/{currency}', 'FinancialInstitutionController@getAccountNumbersBasedOnCurrency');
- 
+
 				 Route::get('financial-institutions', 'FinancialInstitutionController@index')->name('view.financial.institutions');
 				 Route::get('financial-institutions/create/{model?}', 'FinancialInstitutionController@create')->name('create.financial.institutions');
 				 Route::post('financial-institutions/create', 'FinancialInstitutionController@store')->name('store.financial.institutions');
 				 Route::get('financial-institutions/edit/{financialInstitution}', 'FinancialInstitutionController@edit')->name('edit.financial.institutions');
 				 Route::put('financial-institutions/update/{financialInstitution}', 'FinancialInstitutionController@update')->name('update.financial.institutions');
 				 Route::delete('financial-institutions/delete/{financialInstitution}', 'FinancialInstitutionController@destroy')->name('delete.financial.institutions');
- 
+
 				 Route::get('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@addAccount')->name('financial.institution.add.account');
 				 Route::post('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@storeAccount')->name('financial.institution.store.account');
 				 Route::get('financial-institution-accounts/edit/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@edit')->name('edit.financial.institutions.account');
 				 Route::put('financial-institution-accounts/update/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@update')->name('update.financial.institutions.account');
 				 Route::delete('financial-institution-accounts/delete/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@destroy')->name('delete.financial.institutions.account');
- 
+
 				 /**
 				  * * Bank Accounts
 				  * * لعرض الاكونتات الخاصة بالعميل في بنك معين او مؤسسة مالية
@@ -315,13 +315,14 @@ Route::middleware([])->group(function () {
 				 // Route::get('financial-institutions/{financialInstitution}/bank-accounts/edit/{certificatesOfDeposit}','CertificatesOfDepositsController@edit')->name('edit.certificates.of.deposit');
 				 // Route::put('financial-institutions/{financialInstitution}/bank-accounts/update/{certificatesOfDeposit}','CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
 				 // Route::delete('financial-institutions/{financialInstitution}/bank-accounts/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
- 
+
 				 Route::post('add-new-partner','AddNewCustomerController@addNew')->name('add.new.partner');
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
+				 Route::resource('lg-opening-balance', 'LgOpeningBalancesController');
 				 Route::resource('internal-money-transfers', 'InternalMoneyTransferController');
 				//  Route::resource('contracts', 'ContractsController');
-				
+
 				 Route::get('contracts/{type}','ContractsController@index')->name('contracts.index');
 				 Route::get('contracts/create/{type}','ContractsController@create')->name('contracts.create');
 				 Route::post('contracts/{type}','ContractsController@store')->name('contracts.store');
@@ -330,37 +331,37 @@ Route::middleware([])->group(function () {
 				 Route::delete('contracts/{contract}/{type}','ContractsController@destroy')->name('contracts.destroy');
 				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
 				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
-				 
+
 
 
 
 
 				 Route::resource('notifications-settings', 'NotificationSettingsController');
 				 Route::get('mark-notifications-as-read', 'NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
- 
+
 				 Route::get('adjust-due-dates/{modelId}/{modelType}', 'AdjustedDueDateHistoriesController@index')->name('adjust.due.dates');
 				 Route::post('adjust-due-dates/{modelId}/{modelType}', 'AdjustedDueDateHistoriesController@store')->name('store.adjust.due.dates');
 				 Route::get('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@edit')->name('edit.adjust.due.dates');
 				 Route::patch('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@update')->name('update.adjust.due.dates');
 				 Route::delete('delete-adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@destroy')->name('delete.adjust.due.dates');
 
-				 
-				 
+
+
 				 Route::get('foreign-exchange-rate', 'ForeignExchangeRateController@index')->name('view.foreign.exchange.rate');
 				 Route::post('foreign-exchange-rate', 'ForeignExchangeRateController@store')->name('store.foreign.exchange.rate');
 				 Route::get('foreign-exchange-rate/edit/{foreignExchangeRate}', 'ForeignExchangeRateController@edit')->name('edit.foreign.exchange.rate');
 				 Route::patch('foreign-exchange-rate/edit/{foreignExchangeRate}', 'ForeignExchangeRateController@update')->name('update.foreign.exchange.rate');
 				 Route::delete('delete-foreign-exchange-rate/edit/{foreignExchangeRate}', 'ForeignExchangeRateController@destroy')->name('delete.foreign.exchange.rate');
- 
- 
-				 
+
+
+
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft', 'CleanOverdraftController@index')->name('view.clean.overdraft');
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/create', 'CleanOverdraftController@create')->name('create.clean.overdraft');
 				 Route::post('financial-institutions/{financialInstitution}/clean-overdraft/create', 'CleanOverdraftController@store')->name('store.clean.overdraft');
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}', 'CleanOverdraftController@edit')->name('edit.clean.overdraft');
 				 Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}', 'CleanOverdraftController@update')->name('update.clean.overdraft');
 				 Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}', 'CleanOverdraftController@destroy')->name('delete.clean.overdraft');
- 
+
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper', 'OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create', 'OverdraftAgainstCommercialPaperController@create')->name('create.overdraft.against.commercial.paper');
 				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/create', 'OverdraftAgainstCommercialPaperController@store')->name('store.overdraft.against.commercial.paper');
@@ -371,7 +372,7 @@ Route::middleware([])->group(function () {
 					/**
 					 * * start certificates of deposit
 					 */
-				 
+
                     Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit', 'CertificatesOfDepositsController@index')->name('view.certificates.of.deposit');
                     Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit/create', 'CertificatesOfDepositsController@create')->name('create.certificates.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/create', 'CertificatesOfDepositsController@store')->name('store.certificates.of.deposit');
@@ -382,19 +383,19 @@ Route::middleware([])->group(function () {
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-break/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyBreak')->name('apply.break.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseDeposit')->name('reverse.deposit.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-broken/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseBroken')->name('reverse.broken.to.certificate.of.deposit');
-					
+
 					/**
 					 * * end certificates of deposit
 					 */
-					
-					 
-					 
-					 
-					 
+
+
+
+
+
 					 	/**
 					 * * start time of deposit
 					 */
-				 
+
 					 Route::get('financial-institutions/{financialInstitution}/time-of-deposit', 'TimeOfDepositsController@index')->name('view.time.of.deposit');
 					 Route::get('financial-institutions/{financialInstitution}/time-of-deposit/create', 'TimeOfDepositsController@create')->name('create.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/create', 'TimeOfDepositsController@store')->name('store.time.of.deposit');
@@ -405,14 +406,14 @@ Route::middleware([])->group(function () {
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/apply-break/{timeOfDeposit}', 'TimeOfDepositsController@applyBreak')->name('apply.break.to.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-deposit/{timeOfDeposit}', 'TimeOfDepositsController@reverseDeposit')->name('reverse.deposit.to.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-broken/{timeOfDeposit}', 'TimeOfDepositsController@reverseBroken')->name('reverse.broken.to.time.of.deposit');
-					 
+
 					 /**
 					  * * end time of deposit
 					  */
-					  
-					
-					
-					
+
+
+
+
 					// Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility', 'LetterOfGuaranteeFacilityController@index')->name('view.letter.of.guarantee.facility');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-guarantee-facility/create', 'LetterOfGuaranteeFacilityController@create')->name('create.letter.of.guarantee.facility');
@@ -441,15 +442,15 @@ Route::middleware([])->group(function () {
                     Route::get('aging-analysis/{modelType}', 'AgingController@index')->name('view.aging.analysis');
                     Route::post('aging-analysis/{modelType}', 'AgingController@result')->name('result.aging.analysis');
 
-					
+
 					Route::get('safe-statement', 'SafeStatementController@index')->name('view.safe.statement');
                     Route::post('safe-statement', 'SafeStatementController@result')->name('result.safe.statement');
-					
+
 					Route::get('bank-statement', 'BankStatementController@index')->name('view.bank.statement');
                     Route::post('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
 
-					
-						
+
+
                     Route::get('customer-balances/{modelType}', 'BalancesController@index')->name('view.balances');
                     Route::get('/invoices-dashboard/cash', 'CustomerInvoiceDashboardController@viewCashDashboard')->name('view.customer.invoice.dashboard.cash');
                     Route::get('/invoices-dashboard/forecast', 'CustomerInvoiceDashboardController@viewForecastDashboard')->name('view.customer.invoice.dashboard.forecast');
@@ -457,14 +458,14 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/invoices-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showInvoiceReport')->name('view.invoice.report');
                     Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
-					
+
 					Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
 					Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
-					
+
 					Route::get('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@index')->name('view.withdrawals.settlement.report');
 					Route::post('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@result')->name('result.withdrawals.settlement.report');
-					
-					
+
+
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
@@ -473,9 +474,9 @@ Route::middleware([])->group(function () {
                     Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
-			   
-				
-					
+
+
+
 					Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
@@ -484,8 +485,8 @@ Route::middleware([])->group(function () {
                     Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
-			   
-					
+
+
 					Route::get('money-payment', 'MoneyPaymentController@index')->name('view.money.payment');
                     Route::get('money-payment/create/{model?}', 'MoneyPaymentController@create')->name('create.money.payment');
                     Route::post('money-payment/create', 'MoneyPaymentController@store')->name('store.money.payment');
@@ -496,7 +497,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-payment/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyPaymentController@getAccountNumbersForAccountType'); // ajax request
 					Route::post('mark-payable-cheques-as-paid', 'MoneyPaymentController@markChequesAsPaid')->name('payable.cheque.mark.as.paid');
 					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
-			   
+
 					Route::post('adjust-customer-due-invoices','WeeklyCashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
                     Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
                     Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
@@ -521,8 +522,8 @@ Route::middleware([])->group(function () {
 				Route::get('calculate-interest-percentage', 'Loans2Controller@create')->name('calc.interest.percentage');
 				Route::get('fixed-payments-at-beginning', 'Loans2Controller@create')->name('fixed.loan.fixed.at.beginning');
 				Route::get('variable-payments', 'Loans2Controller@create')->name('variable.payments');
-				
-				
+
+
                 Route::post('edit-table-cell', [EditTableCellsController::class, '__invoke'])->name('admin.edit.table.cell');
                 Route::delete('delete-revenue-business-line/{revenueBusinessLine}', [RevenueBusinessLineController::class, 'deleteRevenueBusinessLine'])->name('admin.delete.revenue.business.line');
                 Route::delete('delete-service-category/{serviceCategory}', [RevenueBusinessLineController::class, 'deleteServiceCategory'])->name('admin.delete.service.category');
@@ -574,7 +575,7 @@ Route::middleware([])->group(function () {
                 Route::get('down-payments/get-contracts-for-customer', 'MoneyReceivedController@getContractsForCustomer')->name('get.contracts.for.customer'); // ajax request
                 Route::get('down-payments/get-contracts-for-supplier', 'MoneyPaymentController@getContractsForCustomer')->name('get.contracts.for.supplier'); // ajax request
                 Route::get('down-payments/get-sales-orders-for-contract/{contract_id}/{currency?}', 'MoneyReceivedController@getSalesOrdersForContract'); // ajax request
-               
+
                 Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');
                 Route::get('/create-labeling-items', 'DynamicItemsController@createLabelingItems')->name('create.labeling.items');
                 Route::get('/create-labeling-form', 'DynamicItemsController@createLabelingForm')->name('create.labeling.form');
@@ -763,8 +764,8 @@ Route::middleware([])->group(function () {
                     Route::any('/BreakdownSummaryReport', 'SummaryController@breakdownForecastReport')->name('breakdown.forecast.report');
                     Route::any('/CollectionSummaryReport', 'SummaryController@collectionForecastReport')->name('collection.forecast.report');
 
-					
-				
+
+
 
 
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////
