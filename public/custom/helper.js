@@ -14,7 +14,7 @@ Date.prototype.addMonths = function(value) {
 	var n = this.getDate();
 	this.setDate(1);
 	this.setMonth(this.getMonth() + parseInt(value));
-	console.log('value',value,this,'end of',this.getMonth()	);
+
 	this.setDate(Math.min(n, this.getDaysInMonth()));
 	return this;
 };
