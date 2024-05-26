@@ -604,7 +604,7 @@
 						$('#total-room-id').val(res.total_room).prop('disabled',true)
 						$('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled',true)
                         $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
-						$('#lg_commission_rate').val(res.lg_commission_rate).trigger('change');
+						$('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
                         $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
                         $('#cash-cover-rate-id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
 						$('[js-update-contracts-based-on-customers]').trigger('change')
