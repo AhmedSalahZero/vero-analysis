@@ -107,11 +107,11 @@
                                             @endforeach
                                         </select>
                                     </div>
-									
+
                                     <div class="col-md-4">
                                         <x-form.input :id="'limit-id'" :default-value="0" :model="$model??null" :label="__('LG Limit')" :type="'text'" :placeholder="__('Total LGs Outstanding Balance')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-									
+
                                     <div class="col-md-4">
                                         <x-form.input :id="'total-lg-for-all-types-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'"  :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
@@ -157,8 +157,8 @@
 
 
                                 <div class="form-group row">
-								
-								
+
+
 								 <div class="col-md-5">
 
                                     <label>{{__('Beneficiary Name')}}
@@ -209,15 +209,15 @@
                                     </div>
                                 </div>
 
-                              
+
 
 <div class="col-md-3 hidden show-only-bond">
 
-                                        
+
                                         <x-form.input :default-value="1" :model="$model??null" :label="__('Transaction Reference')" :type="'text'" :placeholder="__('Transaction Reference')" :name="'transaction_reference'" :class="''" :required="true"></x-form.input>
-                                       
+
                                     </div>
-									
+
                                     <div class="col-md-3 hidden hide-only-bond">
 
                                         <label> {{ __('Contract Reference') }}
@@ -305,7 +305,7 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
+                                        <x-form.input :id="'cash-cover-rate-id'" :default-value="0" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
                                     </div>
 
 
@@ -325,12 +325,12 @@
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
 									 <div class="col-md-3">
-                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :id="'min_lg_commission_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
 									     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
-									
+
 
 
                                     <div class="col-md-3">
@@ -504,7 +504,7 @@
             })
         }
     })
-	
+
             </script>
 
             <script>
@@ -545,9 +545,9 @@
                     const duration = $('.lg-duration-months-js').val();
                     if (issuanceDate || duration == '0') {
                         const numberOfMonths = duration
-						
+
                         let renewalDate = issuanceDate.addMonths(numberOfMonths)
-					
+
                         renewalDate = formatDateForSelect2(renewalDate)
                         $('.renewal-date-js').val(renewalDate).trigger('change')
                     }
@@ -599,13 +599,16 @@
 						$('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled',true)
 						$('#total-room-id').val(res.total_room).prop('disabled',true)
 						$('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled',true)
+                        $('#min_lg_commission_fees_id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
+                        $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
+                        $('#cash-cover-rate-id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
 						$('[js-update-contracts-based-on-customers]').trigger('change')
 					}
 				})
 			})
 			$('[js-update-outstanding-balance-and-limits]').trigger('change')
 			</script>
-			
+
 			<script>
 			$(document).on('change','[js-update-contracts-based-on-customers]',function(e){
 				const customerId = $('select#customer_name').val()
@@ -631,18 +634,18 @@
 				})
 			})
 			$('[js-update-contracts-based-on-customers]').trigger('change')
-			
+
 			</script>
-			
-			
-			
-			
-			
+
+
+
+
+
 			<script>
 			$(document).on('change','[js-update-purchase-orders-based-on-contract]',function(e){
 				const contractId = $('select#contract-id').val()
 				if(!contractId){
-					return 
+					return
 				}
 				$.ajax({
 					url:"{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}",
@@ -663,5 +666,5 @@
 			})
 			$('[js-update-purchase-orders-based-on-contract]').trigger('change')
 			</script>
-			
+
             @endsection

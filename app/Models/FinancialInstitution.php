@@ -14,13 +14,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class FinancialInstitution extends Model
 {
     protected $guarded = ['id'];
-	
+
 	const BANK = 'bank';
-	
+
 	public function scopeOnlyForCompany(Builder $builder , int $companyId){
 		return $builder->where('company_id',$companyId);
 	}
-	
+
 	public function scopeOnlyForSource(Builder $builder , string $source)
 	{
 		if($source === LetterOfGuaranteeIssuance::LG_FACILITY){
@@ -32,10 +32,10 @@ class FinancialInstitution extends Model
 		if($source === LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ){
 			return $builder;
 		}
-		
+
 		dd('invalid source for financial insiutution');
 	}
-	
+
 	public function scopeOnlyBanks(Builder $builder)
 	{
 		$builder->where('type',self::BANK);
@@ -47,7 +47,7 @@ class FinancialInstitution extends Model
 	/**
 	 * * نوع المؤسسة المالية وليكن مثلا بنك
 	 */
-	public function getType():string 
+	public function getType():string
 	{
 		return $this->type ;
 	}
@@ -76,14 +76,14 @@ class FinancialInstitution extends Model
 		return $this->branch_name ;
 	}
 	/**
-	 * * هو رقم مميز للحساب الرئيسي زي ال الاي دي وبالتالي هو يختلف عن رقم الحساب نفسه 
+	 * * هو رقم مميز للحساب الرئيسي زي ال الاي دي وبالتالي هو يختلف عن رقم الحساب نفسه
 	 */
 	public function getCompanyAccountNumber()
 	{
-		return $this->company_account_number ; 
+		return $this->company_account_number ;
 	}
 	/**
-	 * * تاريخ المبالغ الماليه اللي معايا في حساباتي في المؤسسة المالية دي 
+	 * * تاريخ المبالغ الماليه اللي معايا في حساباتي في المؤسسة المالية دي
 	 */
 	public function getBalanceDate()
 	{
@@ -105,7 +105,7 @@ class FinancialInstitution extends Model
 	public function getBankName()
 	{
 		 return $this->bank ? $this->bank->getViewName() : __('N/A');
-	}	
+	}
 	public function getBankNameIn(string $lang)
 	{
 		 return $this->bank ? $this->bank['name_'.$lang] : __('N/A');
@@ -131,7 +131,7 @@ class FinancialInstitution extends Model
 		return $this->hasMany(CleanOverdraft::class , 'financial_institution_id','id');
 	}
 	/**
-	 * * use getCurrentAvailableLetterOfGuaranteeFacility instead 
+	 * * use getCurrentAvailableLetterOfGuaranteeFacility instead
 	 */
 	public function LetterOfGuaranteeFacilities()
 	{
@@ -161,8 +161,8 @@ class FinancialInstitution extends Model
 				'is_main_account'=>$isMainAccount // الحساب المصري
 			]);
 			/**
-			 * * لو ال 
-			 * * balance amount > 0 
+			 * * لو ال
+			 * * balance amount > 0
 			 * * هنضفله قيمة في ال
 			 * * current account bank Statement
 			 */
@@ -176,11 +176,11 @@ class FinancialInstitution extends Model
 					'is_credit' => !$isDebit,
 					'date'=>$startDate ,
 				]);
-					
+
 			}
-			
-			
-			
+
+
+
 			$account->accountInterests()->create([
 				'interest_rate'=>$accountArr['interest_rate'],
 				'min_balance'=>$accountArr['min_balance'],
@@ -191,6 +191,6 @@ class FinancialInstitution extends Model
 
 
 
-	
-	
+
+
 }

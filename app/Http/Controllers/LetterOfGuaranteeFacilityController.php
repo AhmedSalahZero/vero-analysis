@@ -5,6 +5,7 @@ use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfGuaranteeStatement;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,8 +20,8 @@ class LetterOfGuaranteeFacilityController
 			return $collection;
 		}
 		$searchFieldName = $request->get('field');
-		$dateFieldName =  'created_at' ; // change it 
-		// $dateFieldName = $searchFieldName === 'balance_date' ? 'balance_date' : 'created_at'; 
+		$dateFieldName =  'created_at' ; // change it
+		// $dateFieldName = $searchFieldName === 'balance_date' ? 'balance_date' : 'created_at';
 		$from = $request->get('from');
 		$to = $request->get('to');
 		$value = $request->query('value');
@@ -29,7 +30,7 @@ class LetterOfGuaranteeFacilityController
 			return $collection->filter(function($moneyReceived) use ($value,$searchFieldName){
 				$currentValue = $moneyReceived->{$searchFieldName} ;
 				if($searchFieldName == 'bank_id'){
-					$currentValue = $moneyReceived->getBankName() ;  
+					$currentValue = $moneyReceived->getBankName() ;
 				}
 				return false !== stristr($currentValue , $value);
 			});
@@ -41,23 +42,23 @@ class LetterOfGuaranteeFacilityController
 			return $collection->where($dateFieldName,'<=',$to);
 		})
 		->sortByDesc('id');
-		
+
 		return $collection;
 	}
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
-		
-		
+
+
 		$letterOfGuaranteeFacilities = $financialInstitution->letterOfGuaranteeFacilities ;
-		
+
 		$letterOfGuaranteeFacilities =   $this->applyFilter($request,$letterOfGuaranteeFacilities) ;
-		
+
 		$searchFields = [
 			'contract_start_date'=>__('Contract Start Date'),
 			'contract_end_date'=>__('Contract End Date'),
 			'currency'=>__('Currency'),
 			'limit'=>__('Limit'),
-			
+
 		];
         return view('reports.LetterOfGuaranteeFacility.index', [
 			'company'=>$company,
@@ -66,24 +67,23 @@ class LetterOfGuaranteeFacilityController
 			'letterOfGuaranteeFacilities'=>$letterOfGuaranteeFacilities
 		]);
     }
-	
+
 	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
         return view('reports.LetterOfGuaranteeFacility.form',[
 			'financialInstitution'=>$financialInstitution,
 		]);
     }
-	public function getCommonDataArr():array 
+	public function getCommonDataArr():array
 	{
 		return ['contract_start_date','contract_end_date','outstanding_date','currency','limit','outstanding_amount'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
-		
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','outstanding_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
-		$termAndConditions = $request->get('termAndConditions',[]) ; 
+		$termAndConditions = $request->get('termAndConditions',[]) ;
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		/**
@@ -92,6 +92,7 @@ class LetterOfGuaranteeFacilityController
 		$letterOfGuaranteeFacility = $financialInstitution->LetterOfGuaranteeFacilities()->create($data);
 		$currencyName = $letterOfGuaranteeFacility->getCurrency();
 		$source = LetterOfGuaranteeIssuance::LG_FACILITY;
+
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
 			$termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
@@ -101,70 +102,66 @@ class LetterOfGuaranteeFacilityController
 				$letterOfGuaranteeFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
 			}
-			$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,'beginning-balance');
-			
+			$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+
 		}
 		$type = $request->get('type','letter-of-guarantee-facilities');
-		$activeTab = $type ; 
-		
+		$activeTab = $type ;
+
 		return redirect()->route('view.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
-		
+
 	}
-	
+
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , LetterOfGuaranteeFacility $letterOfGuaranteeFacility){
-		
+
         return view('reports.LetterOfGuaranteeFacility.form',[
 			'financialInstitution'=>$financialInstitution,
 			'model'=>$letterOfGuaranteeFacility
 		]);
-		
+
 	}
-	
+
 	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,LetterOfGuaranteeFacility $letterOfGuaranteeFacility){
-		// $type = $request->get('type');
 		$termAndConditions =  $request->get('termAndConditions',[]) ;
-		
+        $source = LetterOfGuaranteeIssuance::LG_FACILITY;
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','outstanding_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
-		// $additionalData = [];
-		// if($type =='bank'){
-		// 	$additionalData = ['bank_id','company_account_number','swift_code','iban_code','current_account_number','main_currency','balance_amount'] ;
-		// }
-		// else{
-		// 	$additionalData = ['name'] ;
-		// }
-		
-		// foreach($additionalData as $name){
-		// 	$data[$name] = $request->get($name);
-		// }
-		// $data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
-	
-		
-		$letterOfGuaranteeFacility->update($data);
+
+     $letterOfGuaranteeFacility->update($data);
+     $currencyName = $letterOfGuaranteeFacility->getCurrency();
+     LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
 		$letterOfGuaranteeFacility->termAndConditions->each(function($termAndCondition){
 			$termAndCondition->delete();
 		});
-		
+
 		foreach($termAndConditions as $termAndConditionArr){
 			$letterOfGuaranteeFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
-				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
 			]));
+            $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
+			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			$currentLgType = $termAndConditionArr['lg_type'] ;
+
+			$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+
 		}
 		$type = $request->get('type','letter-of-guarantee-facilities');
 		$activeTab = $type ;
-		//  $activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
-		
+
+
 	}
-	
+
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , LetterOfGuaranteeFacility $letterOfGuaranteeFacility)
 	{
+
+         LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
+
 		$letterOfGuaranteeFacility->termAndConditions->each(function($termAndCondition){
-			$termAndCondition->delete();
+            $termAndCondition->delete();
+
 		});
 		$letterOfGuaranteeFacility->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
@@ -174,6 +171,12 @@ class LetterOfGuaranteeFacilityController
 		$selectedLgType = $request->get('lgType');
 		$currentLgOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+        $letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
+        $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
+        $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
+        $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
+
+
 		/**
 		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
 		 */
@@ -192,15 +195,19 @@ class LetterOfGuaranteeFacilityController
 			}
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
-		$limit = $letterOfGuaranteeFacility->getLimit();
+		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
 		return response()->json([
 			'limit'=>number_format($limit) ,
 			'total_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
 			'total_room'=>number_format($limit - abs($totalLastOutstandingBalanceOfFourTypes)),
-			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgOutstanding))
+			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgOutstanding)),
+            'min_lg_commission_rate'=>$minLgCommissionRateForCurrentLgType,
+            'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,
+            'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType
+
 		]);
 	}
 
-	
-	
+
+
 }

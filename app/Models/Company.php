@@ -86,13 +86,13 @@ class Company extends Model implements HasMedia
 	{
 		return .2;
 	}
-	
+
 	public function getLabelingWidth()
 	{
 		// logo (clients)
-		// qrcode 
-		// code 
-		
+		// qrcode
+		// code
+
 		return $this->label_width ?: 100 ;
 	}
 	public function getFirstLabelingLogo()
@@ -129,7 +129,7 @@ class Company extends Model implements HasMedia
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getCustomerPastDuesInvoicesNotificationsDays() : NotificationSetting::CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS ;
 	}
-	public function getChequesInSafeNotificationDays():int 
+	public function getChequesInSafeNotificationDays():int
 	{
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getChequesInSafeNotificationsDays() : NotificationSetting::CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS ;
@@ -146,7 +146,11 @@ class Company extends Model implements HasMedia
 	public function openingBalance()
 	{
 		return $this->hasOne(OpeningBalance::class,'company_id');
-	}	
+	}
+    public function lgOpeningBalance()
+	{
+		return $this->hasOne(LgOpeningBalance::class,'company_id');
+	}
 	public function contracts()
 	{
 		return $this->hasMany(Contract::class,'company_id','id');
@@ -170,11 +174,11 @@ class Company extends Model implements HasMedia
 		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
 		->where('status',CertificatesOfDeposit::BROKEN);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	public function runningTimeOfDeposits()
 	{
 		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
@@ -193,8 +197,8 @@ class Company extends Model implements HasMedia
 	public function getHeadOfficeId()
 	{
 		return DB::table('branch')->where('company_id',$this->id)->orderByRaw('created_at asc')->first()->id;
-	}	
-	
-	
+	}
+
+
 
 }

@@ -1,11 +1,11 @@
-<?php 
+<?php
 namespace App\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
-trait HasBasicStoreRequest 
+trait HasBasicStoreRequest
 {
 	public function storeBasicForm(Request $request , array $except = ['_token','save','_method'] ):self{
 		foreach($request->except($except) as $name => $value){
@@ -24,7 +24,7 @@ trait HasBasicStoreRequest
 		}
 		$this->save();
 		// store relations
-		
+
 		foreach($request->except($except) as $name => $value){
 			// in store case
 			if(is_array($request->get($name)) && method_exists($this,$name) && ! $this->id ){
@@ -36,39 +36,36 @@ trait HasBasicStoreRequest
 					$this->$name()->create($values);
 				}
 			}
-			// in update case 
+			// in update case
 			elseif(is_array($request->get($name)) && method_exists($this,$name) && $this->id ){
 				// is relationship
-				$this->updateRepeaterRelation($name,$this->$name()->getRelated()->getTable(),$request->get($name),[
+				$this->updateRepeaterRelation($name,$this->$name()->getRelated()->getTable(),[
 					'company_id'=>getCurrentCompanyId()
 				]);
 			}
-				
-		}
-		
-		return $this ; 
-	}
-	protected function updateRepeaterRelation(string $relationName,string $relationTableName, array $relationDataArray , array $additionRelationData = [])
-	{
 
-		/**
-		 * * 	// for example 
-		 * * $relationName ='SalesOrder' 
-		 * * وخلي اسم الريليشن هو نفسه الاسم اللي جي في الريكويست علشان هو اللي هيكون مبني عليه كل حاجه ;
-		 * * * $relationTableName = 'sales_orders';
-		* * $additionRelationData لو حابب تضيف داتا اضافيه وليكن مثلا company_id 
+		}
+
+		return $this ;
+	}
+	public function updateRepeaterRelation(string $relationName,string $relationTableName , array $additionRelationData = [])
+	{
+        /**
+         * * 	// for example
+		 * * $relationName ='SalesOrder'
+         * * وخلي اسم الريليشن هو نفسه الاسم اللي جي في الريكويست علشان هو اللي هيكون مبني عليه كل حاجه ;
+         * * * $relationTableName = 'sales_orders';
+         * * $additionRelationData لو حابب تضيف داتا اضافيه وليكن مثلا company_id
 		 */
-	
+
+        $relationDataArray = Request()->get($relationName);
 		$oldIdsFromDatabase = $this->{$relationName}->pluck('id')->toArray();
 		$idsFromRequest =array_column($relationDataArray,'id') ;
-	
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
-
 		$this->$relationName()->whereIn($relationTableName.'.id',$elementsToDelete)->delete();
 		foreach($elementsToUpdate as $id){
 			$dataToUpdate = findByKey($relationDataArray,'id',$id);
-		
 			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update($dataToUpdate);
 		}
 		foreach($relationDataArray as $data){

@@ -1559,9 +1559,9 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
             $type = __($modelType);
         } else {
             dd('not supported type');
-            
+
         }
-        
+
 
         $secondReportData = $secondReportDataResult['report_data'] ?? [];
         $secondReportData['full_date'] = $secondReportDataResult['full_date'] ?? [];
@@ -2068,14 +2068,14 @@ function MonthAndQuarterlyIntervals(): array
 			'value' => 'quarterly',
             'title' => __('Quarterly')
 		],
-			
+
     ];
 }
 
 function getDurationIntervalTypesForSelectExceptMonthly(): array
 {
     return [
-    
+
         [
             'value' => 'quarterly',
             'title' => __('Quarterly')
@@ -2093,7 +2093,7 @@ function getDurationIntervalTypesForSelectExceptMonthly(): array
 
 function getPaymentTerms(): array
 {
-    
+
     return [
         [
             'value' => 'customize',
@@ -2268,7 +2268,7 @@ function getExportDateTime(): string
 function getExportUserName()
 {
 	/**
-	 * @var User $user 
+	 * @var User $user
 	 */
 	$user = Auth()->user() ;
     return  $user ? $user->getName() : null;
@@ -2880,7 +2880,7 @@ function getPermissions():array
         [
             'name'=>'view data gathering'
         ],
-        
+
         [
             'name'=>'view sales data',
         ],
@@ -2897,7 +2897,7 @@ function getPermissions():array
         [
             'name'=>'export sales gathering data',
         ],
-        
+
         [
             //
             'name'=>exportExportAnalysisData,
@@ -2909,7 +2909,7 @@ function getPermissions():array
         [
             'name'=>deleteExportAnalysisData
         ],
-        
+
         [
             'name'=>viewCustomerInvoiceData
         ],
@@ -2919,11 +2919,11 @@ function getPermissions():array
         [
             'name'=>exportCustomerInvoiceData
         ],
-        
+
         [
             'name'=>deleteCustomerInvoiceData
         ],
-		
+
 		[
             'name'=>viewSupplierInvoiceData
         ],
@@ -2933,17 +2933,17 @@ function getPermissions():array
         [
             'name'=>exportSupplierInvoiceData
         ],
-        
+
         [
             'name'=>deleteSupplierInvoiceData
         ],
-		
-		
-		
-		
-        
-     
-        
+
+
+
+
+
+
+
         [
             'name'=>'view financial statement',
         ],
@@ -2999,7 +2999,7 @@ function getPermissions():array
         [
             'name'=>'view sales forecast value base'
         ],
-		
+
         [
             'name'=>'view sales forecast quantity base'
         ],
@@ -3037,15 +3037,15 @@ function getPermissions():array
             'name'=>'view customer balances'
         ],  [
             'name'=>'view supplier balances'
-        ], 
+        ],
 		[
             'name'=>'view letter of guarantee issuance'
         ],
-		
+
 		[
             'name'=>'view cash dashboard'
         ],
-		
+
 		[
             'name'=>'view notification settings'
         ],
@@ -3062,8 +3062,8 @@ function getPermissions():array
 		[
             'name'=>'view cashvero settings'
         ],
-		
-		
+
+
 		[
             'name'=>'view cash Forecast dashboard'
         ],
@@ -3093,7 +3093,7 @@ function getPermissions():array
 		],
 		[
 			'name'=>'view safe statement report'
-		],	
+		],
 		[
 			'name'=>'view bank statement report'
 		],
@@ -3263,7 +3263,7 @@ function getEndYearBasedOnDataUploaded(Company $company, int $minusFromYear = 0)
 {
     $cashingService = new CashingService($company);
     $dates = $cashingService->getIntervalYearsFormCompany() ;
-    
+
     $endYear = $dates['end_year'];
     $endYear = $endYear ?: now()->format('Y');
     $endYear = $endYear - $minusFromYear;
@@ -3345,10 +3345,10 @@ function getTypesForValues():array
             'title'=>__('Expense Per Employee'),
             'value'=>'expense_per_employee',
         ],
-        
-        
-        
-        
+
+
+
+
     ];
 }
 function twoArrayIsEqualValues(array $firstItems, array $secondItems)
@@ -3377,7 +3377,7 @@ function array_sum_at_date($items, $date)
     $total = 0 ;
     foreach($items as$keys=> $vals) {
         foreach($vals as $key => $val) {
-            
+
             if($key == $date) {
                 $total += $val ;
             }
@@ -3387,7 +3387,7 @@ function array_sum_at_date($items, $date)
 }
 function get_total_with_preserve_key($items)
 {
-    
+
     $result = [];
     if(!count($items)) {
         return [];
@@ -3594,7 +3594,7 @@ function dueInDays()
             'value'=>270 ,
             'title'=>270
 		],
-		
+
 		[
             'value'=>300 ,
             'title'=>300
@@ -3693,7 +3693,7 @@ function sumDueDayWithPayment($paymentRate, $dueDays)
 
 function getUploadParamsFromType(string $type = null):array
 {
-    
+
     $params  = [
         'SalesGathering'=>[
             'fullModel'=>'\App\Models\SalesGathering',
@@ -3721,7 +3721,7 @@ function getUploadParamsFromType(string $type = null):array
             'fullModel'=>'\App\Models\LabelingItem',
             'dbName'=>'labeling_items',
             'typePrefixName'=>__('Labeling Item'),
-            'orderByDateField'=>'id', // important for this case 
+            'orderByDateField'=>'id', // important for this case
             'viewPermissionName'=>viewLabelingItemData,// important:add this also into permission function names [getPermissions()]
             'uploadPermissionName'=>uploadLabelingItemData, // important:add this also into permission function names [getPermissions()]
             'exportPermissionName'=>exportLabelingItemData,// important:add this also into permission function names[getPermissions()]
@@ -3739,7 +3739,7 @@ function getUploadParamsFromType(string $type = null):array
             'deletePermissionName'=>deleteCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Customer Invoice Import'),
 		],
-		
+
 		'SupplierInvoice'=>[
             'fullModel'=>'\App\Models\SupplierInvoice',
             'dbName'=>'supplier_invoices',
@@ -3751,7 +3751,7 @@ function getUploadParamsFromType(string $type = null):array
             'deletePermissionName'=>deleteSupplierInvoiceData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Supplier Invoice Import'),
         ]
-		
+
     ] ;
     if($type) {
         return $params[$type];
@@ -3773,13 +3773,13 @@ function getUploadDataText($typePrefixName)
 function convertArrayToSqlString($items)
 {
     if(!is_array($items)) {
-        
+
         return "'".$items."'";
         ;
-        
+
     }
     $sqlString = "";
-    
+
     foreach($items as $item) {
         $sqlString .= "'".$item."',";
     }
@@ -3855,7 +3855,7 @@ function getInvoiceDayIntervals()
     ];
 }
 // function getDatesFromTwoIndexes(string $dayInterval,string $date , string $direction = 'coming' ):array{
-    
+
 
 // 	$date= Carbon::make($date);
 // 	$functionName = $direction == 'past'  ?  'subDays' : 'addDays';
@@ -3887,17 +3887,17 @@ function getWeeksForCurrentDate()
 }
 function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
 {
-    
+
     $week = 1 ;
     $dates = generateDatesBetweenTwoDates(Carbon::make('01-01-'.$firstDateYear), $secondDate, 'addDay');
     $weeks = [];
     $day  =1 ;
-        
+
     foreach($dates as $index =>$dateAsString) {
         if(Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
             $day = 1 ;
             $week = 1;
-            
+
         }
         if(Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '31' || Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '30') {
             $week = 52;
@@ -3905,7 +3905,7 @@ function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
         $weeks[$dateAsString] = $week ;
         if($day % 7 == 0) {
             $week ++ ;
-                
+
         }
         $day++;
     }
@@ -3928,14 +3928,14 @@ function getMinDateOfWeek(array $dateAndWeek, int $weekNo, int $year)
 }
 function getFieldTypeAndClassFromTitle(string $title):array
 {
-    
+
     if(Str::contains($title, 'date') || Str::contains($title, 'Date') || Str::contains($title, 'Estimated')) {
         return [
             'type'=>'date',
             'class'=>'',
             'default_value'=>now()
         ];
-        
+
     }
     if(Str::contains($title, getNumericExportFields())) {
         return [
@@ -3978,10 +3978,10 @@ function getEndYearMonthFrom(int $month, int $year)
         $monthAndYear[sprintf("%02d", $month)] = $year ;
     }
     return $monthAndYear ;
-    
+
 
 }
-function getCurrenciesForSuppliersAndCustomers():array 
+function getCurrenciesForSuppliersAndCustomers():array
 {
 	return array_merge(
 		CustomerInvoice::getCurrencies(),
@@ -4100,12 +4100,12 @@ function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
 			'show'=> isset($modified_seasonality) && $salesForecast  ,
 			'link'=>route('forecast.report',['company'=>$companyId]),
 		],
-		
+
 	];
 }
 function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId)
 {
-	
+
 		$sales_forecast = QuantitySalesForecast::where('company_id',$companyId)->first();
 	return [
 		'sales-forecast-fact-sheet'=>[
@@ -4144,7 +4144,7 @@ function getHeaderMenu()
 {
     $company = getCurrentCompany();
 	/**
-	 * @var User $user 
+	 * @var User $user
 	 */
     $user = auth()->user();
     if(!$company) {
@@ -4162,7 +4162,7 @@ function getHeaderMenu()
 	$canViewWeeklyCashFlow = $user->can('view weekly cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
 	$cashManagementSubItems = [
-		
+
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
 		'cash-dashboard'=>[
 			'title'=>__('Cash Dashboard'),
@@ -4188,7 +4188,7 @@ function getHeaderMenu()
 					'submenu'=>[]
 				],
 			]
-			
+
 		]
 		,
 
@@ -4202,7 +4202,7 @@ function getHeaderMenu()
 			'link'=>'#',
 			'show'=>true,
 			'submenu'=>[
-				
+
 				[
 					'title'=>__('Customer Balances'),
 					'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
@@ -4219,7 +4219,7 @@ function getHeaderMenu()
 				'title'=>__('Customer Contracts'),
 			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
 			'show'=>$user->can('view customers contracts'),
-			
+
 			],
 			[
 				'title'=>__('Upload New Customer Invoice Data'),
@@ -4227,13 +4227,13 @@ function getHeaderMenu()
 				'show'=>$user->can(uploadCustomerInvoiceData),
 				'submenu'=>[]
 			]
-			
-			
-			
-			
-			
-			
-				
+
+
+
+
+
+
+
 			]
 		],
 		'supplier-sections'=>[
@@ -4241,7 +4241,7 @@ function getHeaderMenu()
 			'link'=>'#',
 			'show'=>true,
 			'submenu'=>[
-				
+
 				[
 					'title'=>__('Supplier Balances'),
 					'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
@@ -4258,7 +4258,7 @@ function getHeaderMenu()
 				'title'=>__('Supplier Contracts'),
 			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Supplier']),
 			'show'=>$user->can('view suppliers contracts'),
-			
+
 			],
 			[
 				'title'=>__('Upload New Supplier Invoice Data'),
@@ -4266,13 +4266,13 @@ function getHeaderMenu()
 				'show'=>$user->can(uploadSupplierInvoiceData),
 				'submenu'=>[]
 			]
-			
-			
-			
-			
-			
-			
-				
+
+
+
+
+
+
+
 			]
 		],
 		'money-transactions'=>[
@@ -4292,7 +4292,7 @@ function getHeaderMenu()
 					'show'=>$user->can('view money payment'),
 					'submenu'=>[]
 				],
-				
+
 				[
 			'title'=>__('Internal Money Transfer'),
 			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
@@ -4346,29 +4346,29 @@ function getHeaderMenu()
 							'title'=>__('Cash & Cheques Opening Balance'),
 						'link'=>route('opening-balance.index', ['company'=>$companyId]),
 						'show'=>$user->can('view opening balances'),
-						
+
 						],
 						[
-							
+
 					'title'=>__('LGs Opening Balances'),
-					'link'=>'#',
+					'link'=>route('lg-opening-balance.index',['company'=>$companyId]),
 					'show'=>true ,
-					'submenu'=>[
-						[
-							'title'=>__('100% Cash Cover LGs'),
-							'link'=>route('view.safe.statement',['company'=>$company->id]) ,
-							'show'=>true,
-							'submenu'=>[]
-						],
-						[
-							'title'=>__('LGs Against CDs Or TDs'),
-							'link'=>route('view.bank.statement',['company'=>$company->id]),
-							'show'=>true,
-							'submenu'=>[]
+					// 'submenu'=>[
+					// 	[
+					// 		'title'=>__('100% Cash Cover LGs'),
+					// 		'link'=>route('view.safe.statement',['company'=>$company->id]) ,
+					// 		'show'=>true,
+					// 		'submenu'=>[]
+					// 	],
+					// 	[
+					// 		'title'=>__('LGs Against CDs Or TDs'),
+					// 		'link'=>route('view.bank.statement',['company'=>$company->id]),
+					// 		'show'=>true,
+					// 		'submenu'=>[]
+					// 	]
+					// ]
 						]
-					]
-						]
-				
+
 			]
 		]
 		,
@@ -4390,23 +4390,23 @@ function getHeaderMenu()
 			'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
 			'show'=>$user->can('view cashvero settings'),
 			'submenu'=>[
-			
-				
-				
+
+
+
 				[
 					'title'=>__('Notification Settings'),
 				'link'=>route('notifications-settings.index', ['company'=>$companyId]),
 				'show'=>$user->can('view notification settings'),
-				
+
 				]
 			]
 		],
-		
-		
-	
-	
-		
-		
+
+
+
+
+
+
 		];
 		$isCustomerOrSupplierUploading = in_array('CustomerInvoice',Request()->segments()) || in_array('SupplierInvoice',Request()->segments());
 		if(hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading ){
@@ -4479,11 +4479,11 @@ function getHeaderMenu()
 									'link'=>route('sales.export.analysis', ['company'=>$companyId]),
 									'show'=>$user->can('view export analysis data')
 								],
-                               
-								
-                                
+
+
+
                             ]
-                            
+
 								],
 								'sales-forecast'=>[
 									'title'=>__('Sales Forecast'),
@@ -4515,10 +4515,10 @@ function getHeaderMenu()
 											'show'=>$user->can('view cash management'),
 											'submenu'=>$cashManagementSubItems
 												],
-												
-												
-												
-												
+
+
+
+
 												'quick-price'=>[
 													'title'=>__('Quick Price'),
 													'link'=>'#',
@@ -4529,14 +4529,14 @@ function getHeaderMenu()
 															'link'=>route('admin.view.quick.pricing.calculator',['company'=>$companyId]),
 															'show'=>$user->can('view pricing plans')
 														],
-														
+
 														'quick-price-calculator'=>[
 															'title'=>__('Quick Price Calculator'),
 															'link'=>route('admin.view.quick.pricing.calculator', ['company'=>$companyId]),
 															'show'=>$user->can('view quick price calculator'),
 															'submenu'=>[]
 														],
-													
+
 														'setting'=>[
 															'title'=>__('Setting'),
 															'link'=>'#',
@@ -4545,11 +4545,11 @@ function getHeaderMenu()
 																'revenue-business-line'=>generateMenuItem(__('Revenue Business Line'), $user->can('view revenue business line'), route('admin.view.revenue.business.line', ['company'=>$companyId]), []),
 																'positions'=>generateMenuItem(__('Positions'), $user->can('view positions'), route('positions.index', ['company'=>$companyId]), []),
 																'expenses'=>generateMenuItem(__('Expenses'), $user->can('view expenses'), route('pricing-expenses.index', ['company'=>$companyId]), []),
-																
+
 															]
 														],
-														
-														
+
+
 													]
 													],
 													'labeling-items'=>[
@@ -4561,15 +4561,15 @@ function getHeaderMenu()
 															'building lable'=>generateMenuItem(__('Building Label'), $user->can('view create labeling items'), route('show.building.label', ['company'=>$companyId]) ),
 															'FF&E lable'=>generateMenuItem(__('FF&E Label'), $user->can('view create labeling items'), route('show.ffe.label', ['company'=>$companyId]) ),
 															'create-labeling-form'=>generateMenuItem(__('Create Labeling Form'), $user->can('view create labeling items'), route('create.labeling.form', ['company'=>$companyId]) ),
-															
+
 														]
 													],
-												
-						
-                
+
+
+
     ];
 }
-function getLgTypes():array 
+function getLgTypes():array
 {
 	return LgTypes::getAll();
 }
@@ -4602,7 +4602,7 @@ function unformat_number($money)
 function getRevenueBusinessLineOptions(): array
 {
 
-	// used by seeder 
+	// used by seeder
 
 	return [
 		'training_service' => __('Training Service'),
@@ -4727,7 +4727,7 @@ function getTestFloors()
 			'data-abb'=>'FO2',
 			'data-code'=>'02'
 		],
-		
+
 	];
 }
 function getTestCategory()
@@ -4745,7 +4745,7 @@ function getTestCategory()
 			'data-abb'=>'CHs',
 			'data-code'=>'02'
 		],
-		
+
 	];
 }
 function getTestLabelForm()
@@ -4782,7 +4782,7 @@ function filterByColumnName($filterByColumnName){
 		foreach($attributes as $colName => $colVal){
 				$items[$colName][$colVal] = $colVal ;
 		}
-		
+
 	}
 	$formatted=[];
 	foreach($items as $colName => $arr){
@@ -4790,10 +4790,10 @@ function filterByColumnName($filterByColumnName){
 			$formatted[$colName][] =[
 				'title'=>$col,
 				'value'=>$val
-			]; 
+			];
 		}
 	}
-	return $formatted ; 
+	return $formatted ;
 }
 function formatColumnName($name)
 {
@@ -4802,18 +4802,18 @@ function formatColumnName($name)
 function FormatKeyAsColumnName($items){
 	$result = [];
 	foreach($items as $key => $val){
-		$result[formatColumnName($key)] =$val; 
+		$result[formatColumnName($key)] =$val;
 	}
-	return $result ; 
+	return $result ;
 }
 function getValuesStartedAfterIndex(array $items , int $index){
 	$result = ['QR Code'];
 	foreach($items as $i => $val){
 		if($i > $index){
-			$result[]=$val ; 
+			$result[]=$val ;
 		}
 	}
-	return $result; 
+	return $result;
 }
 function qrcodeSpacing($code)
 {
@@ -4827,7 +4827,7 @@ function array_to_upper(array $items)
 {
 	$result = [];
 	foreach($items as $item){
-		$result[] = snakeToCamel($item); 
+		$result[] = snakeToCamel($item);
 	}
 	return $result ;
 }
@@ -4847,7 +4847,7 @@ function toupperfirst($currentName){
 	return ucfirst($currentName);
 }
 
-function dashesToCamelCase($string) 
+function dashesToCamelCase($string)
 {
     $str = str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
     $str[0] = strtolower($str[0]);
@@ -4859,7 +4859,7 @@ function isAll($percentageOf){
 	}
 	$allItems  = is_array($percentageOf) ? $percentageOf : json_decode($percentageOf) ;
 	return in_array('all',$allItems);
-	
+
 }
 function getAllPercentageOfRevenuesIds(int $incomeStatementId , string $subItemType,int $isQuantity)
 {
@@ -4869,19 +4869,19 @@ function getAllPercentageOfRevenuesIds(int $incomeStatementId , string $subItemT
 	->where('sub_item_type',$subItemType)
 	->where('financial_statement_able_id',$incomeStatementId)
 	->pluck('id')->toArray();
-	
+
 }
 function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSubItemType)
 {
-	
+
 	/**
 	 * @var IncomeStatement $incomeStatement
-	 * * 
+	 * *
 	 */
-	$newPercentageOf = []; 
+	$newPercentageOf = [];
 
 	// $isPercentageOfs = $incomeStatement->pivot->{$propertyName} ;
-	
+
 	foreach((array)convertStringArrayToArr($isPercentageOfs) as $percentageOfId){
 		$subItem = IncomeStatementSubItem::find($percentageOfId);
 		if($subItem){
@@ -4896,17 +4896,17 @@ function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSub
 				$newPercentageOf[] = $item->id;
 			}
 		}
-		
+
 	}
 	return $newPercentageOf;
 }
- function convertStringArrayToArr($arrayAsString):?array 
+ function convertStringArrayToArr($arrayAsString):?array
 	{
 		if(is_string($arrayAsString)){
 			return (array)(json_decode($arrayAsString)) ;
 		}
 		return $arrayAsString;
-	} 
+	}
 function hasMiddleware(string $middlewareName)
 {
 	return in_array($middlewareName,array_values(Route::current()->gatherMiddleware()) );
@@ -4990,8 +4990,8 @@ function formatWeeksDatesFromStartDate(string $agingDate, string $format = 'd-m-
 
         ];
     }
-	
-	
+
+
 
 if (!function_exists('str_to_upper')) {
 	function str_to_upper($str)
@@ -5012,4 +5012,3 @@ if (!function_exists('getFixedLoanTypes')) {
 	{
 		return $secondDate->diffInDays($firstDate);
 	}
-	

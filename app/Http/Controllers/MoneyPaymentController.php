@@ -32,7 +32,7 @@ class MoneyPaymentController
 			return $collection;
 		}
 		$searchFieldName = $request->get('field');
-		$dateFieldName = $searchFieldName === 'due_date' ? 'due_date' : 'delivery_date'; 
+		$dateFieldName = $searchFieldName === 'due_date' ? 'due_date' : 'delivery_date';
 		if($searchFieldName =='delivery_date'){
 			$dateFieldName = 'delivery_date';
 		}
@@ -49,14 +49,14 @@ class MoneyPaymentController
 				/**
 				 * * بمعني لو مالقناش القيمة في جدول ال
 				 * * moneyPayment
-				 * * هندور عليها في العلاقه 
+				 * * هندور عليها في العلاقه
 				 */
 				$currentValue = is_null($currentValue) && $relationRecord ? $relationRecord->{$searchFieldName}  :$currentValue ;
 				if($searchFieldName == 'delivery_branch_id'){
-					$currentValue = $moneyPayment->getCashPaymentBranchName() ;  
+					$currentValue = $moneyPayment->getCashPaymentBranchName() ;
 				}
 				if($searchFieldName == 'delivery_bank_id'){
-					$currentValue = $moneyPayment->getDeliveryBankName() ;  
+					$currentValue = $moneyPayment->getDeliveryBankName() ;
 				}
 				return false !== stristr($currentValue , $value);
 			});
@@ -68,7 +68,7 @@ class MoneyPaymentController
 			return $collection->where($dateFieldName,'<=',$to);
 		})
 		->sortByDesc('delivery_date');
-	
+
 		return $collection;
 	}
 	public function index(Company $company,Request $request)
@@ -79,67 +79,67 @@ class MoneyPaymentController
 		foreach(MoneyPayment::getAllTypes() as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
-			
+
 			$filterDates[$type] = [
 				'startDate'=>$startDate,
 				'endDate'=>$endDate
 			];
 		}
-		// cash 
+		// cash
 		$cashPaymentsStartDate = $filterDates[MoneyPayment::CASH_PAYMENT]['startDate'] ?? null ;
 		$cashPaymentsEndDate = $filterDates[MoneyPayment::CASH_PAYMENT]['endDate'] ?? null ;
-		
+
 
 			// outgoing transfer
 			$outgoingTransferStartDate = $filterDates[MoneyPayment::OUTGOING_TRANSFER]['startDate'] ?? null ;
 			$outgoingTransferEndDate = $filterDates[MoneyPayment::OUTGOING_TRANSFER]['endDate'] ?? null ;
-			
+
 		/**
 		 * * cheques in safe
 		 */
 		$payableChequesStartDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['startDate'] ?? null ;
 		$payableChequesEndDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['endDate'] ?? null ;
-		
+
 		/**
 		 * * rejected cheques
 		 */
 		// $chequesRejectedStartDate = $filterDates[MoneyPayment::CHEQUE_REJECTED]['startDate'] ?? null ;
 		// $chequesRejectedEndDate = $filterDates[MoneyPayment::CHEQUE_REJECTED]['endDate'] ?? null ;
-		
-		
-	
-		
-		
-	
+
+
+
+
+
+
 		$user = $request->user()->load('moneyPayments') ;
-		/** 
+		/**
 		* @var User $user
 		*/
 		$cashPayments = $user->getCashPayments($cashPaymentsStartDate ,$cashPaymentsEndDate ) ;
-	
+
 		$outgoingTransfer = $user->getOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
 		$payableCheques = $user->getPayableCheques($payableChequesStartDate,$payableChequesEndDate);
 		// $receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe($chequesRejectedStartDate,$chequesRejectedEndDate);
 		// $receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
 		// $collectedCheques=  $user->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
-		
+
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		
-		$accountTypes = AccountType::onlyCashAccounts()->get();		
+
+		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$cashPayments = $moneyType == MoneyPayment::CASH_PAYMENT ? $this->applyFilter($request,$cashPayments) :$cashPayments  ;
 		$outgoingTransfer = $moneyType === MoneyPayment::OUTGOING_TRANSFER ? $this->applyFilter($request,$outgoingTransfer) : $outgoingTransfer  ;
-		
-	
+
+
 		$payableCheques = $moneyType == MoneyPayment::PAYABLE_CHEQUE ? $this->applyFilter($request,$payableCheques) : $payableCheques;
-		
-		
+
+
 		// $receivedRejectedChequesInSafe = $moneyType == MoneyPayment::CHEQUE_REJECTED ? $this->applyFilter($request,$receivedRejectedChequesInSafe) : $receivedRejectedChequesInSafe;
-		
+
 		// $receivedChequesUnderCollection=  $moneyType == MoneyPayment::CHEQUE_UNDER_COLLECTION ? $this->applyFilter($request,$receivedChequesUnderCollection) : $receivedChequesUnderCollection ;
-		
+
 		// $collectedCheques=  $moneyType == MoneyPayment::CHEQUE_COLLECTED ? $this->applyFilter($request,$collectedCheques) : $collectedCheques ;
-		
-		
+
+
 		$payableChequesTableSearchFields = [
 			'supplier_name'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
@@ -149,8 +149,8 @@ class MoneyPaymentController
 			'due_date'=>__('Due Date'),
 			'cheque_status'=>__('Status')
 		];
-		
-		
+
+
 		// $chequesRejectedTableSearchFields = [
 		// 	'supplier_name'=>__('Supplier Name'),
 		// 	'delivery_date'=>__('Delivery Date'),
@@ -160,7 +160,7 @@ class MoneyPaymentController
 		// 	'due_date'=>__('Due Date'),
 		// 	'cheque_status'=>__('Status')
 		// ];
-		
+
 		// $chequesUnderCollectionTableSearchFields = [
 		// 	'supplier_name'=>__('Supplier Name'),
 		// 	'cheque_number'=>__('Cheque Number'),
@@ -169,7 +169,7 @@ class MoneyPaymentController
 		// 	'delivery_bank_id'=>__('Delivery Bank'),
 		// 	'clearance_days'=>'Clearance Days'
 		// ];
-		
+
 		// $collectedChequesTableSearchFields = [
 		// 	'supplier_name'=>__('Supplier Name'),
 		// 	'cheque_number'=>__('Cheque Number'),
@@ -178,7 +178,7 @@ class MoneyPaymentController
 		// 	'delivery_bank_id'=>__('Delivery Bank'),
 		// 	'clearance_days'=>'Clearance Days'
 		// ];
-		
+
 		$outgoingTransferTableSearchFields = [
 			'supplier_name'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
@@ -187,9 +187,9 @@ class MoneyPaymentController
 			'currency'=>__('Currency'),
 			'account_number'=>__('Account Number')
 		];
-		
-		
-		
+
+
+
 		$payableCashTableSearchFields = [
 			'supplier_name'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
@@ -198,12 +198,12 @@ class MoneyPaymentController
 			'currency'=>__('Currency'),
 			'receipt_number'=>__('Receipt Number')
 		];
-		
-		
-		
-		
 
-		$accountTypes = AccountType::onlyCashAccounts()->get();		
+
+
+
+
+		$accountTypes = AccountType::onlyCashAccounts()->get();
         return view('reports.moneyPayments.index', [
 			'company'=>$company ,
 			'payableCheques'=>$payableCheques,
@@ -221,11 +221,11 @@ class MoneyPaymentController
 			// 'collectedCheques'=>$collectedCheques,
 			// 'collectedChequesTableSearchFields'=>$collectedChequesTableSearchFields,
 			'filterDates'=>$filterDates,
-			
+
 		]);
         return view('reports.moneyPayments.index', compact('financialInstitutionBanks','accountTypes'));
     }
-	
+
 	public function create(Company $company,$supplierInvoiceId = null)
 	{
 		$currencies = DB::table('supplier_invoices')
@@ -241,10 +241,10 @@ class MoneyPaymentController
 		$isDownPayment = Request()->has('type');
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 
-		$accountTypes = AccountType::onlyCashAccounts()->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		// $supplierInvoices =  $singleModel ?  SupplierInvoice::where('id',$singleModel)->pluck('supplier_name','id') :SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray(); 
+		// $supplierInvoices =  $singleModel ?  SupplierInvoice::where('id',$singleModel)->pluck('supplier_name','id') :SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
 		$invoiceNumber = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getInvoiceNumber():null;
 		/**
 		 * * for contracts
@@ -257,7 +257,7 @@ class MoneyPaymentController
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->pluck('name','id')->toArray(); 
+		->pluck('name','id')->toArray();
 		$contracts = [];
 
         return view($viewName,[
@@ -271,9 +271,9 @@ class MoneyPaymentController
 			'contracts'=>$contracts
 		]);
     }
-	
+
 	public function result(Company $company , Request $request){
-		
+
 		return view('reports.moneyPayments.form',[
 		]);
 	}
@@ -298,11 +298,11 @@ class MoneyPaymentController
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
 			return response()->json([
-				'status'=>true , 
+				'status'=>true ,
 				'purchases_orders'=>$formattedSalesOrders,
 				'selectedCurrency'=>$selectedCurrency
 			]);
-		
+
 	}
 	public function getInvoiceNumber(Company $company ,  Request $request , int $supplierInvoiceId,?string $selectedCurrency=null)
 	{
@@ -313,42 +313,42 @@ class MoneyPaymentController
 		$supplierName = $partner->getName() ;
 		$invoices = SupplierInvoice::where('supplier_name',$supplierName)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
-	
+
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
-		
+
 		$allCurrencies =$invoices->where('company_id',$company->id)->pluck('currency','currency')->mapWithKeys(function($value,$key){
 			return [
-				$key=>$value 
+				$key=>$value
 			];
-		});		
+		});
 		if($selectedCurrency){
-			$invoices = $invoices->where('currency','=',$selectedCurrency);	
+			$invoices = $invoices->where('currency','=',$selectedCurrency);
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')
 		->get(['invoice_number','invoice_date','net_invoice_amount','paid_amount','net_balance','currency'])
 		->toArray();
-		
-		
+
+
 		foreach($invoices as $index=>$invoiceArr){
 			$invoices[$index]['paid_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
 			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
 		}
-		
+
 		$invoices = $this->formatInvoices($invoices,$inEditMode);
 			return response()->json([
-				'status'=>true , 
+				'status'=>true ,
 				'invoices'=>$invoices,
 				'currencies'=>$allCurrencies,
 				'selectedCurrency'=>$selectedCurrency
 			]);
-		
+
 	}
 	protected function formatInvoices(array $invoices,int $inEditMode){
 		return SupplierInvoice::formatInvoices($invoices,$inEditMode);
 	}
-	
+
 	public function store(Company $company , StoreMoneyPaymentRequest $request){
 		$moneyType = $request->get('type');
 		$bankId = null;
@@ -366,7 +366,7 @@ class MoneyPaymentController
 		$isDownPayment = $request->has('purchases_orders_amounts');
 		$data['money_type'] =  !$isDownPayment ? 'money-payment' : 'down-payment';
 
-		
+
 		$relationData = [];
 		$relationName = null ;
 		$paidAmount = 0 ;
@@ -387,7 +387,7 @@ class MoneyPaymentController
 				'account_type'=>$request->input('account_type.'.MoneyPayment::OUTGOING_TRANSFER)
 			];
 		}
-		
+
 		elseif($moneyType ==MoneyPayment::PAYABLE_CHEQUE ){
 			$relationName = 'payableCheque';
 			$bankId = $request->input('delivery_bank_id.'.MoneyPayment::PAYABLE_CHEQUE) ;
@@ -410,16 +410,16 @@ class MoneyPaymentController
 		/**
 		 * @var MoneyPayment $moneyPayment ;
 		 */
-		
-		
+
+
 		 $moneyPayment = MoneyPayment::create($data);
-		 $relationData['company_id'] = $company->id ;  
+		 $relationData['company_id'] = $company->id ;
 		 $moneyPayment->$relationName()->create($relationData);
 		$statementDate = $moneyPayment->getStatementDate();
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
-		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,0,$paidAmount,$deliveryBranchId,$currencyName);
+		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmount,$deliveryBranchId,$currencyName);
 		/**
 		 * * For Money Received Only
 		 */
@@ -446,7 +446,7 @@ class MoneyPaymentController
 				$settlementArr['supplier_name'] = $supplierName ;
 				$settlementArr['settlement_amount'] = $settlementArr['paid_amount'];
 				$withholdAmount = $settlementArr['withhold_amount']?? 0;
-				
+
 				$totalWithholdAmount +=   $withholdAmount;
 				$moneyPayment->settlements()->create($settlementArr);
 			}
@@ -468,19 +468,19 @@ class MoneyPaymentController
 					));
 			}
 		}
-		
-		
+
+
 		$moneyPayment->update([
 			'total_withhold_amount'=>$totalWithholdAmount
 		]);
 		/**
 		 * @var SupplierInvoice $supplierInvoice
 		 */
-		
+
 		$activeTab = $moneyType;
-		
+
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
-		
+
 	}
 	protected function getActiveTab(string $moneyType)
 	{
@@ -494,14 +494,27 @@ class MoneyPaymentController
 		->where('currency','!=','')
 		->get()
 		->unique('currency')->pluck('currency','currency');
-		
-		$viewName = $moneyPayment->isDownPayment()  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
+		$isDownPayment = $moneyPayment->isDownPayment(); 
+		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $supplierInvoices = SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray(); 
-		$accountTypes = AccountType::onlyCashAccounts()->get();		
+		// $supplierInvoices = SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
+		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$suppliers =  $supplierInvoiceId ?  Partner::where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray(); 
+		$suppliers =  $supplierInvoiceId ?  Partner::where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray();
+		/**
+		 * * for contracts
+		 */
+		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
+		->when($isDownPayment,function(Builder $q){
+			$q->has('contracts');
+		})
+		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)
+		->when($isDownPayment,function(Builder $q){
+			$q->has('contracts');
+		})
+		->pluck('name','id')->toArray();
+		
 		$contracts = Contract::where('company_id',$company->id)->get();
 		// if($moneyPayment->isChequeUnderCollection()){
 		// 	return view('reports.moneyPayments.edit-cheque-under-collection',[
@@ -512,7 +525,7 @@ class MoneyPaymentController
 		// 		'singleModel'=>$singleModel,
 		// 		'accountTypes'=>$accountTypes,
 		// 		'financialInstitutionBanks'=>$financialInstitutionBanks
-		// 	]); 
+		// 	]);
 		// }
         return view($viewName,[
 			'banks'=>$banks,
@@ -526,11 +539,11 @@ class MoneyPaymentController
 			'singleModel'=>$supplierInvoiceId,
 			'currencies'=>$currencies
 		]);
-		
+
 	}
-	
+
 	public function update(Company $company , StoreMoneyPaymentRequest $request , moneyPayment $moneyPayment){
-		
+
 		$newType = $request->get('type');
 		$moneyPayment->deleteRelations();
 		$moneyPayment->delete();
@@ -538,7 +551,7 @@ class MoneyPaymentController
 		 $activeTab = $newType;
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
-	
+
 	public function destroy(Company $company , MoneyPayment $moneyPayment)
 	{
 		$moneyPayment->deleteRelations();
@@ -574,20 +587,20 @@ class MoneyPaymentController
 					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
 					'updated_at'=>now()
 				]);
-		
+
 			}
-			
+
 		}
 		if($request->ajax()){
 			return response()->json([
 				'status'=>true ,
 				'msg'=>__('Good'),
 				'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE])
-			]);	
+			]);
 		}
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE]);
-		
-	}	
+
+	}
 	public function markOutgoingTransfersAsPaid(Company $company,Request $request)
 	{
 		$moneyPaymentIds = $request->get('cheques') ;
@@ -605,26 +618,26 @@ class MoneyPaymentController
 					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
 					'updated_at'=>now()
 				]);
-		
+
 			}
-			
+
 		}
 		if($request->ajax()){
 			return response()->json([
 				'status'=>true ,
 				'msg'=>__('Good'),
 				'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER])
-			]);	
+			]);
 		}
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER]);
-		
+
 	}
 
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId);
 		return response()->json([
-			'status'=>true , 
+			'status'=>true ,
 			'data'=>$accountNumberModel
 		]);
 	}

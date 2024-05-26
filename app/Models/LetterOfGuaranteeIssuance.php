@@ -15,6 +15,9 @@ class LetterOfGuaranteeIssuance extends Model
 	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
 	const RUNNING = 'running';
 	const CANCELLED = 'cancelled';
+    const LG_FACILITY_BEGINNING_BALANCE = 'lg-facility-beginning-balance';
+    const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
+    const AGAINST_CD_OR_TD_BEGINNING_BALANCE = 'against-cd-or-td-beginning-balance';
 	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
     protected $guarded = ['id'];
 	public function isRunning()
@@ -25,7 +28,7 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->getStatus() === self::CANCELLED;
 	}
-	
+
 	public function getStatus()
 	{
 		return $this->status ;
@@ -46,7 +49,7 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->financialInstitutionBank ? $this->financialInstitutionBank->getName() : __('N/A') ;
 	}
-	
+
 	public function getFinancialInstitutionBankId()
 	{
 		return $this->financialInstitutionBank ? $this->financialInstitutionBank->getName() : __('N/A') ;
@@ -73,7 +76,7 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function getLgCode()
 	{
-		return $this->lg_code ; 
+		return $this->lg_code ;
 	}
 	public function beneficiary()
 	{
@@ -82,14 +85,14 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getBeneficiaryName()
 	{
 		$beneficiary = $this->beneficiary ;
-		return  $beneficiary ? $beneficiary->getName(): 0 ; 
+		return  $beneficiary ? $beneficiary->getName(): 0 ;
 	}
 	public function getBeneficiaryId()
 	{
 		$beneficiary = $this->beneficiary ;
-		return  $beneficiary ? $beneficiary->getId(): 0 ; 
+		return  $beneficiary ? $beneficiary->getId(): 0 ;
 	}
-	
+
 	public function contract()
 	{
 		return $this->belongsTo(Contract::class , 'contract_id','id');
@@ -97,12 +100,12 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getContractName()
 	{
 		$contract = $this->contract ;
-		return  $contract ? $contract->getName(): 0 ; 
+		return  $contract ? $contract->getName(): 0 ;
 	}
 	public function getContractId()
 	{
 		$contract = $this->contract ;
-		return  $contract ? $contract->getId(): 0 ; 
+		return  $contract ? $contract->getId(): 0 ;
 	}
 	public function purchaseOrder()
 	{
@@ -111,12 +114,12 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getPurchaseOrderName()
 	{
 		$purchaseOrder = $this->purchaseOrder ;
-		return  $purchaseOrder ? $purchaseOrder->getName(): 0 ; 
+		return  $purchaseOrder ? $purchaseOrder->getName(): 0 ;
 	}
 	public function getPurchaseOrderId()
 	{
 		$purchaseOrder = $this->purchaseOrder ;
-		return  $purchaseOrder ? $purchaseOrder->getId(): 0 ; 
+		return  $purchaseOrder ? $purchaseOrder->getId(): 0 ;
 	}
 	public function getPurchaseOrderDate()
 	{
@@ -137,7 +140,7 @@ class LetterOfGuaranteeIssuance extends Model
 		$month = $date[0];
 		$day = $date[1];
 		$year = $date[2];
-		
+
 		$this->attributes['purchase_order_date'] = $year.'-'.$month.'-'.$day;
 	}
 	public function getTransactionDate()
@@ -159,14 +162,14 @@ class LetterOfGuaranteeIssuance extends Model
 		$month = $date[0];
 		$day = $date[1];
 		$year = $date[2];
-		
+
 		$this->attributes['transaction_date'] = $year.'-'.$month.'-'.$day;
 	}
 	public function getTransactionReference()
 	{
 		return $this->transaction_reference ;
 	}
-	
+
 	public function getIssuanceDate()
 	{
 		return $this->issuance_date;
@@ -186,15 +189,15 @@ class LetterOfGuaranteeIssuance extends Model
 		$month = $date[0];
 		$day = $date[1];
 		$year = $date[2];
-		
+
 		$this->attributes['issuance_date'] = $year.'-'.$month.'-'.$day;
 	}
-	
+
 	public function getLgDurationMonths()
 	{
 		return $this->lg_duration_months;
 	}
-	
+
 	public function getRenewalDate()
 	{
 		return $this->renewal_date;
@@ -214,10 +217,10 @@ class LetterOfGuaranteeIssuance extends Model
 		$month = $date[0];
 		$day = $date[1];
 		$year = $date[2];
-		
+
 		$this->attributes['renewal_date'] = $year.'-'.$month.'-'.$day;
 	}
-	
+
 	public function getLgAmount()
 	{
 		return $this->lg_amount ?: 0 ;
@@ -230,10 +233,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->lg_currency ;
 	}
-	
+
 	public function getCasCoverRate()
 	{
-		return $this->cash_cover_rate?:0; 
+		return $this->cash_cover_rate?:0;
 	}
 	public function getCashCoverRateFormatted()
 	{
@@ -255,10 +258,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_number;
 	}
-	
+
 	public function getLgCommissionRate()
 	{
-		return $this->lg_commission_rate ?: 0; 
+		return $this->lg_commission_rate ?: 0;
 	}
 	public function getLgCommissionRateFormatted()
 	{
@@ -280,6 +283,6 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeStatement::class,'letter_of_guarantee_issuance_id','id');
 	}
-	
+
 
 }
