@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLetterOfGuaranteeStatementsTable extends Migration
+class CreateLetterOfGuaranteeCashCoverStatementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateLetterOfGuaranteeStatementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('letter_of_guarantee_statements', function (Blueprint $table) {
+        Schema::create('letter_of_guarantee_cash_cover_statements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('type')->nullable();
 			$table->string('source')->comment('هو المكان او الطريقه يعني اللي انت انشاتة بيها وانت عندك ثلاث او اربع زراير دول عباره عن المصدر اللي هو قيمة الكولوم دا');
@@ -45,6 +45,6 @@ class CreateLetterOfGuaranteeStatementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('letter_of_guarantee_statements');
+        Schema::dropIfExists('letter_of_guarantee_cash_cover_statements');
     }
 }

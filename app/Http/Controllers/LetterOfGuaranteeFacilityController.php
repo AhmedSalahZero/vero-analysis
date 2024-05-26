@@ -97,12 +97,21 @@ class LetterOfGuaranteeFacilityController
 			$termAndConditionArr['company_id'] = $company->id ;
 			$termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
 			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			$currentCashCover = $termAndConditionArr['cash_cover_rate'];
+			
 			$currentLgType = $termAndConditionArr['lg_type'] ;
 			if($currentOutstandingBalance){
 				$letterOfGuaranteeFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
 			}
-			$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			if($currentOutstandingBalance > 0){
+				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+				
+			}
+			$cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
+			if( $cashCoverOpeningBalance > 0 ){
+				$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$cashCoverOpeningBalance,0,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			}
 
 		}
 		$type = $request->get('type','letter-of-guarantee-facilities');
@@ -133,6 +142,7 @@ class LetterOfGuaranteeFacilityController
      $letterOfGuaranteeFacility->update($data);
      $currencyName = $letterOfGuaranteeFacility->getCurrency();
      LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
+     LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
 		$letterOfGuaranteeFacility->termAndConditions->each(function($termAndCondition){
 			$termAndCondition->delete();
 		});
@@ -142,9 +152,16 @@ class LetterOfGuaranteeFacilityController
 			]));
             $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
 			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			$currentCashCoverRate = $termAndConditionArr['cash_cover_rate'] / 100  ;
+			$currentCashCoverBeginningBalance  = $currentOutstandingBalance * $currentCashCoverRate ; 
 			$currentLgType = $termAndConditionArr['lg_type'] ;
-
-			$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			if($currentOutstandingBalance > 0 ){
+				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			}
+			if($currentCashCoverBeginningBalance > 0){
+				$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$currentCashCoverBeginningBalance,0,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			}
+			
 
 		}
 		$type = $request->get('type','letter-of-guarantee-facilities');
@@ -158,6 +175,7 @@ class LetterOfGuaranteeFacilityController
 	{
 
          LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
+         LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
 
 		$letterOfGuaranteeFacility->termAndConditions->each(function($termAndCondition){
             $termAndCondition->delete();
