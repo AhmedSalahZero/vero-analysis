@@ -56,7 +56,7 @@ class LgOpeningBalance extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeStatement::class,'letter_of_guarantee_issuance_id','id');
 	}
-
+	
 
 
 

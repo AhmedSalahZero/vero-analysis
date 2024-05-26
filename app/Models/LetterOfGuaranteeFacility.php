@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Models\LetterOfGuaranteeFacilityTermAndCondition;
+use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class LetterOfGuaranteeFacility extends Model
 {
-	use HasLetterOfGuaranteeStatements;
+	use HasLetterOfGuaranteeStatements , HasLetterOfGuaranteeCashCoverStatements;
     protected $guarded = ['id'];
 	public function getContractStartDate()
 	{
@@ -79,6 +80,9 @@ class LetterOfGuaranteeFacility extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeStatement::class,'lg_facility_id','id');
 	}
-
+	public function letterOfGuaranteeCashCoverStatements()
+	{
+		return $this->hasMany(LetterOfGuaranteeCashCoverStatement::class,'lg_facility_id','id');
+	}
 
 }

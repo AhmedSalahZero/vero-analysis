@@ -26,7 +26,6 @@ trait HasLetterOfGuaranteeStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-
 	public function handleLetterOfGuaranteeStatement(int $financialInstitutionId , string $source  , int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $type =null)
 	{
 		$data = $this->generateLetterOfGuaranteeData($financialInstitutionId , $source  , $lgFacilityId, $lgType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName , $type) ;

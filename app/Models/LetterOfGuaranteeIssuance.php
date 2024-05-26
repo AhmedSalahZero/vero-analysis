@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class LetterOfGuaranteeIssuance extends Model
 {
-	use HasBasicStoreRequest,HasLetterOfGuaranteeStatements;
+	use HasBasicStoreRequest,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
 	const LG_FACILITY = 'lg-facility';
 	const AGAINST_CD_OR_TD ='against-cd-or-td';
 	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
@@ -283,6 +284,35 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeStatement::class,'letter_of_guarantee_issuance_id','id');
 	}
-
+	public function letterOfGuaranteeCashCoverStatements()
+	{
+		return $this->hasMany(LetterOfGuaranteeCashCoverStatement::class,'letter_of_guarantee_issuance_id','id');
+	}
+	
+	public function currentAccountCreditBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->where('is_credit',1);
+	}
+	public function currentAccountCreditBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->where('is_credit',1)->orderBy('full_date','desc');
+	}
+	
+	public function currentAccountDebitBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->where('is_debit',1);
+	}
+	public function currentAccountDebitBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->where('is_debit',1)->orderBy('full_date','desc');
+	}
+	/**
+	 * * علشان نجيب الاربعه مع بعض مرة واحدة
+	 */
+	public function currentAccountBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->orderBy('full_date','desc');
+	}
+	
 
 }

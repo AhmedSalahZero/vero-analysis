@@ -59,7 +59,7 @@
  </div>
  @elseif($model->isCancelled())
  
-  <a data-toggle="modal" data-target="#back-to-running-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Cancel Letter') }}" href="#"><i class="fa fa fa-undo"></i></a>
+  <a data-toggle="modal" data-target="#back-to-running-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Back To Running') }}" href="#"><i class="fa fa fa-undo"></i></a>
 
  <div class="modal fade" id="back-to-running-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">

@@ -27,6 +27,8 @@ trait HasDeleteButTriggerChangeOnLastElement
 			 * * observer 
 			 * * من عندة
 			 */
+			
+		
 			if($index == $length-1){
 				$statements->delete();
 			}else{
