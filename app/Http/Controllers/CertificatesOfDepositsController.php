@@ -73,7 +73,7 @@ class CertificatesOfDepositsController
 		 */
 		$runningCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::RUNNING]['startDate'] ?? null ;
 		$runningCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::RUNNING]['endDate'] ?? null ;
-		$runningCertificatesOfDeposits = $company->runningCertificatesOfDeposits ;
+		$runningCertificatesOfDeposits = $financialInstitution->runningCertificatesOfDeposits ;
 		$runningCertificatesOfDeposits =  $runningCertificatesOfDeposits->filterByStartDate($runningCertificatesOfDepositsStartDate,$runningCertificatesOfDepositsEndDate) ;
 		$runningCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::RUNNING ? $this->applyFilter($request,$runningCertificatesOfDeposits):$runningCertificatesOfDeposits ;
 		/**
@@ -87,7 +87,7 @@ class CertificatesOfDepositsController
 		 */
 		$maturedCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::MATURED]['startDate'] ?? null ;
 		$maturedCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::MATURED]['endDate'] ?? null ;
-		$maturedCertificatesOfDeposits = $company->maturedCertificatesOfDeposits ;
+		$maturedCertificatesOfDeposits = $financialInstitution->maturedCertificatesOfDeposits ;
 		$maturedCertificatesOfDeposits =  $maturedCertificatesOfDeposits->filterByStartDate($maturedCertificatesOfDepositsStartDate,$maturedCertificatesOfDepositsEndDate) ;
 		$maturedCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::MATURED ? $this->applyFilter($request,$maturedCertificatesOfDeposits):$maturedCertificatesOfDeposits ;
 		/**
@@ -101,7 +101,7 @@ class CertificatesOfDepositsController
 		 */
 		$brokenCertificatesOfDepositsStartDate = $filterDates[CertificatesOfDeposit::BROKEN]['startDate'] ?? null ;
 		$brokenCertificatesOfDepositsEndDate = $filterDates[CertificatesOfDeposit::BROKEN]['endDate'] ?? null ;
-		$brokenCertificatesOfDeposits = $company->brokenCertificatesOfDeposits ;
+		$brokenCertificatesOfDeposits = $financialInstitution->brokenCertificatesOfDeposits ;
 		$brokenCertificatesOfDeposits =  $brokenCertificatesOfDeposits->filterByStartDate($brokenCertificatesOfDepositsStartDate,$brokenCertificatesOfDepositsEndDate) ;
 		$brokenCertificatesOfDeposits =  $currentType == CertificatesOfDeposit::BROKEN ? $this->applyFilter($request,$brokenCertificatesOfDeposits):$brokenCertificatesOfDeposits ;
 		/**

@@ -38,14 +38,16 @@ class BalancesController
 		$fullClassName = ('\App\Models\\'.$modelType) ;
 		$customersOrSupplierText = (new $fullClassName )->getClientDisplayName();
 		$title = (new $fullClassName )->getBalancesTitle();
+		$customersOrSupplierStatementText = (new $fullClassName)->getCustomerOrSupplierStatementText();
 		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+		// __('Customer Statement')
 		$tableName = $fullClassName::TABLE_NAME ; 
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();
 		$invoicesBalances =DB::select(DB::raw('select id, '. $clientNameColumnName .' , '. $clientIdColumnName .' , currency , sum(net_balance) as net_balance , sum(net_balance_in_main_currency) as net_balance_in_main_currency from '. $tableName .' where net_balance > 0 and company_id = '. $company->id .'  group by '. $clientNameColumnName .' , currency order by net_balance desc;'));
 		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainCurrency,$clientNameColumnName);
-        return view('admin.reports.balances_form', compact('company','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName'));
+        return view('admin.reports.balances_form', compact('company','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }
 	public function result(Company $company , Request $request,string $modelType){
 		

@@ -84,7 +84,7 @@ class LetterOfCreditFacilityController
 		$termAndConditions = $request->get('termAndConditions',[]) ; 
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-					$letterOfCreditFacility = $financialInstitution->LetterOfCreditFacilities()->create($data);
+		$letterOfCreditFacility = $financialInstitution->LetterOfCreditFacilities()->create($data);
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
 			if(isset($termAndConditionArr['outstanding_balance'])){

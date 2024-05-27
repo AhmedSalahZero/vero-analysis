@@ -133,8 +133,8 @@ class SupplierInvoice extends Model implements IInvoice
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
 			$currentData['document_no'] = null;
-			$currentData['debit'] = $debit = $beginningBalance >= 0 ? $beginningBalance : 0;
-			$currentData['credit'] = $credit = $beginningBalance < 0 ? $beginningBalance * -1 : 0 ;
+			$currentData['debit'] =$debit  = $beginningBalance < 0 ? $beginningBalance * -1 : 0 ;
+			$currentData['credit'] = $credit = $beginningBalance >= 0 ? $beginningBalance : 0 ;
 			$currentData['end_balance'] =$debit - $credit;
 			$currentData['comment'] =null;
 			$index++ ;
@@ -152,8 +152,8 @@ class SupplierInvoice extends Model implements IInvoice
 			$currentData['date'] = $invoiceDate;
 			$currentData['document_type'] = 'Invoice';
 			$currentData['document_no'] = $invoiceNumber;
-			$currentData['debit'] = $supplierInvoice->getNetInvoiceAmount();
-			$currentData['credit'] =0;
+			$currentData['debit'] =0 ;
+			$currentData['credit'] = $supplierInvoice->getNetInvoiceAmount() ;
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index]=$currentData;
@@ -169,8 +169,8 @@ class SupplierInvoice extends Model implements IInvoice
 					$currentData['date'] = $deliveryDate;
 					$currentData['document_type'] = $moneyPaymentType;
 					$currentData['document_no'] = $docNumber  ;
-					$currentData['debit'] = 0;
-					$currentData['credit'] =$moneyPaymentAmount;
+					$currentData['debit'] = $moneyPaymentAmount ;
+					$currentData['credit'] = 0;
 					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->pluck('invoice_number')->toArray()); ;
 					$index++;
 					$formattedData[] = $currentData ;
@@ -181,8 +181,8 @@ class SupplierInvoice extends Model implements IInvoice
 					$currentData['date'] = $deliveryDate;
 					$currentData['document_type'] = __('Withhold Taxes');
 					$currentData['document_no'] =  $docNumber ;
-					$currentData['debit'] = 0;
-					$currentData['credit'] =$totalWithholdAmount;
+					$currentData['debit'] = $totalWithholdAmount;
+					$currentData['credit'] =0;
 					$currentData['comment'] =$bankName;
 					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->where('withhold_amount','>',0)->pluck('invoice_number')->toArray());
 					$index++;
@@ -205,10 +205,11 @@ class SupplierInvoice extends Model implements IInvoice
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
-
-			$result[$index]['paid_amount'] = $inEditMode 	?  (double)$invoiceArr['paid_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['paid_amount'];
-			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
-			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
+			$currentSettlementAmount = $invoiceArr['settlement_amount'] ?? 0 ;
+			$currentSettlementAmount = (double) $currentSettlementAmount ;
+			$result[$index]['paid_amount'] = $inEditMode 	?  (double)$invoiceArr['paid_amount'] - $currentSettlementAmount  : (double)$invoiceArr['paid_amount'];
+			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $currentSettlementAmount  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
+			$result[$index]['settlement_amount'] = $inEditMode ? $currentSettlementAmount : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
 			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
 		}

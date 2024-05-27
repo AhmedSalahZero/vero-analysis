@@ -203,7 +203,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var paidAmount = res.invoices[i].paid_amount
 				var invoiceDate = res.invoices[i].invoice_date
 				var settlementAmount = res.invoices[i].paid_amount
-				console.log(res.invoices,settlementAmount,'---','qq');
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
 				domInvoiceNumber.val(invoiceNumber)

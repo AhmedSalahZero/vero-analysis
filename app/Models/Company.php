@@ -159,41 +159,7 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(InternalMoneyTransfer::class,'company_id','id');
 	}
-	public function runningCertificatesOfDeposits()
-	{
-		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
-		->where('status',CertificatesOfDeposit::RUNNING);
-	}
-	public function maturedCertificatesOfDeposits()
-	{
-		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
-		->where('status',CertificatesOfDeposit::MATURED);
-	}
-	public function brokenCertificatesOfDeposits()
-	{
-		return $this->hasMany(CertificatesOfDeposit::class , 'company_id','id')
-		->where('status',CertificatesOfDeposit::BROKEN);
-	}
-
-
-
-
-
-	public function runningTimeOfDeposits()
-	{
-		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
-		->where('status',TimeOfDeposit::RUNNING);
-	}
-	public function maturedTimeOfDeposits()
-	{
-		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
-		->where('status',TimeOfDeposit::MATURED);
-	}
-	public function brokenTimeOfDeposits()
-	{
-		return $this->hasMany(TimeOfDeposit::class , 'company_id','id')
-		->where('status',TimeOfDeposit::BROKEN);
-	}
+	
 	public function getHeadOfficeId()
 	{
 		return DB::table('branch')->where('company_id',$this->id)->orderByRaw('created_at asc')->first()->id;

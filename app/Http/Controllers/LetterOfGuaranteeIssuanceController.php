@@ -128,8 +128,14 @@ class LetterOfGuaranteeIssuanceController
 		$lgAmount = $request->get('lg_amount',0);
 		$currency = $request->get('lg_currency',0);
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
+		$issuanceFees = $request->get('issuance_fees',0);
+		$lgCommissionAmount = $request->get('lg_commission_amount',0);
+		$minLgCommissionAmount = $request->get('min_lg_commission_fees',0);
+		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId);
+		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId);
+		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,'credit-lg-amount');
 		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,'credit-lg-amount');
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
