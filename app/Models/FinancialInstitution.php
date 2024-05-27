@@ -188,7 +188,42 @@ class FinancialInstitution extends Model
 			]);
 		}
 	}
+	public function runningCertificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id')
+		->where('status',CertificatesOfDeposit::RUNNING);
+	}
+	public function maturedCertificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id')
+		->where('status',CertificatesOfDeposit::MATURED);
+	}
+	public function brokenCertificatesOfDeposits()
+	{
+		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id')
+		->where('status',CertificatesOfDeposit::BROKEN);
+	}
 
+
+
+
+
+	public function runningTimeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'financial_institution_id','id')
+		->where('status',TimeOfDeposit::RUNNING);
+	}
+	public function maturedTimeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'financial_institution_id','id')
+		->where('status',TimeOfDeposit::MATURED);
+	}
+	public function brokenTimeOfDeposits()
+	{
+		return $this->hasMany(TimeOfDeposit::class , 'financial_institution_id','id')
+		->where('status',TimeOfDeposit::BROKEN);
+	}
+	
 
 
 

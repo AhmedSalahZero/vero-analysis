@@ -72,7 +72,7 @@ class TimeOfDepositsController
 		 */
 		$runningTimeOfDepositsStartDate = $filterDates[TimeOfDeposit::RUNNING]['startDate'] ?? null ;
 		$runningTimeOfDepositsEndDate = $filterDates[TimeOfDeposit::RUNNING]['endDate'] ?? null ;
-		$runningTimeOfDeposits = $company->runningTimeOfDeposits ;
+		$runningTimeOfDeposits = $financialInstitution->runningTimeOfDeposits ;
 		$runningTimeOfDeposits =  $runningTimeOfDeposits->filterByStartDate($runningTimeOfDepositsStartDate,$runningTimeOfDepositsEndDate) ;
 		$runningTimeOfDeposits =  $currentType == TimeOfDeposit::RUNNING ? $this->applyFilter($request,$runningTimeOfDeposits):$runningTimeOfDeposits ;
 		/**
@@ -86,7 +86,7 @@ class TimeOfDepositsController
 		 */
 		$maturedTimeOfDepositsStartDate = $filterDates[TimeOfDeposit::MATURED]['startDate'] ?? null ;
 		$maturedTimeOfDepositsEndDate = $filterDates[TimeOfDeposit::MATURED]['endDate'] ?? null ;
-		$maturedTimeOfDeposits = $company->maturedTimeOfDeposits ;
+		$maturedTimeOfDeposits = $financialInstitution->maturedTimeOfDeposits ;
 		$maturedTimeOfDeposits =  $maturedTimeOfDeposits->filterByStartDate($maturedTimeOfDepositsStartDate,$maturedTimeOfDepositsEndDate) ;
 		$maturedTimeOfDeposits =  $currentType == TimeOfDeposit::MATURED ? $this->applyFilter($request,$maturedTimeOfDeposits):$maturedTimeOfDeposits ;
 		/**
@@ -100,7 +100,7 @@ class TimeOfDepositsController
 		 */
 		$brokenTimeOfDepositsStartDate = $filterDates[TimeOfDeposit::BROKEN]['startDate'] ?? null ;
 		$brokenTimeOfDepositsEndDate = $filterDates[TimeOfDeposit::BROKEN]['endDate'] ?? null ;
-		$brokenTimeOfDeposits = $company->brokenTimeOfDeposits ;
+		$brokenTimeOfDeposits = $financialInstitution->brokenTimeOfDeposits ;
 		$brokenTimeOfDeposits =  $brokenTimeOfDeposits->filterByStartDate($brokenTimeOfDepositsStartDate,$brokenTimeOfDepositsEndDate) ;
 		$brokenTimeOfDeposits =  $currentType == TimeOfDeposit::BROKEN ? $this->applyFilter($request,$brokenTimeOfDeposits):$brokenTimeOfDeposits ;
 		/**

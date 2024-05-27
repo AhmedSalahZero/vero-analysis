@@ -307,7 +307,6 @@ class CustomerInvoiceDashboardController extends Controller
         ->where($clientIdColumnName, '=', $partnerId)->get();
         $partner = Partner::find($partnerId);
         $partnerName = $partner->getName() ;
-
         $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));

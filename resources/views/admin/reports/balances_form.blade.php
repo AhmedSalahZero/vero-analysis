@@ -391,7 +391,7 @@
                                                 <td class="sub-text-bg text-center max-w-amount">{{ number_format($invoicesBalancesAsStdClass->net_balance) }}</td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     @if($currencyName && $invoicesBalancesAsStdClass->{$clientNameColumnName})
-                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ __('Customer Statement') }}</a>
+                                                    <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ $customersOrSupplierStatementText }}</a>
                                                     @endif
                                                 </td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">

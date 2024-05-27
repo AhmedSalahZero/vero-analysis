@@ -534,7 +534,6 @@ class MoneyReceivedController
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
-		// $customers =  $singleModel ?  Partner::where('id',$singleModel)->pluck('name','id') :Partner::where('company_id',$company->id)->pluck('name','id')->unique()->toArray(); 
 		/**
 		 * * for contracts
 		 */
@@ -554,7 +553,7 @@ class MoneyReceivedController
 				'selectedBranches'=>$selectedBranches,
 				'selectedBanks'=>$selectedBanks,
 				'model'=>$moneyReceived,
-				'singleModel'=>$singleModel,
+				'singleModel'=>$customerInvoiceId,
 				'accountTypes'=>$accountTypes,
 				'financialInstitutionBanks'=>$financialInstitutionBanks,
 				'currencies'=>$currencies
@@ -570,7 +569,7 @@ class MoneyReceivedController
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'selectedBanks'=>$selectedBanks,
 			'model'=>$moneyReceived,
-			'singleModel'=>$singleModel,
+			'singleModel'=>$customerInvoiceId,
 			'currencies'=>$currencies
 		]);
 		

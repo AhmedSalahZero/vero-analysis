@@ -240,7 +240,7 @@ class MoneyPaymentController
 		->unique('currency')->pluck('currency','currency');
 		$isDownPayment = Request()->has('type');
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
-
+		
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
@@ -249,6 +249,7 @@ class MoneyPaymentController
 		/**
 		 * * for contracts
 		 */
+
 		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
@@ -259,7 +260,7 @@ class MoneyPaymentController
 		})
 		->pluck('name','id')->toArray();
 		$contracts = [];
-
+		
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'selectedBranches'=>$selectedBranches,
