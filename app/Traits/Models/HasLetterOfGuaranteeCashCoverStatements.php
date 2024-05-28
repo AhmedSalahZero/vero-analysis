@@ -5,7 +5,7 @@ namespace App\Traits\Models;
 
 trait HasLetterOfGuaranteeCashCoverStatements
 {
-    public function generateLetterOfGuaranteeCashCoverData(int $financialInstitutionId , string $source  , int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $type =null):array
+    public function generateLetterOfGuaranteeCashCoverData( int $financialInstitutionId , string $source  , int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $type =null):array
     {
         return [
 			'type'=>$type , // beginning-balance for example

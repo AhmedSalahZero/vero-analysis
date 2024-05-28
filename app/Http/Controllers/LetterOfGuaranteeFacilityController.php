@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Enums\LgTypes;
+use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeFacility;
@@ -8,6 +9,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -105,7 +107,7 @@ class LetterOfGuaranteeFacilityController
 				]));
 			}
 			if($currentOutstandingBalance > 0){
-				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
 				
 			}
 			$cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
@@ -156,7 +158,7 @@ class LetterOfGuaranteeFacilityController
 			$currentCashCoverBeginningBalance  = $currentOutstandingBalance * $currentCashCoverRate ; 
 			$currentLgType = $termAndConditionArr['lg_type'] ;
 			if($currentOutstandingBalance > 0 ){
-				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
 			}
 			if($currentCashCoverBeginningBalance > 0){
 				$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$currentCashCoverBeginningBalance,0,$currencyName,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
@@ -185,6 +187,7 @@ class LetterOfGuaranteeFacilityController
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	public function updateOutstandingBalanceAndLimits(Request $request , Company $company ){
+	
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
 		$selectedLgType = $request->get('lgType');
 		$currentLgOutstanding = 0 ;
@@ -202,10 +205,19 @@ class LetterOfGuaranteeFacilityController
 		$letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
+			$accountTypeId = $request->get('accountTypeId');
 			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
 			->where('company_id',$company->id)
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('lg_type',$lgTypeId)
+			->when($request->has('accountTypeId'),function(Builder $builder) use ($request,$accountTypeId){
+				$accountType = AccountType::find($accountTypeId);
+				$currentSource = LetterOfGuaranteeIssuance::AGAINST_TD;
+				if($accountType->isCertificateOfDeposit()){
+					$currentSource = LetterOfGuaranteeIssuance::AGAINST_CD;
+				}
+				$builder->where('source',$currentSource);
+			})
 			->orderByRaw('full_date desc')
 			->first();
 			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
@@ -214,6 +226,7 @@ class LetterOfGuaranteeFacilityController
 			}
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
+		dd($currentLgOutstanding);
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
 		return response()->json([
 			'limit'=>number_format($limit) ,

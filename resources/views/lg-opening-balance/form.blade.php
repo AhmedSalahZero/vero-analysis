@@ -419,7 +419,7 @@ use App\Models\LetterOfGuaranteeIssuance ;
 
                                 {{-- start of Cheques Under Collection --}}
                                 @php
-                                $tableId = 'LgAgainstTdOrCdOpeningBalances'; // name of relationship
+                                $tableId = 'LgAgainstCertificateOfDepositOrTimeOfDepositOpeningBalances'; // name of relationship
                                 $repeaterId = 'm_repeater_9';
 
                                 @endphp

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 
-class CleanOverdraftBankStatement extends Model
+class FullySecuredOverdraftBankStatement extends Model
 {
 	
 	protected $guarded =[
@@ -20,7 +20,7 @@ class CleanOverdraftBankStatement extends Model
 	{
 		$minDate  = $model->full_date ;
 		
-		DB::table('clean_overdrafts')->where('id',$model->clean_overdraft_id)->update([
+		DB::table('fully_secured_overdrafts')->where('id',$model->fully_secured_overdraft_id)->update([
 			'oldest_full_date'=>$minDate,
 			'origin_update_row_is_debit'=>$model->is_debit  
 		]);
@@ -36,9 +36,9 @@ class CleanOverdraftBankStatement extends Model
 		 DB::table($tableName)
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , priority asc , id asc')
-		->where('clean_overdraft_id',$model->clean_overdraft_id)
-		->each(function($cleanOverdraftBankStatement) use($tableName){
-			DB::table($tableName)->where('id',$cleanOverdraftBankStatement->id)->update([
+		->where('fully_secured_overdraft_id',$model->fully_secured_overdraft_id)
+		->each(function($fullySecuredOverdraftBankStatement) use($tableName){
+			DB::table($tableName)->where('id',$fullySecuredOverdraftBankStatement->id)->update([
 				'updated_at'=>now()
 			]);
 		});
@@ -58,7 +58,7 @@ class CleanOverdraftBankStatement extends Model
 				 */
 				$fullDateTime = HDate::generateUniqueDateTimeForModel(self::class,'full_date',$fullDateTime,[
 					[
-						'clean_overdraft_id','=',$model->clean_overdraft_id ,
+						'fully_secured_overdraft_id','=',$model->fully_secured_overdraft_id ,
 					]
 				]) ;
 				$model->full_date = $fullDateTime;
@@ -73,26 +73,26 @@ class CleanOverdraftBankStatement extends Model
 				$minDate = self::updateNextRows($model);
 				
 				
-				$isChanged = $model->isDirty('clean_overdraft_id') ;
+				$isChanged = $model->isDirty('fully_secured_overdraft_id') ;
 				/**
 				 * * دي علشان لو غيرت ال
-				 * * clean_overdraft_id
+				 * * fully_secured_overdraft_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
 				if($isChanged){
-					$oldCleanOverdraftId=$model->getRawOriginal('clean_overdraft_id');
+					$oldFullySecuredOverdraftId=$model->getRawOriginal('fully_secured_overdraft_id');
 					$oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldCleanOverdraft = self::where('clean_overdraft_id',$oldCleanOverdraftId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					$firstBankStatementForOldFullySecuredOverdraft = self::where('fully_secured_overdraft_id',$oldFullySecuredOverdraftId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-					if(!$firstBankStatementForOldCleanOverdraft){
-						CleanOverdraftWithdrawal::where('clean_overdraft_id',$oldCleanOverdraftId)->delete();
+					if(!$firstBankStatementForOldFullySecuredOverdraft){
+						FullySecuredOverdraftWithdrawal::where('fully_secured_overdraft_id',$oldFullySecuredOverdraftId)->delete();
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
-						DB::table('clean_overdraft_bank_statements')
+						DB::table((new self)->getTable())
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , priority asc , id asc')
-						->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
+						->where('fully_secured_overdraft_id',$model->fully_secured_overdraft_id)->update([
 							'updated_at'=>now()
 						]);
 						
@@ -102,23 +102,23 @@ class CleanOverdraftBankStatement extends Model
 				
 			});
 			
-			static::deleting(function(self $cleanOverdraftBankStatement){
+			static::deleting(function(self $fullySecuredOverdraftBankStatement){
 				$oldDate = null ;
-				if($cleanOverdraftBankStatement->is_debit && Request('receiving_date')||$cleanOverdraftBankStatement->is_credit && Request('delivery_date')){
+				if($fullySecuredOverdraftBankStatement->is_debit && Request('receiving_date')||$fullySecuredOverdraftBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $cleanOverdraftBankStatement->full_date ;
-						$cleanOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+						$currentDate = $fullySecuredOverdraftBankStatement->full_date ;
+						$fullySecuredOverdraftBankStatement->full_date = min($oldDate,$currentDate);
 				}
-				DB::table('clean_overdrafts')->where('id',$cleanOverdraftBankStatement->clean_overdraft_id)->update([
-					'oldest_full_date'=>$cleanOverdraftBankStatement->full_date,
-					'origin_update_row_is_debit'=>$cleanOverdraftBankStatement->is_debit
+				DB::table('fully_secured_overdrafts')->where('id',$fullySecuredOverdraftBankStatement->fully_secured_overdraft_id)->update([
+					'oldest_full_date'=>$fullySecuredOverdraftBankStatement->full_date,
+					'origin_update_row_is_debit'=>$fullySecuredOverdraftBankStatement->is_debit
 				]);
 				
-				$cleanOverdraftBankStatement->debit = 0;
-				$cleanOverdraftBankStatement->credit = 0;
-				$cleanOverdraftBankStatement->save();
+				$fullySecuredOverdraftBankStatement->debit = 0;
+				$fullySecuredOverdraftBankStatement->credit = 0;
+				$fullySecuredOverdraftBankStatement->save();
 				
 			});
 		}
@@ -133,11 +133,11 @@ class CleanOverdraftBankStatement extends Model
 	}
 	public function withdrawals()
 	{
-		return $this->hasMany(CleanOverdraftWithdrawal::class,'clean_overdraft_bank_statement_id','id');
+		return $this->hasMany(FullySecuredOverdraftWithdrawal::class,'fully_secured_overdraft_bank_statement_id','id');
 	}
-	public function cleanOverDraft()
+	public function fullySecuredOverDraft()
 	{
-		return $this->belongsTo(CleanOverdraft::class,'clean_overdraft_id','id');
+		return $this->belongsTo(FullySecuredOverdraft::class,'fully_secured_overdraft_id','id');
 	}
 	public function getId()
 	{

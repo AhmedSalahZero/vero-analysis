@@ -6,7 +6,6 @@ use App\Models\Company;
 use App\OutstandingBreakdown;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 
 trait HasOutstandingBreakdown

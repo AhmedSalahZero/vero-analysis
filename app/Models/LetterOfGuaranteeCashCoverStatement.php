@@ -96,7 +96,6 @@ class LetterOfGuaranteeCashCoverStatement extends Model
 					where('financial_institution_id',$financialInstitutionId)->
 					where('lg_facility_id',$oldLgFacilityId)->
 					where('source',$oldSource)->
-					
 					where('lg_type',$oldLgType)
 					->where('id','!=',$oldStatementId )->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
@@ -191,5 +190,6 @@ class LetterOfGuaranteeCashCoverStatement extends Model
 	{
 		return $this->belongsTo(LetterOfGuaranteeIssuance::class,'lg_facility_id','id');
 	} 
+	
 	
 }
