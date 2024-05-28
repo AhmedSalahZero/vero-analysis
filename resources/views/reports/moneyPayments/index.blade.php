@@ -9,6 +9,9 @@ $banks = [];
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+.color-green{
+	color:green !important;
+}
     button[type="submit"],
     button[type="button"] {
         font-size: 1rem !important;
@@ -145,7 +148,7 @@ $banks = [];
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyPayment->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyPayment->id }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
-                                    <td>{{ $moneyPayment->payableCheque->getStatusFormatted() }}</td>
+                                    <td class="@if($moneyPayment->payableCheque->getStatus() == 'paid') text-success color-green @endif ">{{ $moneyPayment->payableCheque->getStatusFormatted() }}</td>
                                     <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyPayment->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
@@ -159,7 +162,13 @@ $banks = [];
 										$dueStatus = $moneyPayment->payableCheque->getDueStatusFormatted() ;
 									@endphp
 									
-                                    <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">{{ $dueStatus['status'] }}</td>
+                                    <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">
+									@if($moneyPayment->payableCheque->getStatus() == 'paid') 
+									-
+									@else  
+									{{ $dueStatus['status'] }}
+									@endif
+									</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										{{-- @if(!$moneyPayment->isOpenBalance() && $moneyPayment->payableCheque->getStatus() == 'pending') --}}

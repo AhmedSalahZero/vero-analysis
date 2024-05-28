@@ -41,7 +41,7 @@ class BalancesController
 		$customersOrSupplierStatementText = (new $fullClassName)->getCustomerOrSupplierStatementText();
 		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
-		// __('Customer Statement')
+	
 		$tableName = $fullClassName::TABLE_NAME ; 
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();

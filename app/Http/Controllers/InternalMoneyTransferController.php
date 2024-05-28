@@ -71,23 +71,24 @@ class InternalMoneyTransferController
 			'models'=>$models
 		]);
     }
-	public function create(Company $company)
+	public function create(Company $company,$type)
 	{
-        return view('internal-money-transfer.form',$this->getCommonViewVars($company));
+		$formName = $type . '-form';
+        return view('internal-money-transfer.'.$formName,$this->getCommonViewVars($company,$type));
     }
-	public function getCommonViewVars(Company $company,$model = null)
+	public function getCommonViewVars(Company $company,string $type,$model = null)
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
-		
 		return [
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'accountTypes'=>$accountTypes,
-			'model'=>$model
+			'model'=>$model,
+			'type'=>$type
 		];
 	}
 	
@@ -176,10 +177,9 @@ class InternalMoneyTransferController
 		
 	}
 
-	public function edit(Company $company,InternalMoneyTransfer $internalMoneyTransfer)
+	public function edit(Company $company,string $type,InternalMoneyTransfer $internalMoneyTransfer)
 	{
-		
-        return view('internal-money-transfer.form',$this->getCommonViewVars($company,$internalMoneyTransfer));
+        return view('internal-money-transfer.bank-to-bank-form',$this->getCommonViewVars($company,$type,$internalMoneyTransfer));
     }
 	
 	public function update(Company $company , Request $request , InternalMoneyTransfer $internalMoneyTransfer){

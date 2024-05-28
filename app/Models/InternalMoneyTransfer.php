@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class InternalMoneyTransfer extends Model
 {
+	const BANK_TO_BANK = 'bank-to-bank';
+	const BANK_TO_SAFE = 'bank-to-safe';
+	const SAFE_TO_BANK = 'safe-to-bank';
     use HasBasicStoreRequest ;
     protected $guarded = ['id'];
 
