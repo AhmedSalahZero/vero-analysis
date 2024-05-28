@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\LgTypes;
 use App\Models\AccountType;
+use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\LgOpeningBalance;
 use App\Models\Partner;
+use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 
@@ -67,31 +69,62 @@ class LgOpeningBalancesController
                     'lg_expiry_date'=>$item['lg_expiry_date'],
                     'currency'=>$currencyName
                 ]);
-                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE);
+                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,0,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE);
             }
 
         }
 
 
-        foreach ($request->get('LgAgainstTdOrCdOpeningBalances') as $index => $item) {
+        foreach ($request->get('LgAgainstCertificateOfDepositOrTimeOfDepositOpeningBalances') as $index => $item) {
             /**
              * @var LgOpeningBalance $lgOpeningBalance
              */
             $amount = $item['amount'] ?: 0 ;
             if($amount > 0){
+				$currentAccountNumber = $item['account_number'] ;
                 $lgType = $item['lg_type'] ;
                 $currencyName = $item['currency'];
                 $financialInstitutionId = $item['financial_institution_id'] ;
-                $lgOpeningBalance->LgAgainstTdOrCdOpeningBalances()->create([
+				$accountTypeId = $item['account_type'] ;
+				$accountType = AccountType::where('id',$accountTypeId)->first();
+				$againstCdOrTdType = null ;
+				$beginningBalanceType = null ;
+				$additionalRelationData = [];
+				$cdOrTdId = 0 ;
+				if($accountType->isCertificateOfDeposit()){
+					$againstCdOrTdType = LetterOfGuaranteeIssuance::AGAINST_CD ;
+					$beginningBalanceType = LetterOfGuaranteeIssuance::AGAINST_CD_BEGINNING_BALANCE ;
+					$additionalRelationData = [
+						'type'=>LgOpeningBalance::CERTIFICATE_OF_DEPOSIT
+					];
+					$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($company->id,$currentAccountNumber)->id ;
+				}
+				elseif($accountType->isTimeOfDeposit()){
+					$againstCdOrTdType = LetterOfGuaranteeIssuance::AGAINST_TD ;
+					$beginningBalanceType = LetterOfGuaranteeIssuance::AGAINST_TD_BEGINNING_BALANCE ;
+					$additionalRelationData = [
+						'type'=>LgOpeningBalance::TIME_OF_DEPOSIT
+					];
+					$cdOrTdId = TimeOfDeposit::findByAccountNumber($company->id,$currentAccountNumber)->id ;
+				}
+				$currentData = [
                     'amount'=>$amount ,
                     'financial_institution_id'=>$financialInstitutionId,
-                    'account_type'=>$item['account_type'],
-                    'account_number'=>$item['account_number'],
+                    'account_type'=>$accountTypeId,
+                    'account_number'=>$currentAccountNumber,
                     'lg_type'=>$lgType,
                     'lg_end_date'=>$item['lg_end_date'],
                     'currency'=>$currencyName
-                ]);
-                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,LetterOfGuaranteeIssuance::AGAINST_CD_OR_TD,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,LetterOfGuaranteeIssuance::AGAINST_CD_OR_TD_BEGINNING_BALANCE);
+                ] ;
+				$currentData = array_merge($currentData , $additionalRelationData);
+				if($accountType->isCertificateOfDeposit()){
+					$lgOpeningBalance->LgAgainstCertificateOfDepositOpeningBalances()->create($currentData);
+				}
+				elseif($accountType->isTimeOfDeposit()){
+					$lgOpeningBalance->LgAgainstTimeOfDepositOpeningBalances()->create($currentData);
+				}
+				
+                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,$againstCdOrTdType,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,$cdOrTdId,$beginningBalanceType);
             }
 
         }
@@ -120,16 +153,18 @@ class LgOpeningBalancesController
 
           /**
          * * بداية تحديث ال
-         * * LgAgainstTdOrCdOpeningBalances
+         * * LgAgainstCertificateOfDepositOpeningBalances
          */
 
-         LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($LgOpeningBalance->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AGAINST_CD_OR_TD_BEGINNING_BALANCE));
-        $LgOpeningBalance->LgAgainstTdOrCdOpeningBalances()->delete();
+         LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($LgOpeningBalance->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AGAINST_CD_BEGINNING_BALANCE));
+         LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($LgOpeningBalance->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AGAINST_TD_BEGINNING_BALANCE));
+        $LgOpeningBalance->LgAgainstCertificateOfDepositOpeningBalances()->delete();
+        $LgOpeningBalance->LgAgainstTimeOfDepositOpeningBalances()->delete();
         $LgOpeningBalance->delete();
 
         /**
          * * نهاية تحديث ال
-         * * LgAgainstTdOrCdOpeningBalances
+         * * LgAgainstCertificateOfDepositOrTimeOfDepositOpeningBalances
          */
 
          /**

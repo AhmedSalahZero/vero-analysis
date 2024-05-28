@@ -111,20 +111,19 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             @endforeach
                                         </select>
                                     </div>
-                                    @if($source != LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER)
+									
+
+									
+									
                                     <div class="col-md-4">
                                         <x-form.input :id="'limit-id'" :default-value="0" :model="$model??null" :label="__('LG Limit')" :type="'text'" :placeholder="__('LG Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    @endif
-
                                     <div class="col-md-4">
                                         <x-form.input :id="'total-lg-for-all-types-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    @if($source != LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER)
                                     <div class="col-md-4">
                                         <x-form.input :id="'total-room-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Room')" :type="'text'" :placeholder="__('Total LGs Room')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    @endif
 
                                     <div class="col-md-4">
                                         <label> {{ __('LG Type') }}
@@ -151,56 +150,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             </div>
                         </div>
 
-						@if($source == LetterOfGuaranteeIssuance::AGAINST_CD_OR_TD)
-                        <div class="kt-portlet">
-                            <div class="kt-portlet__head">
-                                <div class="kt-portlet__head-label">
-                                    <h3 class="kt-portlet__head-title head-title text-primary">
-                                        {{__('CD Or TD Information')}}
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="kt-portlet__body">
-
-
-                                <div class="form-group row">
-                                    <div class="col-md-4">
-									<label>{{ __('Account Type') }} <span class=""></span> </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select name="cd_or_td_account_type" class="form-control js-update-account-number-based-on-account-type">
-                                                    @foreach($cdOrTdAccountTypes as $index => $accountType)
-                                                    <option @if(isset($model) && ($accountType->id == $model->getCdOrTdAccountTypeId()) ) selected @endif value="{{ $accountType->id }}">{{ $accountType->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-									   <label>{{ __('Account Number') }} <span class=""></span> </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCdOrTdAccountNumber(): 0 }}" name="cd_or_td_account_number" class="form-control js-account-number">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-									
-									
-									
-									           <div class="col-md-4 ">
-
-
-                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'test__name'" :class="''" :required="true"></x-form.input>
-
-                                    </div>
-									
-                                </div>
-                            </div>
-                        </div>
-						@endif 
+                      
 
 
 
@@ -368,7 +318,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             </select>
                                         </div>
                                     </div>
-
+							
                                     <div class="col-md-3">
                                         <x-form.input :id="$source != LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
                                     </div>
@@ -377,6 +327,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
                                     </div>
+							
 
 
 
@@ -389,9 +340,11 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-3">
+                                 
+									<div class="col-md-3">
                                         <x-form.input :id="'min_lg_commission_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
+									
                                     <div class="col-md-3">
                                         <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
@@ -676,10 +629,14 @@ use App\Models\LetterOfGuaranteeIssuance;
                         }
                     })
                 })
+
+            </script>
+            @if(!isset($model))
+            <script>
                 $('[js-update-outstanding-balance-and-limits]').trigger('change')
 
             </script>
-
+            @endif
             <script>
                 $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
                     const customerId = $('select#customer_name').val()
@@ -738,20 +695,21 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
             </script>
-			<script>
-				$(document).on('change','[js-cd-or-td-account-number]',function(){
-					const parent=  $(this).closest('.kt-portlet__body') ; 
-					const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
-					const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
-					let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number' ]) }}";
-					url = url.replace('replace_account_type',accountType);
-					url = url.replace('replace_account_number',accountNumber);
-					$.ajax({
-						url ,
-						success:function(res){
-							parent.find('#cd-or-td-amount-id').val(number_format(res.amount))
-						}
-					});
-				})
-			</script>
+            <script>
+                $(document).on('change', '[js-cd-or-td-account-number]', function() {
+                    const parent = $(this).closest('.kt-portlet__body');
+                    const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
+                    const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
+                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number' ]) }}";
+                    url = url.replace('replace_account_type', accountType);
+                    url = url.replace('replace_account_number', accountNumber);
+                    $.ajax({
+                        url
+                        , success: function(res) {
+                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount))
+                        }
+                    });
+                })
+
+            </script>
             @endsection

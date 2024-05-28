@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\CertificatesOfDeposit;
-use App\Models\LetterOfCreditFacility;
-use App\Models\LetterOfGuaranteeFacility;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -180,10 +177,7 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
 	}
-	public function cleanOverdraft()
-	{
-		return $this->hasMany(CleanOverdraft::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
-	}
+	
 
 	
 	public function isFreeTrialAccount()

@@ -12,13 +12,15 @@ class LetterOfGuaranteeIssuance extends Model
 {
 	use HasBasicStoreRequest,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
 	const LG_FACILITY = 'lg-facility';
-	const AGAINST_CD_OR_TD ='against-cd-or-td';
+	const AGAINST_TD ='against-td';
+	const AGAINST_CD ='against-cd';
 	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
 	const RUNNING = 'running';
 	const CANCELLED = 'cancelled';
     const LG_FACILITY_BEGINNING_BALANCE = 'lg-facility-beginning-balance';
     const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
-    const AGAINST_CD_OR_TD_BEGINNING_BALANCE = 'against-cd-or-td-beginning-balance';
+    const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
+    const AGAINST_TD_BEGINNING_BALANCE = 'against-td-beginning-balance';
 	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
     protected $guarded = ['id'];
 	public function isRunning()
@@ -40,12 +42,33 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function getSource()
 	{
+		
 		return $this->source ?: self::LG_FACILITY ;
+	}
+	public function isCertificateOfDepositSource()
+	{
+		$accountTypeId = $this->getCdOrTdAccountTypeId() ;
+		$accountType = AccountType::find($accountTypeId);
+		return $accountType && $accountType->isCertificateOfDeposit();
 	}
 	public function getSourceFormatted()
 	{
-		return camelizeWithSpace($this->getSource());
+		
+		$source = $this->getSource();
+		if($source == self::LG_FACILITY){
+			return __('LG Facility');
+		}
+		if($source == self::AGAINST_CD){
+			return __('Against CD');
+			
+		}
+		if($source == self::AGAINST_TD){
+			return __('Against TD');
+			
+		}
+		return camelizeWithSpace($source);
 	}
+	
 	public function getTransactionName()
 	{
 		return $this->transaction_name;
@@ -328,6 +351,19 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getCdOrTdAccountNumber()
 	{
 		return $this->cd_or_td_account_number;
+	}
+	public function getCdOrTdId()
+	{
+		$account = AccountType::find($this->getCdOrTdAccountTypeId());
+		if($account && $account->isCertificateOfDeposit() ){
+			return CertificatesOfDeposit::findByAccountNumber($this->company_id , $this->getCdOrTdAccountNumber())->id;
+		}
+		if($account && $account->isTimeOfDeposit() ){
+			return TimeOfDeposit::findByAccountNumber($this->company_id , $this->getCdOrTdAccountNumber())->id;
+		}
+		
+		
+		return 0 ;
 	}
 
 }

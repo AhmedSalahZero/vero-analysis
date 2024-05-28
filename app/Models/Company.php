@@ -164,7 +164,16 @@ class Company extends Model implements HasMedia
 	{
 		return DB::table('branch')->where('company_id',$this->id)->orderByRaw('created_at asc')->first()->id;
 	}
-
+	public function cleanOverdrafts()
+	{
+		return $this->hasMany(CleanOverdraft::class , 'company_id','id');
+	}
+	public function fullySecuredOverdrafts()
+	{
+		return $this->hasMany(FullySecuredOverdraft::class , 'company_id','id');
+	}
+	
+	
 
 
 }

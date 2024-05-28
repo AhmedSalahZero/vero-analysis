@@ -14,16 +14,16 @@ use Illuminate\Database\Eloquent\Model;
  * * وعموما في حالة انك مدان للبنك وليكن مثلا لو انت سالف من البنك عشر الالف وسحبت تسعه ونزل عليك فايدة خمس مئة جنية
  * * وقتها ال خمس مئة جنية دول بينسحبوا من حسابك علطول وبالتالي انت ما عتش فاضلك غير خمس مئة مثلا
  */
-class CleanOverdraft extends Model
+class FullySecuredOverdraft extends Model
 {
     protected $guarded = ['id'];
 	use HasOutstandingBreakdown , IsOverdraft;
 	
 	
 	
-	public function cleanOverdraftBankStatements()
+	public function fullySecuredOverdraftBankStatements()
 	{
-		return $this->hasMany(CleanOverdraftBankStatement::class,'clean_overdraft_id','id');
+		return $this->hasMany(FullySecuredOverdraftBankStatement::class,'clean_overdraft_id','id');
 	}
 	public function bankStatements()
 	{

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class AccountType extends Model
 {
 	CONST CURRENT_ACCOUNT = 'current-account';
+	CONST FULLY_SECURED_OVERDRAFT = 'fully-secured-overdraft';
 	CONST CLEAN_OVERDRAFT = 'clean-overdraft';
 	CONST OVERDRAFT_AGAINST_COMMERCIAL_PAPER = 'overdraft-against-commercial-paper';
 	CONST OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS= 'overdraft-against-assignment-of-contracts';
@@ -23,7 +24,7 @@ class AccountType extends Model
 	];
 	public function scopeOnlyCashAccounts(Builder $builder)
 	{
-		return $builder->onlySlugs([self::CURRENT_ACCOUNT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
+		return $builder->onlySlugs([self::CURRENT_ACCOUNT,self::FULLY_SECURED_OVERDRAFT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
 	}
 
 	public function scopeOnlyCurrentAccount(Builder $builder)
@@ -34,13 +35,33 @@ class AccountType extends Model
 	{
 		return $builder->onlySlugs([self::CERTIFICATE_OF_DEPOSIT,self::TIME_OF_DEPOSIT]);
 	}
+	public function scopeOnlyCdAccounts(Builder $builder)
+	{
+		return $builder->onlySlugs([self::CERTIFICATE_OF_DEPOSIT]);
+	}
+	public function scopeOnlyTdAccounts(Builder $builder)
+	{
+		return $builder->onlySlugs([self::TIME_OF_DEPOSIT]);
+	}
 	public function isCdOrTdAccount()
 	{
 		return in_array($this->slug , [self::CERTIFICATE_OF_DEPOSIT , self::TIME_OF_DEPOSIT]);
 	}
+	public function isCertificateOfDeposit()
+	{
+		return in_array($this->slug , [self::CERTIFICATE_OF_DEPOSIT ]);
+	}
+	public function isTimeOfDeposit()
+	{
+		return in_array($this->slug , [self::TIME_OF_DEPOSIT ]);
+	}
 	public function isCleanOverDraftAccount():bool
 	{
 		return $this->slug === self::CLEAN_OVERDRAFT ;
+	}
+	public function isFullySecuredOverDraftAccount():bool
+	{
+		return $this->slug === self::FULLY_SECURED_OVERDRAFT ;
 	}
 	public function isCurrentAccount():bool
 	{

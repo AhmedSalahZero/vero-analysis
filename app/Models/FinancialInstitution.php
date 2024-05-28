@@ -26,8 +26,11 @@ class FinancialInstitution extends Model
 		if($source === LetterOfGuaranteeIssuance::LG_FACILITY){
 			return $builder->has('LetterOfGuaranteeFacilities');
 		}
-		if($source === LetterOfGuaranteeIssuance::AGAINST_CD_OR_TD){
-			return $builder->has('certificatesOfDeposits')->orHas('timeOfDeposits');
+		if($source === LetterOfGuaranteeIssuance::AGAINST_CD){
+			return $builder->has('certificatesOfDeposits');
+		}
+		if($source === LetterOfGuaranteeIssuance::AGAINST_TD){
+			return $builder->has('timeOfDeposits');
 		}
 		if($source === LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ){
 			return $builder;

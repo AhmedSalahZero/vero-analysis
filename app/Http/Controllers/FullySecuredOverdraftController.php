@@ -1,16 +1,17 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
-use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\FullySecuredOverdraft;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class CleanOverdraftController
+class FullySecuredOverdraftController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -45,11 +46,8 @@ class CleanOverdraftController
 	}
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
-		
-	
-		
-		$cleanOverdrafts = $company->cleanOverdrafts->where('financial_institution_id',$financialInstitution->id) ;
-		$cleanOverdrafts =   $this->applyFilter($request,$cleanOverdrafts) ;
+		$fullySecuredOverdrafts = $company->fullySecuredOverdrafts->where('financial_institution_id',$financialInstitution->id) ;
+		$fullySecuredOverdrafts =   $this->applyFilter($request,$fullySecuredOverdrafts) ;
 		$searchFields = [
 			'contract_start_date'=>__('Contract Start Date'),
 			'contract_end_date'=>__('Contract End Date'),
@@ -61,21 +59,22 @@ class CleanOverdraftController
 			
 		];
 
-        return view('reports.clean-overdraft.index', [
+        return view('reports.fully-secured-overdraft.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
 			'financialInstitution'=>$financialInstitution,
-			'cleanOverdrafts'=>$cleanOverdrafts
+			'fullySecuredOverdrafts'=>$fullySecuredOverdrafts
 		]);
     }
 	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-        return view('reports.clean-overdraft.form',[
+        return view('reports.fully-secured-overdraft.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
+			'cdOrTdAccountTypes' =>AccountType::onlyCdOrTdAccounts()->get()
 		]);
     }
 	public function getCommonDataArr():array 
@@ -91,31 +90,32 @@ class CleanOverdraftController
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		/**
-		 * @var CleanOverDraft $cleanOverdraft 
+		 * @var FullySecuredOverdraft $fullySecuredOverdraft 
 		 */
-		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
-		$type = $request->get('type','clean-over-draft');
+		$fullySecuredOverdraft = $financialInstitution->fullySecuredOverdrafts()->create($data);
+		$type = $request->get('type','fully-secured-over-draft');
 		$activeTab = $type ; 
 		
-		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
-		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		$fullySecuredOverdraft->storeOutstandingBreakdown($request,$company);
+		return redirect()->route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
 
-	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft){
+	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , FullySecuredOverdraft $fullySecuredOverdraft){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-        return view('reports.clean-overdraft.form',[
+        return view('reports.fully-secured-overdraft.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
 			// 'customers'=>$customers,
-			'model'=>$cleanOverdraft
+			'model'=>$fullySecuredOverdraft,
+			'cdOrTdAccountTypes' =>AccountType::onlyCdOrTdAccounts()->get()
 		]);
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,CleanOverdraft $cleanOverdraft){
+	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,FullySecuredOverdraft $fullySecuredOverdraft){
 		// $infos =  $request->get('infos',[]) ;
 		
 		$data['updated_by'] = auth()->user()->id ;
@@ -124,19 +124,19 @@ class CleanOverdraftController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		
-		$cleanOverdraft->update($data);
-		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
-		$type = $request->get('type','clean-over-draft');
+		$fullySecuredOverdraft->update($data);
+		$fullySecuredOverdraft->storeOutstandingBreakdown($request,$company);
+		$type = $request->get('type','fully-secured-over-draft');
 		$activeTab = $type ;
-		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return redirect()->route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 		
 		
 	}
 	
-	public function destroy(Company $company , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft)
+	public function destroy(Company $company , FinancialInstitution $financialInstitution , FullySecuredOverdraft $fullySecuredOverdraft)
 	{
 	
-		$cleanOverdraft->delete();
+		$fullySecuredOverdraft->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 

@@ -34,6 +34,7 @@ class LetterOfGuaranteeStatement extends Model
 		->where('financial_institution_id',$model->financial_institution_id)
 		->where('source',$model->source)
 		->where('lg_facility_id',$model->lg_facility_id)
+		->where('cd_or_td_id',$model->cd_or_td_id)
 		->where('lg_type',$model->lg_type)
 		->each(function($letterOfGuaranteeStatement){
 			DB::table('letter_of_guarantee_statements')->where('id',$letterOfGuaranteeStatement->id)->update([
@@ -74,6 +75,7 @@ class LetterOfGuaranteeStatement extends Model
 				
 				
 				$lgFacilityIsChanged = $model->isDirty('lg_facility_id') ;
+				$lgCdOrTdIdIsChanged = $model->isDirty('cd_or_td_id') ;
 				$financialInstitutionIsChanged = $model->isDirty('financial_institution_id') ;
 				$sourceIsChanged = $model->isDirty('source') ;
 				$lgTypeIsChange = $model->isDirty('lg_type') ;
@@ -85,9 +87,10 @@ class LetterOfGuaranteeStatement extends Model
 				 * * lg_facility_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
-				if($lgFacilityIsChanged ||$lgTypeIsChange || $financialInstitutionIsChanged || $sourceIsChanged ){
+				if($lgFacilityIsChanged ||$lgTypeIsChange || $financialInstitutionIsChanged || $sourceIsChanged || $lgCdOrTdIdIsChanged ){
 					$oldLgFacilityId=$model->getRawOriginal('lg_facility_id');
 					$oldSource=$model->getRawOriginal('source');
+					$oldCdOrTdId=$model->getRawOriginal('cd_or_td_id');
 					$financialInstitutionId=$model->getRawOriginal('financial_institution_id');
 					$oldLgType=$model->getRawOriginal('lg_type');
 					$oldStatementId =$model->getRawOriginal('id');
@@ -95,6 +98,7 @@ class LetterOfGuaranteeStatement extends Model
 					$firstBankStatementForOldCleanOverdraft = LetterOfGuaranteeStatement::
 					where('financial_institution_id',$financialInstitutionId)->
 					where('lg_facility_id',$oldLgFacilityId)->
+					where('cd_or_td_id',$oldCdOrTdId)->
 					where('source',$oldSource)->
 					
 					where('lg_type',$oldLgType)
@@ -108,6 +112,7 @@ class LetterOfGuaranteeStatement extends Model
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , id asc')
 						->where('lg_facility_id',$model->lg_facility_id)
+						->where('cd_or_td_id',$model->cd_or_td_id)
 						->where('lg_type',$model->lg_type)
 						->where('financial_institution_id',$model->financial_institution_id)
 						->where('source',$model->source)
@@ -191,6 +196,7 @@ class LetterOfGuaranteeStatement extends Model
 	{
 		return $this->belongsTo(LetterOfGuaranteeIssuance::class,'lg_facility_id','id');
 	} 
+
 	// public function cashInSafes()
 	// {
 	// 	return $this->belongsTo(OpeningBalance::class,'opening_balance_id','id') ;

@@ -3,15 +3,18 @@ namespace App\Http\Controllers;
 
 use App\Enums\LgTypes;
 use App\Models\AccountType;
+use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\LetterOfCreditFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\Partner;
 use App\Models\PurchaseOrder;
+use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -93,7 +96,13 @@ class LetterOfGuaranteeIssuanceController
     }
 	public function commonViewVars(Company $company,string $source):array
 	{
-		$cdOrTdAccountTypes = AccountType::onlyCdOrTdAccounts()->get();
+		$cdOrTdAccountTypes = [];
+		if($source == LetterOfGuaranteeIssuance::AGAINST_CD){
+			$cdOrTdAccountTypes = AccountType::onlyCdAccounts()->get();
+		}
+		elseif($source == LetterOfGuaranteeIssuance::AGAINST_TD){
+			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
+		}
 		
 		return [
 			'financialInstitutionBanks'=> FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get(),
@@ -109,8 +118,8 @@ class LetterOfGuaranteeIssuanceController
 	public function create(Company $company,string $source)
 
 	{
-		// dd();
-        return view('reports.LetterOfGuaranteeIssuance.form',array_merge(
+		$formName = $source.'-form';
+        return view('reports.LetterOfGuaranteeIssuance.'.$formName,array_merge(
 			$this->commonViewVars($company,$source) ,
 			[
 
@@ -129,20 +138,31 @@ class LetterOfGuaranteeIssuanceController
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
 		}
 		$model = new LetterOfGuaranteeIssuance();
+		$lgCommissionAmount = $request->get('lg_commission_amount',0);
+		$minLgCommissionAmount = $request->get('min_lg_commission_fees',0);
 		$model->storeBasicForm($request);
 		$lgType = $request->get('lg_type');
 		$issuanceDate = $request->get('issuance_date');
 		$lgAmount = $request->get('lg_amount',0);
 		$currency = $request->get('lg_currency',0);
+		$cdOrTdAccountNumber = $request->get('cd_or_td_account_number');
+		$cdOrTdAccountTypeId = $request->get('cd_or_td_account_type_id');
+		$accountType = AccountType::find($cdOrTdAccountTypeId);
+		$cdOrTdId = 0 ;
+		if($accountType->isCertificateOfDeposit()){
+			$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($company->id , $cdOrTdAccountNumber)->id;
+		}
+		elseif($accountType->isTimeOfDeposit()){
+			$cdOrTdId = TimeOfDeposit::findByAccountNumber($company->id , $cdOrTdAccountNumber)->id;
+		}
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
 		$issuanceFees = $request->get('issuance_fees',0);
-		$lgCommissionAmount = $request->get('lg_commission_amount',0);
-		$minLgCommissionAmount = $request->get('min_lg_commission_fees',0);
+	
 		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId);
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId);
-		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,'credit-lg-amount');
+		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,$cdOrTdId,'credit-lg-amount');
 		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,'credit-lg-amount');
 		
 		$lgDurationMonths = $request->get('lg_duration_months',1);
@@ -150,7 +170,7 @@ class LetterOfGuaranteeIssuanceController
 		$lgCommissionInterval = $request->get('lg_commission_interval');
 		if($lgCommissionInterval == 'quarterly'){
 			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
-				$currentDate = Carbon::make($issuanceDate)->addMonth($i)->format('Y-m-d');
+				$currentDate = Carbon::make($issuanceDate)->addMonth(3)->format('Y-m-d');
 				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
 			}
 		}else{
@@ -161,7 +181,8 @@ class LetterOfGuaranteeIssuanceController
 	}
 
 	public function edit(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
-        return view('reports.LetterOfGuaranteeIssuance.form',array_merge(
+		$formName = $source.'-form';
+        return view('reports.LetterOfGuaranteeIssuance.'.$formName,array_merge(
 			$this->commonViewVars($company,$source) ,
 			[
 				'model'=>$letterOfGuaranteeIssuance
@@ -202,7 +223,7 @@ class LetterOfGuaranteeIssuanceController
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		$amount = $letterOfGuaranteeIssuance->getLgAmount();
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
-		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
+		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
 		$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId);
@@ -229,9 +250,7 @@ class LetterOfGuaranteeIssuanceController
 			'status' => $letterOfGuaranteeIssuanceStatus,
 			'cancellation_date'=>null
 		]);
-		// $letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
-		// $lgType = $letterOfGuaranteeIssuance->getLgType();
-		// $amount = $letterOfGuaranteeIssuance->getLgAmount();
+	
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);

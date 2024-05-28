@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class LgOpeningBalance extends Model
 {
+	const TIME_OF_DEPOSIT = 'TimeOfDeposit' ;
+	const CERTIFICATE_OF_DEPOSIT = 'CertificateOfDeposit' ;
     use HasBasicStoreRequest ;
     use HasLetterOfGuaranteeStatements ;
 
@@ -48,10 +50,22 @@ class LgOpeningBalance extends Model
 	{
 		return $this->hasMany(LgHundredPercentageCashCoverOpeningBalance::class , 'lg_opening_balance_id','id');
 	}
-    public function LgAgainstTdOrCdOpeningBalances()
+    public function LgAgainstTimeOfDepositOpeningBalances()
+	{
+		return $this->hasMany(LgAgainstTdOrCdOpeningBalance::class , 'lg_opening_balance_id','id')->where('type',self::TIME_OF_DEPOSIT);
+	}
+	public function LgAgainstCertificateOfDepositOpeningBalances()
+	{
+		return $this->hasMany(LgAgainstTdOrCdOpeningBalance::class , 'lg_opening_balance_id','id')->where('type',self::CERTIFICATE_OF_DEPOSIT);
+	}
+	/**
+	 * * نجيب الاتنين مع بعض
+	 */
+	public function LgAgainstCertificateOfDepositOrTimeOfDepositOpeningBalances()
 	{
 		return $this->hasMany(LgAgainstTdOrCdOpeningBalance::class , 'lg_opening_balance_id','id');
 	}
+	
 	public function letterOfGuaranteeStatements()
 	{
 		return $this->hasMany(LetterOfGuaranteeStatement::class,'letter_of_guarantee_issuance_id','id');
