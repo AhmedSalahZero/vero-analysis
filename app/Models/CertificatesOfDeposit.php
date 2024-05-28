@@ -226,6 +226,10 @@ class CertificatesOfDeposit extends Model
 		->where('financial_institution_id',$financialInstitutionId)
 		->pluck('account_number','account_number')->toArray();
 	}
+	public static function findByAccountNumber(int $companyId , string $accountNumber)
+	{
+		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
+	} 
 
 
 }

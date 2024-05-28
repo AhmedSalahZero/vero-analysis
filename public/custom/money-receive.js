@@ -298,7 +298,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 

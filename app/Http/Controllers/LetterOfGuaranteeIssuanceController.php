@@ -13,6 +13,7 @@ use App\Models\LetterOfGuaranteeStatement;
 use App\Models\Partner;
 use App\Models\PurchaseOrder;
 use App\Traits\GeneralFunctions;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -92,6 +93,8 @@ class LetterOfGuaranteeIssuanceController
     }
 	public function commonViewVars(Company $company,string $source):array
 	{
+		$cdOrTdAccountTypes = AccountType::onlyCdOrTdAccounts()->get();
+		
 		return [
 			'financialInstitutionBanks'=> FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get(),
 			'beneficiaries'=>Partner::onlyCustomers()->onlyForCompany($company->id)->get(),
@@ -99,6 +102,7 @@ class LetterOfGuaranteeIssuanceController
 			'purchaseOrders'=>PurchaseOrder::onlyForCompany($company->id)->get(),
 			'accountTypes'=> AccountType::onlyCurrentAccount()->get(),
 			'source'=>$source,
+			'cdOrTdAccountTypes'=>$cdOrTdAccountTypes
 		];
 
 	}
@@ -121,6 +125,9 @@ class LetterOfGuaranteeIssuanceController
 
 		$financialInstitutionId = $request->get('financial_institution_id') ;
 		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
+		if(!$letterOfGuaranteeFacility){
+			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
+		}
 		$model = new LetterOfGuaranteeIssuance();
 		$model->storeBasicForm($request);
 		$lgType = $request->get('lg_type');
@@ -135,9 +142,20 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId);
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId);
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,'credit-lg-amount');
 		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,'credit-lg-amount');
+		
+		$lgDurationMonths = $request->get('lg_duration_months',1);
+		$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 
+		$lgCommissionInterval = $request->get('lg_commission_interval');
+		if($lgCommissionInterval == 'quarterly'){
+			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
+				$currentDate = Carbon::make($issuanceDate)->addMonth($i)->format('Y-m-d');
+				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
+			}
+		}else{
+			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
+		}
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 
 	}

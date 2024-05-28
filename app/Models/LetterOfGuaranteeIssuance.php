@@ -34,9 +34,17 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->status ;
 	}
+	public function getStatusFormatted()
+	{
+		return camelizeWithSpace($this->getStatus());
+	}
 	public function getSource()
 	{
 		return $this->source ?: self::LG_FACILITY ;
+	}
+	public function getSourceFormatted()
+	{
+		return camelizeWithSpace($this->getSource());
 	}
 	public function getTransactionName()
 	{
@@ -313,6 +321,13 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->orderBy('full_date','desc');
 	}
-	
+	public function getCdOrTdAccountTypeId()
+	{
+		return $this->cd_or_td_account_type_id;
+	}
+	public function getCdOrTdAccountNumber()
+	{
+		return $this->cd_or_td_account_number;
+	}
 
 }

@@ -98,6 +98,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Source') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Status') !!} </th>
+									
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
@@ -115,6 +118,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+                                    <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
@@ -188,6 +193,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Source') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
@@ -204,6 +211,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+                                    <td>{{ $model->getSourceFormatted() }}</td>
+                                    <td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
@@ -272,6 +281,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Source') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
@@ -289,6 +300,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+									<td>{{ $model->getSourceFormatted() }}</td>
+									<td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
@@ -358,6 +371,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Source') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
@@ -374,6 +389,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+                                    <td>{{ $model->getSourceFormatted() }}</td>
+                                    <td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
