@@ -68,11 +68,7 @@ class BankStatementController
 				 ->where('clean_overdrafts.currency','=',$currencyName)
 				 ->orderByRaw('full_date desc , priority asc ')
 				 ->get();
-			
-			
-			// $results = DB::table('clean_overdraft_bank_statements')
 		
-			// 	 ->get();
 				 
 		}
 

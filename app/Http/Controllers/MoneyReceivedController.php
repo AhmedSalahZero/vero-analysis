@@ -612,6 +612,9 @@ class MoneyReceivedController
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);
 		$data['status'] = Cheque::UNDER_COLLECTION;
 		foreach($moneyReceivedIds as $moneyReceivedId){
+			/**
+			 * @var MoneyReceived $moneyReceived 
+			 */
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
 			$moneyReceived->cheque->update($data);
@@ -634,10 +637,11 @@ class MoneyReceivedController
 		/**
 		 * @var MoneyReceived $moneyReceived
 		 */
+		$actualCollectionDate = $request->get('actual_collection_date')  ;
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::COLLECTED,
 			'collection_fees'=>$request->get('collection_fees'),
-			'actual_collection_date'=>$request->get('actual_collection_date') 
+			'actual_collection_date'=>$actualCollectionDate
 		]);
 		$accountType = AccountType::find($moneyReceived->cheque->account_type) ;
 		$currency = $moneyReceived->getCurrency();
@@ -650,7 +654,7 @@ class MoneyReceivedController
 		 * @var AccountType $accountType ;
 		 */
 		
-		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$receivingDate,$receivedAmount,$currency,null);
+		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$actualCollectionDate,$receivedAmount,$currency,null);
 		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}

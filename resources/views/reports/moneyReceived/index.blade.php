@@ -728,7 +728,7 @@ use App\Models\MoneyReceived;
 								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getCustomerName() }}</td>
                                     <td>{{ $money->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $money->getIncomingTransferReceivingBankName() }}</td>
+                                    <td>{{ $money->getCashInBankReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
                                     <td>{{ $money->getCashInBankAccountTypeName() }}</td>

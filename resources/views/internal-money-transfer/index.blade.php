@@ -1,4 +1,7 @@
 @extends('layouts.dashboard')
+@php
+	use App\Models\InternalMoneyTransfer ;
+@endphp
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -45,10 +48,22 @@
 
             </ul>
 
-            <a href="{{ route('internal-money-transfers.create',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+            <a href="{{ route('internal-money-transfers.create',['company'=>$company->id,InternalMoneyTransfer::BANK_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
+                {{ __('Bank To Bank') }}
             </a>
+			
+			
+			<a href="{{ route('internal-money-transfers.create',['company'=>$company->id,InternalMoneyTransfer::SAFE_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                <i class="fas fa-plus"></i>
+                {{ __('Safe To Bank') }}
+            </a>
+			
+			<a href="{{ route('internal-money-transfers.create',['company'=>$company->id,InternalMoneyTransfer::BANK_TO_SAFE]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                <i class="fas fa-plus"></i>
+                {{ __('Bank To Safe') }}
+            </a>
+			
             {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
 				<i class="fas fa-plus"></i>
 				<span>{{ __('New Record') }}</span>
@@ -71,7 +86,7 @@
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-internal-money-transfer :search-fields="$searchFields" :money-received-type="'internal-money-transfer'" :has-search="1" :has-batch-collection="0" href="{{route('internal-money-transfers.create',['company'=>$company->id])}}" />
+                        <x-export-internal-money-transfer :search-fields="$searchFields" :money-received-type="'internal-money-transfer'" :has-search="1" :has-batch-collection="0" href="{{route('internal-money-transfers.create',['company'=>$company->id,InternalMoneyTransfer::BANK_TO_BANK])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -118,12 +133,12 @@
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>InternalMoneyTransfer::BANK_TO_BANK]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('internal-money-transfers.destroy',['company'=>$company->id,'internal_money_transfer'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('internal-money-transfers.destroy',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>InternalMoneyTransfer::BANK_TO_BANK ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

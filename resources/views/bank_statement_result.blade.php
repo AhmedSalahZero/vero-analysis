@@ -273,13 +273,15 @@
 
 
                 <div class="table-custom-container position-relative  ">
-
+				{{-- {{ dd(get_defined_vars()) }} --}}
+					@if(!$isCurrentAccount)
                     <div class="d-flex z-index-6" style="justify-content:right">
-					<a href="#" class="btn active-style btn-icon-sm align-self-center">
+					<a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id ]) }}" class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-book"></i>
                         {{ __('Withdrawals Settlement Report') }}
                     </a>
 					</div>
+					@endif
 
                     <div>
 
