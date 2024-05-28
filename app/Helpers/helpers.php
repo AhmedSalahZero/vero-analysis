@@ -54,6 +54,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use App\Helpers\HStr;
 
 const MAX_RANKING = 5;
 const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis';
@@ -4583,7 +4584,7 @@ function getCommissionInterval():array
 
 function camelizeWithSpace($input, $separator = '-')
 {
-	return str_replace($separator, ' ', ucwords($input, $separator));
+	return HStr::camelizeWithSpace($input,$separator);
 }
 function unformat_number($money)
 {

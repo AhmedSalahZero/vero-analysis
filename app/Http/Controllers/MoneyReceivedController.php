@@ -646,7 +646,7 @@ class MoneyReceivedController
 		$accountType = AccountType::find($moneyReceived->cheque->account_type) ;
 		$currency = $moneyReceived->getCurrency();
 		$receivedAmount = $moneyReceived->getReceivedAmount();
-		$receivingDate = $moneyReceived->getReceivingDate();
+		// $receivingDate = $moneyReceived->getReceivingDate();
 		$moneyType = MoneyReceived::CHEQUE;
 		$accountNumber = $moneyReceived->cheque->account_number ;
 		$financialInstitutionId = $moneyReceived->cheque->getDrawlBankId();
@@ -693,9 +693,22 @@ class MoneyReceivedController
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId);
+
 		return response()->json([
 			'status'=>true , 
 			'data'=>$accountNumberModel
+			
+		]);
+	}
+	public function getAccountAmountForAccountNumber(Company $company ,  Request $request ,  string $accountTypeId , string $accountNumber){
+		$accountType = AccountType::find($accountTypeId);
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($company->id,$accountNumber);
+		
+
+		return response()->json([
+			'status'=>true , 
+			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 
+			
 		]);
 	}
 }

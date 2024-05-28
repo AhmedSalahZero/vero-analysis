@@ -34,6 +34,10 @@ class AccountType extends Model
 	{
 		return $builder->onlySlugs([self::CERTIFICATE_OF_DEPOSIT,self::TIME_OF_DEPOSIT]);
 	}
+	public function isCdOrTdAccount()
+	{
+		return in_array($this->slug , [self::CERTIFICATE_OF_DEPOSIT , self::TIME_OF_DEPOSIT]);
+	}
 	public function isCleanOverDraftAccount():bool
 	{
 		return $this->slug === self::CLEAN_OVERDRAFT ;

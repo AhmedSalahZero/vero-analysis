@@ -4,19 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Enums\LgTypes;
 use App\Models\AccountType;
-use App\Models\Bank;
-use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\LgOpeningBalance;
-use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Traits\GeneralFunctions;
-use App\Traits\HasBasicStoreRequest;
-use App\Traits\Models\HasDebitStatements;
-use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Illuminate\Http\Request;
 
 class LgOpeningBalancesController
@@ -29,6 +23,7 @@ class LgOpeningBalancesController
         $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
         $accountTypes = AccountType::onlyCurrentAccount()->get();
         $cdOrTdAccountTypes = AccountType::onlyCdOrTdAccounts()->get();
+		
         $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->get()->formattedForSelect(true, 'getId', 'getName');
         $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
         $lgTypes  = LgTypes::getAll();
