@@ -45,7 +45,8 @@
                 
             </ul>
 
-            <a href="{{ route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+        <div class="flex-tabs">
+		    <a href="{{ route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
@@ -53,6 +54,7 @@
 				<i class="fas fa-plus"></i>
 				<span>{{ __('New Record') }}</span>
             </a> --}}
+		</div>
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -85,9 +87,9 @@
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Limit') }}</th>
-                                    <th>{{ __('Borrowing Rate') }}</th>
-                                    <th>{{ __('Margin Rate') }}</th>
-                                    <th>{{ __('Intreset Rate') }}</th>
+                                    <th>{{ __('Borrowing Rate %') }}</th>
+                                    <th>{{ __('Margin Rate %') }}</th>
+                                    <th>{{ __('Intreset Rate %') }}</th>
                                     {{-- <th>{{ __('Max Lending Limit Per Customer') }}</th> --}}
                                     {{-- <th>{{ __('Max Settlement Days') }}</th> --}}
                                     <th>{{ __('Control') }}</th>
@@ -104,9 +106,9 @@
                                     <td>{{ $cleanOverdraft->getAccountNumber() }}</td>
                                     <td class="text-uppercase">{{ $cleanOverdraft->getCurrency() }}</td>
                                     <td class="text-transform">{{ $cleanOverdraft->getLimit() }}</td>
-                                    <td class="bank-max-width">{{ $cleanOverdraft->getBorrowingRate() }}</td>
-                                    <td class="text-nowrap">{{ $cleanOverdraft->getMarginRate() }}</td>
-                                    <td>{{ $cleanOverdraft->getInterestRate() }}</td>
+                                    <td class="bank-max-width">{{ $cleanOverdraft->getBorrowingRateFormatted() .' %'  }}</td>
+                                    <td class="text-nowrap">{{ $cleanOverdraft->getMarginRateFormatted() .' %'  }}</td>
+                                    <td>{{ $cleanOverdraft->getInterestRateFormatted() .' %'  }}</td>
                                     {{-- <td>{{ $cleanOverdraft->getMaxLendingLimitPerCustomer() }}</td> --}}
                                     {{-- <td>{{ $cleanOverdraft->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

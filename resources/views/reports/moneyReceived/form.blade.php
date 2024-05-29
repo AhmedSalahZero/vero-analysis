@@ -125,7 +125,6 @@ use App\Models\CustomerInvoice;
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers">
                                     <option value="" selected>{{__('Select')}}</option>
-                                    {{-- {{  }} --}}
                                     @foreach($customers as $customerId => $customerName)
                                     <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
                                     @endforeach

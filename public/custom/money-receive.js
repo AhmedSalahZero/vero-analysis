@@ -281,6 +281,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	console.log(val , currency , financialInstitutionBankId)
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
 	}

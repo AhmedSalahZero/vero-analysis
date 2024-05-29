@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * * هنا عميلة تحويل الاموال من حساب بنك الي حساب بنكي اخر
@@ -12,10 +13,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class InternalMoneyTransfer extends Model
 {
+	use HasBasicStoreRequest ;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
-    use HasBasicStoreRequest ;
+	public static function getAllTypes()
+	{
+		return [
+			self::BANK_TO_BANK,
+			self::BANK_TO_SAFE,
+			self::SAFE_TO_BANK
+		];
+	}
     protected $guarded = ['id'];
 
     public function getTransferDays()
@@ -143,7 +152,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->hasMany(CleanOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
     }
-
+	public function cashInSafeStatements():HasMany
+	{
+		return $this->hasMany(CashInSafeStatement::class,'internal_money_transfer_id','id');
+	}
     public function deleteRelations()
     {
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
@@ -152,6 +164,139 @@ class InternalMoneyTransfer extends Model
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
 			$currentAccountBankStatement->delete();
 		});
+		$this->cashInSafeStatements->each(function (CashInSafeStatement $cashInSafeStatement) {
+			$cashInSafeStatement->delete();
+		});
 		
     }
+	/**
+	 * * هنا لما بنحول من بنك او الى بنك بغض النظر عن نوع الحساب
+	 */
+	public function handleBankTransfer(int $companyId , int $fromFinancialInstitutionId , AccountType $fromAccountType , string $fromAccountNumber ,string $transferDate  , $debitAmount , $creditAmount)
+	{
+		if($fromAccountType && $fromAccountType->isCurrentAccount()){
+			/**
+			 * @var CleanOverdraft $fromCleanOverDraft
+			 */
+			$fromCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			CurrentAccountBankStatement::create([
+				'financial_institution_account_id'=>$fromCurrentAccount->id ,
+				'internal_money_transfer_id'=>$this->id  ,
+				'company_id'=>$companyId ,
+				'date' => $transferDate , 
+				'credit'=>$creditAmount,
+				'debit'=>$debitAmount
+			]);
+		}
+		
+		
+		if($fromAccountType && $fromAccountType->isCleanOverDraftAccount()){
+			/**
+			 * @var CleanOverdraft $fromCleanOverDraft
+			 */
+
+			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			CleanOverdraftBankStatement::create([
+				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
+				'clean_overdraft_id'=>$fromCleanOverDraft->id ,
+				'internal_money_transfer_id'=>$this->id ,
+				'company_id'=>$companyId ,
+				'date' => $transferDate , 
+				'limit' =>$fromCleanOverDraft->getLimit(),
+				'credit'=>$creditAmount,
+				'debit'=>$debitAmount
+			]);
+		}
+		
+		
+	}
+	/**
+	 * * هنا لما بنحول الي بنك بغض النظر هل هو خزنة الي بنك ام بنك الي خزنة
+	 */
+	// public function handleToBankTransfer(int $companyId , int $toFinancialInstitutionId , AccountType $toAccountType , string $toAccountNumber ,string $receivingDate , $transferAmount)
+	// {
+	// 	if($toAccountType && $toAccountType->isCurrentAccount()){
+	// 		/**
+	// 		 * @var CleanOverdraft $fromCleanOverDraft
+	// 		 */
+	// 		$toCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($toAccountNumber,$companyId,$toFinancialInstitutionId);
+	// 		CurrentAccountBankStatement::create([
+	// 			'financial_institution_account_id'=>$toCurrentAccount->id ,
+	// 			'internal_money_transfer_id'=>$this->id  ,
+	// 			'company_id'=>$companyId ,
+	// 			'date' => $receivingDate , 
+	// 			'debit'=>$transferAmount,
+	// 		]);
+	// 	}
+		
+	// 	//////////////////////////
+		
+		
+		
+	// 	if($toAccountType && $toAccountType->isCleanOverDraftAccount()){
+	// 		/**
+	// 		 * @var CleanOverdraft $fromCleanOverDraft
+	// 		 */
+	// 		$toCleanOverDraft = CleanOverdraft::findByAccountNumber($toAccountNumber,$companyId,$toFinancialInstitutionId);
+	// 		CleanOverdraftBankStatement::create([
+	// 			'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
+	// 			'clean_overdraft_id'=>$toCleanOverDraft->id ,
+	// 			'internal_money_transfer_id'=>$this->id ,
+	// 			'company_id'=>$companyId ,
+	// 			'date' => $receivingDate , 
+	// 			'limit' =>$toCleanOverDraft->getLimit(),
+	// 			'debit'=>$transferAmount
+	// 		]);
+	// 	}
+		
+		
+	// }
+	/**
+	 * * دي هتستخدم في الحالتين سواء من او الى
+	 */
+	public function handleSafeTransfer(int $companyId, string $date ,  $debitAmount , $creditAmount , int $branchId , string $currencyName , string $exchangeRate )
+	{
+	
+				$this->cashInSafeStatements()->create([
+					'type'=>CashInSafeStatement::MONEY_TRANSFER,
+					'branch_id'=>$branchId ,
+					'currency'=>$currencyName ,
+					'exchange_rate'=>$exchangeRate,
+					'company_id'=>$companyId ,
+					'date'=>$date ,
+					'debit'=>$debitAmount ,
+					'credit'=> $creditAmount 
+				]);
+	}
+	public function handleBankToBankTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , string $transferDate , string $receivingDate, $transferAmount)
+	{
+		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate , 0,$transferAmount);
+		$this->handleBankTransfer($companyId , $toFinancialInstitutionId , $toAccountType , $toAccountNumber ,$receivingDate , $transferAmount,0);
+	}
+	public function handleBankToSafeTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , int $toBranchId , string $currencyName , string $transferDate , $transferAmount)
+	{
+		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate ,0, $transferAmount);
+		$this->handleSafeTransfer($companyId,$transferDate,$transferAmount,0,$toBranchId ,$currencyName,1);
+	}
+	public function handleSafeToBankTransfer( int $companyId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , int $fromBranchId , string $currencyName , string $transferDate , $transferAmount)
+	{
+		$this->handleSafeTransfer($companyId,$transferDate,0,$transferAmount,$fromBranchId ,$currencyName,1);
+		$this->handleBankTransfer($companyId , $toFinancialInstitutionId ,  $toAccountType , $toAccountNumber , $transferDate , $transferAmount,0);
+	}
+	public function fromBranch()
+	{
+		return $this->belongsTo(Branch::class,'from_branch_id','id');
+	}
+	public function getFromBranchName()
+	{
+		return $this->fromBranch ? $this->fromBranch->getName()  : __('N/A');  
+	}
+	public function toBranch()
+	{
+		return $this->belongsTo(Branch::class,'to_branch_id','id');
+	}
+	public function getToBranchName()
+	{
+		return $this->toBranch ? $this->toBranch->getName()  : __('N/A');  
+	}
 }

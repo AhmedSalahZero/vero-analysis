@@ -51,18 +51,82 @@ class InternalMoneyTransferController
 	public function index(Company $company,Request $request)
 	{
 		
-		$models = $company->moneyTransfers ;
-		$models =   $this->applyFilter($request,$models) ;
+		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
+		$currentType = $request->get('active',InternalMoneyTransfer::BANK_TO_BANK);
 		
-		$searchFields = [
-			'transfer_date'=>__('Transfer Date'),
-			// 'contract_end_date'=>__('Contract End Date'),
-			// 'account_number'=>__('Contract Number'),
-			// 'currency'=>__('Currency'),
-			// 'limit'=>__('Limit'),
-			// 'outstanding_balance'=>__('Outstanding Balance'),
-			// 'balance_date'=>__('Balance Date'),
+		$filterDates = [];
+		foreach(InternalMoneyTransfer::getAllTypes() as $type){
+			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
+			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
+			$filterDates[$type] = [
+				'startDate'=>$startDate,
+				'endDate'=>$endDate
+			];
+		}
+		
+		/**
+		 * * start of bank to bank internal money transfer 
+		 */
+		
+		$bankToBankStartDate = $filterDates[InternalMoneyTransfer::BANK_TO_BANK]['startDate'] ?? null ;
+		$bankToBankEndDate = $filterDates[InternalMoneyTransfer::BANK_TO_BANK]['endDate'] ?? null ;
+		$bankToBankInternalMoneyTransfers = $company->bankToBankInternalMoneyTransfers ;
+		$bankToBankInternalMoneyTransfers =  $bankToBankInternalMoneyTransfers->filterByTransferDate($bankToBankStartDate,$bankToBankEndDate) ;
+		$bankToBankInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::BANK_TO_BANK ? $this->applyFilter($request,$bankToBankInternalMoneyTransfers):$bankToBankInternalMoneyTransfers ;
+
+		/**
+		 * * end of bank to bank internal money transfer 
+		 */
+		
+		 
+		 /**
+		 * * start of safe to bank internal money transfer 
+		 */
+		
+		$safeToBankStartDate = $filterDates[InternalMoneyTransfer::SAFE_TO_BANK]['startDate'] ?? null ;
+		$safeToBankEndDate = $filterDates[InternalMoneyTransfer::SAFE_TO_BANK]['endDate'] ?? null ;
+		$safeToBankInternalMoneyTransfers = $company->safeToBankInternalMoneyTransfers ;
+		$safeToBankInternalMoneyTransfers =  $safeToBankInternalMoneyTransfers->filterByTransferDate($safeToBankStartDate,$safeToBankEndDate) ;
+		$safeToBankInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::SAFE_TO_BANK ? $this->applyFilter($request,$safeToBankInternalMoneyTransfers):$safeToBankInternalMoneyTransfers ;
+
+		/**
+		 * * end of safe to bank internal money transfer 
+		 */
+		
+		 
+		  /**
+		 * * start of bank to safe internal money transfer 
+		 */
+		
+		$bankToSafeStartDate = $filterDates[InternalMoneyTransfer::BANK_TO_SAFE]['startDate'] ?? null ;
+		$bankToSafeEndDate = $filterDates[InternalMoneyTransfer::BANK_TO_SAFE]['endDate'] ?? null ;
+		$bankToSafeInternalMoneyTransfers = $company->bankToSafeInternalMoneyTransfers ;
+		$bankToSafeInternalMoneyTransfers =  $bankToSafeInternalMoneyTransfers->filterByTransferDate($bankToSafeStartDate,$bankToSafeEndDate) ;
+		$bankToSafeInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::BANK_TO_SAFE ? $this->applyFilter($request,$bankToSafeInternalMoneyTransfers):$bankToSafeInternalMoneyTransfers ;
+
+		/**
+		 * * end of bank to safe internal money transfer 
+		 */
+		 
+		
+		 $searchFields = [
+			InternalMoneyTransfer::BANK_TO_BANK=>[
+				'transfer_date'=>__('Transfer Date')
+			],
+			InternalMoneyTransfer::SAFE_TO_BANK=>[
+				'transfer_date'=>__('Deposit Date')
+			],
+			InternalMoneyTransfer::BANK_TO_SAFE=>[
+				'transfer_date'=>__('Withdrawal Date')
+			],
+			
+		];
+	
+		$models = [
+			InternalMoneyTransfer::BANK_TO_BANK =>$bankToBankInternalMoneyTransfers ,
+			InternalMoneyTransfer::SAFE_TO_BANK =>$safeToBankInternalMoneyTransfers ,
+			InternalMoneyTransfer::BANK_TO_SAFE =>$bankToSafeInternalMoneyTransfers ,
 		];
 
         return view('internal-money-transfer.index', [
@@ -81,7 +145,7 @@ class InternalMoneyTransferController
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$accountTypes = AccountType::onlyCashAccounts()->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();
 		return [
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
@@ -92,9 +156,9 @@ class InternalMoneyTransferController
 		];
 	}
 	
-	public function store(Company $company  , Request $request){
-	
+	public function store(Company $company , string $type  , Request $request){
 		$internalMoneyTransfer = new InternalMoneyTransfer ;
+		$internalMoneyTransfer->type = $type ;
 		$transferDate = $request->get('transfer_date') ;
 		$receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
 		$transferAmount = $request->get('amount') ;
@@ -103,73 +167,23 @@ class InternalMoneyTransferController
 		$toFinancialInstitutionId = $request->get('to_bank_id');
 		$fromAccountTypeId = $request->get('from_account_type_id');
 		$toAccountTypeId = $request->get('to_account_type_id');
+		$fromAccountNumber = $request->get('from_account_number');
+		$toAccountNumber = $request->get('to_account_number');
+		$toBranchId = $request->get('to_branch_id');
+		$fromBranchId = $request->get('from_branch_id');
+		$currencyName = $request->get('currency');	
 		$fromAccountType = AccountType::find($fromAccountTypeId);
 		$toAccountType = AccountType::find($toAccountTypeId);
-		
-		if($fromAccountType && $fromAccountType->isCurrentAccount()){
-			/**
-			 * @var CleanOverdraft $fromCleanOverDraft
-			 */
-			$fromCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($request->get('from_account_number'),$company->id,$fromFinancialInstitutionId);
-			CurrentAccountBankStatement::create([
-				'financial_institution_account_id'=>$fromCurrentAccount->id ,
-				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
-				'company_id'=>$company->id ,
-				'date' => $transferDate , 
-				'credit'=>$transferAmount
-			]);
+		if($type === InternalMoneyTransfer::BANK_TO_BANK){
+			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
+		}
+		elseif($type === InternalMoneyTransfer::BANK_TO_SAFE ){
+			$internalMoneyTransfer->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyName , $transferDate,$transferAmount);
+		}
+		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
+			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
 		}
 		
-		if($toAccountType && $toAccountType->isCurrentAccount()){
-			/**
-			 * @var CleanOverdraft $fromCleanOverDraft
-			 */
-			$toCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($request->get('to_account_number'),$company->id,$toFinancialInstitutionId);
-			CurrentAccountBankStatement::create([
-				'financial_institution_account_id'=>$toCurrentAccount->id ,
-				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
-				'company_id'=>$company->id ,
-				'date' => $receivingDate , 
-				'debit'=>$transferAmount,
-			]);
-		}
-		
-		//////////////////////////
-		
-		if($fromAccountType && $fromAccountType->isCleanOverDraftAccount()){
-			/**
-			 * @var CleanOverdraft $fromCleanOverDraft
-			 */
-
-			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('from_account_number'),$company->id,$fromFinancialInstitutionId);
-			CleanOverdraftBankStatement::create([
-				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
-				'clean_overdraft_id'=>$fromCleanOverDraft->id ,
-				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
-				'company_id'=>$company->id ,
-				'date' => $transferDate , 
-				'limit' =>$fromCleanOverDraft->getLimit(),
-				'credit'=>$transferAmount
-			]);
-		}
-		
-		if($toAccountType && $toAccountType->isCleanOverDraftAccount()){
-			/**
-			 * @var CleanOverdraft $fromCleanOverDraft
-			 */
-			$toCleanOverDraft = CleanOverdraft::findByAccountNumber($request->get('to_account_number'),$company->id,$toFinancialInstitutionId);
-			CleanOverdraftBankStatement::create([
-				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
-				'clean_overdraft_id'=>$toCleanOverDraft->id ,
-				'internal_money_transfer_id'=>$internalMoneyTransfer->id ,
-				'company_id'=>$company->id ,
-				'date' => $receivingDate , 
-				'limit' =>$toCleanOverDraft->getLimit(),
-				'debit'=>$transferAmount
-			]);
-		}
-		
-		$type = $request->get('type','internal-money-transfer');
 		$activeTab = $type ; 
 		
 	
@@ -179,12 +193,12 @@ class InternalMoneyTransferController
 
 	public function edit(Company $company,string $type,InternalMoneyTransfer $internalMoneyTransfer)
 	{
-        return view('internal-money-transfer.bank-to-bank-form',$this->getCommonViewVars($company,$type,$internalMoneyTransfer));
+		$formName = $type . '-form';
+        return view('internal-money-transfer.'.$formName ,$this->getCommonViewVars($company,$type,$internalMoneyTransfer));
     }
 	
-	public function update(Company $company , Request $request , InternalMoneyTransfer $internalMoneyTransfer){
+	public function update(Company $company , string $type , Request $request , InternalMoneyTransfer $internalMoneyTransfer){
 		
-		$type = $request->get('type','internal-money-transfer');
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();
 		$this->store($company,$request);
@@ -194,7 +208,7 @@ class InternalMoneyTransferController
 		
 	}
 	
-	public function destroy(Company $company, InternalMoneyTransfer $internalMoneyTransfer)
+	public function destroy(Company $company , string $type, InternalMoneyTransfer $internalMoneyTransfer)
 	{
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();

@@ -45,14 +45,13 @@
                 
             </ul>
 
-            <a href="{{ route('create.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+           <div class="flex-tabs">
+		    <a href="{{ route('create.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+		   </div>
+     
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -85,9 +84,9 @@
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Limit') }}</th>
-                                    <th>{{ __('Borrowing Rate') }}</th>
-                                    <th>{{ __('Margin Rate') }}</th>
-                                    <th>{{ __('Intreset Rate') }}</th>
+                                    <th>{{ __('Borrowing Rate %') }}</th>
+                                    <th>{{ __('Margin Rate %') }}</th>
+                                    <th>{{ __('Intreset Rate %') }}</th>
                                     {{-- <th>{{ __('Max Lending Limit Per Customer') }}</th> --}}
                                     {{-- <th>{{ __('Max Settlement Days') }}</th> --}}
                                     <th>{{ __('Control') }}</th>
@@ -104,9 +103,9 @@
                                     <td>{{ $fullySecuredOverdraft->getAccountNumber() }}</td>
                                     <td class="text-uppercase">{{ $fullySecuredOverdraft->getCurrency() }}</td>
                                     <td class="text-transform">{{ $fullySecuredOverdraft->getLimit() }}</td>
-                                    <td class="bank-max-width">{{ $fullySecuredOverdraft->getBorrowingRate() }}</td>
-                                    <td class="text-nowrap">{{ $fullySecuredOverdraft->getMarginRate() }}</td>
-                                    <td>{{ $fullySecuredOverdraft->getInterestRate() }}</td>
+                                    <td class="bank-max-width">{{ $fullySecuredOverdraft->getBorrowingRateFormatted() . ' %' }}</td>
+                                    <td class="text-nowrap">{{ $fullySecuredOverdraft->getMarginRateFormatted() . ' %' }}</td>
+                                    <td>{{ $fullySecuredOverdraft->getInterestRateFormatted() . ' %' }}</td>
                                     {{-- <td>{{ $fullySecuredOverdraft->getMaxLendingLimitPerCustomer() }}</td> --}}
                                     {{-- <td>{{ $fullySecuredOverdraft->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

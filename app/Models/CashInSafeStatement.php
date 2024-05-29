@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class CashInSafeStatement extends Model
 {
+	const MONEY_TRANSFER  = 'money-transfer';
+	
     protected $guarded = [
         'id'
     ];
@@ -168,4 +170,9 @@ class CashInSafeStatement extends Model
 	{
 		return $this->exchange_rate ?:1 ;
 	}
+	public function internalMoneyTransfer()
+	{
+		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
+	}
+	
 }

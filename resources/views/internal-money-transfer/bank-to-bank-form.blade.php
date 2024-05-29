@@ -67,6 +67,7 @@
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input  type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input  type="hidden" name="company_id" value="{{ $company->id }}">
+			
 			@if(isset($model))
 			<input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
 			@else

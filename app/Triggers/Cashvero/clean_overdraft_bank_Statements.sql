@@ -236,13 +236,13 @@
 				-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
 				if(_origin_update_row_is_debit > 0 ) then 
 					call reverse_clean_overdraft_settlements(_start_update_from_date_time,new.clean_overdraft_id);	
+					
 					call resettlement_clean_overdraft_from(_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
 					elseif  _origin_update_row_is_debit > 0 and _current_debit < 0  then 
 					call reverse_clean_overdraft_settlements_by_specific_debit(_start_update_from_date_time,new.clean_overdraft_id,_current_debit);	
 				
 				else 
 				
-			
 					call resettlement_clean_overdraft_from(_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
 				 
 				end if;

@@ -23,6 +23,10 @@
 
 
     <style>
+	.flex-tabs{
+		display:flex;
+		gap:10px;
+	}
 	.text-green{
 		color:green !important;
 	}

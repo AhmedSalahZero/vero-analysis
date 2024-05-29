@@ -116,7 +116,7 @@
                             <label>{{ __('Branch') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
+                                    <select data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
                                         @foreach($selectedBranches as $id => $name)
                                         <option value="{{ $id }}">{{ $name }}</option>
                                         @endforeach

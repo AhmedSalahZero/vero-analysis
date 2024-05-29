@@ -45,7 +45,8 @@
                 
             </ul>
 
-            <a href="{{ route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+            <div class="flex-tabs">
+			<a href="{{ route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
@@ -53,6 +54,7 @@
 				<i class="fas fa-plus"></i>
 				<span>{{ __('New Record') }}</span>
             </a> --}}
+			</div>
         </div>
     </div>
     <div class="kt-portlet__body">

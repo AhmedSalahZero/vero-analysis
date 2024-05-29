@@ -69,7 +69,7 @@ class CleanOverdraftBankStatement extends Model
 			});
 			
 			static::updated(function (self $model) {
-				
+				$tableName = (new self)->getTable();
 				$minDate = self::updateNextRows($model);
 				
 				
@@ -89,7 +89,7 @@ class CleanOverdraftBankStatement extends Model
 						CleanOverdraftWithdrawal::where('clean_overdraft_id',$oldCleanOverdraftId)->delete();
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
-						DB::table('clean_overdraft_bank_statements')
+						DB::table($tableName)
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , priority asc , id asc')
 						->where('clean_overdraft_id',$model->clean_overdraft_id)->update([
@@ -167,6 +167,9 @@ class CleanOverdraftBankStatement extends Model
 	// 	return $this->full_date;
 	// }
 	
-	
+	public function internalMoneyTransfer()
+	{
+		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
+	}
 	
 }

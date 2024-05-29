@@ -63,10 +63,12 @@
 
             </ul>
 
-            {{-- <a href="#" class="btn  active-style btn-icon-sm align-self-center">
+          <div class="flex-tabs">
+		    {{-- <a href="#" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a> --}}
+		  </div>
 
         </div>
     </div>

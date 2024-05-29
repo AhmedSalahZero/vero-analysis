@@ -62,10 +62,12 @@ use \App\Models\CertificatesOfDeposit;
 
             </ul>
 
-            <a href="{{ route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+			<div class="flex-tabs">
+			 <a href="{{ route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
+			</div>
         </div>
     </div>
     <div class="kt-portlet__body">
