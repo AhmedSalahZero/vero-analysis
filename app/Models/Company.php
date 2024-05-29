@@ -155,11 +155,22 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Contract::class,'company_id','id');
 	}
-	public function moneyTransfers()
+	public function internalMoneyTransfers()
 	{
 		return $this->hasMany(InternalMoneyTransfer::class,'company_id','id');
 	}
-	
+	public function bankToBankInternalMoneyTransfers()
+	{
+		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::BANK_TO_BANK);
+	}
+	public function safeToBankInternalMoneyTransfers()
+	{
+		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::SAFE_TO_BANK);
+	}
+	public function bankToSafeInternalMoneyTransfers()
+	{
+		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::BANK_TO_SAFE);
+	}
 	public function getHeadOfficeId()
 	{
 		return DB::table('branch')->where('company_id',$this->id)->orderByRaw('created_at asc')->first()->id;

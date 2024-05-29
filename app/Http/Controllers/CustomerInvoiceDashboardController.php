@@ -9,6 +9,7 @@ use App\Models\Partner;
 use App\ReadyFunctions\ChequeAgingService;
 use App\ReadyFunctions\InvoiceAgingService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -292,7 +293,16 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType)
     {
+		$partnerId = $request->has('partner_id') ? $request->get('partner_id') : $partnerId;
         $fullClassName = ('\App\Models\\' . $modelType) ;
+		$isCustomer = $modelType == 'CustomerInvoice' ? 1 : 0;
+		$isSupplier = $modelType == 'CustomerInvoice' ? 0 : 1;
+		
+		$partners = Partner::when($partnerId,function(Builder $builder) use ($partnerId,$isSupplier,$isCustomer){
+			$builder->whereIn('id',(array) $partnerId )->where('is_customer',$isCustomer)->where('is_supplier',$isSupplier);
+		})->whereHas($modelType,function(Builder $builder) use($currency){
+			$builder->where('currency',$currency);
+		})->pluck('name','id')->toArray();
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
@@ -305,7 +315,20 @@ class CustomerInvoiceDashboardController extends Controller
         ->where('currency', $currency)
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
+		// dd($clientIdColumnName , $partnerId);
         $partner = Partner::find($partnerId);
+		if(!$partner){
+			return view('admin.reports.customer-statement-report', [
+				'invoicesWithItsReceivedMoney' => [],
+				'partnerName' => null,
+				'partnerId' => $partnerId,
+				'currency' => $currency,
+				'startDate' => $startDate,
+				'endDate' => $endDate,
+				'customerStatementText' => $customerStatementText,
+				'partners'=>$partners
+			]);
+		}
         $partnerName = $partner->getName() ;
         $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
         if (count($invoicesWithItsReceivedMoney) < 1) {
@@ -319,7 +342,8 @@ class CustomerInvoiceDashboardController extends Controller
             'currency' => $currency,
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'customerStatementText' => $customerStatementText
+            'customerStatementText' => $customerStatementText,
+			'partners'=>$partners
         ]);
     }
 }

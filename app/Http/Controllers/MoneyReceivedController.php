@@ -707,8 +707,8 @@ class MoneyReceivedController
 
 		return response()->json([
 			'status'=>true , 
-			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 
-			
+			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 ,
+			'interest_rate'=>$accountNumberModel ? $accountNumberModel->getInterestRate() : 0
 		]);
 	}
 }

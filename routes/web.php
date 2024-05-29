@@ -368,8 +368,8 @@ Route::middleware([])->group(function () {
 
 
 
-				 Route::get('financial-institutions/{financialInstitution}/full-secured-clean-overdraft', 'FullySecuredOverdraftController@index')->name('view.fully.secured.overdraft');
-				 Route::get('financial-institutions/{financialInstitution}/full-secured-clean-overdraft/create', 'FullySecuredOverdraftController@create')->name('create.fully.secured.overdraft');
+				 Route::get('financial-institutions/{financialInstitution}/full-secured-overdraft', 'FullySecuredOverdraftController@index')->name('view.fully.secured.overdraft');
+				 Route::get('financial-institutions/{financialInstitution}/full-secured-overdraft/create', 'FullySecuredOverdraftController@create')->name('create.fully.secured.overdraft');
 				 Route::post('financial-institutions/{financialInstitution}/full-secured-overdraft/create', 'FullySecuredOverdraftController@store')->name('store.fully.secured.overdraft');
 				 Route::get('financial-institutions/{financialInstitution}/full-secured-overdraft/edit/{fullySecuredOverdraft}', 'FullySecuredOverdraftController@edit')->name('edit.fully.secured.overdraft');
 				 Route::put('financial-institutions/{financialInstitution}/full-secured-overdraft/update/{fullySecuredOverdraft}', 'FullySecuredOverdraftController@update')->name('update.fully.secured.overdraft');
@@ -498,7 +498,7 @@ Route::middleware([])->group(function () {
                     Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
-					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
+				Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 
 
 

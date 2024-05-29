@@ -133,6 +133,10 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(CleanOverdraft::class , 'financial_institution_id','id');
 	}
+	public function fullySecuredOverdrafts()
+	{
+		return $this->hasMany(FullySecuredOverdraft::class , 'financial_institution_id','id');
+	}
 	/**
 	 * * use getCurrentAvailableLetterOfGuaranteeFacility instead
 	 */

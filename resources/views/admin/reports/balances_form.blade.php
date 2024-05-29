@@ -75,7 +75,7 @@
 
     .dt-buttons.btn-group,
     .buttons-print {
-        max-width: 30%;
+        max-width: 50%;
         margin-left: auto;
         position: relative;
         top: 45px;
@@ -140,7 +140,6 @@
 <x-main-form-title :id="'main-form-title'" :class="''">{{ $title }}</x-main-form-title>
 @endsection
 @section('content')
-
 <div class="row">
     <div class="col-md-12">
 
@@ -310,7 +309,6 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-toolbar">
                     <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-
                         @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
                         <li class="nav-item">
                             <a class="nav-link {{ $loop->first ? 'active':'' }}" onclick="return false;" data-toggle="tab" href="#{{ $currencyName.'report__table' }}" role="tab">
@@ -331,7 +329,6 @@
             @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
             <div class="tab-pane {{ $loop->first ? 'active':'' }}" id="{{ $currencyName.'report__table' }}" role="tabpanel">
                 <div class="kt-portlet">
-
                     <div class="kt-portlet__body with-scroll pt-0">
 
                         <div class="table-custom-container position-relative  ">
@@ -353,7 +350,7 @@
                                                 </th>
 
                                                 <th class="view-table-th max-w-name   header-th  align-middle text-center">
-                                                    {{ __('Customer Name') }}
+                                                    {{ __('Name') }}
                                                 </th>
 
                                                 <th class="view-table-th  max-w-currency    header-th  align-middle text-center">
@@ -490,10 +487,14 @@
     }); // end am4core.ready()
 
 </script>
+@foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
 <script>
 
+$(function(){
 
+	$('#{{$currencyName}}report__table .dt-buttons.btn-group').prepend('<a href="{{ route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0]) }}" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> {{ $currencyName }} {{ $customersOrSupplierStatementText . ' '. __("Report") }} </a>')
+})
 
 </script>
-
+@endforeach 
 @endsection

@@ -17,9 +17,8 @@ use Illuminate\Database\Eloquent\Model;
 class CleanOverdraft extends Model
 {
     protected $guarded = ['id'];
+	
 	use HasOutstandingBreakdown , IsOverdraft;
-	
-	
 	
 	public function cleanOverdraftBankStatements()
 	{

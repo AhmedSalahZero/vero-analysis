@@ -20,7 +20,6 @@ CREATE TRIGGER `insert_net_invoice_amount_for_customers` BEFORE INSERT
 		SET  NEW.invoice_status = 'not_due_yet'; 
 	ELSEIF( DATE(NEW.invoice_due_date) = DATE(NOW() )) THEN 
 		SET  NEW.invoice_status = 'due_to_day';
-
 	ELSEIF(ifnull(NEW.collected_amount,0) + ifnull(NEW.withhold_amount,0) = 0 and DATE(NEW.invoice_due_date) < DATE(NOW() )) THEN 
 		SET  NEW.invoice_status = 'past_due';            
 		END IF;

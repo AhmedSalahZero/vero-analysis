@@ -63,22 +63,24 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
             </ul>
 
-            <a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New From LG Facility') }}
-            </a>
-            <a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_CD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New LG Agnist CDs') }}
-            </a>
-			  <a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_TD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New LG Agnist TDs') }}
-            </a>
-            <a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New LG 100% Cash Cover') }}
-            </a>
+            <div class="flex-tabs">
+				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+					<i class="fas fa-plus"></i>
+					{{ __('New From LG Facility') }}
+				</a>
+				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_CD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+					<i class="fas fa-plus"></i>
+					{{ __('New LG Agnist CDs') }}
+				</a>
+				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_TD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+					<i class="fas fa-plus"></i>
+					{{ __('New LG Agnist TDs') }}
+				</a>
+				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+					<i class="fas fa-plus"></i>
+					{{ __('New LG 100% Cash Cover') }}
+				</a>
+			</div >
 
         </div>
     </div>

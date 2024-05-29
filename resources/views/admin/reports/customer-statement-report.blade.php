@@ -131,7 +131,11 @@
 </style>
 @endsection
 @section('sub-header')
+@if($partnerName)
 <x-main-form-title :id="'main-form-title'" :class="''">{{ $customerStatementText . ' '.__('Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
+@else
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $customerStatementText . ' '.__('Table') . ' [ '. $currency .' ]' }}</x-main-form-title>
+@endif 
 @endsection
 @section('content')
 
@@ -298,12 +302,33 @@
             <div class="row row-no-padding row-col-separator-xl">
 				<form class="w-full mt-3 ml-3">
 					<div class="row align-items-center">
-						<div class="col-md-4">
+					
+					      <div class="col-md-4">
+
+                    <label>{{__('Name')}} <span class="required">*</span></label>
+                    <div class="kt-input-icon">
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select data-live-search="true" data-actions-box="true" id="partner_id" name="partner_id" class="form-control select2-select 
+								{{-- ajax-get-invoice-numbers --}}
+								">
+                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                    @foreach($partners as $currentPartnerId => $customerName)
+                                    <option @if($partnerId == $currentPartnerId)  selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $currentPartnerId }}">{{$customerName}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+				
+						<div class="col-md-3">
 							<label for="start_date">{{ __('Start Date') }}</label>
 							<input id="start_date" type="date" value="{{ $startDate }}" class="form-control" name="start_date" >
 						</div>
 						
-						<div class="col-md-4">
+						<div class="col-md-3">
 							<label for="end_Date">{{ __('End Date') }}</label>
 							<input id="end_Date" type="date" value="{{ $endDate }}" class="form-control" name="end_Date" >
 						</div>

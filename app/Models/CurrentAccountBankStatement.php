@@ -170,5 +170,8 @@ class CurrentAccountBankStatement extends Model
 	{
 		return $this->belongsTo(CurrentAccountBankStatement::class,'financial_institution_account_id','id');
 	}
-	
+	public function internalMoneyTransfer()
+	{
+		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
+	}
 }

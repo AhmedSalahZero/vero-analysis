@@ -85,5 +85,14 @@ class Partner extends Model
 		})
 		->get();
 	}
+	public function CustomerInvoice()
+	{
+		return $this->hasMany(CustomerInvoice::class,'customer_id','id');
+	}
+	public function SupplierInvoice()
+	{
+		return $this->hasMany(SupplierInvoice::class,'supplier_id','id');
+	}
+	
 	
 }

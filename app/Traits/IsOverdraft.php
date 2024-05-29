@@ -62,6 +62,10 @@ trait IsOverdraft
 	{
 		return $this->interest_rate?:0;
 	}
+	public function getInterestRateFormatted()
+	{
+		return number_format($this->getInterestRate(),2);
+	}
 	public function getMaxLendingLimitPerCustomer()
 	{
 		return $this->max_lending_limit_per_customer?:0;
@@ -85,12 +89,20 @@ trait IsOverdraft
 	{
 		return $this->borrowing_rate ?: 0;
 	}
+	public function getBorrowingRateFormatted()
+	{
+		return number_format($this->getBorrowingRate(),2);
+	}
 		/**
 	 * * هي فايدة خاصة بالبنك بناء علي العميل (طبقا للقدرة المالية زي امتلاكك للمصانع)
 	 */
 	public function getMarginRate()
 	{
 		return $this->bank_margin_rate ?: 0 ;
+	}
+	public function getMarginRateFormatted()
+	{
+		return number_format($this->getMarginRate(),2);
 	}
 	public function getCurrency()
 	{

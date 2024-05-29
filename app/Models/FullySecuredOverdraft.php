@@ -19,24 +19,40 @@ class FullySecuredOverdraft extends Model
     protected $guarded = ['id'];
 	use HasOutstandingBreakdown , IsOverdraft;
 	
-	
-	
 	public function fullySecuredOverdraftBankStatements()
 	{
-		return $this->hasMany(FullySecuredOverdraftBankStatement::class,'clean_overdraft_id','id');
+		return $this->hasMany(FullySecuredOverdraftBankStatement::class,'fully_secured_overdraft_id','id');
 	}
 	public function bankStatements()
 	{
-		return $this->hasMany(CleanOverdraftBankStatement::class , 'clean_overdraft_id','id');
+		return $this->hasMany(FullySecuredOverdraftBankStatement::class , 'fully_secured_overdraft_id','id');
 	}	
 	
 	public function generateForeignKeyFormModelName()
 	{
-		return 'clean_overdraft_id';
+		return 'fully_secured_overdraft_id';
 	}	
 	public function getBankStatementTableName()
 	{
-		return 'clean_overdraft_bank_statements';
+		return 'fully_secured_overdraft_bank_statements';
+	}
+	
+	public function internalMoneyTransfer()
+	{
+		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
+	}	
+	public function cdOrTdAccountType()
+	{
+		return $this->belongsTo(AccountType::class,'cd_or_td_account_type_id','id');
+	}
+	public function getCdOrTdAccountTypeId()
+	{
+		return $this->cdOrTdAccountType ? $this->cdOrTdAccountType->id : 0 ; 
+	}
+	
+	public function getCdOrTdAccountNumber()
+	{
+		return $this->cd_or_td_account_id;
 	}
 	
 	

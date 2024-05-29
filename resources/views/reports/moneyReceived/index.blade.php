@@ -96,7 +96,8 @@ use App\Models\MoneyReceived;
 
             </ul>
 
-            <a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
+            <div class="flex-tabs">
+			<a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('Money Received') }}
             </a>
@@ -105,6 +106,7 @@ use App\Models\MoneyReceived;
                 <i class="fas fa-plus"></i>
                 {{ __('Down Payment') }}
             </a>
+			</div>
 
         </div>
     </div>
