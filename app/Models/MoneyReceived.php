@@ -419,6 +419,10 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
 	}
+	public function fullySecuredOverdraftDebitBankStatement()
+	{
+		return $this->hasOne(FullySecuredOverdraftBankStatement::class,'money_received_id','id');
+	}
 	public function cashInSafeDebitStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
@@ -466,6 +470,7 @@ class MoneyReceived extends Model
 		});
 		$this->unappliedAmounts()->delete();
 		$this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() : null ;
+		$this->fullySecuredOverdraftDebitBankStatement ? $this->fullySecuredOverdraftDebitBankStatement->delete() : null ;
 		$this->cashInSafeDebitStatement ? $this->cashInSafeDebitStatement->delete() : null ;
 		$this->currentAccountDebitBankStatement ? $this->currentAccountDebitBankStatement->delete() : null ;
 	}

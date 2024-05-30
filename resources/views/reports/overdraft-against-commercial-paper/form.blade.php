@@ -204,7 +204,7 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('More Lending Information')}}
+                                {{__('Lending Information')}}
                             </h3>
                         </div>
                     </div>

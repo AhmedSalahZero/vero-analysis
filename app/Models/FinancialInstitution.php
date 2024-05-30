@@ -47,6 +47,7 @@ class FinancialInstitution extends Model
 		$builder
 		->has('cleanOverdrafts');
 	}
+	
 	/**
 	 * * نوع المؤسسة المالية وليكن مثلا بنك
 	 */

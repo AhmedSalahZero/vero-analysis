@@ -32,8 +32,8 @@ class CurrentAccountBankStatement extends Model
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , id asc')
 		->where('financial_institution_account_id',$model->financial_institution_account_id)
-		->each(function($cleanOverdraftBankStatement){
-			DB::table('current_account_bank_statements')->where('id',$cleanOverdraftBankStatement->id)->update([
+		->each(function($currentAccountBankStatement){
+			DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatement->id)->update([
 				'updated_at'=>now()
 			]);
 		});
@@ -80,10 +80,9 @@ class CurrentAccountBankStatement extends Model
 					$oldAccountIdId=$model->getRawOriginal('financial_institution_account_id');
 					$oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldCleanOverdraft = CurrentAccountBankStatement::where('financial_institution_account_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					$firstBankStatementForOld = CurrentAccountBankStatement::where('financial_institution_account_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-					if(!$firstBankStatementForOldCleanOverdraft){
-						// CleanOverdraftWithdrawal::where('financial_institution_account_id',$oldCleanOverdraftId)->delete();
+					if(!$firstBankStatementForOld){
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('current_account_bank_statements')
@@ -99,20 +98,20 @@ class CurrentAccountBankStatement extends Model
 				
 			});
 			
-			static::deleting(function(CurrentAccountBankStatement $cleanOverdraftBankStatement){
+			static::deleting(function(CurrentAccountBankStatement $currentAccountBankStatement){
 				$oldDate = null ;
-				if($cleanOverdraftBankStatement->is_debit && Request('receiving_date')||$cleanOverdraftBankStatement->is_credit && Request('delivery_date')){
+				if($currentAccountBankStatement->is_debit && Request('receiving_date')||$currentAccountBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $cleanOverdraftBankStatement->full_date ;
-						$cleanOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+						$currentDate = $currentAccountBankStatement->full_date ;
+						$currentAccountBankStatement->full_date = min($oldDate,$currentDate);
 				}
 			
 				
-				$cleanOverdraftBankStatement->debit = 0;
-				$cleanOverdraftBankStatement->credit = 0;
-				$cleanOverdraftBankStatement->save();
+				$currentAccountBankStatement->debit = 0;
+				$currentAccountBankStatement->credit = 0;
+				$currentAccountBankStatement->save();
 				
 			});
 		}

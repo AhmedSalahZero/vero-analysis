@@ -80,10 +80,9 @@ class CashInSafeStatement extends Model
 					$oldAccountIdId=$model->getRawOriginal('branch_id');
 					$oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldCleanOverdraft = CashInSafeStatement::where('branch_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					$firstBankStatementForOld = CashInSafeStatement::where('branch_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-					if(!$firstBankStatementForOldCleanOverdraft){
-						// CleanOverdraftWithdrawal::where('branch_id',$oldCleanOverdraftId)->delete();
+					if(!$firstBankStatementForOld){
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('cash_in_safe_statements')

@@ -8,6 +8,7 @@ use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\FullySecuredOverdraft;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,9 @@ class BankStatementController
         $currencyName = $request->get('currency');
 		$results = [];
 		$accountType = AccountType::find($accountTypeId);
+		/**
+		 * @var AccountType $accountType
+		 */
 		$accountTypeName = $accountType->getName() ;
 		$isCurrentAccount = $accountType->isCurrentAccount() ;
 		if($isCurrentAccount){
@@ -68,8 +72,18 @@ class BankStatementController
 				 ->where('clean_overdrafts.currency','=',$currencyName)
 				 ->orderByRaw('full_date desc , priority asc ')
 				 ->get();
-		
-				 
+		}
+		elseif($accountType->isFullySecuredOverDraftAccount()){
+			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+			$results = DB::table('fully_secured_overdraft_bank_statements')
+				 ->where('fully_secured_overdraft_bank_statements.company_id',$company->id)
+				 ->where('date', '>=', $startDate)
+				 ->where('date', '<=', $endDate)
+				 ->where('fully_secured_overdraft_id',$fullySecuredOverdraft->id)
+				 ->join('fully_secured_overdrafts','fully_secured_overdraft_bank_statements.fully_secured_overdraft_id','=','fully_secured_overdrafts.id')
+				 ->where('fully_secured_overdrafts.currency','=',$currencyName)
+				 ->orderByRaw('full_date desc , priority asc ')
+				 ->get();
 		}
 
         if (!count($results)) {

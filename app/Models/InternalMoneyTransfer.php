@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\FullySecuredOverdraft;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -152,6 +153,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->hasMany(CleanOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
     }
+	public function fullySecuredOverdraftBankStatements()
+    {
+        return $this->hasMany(FullySecuredOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
+    }
 	public function cashInSafeStatements():HasMany
 	{
 		return $this->hasMany(CashInSafeStatement::class,'internal_money_transfer_id','id');
@@ -160,6 +165,9 @@ class InternalMoneyTransfer extends Model
     {
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
 			$cleanOverdraftBankStatement->delete();
+		});
+		$this->fullySecuredOverdraftBankStatements->each(function (FullySecuredOverdraftBankStatement $fullySecuredOverdraftBankStatement) {
+			$fullySecuredOverdraftBankStatement->delete();
 		});
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
 			$currentAccountBankStatement->delete();
@@ -207,47 +215,26 @@ class InternalMoneyTransfer extends Model
 				'debit'=>$debitAmount
 			]);
 		}
-		
+		if($fromAccountType && $fromAccountType->isFullySecuredOverDraftAccount()){
+			/**
+			 * @var FullySecuredOverdraft $fromFullySecuredOverDraft
+			 */
+
+			 $fromFullySecuredOverDraft = FullySecuredOverdraft::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			FullySecuredOverdraftBankStatement::create([
+				'type'=>FullySecuredOverdraftBankStatement::MONEY_TRANSFER ,
+				'fully_secured_overdraft_id'=>$fromFullySecuredOverDraft->id ,
+				'internal_money_transfer_id'=>$this->id ,
+				'company_id'=>$companyId ,
+				'date' => $transferDate , 
+				'limit' =>$fromFullySecuredOverDraft->getLimit(),
+				'credit'=>$creditAmount,
+				'debit'=>$debitAmount
+			]);
+		}
 		
 	}
-	/**
-	 * * هنا لما بنحول الي بنك بغض النظر هل هو خزنة الي بنك ام بنك الي خزنة
-	 */
-	// public function handleToBankTransfer(int $companyId , int $toFinancialInstitutionId , AccountType $toAccountType , string $toAccountNumber ,string $receivingDate , $transferAmount)
-	// {
-	// 	if($toAccountType && $toAccountType->isCurrentAccount()){
-	// 		/**
-	// 		 * @var CleanOverdraft $fromCleanOverDraft
-	// 		 */
-	// 		$toCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($toAccountNumber,$companyId,$toFinancialInstitutionId);
-	// 		CurrentAccountBankStatement::create([
-	// 			'financial_institution_account_id'=>$toCurrentAccount->id ,
-	// 			'internal_money_transfer_id'=>$this->id  ,
-	// 			'company_id'=>$companyId ,
-	// 			'date' => $receivingDate , 
-	// 			'debit'=>$transferAmount,
-	// 		]);
-	// 	}
-		
-	// 	//////////////////////////
-		
-		
-		
-	// 	if($toAccountType && $toAccountType->isCleanOverDraftAccount()){
-	// 		/**
-	// 		 * @var CleanOverdraft $fromCleanOverDraft
-	// 		 */
-	// 		$toCleanOverDraft = CleanOverdraft::findByAccountNumber($toAccountNumber,$companyId,$toFinancialInstitutionId);
-	// 		CleanOverdraftBankStatement::create([
-	// 			'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
-	// 			'clean_overdraft_id'=>$toCleanOverDraft->id ,
-	// 			'internal_money_transfer_id'=>$this->id ,
-	// 			'company_id'=>$companyId ,
-	// 			'date' => $receivingDate , 
-	// 			'limit' =>$toCleanOverDraft->getLimit(),
-	// 			'debit'=>$transferAmount
-	// 		]);
-	// 	}
+	
 		
 		
 	// }

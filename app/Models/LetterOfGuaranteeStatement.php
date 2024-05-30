@@ -95,7 +95,7 @@ class LetterOfGuaranteeStatement extends Model
 					$oldLgType=$model->getRawOriginal('lg_type');
 					$oldStatementId =$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldCleanOverdraft = LetterOfGuaranteeStatement::
+					$firstBankStatementForOld = LetterOfGuaranteeStatement::
 					where('financial_institution_id',$financialInstitutionId)->
 					where('lg_facility_id',$oldLgFacilityId)->
 					where('cd_or_td_id',$oldCdOrTdId)->
@@ -104,8 +104,7 @@ class LetterOfGuaranteeStatement extends Model
 					where('lg_type',$oldLgType)
 					->where('id','!=',$oldStatementId )->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-					if(!$firstBankStatementForOldCleanOverdraft){
-						// CleanOverdraftWithdrawal::where('branch_id',$oldCleanOverdraftId)->delete();
+					if(!$firstBankStatementForOld){
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('letter_of_guarantee_statements')

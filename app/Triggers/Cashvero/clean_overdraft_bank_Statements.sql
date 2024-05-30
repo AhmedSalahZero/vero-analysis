@@ -74,19 +74,6 @@
 			
 			
 		end //
-		delimiter ;
-		drop trigger if exists after_update_clean_overdraft_withdrawals ;
-		delimiter // 
-			create trigger after_update_clean_overdraft_withdrawals after update on `clean_overdraft_withdrawals` for each row
-			begin 
-				-- وظيفه التريجر دا بسيطة خالص .. بعد اما نعدل علي سحبة معينه لو قيمة التسديد فيها بصفر يبقي هندخل نحذف كل ال التسديدات المربوطة بيها
-
-				if new.settlement_amount = 0  
-				then 
-					delete  from clean_overdraft_settlements where clean_overdraft_withdrawal_id = new.id ;
-				end if ;
-			end //
-			
 			
 		delimiter ;
 		drop procedure if exists reverse_clean_overdraft_settlements ;

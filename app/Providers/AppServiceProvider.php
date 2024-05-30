@@ -2,28 +2,16 @@
 
 namespace App\Providers;
 
-use App\Exports\LabelingItemExport;
 
 use App\Http\Controllers\ExportTable;
-use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
-use App\Models\CustomersInvoice;
-use App\Models\MoneyReceived;
-use App\Models\NetBalance;
 use App\Models\Section;
 use App\Models\User;
-use App\Providers\ProductionArtisanServiceProvider;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Font;
 use Spatie\Permission\Models\Permission;
 use stdClass;
