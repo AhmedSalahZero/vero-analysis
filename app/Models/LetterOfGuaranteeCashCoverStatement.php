@@ -92,15 +92,14 @@ class LetterOfGuaranteeCashCoverStatement extends Model
 					$oldLgType=$model->getRawOriginal('lg_type');
 					$oldStatementId =$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldCleanOverdraft = LetterOfGuaranteeCashCoverStatement::
+					$firstBankStatementForOld = LetterOfGuaranteeCashCoverStatement::
 					where('financial_institution_id',$financialInstitutionId)->
 					where('lg_facility_id',$oldLgFacilityId)->
 					where('source',$oldSource)->
 					where('lg_type',$oldLgType)
 					->where('id','!=',$oldStatementId )->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-					if(!$firstBankStatementForOldCleanOverdraft){
-						// CleanOverdraftWithdrawal::where('branch_id',$oldCleanOverdraftId)->delete();
+					if(!$firstBankStatementForOld){
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('letter_of_guarantee_cash_cover_statements')

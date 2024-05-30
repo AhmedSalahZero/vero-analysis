@@ -95,10 +95,7 @@ class OverdraftAgainstCommercialPaperController
 		$lendingInformation = $request->get('infos',[]) ; 
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		
-					
 					$overdraftAgainstCommercialPapers = $financialInstitution->overdraftAgainstCommercialPapers()->create($data);
-					// dd($request->all());
 					$overdraftAgainstCommercialPapers->storeOutstandingBreakdown($request,$company);
 		foreach($lendingInformation as $lendingInformationArr){
 			$overdraftAgainstCommercialPapers->lendingInformation()->create(array_merge($lendingInformationArr , [
@@ -106,7 +103,6 @@ class OverdraftAgainstCommercialPaperController
 		}
 		$type = $request->get('type','over-draft-against-commercial-paper');
 		$activeTab = $type ; 
-		// $activeTab = $this->getActiveTab($type);
 		
 		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		

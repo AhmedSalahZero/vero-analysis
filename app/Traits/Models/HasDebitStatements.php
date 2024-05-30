@@ -4,6 +4,7 @@ namespace App\Traits\Models;
 use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\FullySecuredOverdraft;
 
 trait HasDebitStatements 
 {
@@ -17,6 +18,10 @@ trait HasDebitStatements
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
 			$this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$receivingDate,$debit);
+		}
+		if($accountType && $accountType->getSlug() == AccountType::FULLY_SECURED_OVERDRAFT){
+			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
+			$this->storeFullySecuredOverdraftDebitBankStatement($moneyType,$fullySecuredOverdraft,$receivingDate,$debit);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
@@ -35,6 +40,19 @@ trait HasDebitStatements
 			'company_id'=>$this->company_id ,
 			'date'=>$date,
 			'limit'=>$cleanOverdraft->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>$debit,
+			'credit'=>0
+		]) ;
+	}
+	public function storeFullySecuredOverdraftDebitBankStatement(string $moneyType , FullySecuredOverdraft $fullySecuredOverdraft , string $date , $debit )
+	{
+		return $this->fullySecuredOverdraftDebitBankStatement()->create([
+			'type'=>$moneyType ,
+			'fully_secured_overdraft_id'=>$fullySecuredOverdraft->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$fullySecuredOverdraft->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>$debit,
 			'credit'=>0

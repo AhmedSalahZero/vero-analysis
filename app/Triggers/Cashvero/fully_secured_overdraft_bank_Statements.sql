@@ -74,18 +74,7 @@
 				
 				
 			end //
-			delimiter ;
-			drop trigger if exists after_update_fully_secured_overdraft_withdrawals ;
-			delimiter // 
-				create trigger after_update_fully_secured_overdraft_withdrawals after update on `fully_secured_overdraft_withdrawals` for each row
-				begin 
-					-- وظيفه التريجر دا بسيطة خالص .. بعد اما نعدل علي سحبة معينه لو قيمة التسديد فيها بصفر يبقي هندخل نحذف كل ال التسديدات المربوطة بيها
-
-					if new.settlement_amount = 0  
-					then 
-						delete  from fully_secured_overdraft_settlements where fully_secured_overdraft_withdrawal_id = new.id ;
-					end if ;
-				end //
+			
 				
 				
 			delimiter ;

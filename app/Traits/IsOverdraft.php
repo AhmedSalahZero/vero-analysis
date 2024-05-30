@@ -70,9 +70,9 @@ trait IsOverdraft
 	{
 		return $this->max_lending_limit_per_customer?:0;
 	}
-	public static function findByFinancialInstitutionIds(array $cleanOverdraftIds):array
+	public static function findByFinancialInstitutionIds(array $overdraftIds):array
 	{
-		return self::where('financial_institution_id',$cleanOverdraftIds)->pluck('id')->toArray();
+		return self::where('financial_institution_id',$overdraftIds)->pluck('id')->toArray();
 	}
 	/**
 	 * * هو عدد الايام اللي اجباري تسدد السحبات فيها 

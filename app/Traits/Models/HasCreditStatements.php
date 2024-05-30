@@ -4,6 +4,7 @@ namespace App\Traits\Models;
 use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\FullySecuredOverdraft;
 
 trait HasCreditStatements
 {
@@ -18,6 +19,10 @@ trait HasCreditStatements
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$companyId,$bankId);
 			$this->storeCleanOverdraftCreditBankStatement($moneyType,$cleanOverdraft,$statementDate,$paidAmount);
+		}
+		elseif($accountType && $accountType->getSlug() == AccountType::FULLY_SECURED_OVERDRAFT){
+			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,$companyId,$bankId);
+			$this->storeFullySecuredOverdraftCreditBankStatement($moneyType,$fullySecuredOverdraft,$statementDate,$paidAmount);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$companyId,$bankId);
@@ -66,6 +71,19 @@ trait HasCreditStatements
 		]) ;
 
 	}
+	public function storeFullySecuredOverdraftCreditBankStatement(string $moneyType , FullySecuredOverdraft $fullySecuredOverdraft , string $date , $paidAmount )
+	{
+		return  $this->fullySecuredOverdraftCreditBankStatement()->create([
+			'type'=>$moneyType ,
+			'fully_secured_overdraft_id'=>$fullySecuredOverdraft->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$fullySecuredOverdraft->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>0,
+			'credit'=>$paidAmount
+		]) ;
 
+	}
 
 }

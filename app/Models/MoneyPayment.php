@@ -347,6 +347,10 @@ class MoneyPayment extends Model
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_payment_id','id');
 	}
+	public function fullySecuredOverdraftCreditBankStatement()
+	{
+		return $this->hasOne(FullySecuredOverdraftBankStatement::class,'money_payment_id','id');
+	}
 	public function cashInSafeCreditStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_payment_id','id');
@@ -386,6 +390,9 @@ class MoneyPayment extends Model
 		if($this->cleanOverdraftCreditBankStatement){
 			return $this->cleanOverdraftCreditBankStatement;
 		}	
+		if($this->fullySecuredOverdraftCreditBankStatement){
+			return $this->fullySecuredOverdraftCreditBankStatement;
+		}
 		if($this->cashInSafeCreditStatement){
 			return $this->cashInSafeCreditStatement ;
 		}
