@@ -28,15 +28,26 @@ class FullySecuredOverdraft extends Model
 		return $this->hasMany(FullySecuredOverdraftBankStatement::class , 'fully_secured_overdraft_id','id');
 	}	
 	
-	public function generateForeignKeyFormModelName()
+	public static function generateForeignKeyFormModelName()
 	{
 		return 'fully_secured_overdraft_id';
 	}	
-	public function getBankStatementTableName()
+	public static function getBankStatementTableName()
 	{
 		return 'fully_secured_overdraft_bank_statements';
 	}
-	
+	public static function getWithdrawalTableName()
+	{
+		return 'fully_secured_overdraft_withdrawals';
+	}
+	public static function getBankStatementIdName():string 
+	{
+		return 'fully_secured_overdraft_bank_statement_id';
+	}
+	public static function getTableNameFormatted()
+	{
+		return __('Fully Secured Overdraft');
+	}
 	public function internalMoneyTransfer()
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');

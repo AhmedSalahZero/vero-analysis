@@ -45,7 +45,8 @@ class FinancialInstitution extends Model
 	}
 	public function scopeOnlyHasOverdrafts(Builder $builder){
 		$builder
-		->has('cleanOverdrafts');
+		->has('cleanOverdrafts')
+		->orHas('fullySecuredOverdrafts');
 	}
 	
 	/**

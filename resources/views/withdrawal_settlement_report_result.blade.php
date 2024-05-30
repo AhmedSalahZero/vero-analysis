@@ -342,12 +342,12 @@
                                         let currentTable = null;
 
                                     </script>
-                                    @foreach($clean_overdraft_withdrawals as $index=>$modelAsStdClass)
+                                    @foreach($cleanOverdraftWithdrawals as $index=>$modelAsStdClass)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                         <td class="sub-text-bg text-center max-w-amount">{{ $modelAsStdClass->name_en }}</td>
 										
-                                        <td class="sub-text-bg text-center max-w-invoice-number">{{ $modelAsStdClass->clean_overdraft_id ? __('Clean Overdraft') : __('') }}</td>
+                                        <td class="sub-text-bg text-center max-w-invoice-number">{{ $tableNameFormatted }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{  $modelAsStdClass->account_number }}</td>
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y') }}</td>
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->credit) }}</td>

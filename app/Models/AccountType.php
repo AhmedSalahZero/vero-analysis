@@ -26,7 +26,10 @@ class AccountType extends Model
 	{
 		return $builder->onlySlugs([self::CURRENT_ACCOUNT,self::FULLY_SECURED_OVERDRAFT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
 	}
-
+	public function scopeOnlyOverdraftsAccounts(Builder $builder)
+	{
+		return $builder->onlySlugs([self::FULLY_SECURED_OVERDRAFT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
+	}
 	public function scopeOnlyCurrentAccount(Builder $builder)
 	{
 		return $builder->onlySlugs([self::CURRENT_ACCOUNT]);
