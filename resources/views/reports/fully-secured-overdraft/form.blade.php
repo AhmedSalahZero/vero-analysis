@@ -211,8 +211,9 @@
                             </div>
                             <div class="kt-portlet__body">
                                 <div class="form-group row">
-                                    <div class="col-md-4 ">
-                                        <x-form.input :id="'limit-id'" :readonly="true" :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                    <div class="col-md-4 ">	
+										<input id="limit-id" type="hidden" name="limit" value="{{ isset($model) ? $model->limit : 0 }}">
+                                        <x-form.input :id="'limit-formatted-id'" :readonly="true" :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit_formatted'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-4 ">
@@ -465,7 +466,8 @@
 			let amount = number_unformat($('#cd-or-td-amount-id').val());
 			let lendingPercentage = number_unformat($('#cd-or-td-lending-percentage-id').val());
 			let limit = amount * lendingPercentage / 100 ;
-			$('#limit-id').val(number_format(limit))
+			$('#limit-id').val(limit)
+			$('#limit-formatted-id').val(number_format(limit))
 			
 			
 		})
