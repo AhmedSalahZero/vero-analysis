@@ -38,9 +38,9 @@ trait HasOutstandingBreakdown
 				unset($outstandingBreakdownArr['id']);
 				$outstandingBreakdownArr['company_id'] = $company->id ;
 				$outstandingBreakdownArr['model_type'] = get_class($this);
-				$modelForeignKey = $this->generateForeignKeyFormModelName();
+				// $modelForeignKey = $this->generateForeignKeyFormModelName();
 				$outstandingBreakdownArr['amount'] = number_unformat($outstandingBreakdownArr['amount']);
-				$withdrawalDate = Carbon::make($outstandingBreakdownArr['settlement_date'])->subDays($this->getMaxSettlementDays())->format('Y-m-d');
+				// $withdrawalDate = Carbon::make($outstandingBreakdownArr['settlement_date'])->subDays($this->getMaxSettlementDays())->format('Y-m-d');
 				$bankStatement = $this->bankStatements()->create([
 				'type'=>'outstanding_balance',
 				'money_received_id'=>0 ,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
@@ -15,9 +16,12 @@ class WithdrawalsSettlementReportController
     public function index(Company $company)
 	{
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyHasOverdrafts()->get();
+		$accountTypes = AccountType::onlyOverdraftsAccounts()->get();
+		
         return view('reports.withdrawals_settlement_report_form', [
 			'company'=>$company,
-			'financialInstitutionBanks'=>$financialInstitutionBanks
+			'financialInstitutionBanks'=>$financialInstitutionBanks,
+			'accountTypes'=>$accountTypes
 		]);
     }
 	public function result(Company $company , Request $request){
@@ -25,19 +29,30 @@ class WithdrawalsSettlementReportController
 		$currency = $request->get('currency');
 		$endDate  = $request->get('end_date');
 		$financialInstitutionIds = $request->get('financial_institution_ids',[]);
-		$cleanOverdraftIds = CleanOverdraft::findByFinancialInstitutionIds($financialInstitutionIds);
-		$cleanOverdraftWithdrawals=DB::table('clean_overdraft_withdrawals')
-		->join('clean_overdraft_bank_statements','clean_overdraft_bank_statement_id','=','clean_overdraft_bank_statements.id')
-		->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
-		->join('financial_institutions','financial_institutions.id','=','clean_overdrafts.financial_institution_id')
+		$accountType = AccountType::find($request->get('account_type'));
+		$fullClassName = ('\App\Models\\'.$accountType->model_name) ;
+		$overdraftIds = $fullClassName::findByFinancialInstitutionIds($financialInstitutionIds);
+		$foreignKeyName = $fullClassName::generateForeignKeyFormModelName();
+		$withdrawalsTableName = $fullClassName::getWithdrawalTableName();
+		$bankStatementTableName = $fullClassName::getBankStatementTableName();
+		$bankStatementIdName = $fullClassName::getBankStatementIdName();
+		$tableNameFormatted = $fullClassName::getTableNameFormatted();
+		$tableName = (new $fullClassName)->getTable();
+		
+		$overdraftWithdrawals=DB::table($withdrawalsTableName)
+		->join($bankStatementTableName,$bankStatementIdName,'=',$bankStatementTableName.'.id')
+		->join($tableName,$bankStatementTableName.'.'.$foreignKeyName,'=',$tableName.'.id')
+		->join('financial_institutions','financial_institutions.id','=',$tableName.'.financial_institution_id')
 		->join('banks','banks.id','=','financial_institutions.bank_id')
-		->where('clean_overdraft_bank_statements.company_id',$company->id)
-		->whereIn('clean_overdraft_bank_statements.clean_overdraft_id',$cleanOverdraftIds)
-		->whereBetween('clean_overdraft_bank_statements.date',[$startDate,$endDate] )
+		->where($bankStatementTableName.'.company_id',$company->id)
+		->whereIn($bankStatementTableName.'.'.$foreignKeyName,$overdraftIds)
+		->whereBetween($bankStatementTableName.'.date',[$startDate,$endDate] )
 		->orderByRaw('due_date asc')
 		->get();
+	
 		return view('withdrawal_settlement_report_result',[
-			'clean_overdraft_withdrawals'=>$cleanOverdraftWithdrawals
+			'cleanOverdraftWithdrawals'=>$overdraftWithdrawals,
+			'tableNameFormatted'=>$tableNameFormatted
 		]);
 	}
 	

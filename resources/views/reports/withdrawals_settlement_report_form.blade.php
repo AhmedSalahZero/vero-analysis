@@ -49,7 +49,7 @@
 
                         </div>
 
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <label>{{__('Select Banks')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -62,15 +62,31 @@
                                 </div>
                             </div>
                         </div>
+						
+						   <div class="col-md-3">
+                                        <label>{{__('Account Type')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                    @foreach($accountTypes as $index => $accountType)
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
 
-
-                        <div class="col-md-2">
-                            <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                        <div class="col-md-1">
+                            <label>{{__('Select Currency')}}</label>
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
-                                        <option value="" selected>{{__('Select')}}</option>
+                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                         @php
                                         $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;

@@ -29,14 +29,24 @@ class CleanOverdraft extends Model
 		return $this->hasMany(CleanOverdraftBankStatement::class , 'clean_overdraft_id','id');
 	}	
 	
-	public function generateForeignKeyFormModelName()
+	public static function generateForeignKeyFormModelName():string 
 	{
 		return 'clean_overdraft_id';
 	}	
-	public function getBankStatementTableName()
+	public static function getBankStatementTableName():string 
 	{
 		return 'clean_overdraft_bank_statements';
 	}
-	
-	
+	public static function getWithdrawalTableName():string 
+	{
+		return 'clean_overdraft_withdrawals';
+	}
+	public static function getBankStatementIdName():string 
+	{
+		return 'clean_overdraft_bank_statement_id';
+	}
+	public static function getTableNameFormatted()
+	{
+		return __('Clean Overdraft');
+	}
 }
