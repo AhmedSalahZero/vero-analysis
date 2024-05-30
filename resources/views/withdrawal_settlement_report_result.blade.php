@@ -116,7 +116,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Withdrawals Settlement Report')  }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $tableNameFormatted .' ' . __('Withdrawals Settlement Report')  }}</x-main-form-title>
 
 @endsection
 @section('content')
