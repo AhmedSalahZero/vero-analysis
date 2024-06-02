@@ -110,15 +110,15 @@ class CustomerInvoiceDashboardController extends Controller
                  * * مؤجلة لحساب الكلين اوفردرافت
                  * * aginst commerical
                  */
-                //   $cleanOverdraftOverCommercialRoom = DB::table('clean_overdraft_against_commercial_bank_statements')
-                //   ->where('clean_overdraft_against_commercial_bank_statements.company_id',$company->id)->where('date','<=',$date)
-                //   ->join('clean_overdraft_against_commercials','clean_overdraft_against_commercial_bank_statements.clean_overdraft_id','=','clean_overdraft_against_commercials.id')
-                //   ->where('clean_overdraft_against_commercials.currency','=',$currencyName)
-                //   ->orderBy('clean_overdraft_against_commercial_bank_statements.id')
-                //   ->limit(1)
-                //   ->first() ;
-                //   $cleanOverdraftOverCommercialRoom = $cleanOverdraftOverCommercialRoom ? $cleanOverdraftOverCommercialRoom->room : 0 ;
-                //   $totalCleanOverdraftAgainstCommercialRoom +=$cleanOverdraftOverCommercialRoom ;
+                  $cleanOverdraftOverCommercialRoom = DB::table('clean_overdraft_against_commercial_bank_statements')
+                  ->where('clean_overdraft_against_commercial_bank_statements.company_id',$company->id)->where('date','<=',$date)
+                  ->join('clean_overdraft_against_commercials','clean_overdraft_against_commercial_bank_statements.clean_overdraft_id','=','clean_overdraft_against_commercials.id')
+                  ->where('clean_overdraft_against_commercials.currency','=',$currencyName)
+                  ->orderBy('clean_overdraft_against_commercial_bank_statements.id')
+                  ->limit(1)
+                  ->first() ;
+                  $cleanOverdraftOverCommercialRoom = $cleanOverdraftOverCommercialRoom ? $cleanOverdraftOverCommercialRoom->room : 0 ;
+                  $totalCleanOverdraftAgainstCommercialRoom +=$cleanOverdraftOverCommercialRoom ;
             }
             $reports['cash_and_banks'][$currencyName] = $cashInSafeStatementAmountForCurrency + $currentAccountInBanks ;
             $reports['certificate_of_deposits'][$currencyName] = $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount ;

@@ -63,17 +63,7 @@
                     </div>
 
 
-                    <div class="col-2">
-                        <label class="form-label font-weight-bold">{{ __('Setteled Max Within') }}
-                        </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group">
-                                <input @if($isRepeater) name="to_be_setteled_max_within_days" @else name="infos[0][to_be_setteled_max_within_days]" @endif type="text" class="form-control only-greater-than-zero-allowed 
-								{{-- trigger-change-repeater --}}
-								" value="{{ (isset($infos) ? $infos->to_be_setteled_max_within_days: old('to_be_setteled_max_within_days',0)) }}">
-                            </div>
-                        </div>
-                    </div>
+                  
 
 
 

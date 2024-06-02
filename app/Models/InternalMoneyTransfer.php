@@ -157,6 +157,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->hasMany(FullySecuredOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
     }
+	public function overdraftAgainstCommercialPaperBankStatements()
+    {
+        return $this->hasMany(overdraftAgainstCommercialPaperBankStatement::class, 'internal_money_transfer_id', 'id');
+    }
 	public function cashInSafeStatements():HasMany
 	{
 		return $this->hasMany(CashInSafeStatement::class,'internal_money_transfer_id','id');
@@ -168,6 +172,9 @@ class InternalMoneyTransfer extends Model
 		});
 		$this->fullySecuredOverdraftBankStatements->each(function (FullySecuredOverdraftBankStatement $fullySecuredOverdraftBankStatement) {
 			$fullySecuredOverdraftBankStatement->delete();
+		});
+		$this->overdraftBankAgainstCommercialPaperStatements->each(function (OverdraftAgainstCommercialPaperBankStatement $overdraftAgainstCommercialPaperBankStatement) {
+			$overdraftAgainstCommercialPaperBankStatement->delete();
 		});
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
 			$currentAccountBankStatement->delete();
@@ -232,6 +239,25 @@ class InternalMoneyTransfer extends Model
 				'debit'=>$debitAmount
 			]);
 		}
+		
+		if($fromAccountType && $fromAccountType->isOverDraftAgainstCommercialPaperAccount()){
+			/**
+			 * @var OverDraftAgainstCommercialPaper $fromOverDraftAgainstCommercialPaper
+			 */
+
+			 $fromOverDraftAgainstCommercialPaper = OverDraftAgainstCommercialPaper::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			OverdraftAgainstCommercialPaperBankStatement::create([
+				'type'=>OverdraftAgainstCommercialPaperBankStatement::MONEY_TRANSFER ,
+				'overdraft_against_commercial_paper_id'=>$fromOverDraftAgainstCommercialPaper->id ,
+				'internal_money_transfer_id'=>$this->id ,
+				'company_id'=>$companyId ,
+				'date' => $transferDate , 
+				'limit' =>$fromOverDraftAgainstCommercialPaper->getLimit(),
+				'credit'=>$creditAmount,
+				'debit'=>$debitAmount
+			]);
+		}
+		
 		
 	}
 	

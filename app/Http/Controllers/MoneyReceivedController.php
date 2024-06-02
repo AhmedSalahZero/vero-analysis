@@ -17,6 +17,7 @@ use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasDebitStatements;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -692,8 +693,8 @@ class MoneyReceivedController
 
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);
-		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId);
-
+		$modelName = $accountType->getModelName() ;
+		$accountNumberModel =  ('\App\Models\\'.$modelName)::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId);
 		return response()->json([
 			'status'=>true , 
 			'data'=>$accountNumberModel
@@ -710,5 +711,60 @@ class MoneyReceivedController
 			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 ,
 			'interest_rate'=>$accountNumberModel ? $accountNumberModel->getInterestRate() : 0
 		]);
+	}
+	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company )
+	{
+		$accountTypeId = $request->get('accountType');
+		$accountType = AccountType::find($accountTypeId);
+		$accountNumber = $request->get('accountNumber');
+		$financialInstitutionId = $request->get('financialInstitutionId');
+		// dd($financialInstitutionId);
+		// dd(('\App\Models\\'.$accountType->getModelName()));
+		
+		// DB::table(getStatementTableName)
+		if(!$accountType){
+			return [
+				'status'=>true ,
+				'balance'=>0,
+				'net_balance'=>0 ,
+			];
+		}
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+		if(!$accountNumberModel){
+			if(!$accountType){
+				return [
+					'status'=>true ,
+					'balance'=>0,
+					'net_balance'=>0 ,
+				];
+			}
+		}
+		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
+		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
+		
+		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , now())->orderByRaw('full_date desc')->first();
+		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
+		$balance = 0;
+		$balanceDate = null;
+		
+		$netBalance = 0;
+		if($balanceRow){
+			$balance = $balanceRow->end_balance ; 
+			$balanceDate = Carbon::make($balanceRow->date)->format('d-m-Y') ;
+		}
+		if($NetBalanceRow){
+			$netBalance =$NetBalanceRow->end_balance ; 
+			$netBalanceDate =Carbon::make($NetBalanceRow->date)->format('d-m-Y') ; 
+		}
+		
+		return response()->json([
+			'status'=>true ,
+			'balance'=>$balance,
+			'balance_date'=>$balanceDate,
+			'net_balance'=>$netBalance ,
+			'net_balance_date'=>$netBalanceDate ,
+			
+		]);
+
 	}
 }

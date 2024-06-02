@@ -298,17 +298,13 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
-
 			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 
-
-
-
-
-
 })
+
+
 $(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
 
 	$(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type').trigger('change')

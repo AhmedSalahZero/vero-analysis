@@ -329,10 +329,10 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-3">
-                                        <x-form.input :id="'min_lg_commission_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                        <x-form.input :id="'min_lg_commission_fees_id2'" :default-value="0" :readonly="false" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-3">
-                                        <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                        <x-form.input :id="'issuance_fees_id2'" :default-value="0" :readonly="false" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
 
 
@@ -672,7 +672,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
                             for (var purchaseOrderId in res.purchase_orders) {
                                 var contractName = res.purchase_orders[purchaseOrderId];
-                                purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+                                purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
                             }
                             $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
                         }

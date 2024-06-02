@@ -222,8 +222,10 @@ class CertificatesOfDeposit extends Model
 
     public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
 	{
+
 		return self::where('company_id',$companyId)->where('currency',$currencyName)
 		->where('financial_institution_id',$financialInstitutionId)
+		->where('status',CertificatesOfDeposit::RUNNING)
 		->pluck('account_number','account_number')->toArray();
 	}
 	public static function findByAccountNumber(int $companyId , string $accountNumber)

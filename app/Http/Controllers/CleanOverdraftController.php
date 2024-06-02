@@ -46,8 +46,6 @@ class CleanOverdraftController
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
 		
-	
-		
 		$cleanOverdrafts = $company->cleanOverdrafts->where('financial_institution_id',$financialInstitution->id) ;
 		$cleanOverdrafts =   $this->applyFilter($request,$cleanOverdrafts) ;
 		$searchFields = [

@@ -226,7 +226,6 @@ class LetterOfGuaranteeFacilityController
 			}
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
-		dd($currentLgOutstanding);
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
 		return response()->json([
 			'limit'=>number_format($limit) ,

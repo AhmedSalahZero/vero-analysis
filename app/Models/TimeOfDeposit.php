@@ -224,6 +224,7 @@ class TimeOfDeposit extends Model
 	{
 		return self::where('company_id',$companyId)->where('currency',$currencyName)
 		->where('financial_institution_id',$financialInstitutionId)
+		->where('status',TimeOfDeposit::RUNNING)
 		->pluck('account_number','account_number')->toArray();
 	}
 	public static function findByAccountNumber(int $companyId , string $accountNumber)

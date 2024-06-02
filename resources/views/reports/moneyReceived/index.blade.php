@@ -506,7 +506,7 @@ use App\Models\MoneyReceived;
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
-                                    <td> {{ $moneyReceived->cheque->chequeExpectedCollectionDateFormatted() }} </td>
+                                    <td> {{ $moneyReceived->cheque->chequeActualCollectionDateFormatted() }} </td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -899,6 +899,31 @@ use App\Models\MoneyReceived;
 
     })
 
+</script>
+<script>
+$(document).on('change','.js-account-number',function(){
+	const parent = $(this).closest('.modal-body') ;
+	const financialInstitutionId = parent.find('select.js-drawl-bank').val()
+	const accountNumber= $(this).val();
+	const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+	$.ajax({
+		url:"{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}",
+		data:{
+			accountNumber,
+			accountType ,
+			financialInstitutionId 
+		},
+		type:"get",
+		success:function(res){
+			
+			$(parent).find('.balance-date-js').html('[ ' +res.balance_date + ' ]')
+			$(parent).find('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+			$(parent).find('.net-balance-js').val(number_format(res.net_balance))
+			$(parent).find('.balance-js').val(number_format(res.balance))
+			
+		}
+	})
+})
 </script>
 @endsection
 @push('js')

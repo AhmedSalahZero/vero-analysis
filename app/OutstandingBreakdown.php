@@ -5,6 +5,7 @@ namespace App;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FullySecuredOverdraft;
+use App\Models\OverdraftAgainstCommercialPaper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,6 +59,10 @@ class OutstandingBreakdown extends Model
 	public function cleanOverDraft()
 	{
 		return $this->belongsTo(CleanOverdraft::class,'model_id','id')->where('model_type',CleanOverdraft::class);
+	}
+	public function overDraftAgainstCommercialPaper()
+	{
+		return $this->belongsTo(OverdraftAgainstCommercialPaper::class,'model_id','id')->where('model_type',OverdraftAgainstCommercialPaper::class);
 	}
 	public function fullySecuredOverDraft()
 	{

@@ -150,14 +150,22 @@ use App\Models\MoneyReceived ;
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3 mb-3">
-                                        <label>{{__('Account Balance')}} <span class="required">*</span></label>
+                                    <div class="col-md-2 mb-3">
+                                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
                                         <div class="kt-input-icon">
-                                            <input readonly required value="0" type="text" name="account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
+                                            <input   value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
+											
                                             {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
                                         </div>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+									  <div class="col-md-2 mb-3">
+                                        <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                                        <div class="kt-input-icon">
+                                            <input   value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
                                         <label>{{__('Clearance Days')}} <span class="required">*</span></label>
                                         <div class="kt-input-icon">
                                             <input value="0" required name="clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">

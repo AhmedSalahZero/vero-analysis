@@ -5,6 +5,7 @@ use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\OverdraftAgainstCommercialPaper;
 
 trait HasDebitStatements 
 {
@@ -22,6 +23,10 @@ trait HasDebitStatements
 		if($accountType && $accountType->getSlug() == AccountType::FULLY_SECURED_OVERDRAFT){
 			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
 			$this->storeFullySecuredOverdraftDebitBankStatement($moneyType,$fullySecuredOverdraft,$receivingDate,$debit);
+		}
+		if($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_COMMERCIAL_PAPER){
+			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
+			$this->storeOverdraftAgainstCommercialPaperDebitBankStatement($moneyType,$overdraftAgainstCommercialPaper,$receivingDate,$debit);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
@@ -53,6 +58,19 @@ trait HasDebitStatements
 			'company_id'=>$this->company_id ,
 			'date'=>$date,
 			'limit'=>$fullySecuredOverdraft->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>$debit,
+			'credit'=>0
+		]) ;
+	}
+	public function storeOverdraftAgainstCommercialPaperDebitBankStatement(string $moneyType , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper , string $date , $debit )
+	{
+		return $this->overdraftAgainstCommercialPaperDebitBankStatement()->create([
+			'type'=>$moneyType ,
+			'overdraft_against_commercial_paper_id'=>$overdraftAgainstCommercialPaper->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$overdraftAgainstCommercialPaper->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>$debit,
 			'credit'=>0

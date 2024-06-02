@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Interfaces\Models\Interfaces\IHaveStatement;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * * وعموما في حالة انك مدان للبنك وليكن مثلا لو انت سالف من البنك عشر الالف وسحبت تسعه ونزل عليك فايدة خمس مئة جنية
  * * وقتها ال خمس مئة جنية دول بينسحبوا من حسابك علطول وبالتالي انت ما عتش فاضلك غير خمس مئة مثلا
  */
-class FullySecuredOverdraft extends Model
+class FullySecuredOverdraft extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
 	use HasOutstandingBreakdown , IsOverdraft;
@@ -65,6 +66,13 @@ class FullySecuredOverdraft extends Model
 	{
 		return $this->cd_or_td_account_id;
 	}
-	
+	public static function getStatementTableName():string
+	 {
+		return 'fully_secured_overdraft_bank_statements';	
+	}
+	public static function getForeignKeyInStatementTable()
+	{
+		 return 'fully_secured_overdraft_id';
+	}
 	
 }

@@ -6,10 +6,9 @@ use App\Models\AccountType;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\Contract;
-use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
-use App\Models\LetterOfCreditFacility;
+use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\Partner;
@@ -133,9 +132,13 @@ class LetterOfGuaranteeIssuanceController
 	public function store(Company $company  , Request $request , string $source){
 
 		$financialInstitutionId = $request->get('financial_institution_id') ;
-		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
-		if(!$letterOfGuaranteeFacility){
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
+		$letterOfGuaranteeFacilityId =  null ; 
+		if(is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
+		}
+		if($letterOfGuaranteeFacility instanceof LetterOfGuaranteeFacility){
+			$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility->id ;
 		}
 		$model = new LetterOfGuaranteeIssuance();
 		$lgCommissionAmount = $request->get('lg_commission_amount',0);
@@ -147,12 +150,13 @@ class LetterOfGuaranteeIssuanceController
 		$currency = $request->get('lg_currency',0);
 		$cdOrTdAccountNumber = $request->get('cd_or_td_account_number');
 		$cdOrTdAccountTypeId = $request->get('cd_or_td_account_type_id');
+	
 		$accountType = AccountType::find($cdOrTdAccountTypeId);
 		$cdOrTdId = 0 ;
-		if($accountType->isCertificateOfDeposit()){
+		if($accountType && $accountType->isCertificateOfDeposit()){
 			$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($company->id , $cdOrTdAccountNumber)->id;
 		}
-		elseif($accountType->isTimeOfDeposit()){
+		elseif($accountType && $accountType->isTimeOfDeposit()){
 			$cdOrTdId = TimeOfDeposit::findByAccountNumber($company->id , $cdOrTdAccountNumber)->id;
 		}
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
@@ -162,8 +166,8 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId);
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId);
-		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,$cdOrTdId,'credit-lg-amount');
-		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,'credit-lg-amount');
+		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,$cdOrTdId,'credit-lg-amount');
+		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,'credit-lg-amount');
 		
 		$lgDurationMonths = $request->get('lg_duration_months',1);
 		$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 

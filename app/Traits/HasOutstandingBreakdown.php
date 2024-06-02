@@ -38,14 +38,13 @@ trait HasOutstandingBreakdown
 				unset($outstandingBreakdownArr['id']);
 				$outstandingBreakdownArr['company_id'] = $company->id ;
 				$outstandingBreakdownArr['model_type'] = get_class($this);
-				// $modelForeignKey = $this->generateForeignKeyFormModelName();
 				$outstandingBreakdownArr['amount'] = number_unformat($outstandingBreakdownArr['amount']);
-				// $withdrawalDate = Carbon::make($outstandingBreakdownArr['settlement_date'])->subDays($this->getMaxSettlementDays())->format('Y-m-d');
-				$bankStatement = $this->bankStatements()->create([
+				$balanceDate = Carbon::make($outstandingBreakdownArr['settlement_date'])->format('Y-m-d');
+				$this->bankStatements()->create([
 				'type'=>'outstanding_balance',
 				'money_received_id'=>0 ,
 				'company_id'=>$company->id ,
-				'date'=>$request->get('balance_date'),
+				'date'=>$balanceDate,
 				'limit'=>$this->getLimit(),
 				'beginning_balance'=>0 ,
 				'debit'=>0,
@@ -54,15 +53,6 @@ trait HasOutstandingBreakdown
 				'is_debit'=>0 
 				]);
 			
-				// $bankStatement->withdrawals()->create([
-				// 	$modelForeignKey =>$this->id ,
-				// 	'company_id'=>$company->id ,
-				// 	'withdrawal_date'=>$withdrawalDate,
-				// 	'withdrawal_amount'=>$outstandingBreakdownArr['amount'] ,
-				// 	'max_settlement_days'=>$this->getMaxSettlementDays(),
-				// 	'due_date'=>$outstandingBreakdownArr['settlement_date'] ,
-				// 	'settlement_amount'=>0,
-				// ]);
 				$this->outstandingBreakdowns()->create($outstandingBreakdownArr);
 			}
 				
