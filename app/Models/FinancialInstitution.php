@@ -46,7 +46,8 @@ class FinancialInstitution extends Model
 	public function scopeOnlyHasOverdrafts(Builder $builder){
 		$builder
 		->has('cleanOverdrafts')
-		->orHas('fullySecuredOverdrafts');
+		->orHas('fullySecuredOverdrafts')
+		->orHas('overdraftAgainstCommercialPapers');
 	}
 	
 	/**
@@ -119,10 +120,7 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(FinancialInstitutionAccount::class,'financial_institution_id','id');
 	}
-	public function overdraftAgainstCommercialPapers()
-	{
-		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'financial_institution_id','id');
-	}
+
 	public function certificatesOfDeposits()
 	{
 		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id');
@@ -138,6 +136,10 @@ class FinancialInstitution extends Model
 	public function fullySecuredOverdrafts()
 	{
 		return $this->hasMany(FullySecuredOverdraft::class , 'financial_institution_id','id');
+	}
+	public function overdraftAgainstCommercialPapers()
+	{
+		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'financial_institution_id','id');
 	}
 	/**
 	 * * use getCurrentAvailableLetterOfGuaranteeFacility instead

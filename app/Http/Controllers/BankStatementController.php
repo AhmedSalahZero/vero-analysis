@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\OverdraftAgainstCommercialPaper;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -82,6 +83,18 @@ class BankStatementController
 				 ->where('fully_secured_overdraft_id',$fullySecuredOverdraft->id)
 				 ->join('fully_secured_overdrafts','fully_secured_overdraft_bank_statements.fully_secured_overdraft_id','=','fully_secured_overdrafts.id')
 				 ->where('fully_secured_overdrafts.currency','=',$currencyName)
+				 ->orderByRaw('full_date desc , priority asc ')
+				 ->get();
+		}
+		elseif($accountType->isOverDraftAgainstCommercialPaperAccount()){
+			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+			$results = DB::table('overdraft_against_commercial_paper_bank_statements')
+				 ->where('overdraft_against_commercial_paper_bank_statements.company_id',$company->id)
+				 ->where('date', '>=', $startDate)
+				 ->where('date', '<=', $endDate)
+				 ->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaper->id)
+				 ->join('overdraft_against_commercial_papers','overdraft_against_commercial_paper_bank_statements.overdraft_against_commercial_paper_id','=','overdraft_against_commercial_papers.id')
+				 ->where('overdraft_against_commercial_papers.currency','=',$currencyName)
 				 ->orderByRaw('full_date desc , priority asc ')
 				 ->get();
 		}

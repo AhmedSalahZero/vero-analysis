@@ -498,6 +498,7 @@ Route::middleware([])->group(function () {
                     Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
+					Route::get('money-received/get-net-balance-based-on-account-number', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumber')->name('update.balance.and.net.balance.based.on.account.number');
 				Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 
 

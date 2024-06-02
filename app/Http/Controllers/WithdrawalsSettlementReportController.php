@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountType;
-use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Traits\GeneralFunctions;
@@ -38,7 +37,6 @@ class WithdrawalsSettlementReportController
 		$bankStatementIdName = $fullClassName::getBankStatementIdName();
 		$tableNameFormatted = $fullClassName::getTableNameFormatted();
 		$tableName = (new $fullClassName)->getTable();
-		
 		$overdraftWithdrawals=DB::table($withdrawalsTableName)
 		->join($bankStatementTableName,$bankStatementIdName,'=',$bankStatementTableName.'.id')
 		->join($tableName,$bankStatementTableName.'.'.$foreignKeyName,'=',$tableName.'.id')
@@ -49,9 +47,11 @@ class WithdrawalsSettlementReportController
 		->whereBetween($bankStatementTableName.'.date',[$startDate,$endDate] )
 		->orderByRaw('due_date asc')
 		->get();
+		
+
 	
 		return view('withdrawal_settlement_report_result',[
-			'cleanOverdraftWithdrawals'=>$overdraftWithdrawals,
+			'overdraftWithdrawals'=>$overdraftWithdrawals,
 			'tableNameFormatted'=>$tableNameFormatted
 		]);
 	}

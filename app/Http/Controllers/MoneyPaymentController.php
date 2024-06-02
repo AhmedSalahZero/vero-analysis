@@ -412,7 +412,6 @@ class MoneyPaymentController
 		 * @var MoneyPayment $moneyPayment ;
 		 */
 
-
 		 $moneyPayment = MoneyPayment::create($data);
 		 $relationData['company_id'] = $company->id ;
 		 $moneyPayment->$relationName()->create($relationData);
@@ -477,7 +476,6 @@ class MoneyPaymentController
 		/**
 		 * @var SupplierInvoice $supplierInvoice
 		 */
-
 		$activeTab = $moneyType;
 
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));

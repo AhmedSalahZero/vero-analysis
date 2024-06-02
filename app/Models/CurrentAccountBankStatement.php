@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Interfaces\Models\Interfaces\IHaveStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class CurrentAccountBankStatement extends Model
+class CurrentAccountBankStatement extends Model  implements IHaveStatement
 {
 	use HasDeleteButTriggerChangeOnLastElement;
     protected $guarded = [
@@ -173,4 +174,5 @@ class CurrentAccountBankStatement extends Model
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
+	
 }

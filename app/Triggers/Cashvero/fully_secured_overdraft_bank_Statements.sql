@@ -70,7 +70,7 @@
 				select sum(settlement_amount) into _total_settlements from fully_secured_overdraft_withdrawals where fully_secured_overdraft_id =  _fully_secured_overdraft_id ;
 				set _current_debit = _current_debit - _total_settlements ;
 				
-						call start_settlement_process(0 , _fully_secured_overdraft_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
+						call start_settlement_process_fully_secured(0 , _fully_secured_overdraft_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
 				
 				
 			end //
@@ -267,10 +267,10 @@
 			end //
 
 			delimiter ;
-			drop procedure if exists start_settlement_process;
+			drop procedure if exists start_settlement_process_fully_secured;
 			delimiter //
 			-- هنا هنبدا نضيف سحبة جديدة لو البنك استيت منت كان كريدت اما لو كان دبت (يعني) الدبت اكبر من الصفر وقتها هنبدا نسدد 
-			create procedure start_settlement_process(in _bank_statement_id integer , in _fully_secured_overdraft_id integer , in _debit decimal , in _credit decimal , in _company_id integer , in _date_for_settlement date)
+			create procedure start_settlement_process_fully_secured(in _bank_statement_id integer , in _fully_secured_overdraft_id integer , in _debit decimal , in _credit decimal , in _company_id integer , in _date_for_settlement date)
 			-- new.id , new.fully_secured_overdraft_id , new.debit  , new.credit , new.company_id , new.date
 			begin 
 				declare _fully_secured_overdraft_to_be_settled_after integer default 0 ;
@@ -367,7 +367,7 @@
 				
 				end if  ;
 				if new.is_credit > 0 then
-					call start_settlement_process(new.id , new.fully_secured_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
+					call start_settlement_process_fully_secured(new.id , new.fully_secured_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
 				end if;
 			end //
 

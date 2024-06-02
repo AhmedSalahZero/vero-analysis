@@ -102,6 +102,7 @@ class ContractsController
 	public function updatePurchaseOrdersBasedOnContract(Request $request , Company $company ){
 		$contract = Contract::find($request->get('contractId'));
 		$purchaseOrders = $contract->salesOrders->pluck('so_number','id')->toArray();
+
 		return response()->json([
 			'purchase_orders'=>$purchaseOrders
 		]);

@@ -701,7 +701,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
                             for (var purchaseOrderId in res.purchase_orders) {
                                 var contractName = res.purchase_orders[purchaseOrderId];
-                                purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+                                purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
                             }
                             $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
                         }

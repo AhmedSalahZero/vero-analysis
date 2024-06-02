@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Traits\GeneralFunctions;
@@ -47,11 +46,9 @@ class OverdraftAgainstCommercialPaperController
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
 		
-		$user = $request->user()->load('overdraftAgainstCommercialPaper') ;
-		
-		$overdraftAgainstCommercialPapers = $user->overdraftAgainstCommercialPaper->where('financial_institution_id',$financialInstitution->id) ;
+		$overdraftAgainstCommercialPapers = $company->overdraftAgainstCommercialPapers->where('financial_institution_id',$financialInstitution->id) ;
+		dd($overdraftAgainstCommercialPapers);
 		$overdraftAgainstCommercialPapers =   $this->applyFilter($request,$overdraftAgainstCommercialPapers) ;
-		
 		$searchFields = [
 			'contract_start_date'=>__('Contract Start Date'),
 			'contract_end_date'=>__('Contract End Date'),
@@ -60,6 +57,7 @@ class OverdraftAgainstCommercialPaperController
 			'limit'=>__('Limit'),
 			'outstanding_balance'=>__('Outstanding Balance'),
 			'balance_date'=>__('Balance Date'),
+			
 		];
 
         return view('reports.overdraft-against-commercial-paper.index', [
@@ -69,22 +67,19 @@ class OverdraftAgainstCommercialPaperController
 			'overdraftAgainstCommercialPapers'=>$overdraftAgainstCommercialPapers
 		]);
     }
-	
 	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customers = CustomerInvoice::getAllUniqueCustomerNames($company->id );
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			'customers'=>$customers
 		]);
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate'];
+		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		
@@ -95,46 +90,38 @@ class OverdraftAgainstCommercialPaperController
 		$lendingInformation = $request->get('infos',[]) ; 
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-					$overdraftAgainstCommercialPapers = $financialInstitution->overdraftAgainstCommercialPapers()->create($data);
-					$overdraftAgainstCommercialPapers->storeOutstandingBreakdown($request,$company);
-		foreach($lendingInformation as $lendingInformationArr){
-			$overdraftAgainstCommercialPapers->lendingInformation()->create(array_merge($lendingInformationArr , [
-			]));
-		}
-		$type = $request->get('type','over-draft-against-commercial-paper');
+		/**
+		 * @var OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper 
+		 */
+		$overdraftAgainstCommercialPaper = $financialInstitution->overdraftAgainstCommercialPapers()->create($data);
+		$type = $request->get('type','overdraft-against-commercial-paper');
 		$activeTab = $type ; 
 		
+		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
+		foreach($lendingInformation as $lendingInformationArr){
+			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
+			]));
+		}
 		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
-	protected function getActiveTab(string $moneyType)
-	{
-		return [
-			'bank'=>'bank',
-			'leasing_companies'=>'leasing_companies',
-			'factoring_companies'=>'factoring_companies',
-			'mortgage_companies'=>'mortgage_companies'
-		][$moneyType];
-	}
+
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customers = CustomerInvoice::getAllUniqueCustomerNames($company->id);
-		
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			'customers'=>$customers,
+			// 'customers'=>$customers,
 			'model'=>$overdraftAgainstCommercialPaper
 		]);
 		
 	}
 	
 	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
-		// $type = $request->get('type');
+		// $infos =  $request->get('infos',[]) ;
 		$infos =  $request->get('infos',[]) ;
-		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
@@ -143,18 +130,13 @@ class OverdraftAgainstCommercialPaperController
 		
 		$overdraftAgainstCommercialPaper->update($data);
 		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
-		$overdraftAgainstCommercialPaper->lendingInformation->each(function($lendingInformation){
-			$lendingInformation->delete();
-		});
-		
 		foreach($infos as $lendingInformationArr){
 			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
 				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
 			]));
 		}
-		$type = $request->get('type','over-draft-against-commercial-paper');
+		$type = $request->get('type','overdraft-against-commercial-paper');
 		$activeTab = $type ;
-		//  $activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 		
 		

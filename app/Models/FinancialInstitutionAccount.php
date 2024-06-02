@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Interfaces\Models\Interfaces\IHaveStatement;
 use App\Models\AccountInterest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -120,4 +121,12 @@ class FinancialInstitutionAccount extends Model
 		return $this->hasMany(CurrentAccountBankStatement::class,'financial_institution_account_id','id');
 	}
 	
+	public static function getStatementTableName():string
+	{
+	   return 'current_account_bank_statements';	
+   }	
+   public static function getForeignKeyInStatementTable()
+   {
+		return 'financial_institution_account_id';
+   }
 }
