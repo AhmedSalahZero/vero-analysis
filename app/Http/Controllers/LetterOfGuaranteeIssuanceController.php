@@ -10,6 +10,7 @@ use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfGuaranteeIssuanceAdvancedPaymentHistory;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\Partner;
 use App\Models\PurchaseOrder;
@@ -166,8 +167,8 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId);
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId);
-		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,$cdOrTdId,'credit-lg-amount');
-		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,'credit-lg-amount');
+		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,0,$cdOrTdId,'credit-lg-amount');
+		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lg-amount');
 		
 		$lgDurationMonths = $request->get('lg_duration_months',1);
 		$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 
@@ -175,7 +176,8 @@ class LetterOfGuaranteeIssuanceController
 		if($lgCommissionInterval == 'quarterly'){
 			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
 				$currentDate = Carbon::make($issuanceDate)->addMonth(3)->format('Y-m-d');
-				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
+				$isActive = now()->greaterThanOrEqualTo($currentDate);
+				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId,0,$isActive);
 			}
 		}else{
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountId);
@@ -204,36 +206,7 @@ class LetterOfGuaranteeIssuanceController
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
 
-	/**
-	 * * هنا اليوزر هيعكس عملية الكسر اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال
-	 * * letter of guarantee statements
-	 */
-	public function cancel(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
-	{
-		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::CANCELLED ;
-
-		/**
-		 * * هنشيل قيم ال
-		 * * letter of guarantee statement
-		 */
-		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
-
-		$cancellationDate = $request->get('cancellation_date',now()->format('Y-m-d')) ;
-		 $letterOfGuaranteeIssuance->update([
-			'status' => $letterOfGuaranteeIssuanceStatus,
-			'cancellation_date'=>$cancellationDate
-		]);
-		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
-		$lgType = $letterOfGuaranteeIssuance->getLgType();
-		$amount = $letterOfGuaranteeIssuance->getLgAmount();
-		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
-		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
-		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
-		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
-		$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId);
-		
-		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
-	}
+	
 
 
 		/**
@@ -261,7 +234,146 @@ class LetterOfGuaranteeIssuanceController
 		
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
+	
+	
+		/**
+	 * * هنا اليوزر هيعكس عملية الكسر اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال
+	 * * letter of guarantee statements
+	 */
+	public function cancel(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
+	{
+		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::CANCELLED ;
 
+		/**
+		 * * هنشيل قيم ال
+		 * * letter of guarantee statement
+		 */
+		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
+
+		$cancellationDate = $request->get('cancellation_date',now()->format('Y-m-d')) ;
+		 $letterOfGuaranteeIssuance->update([
+			'status' => $letterOfGuaranteeIssuanceStatus,
+			'cancellation_date'=>$cancellationDate
+		]);
+		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
+		$lgType = $letterOfGuaranteeIssuance->getLgType();
+		$amount = $letterOfGuaranteeIssuance->getLgAmount();
+		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
+		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),0,$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
+		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),0,LetterOfGuaranteeIssuance::FOR_CANCELLATION);
+		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
+		$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId,0,$letterOfGuaranteeIssuance->id);
+			
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
+	}
+	
+	
+	/**
+	 * * دلوقت دا خطاب ضمان .. فا اليوزر بيدخول يقول انا سددت جزء فلاني من قيمة ال
+	 * * lg amount
+	 * * وبالتالي بنقص القيمة دي من اللي الفلوس من قيمة ال
+	 * * lg amount
+	 * * بس في نفس الوقت بنحتفظ بقيمة ال
+	 * * lg amount 
+	 * * الاصليه علشان التقارير
+	 * * letter of guarantee statements
+	 */
+	public function applyAmountToBeDecreased(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
+	{
+		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
+		/**
+		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $letterOfGuaranteeIssuanceAdvancedPaymentHistory
+		 */
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory = new LetterOfGuaranteeIssuanceAdvancedPaymentHistory();
+		$decreaseDate = $request->get('date',now()->format('Y-m-d')) ;
+		$decreaseDate = Carbon::make($decreaseDate)->format('Y-m-d');
+		$decreaseAmount = $request->get('amount',0);
+		
+		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
+		$letterOfGuaranteeFacilityId =  null ; 
+		$lgType =$letterOfGuaranteeIssuance->getLgType();
+		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
+		$cdOrTdId = $letterOfGuaranteeIssuance->getCdOrTdId() ;
+		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
+		
+		if(is_null($letterOfGuaranteeFacility)){
+			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
+		}
+		if($letterOfGuaranteeFacility instanceof LetterOfGuaranteeFacility){
+			$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility->id ;
+		}
+		
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory = $letterOfGuaranteeIssuance->advancedPaymentHistories()->create([
+			'date'=>$decreaseDate,
+			'amount'=>$decreaseAmount,
+			'company_id'=>$company->id 
+		]);
+		
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $decreaseDate ,0 ,$decreaseAmount,0,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$cdOrTdId,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$decreaseDate,0,0 , $cashCoverAmount ,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->storeCurrentAccountDebitBankStatement($decreaseDate,$cashCoverAmount , $financialInstitutionAccountId,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$letterOfGuaranteeIssuance->id);
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
+	}
+	
+	public function editAmountToBeDecreased(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory,string $source)
+	{
+		$decreaseDate = Carbon::make($request->get('decrease_date',now()->format('Y-m-d')));
+		$decreaseAmount = $request->get('amount_to_be_decreased',0);
+		$lgAdvancedPaymentHistory->update([
+			'amount'=>$decreaseAmount , 
+			'date'=>$decreaseDate
+		]);
+		$letterOfGuaranteeIssuance = $lgAdvancedPaymentHistory->letterOfGuaranteeIssuance;
+		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
+		/**
+		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory
+		 */
+
+		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
+		// dd($cashCoverAmount);
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
+
+		if(is_null($letterOfGuaranteeFacility)){
+			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
+		}
+		
+		
+		
+		$lgAdvancedPaymentHistory->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first()->update([
+			'date'=>$decreaseDate,
+			'debit'=>$decreaseAmount
+		]);
+		$lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first()->update([
+			'credit'=>$cashCoverAmount,
+			'date'=>$decreaseDate 
+		]);
+		$lgAdvancedPaymentHistory->currentAccountDebitBankStatement->update([
+			'debit'=>$cashCoverAmount,
+			'date'=>$decreaseDate
+		]);
+		return response()->json([
+			'status'=>true ,
+			'reloadCurrentPage'=>true 
+		]);
+		// return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
+	}
+	
+	/**
+	 * * هنا اليوزر هيعكس عملية الكسر اللي كان اكدها اكنه عملها بالغلط فا هنرجع كل حاجه زي ما كانت ونحذف القيم اللي في جدول ال
+	 * * letter of guarantee statements
+	 */
+	public function deleteAdvancedPayment(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory)
+	{
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->currentAccountBankStatements);
+		$lgAdvancedPaymentHistory->delete();
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgAdvancedPaymentHistory->letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
+	
+		
+	}
+	
 
 
 	public function destroy(Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance)

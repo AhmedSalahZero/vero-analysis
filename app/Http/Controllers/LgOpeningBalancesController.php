@@ -69,7 +69,7 @@ class LgOpeningBalancesController
                     'lg_expiry_date'=>$item['lg_expiry_date'],
                     'currency'=>$currencyName
                 ]);
-                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,0,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE);
+                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,0,0,LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE);
             }
 
         }
@@ -124,7 +124,7 @@ class LgOpeningBalancesController
 					$lgOpeningBalance->LgAgainstTimeOfDepositOpeningBalances()->create($currentData);
 				}
 				
-                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,$againstCdOrTdType,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,$cdOrTdId,$beginningBalanceType);
+                $lgOpeningBalance->handleLetterOfGuaranteeStatement($financialInstitutionId,$againstCdOrTdType,0,$lgType,$company->id ,$openingBalanceDate ,  0,0,$amount,$currencyName,0,$cdOrTdId,$beginningBalanceType);
             }
 
         }

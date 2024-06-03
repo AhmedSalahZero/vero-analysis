@@ -1503,7 +1503,7 @@ $(document).find('select.select2-select2').each(function(index, value) {
             clearTimeout(wto);
             wto = setTimeout(() => {
 
-
+				// #FIXME:first start date and and end date , second start end
                 let startDate = $('input[name="start_date"]').val();
                 let endDate = $('input[name="end_date"]').val();
                 let mainType = $('input[name="main_type"]').val();
@@ -1515,6 +1515,7 @@ $(document).find('select.select2-select2').each(function(index, value) {
                     let secondStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date_second"]').val();
                     let firstEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date"]').val();
                     let secondEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date_second"]').val();
+					console.log(firstStartDate , secondStartDate , firstEndDate ,secondEndDate)
                     if (Date.parse(firstStartDate) <= Date.parse(secondStartDate)) {
                         startDate = firstStartDate;
                     } else {
@@ -1525,11 +1526,9 @@ $(document).find('select.select2-select2').each(function(index, value) {
                     } else {
                         endDate = secondEndDate;
                     }
-                    console.log(startDate, endDate);
 
 
                 }
-                console.log(startDate, endDate)
 
 
                 $.ajax({

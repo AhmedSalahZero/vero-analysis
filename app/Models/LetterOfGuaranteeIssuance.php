@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\LgTypes;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfGuaranteeIssuance extends Model
 {
@@ -22,6 +24,7 @@ class LetterOfGuaranteeIssuance extends Model
     const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
     const AGAINST_TD_BEGINNING_BALANCE = 'against-td-beginning-balance';
 	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
+	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
 	public function isRunning()
 	{
@@ -45,6 +48,10 @@ class LetterOfGuaranteeIssuance extends Model
 		
 		return $this->source ?: self::LG_FACILITY ;
 	}
+	// public function isAdvancedPayment()
+	// {
+	// 	return $this->getSource() === self::ADV
+	// }
 	public function isCertificateOfDepositSource()
 	{
 		$accountTypeId = $this->getCdOrTdAccountTypeId() ;
@@ -89,6 +96,10 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getLgType()
 	{
 		return $this->lg_type;
+	}
+	public function isAdvancedPayment()
+	{
+		return $this->getLgType() === LgTypes::ADVANCED_PAYMENT_LGS;
 	}
 	public function getTotalLgOutstandingBalance()
 	{
@@ -346,11 +357,11 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function getCdOrTdAccountTypeId()
 	{
-		return $this->cd_or_td_account_type_id;
+		return $this->cd_or_td_account_type_id ?:0 ;
 	}
 	public function getCdOrTdAccountNumber()
 	{
-		return $this->cd_or_td_account_number;
+		return $this->cd_or_td_account_number ?: 0;
 	}
 	public function getCdOrTdId()
 	{
@@ -361,9 +372,13 @@ class LetterOfGuaranteeIssuance extends Model
 		if($account && $account->isTimeOfDeposit() ){
 			return TimeOfDeposit::findByAccountNumber($this->company_id , $this->getCdOrTdAccountNumber())->id;
 		}
-		
-		
 		return 0 ;
 	}
+	public function advancedPaymentHistories():HasMany
+	{
+		return $this->hasMany(LetterOfGuaranteeIssuanceAdvancedPaymentHistory::class , 'letter_of_guarantee_issuance_id','id');
+	}
+	
+	
 
 }
