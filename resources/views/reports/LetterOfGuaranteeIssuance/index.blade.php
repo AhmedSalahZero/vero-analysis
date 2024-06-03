@@ -317,7 +317,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                         	  @include('reports.LetterOfGuaranteeIssuance.actions')
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
+											  
+											@if(!$model->advancedPaymentHistories->count())  
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}">
+											<i class="fa fa-pen-alt"></i>
+											
+											</a>
+											@endif
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -515,6 +521,11 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     $(function() {
         $('.js-search-modal').trigger('change')
     })
+
+
+$("button[data-dismiss=modal2]").click(function(){
+    $(this).closest('.modal').modal('hide');
+});
 
 </script>
 @endsection

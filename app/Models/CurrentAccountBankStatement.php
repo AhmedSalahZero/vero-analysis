@@ -6,7 +6,9 @@ use App\Helpers\HDate;
 use App\Interfaces\Models\Interfaces\IHaveStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
 class CurrentAccountBankStatement extends Model  implements IHaveStatement
@@ -15,6 +17,24 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
     protected $guarded = [
         'id'
     ];
+	
+	/**
+	 * * ال 
+	 * * global scope 
+	 * * دا خاص بس بجزئيه ال
+	 * * commission 
+	 * * ما عدا ذالك ملهوش اي لزمة هو والكولوم اللي اسمة
+	 * * is_active
+	 */
+	protected static function boot()
+    {
+        parent::boot();
+ 
+        static::addGlobalScope('only_active',function(Builder $builder){
+			$builder->where('is_active',1); 
+		});
+    }
+	
 
 	public static function updateNextRows(CurrentAccountBankStatement $model):string 
 	{
@@ -174,5 +194,43 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
-	
+	public function letterOfGuaranteeAdvancedPaymentHistory():BelongsTo
+	{
+		return $this->belongsTo(LetterOfGuaranteeIssuanceAdvancedPaymentHistory::class,'lg_advanced_payment_history_id','id');
+	}	
+	public static function updateNonActiveDaily(Company $company)
+	{
+		// logger('first row here loooo');
+		DB::table('current_account_bank_statements')
+		->where('company_id',$company->id)
+		->where('is_active',0)
+		->where('full_date','<=',now())
+		->orderByRaw('full_date asc , id asc')
+		->each(function($currentAccountBankStatementRow){
+			$letterOfGuaranteeIssuanceId = $currentAccountBankStatementRow->letter_of_guarantee_issuance_id;
+			
+			$letterOfGuaranteeIssuance = DB::table('letter_of_guarantee_issuances')
+			->where('id',$letterOfGuaranteeIssuanceId)
+			->first();
+			
+			$commissionRate = $letterOfGuaranteeIssuance->lg_commission_rate; 
+			
+			$totalPaid = DB::table('lg_issuance_advanced_payment_histories')
+			->where('letter_of_guarantee_issuance_id',$letterOfGuaranteeIssuanceId)
+			->where('date' ,'<=' , $currentAccountBankStatementRow->full_date)
+			->sum('amount');
+			
+			DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatementRow->id)
+			->update([
+				'is_active'=>1 ,
+				'credit'=> ($letterOfGuaranteeIssuance->lg_amount - $totalPaid) * $commissionRate
+			]);
+			/**
+		 * * هنبدا نعمل ابديت من اول الرو اللي تاريخه اصغر حاجه في اللي كانوا محتاجين يتعدلوا
+		 * * وبالتالي هيتعدل هو وكل اللي تحتة
+		 */
+			CurrentAccountBankStatement::updateNextRows(CurrentAccountBankStatement::find($currentAccountBankStatementRow->id));
+			
+		});
+	}
 }
