@@ -166,6 +166,8 @@ return [
          * Package Service Providers...
          */
 		Yoeunes\Toastr\ToastrServiceProvider::class,
+		Maatwebsite\Excel\ExcelServiceProvider::class,
+		Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 		/*
          * Application Service Providers...
          */
@@ -175,8 +177,7 @@ return [
 		// App\Providers\BroadcastServiceProvider::class,
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
-		Maatwebsite\Excel\ExcelServiceProvider::class,
-		Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+	
 	],
 
 	/*
