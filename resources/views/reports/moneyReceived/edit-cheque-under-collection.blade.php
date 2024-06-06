@@ -42,7 +42,6 @@ use App\Models\MoneyReceived;
                 <div class="kt-portlet__body">
 
                     <div class="row mb-3">
-
                         <input type="hidden" class="current-currency" value="{{ $model->getCurrency() }}">
                         @foreach([
                         'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getCustomerName() , 'class'=>'col-md-5'],

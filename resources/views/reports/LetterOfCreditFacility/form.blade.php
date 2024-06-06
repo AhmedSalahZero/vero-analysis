@@ -83,7 +83,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Letter Of Credit Letter')}}
+                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Letter Of Credit')}}
                         </h3>
                     </div>
                 </div>
@@ -125,13 +125,23 @@
                                 <label>{{__('Select Currency')}} <span class="required">*</span></label>
                                 <div class="input-group">
                                     <select name="currency" class="form-control repeater-select">
-                                        <option selected>{{__('Select')}}</option>
+                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="col-md-2">
+                                <x-form.date :label="__('Outstanding Date')" :required="true" :model="$model??null" :name="'outstanding_date'" :placeholder="__('Select Outstanding Date')"></x-form.date>
+                            </div>
+
+
+                            <div class="col-md-2 ">
+                                <x-form.input :model="$model??null" :label="__('Outstanding Amount')" :type="'text'" :placeholder="__('Outstanding Amount')" :name="'outstanding_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                            </div>
+
 
 
 
@@ -143,69 +153,126 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Issuance Terms & Conditions')}}
+                                {{__('Terms & Conditions')}}
                             </h3>
                         </div>
                     </div>
                     <div class="kt-portlet__body">
 
+                        @php
+                        $index = 0 ;
+                        @endphp
+
+                        @foreach(getLcTypes() as $name => $nameFormatted )
+                        @php
+                        $termAndCondition = isset($model) && isset($model->termAndConditions[$index]) ? $model->termAndConditions[$index] : null;
+                        @endphp
                         <div class="form-group row" style="flex:1;">
-                            <div class="col-md-12 mt-3">
 
-
-
-                                <div class="" style="width:100%;overflow:hidden">
-
-                                    <div id="m_repeater_0" class="cash-and-banks-repeater">
-                                        <div class="form-group  m-form__group row  ">
-                                            <div data-repeater-list="termAndConditions" class="col-md-12">
-                                         
-                                                @if(isset($model) )
-                                                @foreach($model->termAndConditions as $termAndCondition)
-                                                @include('reports.LetterOfCreditFacility.repeater' , [
-                                                'termAndCondition'=>$termAndCondition,
-
-
-                                                ])
-                                                @endforeach
-                                                @else
-                                                @include('reports.LetterOfCreditFacility.repeater' , [
-
-                                                ])
-                                                @endif
-
-
-
-
-
-
-                                            </div>
-                                        </div>
-                                        <div class="m-form__group form-group row">
-
-                                            <div class="col-md-6">
-                                                <div data-repeater-create="" class="btn btn btn-sm btn-success m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
-                                                    <span>
-                                                        <i class="fa fa-plus"> </i>
-                                                        <span>
-                                                            {{ __('Add') }}
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-
-
+                            <div class="col-md-2">
+                                <label class="label">{!! __('LC  <br> Type') !!}</label>
+                                <input class="form-control" type="hidden" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lc_type]">
+                                <input class="form-control" type="text" readonly value="{{ $nameFormatted }}">
                             </div>
 
-                        </div>
 
+
+                            <div class="col-2">
+                                <label class="form-label font-weight-bold ">
+								{!! __('Outstanding  <br> Balance') !!}
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input placeholder="{{ __('Outstanding Balance') }}" type="text" class="form-control only-greater-than-zero-allowed" name="termAndConditions[{{ $index }}][outstanding_balance]" value="{{ isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0) }}">
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <div class="col-1">
+                                <label class="form-label font-weight-bold text-center">
+								{!! __('Cash <br> Cover (%)') !!}
+                                    @include('star')
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][cash_cover_rate]" type="text" class="form-control only-percentage-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->cash_cover_rate : old('cash_cover_rate',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-1">
+                                <label class="form-label font-weight-bold text-center "> 
+								{!! __('Commission <br> Rate (%)') !!}
+                                    @include('star')
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][commission_rate]" type="text" class="form-control only-percentage-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->commission_rate : old('commission_rate',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-lc-2">
+                                <label >
+								{!! __('Commission <br> Interval') !!}
+                                    @include('star')
+                                </label>
+                                <div class="input-group">
+                                    <select name="termAndConditions[{{ $index }}][commission_interval]" class="form-control repeater-select">
+                                        {{-- <option selected>{{__('Select')}}</option> --}}
+                                        @foreach(getCommissionInterval() as $name => $nameFormatted )
+                                        {{ logger($name) }}
+                                        <option value="{{ $name  }}" @if(isset($termAndCondition) && ($termAndCondition->getCommissionInterval() == $name ) ) selected @elseif(!isset($termAndCondition) && $name == 'monthly') selected @endif > {{ $nameFormatted }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+							
+							
+							   <div class="col-2">
+                                <label class="form-label font-weight-bold">	{!! __('Min Commissions <br> Fees Amount') !!}
+                                 
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][min_commission_fees]" type="text" class="form-control only-greater-than-or-equal-zero-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->min_commission_fees : old('min_commission_fees',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+								   <div class="col-2">
+                                <label class="form-label font-weight-bold">{!! __('Issuance <br> Fees Amount') !!}
+                                 
+                                </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input name="termAndConditions[{{ $index }}][issuance_fees]" type="text" class="form-control only-greater-than-or-equal-zero-allowed
+								" value="{{ (isset($termAndCondition) ? $termAndCondition->issuance_fees : old('issuance_fees',0)) }}">
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+
+
+
+                        </div>
+                        @php
+                        $index = $index + 1 ;
+                        @endphp
+
+                        @endforeach
 
 
 
@@ -213,9 +280,9 @@
 
                     </div>
                 </div>
-
-
-                <div class="kt-portlet ">
+				
+				
+				  <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
@@ -271,6 +338,8 @@
 
 
                 <x-submitting />
+				
+				
             </form>
 
             <!--end::Form-->
@@ -373,29 +442,4 @@
         })
 
     </script>
-	
-	<script>
-	$('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change',function(){
-		let borrowingRate = $('input[name="borrowing_rate"]').val();
-		borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0 ;  
-		let  bankMaringRate = $('input[name="bank_margin_rate"]').val();
-		bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
-		const interestRate = borrowingRate +  bankMaringRate ;
-		$('input[name="interest_rate"]').attr('readonly',true).val(interestRate);
-	})
-	$('input[name="borrowing_rate"]').trigger('change')
-	</script>
-	
-	<script>
-	$('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change',function(){
-		let borrowingRate = $('input[name="borrowing_rate"]').val();
-		borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0 ;  
-		let  bankMaringRate = $('input[name="bank_margin_rate"]').val();
-		bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
-		const interestRate = borrowingRate +  bankMaringRate ;
-		$('input[name="interest_rate"]').attr('readonly',true).val(interestRate);
-	})
-	$('input[name="borrowing_rate"]').trigger('change')
-	</script>
-	
     @endsection

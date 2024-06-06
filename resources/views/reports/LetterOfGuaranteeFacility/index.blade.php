@@ -149,7 +149,7 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="numeric" step="0.1" class="form-control" value="{{ $termAndCondition->getLgTypeFormatted() }}">
+                                            <input disabled type="text" step="0.1" class="form-control" value="{{ $termAndCondition->getLgTypeFormatted() }}">
                                         </div>
                                     </div>
                                 </td>

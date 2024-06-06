@@ -1,7 +1,9 @@
 <?php
 
+use App\Enums\LcTypes;
 use App\Enums\LgTypes;
 use App\Helpers\HHelpers;
+use App\Helpers\HStr;
 use App\Http\Controllers\Analysis\SalesGathering\BranchesAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\BusinessSectorsAgainstAnalysisReport;
 use App\Http\Controllers\Analysis\SalesGathering\CategoriesAgainstAnalysisReport;
@@ -54,7 +56,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use App\Helpers\HStr;
 
 const MAX_RANKING = 5;
 const Customers_Against_Products_Trend_Analysis = 'Customers Against Products Trend Analysis';
@@ -4573,6 +4574,10 @@ function getHeaderMenu()
 function getLgTypes():array
 {
 	return LgTypes::getAll();
+}
+function getLcTypes():array
+{
+	return LcTypes::getAll();
 }
 function getCommissionInterval():array
 {

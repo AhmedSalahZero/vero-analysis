@@ -70,12 +70,12 @@ class OverdraftAgainstCommercialPaperController
     }
 	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
-		$customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
+		// $customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
-			'customers'=>$customers,
+			// 'customers'=>$customers,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
 		]);
@@ -112,12 +112,12 @@ class OverdraftAgainstCommercialPaperController
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
+		// $customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			'customers'=>$customers,
+			// 'customers'=>$customers,
 			'model'=>$overdraftAgainstCommercialPaper
 		]);
 		

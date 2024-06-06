@@ -454,6 +454,7 @@ use App\Models\MoneyReceived;
                                                 </div>
                                             </div>
 											@endif
+										
                                         </span>
                                     </td>
                                 </tr>
@@ -491,7 +492,7 @@ use App\Models\MoneyReceived;
                                     <th class="align-middle">{{ __('Account Number') }}</th>
                                     <th class="align-middle">{{ __('Collection Fees') }}</th>
                                     <th class="align-middle">{!! __('Cheque Actual <br> Collection Date') !!}</th>
-                                    {{-- <th class="align-middle">{{ __('Control') }}</th> --}}
+                                    <th class="align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -507,6 +508,11 @@ use App\Models\MoneyReceived;
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
                                     <td> {{ $moneyReceived->cheque->chequeActualCollectionDateFormatted() }} </td>
+									<td>
+										@if($moneyReceived->cheque->isCollected())
+											 <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Under Collection') }}" href="{{ route('cheque.send.to.under.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
+											@endif 
+									</td>
                                 </tr>
                                 @endforeach
                             </tbody>

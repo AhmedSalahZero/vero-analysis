@@ -1,0 +1,50 @@
+<?php
+namespace App\Traits\Models;
+
+
+
+trait HasLetterOfCreditStatements
+{
+    public function generateLetterOfCreditData(int $financialInstitutionId , string $source  , int $lcFacilityId,string $lcType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , int $lcAdvancedPaymentId = 0 , int $cdOrTdId = 0 , $type =null):array
+    {
+        return [
+			'type'=>$type , // beginning-balance for example
+			'lc_facility_id'=>$lcFacilityId ,
+			'cd_or_td_id'=>$cdOrTdId,
+			'source'=>$source,
+			'financial_institution_id'=>$financialInstitutionId,
+			'lc_type'=>$lcType ,
+			'currency'=>$currencyName ,
+			'lc_advanced_payment_history_id'=>$lcAdvancedPaymentId,
+			'company_id'=>$companyId ,
+			'beginning_balance'=>$beginningBalance,
+			'debit'=>$debit,
+			'credit'=>$credit ,
+			'date'=>$date,
+		];
+    }
+		/**
+	 * * هنا لو اليوزر ضاف فلوس في الحساب
+	 * * بنحطها في الاستيت منت
+	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
+	 */
+	public function handleLetterOfCreditStatement(int $financialInstitutionId , string $source  , int $lcFacilityId,string $lcType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $lcAdvancedPaymentId = 0 , $cdOrTdId = 0 , $type =null)
+	{
+		$data = $this->generateLetterOfCreditData($financialInstitutionId , $source  , $lcFacilityId, $lcType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName ,$lcAdvancedPaymentId, $cdOrTdId , $type) ;
+		$this->letterOfCreditStatements()->create($data);
+
+	}
+
+	
+	// public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId)
+	// {
+	// 	return $this->currentAccountDebitBankStatement()->create([
+	// 		'financial_institution_account_id'=>$financialInstitutionAccountId,
+	// 		'company_id'=>$this->company_id ,
+	// 		'credit'=>0,
+	// 		'debit'=>$debit,
+	// 		'date'=>$date
+	// 	]);
+	// }
+
+}
