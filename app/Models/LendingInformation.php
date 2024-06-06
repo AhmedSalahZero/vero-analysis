@@ -14,9 +14,9 @@ class LendingInformation extends Model
 	public function getId(){
 		return $this->id ; 
 	}
-	public function getCustomerName()
+	public function getCustomerId()
 	{
-		return $this->customer_name;
+		return $this->customer_id;
 	}	
 	public function getAccountNumber()
 	{

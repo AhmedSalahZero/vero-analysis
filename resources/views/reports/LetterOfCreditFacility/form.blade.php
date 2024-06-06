@@ -159,7 +159,7 @@
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
                                             <div data-repeater-list="termAndConditions" class="col-md-12">
-                                                {{-- {{ dd($model->lendingInformation) }} --}}
+                                         
                                                 @if(isset($model) )
                                                 @foreach($model->termAndConditions as $termAndCondition)
                                                 @include('reports.LetterOfCreditFacility.repeater' , [

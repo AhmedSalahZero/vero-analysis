@@ -183,7 +183,7 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(FullySecuredOverdraft::class , 'company_id','id');
 	}
-	public function cleanOverdraftAgainstCommercialPapers()
+	public function overdraftAgainstCommercialPapers()
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'company_id','id');
 	}

@@ -38,7 +38,7 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'over-draft-against-commercial-paper' ?'active':'' }}" data-toggle="tab" href="#over-draft-against-commercial-paper" role="tab">
+                    <a class="nav-link {{ !Request('active') || Request('active') == 'overdraft-against-commercial-paper' ?'active':'' }}" data-toggle="tab" href="#overdraft-against-commercial-paper" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Over Draft Against Commercial Paper Table') }}
                     </a>
                 </li>
@@ -61,7 +61,7 @@
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') || Request('active') == 'over-draft-against-commercial-paper' ?'active':'' }}" id="bank" role="tabpanel">
+            <div class="tab-pane {{ !Request('active') || Request('active') == 'overdraft-against-commercial-paper' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__head kt-portlet__head--lg p-0">
                         <div class="kt-portlet__head-label">
@@ -73,7 +73,7 @@
                             </h3>
                         </div>
                         {{-- Export --}}
-                        <x-export-overdraft-against-commercial-paper :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'over-draft-against-commercial-paper'" :has-search="1" :has-batch-collection="0"   href="{{route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
+                        <x-export-overdraft-against-commercial-paper :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'overdraft-against-commercial-paper'" :has-search="1" :has-batch-collection="0"   href="{{route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
                     </div>
                     <div class="kt-portlet__body">
 
@@ -105,10 +105,10 @@
                                     <td class="text-nowrap">{{ $overdraftAgainstCommercialPaper->getContractEndDateFormatted() }}</td>
                                     <td>{{ $overdraftAgainstCommercialPaper->getAccountNumber() }}</td>
                                     <td class="text-uppercase">{{ $overdraftAgainstCommercialPaper->getCurrency() }}</td>
-                                    <td class="text-transform">{{ $overdraftAgainstCommercialPaper->getLimit() }}</td>
-                                    <td class="bank-max-width">{{ $overdraftAgainstCommercialPaper->getBorrowingRate() }}</td>
-                                    <td class="text-nowrap">{{ $overdraftAgainstCommercialPaper->getMarginRate() }}</td>
-                                    <td>{{ $overdraftAgainstCommercialPaper->getInterestRate() }}</td>
+                                    <td class="text-transform">{{ $overdraftAgainstCommercialPaper->getLimitFormatted()  }}</td>
+                                    <td class="bank-max-width">{{ $overdraftAgainstCommercialPaper->getBorrowingRateFormatted() . ' %'  }}</td>
+                                    <td class="text-nowrap">{{ $overdraftAgainstCommercialPaper->getMarginRateFormatted() . ' %'  }}</td>
+                                    <td>{{ $overdraftAgainstCommercialPaper->getInterestRateFormatted() . ' %'  }}</td>
                                     {{-- <td>{{ $overdraftAgainstCommercialPaper->getMaxLendingLimitPerCustomer() }}</td> --}}
                                     {{-- <td>{{ $overdraftAgainstCommercialPaper->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

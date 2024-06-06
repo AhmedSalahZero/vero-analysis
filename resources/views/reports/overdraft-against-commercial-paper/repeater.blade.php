@@ -10,40 +10,34 @@
                                          @endif 
 				                         ">
                     <input type="hidden" class="form-control " @if($isRepeater) name="id" @else name="infos[0][id]" @endif value="{{ isset($infos) ? $infos->getId() : 0 }}">
+                    <input type="hidden" class="form-control " @if($isRepeater) name="id" @else name="infos[0][company_id]" @endif value="{{ $company->id }}">
+		
 
 
-
-                    <div class="col-2">
-                        <label class="form-label font-weight-bold ">{{ __('Lending Limit Per Customer') }}
-                        </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group">
-                                <input placeholder="{{ __('Lending Limit Per Customer') }}" type="text" class="form-control  exclude-text" @if($isRepeater) name="max_lending_limit_per_customer" @else name="infos[0][max_lending_limit_per_customer]" @endif value="{{ isset($infos) ? $infos->getMaxLendingLimitPerCustomer() : old('max_lending_limit_per_customer') }}">
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <div class="col-lg-3">
+				 {{-- <div class="col-lg-3">
                         <label>{{__('Select Customer')}} <span class="required">*</span></label>
                         <div class="input-group">
-                            <select @if($isRepeater) name="customer_name" @else name="infos[0][customer_name]" @endif class="form-control repeater-select">
+                            <select @if($isRepeater) name="customer_id" @else name="infos[0][customer_id]" @endif class="form-control repeater-select">
                                 <option selected >{{__('Any Customer')}}</option>
-                                @foreach($customers as $customerName )
-                                <option value="{{ $customerName  }}" @if(isset($infos) && $infos->getCustomerName() == $customerName ) selected @endif > {{ $customerName }}</option>
+                                @foreach($customers as $customerId => $customerName )
+                                <option value="{{ $customerId  }}" @if(isset($infos) && $infos->getCustomerId() == $customerId ) selected @endif > {{ $customerName }}</option>
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
+
+                   
+
+
+
+                   
 
                     <div class="col-2">
                         <label class="form-label font-weight-bold">{{ __('Commercial Papers Due Within') }}
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input @if($isRepeater) name="for_commercial_papers_due_within_days" @else name="infos[0][for_commercial_papers_due_within_days]" @endif type="text" class="form-control only-percentage-allowed
+                                <input @if($isRepeater) name="for_commercial_papers_due_within_days" @else name="infos[0][for_commercial_papers_due_within_days]" @endif type="text" class="form-control 
 								{{-- trigger-change-repeater --}}
 								
 								" value="{{ (isset($infos) ? $infos->for_commercial_papers_due_within_days : old('for_commercial_papers_due_within_days',0)) }}">

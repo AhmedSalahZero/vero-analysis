@@ -182,11 +182,16 @@
                             <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
-							
-							<div class="col-md-4 ">
+
+                            <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :label="__('Setteled Max Within (Days)')" :type="'text'" :placeholder="__('Setteled Max Within (Days)')" :name="'to_be_setteled_max_within_days'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                             </div>
-					
+
+                            <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :label="__('Max Lending Limit Per Customer')" :type="'text'" :placeholder="__('Max Lending Limit Per Customer')" :name="'max_lending_limit_per_customer'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                            </div>
+
+
 
 
 
@@ -200,21 +205,17 @@
 
 
 
-
-                    </div>
-                </div>
-
-                <div class="kt-portlet ">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Lending Information')}}
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="kt-portlet__body">
 
                         <div class="form-group row" style="flex:1;">
+
+                            <div class="kt-portlet__head">
+                                <div class="kt-portlet__head-label">
+                                    <h3 class="kt-portlet__head-title head-title text-primary">
+                                        {{__('Lending Information')}}
+                                    </h3>
+                                </div>
+                            </div>
+
                             <div class="col-md-12 mt-3">
 
 
@@ -224,18 +225,16 @@
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
                                             <div data-repeater-list="infos" class="col-md-12">
-                                                {{-- {{ dd($model->lendingInformation) }} --}}
+
                                                 @if(isset($model) )
                                                 @foreach($model->lendingInformation as $info)
                                                 @include('reports.overdraft-against-commercial-paper.repeater' , [
                                                 'infos'=>$info,
-                                                'customers'=>$customers
 
                                                 ])
                                                 @endforeach
                                                 @else
                                                 @include('reports.overdraft-against-commercial-paper.repeater' , [
-                                                'customers'=>$customers
                                                 ])
                                                 @endif
 
@@ -275,76 +274,150 @@
 
 
 
-
                     </div>
                 </div>
 
-                <!--end::Form-->
-
-
-                <div class="kt-portlet">
+                {{-- <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Outstanding Breakdown')}}
-                            </h3>
-                        </div>
-                    </div>
+                                {{__('Lending Information')}}
+                </h3>
+        </div>
+    </div>
+    <div class="kt-portlet__body">
 
-                    <div class="kt-portlet__body">
-                        <div class="form-group row" style="flex:1;">
-                            <div class="col-md-12 mt-3">
-
-
-
-                                <div class="" style="width:100%">
-
-                                    <div id="m_repeater_1" class="cash-and-banks-repeater">
-                                        <div class="form-group  m-form__group row  ">
-                                            <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
-                                                @if(isset($model) && count($model->outstandingBreakdowns) )
-                                                @foreach($model->outstandingBreakdowns as $outstandingBreakdown)
-                                                @include('outstanding-breakdown.repeater' , [
-                                                'outstandingBreakdown'=>$outstandingBreakdown,
-                                                ])
-
-                                                @endforeach
-                                                @else
-                                                @include('outstanding-breakdown.repeater' , [
-                                                ])
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="m-form__group form-group row">
-
-                                            <div class="col-lg-6">
-                                                <div data-repeater-create="" class="btn btn btn-sm btn-success m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
-                                                    <span>
-                                                        <i class="fa fa-plus"> </i>
-                                                        <span>
-                                                            {{ __('Add') }}
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
+        <div class="form-group row" style="flex:1;">
+            <div class="col-md-12 mt-3">
 
 
-                                </div>
+
+                <div class="" style="width:100%;overflow:hidden">
+
+                    <div id="m_repeater_0" class="cash-and-banks-repeater">
+                        <div class="form-group  m-form__group row  ">
+                            <div data-repeater-list="infos" class="col-md-12">
+
+                                @if(isset($model) )
+                                @foreach($model->lendingInformation as $info)
+                                @include('reports.overdraft-against-commercial-paper.repeater' , [
+                                'infos'=>$info,
+                                'customers'=>$customers
+
+                                ])
+                                @endforeach
+                                @else
+                                @include('reports.overdraft-against-commercial-paper.repeater' , [
+                                'customers'=>$customers
+                                ])
+                                @endif
+
+
+
 
 
 
                             </div>
+                        </div>
+                        <div class="m-form__group form-group row">
+
+                            <div class="col-md-6">
+                                <div data-repeater-create="" class="btn btn btn-sm btn-success m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
+                                    <span>
+                                        <i class="fa fa-plus"> </i>
+                                        <span>
+                                            {{ __('Add') }}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
 
                         </div>
-
                     </div>
+
+
                 </div>
 
-                <!--end::Portlet-->
+
+
+            </div>
+
         </div>
+
+
+
+
+
+
+    </div>
+    </div> --}}
+
+    <!--end::Form-->
+
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title head-title text-primary">
+                    {{__('Outstanding Breakdown')}}
+                </h3>
+            </div>
+        </div>
+
+        <div class="kt-portlet__body">
+            <div class="form-group row" style="flex:1;">
+                <div class="col-md-12 mt-3">
+
+
+
+                    <div class="" style="width:100%">
+
+                        <div id="m_repeater_1" class="cash-and-banks-repeater">
+                            <div class="form-group  m-form__group row  ">
+                                <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
+                                    @if(isset($model) && count($model->outstandingBreakdowns) )
+                                    @foreach($model->outstandingBreakdowns as $outstandingBreakdown)
+                                    @include('outstanding-breakdown.repeater' , [
+                                    'outstandingBreakdown'=>$outstandingBreakdown,
+                                    ])
+
+                                    @endforeach
+                                    @else
+                                    @include('outstanding-breakdown.repeater' , [
+                                    ])
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="m-form__group form-group row">
+
+                                <div class="col-lg-6">
+                                    <div data-repeater-create="" class="btn btn btn-sm btn-success m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}" id="add-row">
+                                        <span>
+                                            <i class="fa fa-plus"> </i>
+                                            <span>
+                                                {{ __('Add') }}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!--end::Portlet-->
+    </div>
     </div>
 
     <x-submitting />

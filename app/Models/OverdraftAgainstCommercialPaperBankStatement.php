@@ -38,7 +38,8 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 		->where('overdraft_against_commercial_paper_id',$model->overdraft_against_commercial_paper_id)
 		->each(function($overdraftAgainstCommercialPaperBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$overdraftAgainstCommercialPaperBankStatement->id)->update([
-				'updated_at'=>now()
+				'updated_at'=>now(),
+				
 			]);
 		});
 		

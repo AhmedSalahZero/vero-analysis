@@ -105,7 +105,7 @@
                                     <td class="text-nowrap">{{ $cleanOverdraft->getContractEndDateFormatted() }}</td>
                                     <td>{{ $cleanOverdraft->getAccountNumber() }}</td>
                                     <td class="text-uppercase">{{ $cleanOverdraft->getCurrency() }}</td>
-                                    <td class="text-transform">{{ $cleanOverdraft->getLimit() }}</td>
+                                    <td class="text-transform">{{ $cleanOverdraft->getLimitFormatted() }}</td>
                                     <td class="bank-max-width">{{ $cleanOverdraft->getBorrowingRateFormatted() .' %'  }}</td>
                                     <td class="text-nowrap">{{ $cleanOverdraft->getMarginRateFormatted() .' %'  }}</td>
                                     <td>{{ $cleanOverdraft->getInterestRateFormatted() .' %'  }}</td>
