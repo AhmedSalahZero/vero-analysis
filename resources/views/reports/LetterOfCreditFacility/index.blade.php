@@ -36,7 +36,7 @@
 <div class="kt-portlet kt-portlet--tabs">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+            <ul class="nav nav-tabs nav-tabs-space-lc nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link {{ !Request('active') || Request('active') == 'letter-of-credit-facilities' ?'active':'' }}" data-toggle="tab" href="#letter-of-credit-facilities" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Letter Of Credit Facility Table') }}
@@ -45,16 +45,13 @@
                 
             </ul>
 
-           <div class="flex-tabs">
+          <div class="flex-tabs">
 		    <a href="{{ route('create.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
-		   </div>
+       
+		  </div>
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -63,7 +60,7 @@
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'letter-of-credit-facilities' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <div class="kt-portlet__head kt-portlet__head--lg p-0">
+                    <div class="kt-portlet__head kt-portlet__head--lc p-0">
                         <div class="kt-portlet__head-label">
                             <span class="kt-portlet__head-icon">
                                 <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
@@ -86,6 +83,8 @@
                                     <th >{{ __('End Date') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Limit') }}</th>
+                                    <th>{{ __('Outstanding Amount') }}</th>
+									<th>{{ __('Terms') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -98,7 +97,121 @@
                                     <td>{{ $letterOfCreditFacility->getContractStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $letterOfCreditFacility->getContractEndDateFormatted() }}</td>
                                     <td class="text-uppercase">{{ $letterOfCreditFacility->getCurrency() }}</td>
-                                    <td class="text-transform">{{ $letterOfCreditFacility->getLimit() }}</td>
+                                    <td class="text-transform">{{ $letterOfCreditFacility->getLimitFormatted() }}</td>
+                                    <td class="text-transform">{{ $letterOfCreditFacility->getOutstandingAmountFormatted() }}
+									
+									
+									</td>
+									<td><button data-toggle="modal" data-target="#letter_of_credit_terms_and_conditions{{ $letterOfCreditFacility->id }}" type="button" class="btn btn-outline-brand btn-elevate btn-pill"><i class="fa fa-tag"></i> Click Here</button>
+									
+									<div class="modal fade " id="letter_of_credit_terms_and_conditions{{ $letterOfCreditFacility->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <form action="#" class="modal-content" method="post">
+		
+								
+		@csrf
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#0741A5 !important" >{{ __('LCs Terms And Conditions') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="customize-elements">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">{!! __('LC Type') !!} </th>
+                                <th class="text-center">{!! __('Cash Cover') !!} </th>
+                                <th class="text-center"> {!! __('Commission %') !!} </th>
+                                <th class="text-center">{{ __('Commission Interval') }}</th>
+                                <th class="text-center"> {!! __('Min Commission Fees') !!} </th>
+                                <th class="text-center"> {!! __('Issuance Fees') !!} </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+						
+							
+                            @foreach($letterOfCreditFacility->termAndConditions as $termAndCondition)
+                            <tr>
+                                <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" step="0.1" class="form-control" value="{{ $termAndCondition->getLcTypeFormatted() }}">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center" value="{{  $termAndCondition->getCashCoverRate() . ' %' }}">
+                                        </div>
+                                    </div>
+                                </td>
+
+
+                                <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center" value="{{ $termAndCondition->getCommissionRate() . ' %' }}">
+										
+                                        </div>
+                                    </div>
+                                </td>
+								
+								
+								 <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center text-capitalize" value="{{ $termAndCondition->getCommissionInterval() }}">
+										
+                                        </div>
+                                    </div>
+                                </td>
+								
+								   <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($termAndCondition->getMinCommissionFees())  }}">
+										
+                                        </div>
+                                    </div>
+                                </td>
+								
+								
+									   <td>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($termAndCondition->getIssuanceFees())  }}">
+										
+                                        </div>
+                                    </div>
+                                </td>
+								
+								
+								
+								
+
+                            </tr>
+                         @endforeach
+					
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary "
+				 data-dismiss="modal"
+				 
+				 >{{ __('Close') }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+									
+									
+									</td>
+
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                      
 

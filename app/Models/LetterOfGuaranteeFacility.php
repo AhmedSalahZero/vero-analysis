@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 class LetterOfGuaranteeFacility extends Model
 {
 	use HasLetterOfGuaranteeStatements , HasLetterOfGuaranteeCashCoverStatements;
-    protected $guarded = ['id'];
+    
+	protected $guarded = ['id'];
+	
 	public function getContractStartDate()
 	{
 		return $this->contract_start_date;
@@ -59,7 +61,6 @@ class LetterOfGuaranteeFacility extends Model
 	{
 		return number_format($this->getOutstandingAmount()) ;
 	}
-
 
 	public function getCurrency()
 	{

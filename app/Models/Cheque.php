@@ -119,7 +119,10 @@ class Cheque extends Model
 	{
 		return $this->status ;
 	}
-	
+	public function isCollected():bool
+	{
+		return $this->getStatus() === self::COLLECTED;
+	}
 	public function getStatusFormatted()
 	{
 		return snakeToCamel($this->getStatus());

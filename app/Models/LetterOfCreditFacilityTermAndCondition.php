@@ -8,15 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 class LetterOfCreditFacilityTermAndCondition extends Model
 {
     protected $guarded = ['id'];
-	public function getLgType()
+	public function getLcType()
 	{
-		return $this->lg_type;
+		return $this->lc_type;
 	}
+	public function getLcTypeFormatted()
+	{
+		return camelizeWithSpace($this->getLcType());
+	} 
 	public function getOutstandingBalance()
 	{
 		return $this->outstanding_balance ?: 0 ;
 	}
-	
+	public function getMinCommissionFees()
+	{
+		return $this->min_commission_fees ?: 0 ;
+	}
+	public function getIssuanceFees()
+	{
+		return $this->issuance_fees ?: 0 ;
+	}
 	public function getOutstandingDateFormatted()
 	{
 		$outStandingDate = $this->outstanding_date ;

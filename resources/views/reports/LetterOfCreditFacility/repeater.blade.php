@@ -13,14 +13,14 @@
 
 
 
-					
-                    <div class="col-lg-2">
-                        <label>{{__('Select LG Type')}} <span class="required">*</span></label>
+				
+                    <div class="col-lc-2">
+                        <label>{{__('Select LC Type')}} <span class="required">*</span></label>
                         <div class="input-group">
-                            <select @if($isRepeater) name="lg_type" @else name="termAndConditions[0][lg_type]" @endif class="form-control repeater-select">
+                            <select @if($isRepeater) name="lc_type" @else name="termAndConditions[0][lc_type]" @endif class="form-control repeater-select">
                                 <option selected>{{__('Select')}}</option>
-                                @foreach(getLgTypes() as $name => $nameFormatted )
-                                <option value="{{ $name  }}" @if(isset($termAndCondition) && $termAndCondition->getLgType() == $name ) selected @endif > {{ $nameFormatted }}</option>
+                                @foreach(getLcTypes() as $name => $nameFormatted )
+                                <option value="{{ $name  }}" @if(isset($termAndCondition) && $termAndCondition->getLcType() == $name ) selected @endif > {{ $nameFormatted }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -71,7 +71,7 @@
 
 
 
-					  <div class="col-lg-2">
+					  <div class="col-lc-2">
                         <label>{{__('Commission Interval')}} <span class="required">*</span></label>
                         <div class="input-group">
                             <select @if($isRepeater) name="commission_interval" @else name="termAndConditions[0][commission_interval]" @endif class="form-control repeater-select">

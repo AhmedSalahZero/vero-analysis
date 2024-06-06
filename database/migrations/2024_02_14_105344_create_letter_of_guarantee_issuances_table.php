@@ -18,7 +18,6 @@ class CreateLetterOfGuaranteeIssuancesTable extends Migration
 			$table->string('transaction_name')->nullable();
             $table->integer('financial_institution_id')->nullable();
 			$table->foreign('financial_institution_id')->references('id')->on('financial_institutions')->cascadeOnDelete();
-			// $table->unsignedBigInteger('bank_id')->nullable();
 			$table->decimal('total_lg_outstanding_balance',14,2)->default(0);
 			$table->string('lg_type')->nullable();
 			$table->decimal('lg_type_outstanding_balance',14,2)->default(0);

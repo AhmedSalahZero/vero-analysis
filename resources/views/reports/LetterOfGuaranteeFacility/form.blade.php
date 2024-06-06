@@ -83,7 +83,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Letter Of Guarantee Letter')}}
+                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Letter Of Guarantee')}}
                         </h3>
                     </div>
                 </div>

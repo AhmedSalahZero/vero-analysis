@@ -13,6 +13,7 @@ class CreateLetterOfCreditFacilitiesTable extends Migration
      */
     public function up()
     {
+		SChema::dropIfExists('letter_of_credit_facilities');
         Schema::create('letter_of_credit_facilities', function (Blueprint $table) {
             $table->integer('id', true);
             $table->integer('financial_institution_id')->nullable();
@@ -21,7 +22,9 @@ class CreateLetterOfCreditFacilitiesTable extends Migration
             $table->date('contract_end_date')->nullable();
             $table->string('currency')->nullable();
             $table->string('limit')->nullable();
-            $table->string('financial_duration')->nullable();
+			$table->date('outstanding_date')->nullable();
+			$table->decimal('outstanding_amount',20,2)->default(0);
+			$table->string('financial_duration')->nullable();
             $table->string('borrowing_rate')->nullable();
             $table->string('bank_margin_rate')->nullable();
             $table->string('interest_rate')->nullable();
@@ -42,6 +45,6 @@ class CreateLetterOfCreditFacilitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('letter_of_credit_facilities');
+        Schema::dropIfExists('letter_of_guarantee_facilities');
     }
 }

@@ -361,8 +361,6 @@ class MoneyReceived extends Model
 		return $cheque ? $cheque->getAccountType() : null ;
 	}
 	
-	
-	
 	public function getChequeAccountNumber()
 	{
 		$cheque = $this->cheque ;
@@ -473,11 +471,34 @@ class MoneyReceived extends Model
 			$settlement->delete();
 		});
 		$this->unappliedAmounts()->delete();
-		$this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() : null ;
-		$this->overdraftDebitBankStatement ? $this->overdraftDebitBankStatement->delete() : null ;
-		$this->fullySecuredOverdraftDebitBankStatement ? $this->fullySecuredOverdraftDebitBankStatement->delete() : null ;
-		$this->cashInSafeDebitStatement ? $this->cashInSafeDebitStatement->delete() : null ;
-		$this->currentAccountDebitBankStatement ? $this->currentAccountDebitBankStatement->delete() : null ;
+		$currentStatement = $this->getCurrentStatement() ;
+		if($currentStatement){
+			$currentStatement->delete();
+		}
+
+	}
+	public function getCurrentStatement()
+	{
+		if($this->cleanOverdraftDebitBankStatement){
+			return $this->cleanOverdraftDebitBankStatement ;
+		}
+		if($this->overdraftDebitBankStatement){
+			return $this->overdraftDebitBankStatement ;
+		}
+		if($this->fullySecuredOverdraftDebitBankStatement){
+			return $this->fullySecuredOverdraftDebitBankStatement;
+		}
+		if($this->overdraftAgainstCommercialPaperDebitBankStatement){
+			return $this->overdraftAgainstCommercialPaperDebitBankStatement;
+		}	
+		if($this->cashInSafeDebitStatement){
+			return $this->cashInSafeDebitStatement;
+		}
+		if($this->currentAccountDebitBankStatement){
+			return $this->currentAccountDebitBankStatement ;
+		}
+		
+		
 	}
 
 	

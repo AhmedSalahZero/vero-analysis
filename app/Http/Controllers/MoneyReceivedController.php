@@ -660,6 +660,20 @@ class MoneyReceivedController
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	
+	public function sendToUnderCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
+	{
+		$moneyReceived->cheque->update([
+			'status'=>Cheque::UNDER_COLLECTION,
+			'collection_fees'=>null,
+			'actual_collection_date'=>null
+		]);
+		$currentStatement = $moneyReceived->getCurrentStatement() ;
+		if($currentStatement){
+			 $currentStatement->delete();
+		}
+		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION])->with('success',__('Cheque Is Under Collection'));
+		
+	}
 	public function sendToSafe(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
 		$moneyReceived->cheque->update([
