@@ -5,6 +5,7 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\OverdraftAgainstCommercialPaper;
+use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class OverdraftAgainstCommercialPaperController
 	{
 		
 		$overdraftAgainstCommercialPapers = $company->overdraftAgainstCommercialPapers->where('financial_institution_id',$financialInstitution->id) ;
-		dd($overdraftAgainstCommercialPapers);
+
 		$overdraftAgainstCommercialPapers =   $this->applyFilter($request,$overdraftAgainstCommercialPapers) ;
 		$searchFields = [
 			'contract_start_date'=>__('Contract Start Date'),
@@ -69,17 +70,19 @@ class OverdraftAgainstCommercialPaperController
     }
 	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
+		$customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
+			'customers'=>$customers,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
 		]);
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
+		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','max_lending_limit_per_customer'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		
@@ -109,11 +112,12 @@ class OverdraftAgainstCommercialPaperController
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
+		$customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
         return view('reports.overdraft-against-commercial-paper.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			// 'customers'=>$customers,
+			'customers'=>$customers,
 			'model'=>$overdraftAgainstCommercialPaper
 		]);
 		
@@ -130,6 +134,7 @@ class OverdraftAgainstCommercialPaperController
 		
 		$overdraftAgainstCommercialPaper->update($data);
 		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
+		$overdraftAgainstCommercialPaper->lendingInformation()->delete();
 		foreach($infos as $lendingInformationArr){
 			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
 				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 

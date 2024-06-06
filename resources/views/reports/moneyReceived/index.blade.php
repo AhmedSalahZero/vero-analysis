@@ -915,9 +915,12 @@ $(document).on('change','.js-account-number',function(){
 		},
 		type:"get",
 		success:function(res){
-			
+			if(res.balance_date){
 			$(parent).find('.balance-date-js').html('[ ' +res.balance_date + ' ]')
-			$(parent).find('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+			}
+			if(res.net_balance_date){
+				$(parent).find('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+			}
 			$(parent).find('.net-balance-js').val(number_format(res.net_balance))
 			$(parent).find('.balance-js').val(number_format(res.balance))
 			

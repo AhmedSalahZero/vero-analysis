@@ -43,7 +43,7 @@
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input @if($isRepeater) name="for_commercial_papers_due_within_days" @else name="infos[0][for_commercial_papers_due_within_days]" @endif type="text" class="form-control only-percentage-allowed
+                                <input @if($isRepeater) name="for_commercial_papers_due_within_days" @else name="infos[0][for_commercial_papers_due_within_days]" @endif type="text" class="form-control 
 								{{-- trigger-change-repeater --}}
 								
 								" value="{{ (isset($infos) ? $infos->for_commercial_papers_due_within_days : old('for_commercial_papers_due_within_days',0)) }}">

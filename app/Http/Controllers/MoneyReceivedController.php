@@ -714,14 +714,11 @@ class MoneyReceivedController
 	}
 	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company )
 	{
+		$netBalanceDate = '' ;
 		$accountTypeId = $request->get('accountType');
 		$accountType = AccountType::find($accountTypeId);
 		$accountNumber = $request->get('accountNumber');
 		$financialInstitutionId = $request->get('financialInstitutionId');
-		// dd($financialInstitutionId);
-		// dd(('\App\Models\\'.$accountType->getModelName()));
-		
-		// DB::table(getStatementTableName)
 		if(!$accountType){
 			return [
 				'status'=>true ,
@@ -745,7 +742,7 @@ class MoneyReceivedController
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , now())->orderByRaw('full_date desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
 		$balance = 0;
-		$balanceDate = null;
+		$balanceDate = '';
 		
 		$netBalance = 0;
 		if($balanceRow){

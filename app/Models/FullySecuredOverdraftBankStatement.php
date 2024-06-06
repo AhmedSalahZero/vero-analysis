@@ -14,6 +14,7 @@ class FullySecuredOverdraftBankStatement extends Model
 	protected $guarded =[
 		'id'
 	];
+	
 	const MONEY_TRANSFER  = 'money-transfer';
 	public $oldFullDate = null;
 	public static function updateNextRows(self $model):string 

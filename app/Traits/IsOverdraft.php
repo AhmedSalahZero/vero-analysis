@@ -47,6 +47,10 @@ trait IsOverdraft
 	{
 		return $this->limit ?: 0 ;
 	}
+	public function getLimitFormatted()
+	{
+		return number_format($this->getLimit());
+	}
 	/**
 	 * * هو قيمة المسحوب من هذا التسهيل لحظه فتح الحساب علي السيستم (كاش فيرو)
 	 * * وهو بالتالي يعتبر ال

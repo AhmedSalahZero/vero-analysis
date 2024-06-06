@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-		$schedule->job(new CheckDueAndPastedInvoicesJob)->everyMinute();
+		$schedule->job(new CheckDueAndPastedInvoicesJob)->name('check_due_date')->everyMinute()->withoutOverlapping();
 		foreach(Company::all() as $company){
 			$firstRaw = CurrentAccountBankStatement::
 			where('company_id',$company->id)
