@@ -228,7 +228,7 @@ class CertificatesOfDeposit extends Model
 		->where('status',CertificatesOfDeposit::RUNNING)
 		->pluck('account_number','account_number')->toArray();
 	}
-	public static function findByAccountNumber(int $companyId , string $accountNumber)
+	public static function findByAccountNumber( string $accountNumber,int $companyId)
 	{
 		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
 	} 

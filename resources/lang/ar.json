@@ -1158,7 +1158,11 @@
 "Maxium:":"بحد اقصى",
 "Selected:":"محدد",
 "Top":"أفضل",
-"Do You Want To Delete This Item ?":"هل تريد حذف هذا العنصر ؟"
-
+"Do You Want To Delete This Item ?":"هل تريد حذف هذا العنصر ؟",
+"Please Insert :attribute":"برجاء ادخال :attribute",
+"Please Select :attribute":"برجاء ادخال :attribute",
+"Collection Date - Max Date Of Today":"تاريخ التحصيل (بحد اقصى تاريخ اليوم)",
+"Deposit Date - Max Date Of Today":"تاريخ الايداع (بحد اقصى تاريخ اليوم)",
+"Account Type":"نوع الحساب"
 
 }

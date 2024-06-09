@@ -304,6 +304,11 @@
                                             {{ __('Limit') }}
                                         </th>
                                         @endif
+													@if($isAgainstCommercialPaper)
+													<th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                            {{ __('Actual Limit') }}
+                                        </th>
+													@endif 
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Beginning Balance') }}
                                         </th>
@@ -357,6 +362,9 @@
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y') }}</td>
                                         @if(! $isCurrentAccount)
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->limit) }}</td>
+										@if($isAgainstCommercialPaper)
+                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->statement_limit) }}</td>
+										@endif 
                                         @endif
                                         <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($modelAsStdClass->beginning_balance) }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>

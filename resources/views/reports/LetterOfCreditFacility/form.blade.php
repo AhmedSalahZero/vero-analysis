@@ -314,9 +314,9 @@
                             <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
-                            <div class="col-md-4 ">
+                            {{-- <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
-                            </div>
+                            </div> --}}
 
 
 

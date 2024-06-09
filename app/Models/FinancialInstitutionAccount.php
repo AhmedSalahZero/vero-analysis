@@ -24,6 +24,8 @@ class FinancialInstitutionAccount extends Model
     {
         return $this->account_number ;
     }
+	
+	
 
     /**
      * *رقم الحساب البنكى الدولى International Bank Account Number وبذلك فهو يعبر عن رقم حسابك البنكى اثناء التحويلات البنكية الدولية وهذا الرقم يتم الحصول علية لكل الحسابات البنكية فى أغلب الدول حول العالم.

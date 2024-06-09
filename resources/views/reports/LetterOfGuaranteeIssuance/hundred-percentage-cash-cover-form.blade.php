@@ -102,17 +102,17 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label> {{ __('Financial Bank') }}
+                                        <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-									
-								
+
+
                                     <div class="col-md-4">
                                         <label> {{ __('LG Type') }}
                                             @include('star')
@@ -138,7 +138,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             </div>
                         </div>
 
-                      
+
 
 
 
@@ -306,7 +306,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             </select>
                                         </div>
                                     </div>
-								
+
                                     <div class="col-md-3">
                                         <x-form.input :id="$source != LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
                                     </div>
@@ -315,7 +315,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
                                     </div>
-								
+
 
 
 
@@ -360,7 +360,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type ">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
                                                     <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -376,7 +376,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -385,9 +385,24 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    {{-- <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Number')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
-                                    </div> --}}
+
+                                    <div class="col-md-3 mb-3">
+                                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                        <div class="kt-input-icon">
+                                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Net Balance')}}">
+                                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-3 mb-3">
+                                        <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                                        <div class="kt-input-icon">
+                                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                        </div>
+                                    </div>
+
 
 
                                 </div>
@@ -681,21 +696,6 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
             </script>
-            <script>
-                $(document).on('change', '[js-cd-or-td-account-number]', function() {
-                    const parent = $(this).closest('.kt-portlet__body');
-                    const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
-                    const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
-                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number' ]) }}";
-                    url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_number', accountNumber);
-                    $.ajax({
-                        url
-                        , success: function(res) {
-                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount))
-                        }
-                    });
-                })
+            @include('reports.LetterOfGuaranteeIssuance.commonJs')
 
-            </script>
             @endsection

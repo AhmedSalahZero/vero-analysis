@@ -455,6 +455,10 @@ Route::middleware([])->group(function () {
                     Route::post('letter-of-guarantee-issuance/cancel/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@cancel')->name('cancel.letter.of.guarantee.issuance');
                     Route::post('letter-of-guarantee-issuance/apply-amount-to-be-decreased/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@applyAmountToBeDecreased')->name('advanced.lg.payment.apply.amount.to.be.decreased');
                     Route::post('letter-of-guarantee-issuance/edit-amount-to-be-decreased/{lgAdvancedPaymentHistory}/{source}', 'LetterOfGuaranteeIssuanceController@editAmountToBeDecreased')->name('advanced.lg.payment.edit.amount.to.be.decreased');
+					
+					Route::post('letter-of-credit-facility/{letterOfCreditFacility}','LetterOfCreditFacilityController@applyExpense')->name('apply.lc.expense');
+					
+					
                     Route::get('letter-of-guarantee-issuance/delete-advanced-payment/{lgAdvancedPaymentHistory}', 'LetterOfGuaranteeIssuanceController@deleteAdvancedPayment')->name('delete.lg.advanced.payment');
                     Route::post('letter-of-guarantee-issuance/back-to-running/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@bankToRunningStatus')->name('back.to.running.letter.of.guarantee.issuance');
 
@@ -501,6 +505,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
 					Route::get('money-received/get-net-balance-based-on-account-number', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumber')->name('update.balance.and.net.balance.based.on.account.number');
+					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
 				Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 
 

@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\HHelpers;
+use App\Http\Requests\ApplyCollectionToChequeRequest;
+use App\Http\Requests\SendToUnderCollectionChequeRequest;
 use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -606,17 +608,22 @@ class MoneyReceivedController
 			}
 			return $branch->id ;
 	}
-	public function sendToCollection(Company $company,Request $request)
+	public function sendToCollection(Company $company,SendToUnderCollectionChequeRequest $request)
 	{
 		$moneyReceivedIds = $request->get('cheques') ;
 		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);
+		$data['account_type'] =  $request->input('account_type.'.MoneyReceived::CHEQUE_UNDER_COLLECTION);
+		$data['account_number'] = $request->input('account_number.'.MoneyReceived::CHEQUE_UNDER_COLLECTION);
+		$data['account_type'] = is_null($data['account_type']) ? $request->get('account_type') : $data['account_type'] ;
+		$data['account_number'] = is_null($data['account_number']) ? $request->get('account_number') : $data['account_number'] ;
 		$data['status'] = Cheque::UNDER_COLLECTION;
 		foreach($moneyReceivedIds as $moneyReceivedId){
 			/**
 			 * @var MoneyReceived $moneyReceived 
 			 */
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
+			
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
 			$moneyReceived->cheque->update($data);
 		}
@@ -633,9 +640,10 @@ class MoneyReceivedController
 	/**
 	 * * تحديد ان الشيك دا تم بالفعل صرفة من البنك ونزل في حسابك
 	 */
-	public function applyCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
+	public function applyCollection(Company $company,ApplyCollectionToChequeRequest $request,MoneyReceived $moneyReceived)
 	{
 		/**
+		 * 
 		 * @var MoneyReceived $moneyReceived
 		 */
 		$actualCollectionDate = $request->get('actual_collection_date')  ;
@@ -656,12 +664,19 @@ class MoneyReceivedController
 		 */
 		
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$actualCollectionDate,$receivedAmount,$currency,null);
-		
+		if($request->ajax()){
+			return response()->json([
+				'status'=>true ,
+				'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])
+			]);
+		}
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	
 	public function sendToUnderCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
+		
+		// dd($request->all());
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::UNDER_COLLECTION,
 			'collection_fees'=>null,
@@ -715,11 +730,14 @@ class MoneyReceivedController
 			
 		]);
 	}
-	public function getAccountAmountForAccountNumber(Company $company ,  Request $request ,  string $accountTypeId , string $accountNumber){
-		$accountType = AccountType::find($accountTypeId);
-		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($company->id,$accountNumber);
+	public function getAccountAmountForAccountNumber(Company $company ,  Request $request ,  string $accountTypeId , string $accountNumber  ){
+	
 		
+		
+		$accountType = AccountType::find($accountTypeId);
 
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id);
+	
 		return response()->json([
 			'status'=>true , 
 			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 ,
@@ -733,21 +751,26 @@ class MoneyReceivedController
 		$accountType = AccountType::find($accountTypeId);
 		$accountNumber = $request->get('accountNumber');
 		$financialInstitutionId = $request->get('financialInstitutionId');
+	
 		if(!$accountType){
-			return [
-				'status'=>true ,
-				'balance'=>0,
-				'net_balance'=>0 ,
-			];
+			return response()->json([
+				[
+					'status'=>true ,
+					'balance'=>0,
+					'net_balance'=>0 ,
+				]
+			]);
 		}
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 		if(!$accountNumberModel){
 			if(!$accountType){
-				return [
-					'status'=>true ,
-					'balance'=>0,
-					'net_balance'=>0 ,
-				];
+				return response()->json(
+					[
+						'status'=>true ,
+						'balance'=>0,
+						'net_balance'=>0 ,
+					]
+				);
 			}
 		}
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
@@ -778,4 +801,15 @@ class MoneyReceivedController
 		]);
 
 	}
+	
+	public function updateNetBalanceBasedOnAccountNumberByAjax(Request $request , Company $company , $accountType , $accountNumber , $financialInstitutionId )
+	{
+
+		return $this->updateNetBalanceBasedOnAccountNumber((new Request())->replace([
+			'accountType'=>$accountType,
+			'accountNumber'=>$accountNumber , 
+			'financialInstitutionId'=>$financialInstitutionId
+		]),$company);
+	}
+	
 }

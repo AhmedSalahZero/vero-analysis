@@ -96,6 +96,7 @@ class BankStatementController
 				 ->join('overdraft_against_commercial_papers','overdraft_against_commercial_paper_bank_statements.overdraft_against_commercial_paper_id','=','overdraft_against_commercial_papers.id')
 				 ->where('overdraft_against_commercial_papers.currency','=',$currencyName)
 				 ->orderByRaw('full_date desc , priority asc ')
+				 ->selectRaw('* , overdraft_against_commercial_paper_bank_statements.limit as statement_limit')
 				 ->get();
 		}
 
@@ -109,7 +110,8 @@ class BankStatementController
 			'isCurrentAccount'=>$isCurrentAccount,
 			'financialInstitutionName'=>$financialInstitutionName,
 			'accountTypeName'=>$accountTypeName,
-			'accountNumber'=>$accountNumber
+			'accountNumber'=>$accountNumber,
+			'isAgainstCommercialPaper'=>$accountType->isOverDraftAgainstCommercialPaperAccount()
         ]);
     }
 }
