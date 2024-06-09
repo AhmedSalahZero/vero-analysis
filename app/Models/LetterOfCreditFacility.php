@@ -85,5 +85,8 @@ class LetterOfCreditFacility extends Model
 	{
 		return $this->hasMany(LetterOfCreditCashCoverStatement::class,'lc_facility_id','id');
 	}
-
+	public function expenses()
+	{
+		return $this->hasMany(LcFacilityExpense::class , 'lc_facility_id','id');
+	}
 }

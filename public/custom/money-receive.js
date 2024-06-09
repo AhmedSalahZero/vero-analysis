@@ -111,7 +111,6 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 			for (var i = 0; i < res.sales_orders.length; i++) {
 				 var salesOrderId = res.sales_orders[i].id
 				 var salesOrderNumber = res.sales_orders[i].so_number
-				 console.log(salesOrderNumber ,res.sales_orders )
 
 				// var currency = res.invoices[i].currency
 				var amount = res.sales_orders[i].amount
@@ -307,8 +306,13 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 
 
 $(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
+	let parent = $(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type') ;
 
-	$(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type').trigger('change')
+	$('.js-update-account-number-based-on-account-type').trigger('change')
+	if(parseInt(parent)){
+		parent.trigger('change')
+	}
+	
 })
 $(function () {
 

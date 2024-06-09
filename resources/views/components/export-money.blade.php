@@ -98,7 +98,7 @@ use App\Models\MoneyReceived ;
                                         <label>{{__('Cheque Deposit Date')}}</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <input required type="text" name="deposit_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                <input required type="text" name="deposit_date" value="" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="la la-calendar-check-o"></i>
@@ -180,7 +180,11 @@ use App\Models\MoneyReceived ;
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                <button type="submit" class="btn btn-success 
+								
+								{{-- submit-form-btn --}}
+								
+								">{{ __('Confirm') }}</button>
                             </div>
 
                         </form>

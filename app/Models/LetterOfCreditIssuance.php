@@ -360,10 +360,10 @@ class LetterOfCreditIssuance extends Model
 	{
 		$account = AccountType::find($this->getCdOrTdAccountTypeId());
 		if($account && $account->isCertificateOfDeposit() ){
-			return CertificatesOfDeposit::findByAccountNumber($this->company_id , $this->getCdOrTdAccountNumber())->id;
+			return CertificatesOfDeposit::findByAccountNumber($this->getCdOrTdAccountNumber(),$this->company_id )->id;
 		}
 		if($account && $account->isTimeOfDeposit() ){
-			return TimeOfDeposit::findByAccountNumber($this->company_id , $this->getCdOrTdAccountNumber())->id;
+			return TimeOfDeposit::findByAccountNumber($this->getCdOrTdAccountNumber(),$this->company_id )->id;
 		}
 		return 0 ;
 	}

@@ -5,7 +5,7 @@ namespace App\Traits\Models;
 
 trait HasLetterOfGuaranteeCashCoverStatements
 {
-    public function generateLetterOfGuaranteeCashCoverData( int $financialInstitutionId , string $source  , int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , int $lgAdvancedPaymentHistoryId =0 , $type =null):array
+    public function generateLetterOfGuaranteeCashCoverData( int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , int $lgAdvancedPaymentHistoryId =0 , $type =null):array
     {
         return [
 			'type'=>$type , // beginning-balance for example
@@ -28,7 +28,7 @@ trait HasLetterOfGuaranteeCashCoverStatements
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
 
-	public function handleLetterOfGuaranteeCashCoverStatement(int $financialInstitutionId , string $source  , int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName ,int $lgAdvancedPaymentHistoryId = 0, $type =null)
+	public function handleLetterOfGuaranteeCashCoverStatement(int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName ,int $lgAdvancedPaymentHistoryId = 0, $type =null)
 	{
 		$data = $this->generateLetterOfGuaranteeCashCoverData($financialInstitutionId , $source  , $lgFacilityId, $lgType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName ,$lgAdvancedPaymentHistoryId, $type) ;
 		$this->letterOfGuaranteeCashCoverStatements()->create($data);

@@ -97,7 +97,7 @@ class LgOpeningBalancesController
 					$additionalRelationData = [
 						'type'=>LgOpeningBalance::CERTIFICATE_OF_DEPOSIT
 					];
-					$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($company->id,$currentAccountNumber)->id ;
+					$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($currentAccountNumber,$company->id)->id ;
 				}
 				elseif($accountType->isTimeOfDeposit()){
 					$againstCdOrTdType = LetterOfGuaranteeIssuance::AGAINST_TD ;
@@ -105,7 +105,7 @@ class LgOpeningBalancesController
 					$additionalRelationData = [
 						'type'=>LgOpeningBalance::TIME_OF_DEPOSIT
 					];
-					$cdOrTdId = TimeOfDeposit::findByAccountNumber($company->id,$currentAccountNumber)->id ;
+					$cdOrTdId = TimeOfDeposit::findByAccountNumber($currentAccountNumber,$company->id)->id ;
 				}
 				$currentData = [
                     'amount'=>$amount ,

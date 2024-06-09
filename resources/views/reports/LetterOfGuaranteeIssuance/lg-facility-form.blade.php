@@ -100,12 +100,11 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-6">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
-
-                                    <div class="col-md-6">
-                                        <label> {{ __('Financial Bank') }}
+                                     <div class="col-md-6">
+                                        <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
@@ -695,21 +694,5 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
             </script>
-            <script>
-                $(document).on('change', '[js-cd-or-td-account-number]', function() {
-                    const parent = $(this).closest('.kt-portlet__body');
-                    const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
-                    const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
-                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number' ]) }}";
-                    url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_number', accountNumber);
-                    $.ajax({
-                        url
-                        , success: function(res) {
-                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount))
-                        }
-                    });
-                })
-
-            </script>
+               @include('reports.LetterOfGuaranteeIssuance.commonJs')
             @endsection

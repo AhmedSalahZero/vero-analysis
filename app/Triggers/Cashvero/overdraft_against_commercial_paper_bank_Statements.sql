@@ -28,34 +28,48 @@
 						join 
 						cheques 
 						on money_received.id = cheques.money_received_id 
+						join overdraft_against_commercial_papers
+						on cheques.drawl_bank_id = overdraft_against_commercial_papers.financial_institution_id 
 						where  cheques.status = 'under-collection'
-						and money_received.company_id = _company_id ;
+						and money_received.company_id = _company_id 
+						and overdraft_against_commercial_papers.id = _overdraft_against_commercial_paper_id
+						
+						;
 						
 						
-						repeat 
+						insert into debugging (message) values (concat('dd',_counter));
+						
+						
+						if
+						_counter > 0 
+						 then 
+						 
+						 repeat 
 						select days_count , sum(received_amount)   into    _current_days_count_for_current_group , _current_received_amount 
 						from money_received 
 						join 
 						cheques 
 						on money_received.id = cheques.money_received_id 
+						join overdraft_against_commercial_papers
+						on cheques.drawl_bank_id = overdraft_against_commercial_papers.financial_institution_id 
 						where  cheques.status = 'under-collection'
 						and money_received.company_id = _company_id 
+						and overdraft_against_commercial_papers.id = _overdraft_against_commercial_paper_id
+						
 						group by days_count
 						limit _i , 1 ;
-						
 						
 						
 						-- repeater hear 
 						
 						repeat 
 						select for_commercial_papers_due_within_days,lending_rate   into _current_commercial_due_within,_current_lending_rate  from lending_information where overdraft_against_commercial_paper_id = _overdraft_against_commercial_paper_id order by for_commercial_papers_due_within_days asc , id asc limit _j, 1 ;
-				--		insert into debugging (message) values (concat('_previous_commercial_due_within',_previous_commercial_due_within, '_current_commercial_due_within',_current_commercial_due_within,'_current_days_count_for_current_group',_current_days_count_for_current_group ,'_current_received_amount',_current_received_amount,'counter',_counter,'_lending_counter',_lending_counter));
 						if(_current_days_count_for_current_group >= _previous_commercial_due_within and _current_days_count_for_current_group <= _current_commercial_due_within)
 						then 
-						--	insert into debugging (message) values(concat('current total',_current_received_amount,'current lending rate',_current_lending_rate,'_max_lending_limit_per_customer',_max_lending_limit_per_customer,''));
 						--	set _current_total_received_amount = ifnull(_current_total_received_amount ,0);
 							set _current_received_amount = _current_received_amount * _current_lending_rate / 100;
 							set _total_limit = _total_limit + LEAST(_current_received_amount,_max_lending_limit_per_customer) ;  
+							insert into debugging (message) values(concat('current total',_current_received_amount,'current lending rate',_current_lending_rate,'_max_lending_limit_per_customer',_max_lending_limit_per_customer,'total limit',_total_limit));
 						end if ; 
 						
 						set _previous_commercial_due_within = _current_commercial_due_within+1; 
@@ -71,6 +85,8 @@
 						
 						
 						until _i >= _counter  end repeat ;
+						
+						end if;
 						set _limit = LEAST(_max_limit , _total_limit )  ;
 						-- second phase
 				
@@ -78,7 +94,6 @@
 						
 						
 						
-		--			insert into debugging (message) values (concat('final limit' , _limit));
 						
 				end //
 				delimiter ;
@@ -105,11 +120,10 @@
 					
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 					call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.company_id,_limit);
-				--	insert into debugging (message) values (concat('_limit',_limit));
+					set new.limit = _limit;
 					set new.room = _limit +  new.end_balance ;
 					set new.is_debit = if(new.debit > 0 , 1 , 0);
 					set new.is_credit = if(new.debit > 0 , 0 , 1);
-				--	 call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.full_date , new.company_id,_limit);
 					
 					set @dayCounts = 0 ;
 					set @interestAmount = 0 ; 
@@ -252,6 +266,7 @@
 										call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.company_id,_limit);
 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
+					set new.limit = _limit;
 					set new.room = _limit +  new.end_balance ;
 					
 					

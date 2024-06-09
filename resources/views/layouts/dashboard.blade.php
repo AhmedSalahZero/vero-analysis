@@ -1615,7 +1615,10 @@ $(document).find('select.select2-select2').each(function(index, value) {
                             return window.location.reload()
 
                         }
-
+						if(res.redirectTo){
+							window.location.href=res.redirectTo;
+							return 
+						}
                         if (res.status) {
                             if (res.showAlert) {
 
@@ -1667,12 +1670,20 @@ $(document).find('select.select2-select2').each(function(index, value) {
                         }
                     }
                     , error: function(res) {
-
+						let title = '{{ __("Something Went Wrong") }}';
+						if(res.responseJSON && res.responseJSON.message){
+							title = res.responseJSON.message ;
+						}
                         $('.submit-form-btn').prop('disabled', false)
-
+						let message = null ;
+						if(res.responseJSON && res.responseJSON.errors){
+							message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0] 
+						}
+				
                         Swal.fire({
                             icon: 'error'
-                            , title: res.responseJSON.message,
+                            , title: title,
+							text:message
 
                         })
 

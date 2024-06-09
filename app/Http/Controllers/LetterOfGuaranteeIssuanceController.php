@@ -135,7 +135,7 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionId = $request->get('financial_institution_id') ;
 		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
 		$letterOfGuaranteeFacilityId =  null ; 
-		if(is_null($letterOfGuaranteeFacility)){
+		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
 		}
 		if($letterOfGuaranteeFacility instanceof LetterOfGuaranteeFacility){
@@ -155,10 +155,10 @@ class LetterOfGuaranteeIssuanceController
 		$accountType = AccountType::find($cdOrTdAccountTypeId);
 		$cdOrTdId = 0 ;
 		if($accountType && $accountType->isCertificateOfDeposit()){
-			$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($company->id , $cdOrTdAccountNumber)->id;
+			$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($cdOrTdAccountNumber , $company->id )->id;
 		}
 		elseif($accountType && $accountType->isTimeOfDeposit()){
-			$cdOrTdId = TimeOfDeposit::findByAccountNumber($company->id , $cdOrTdAccountNumber)->id;
+			$cdOrTdId = TimeOfDeposit::findByAccountNumber($cdOrTdAccountNumber,$company->id )->id;
 		}
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
 		$issuanceFees = $request->get('issuance_fees',0);
@@ -297,7 +297,7 @@ class LetterOfGuaranteeIssuanceController
 		$cdOrTdId = $letterOfGuaranteeIssuance->getCdOrTdId() ;
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
 		
-		if(is_null($letterOfGuaranteeFacility)){
+		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
 		}
 		if($letterOfGuaranteeFacility instanceof LetterOfGuaranteeFacility){
@@ -331,10 +331,10 @@ class LetterOfGuaranteeIssuanceController
 		 */
 
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
-		// dd($cashCoverAmount);
+	
 		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
 
-		if(is_null($letterOfGuaranteeFacility)){
+		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
 		}
 		
@@ -385,7 +385,7 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeIssuance->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgType]);
 	}
-
+	
 
 
 }
