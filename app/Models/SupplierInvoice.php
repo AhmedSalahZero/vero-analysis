@@ -212,6 +212,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$result[$index]['settlement_amount'] = $inEditMode ? $currentSettlementAmount : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
 			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
+			$result[$index]['invoice_due_date'] = Carbon::make($invoiceArr['invoice_due_date'])->format('d-m-Y');
 		}
 		return $result;
 	}
@@ -233,19 +234,26 @@ class SupplierInvoice extends Model implements IInvoice
 			</div>
 
 
-			<div class="col-md-1 width-12">
+			<div class="col-md-1 width-8">
 				<label>'.__('Invoice Date').'</label>
 				<div class="kt-input-icon">
 					<div class="input-group date">
 						<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-						<div class="input-group-append">
-							<span class="input-group-text">
-								<i class="la la-calendar-check-o"></i>
-							</span>
-						</div>
+						
 					</div>
 				</div>
 			</div>
+			
+			<div class="col-md-1 width-8">
+				<label>'.__('Due Date').'</label>
+				<div class="kt-input-icon">
+					<div class="input-group date">
+						<input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
+						
+					</div>
+				</div>
+			</div>
+			
 
 			<div class="col-md-1 width-8">
 				<label>'.__('Currency').' </label>

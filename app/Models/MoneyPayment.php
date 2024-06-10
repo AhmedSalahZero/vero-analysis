@@ -322,7 +322,6 @@ class MoneyPayment extends Model
 		return $outgoingTransfer ? $outgoingTransfer->getAccountNumber() : 0 ;
 	}
 	
-	
 	public function getPayableChequeAccountTypeId(){
 		$payableCheque = $this->payableCheque;
 

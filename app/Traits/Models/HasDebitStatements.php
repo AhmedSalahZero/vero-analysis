@@ -14,26 +14,26 @@ trait HasDebitStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $receivingDate = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1)
+	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $date = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$receivingDate,$debit);
+			$this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$date,$debit);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::FULLY_SECURED_OVERDRAFT){
 			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeFullySecuredOverdraftDebitBankStatement($moneyType,$fullySecuredOverdraft,$receivingDate,$debit);
+			$this->storeFullySecuredOverdraftDebitBankStatement($moneyType,$fullySecuredOverdraft,$date,$debit);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_COMMERCIAL_PAPER){
 			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeOverdraftAgainstCommercialPaperDebitBankStatement($moneyType,$overdraftAgainstCommercialPaper,$receivingDate,$debit);
+			$this->storeOverdraftAgainstCommercialPaperDebitBankStatement($moneyType,$overdraftAgainstCommercialPaper,$date,$debit);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCurrentAccountDebitBankStatement($receivingDate,$debit,$financialInstitutionAccount->id);
+			$this->storeCurrentAccountDebitBankStatement($date,$debit,$financialInstitutionAccount->id);
 		}
 		elseif($this->isCashInSafe()){
-			$this->storeCashInSafeDebitStatement($receivingDate,$debit,$currencyName,$receivingBranchId,$exchangeRate);
+			$this->storeCashInSafeDebitStatement($date,$debit,$currencyName,$receivingBranchId,$exchangeRate);
 		}
 	}
 	

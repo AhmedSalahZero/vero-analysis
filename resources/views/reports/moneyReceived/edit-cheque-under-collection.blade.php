@@ -83,14 +83,15 @@ use App\Models\MoneyReceived;
                                 </div>
                             </div>
                         </div>
-
+						{{-- {{ dd() }} --}}
+{{-- {{ dd($model->cheque->getDraweeBankId(),$model->getCashInBankReceivingBankId()) }} --}}
                         <div class="col-md-9 mb-3">
                             <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date ">
                                     <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::CASH_IN_BANK  }}]" class="form-control js-drawl-bank">
                                         @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                        <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                        <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->cheque->drawl_bank_id == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                         @endforeach
                                     </select>
 
@@ -101,7 +102,7 @@ use App\Models\MoneyReceived;
 
                     </div>
                     <div class="row mb-3">
-
+	{{-- {{ dd($model->cheque->getDraweeBankId() , $model->cheque) }} --}}
                         <div class="col-md-4">
                             <label>{{__('Account Type')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">

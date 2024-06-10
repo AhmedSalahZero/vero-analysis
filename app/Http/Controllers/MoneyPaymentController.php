@@ -328,7 +328,7 @@ class MoneyPaymentController
 			$invoices = $invoices->where('currency','=',$selectedCurrency);
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')
-		->get(['invoice_number','invoice_date','net_invoice_amount','paid_amount','net_balance','currency'])
+		->get(['invoice_number','invoice_date','invoice_due_date','net_invoice_amount','paid_amount','net_balance','currency'])
 		->toArray();
 
 

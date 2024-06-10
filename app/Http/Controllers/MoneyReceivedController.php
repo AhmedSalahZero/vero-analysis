@@ -354,7 +354,7 @@ class MoneyReceivedController
 			$invoices = $invoices->where('currency','=',$selectedCurrency);	
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')
-		->get(['invoice_number','invoice_date','net_invoice_amount','collected_amount','net_balance','currency'])
+		->get(['invoice_number','invoice_date','invoice_due_date','net_invoice_amount','collected_amount','net_balance','currency'])
 		->toArray();
 		
 		
@@ -625,6 +625,7 @@ class MoneyReceivedController
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
 			
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
+			// $data['actual_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
 			$moneyReceived->cheque->update($data);
 		}
 		if($request->ajax()){

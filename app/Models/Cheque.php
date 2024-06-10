@@ -94,10 +94,6 @@ class Cheque extends Model
 		return $this->getChequeNumber();
 	}
 	
-	
-	
-	
-	
 	public function setActualCollectionDateAttribute($value)
 	{
 		if(!$value){
@@ -253,5 +249,44 @@ class Cheque extends Model
 		$secondDate = Carbon::make($this->moneyReceived->getReceivingDate());
 		return getDiffBetweenTwoDatesInDays($firstDate , $secondDate);
 	}
+	protected static function booted(): void
+	{
+		static::created(function(self $model){
+			
+		}
+	);
+	static::updated(function(self $model){
+		$drawalBankIdToBeUpdated = [];
+		$oldDrawalBankId = $model->getRawOriginal('drawl_bank_id');
+		$currentDrawalBankId = $model->drawl_bank_id ;
+		// هنجيب الاي دي بتاع البنك سواء القديم او الجديد
+		if($currentDrawalBankId != null){
+			$drawalBankIdToBeUpdated[]  = $currentDrawalBankId;
+		}
+		if($oldDrawalBankId != null&& $oldDrawalBankId != $currentDrawalBankId){
+			$drawalBankIdToBeUpdated[]  = $currentDrawalBankId;
+		}
+		// هنجيب التاريخ اللي هنبدا من عنده نحسب الليمت تاني 
+		
+		
+	
+		logger('from updated');
+		// self::updateOverdraftAgainstCommercialLimit();
+	}
+);
 
+static::deleted(function(self $model){
+	logger('from deleted');
+	
+	
+}
+);
+
+
+	}
+	
+	public static function updateLimitCalculationFromLeastFullDate()
+	{
+		
+	} 
 }

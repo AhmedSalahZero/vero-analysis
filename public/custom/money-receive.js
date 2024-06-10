@@ -205,13 +205,17 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var netBalance = res.invoices[i].net_balance
 				var collectedAmount = res.invoices[i].collected_amount
 				var invoiceDate = res.invoices[i].invoice_date
+				var invoiceDueDate = res.invoices[i].invoice_due_date
+				console.log(invoiceDueDate)
 				var settlementAmount = res.invoices[i].settlement_amount
+				
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
 				domInvoiceNumber.val(invoiceNumber)
 				domInvoiceNumber.attr('name', 'settlements[' + invoiceNumber + '][invoice_number]')
 				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceNumber == specificInvoiceNumber)) {
 					$(lastNode).find('.js-invoice-date').val(invoiceDate)
+					$(lastNode).find('.js-invoice-due-date').val(invoiceDueDate)
 					$(lastNode).find('.js-net-invoice-amount').val(number_format(netInvoiceAmount, 2))
 					$(lastNode).find('.js-currency').val(currency)
 					$(lastNode).find('.js-net-balance').val(number_format(netBalance, 2))
