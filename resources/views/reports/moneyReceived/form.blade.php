@@ -318,7 +318,6 @@ use App\Models\CustomerInvoice;
                                     <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                     @endforeach
                                 </select>
-
                             </div>
                         </div>
                     </div>

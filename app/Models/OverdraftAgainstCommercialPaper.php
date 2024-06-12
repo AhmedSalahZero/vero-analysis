@@ -54,8 +54,5 @@ class OverdraftAgainstCommercialPaper extends Model implements IHaveStatement
 	{
 		 return 'overdraft_against_commercial_paper_id';
 	}
-	public static function updateLimitCalculationFromLeastFullDate()
-	{
-		
-	}	
+	
 }

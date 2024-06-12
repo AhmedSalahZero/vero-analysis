@@ -86,7 +86,6 @@
 					-- declare i INTEGER DEFAULT 0 ;
 				--	declare _fully_secured_overdraft_withdrawal_id integer default 0 ;
 				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-				insert into debugging (message) values (concat('start from',_start_update_from_date_time));
 					update fully_secured_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and fully_secured_overdraft_id = _fully_secured_overdraft_id ;
 				end //
 				
@@ -389,6 +388,8 @@
 					repeat 
 								-- حساب الفايدة نهاية كل شهر
 								select fully_secured_overdraft_id , sum(interest_amount) , max(end_balance) into _fully_secured_overdraft_id,_current_interest_amount,_largest_end_balance from  fully_secured_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by fully_secured_overdraft_id limit i , 1;
+								set _current_interest_amount = ifnull(_current_interest_amount , 0);
+								set _largest_end_balance = ifnull(_largest_end_balance,0);
 								select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from fully_secured_overdrafts where id = _fully_secured_overdraft_id  ;
 								insert into fully_secured_overdraft_bank_statements (type ,priority,fully_secured_overdraft_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_fully_secured_overdraft_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
 								-- حساب ال highest debit balance

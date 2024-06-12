@@ -579,7 +579,6 @@ class MoneyReceivedController
 	}
 	
 	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived){
-		
 		$newType = $request->get('type');
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
@@ -616,17 +615,33 @@ class MoneyReceivedController
 		$data['account_type'] =  $request->input('account_type.'.MoneyReceived::CHEQUE_UNDER_COLLECTION);
 		$data['account_number'] = $request->input('account_number.'.MoneyReceived::CHEQUE_UNDER_COLLECTION);
 		$data['account_type'] = is_null($data['account_type']) ? $request->get('account_type') : $data['account_type'] ;
+		$data['drawl_bank_id'] = $request->input('receiving_bank_id.'.MoneyReceived::CHEQUE_UNDER_COLLECTION,$request->get('drawl_bank_id'));
+		// $data['drawl_bank_id'] = is_null($data['drawl_bank_id'])  ? 
+		// $accountType = AccountType::find($data['account_type']);
+	
 		$data['account_number'] = is_null($data['account_number']) ? $request->get('account_number') : $data['account_number'] ;
 		$data['status'] = Cheque::UNDER_COLLECTION;
+		// dd($data,$request->all());
+		
 		foreach($moneyReceivedIds as $moneyReceivedId){
 			/**
 			 * @var MoneyReceived $moneyReceived 
 			 */
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
-			
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
-			// $data['actual_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
-			$moneyReceived->cheque->update($data);
+			$moneyReceived->cheque->update(array_merge($data,['updated_at'=>now()]));
+			
+			// if(!$moneyReceived->cheque->overdraftAgainstCommercialPaperLimits->count()){
+			
+			// 	$moneyReceived->cheque->handleOverdraftAgainstCommercialPaperLimit();
+			// }else{
+	
+				
+			// 	$moneyReceived->cheque->overdraftAgainstCommercialPaperLimits()->where('limit','<',0)->update([
+			// 		'updated_at'=>now()
+			// 	]);
+			// }
+			
 		}
 		if($request->ajax()){
 			return response()->json([
@@ -676,13 +691,12 @@ class MoneyReceivedController
 	
 	public function sendToUnderCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
-		
-		// dd($request->all());
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::UNDER_COLLECTION,
 			'collection_fees'=>null,
 			'actual_collection_date'=>null
 		]);
+
 		$currentStatement = $moneyReceived->getCurrentStatement() ;
 		if($currentStatement){
 			 $currentStatement->delete();
@@ -702,6 +716,7 @@ class MoneyReceivedController
 			'expected_collection_date'=>null ,
 			'clearance_days'=>null
 		]);
+
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	public function sendToSafeAsRejected(Company $company,Request $request,MoneyReceived $moneyReceived)
@@ -717,6 +732,7 @@ class MoneyReceivedController
 			'expected_collection_date'=>null ,
 			'clearance_days'=>null
 		]);
+		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_REJECTED])->with('success',__('Cheque Is Returned To Safe'));
 		
 	}

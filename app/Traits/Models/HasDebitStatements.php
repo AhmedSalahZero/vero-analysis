@@ -16,6 +16,7 @@ trait HasDebitStatements
 	 */
 	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $date = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1)
 	{
+		
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
 			$this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$date,$debit);
@@ -65,6 +66,7 @@ trait HasDebitStatements
 	}
 	public function storeOverdraftAgainstCommercialPaperDebitBankStatement(string $moneyType , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper , string $date , $debit )
 	{
+
 		return $this->overdraftAgainstCommercialPaperDebitBankStatement()->create([
 			'type'=>$moneyType ,
 			'overdraft_against_commercial_paper_id'=>$overdraftAgainstCommercialPaper->id ,

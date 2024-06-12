@@ -28,6 +28,7 @@ use App\Models\MoneyReceived;
 
         <form method="post" action="{{ isset($model) ?  route('cheque.send.to.collection',['company'=>$company->id]) :'#' }}" class="kt-form kt-form--label-right">
             <input type="hidden" name="cheques[]" value="{{ $model->id }}">
+			<input type="hidden" name="is_from_under_collection_form" value="1">
             @csrf
 
             {{-- Money Received --}}
@@ -84,12 +85,13 @@ use App\Models\MoneyReceived;
                             </div>
                         </div>
 						{{-- {{ dd() }} --}}
+						{{-- {{ dd($model->cheque,$model->cheque->drawl_bank_id,$financialInstitutionBanks	) }} --}}
 {{-- {{ dd($model->cheque->getDraweeBankId(),$model->getCashInBankReceivingBankId()) }} --}}
                         <div class="col-md-9 mb-3">
                             <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date ">
-                                    <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::CASH_IN_BANK  }}]" class="form-control js-drawl-bank">
+                                    <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::CHEQUE_UNDER_COLLECTION  }}]" class="form-control js-drawl-bank">
                                         @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                         <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->cheque->drawl_bank_id == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                         @endforeach

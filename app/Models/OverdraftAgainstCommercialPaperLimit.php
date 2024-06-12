@@ -5,24 +5,29 @@ namespace App\Models;
 use App\Helpers\HDate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
 
-class OverdraftAgainstCommercialPaperBankStatement extends Model
+class OverdraftAgainstCommercialPaperLimit extends Model
 {
+	protected $table ='overdraft_against_commercial_paper_limits';
 	
 	protected $guarded =[
 		'id'
 	];
-	const MONEY_TRANSFER  = 'money-transfer';
 	public $oldFullDate = null;
-	public static function updateNextRows(self $model):string 
+	
+	public function cheque():BelongsTo
 	{
-		$minDate  = $model->full_date ;
+		return $this->belongsTo(Cheque::class , 'cheque_id','id');
+	}
+	public static function updateNextRows(self $model):string {
+		$minDate  =min($model->full_date,$model->getRawOriginal('full_date')) ?: $model->full_date ;
+		;
 		DB::table('overdraft_against_commercial_papers')->where('id',$model->overdraft_against_commercial_paper_id)->update([
 			'oldest_full_date'=>$minDate,
 		]);
-	
 		
 		/**
 		 * * ليه بنستخدم ال 
@@ -32,26 +37,33 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 		 * * ودا غلط مفروض التاريخ الاقل ما بين التاريخ الجديد و القديم للعنصر بحيث دايما يبدا يحدث من عنده
 		 */
 		$tableName = (new self)->getTable();
+
 		 DB::table($tableName)
 		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , priority asc , id asc')
+		->orderByRaw('full_date asc  , id asc')
 		->where('overdraft_against_commercial_paper_id',$model->overdraft_against_commercial_paper_id)
-		->each(function($overdraftAgainstCommercialPaperBankStatement) use($tableName){
-			DB::table($tableName)->where('id',$overdraftAgainstCommercialPaperBankStatement->id) 
-			->update([
+		->each(function($overdraftAgainstCommercialPaperLimit) use($tableName){
+			DB::table($tableName)->where('id',$overdraftAgainstCommercialPaperLimit->id)->update([
 				'updated_at'=>now(),
-				// 'credit'=>0 
 			]);
 		});
-		
 		return $minDate;
-
 	}
-		protected static function booted(): void
+		public function getChequeActualCollectionOrDepositDate()
 		{
-			static::creating(function(self $model){
-				$model->created_at = now();
-				$date = $model->date ;
+			if($this->cheque->isCollected()){
+				return $this->cheque->chequeActualCollectionDate();
+			}
+			elseif($this->cheque->isRejected()){
+				return $this->cheque->getDueDate();
+			}
+			return $this->cheque->getDepositDate();
+		}
+		public function updateFullDate()
+		{
+				$this->created_at = now();
+				$date = $this->getChequeActualCollectionOrDepositDate()  ;
+				// dd($date);
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 				/**
@@ -59,10 +71,16 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 				 */
 				$fullDateTime = HDate::generateUniqueDateTimeForModel(self::class,'full_date',$fullDateTime,[
 					[
-						'overdraft_against_commercial_paper_id','=',$model->overdraft_against_commercial_paper_id ,
+						'overdraft_against_commercial_paper_id','=',$this->overdraft_against_commercial_paper_id ,
 					]
 				]) ;
-				$model->full_date = $fullDateTime;
+				$this->full_date = $fullDateTime;
+				return $this->full_date ;
+		}
+		protected static function booted(): void
+		{
+			static::creating(function(self $model){
+				$model->updateFullDate();
 			});
 			
 			static::created(function(self $model){
@@ -71,6 +89,7 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 			
 			static::updated(function (self $model) {
 				$tableName = (new self)->getTable();
+				
 				$minDate = self::updateNextRows($model);
 				
 				
@@ -80,61 +99,53 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 				 * * overdraft_against_commercial_paper_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
+				logger('is changged'. $isChanged);
 				if($isChanged){
 					$oldOverdraftAgainstCommercialPaperId=$model->getRawOriginal('overdraft_against_commercial_paper_id');
-					$oldBankStatementId=$model->getRawOriginal('id');
+					// $oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldOverdraftAgainstCommercialPaper = self::where('overdraft_against_commercial_paper_id',$oldOverdraftAgainstCommercialPaperId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					// $firstBankStatementForOldOverdraftAgainstCommercialPaper = self::where('overdraft_against_commercial_paper_id',$oldOverdraftAgainstCommercialPaperId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-					if(!$firstBankStatementForOldOverdraftAgainstCommercialPaper){
-						OverdraftAgainstCommercialPaperWithdrawal::where('overdraft_against_commercial_paper_id',$oldOverdraftAgainstCommercialPaperId)->delete();
-						// وتلقائي هيحذف السحوبات settlements
-					}else{
+				
 						DB::table($tableName)
 						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , priority asc , id asc')
-						->where('overdraft_against_commercial_paper_id',$model->overdraft_against_commercial_paper_id)->update([
+						->orderByRaw('full_date asc , id asc')
+						->where('overdraft_against_commercial_paper_id',$oldOverdraftAgainstCommercialPaperId)->update([
 							'updated_at'=>now()
 						]);
 						
-					}
+					
 					
 				}
 				
 			});
 			
-			static::deleting(function(self $overdraftAgainstCommercialPaperBankStatement){
+			static::deleting(function(self $overdraftAgainstCommercialPaperLimit){
 				$oldDate = null ;
-				if($overdraftAgainstCommercialPaperBankStatement->is_debit && Request('receiving_date')||$overdraftAgainstCommercialPaperBankStatement->is_credit && Request('delivery_date')){
-						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
+
+				if($overdraftAgainstCommercialPaperLimit->cheque_id
+				// && Request('receiving_date')||$overdraftAgainstCommercialPaperLimit->is_credit && Request('delivery_date')
+				){
+						$oldDate =$overdraftAgainstCommercialPaperLimit->getChequeActualCollectionOrDepositDate();
+			
+						// dd($oldDate);
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $overdraftAgainstCommercialPaperBankStatement->full_date ;
-						$overdraftAgainstCommercialPaperBankStatement->full_date = min($oldDate,$currentDate);
+						$currentDate = $overdraftAgainstCommercialPaperLimit->full_date ;
+						$overdraftAgainstCommercialPaperLimit->full_date = min($oldDate,$currentDate);
 				}
-				DB::table('overdraft_against_commercial_papers')->where('id',$overdraftAgainstCommercialPaperBankStatement->overdraft_against_commercial_paper_id)->update([
-					'oldest_full_date'=>$overdraftAgainstCommercialPaperBankStatement->full_date
+				DB::table('overdraft_against_commercial_papers')->where('id',$overdraftAgainstCommercialPaperLimit->overdraft_against_commercial_paper_id)->update([
+					'oldest_full_date'=>$overdraftAgainstCommercialPaperLimit->full_date
 				]);
-				
-				$overdraftAgainstCommercialPaperBankStatement->debit = 0;
-				$overdraftAgainstCommercialPaperBankStatement->credit = 0;
-				$overdraftAgainstCommercialPaperBankStatement->save();
+	
+				// $overdraftAgainstCommercialPaperLimit->limit = -1;
+				// $overdraftAgainstCommercialPaperLimit->accumulated_limit = 0;
+				$overdraftAgainstCommercialPaperLimit->save();
 				
 			});
 		}
 		
-	public function moneyReceived()
-	{
-		return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
-	}
-	public function moneyPayment()
-	{
-		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
-	}
-	public function withdrawals()
-	{
-		return $this->hasMany(OverdraftAgainstCommercialPaperWithdrawal::class,'overdraft_against_commercial_paper_bank_statement_id','id');
-	}
+	
 	public function overdraftAgainstCommercialPaper()
 	{
 		return $this->belongsTo(OverdraftAgainstCommercialPaper::class,'overdraft_against_commercial_paper_id','id');
@@ -143,23 +154,6 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 	{
 		return $this->id ;
 	}
-	public function setDateAttribute($value)
-	{
-		$date = explode('/',$value);
-		if(count($date) != 3){
-			$this->attributes['date'] =  $value ;
-			return ;
-		}
-		$month = $date[0];
-		$day = $date[1];
-		$year = $date[2];
-		
-		$this->attributes['date'] = $year.'-'.$month.'-'.$day;
-	}
 	
-	public function internalMoneyTransfer()
-	{
-		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
-	}
 	
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Cheque extends Model
 {
@@ -118,6 +119,18 @@ class Cheque extends Model
 	public function isCollected():bool
 	{
 		return $this->getStatus() === self::COLLECTED;
+	}
+	public function isRejected():bool 
+	{
+		return $this->getStatus() == self::REJECTED;
+	}
+	public function isUnderCollection()
+	{
+		return $this->getStatus() == self::UNDER_COLLECTION;
+	}
+	public function isInSafe():bool 
+	{
+		return $this->getStatus() == self::IN_SAFE;
 	}
 	public function getStatusFormatted()
 	{
@@ -251,42 +264,133 @@ class Cheque extends Model
 	}
 	protected static function booted(): void
 	{
-		static::created(function(self $model){
-			
-		}
-	);
+		
 	static::updated(function(self $model){
-		$drawalBankIdToBeUpdated = [];
-		$oldDrawalBankId = $model->getRawOriginal('drawl_bank_id');
-		$currentDrawalBankId = $model->drawl_bank_id ;
-		// هنجيب الاي دي بتاع البنك سواء القديم او الجديد
-		if($currentDrawalBankId != null){
-			$drawalBankIdToBeUpdated[]  = $currentDrawalBankId;
-		}
-		if($oldDrawalBankId != null&& $oldDrawalBankId != $currentDrawalBankId){
-			$drawalBankIdToBeUpdated[]  = $currentDrawalBankId;
-		}
-		// هنجيب التاريخ اللي هنبدا من عنده نحسب الليمت تاني 
+		$oldStatus = $model->getRawOriginal('status');
+		$oldAccountTypeId = $model->getRawOriginal('account_type');
+		$currentAccountTypeId = $model->getAccountType();
+		$currentAccountType = AccountType::find($currentAccountTypeId);
+		$oldAccountType = AccountType::find($oldAccountTypeId);
+		$oldAccountNumber = $model->getRawOriginal('account_number');
+		$currentAccountNumber  = $model->getAccountNumber();
 		
 		
+		
+		/**
+		 * * في حالة لو رجعته من 
+		 * * collected to be under collection 
+		 */
+		if($model->isUnderCollection()  &&  $oldStatus == self::COLLECTED ){
+			logger('from 3');
+			
+			$negativeOverdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->where('limit','<',0)->first();
+			$negativeOverdraftAgainstCommercialPaperLimit ? $negativeOverdraftAgainstCommercialPaperLimit->update(['is_active'=>0])  : null ; 
+			$negativeOverdraftAgainstCommercialPaperLimit ? DB::table('overdraft_against_commercial_paper_limits')->where('id',$negativeOverdraftAgainstCommercialPaperLimit->id)->delete(): null ;
+			return ;
+		}
+		/**
+		 * * في حالة لو بقى 
+		 * * collected or rejected
+		 */
+		if($model->isCollected() ){
+			/**
+			 * * هنضيف رو جديد بنفس القيمة ولكن بالسالب
+			 */
+			logger('from 2');
+			
+			$model->handleOverdraftAgainstCommercialPaperLimit();
+			return ;
+		}
 	
-		logger('from updated');
-		// self::updateOverdraftAgainstCommercialLimit();
+		if($model->isInSafe()|| $model->isRejected() ){
+			$model->deleteOverdraftAgainstCommercialPapersLimits();
+			return ;
+		}
+		/**
+		 * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت لاي اكونت تاني غير 
+		 * * overdraft against commercial paper 
+		 */
+		if($model->isUnderCollection() && $currentAccountType && !$currentAccountType->isOverDraftAgainstCommercialPaperAccount()){
+			logger('from 4');
+			$model->deleteOverdraftAgainstCommercialPapersLimits();	
+			return ;
+		}
+			/**
+		 * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت ل 
+		 * * overdraft against commercial paper 
+		 * * وكان عدد ال 
+		 * * papers limits
+		 * * صفر يبقي هو اكيد كان جي من نوع تاني غير ال
+		 * * overdraft against commercial paper
+		 * * 
+		 */
+		if($model->isUnderCollection() && $currentAccountType && $currentAccountType->isOverDraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count() && $oldAccountType && !$oldAccountType->isOverDraftAgainstCommercialPaperAccount() ){
+			$model->handleOverdraftAgainstCommercialPaperLimit();	
+			return ;
+		}
+		/**
+		 * * في حالة لو غير رقم الحساب ال
+		 * * overdraft against commercial paper
+		 * * وحطها في حساب تاني حتى لو كانت بنك مختلف
+		 */
+		
+		if($model->isUnderCollection()  &&  $oldAccountType && $oldAccountType->isOverDraftAgainstCommercialPaperAccount() && $currentAccountType && $currentAccountType->isOverDraftAgainstCommercialPaperAccount() && $currentAccountNumber != $oldAccountNumber ){
+			$model->overdraftAgainstCommercialPaperLimits->each(function($overdraftAgainstCommercialPaper) use ($model,$currentAccountNumber){
+				$overdraftAgainstCommercialPaper->update([
+					'overdraft_against_commercial_paper_id'=>DB::table('overdraft_against_commercial_papers')->where('company_id',$model->company_id)->where('account_number',$currentAccountNumber)->first()->id ,
+				]);
+				
+			});
+			return ;
+		}
+		/**
+		 * * في حالة لو هو في الخزنة اول مرة وبالتالي مفيش 
+		 * * limits
+		 */
+		if($model->isUnderCollection() && $currentAccountType->isOverDraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count()) {
+			$model->handleOverdraftAgainstCommercialPaperLimit();
+			return ;
+		}
+		$overdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->sortBy('full_date')->first() ;
+		$overdraftAgainstCommercialPaperLimit ? $overdraftAgainstCommercialPaperLimit->update(['updated_at'=>now() , 'full_date'=>  $overdraftAgainstCommercialPaperLimit->updateFullDate()  ]) : null;
+		
 	}
 );
 
 static::deleted(function(self $model){
-	logger('from deleted');
-	
-	
+	$model->deleteOverdraftAgainstCommercialPapersLimits();	
 }
 );
 
 
 	}
-	
-	public static function updateLimitCalculationFromLeastFullDate()
+	public function deleteOverdraftAgainstCommercialPapersLimits()
 	{
+	
+		$this->overdraftAgainstCommercialPaperLimits->each(function($overdraftAgainstCommercialPaperLimit){
+			$overdraftAgainstCommercialPaperLimit->update(['is_active'=>0]);
+			DB::table('overdraft_against_commercial_paper_limits')->where('id',$overdraftAgainstCommercialPaperLimit->id)->delete();
+		});
+	}
+	public function overdraftAgainstCommercialPaperLimits()
+	{
+		return $this->hasMany(OverdraftAgainstCommercialPaperLimit::class,'cheque_id','id');
+	}
+	public function handleOverdraftAgainstCommercialPaperLimit():void
+	{
+		/**
+		 * @var AccountType $accountType 
+		 */
+		$accountType = AccountType::find($this->getAccountType());
+		$overdraftAgainstCommercialPaper = OverdraftAgainstCommercialPaper::where('account_number',$this->getAccountNumber())->first();
 		
-	} 
+		if($accountType && $accountType->isOverDraftAgainstCommercialPaperAccount() && $overdraftAgainstCommercialPaper){
+			$this->overdraftAgainstCommercialPaperLimits()->create([
+				'company_id'=>$this->company_id ,
+				'overdraft_against_commercial_paper_id'=>$overdraftAgainstCommercialPaper->id 
+			]);
+		}
+	}
+	
+	
 }
