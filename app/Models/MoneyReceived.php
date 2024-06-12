@@ -465,12 +465,15 @@ class MoneyReceived extends Model
 	public function deleteRelations()
 	{
 		$oldType = $this->getType();
+
+		
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
 		$this->unappliedAmounts()->delete();
+		
 		$currentStatement = $this->getCurrentStatement() ;
 		if($currentStatement){
 			$currentStatement->delete();

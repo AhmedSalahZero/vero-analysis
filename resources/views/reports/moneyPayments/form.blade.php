@@ -27,7 +27,7 @@ $selectedBanks = [];
 
     .width-12 {
         max-width: initial !important;
-        width: 13.5% !important;
+        width: 12.5% !important;
         flex: initial !important;
     }
 
@@ -551,12 +551,15 @@ $selectedBanks = [];
 
             <hr>
             <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2 width-12 ml-auto mr-4">
+                  <div class="col-md-1 width-10"></div>
+                <div class="col-md-1 width-8"></div>
+                <div class="col-md-1 width-8"></div>
+                <div class="col-md-1 width-8"></div>
+                <div class="col-md-1 width-12"></div>
+                <div class="col-md-2 width-12"></div>
+                <div class="col-md-2 width-12"></div>
+                <div class="col-md-2 width-12"></div>
+                <div class="col-md-2 width-12">
                     <label class="label">{{ __('Unapplied Amount') }}</label>
                     <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
                 </div>
