@@ -313,4 +313,8 @@ class BuyOrSellCurrency extends Model
 	{
 		return $this->toBranch ? $this->toBranch->getName()  : __('N/A');  
 	}
+	public function getChequeNumber()
+	{
+		return $this->cheque_number ; 
+	}
 }
