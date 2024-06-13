@@ -56,15 +56,15 @@ class OutstandingBreakdown extends Model
 	{
 		return $this->amount?:0 ;
 	}
-	public function cleanOverDraft()
+	public function cleanOverdraft()
 	{
 		return $this->belongsTo(CleanOverdraft::class,'model_id','id')->where('model_type',CleanOverdraft::class);
 	}
-	public function overDraftAgainstCommercialPaper()
+	public function overdraftAgainstCommercialPaper()
 	{
 		return $this->belongsTo(OverdraftAgainstCommercialPaper::class,'model_id','id')->where('model_type',OverdraftAgainstCommercialPaper::class);
 	}
-	public function fullySecuredOverDraft()
+	public function fullySecuredOverdraft()
 	{
 		return $this->belongsTo(FullySecuredOverdraft::class,'model_id','id')->where('model_type',FullySecuredOverdraft::class);
 	}

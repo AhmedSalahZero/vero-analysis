@@ -134,7 +134,7 @@ class CleanOverdraftBankStatement extends Model
 	{
 		return $this->hasMany(CleanOverdraftWithdrawal::class,'clean_overdraft_bank_statement_id','id');
 	}
-	public function cleanOverDraft()
+	public function cleanOverdraft()
 	{
 		return $this->belongsTo(CleanOverdraft::class,'clean_overdraft_id','id');
 	}

@@ -16,7 +16,7 @@ class OverdraftAgainstCommercialPaperWithdrawal extends Model
 	{
 		return $this->belongsTo(OverdraftAgainstCommercialPaperBankStatement::class,'overdraft_against_commercial_paper_bank_statement_id','id');
 	}
-	public function overDraftAgainstCommercialPaper()
+	public function overdraftAgainstCommercialPaper()
 	{
 		return $this->belongsTo(OverdraftAgainstCommercialPaper::class,'overdraft_against_commercial_paper_id','id');
 	}
