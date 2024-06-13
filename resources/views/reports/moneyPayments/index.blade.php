@@ -161,7 +161,7 @@ $banks = [];
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
                                     <td class="bank-max-width ">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
-                                    <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
+                                    <td class="">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->payableCheque->getDueAfterDays() }}</td>
