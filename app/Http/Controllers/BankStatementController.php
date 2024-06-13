@@ -62,7 +62,7 @@ class BankStatementController
 			
 			
 		}
-		elseif($accountType->isCleanOverDraftAccount()){
+		elseif($accountType->isCleanOverdraftAccount()){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 			$results = DB::table('clean_overdraft_bank_statements')
 				 ->where('clean_overdraft_bank_statements.company_id',$company->id)
@@ -74,7 +74,7 @@ class BankStatementController
 				 ->orderByRaw('full_date desc , priority asc ')
 				 ->get();
 		}
-		elseif($accountType->isFullySecuredOverDraftAccount()){
+		elseif($accountType->isFullySecuredOverdraftAccount()){
 			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 			$results = DB::table('fully_secured_overdraft_bank_statements')
 				 ->where('fully_secured_overdraft_bank_statements.company_id',$company->id)
@@ -86,7 +86,7 @@ class BankStatementController
 				 ->orderByRaw('full_date desc , priority asc ')
 				 ->get();
 		}
-		elseif($accountType->isOverDraftAgainstCommercialPaperAccount()){
+		elseif($accountType->isOverdraftAgainstCommercialPaperAccount()){
 			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 			$results = DB::table('overdraft_against_commercial_paper_bank_statements')
 				 ->where('overdraft_against_commercial_paper_bank_statements.company_id',$company->id)
@@ -111,7 +111,7 @@ class BankStatementController
 			'financialInstitutionName'=>$financialInstitutionName,
 			'accountTypeName'=>$accountTypeName,
 			'accountNumber'=>$accountNumber,
-			'isAgainstCommercialPaper'=>$accountType->isOverDraftAgainstCommercialPaperAccount()
+			'isAgainstCommercialPaper'=>$accountType->isOverdraftAgainstCommercialPaperAccount()
         ]);
     }
 }

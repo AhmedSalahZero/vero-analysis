@@ -133,11 +133,11 @@ $banks = [];
                                     <th class="align-middle">{{ __('Type') }}</th>
                                     <th class="align-middle">{{ __('Status') }}</th>
                                     <th class="align-middle">{{ __('Supplier Name') }}</th>
-                                    <th class="align-middle">{!! __('Delivery<br>Date') !!}</th>
+                                    <th class="align-middle">{!! __('Payment <br> Date') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
                                     <th class="align-middle">{{ __('Currency') }}</th>
-                                    <th class="align-middle" class="bank-max-width">{{ __('Payment Bank') }}</th>
+                                    <th class="align-middle " class="bank-max-width">{{ __('Payment Bank') }}</th>
                                     <th class="align-middle">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account No') }}</th>
 									
@@ -160,7 +160,7 @@ $banks = [];
                                     <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
-                                    <td class="bank-max-width">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
+                                    <td class="bank-max-width text-nowrap">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
@@ -340,7 +340,7 @@ $banks = [];
                                     <th>{{ __('Supplier Name') }}</th>
                                     <th>{{ __('Payment Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
-                                    <th>{{ __('Delivery Amount') }}</th>
+                                    <th>{{ __('Payment Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Receipt Number') }}</th>
                                     <th>{{ __('Control') }}</th>

@@ -192,7 +192,7 @@ class BuyOrSellCurrency extends Model
 	{
 		if($fromAccountType && $fromAccountType->isCurrentAccount()){
 			/**
-			 * @var CleanOverdraft $fromCleanOverDraft
+			 * @var CleanOverdraft $fromCleanOverdraft
 			 */
 			$fromCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
 			CurrentAccountBankStatement::create([
@@ -206,54 +206,54 @@ class BuyOrSellCurrency extends Model
 		}
 		
 		
-		if($fromAccountType && $fromAccountType->isCleanOverDraftAccount()){
+		if($fromAccountType && $fromAccountType->isCleanOverdraftAccount()){
 			/**
-			 * @var CleanOverdraft $fromCleanOverDraft
+			 * @var CleanOverdraft $fromCleanOverdraft
 			 */
 
-			$fromCleanOverDraft = CleanOverdraft::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			$fromCleanOverdraft = CleanOverdraft::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
 			CleanOverdraftBankStatement::create([
 				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
-				'clean_overdraft_id'=>$fromCleanOverDraft->id ,
+				'clean_overdraft_id'=>$fromCleanOverdraft->id ,
 				'internal_money_transfer_id'=>$this->id ,
 				'company_id'=>$companyId ,
 				'date' => $transferDate , 
-				'limit' =>$fromCleanOverDraft->getLimit(),
+				'limit' =>$fromCleanOverdraft->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
 			]);
 		}
-		if($fromAccountType && $fromAccountType->isFullySecuredOverDraftAccount()){
+		if($fromAccountType && $fromAccountType->isFullySecuredOverdraftAccount()){
 			/**
-			 * @var FullySecuredOverdraft $fromFullySecuredOverDraft
+			 * @var FullySecuredOverdraft $fromFullySecuredOverdraft
 			 */
 
-			 $fromFullySecuredOverDraft = FullySecuredOverdraft::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			 $fromFullySecuredOverdraft = FullySecuredOverdraft::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
 			FullySecuredOverdraftBankStatement::create([
 				'type'=>FullySecuredOverdraftBankStatement::MONEY_TRANSFER ,
-				'fully_secured_overdraft_id'=>$fromFullySecuredOverDraft->id ,
+				'fully_secured_overdraft_id'=>$fromFullySecuredOverdraft->id ,
 				'internal_money_transfer_id'=>$this->id ,
 				'company_id'=>$companyId ,
 				'date' => $transferDate , 
-				'limit' =>$fromFullySecuredOverDraft->getLimit(),
+				'limit' =>$fromFullySecuredOverdraft->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
 			]);
 		}
 		
-		if($fromAccountType && $fromAccountType->isOverDraftAgainstCommercialPaperAccount()){
+		if($fromAccountType && $fromAccountType->isOverdraftAgainstCommercialPaperAccount()){
 			/**
-			 * @var OverDraftAgainstCommercialPaper $fromOverDraftAgainstCommercialPaper
+			 * @var OverdraftAgainstCommercialPaper $fromOverdraftAgainstCommercialPaper
 			 */
 
-			 $fromOverDraftAgainstCommercialPaper = OverDraftAgainstCommercialPaper::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			 $fromOverdraftAgainstCommercialPaper = OverdraftAgainstCommercialPaper::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
 			OverdraftAgainstCommercialPaperBankStatement::create([
 				'type'=>OverdraftAgainstCommercialPaperBankStatement::MONEY_TRANSFER ,
-				'overdraft_against_commercial_paper_id'=>$fromOverDraftAgainstCommercialPaper->id ,
+				'overdraft_against_commercial_paper_id'=>$fromOverdraftAgainstCommercialPaper->id ,
 				'internal_money_transfer_id'=>$this->id ,
 				'company_id'=>$companyId ,
 				'date' => $transferDate , 
-				'limit' =>$fromOverDraftAgainstCommercialPaper->getLimit(),
+				'limit' =>$fromOverdraftAgainstCommercialPaper->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
 			]);

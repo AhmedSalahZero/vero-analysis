@@ -58,15 +58,15 @@ class AccountType extends Model
 	{
 		return in_array($this->slug , [self::TIME_OF_DEPOSIT ]);
 	}
-	public function isCleanOverDraftAccount():bool
+	public function isCleanOverdraftAccount():bool
 	{
 		return $this->slug === self::CLEAN_OVERDRAFT ;
 	}
-	public function isFullySecuredOverDraftAccount():bool
+	public function isFullySecuredOverdraftAccount():bool
 	{
 		return $this->slug === self::FULLY_SECURED_OVERDRAFT ;
 	}
-	public function isOverDraftAgainstCommercialPaperAccount():bool
+	public function isOverdraftAgainstCommercialPaperAccount():bool
 	{
 		return $this->slug === self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER ;
 	}

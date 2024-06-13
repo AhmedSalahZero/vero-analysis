@@ -310,7 +310,7 @@ class Cheque extends Model
 		 * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت لاي اكونت تاني غير 
 		 * * overdraft against commercial paper 
 		 */
-		if($model->isUnderCollection() && $currentAccountType && !$currentAccountType->isOverDraftAgainstCommercialPaperAccount()){
+		if($model->isUnderCollection() && $currentAccountType && !$currentAccountType->isOverdraftAgainstCommercialPaperAccount()){
 			logger('from 4');
 			$model->deleteOverdraftAgainstCommercialPapersLimits();	
 			return ;
@@ -324,7 +324,7 @@ class Cheque extends Model
 		 * * overdraft against commercial paper
 		 * * 
 		 */
-		if($model->isUnderCollection() && $currentAccountType && $currentAccountType->isOverDraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count() && $oldAccountType && !$oldAccountType->isOverDraftAgainstCommercialPaperAccount() ){
+		if($model->isUnderCollection() && $currentAccountType && $currentAccountType->isOverdraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count() && $oldAccountType && !$oldAccountType->isOverdraftAgainstCommercialPaperAccount() ){
 			$model->handleOverdraftAgainstCommercialPaperLimit();	
 			return ;
 		}
@@ -334,7 +334,7 @@ class Cheque extends Model
 		 * * وحطها في حساب تاني حتى لو كانت بنك مختلف
 		 */
 		
-		if($model->isUnderCollection()  &&  $oldAccountType && $oldAccountType->isOverDraftAgainstCommercialPaperAccount() && $currentAccountType && $currentAccountType->isOverDraftAgainstCommercialPaperAccount() && $currentAccountNumber != $oldAccountNumber ){
+		if($model->isUnderCollection()  &&  $oldAccountType && $oldAccountType->isOverdraftAgainstCommercialPaperAccount() && $currentAccountType && $currentAccountType->isOverdraftAgainstCommercialPaperAccount() && $currentAccountNumber != $oldAccountNumber ){
 			$model->overdraftAgainstCommercialPaperLimits->each(function($overdraftAgainstCommercialPaper) use ($model,$currentAccountNumber){
 				$overdraftAgainstCommercialPaper->update([
 					'overdraft_against_commercial_paper_id'=>DB::table('overdraft_against_commercial_papers')->where('company_id',$model->company_id)->where('account_number',$currentAccountNumber)->first()->id ,
@@ -347,7 +347,7 @@ class Cheque extends Model
 		 * * في حالة لو هو في الخزنة اول مرة وبالتالي مفيش 
 		 * * limits
 		 */
-		if($model->isUnderCollection() && $currentAccountType->isOverDraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count()) {
+		if($model->isUnderCollection() && $currentAccountType->isOverdraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count()) {
 			$model->handleOverdraftAgainstCommercialPaperLimit();
 			return ;
 		}
@@ -384,7 +384,7 @@ static::deleted(function(self $model){
 		$accountType = AccountType::find($this->getAccountType());
 		$overdraftAgainstCommercialPaper = OverdraftAgainstCommercialPaper::where('account_number',$this->getAccountNumber())->first();
 		
-		if($accountType && $accountType->isOverDraftAgainstCommercialPaperAccount() && $overdraftAgainstCommercialPaper){
+		if($accountType && $accountType->isOverdraftAgainstCommercialPaperAccount() && $overdraftAgainstCommercialPaper){
 			$this->overdraftAgainstCommercialPaperLimits()->create([
 				'company_id'=>$this->company_id ,
 				'overdraft_against_commercial_paper_id'=>$overdraftAgainstCommercialPaper->id 

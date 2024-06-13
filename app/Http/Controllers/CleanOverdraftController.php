@@ -89,7 +89,7 @@ class CleanOverdraftController
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		/**
-		 * @var CleanOverDraft $cleanOverdraft 
+		 * @var CleanOverdraft $cleanOverdraft 
 		 */
 		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
 		$type = $request->get('type','clean-over-draft');

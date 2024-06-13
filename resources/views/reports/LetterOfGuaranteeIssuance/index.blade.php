@@ -287,9 +287,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
+                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>

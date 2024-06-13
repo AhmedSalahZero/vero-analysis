@@ -136,7 +136,7 @@ class FullySecuredOverdraftBankStatement extends Model
 	{
 		return $this->hasMany(FullySecuredOverdraftWithdrawal::class,'fully_secured_overdraft_bank_statement_id','id');
 	}
-	public function fullySecuredOverDraft()
+	public function fullySecuredOverdraft()
 	{
 		return $this->belongsTo(FullySecuredOverdraft::class,'fully_secured_overdraft_id','id');
 	}
