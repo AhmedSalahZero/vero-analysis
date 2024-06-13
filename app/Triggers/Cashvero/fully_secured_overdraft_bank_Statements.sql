@@ -338,9 +338,9 @@
 					
 				end //
 				delimiter ; 
-				drop trigger if exists insert_into_overdraft_withdrawal_after_insert ;
+				drop trigger if exists insert_into_overdraft_withdrawal_after_insert_fully_secured ;
 				delimiter // 
-				create  trigger insert_into_overdraft_withdrawal_after_insert after insert on `fully_secured_overdraft_bank_statements` for each row 
+				create  trigger insert_into_overdraft_withdrawal_after_insert_fully_secured after insert on `fully_secured_overdraft_bank_statements` for each row 
 				begin 
 					declare _date_for_settlement date default new.date ;
 					if  new.type = 'payable_cheque'

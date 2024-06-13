@@ -173,7 +173,7 @@ class InternalMoneyTransfer extends Model
 		$this->fullySecuredOverdraftBankStatements->each(function (FullySecuredOverdraftBankStatement $fullySecuredOverdraftBankStatement) {
 			$fullySecuredOverdraftBankStatement->delete();
 		});
-		$this->overdraftBankAgainstCommercialPaperStatements->each(function (OverdraftAgainstCommercialPaperBankStatement $overdraftAgainstCommercialPaperBankStatement) {
+		$this->overdraftAgainstCommercialPaperBankStatements->each(function (OverdraftAgainstCommercialPaperBankStatement $overdraftAgainstCommercialPaperBankStatement) {
 			$overdraftAgainstCommercialPaperBankStatement->delete();
 		});
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
