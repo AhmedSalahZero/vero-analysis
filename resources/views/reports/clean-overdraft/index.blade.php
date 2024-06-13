@@ -101,7 +101,7 @@
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $cleanOverdraft->getContractStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $cleanOverdraft->getContractStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $cleanOverdraft->getContractEndDateFormatted() }}</td>
                                     <td>{{ $cleanOverdraft->getAccountNumber() }}</td>
                                     <td class="text-uppercase">{{ $cleanOverdraft->getCurrency() }}</td>

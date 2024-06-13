@@ -118,13 +118,8 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 			for (var i = 0; i < res.purchases_orders.length; i++) {
 				 var salesOrderId = res.purchases_orders[i].id
 				 var salesOrderNumber = res.purchases_orders[i].so_number
-				// var currency = res.invoices[i].currency
 				var amount = res.purchases_orders[i].amount
-			//	var netBalance = res.invoices[i].net_balance
-			//	var paidAmount = res.invoices[i].paid_amount
-			//	var invoiceDate = res.invoices[i].invoice_date
 				var paidAmount = res.purchases_orders[i].paid_amount
-			//	var withholdAmount = res.invoices[i].withhold_amount
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-number')
 				domSalesOrder.val(salesOrderId)
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_id]').val(salesOrderId)
@@ -203,7 +198,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var paidAmount = res.invoices[i].paid_amount
 				var invoiceDate = res.invoices[i].invoice_date
 				var invoiceDueDate = res.invoices[i].invoice_due_date
-				var settlementAmount = res.invoices[i].paid_amount
+				var settlementAmount = res.invoices[i].settlement_amount
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
 				domInvoiceNumber.val(invoiceNumber)
@@ -220,7 +215,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					var domWithholdAmount = $(lastNode).find('.js-withhold-amount')
 					domSettlementAmount.val(settlementAmount)
 					domWithholdAmount.val(withholdAmount)
-					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][paid_amount]')
+					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					
 					$('.js-append-to').append(lastNode)

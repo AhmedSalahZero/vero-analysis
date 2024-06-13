@@ -130,9 +130,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getTransactionDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
@@ -222,9 +222,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
@@ -311,9 +311,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                         	  @include('reports.LetterOfGuaranteeIssuance.actions')
@@ -407,9 +407,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
 
-                                    <td class="text-transform">{{ $model->getPurchaseOrderDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')

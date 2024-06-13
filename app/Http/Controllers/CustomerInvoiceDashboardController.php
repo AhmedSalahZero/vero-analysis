@@ -108,13 +108,13 @@ class CustomerInvoiceDashboardController extends Controller
                 /**
                  * * حساب ال clean_overdraft
                  * * مؤجلة لحساب الكلين اوفردرافت
-                 * * aginst commerical
+                 * * against commercial
                  */
-                  $cleanOverdraftOverCommercialRoom = DB::table('clean_overdraft_against_commercial_bank_statements')
-                  ->where('clean_overdraft_against_commercial_bank_statements.company_id',$company->id)->where('date','<=',$date)
-                  ->join('clean_overdraft_against_commercials','clean_overdraft_against_commercial_bank_statements.clean_overdraft_id','=','clean_overdraft_against_commercials.id')
-                  ->where('clean_overdraft_against_commercials.currency','=',$currencyName)
-                  ->orderBy('clean_overdraft_against_commercial_bank_statements.id')
+                  $cleanOverdraftOverCommercialRoom = DB::table('overdraft_against_commercial_paper_bank_statements')
+                  ->where('overdraft_against_commercial_paper_bank_statements.company_id',$company->id)->where('date','<=',$date)
+                  ->join('overdraft_against_commercial_papers','overdraft_against_commercial_paper_bank_statements.overdraft_against_commercial_paper_id','=','overdraft_against_commercial_papers.id')
+                  ->where('overdraft_against_commercial_papers.currency','=',$currencyName)
+                  ->orderBy('overdraft_against_commercial_paper_bank_statements.id')
                   ->limit(1)
                   ->first() ;
                   $cleanOverdraftOverCommercialRoom = $cleanOverdraftOverCommercialRoom ? $cleanOverdraftOverCommercialRoom->room : 0 ;

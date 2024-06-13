@@ -98,7 +98,7 @@
                                 @foreach($models as $model)
                                 <tr>
                                     <td>{{ $model->getInvoiceNumber() }}</td>
-                                    <td>{{ $model->getSettlementDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getSettlementDateFormatted() }}</td>
                                     <td>{{ $model->getSettlementAmountFormatted() }}</td>
                                     <td>{{ $model->getWithholdAmountFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

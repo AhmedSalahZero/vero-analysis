@@ -171,6 +171,34 @@ class Company extends Model implements HasMedia
 	{
 		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::BANK_TO_SAFE);
 	}
+	
+	
+	
+	
+	
+	
+	public function buyOrSellCurrencies()
+	{
+		return $this->hasMany(BuyOrSellCurrency::class,'company_id','id');
+	}
+	public function bankToBankBuyOrSellCurrencies()
+	{
+		return $this->buyOrSellCurrencies()->where('type',BuyOrSellCurrency::BANK_TO_BANK);
+	}
+	public function safeToBankBuyOrSellCurrencies()
+	{
+		return $this->buyOrSellCurrencies()->where('type',BuyOrSellCurrency::SAFE_TO_BANK);
+	}
+	public function bankToSafeBuyOrSellCurrencies()
+	{
+		return $this->buyOrSellCurrencies()->where('type',BuyOrSellCurrency::BANK_TO_SAFE);
+	}
+	public function safeToSafeBuyOrSellCurrencies()
+	{
+		return $this->buyOrSellCurrencies()->where('type',BuyOrSellCurrency::SAFE_TO_SAFE);
+	}
+	
+	
 	public function getHeadOfficeId()
 	{
 		return DB::table('branch')->where('company_id',$this->id)->orderByRaw('created_at asc')->first()->id;

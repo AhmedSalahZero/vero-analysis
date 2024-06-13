@@ -362,7 +362,7 @@ class MoneyReceivedController
 			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName) : 0;
 			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName) : 0;
 		}
-		
+	
 		$invoices = $this->formatInvoices($invoices,$inEditMode);
 			return response()->json([
 				'status'=>true , 

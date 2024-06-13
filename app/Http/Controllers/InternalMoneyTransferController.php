@@ -197,11 +197,9 @@ class InternalMoneyTransferController
 		
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();
-		$this->store($company,$request);
+		$this->store($company,$type,$request);
 		$activeTab = $type ;
 		return redirect()->route('internal-money-transfers.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
-		
 	}
 	
 	public function destroy(Company $company , string $type, InternalMoneyTransfer $internalMoneyTransfer)
@@ -210,7 +208,4 @@ class InternalMoneyTransferController
 		$internalMoneyTransfer->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
-
-	
-	
 }

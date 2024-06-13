@@ -138,6 +138,9 @@ $banks = [];
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
                                     <th class="align-middle">{{ __('Currency') }}</th>
                                     <th class="align-middle" class="bank-max-width">{{ __('Payment Bank') }}</th>
+                                    <th class="align-middle">{{ __('Account Type') }}</th>
+                                    <th class="align-middle">{{ __('Account No') }}</th>
+									
                                     <th class="align-middle">{!! __('Due<br>Date') !!}</th>
                                     <th class="align-middle">{!! __('Due <br> After Days') !!}</th>
                                     <th class="align-middle">{!! __('Status') !!}</th>
@@ -158,6 +161,8 @@ $banks = [];
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
+                                    <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
+                                    <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->payableCheque->getDueAfterDays() }}</td>
 									@php
@@ -263,7 +268,7 @@ $banks = [];
                                     </td>
 								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getSupplierName() }}</td>
-                                    <td>{{ $money->getDeliveryDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $money->getDeliveryDateFormatted() }}</td>
                                     <td>{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
                                     <td>{{ $money->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
@@ -347,7 +352,7 @@ $banks = [];
                                 <tr>
                                     <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyPayment->getSupplierName() }}</td>
-                                    <td>{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->getCashPaymentBranchName() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>

@@ -108,7 +108,7 @@ use \App\Models\CertificatesOfDeposit;
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $model->getStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getEndDateFormatted() }}</td>
                                     <td>{{ $model->getAccountNumber() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>
@@ -346,14 +346,14 @@ use \App\Models\CertificatesOfDeposit;
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $model->getStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getEndDateFormatted() }}</td>
                                     <td>{{ $model->getAccountNumber() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>
                                     <td class="text-uppercase">{{ $model->getCurrency() }}</td>
                                     <td>{{ $model->getInterestRateFormatted() }}</td>
                                     <td>{{ $model->getInterestAmountFormatted() }}</td>
-                                    <td>{{ $model->getDepositDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getDepositDateFormatted() }}</td>
                                     <td>{{ $model->getActualInterestAmountFormatted() }}</td>
 									
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
@@ -498,14 +498,14 @@ use \App\Models\CertificatesOfDeposit;
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $model->getStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getEndDateFormatted() }}</td>
                                     <td>{{ $model->getAccountNumber() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>
                                     <td class="text-uppercase">{{ $model->getCurrency() }}</td>
                                     <td>{{ $model->getInterestRateFormatted() }}</td>
                                     <td>{{ $model->getInterestAmountFormatted() }}</td>
-                                    <td>{{ $model->getDepositDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getDepositDateFormatted() }}</td>
                                     <td>{{ $model->getActualInterestAmountFormatted() }}</td>
 									
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

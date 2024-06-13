@@ -126,7 +126,7 @@ use App\Models\InternalMoneyTransfer ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td>{{ $model->getTransferDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getTransferDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getTransferDays() }}</td>
                                     <td class="text-nowrap">{{ $model->getReceivingDateFormatted() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>
@@ -213,7 +213,7 @@ use App\Models\InternalMoneyTransfer ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td>{{ $model->getTransferDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getTransferDateFormatted() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>
                                     <td>{{ $model->getCurrencyFormatted() }}</td>
                                     <td>{{ $model->getFromBranchName() }}</td>
@@ -300,7 +300,7 @@ use App\Models\InternalMoneyTransfer ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td>{{ $model->getTransferDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getTransferDateFormatted() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>
                                     <td>{{ $model->getCurrencyFormatted() }}</td>
                                     <td>{{ $model->getFromBankName() }}</td>

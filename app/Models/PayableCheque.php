@@ -184,6 +184,7 @@ class PayableCheque extends Model
 	{
 		return $this->belongsTo(AccountType::class,'account_type','id');
 	}
+	
 	public function getAccountType()
 	{
 		return $this->account_type ;

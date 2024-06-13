@@ -97,7 +97,7 @@
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $letterOfGuaranteeFacility->getContractStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $letterOfGuaranteeFacility->getContractStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $letterOfGuaranteeFacility->getContractEndDateFormatted() }}</td>
                                     <td class="text-uppercase">{{ $letterOfGuaranteeFacility->getCurrency() }}</td>
                                     <td class="text-transform">{{ $letterOfGuaranteeFacility->getLimitFormatted() }}</td>

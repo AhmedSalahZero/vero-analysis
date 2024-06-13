@@ -320,7 +320,7 @@ Route::middleware([])->group(function () {
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
 				 Route::resource('lg-opening-balance', 'LgOpeningBalancesController');
-				//  Route::resource('internal-money-transfers', 'InternalMoneyTransferController');
+				//  Route::resource('buy-or-sell-currencies', 'InternalMoneyTransferController');
 				 //
 				 Route::get('internal-money-transfers','InternalMoneyTransferController@index')->name('internal-money-transfers.index');
 				 Route::get('internal-money-transfers/{type}/create','InternalMoneyTransferController@create')->name('internal-money-transfers.create');
@@ -328,6 +328,14 @@ Route::middleware([])->group(function () {
 				 Route::get('internal-money-transfers/{type}/{internal_money_transfer}/edit','InternalMoneyTransferController@edit')->name('internal-money-transfers.edit');
 				 Route::put('internal-money-transfers/{type}/{internal_money_transfer}/update','InternalMoneyTransferController@update')->name('internal-money-transfers.update');
 				 Route::delete('internal-money-transfers/{type}/{internal_money_transfer}/delete','InternalMoneyTransferController@destroy')->name('internal-money-transfers.destroy');
+				 
+				 
+				 Route::get('buy-or-sell-currencies','BuyOrSellCurrenciesController@index')->name('buy-or-sell-currencies.index');
+				 Route::get('buy-or-sell-currencies/create','BuyOrSellCurrenciesController@create')->name('buy-or-sell-currencies.create');
+				 Route::post('buy-or-sell-currencies/store','BuyOrSellCurrenciesController@store')->name('buy-or-sell-currencies.store');
+				 Route::get('buy-or-sell-currencies/{buy_or_sell_currency}/edit','BuyOrSellCurrenciesController@edit')->name('buy-or-sell-currencies.edit');
+				 Route::put('buy-or-sell-currencies/{buy_or_sell_currency}/update','BuyOrSellCurrenciesController@update')->name('buy-or-sell-currencies.update');
+				 Route::delete('buy-or-sell-currencies/{buy_or_sell_currency}/delete','BuyOrSellCurrenciesController@destroy')->name('buy-or-sell-currencies.destroy');
 				 
 				 
 				 

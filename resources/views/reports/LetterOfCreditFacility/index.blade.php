@@ -94,7 +94,7 @@
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $letterOfCreditFacility->getContractStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $letterOfCreditFacility->getContractStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $letterOfCreditFacility->getContractEndDateFormatted() }}</td>
                                     <td class="text-uppercase">{{ $letterOfCreditFacility->getCurrency() }}</td>
                                     <td class="text-transform">{{ $letterOfCreditFacility->getLimitFormatted() }}</td>
@@ -321,7 +321,7 @@
                                          @foreach($letterOfCreditFacility->expenses as $index=>$expense)
                                          <tr>
                                              <td> {{ ++$index }} </td>
-                                             <td>{{$expense->getDateFormatted() }}</td>
+                                             <td class="text-nowrap">{{$expense->getDateFormatted() }}</td>
                                              <td> {{ $expense->getAmountFormatted() }} </td>
                                              <td>
                                                  <a data-toggle="modal" data-target="#edit-advanced-payment-lg-{{ $expense->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$letterOfCreditFacility->id]) }}"><i class="fa fa-pen-alt"></i></a>

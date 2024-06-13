@@ -98,7 +98,7 @@
                                     <td>
                                         {{ $index+1 }}
                                     </td>
-                                    <td>{{ $fullySecuredOverdraft->getContractStartDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $fullySecuredOverdraft->getContractStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $fullySecuredOverdraft->getContractEndDateFormatted() }}</td>
                                     <td>{{ $fullySecuredOverdraft->getAccountNumber() }}</td>
                                     <td class="text-uppercase">{{ $fullySecuredOverdraft->getCurrency() }}</td>

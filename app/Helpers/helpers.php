@@ -3088,7 +3088,7 @@ function getPermissions():array
             'name'=>'view internal money transfer'
         ],
 		[
-			'name'=>'view buy or sell foreign currency'
+			'name'=>'view buy or sell currency'
 		],
 		[
 			'name'=>'view foreign exchange rate'
@@ -4302,9 +4302,9 @@ function getHeaderMenu()
 			'submenu'=>[]
 				],
 				[
-					'title'=>__('Buy Or Sell Foreign Currency'),
-					'link'=>'#',
-					'show'=>$user->can('view buy or sell foreign currency'),
+					'title'=>__('Buy Or Sell Currency'),
+					'link'=>route('buy-or-sell-currencies.index',['company'=>$company->id ]),
+					'show'=>$user->can('view buy or sell currency'),
 					'submenu'=>[]
 				],
 				[

@@ -115,7 +115,6 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 				// var currency = res.invoices[i].currency
 				var amount = res.sales_orders[i].amount
 			//	var netBalance = res.invoices[i].net_balance
-			//	var collectedAmount = res.invoices[i].collected_amount
 			//	var invoiceDate = res.invoices[i].invoice_date
 				var receivedAmount = res.sales_orders[i].received_amount
 			//	var withholdAmount = res.invoices[i].withhold_amount
@@ -129,18 +128,11 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 
 				
 				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
-				//	$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))
-					//$(lastNode).find('.js-currency').val(currency)
-					//$(lastNode).find('.js-net-balance').val(number_format(netBalance, 2))
-					//$(lastNode).find('.js-collected-amount').val(number_format(collectedAmount, 2))
-
+				
 					var domReceivedAmount = $(lastNode).find('.js-received-amount')
-			//		var domWithholdAmount = $(lastNode).find('.js-withhold-amount')
 					domReceivedAmount.val(receivedAmount)
-					// domWithholdAmount.val(withholdAmount)
 					domReceivedAmount.attr('name', 'sales_orders_amounts[' + salesOrderId + '][received_amount]')
-					//domWithholdAmount.attr('name', 'sales_orders_amounts[' + invoiceNumber + '][withhold_amount]')
 				
 					$('.js-append-to').append(lastNode)
 					var lastNode = $('.js-template .js-duplicate-node').clone(true)
@@ -206,7 +198,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var collectedAmount = res.invoices[i].collected_amount
 				var invoiceDate = res.invoices[i].invoice_date
 				var invoiceDueDate = res.invoices[i].invoice_due_date
-				console.log(invoiceDueDate)
+				
 				var settlementAmount = res.invoices[i].settlement_amount
 				
 				var withholdAmount = res.invoices[i].withhold_amount
