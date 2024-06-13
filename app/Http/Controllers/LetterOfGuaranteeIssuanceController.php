@@ -175,7 +175,7 @@ class LetterOfGuaranteeIssuanceController
 		$lgCommissionInterval = $request->get('lg_commission_interval');
 		if($lgCommissionInterval == 'quarterly'){
 			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
-				$currentDate = Carbon::make($issuanceDate)->addMonth(3)->format('Y-m-d');
+				$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
 				$isActive = now()->greaterThanOrEqualTo($currentDate);
 				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId,0,$isActive);
 			}
@@ -259,8 +259,9 @@ class LetterOfGuaranteeIssuanceController
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		$amount = $letterOfGuaranteeIssuance->getLgAmount();
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
-		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),0,$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
-		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),0,LetterOfGuaranteeIssuance::FOR_CANCELLATION);
+		$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->id : null ;
+		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),0,$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION);
+		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),0,LetterOfGuaranteeIssuance::FOR_CANCELLATION);
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
 		$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId,0,$letterOfGuaranteeIssuance->id);
 			
@@ -311,7 +312,7 @@ class LetterOfGuaranteeIssuanceController
 		]);
 		
 		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $decreaseDate ,0 ,$decreaseAmount,0,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$cdOrTdId,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
-		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacility->id,$lgType,$company->id,$decreaseDate,0,0 , $cashCoverAmount ,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$decreaseDate,0,0 , $cashCoverAmount ,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
 		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->storeCurrentAccountDebitBankStatement($decreaseDate,$cashCoverAmount , $financialInstitutionAccountId,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$letterOfGuaranteeIssuance->id);
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
 	}
@@ -378,10 +379,18 @@ class LetterOfGuaranteeIssuanceController
 
 	public function destroy(Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance)
 	{
+		
+		
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->advancedPaymentHistories);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountDebitBankStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountCreditBankStatements);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements);
+		$letterOfGuaranteeIssuance->currentAccountCreditBankStatement ? $letterOfGuaranteeIssuance->currentAccountCreditBankStatement->delete() : null;
+		
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
+
 		$letterOfGuaranteeIssuance->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgType]);
 	}

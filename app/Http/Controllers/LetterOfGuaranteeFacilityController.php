@@ -88,6 +88,7 @@ class LetterOfGuaranteeFacilityController
 		$termAndConditions = $request->get('termAndConditions',[]) ;
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
+		$data['outstanding_amount'] = $data['outstanding_amount'] ? $data['outstanding_amount']: 0; 
 		/**
 		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
 		 */
@@ -193,10 +194,10 @@ class LetterOfGuaranteeFacilityController
 		$currentLgOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
         $letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
-        $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
-        $lgCommissionRate  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
-        $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
-        $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
+        $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
+        $lgCommissionRate  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
+        $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
+        $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
 
 
 		/**
