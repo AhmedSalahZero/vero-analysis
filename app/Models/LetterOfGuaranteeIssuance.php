@@ -378,6 +378,14 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeIssuanceAdvancedPaymentHistory::class , 'letter_of_guarantee_issuance_id','id');
 	}
+	public function getLgCurrentAmount()
+	{
+		return $this->getLgAmount() - $this->advancedPaymentHistories->sum('amount');
+	}
+	public function getLgCurrentAmountFormatted()
+	{
+		return number_format($this->getLgCurrentAmount());
+	}
 	
 	
 

@@ -136,7 +136,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
-										
+										@if(!$model->isCancelled())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -160,6 +160,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>
@@ -204,6 +205,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+							
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
@@ -228,7 +230,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
-										
+											@if(!$model->isCancelled())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -252,6 +254,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>
@@ -293,6 +296,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                    <th class="text-center align-middle">{{ __('LG Current Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
@@ -311,6 +315,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
@@ -318,12 +323,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                         	  @include('reports.LetterOfGuaranteeIssuance.actions')
 											  
-											@if(!$model->advancedPaymentHistories->count())  
+											@if(!$model->advancedPaymentHistories->count() && !$model->isCancelled())  
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}">
 											<i class="fa fa-pen-alt"></i>
 											
 											</a>
 											@endif
+											@if(!$model->isCancelled())
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -346,6 +352,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>
@@ -414,6 +421,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
 
+					@if(!$model->isCancelled())
                     <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
                     <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                     <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -437,6 +445,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                             </div>
                         </div>
                     </div>
+					@endif 
                     </span>
                     </td>
                     </tr>

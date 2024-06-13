@@ -88,6 +88,7 @@ class LetterOfCreditFacilityController
 		$termAndConditions = $request->get('termAndConditions',[]) ;
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
+		$data['outstanding_amount'] = $data['outstanding_amount'] ? $data['outstanding_amount']: 0; 
 		/**
 		 * @var LetterOfCreditFacility $letterOfCreditFacility
 		 */
@@ -193,10 +194,10 @@ class LetterOfCreditFacilityController
 		$currentLcOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
         $letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
-        $minLcCommissionRateForCurrentLcType  = $letterOfCreditFacility ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->min_commission_fees : 0;
-        $lcCommissionRate  = $letterOfCreditFacility ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->commission_rate : 0;
-        $minLcCashCoverRateForCurrentLcType  = $letterOfCreditFacility ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->cash_cover_rate : 0;
-        $minLcIssuanceFeesForCurrentLcType  = $letterOfCreditFacility ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->issuance_fees : 0;
+        $minLcCommissionRateForCurrentLcType  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)  ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->min_commission_fees : 0;
+        $lcCommissionRate  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->commission_rate : 0;
+        $minLcCashCoverRateForCurrentLcType  = $letterOfCreditFacility && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)  ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->cash_cover_rate : 0;
+        $minLcIssuanceFeesForCurrentLcType  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->issuance_fees : 0;
 
 
 		/**
