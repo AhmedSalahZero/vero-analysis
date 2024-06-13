@@ -14273,6 +14273,18 @@
          * @param string|null $endDate
          * @static 
          */ 
+        public static function filterByTransactionDate($startDate, $endDate)
+        {
+                        return \Illuminate\Support\Collection::filterByTransactionDate($startDate, $endDate);
+        }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @param string|null $startDate
+         * @param string|null $endDate
+         * @static 
+         */ 
         public static function filterByDeliveryDate($startDate, $endDate)
         {
                         return \Illuminate\Support\Collection::filterByDeliveryDate($startDate, $endDate);

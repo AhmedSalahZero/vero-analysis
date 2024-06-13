@@ -1,7 +1,12 @@
 @extends('layouts.dashboard')
 @section('css')
 @php
-use App\Models\BuyOrSellCurrency;
+use App\Models\BuyOrSellCurrency ;
+$bankToBankConst = BuyOrSellCurrency::BANK_TO_BANK;
+$bankToSafeConst = BuyOrSellCurrency::BANK_TO_SAFE;
+$safeToBankConst = BuyOrSellCurrency::SAFE_TO_BANK;
+$safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
+
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -66,7 +71,7 @@ use App\Models\BuyOrSellCurrency;
     <div class="col-md-12">
         <!--begin::Portlet-->
 
-        <form method="post" action="{{ isset($model) ?  route('buy-or-sell-currencies.update',['company'=>$company->id,'internal_money_transfer'=>$model->id]) :route('buy-or-sell-currencies.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ isset($model) ?  route('buy-or-sell-currencies.update',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) :route('buy-or-sell-currencies.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
@@ -114,13 +119,13 @@ use App\Models\BuyOrSellCurrency;
                                         <div class="row">
 
                                             <div class="col-md-3">
-                                                <label>{{__('Currency')}}
+                                                <label>{{__('Type')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select name="type" class="form-control">
+                                                    <select name="type" class="form-control type">
                                                         @foreach(BuyOrSellCurrency::getAllTypes() as $key => $title)
-                                                        <option value="{{ $key }}" @if(isset($model) && $model->getCurrency() == $key ) selected @endif > {{ $title }}</option>
+                                                        <option value="{{ $key }}" @if(isset($model) && $model->getType() == $key ) selected @endif > {{ $title }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -150,10 +155,10 @@ use App\Models\BuyOrSellCurrency;
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select js-from-when-change-trigger-change-account-type name="currency_to_sell" class="form-control current-to-currency" js-to-when-change-trigger-change-account-type>
+                                                    <select js-from-when-change-trigger-change-account-type name="currency_to_buy" class="form-control current-to-currency" js-to-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                        <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrencyToSell() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
+                                                        <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrencyToBuy() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -165,7 +170,7 @@ use App\Models\BuyOrSellCurrency;
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->getCurrencyToSellAmount():0 }}" name="currency_to_sell_amount" class="form-control greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
+                                                    <input type="text" value="{{ isset($model) ? $model->getAmountToSell():0 }}" name="currency_to_sell_amount" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
                                                 </div>
                                             </div>
 
@@ -178,7 +183,7 @@ use App\Models\BuyOrSellCurrency;
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->getExchangeRate():0 }}" name="exchange_rate" class="form-control  " placeholder="{{__('Exchange Rate')}}">
+                                                    <input type="text" value="{{ isset($model) ? $model->getExchangeRate():0 }}" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="{{__('Exchange Rate')}}">
                                                 </div>
                                             </div>
 
@@ -188,7 +193,8 @@ use App\Models\BuyOrSellCurrency;
                                                     {{-- @include('star') --}}
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input readonly type="text" value="{{ isset($model) ? $model->getCurrencyToBuyAmount():0 }}" name="currency_to_buy_amount" class="form-control greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
+													<input type="hidden" class="amount-in-main-currency-js-hidden" name="currency_to_buy_amount" value="{{ isset($model) ? $model->getAmountToBuy():0 }}">
+                                                    <input readonly type="text" value="{{ isset($model) ? $model->getAmountToBuy():0 }}" class="form-control greater-than-or-equal-zero-allowed amount-in-main-currency-js" placeholder="{{__('Insert Amount')}}">
                                                 </div>
                                             </div>
 
@@ -203,7 +209,7 @@ use App\Models\BuyOrSellCurrency;
 
                                             {{-- {{  common between bank to bank and bank to safe   }} --}}
 
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 show-only-if" data-type="{{ $bankToBankConst.','.$bankToSafeConst }}">
                                                 <label>{{__('From Bank')}}
                                                     @include('star')
                                                 </label>
@@ -222,14 +228,14 @@ use App\Models\BuyOrSellCurrency;
 
 
 
-                                            <div class="col-md-3 ">
+                                            <div data-type="{{ $bankToBankConst.','.$bankToSafeConst }}" class="col-md-3 show-only-if">
                                                 <label>{{__('From Account Type')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
-                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                             @endforeach
@@ -238,20 +244,20 @@ use App\Models\BuyOrSellCurrency;
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3 ">
+                                            <div class="col-md-3  show-only-if" data-type="{{ $bankToBankConst.','.$bankToSafeConst }}">
                                                 <label>{{__('From Account Number')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
-                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
+                                            <div data-type="{{ $bankToBankConst}}" class="col-md-6 show-only-if">
                                                 <label>{{__('To Bank')}}
                                                     @include('star')
                                                 </label>
@@ -267,14 +273,14 @@ use App\Models\BuyOrSellCurrency;
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 ">
+                                            <div data-type="{{ $bankToBankConst }}" class="col-md-3 show-only-if ">
                                                 <label>{{__('To Account Type')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
-                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getToAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                             @endforeach
@@ -283,14 +289,14 @@ use App\Models\BuyOrSellCurrency;
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3 ">
+                                            <div data-type="{{ $bankToBankConst }}" class="col-md-3 show-only-if ">
                                                 <label>{{__('To Account Number')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
-                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         </select>
                                                     </div>
                                                 </div>
@@ -298,29 +304,29 @@ use App\Models\BuyOrSellCurrency;
 
 
 
-										  {{-- only safe to bank  --}}
-                                            <div class="col-md-2 mb-4">
-                                                <label>{{ __('To Branch') }} <span class="multi_selection"></span> </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
-                                                            @foreach($selectedBranches as $id => $name)
-                                                            <option value="{{ $id }}">{{ $name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-											
-											
-											 {{-- only safe to bank   --}}
-                                            <div class="col-md-2 mb-4">
+ {{-- only safe to bank   --}}
+                                            <div data-type="{{ $safeToBankConst.','.$safeToSafeConst }}" class="col-md-2 mb-4 show-only-if">
                                                 <label>{{ __('From Branch') }} <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             @foreach($selectedBranches as $id => $name)
-                                                            <option value="{{ $id }}">{{ $name }}</option>
+                                                            <option  @if(isset($model) && $id == $model->getToBranchId())  selected @endif  value="{{ $id }}">{{ $name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+											
+
+										  {{-- only safe to bank  --}}
+                                            <div data-type="{{ $safeToSafeConst.','.$bankToSafeConst	 }}" class="col-md-2 mb-4 show-only-if">
+                                                <label>{{ __('To Branch') }} <span class="multi_selection"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group date">
+                                                        <select data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                                            @foreach($selectedBranches as $id => $name)
+                                                            <option  @if(isset($model) && $id == $model->getToBranchId())  selected @endif value="{{ $id }}">{{ $name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -329,7 +335,10 @@ use App\Models\BuyOrSellCurrency;
 											
 											
 											
-											  <div class="col-md-6">
+											
+											
+											
+											  <div class="col-md-6 show-only-if" data-type="{{ $safeToBankConst }}">
                                                 <label>{{__('To Bank')}}
                                                     @include('star')
                                                 </label>
@@ -345,14 +354,14 @@ use App\Models\BuyOrSellCurrency;
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 ">
+                                            <div class="col-md-3 show-only-if " data-type="{{ $safeToBankConst }}">
                                                 <label>{{__('To Account Type')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
-                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getToAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                             @endforeach
@@ -361,14 +370,14 @@ use App\Models\BuyOrSellCurrency;
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3 ">
+                                            <div class="col-md-3 show-only-if" data-type="{{ $safeToBankConst }}">
                                                 <label>{{__('To Account Number')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
-                                                            <option value="" selected>{{__('Select')}}</option>
+                                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         </select>
                                                     </div>
                                                 </div>
@@ -524,7 +533,7 @@ use App\Models\BuyOrSellCurrency;
                     , data
                     , success: function(res) {
                         options = ''
-                        var selectToAppendInto = $(parent).find('.js-from-account-number')
+                        var selectToAppendInto = $(parent).find('.js-from-account-number[name]')
 
                         for (key in res.data) {
                             var val = res.data[key]
@@ -543,22 +552,26 @@ use App\Models\BuyOrSellCurrency;
 
             })
             $(document).on('change', '[js-from-when-change-trigger-change-account-type]', function() {
-
-                $(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
+				if($(this).attr('name')){
+	                $(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
+				}
             })
             $(function() {
-                $('.js-from-update-account-number-based-on-account-type').trigger('change')
+                $('.js-from-update-account-number-based-on-account-type[name]').trigger('change')
             })
 
 
             $(document).on('change', '.js-to-update-account-number-based-on-account-type', function() {
+				if(!$(this).attr('name')){
+					return
+				}
                 const val = $(this).val()
                 const lang = $('body').attr('data-lang')
                 const companyId = $('body').attr('data-current-company-id')
                 const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
                 const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
                 const data = []
-                let currency = $(this).closest('form').find('select.current-from-currency').val()
+                let currency = $(this).closest('form').find('select.current-to-currency').val()
                 let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
                 financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
                 if (!val || !currency || !financialInstitutionBankId) {
@@ -570,7 +583,7 @@ use App\Models\BuyOrSellCurrency;
                     , data
                     , success: function(res) {
                         options = ''
-                        var selectToAppendInto = $(parent).find('.js-to-account-number')
+                        var selectToAppendInto = $(parent).find('.js-to-account-number[name]')
                         for (key in res.data) {
                             var val = res.data[key]
                             var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
@@ -596,6 +609,34 @@ use App\Models\BuyOrSellCurrency;
             })
 
         </script>
+		
+		<script>
+		$(document).on('change','.recalculate-amount-in-main-currency',function(){
+		const parent = $(this).closest('.kt-portlet__body');
+		const amount = parseFloat($(parent).find('.amount-js').val()	)
+		const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
+		const amountInMainCurrency = parseFloat(amount * exchangeRate) ;
+		console.log(amountInMainCurrency,amount,exchangeRate,parent)
+		$(parent).find('.amount-in-main-currency-js-hidden').val( amountInMainCurrency)
+		$(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
+	})
+$(document).on('change','.type',function(e){
+	const type = $(this).val()
+	$('.show-only-if').addClass('hidden');
+	$('.show-only-if [name]').each(function(index,element){
+		$(element).attr('data-name',$(element).attr('name'))
+	})
+
+	$('.show-only-if input , .show-only-if select').each(function(index,element){
+		$(element).removeAttr('name')
+	})
+	$('.show-only-if[data-type*="'+type+'"]').removeClass('hidden')
+	$('.show-only-if[data-type*="'+type+'"] input,.show-only-if[data-type*="'+type+'"] select').each(function(index,element){
+		$(element).attr('name',$(element).attr('data-name'))
+	})
+})	
+$('.type').trigger('change')	
+		</script>
 
 
         @endsection

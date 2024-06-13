@@ -582,12 +582,11 @@
 		const parent = $(this).closest('.modal-body');
 		const amount = parseFloat($(parent).find('.amount-js').val()	)
 		const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
-		console.log(amount,exchangeRate)
 		const amountInMainCurrency = parseFloat(amount * exchangeRate) ;
 		$(parent).find('.amount-in-main-currency-js-hidden').val( amountInMainCurrency)
 		$(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
-	 
 	})
+	
 	
 </script>
 {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}

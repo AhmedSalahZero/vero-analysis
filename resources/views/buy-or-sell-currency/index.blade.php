@@ -55,13 +55,13 @@ use App\Models\BuyOrSellCurrency ;
 				
 				<li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::BANK_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::BANK_TO_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Bank To Safe') }}
+                        <i class="fa fa-money-check-alt"></i> {{ __('Bank To SAFE') }}
                     </a>
                 </li>
 				
 				<li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::SAFE_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::SAFE_TO_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('SAFE To Safe') }}
+                        <i class="fa fa-money-check-alt"></i> {{ __('SAFE To SAFE') }}
                     </a>
                 </li>
 				
@@ -108,7 +108,7 @@ use App\Models\BuyOrSellCurrency ;
             <div class="tab-pane {{ !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id,'type'=>$currentType])}}" />
+                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -117,11 +117,11 @@ use App\Models\BuyOrSellCurrency ;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
-                                    <th>{{ __('Transfer Date') }}</th>
-                                    <th>{{ __('Transfer Days') }}</th>
-                                    <th>{{ __('Receiving Date') }}</th>
-                                    <th>{{ __('Amount') }}</th>
-                                    <th>{{ __('Currency') }}</th>
+                                    <th>{{ __('Transaction Date') }}</th>
+                                    <th>{{ __('Amount To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
+                                    <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Bank') }}</th>
                                     <th>{{ __('From Account Type') }}</th>
                                     <th>{{ __('From Account Number') }}</th>
@@ -138,11 +138,12 @@ use App\Models\BuyOrSellCurrency ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $model->getTransferDateFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getTransferDays() }}</td>
-                                    <td class="text-nowrap">{{ $model->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $model->getAmountFormatted() }}</td>
-                                    <td>{{ $model->getCurrencyFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
+                          
+                                    <td>{{ $model->getAmountToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
                                     <td>{{ $model->getFromBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
@@ -155,12 +156,120 @@ use App\Models\BuyOrSellCurrency ;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('buy-or-sell-currencies.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('buy-or-sell-currencies.edit',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType ]) }}" method="post">
+                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			   @php
+            $currentType = BuyOrSellCurrency::BANK_TO_SAFE ;
+            @endphp
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{  Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                    </x-table-title.with-two-dates>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+                                    <th>{{ __('#') }}</th>
+                                    <th>{{ __('Transaction Date') }}</th>
+                                    <th>{{ __('Amount To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
+                                    <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Currency To Buy') }}</th>
+                                    <th>{{ __('From Bank') }}</th>
+                                    <th>{{ __('From Account Type') }}</th>
+                                    <th>{{ __('From Account Number') }}</th>
+                                    {{-- <th>{{ __('To Bank') }}</th>
+                                    <th>{{ __('To Account Type') }}</th>
+                                    <th>{{ __('To Account Number') }}</th> --}}
+									<th>{{ __('To Branch') }}</th>
+                                    <th>{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($models[$currentType] as $index=>$model)
+                                <tr>
+                                    <td>
+                                        {{ $index+1 }}
+                                    </td>
+
+                                    <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
+                          
+                                    <td>{{ $model->getAmountToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
+                                    <td>{{ $model->getFromBankName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
+                                    <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
+                                    {{-- <td>{{ $model->getToBankName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
+                                    <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
+									<td class="text-uppercase">{{ $model->getToBranchName() }}</td>
+
+
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+
+
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('buy-or-sell-currencies.edit',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -191,6 +300,224 @@ use App\Models\BuyOrSellCurrency ;
             </div>
 
 
+
+
+
+
+
+
+
+
+
+
+  @php
+            $currentType = BuyOrSellCurrency::SAFE_TO_BANK ;
+            @endphp
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{  Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                    </x-table-title.with-two-dates>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+                                    <th>{{ __('#') }}</th>
+                                    <th>{{ __('Transaction Date') }}</th>
+                                    <th>{{ __('Amount To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
+                                    <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Currency To Buy') }}</th>
+									<th>{{ __('From Branch') }}</th>
+                                    <th>{{ __('To Bank') }}</th>
+                                    <th>{{ __('To Account Type') }}</th>
+                                    <th>{{ __('To Account Number') }}</th>
+                                    {{-- <th>{{ __('To Bank') }}</th>
+                                    <th>{{ __('To Account Type') }}</th>
+                                    <th>{{ __('To Account Number') }}</th> --}}
+                                    <th>{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($models[$currentType] as $index=>$model)
+                                <tr>
+                                    <td>
+                                        {{ $index+1 }}
+                                    </td>
+
+                                    <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
+                          
+                                    <td>{{ $model->getAmountToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
+									<td class="text-uppercase">{{ $model->getFromBranchName() }}</td>
+                                    <td>{{ $model->getToBankName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
+                                    <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
+                                    {{-- <td>{{ $model->getToBankName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
+                                    <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
+
+
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+
+
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('buy-or-sell-currencies.edit',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+  @php
+            $currentType = BuyOrSellCurrency::SAFE_TO_SAFE ;
+            @endphp
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{  Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                    </x-table-title.with-two-dates>
+                    <div class="kt-portlet__body">
+
+                        <!--begin: Datatable -->
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                            <thead>
+                                <tr class="table-standard-color">
+                                    <th>{{ __('#') }}</th>
+                                    <th>{{ __('Transaction Date') }}</th>
+                                    <th>{{ __('Amount To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
+                                    <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Currency To Buy') }}</th>
+									<th>{{ __('From Branch') }}</th>
+									<th>{{ __('To Branch') }}</th>
+                                    {{-- <th>{{ __('To Bank') }}</th>
+                                    <th>{{ __('To Account Type') }}</th>
+                                    <th>{{ __('To Account Number') }}</th> --}}
+                                    {{-- <th>{{ __('To Bank') }}</th>
+                                    <th>{{ __('To Account Type') }}</th>
+                                    <th>{{ __('To Account Number') }}</th> --}}
+                                    <th>{{ __('Control') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($models[$currentType] as $index=>$model)
+                                <tr>
+                                    <td>
+                                        {{ $index+1 }}
+                                    </td>
+
+                                    <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
+                          
+                                    <td>{{ $model->getAmountToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
+									<td class="text-uppercase">{{ $model->getFromBranchName(true) }}</td>
+									<td class="text-uppercase">{{ $model->getToBranchName() }}</td>
+                                    {{-- <td>{{ $model->getToBankName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
+                                    <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
+                                    {{-- <td>{{ $model->getToBankName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
+                                    <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
+
+
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+
+
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('buy-or-sell-currencies.edit',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!--end: Datatable -->
+                    </div>
+                </div>
+            </div>
 
 
 
