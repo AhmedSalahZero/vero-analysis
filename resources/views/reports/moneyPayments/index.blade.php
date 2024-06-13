@@ -137,7 +137,7 @@ $banks = [];
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
                                     <th class="align-middle">{{ __('Currency') }}</th>
-                                    <th class="align-middle " >{{ __('Payment Bank') }}</th>
+                                    <th class="align-middle " class="bank-max-width">{{ __('Payment Bank') }}</th>
                                     <th class="align-middle">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account No') }}</th>
 									
@@ -160,7 +160,7 @@ $banks = [];
                                     <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
+                                    <td class="bank-max-width ">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
@@ -250,7 +250,7 @@ $banks = [];
                                     <th>{{ __('Type') }}</th>
                                     <th>{{ __('Supplier Name') }}</th>
                                     <th>{{ __('Payment Date') }}</th>
-                                    <th >{{ __('Payment Bank') }}</th>
+                                    <th class="bank-max-width">{{ __('Payment Bank') }}</th>
                                     <th>{{ __('Transfer Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Account Type') }}</th>
