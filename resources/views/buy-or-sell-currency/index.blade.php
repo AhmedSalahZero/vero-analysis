@@ -32,7 +32,7 @@ use App\Models\BuyOrSellCurrency ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Internal Money Transfer') }}
+{{ __('Buy Or Sell Currencies') }}
 @endsection
 @section('content')
 
@@ -108,7 +108,7 @@ use App\Models\BuyOrSellCurrency ;
             <div class="tab-pane {{ !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -214,7 +214,7 @@ use App\Models\BuyOrSellCurrency ;
             <div class="tab-pane {{  Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -317,7 +317,7 @@ use App\Models\BuyOrSellCurrency ;
             <div class="tab-pane {{  Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -432,7 +432,7 @@ use App\Models\BuyOrSellCurrency ;
             <div class="tab-pane {{  Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__(BuyOrSellCurrency::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
+                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
