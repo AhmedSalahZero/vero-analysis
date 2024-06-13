@@ -98,6 +98,9 @@
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+		@php
+			$index = 0 ;
+		@endphp
             @foreach($selectedCurrencies as $index=>$currency)
 
             <li class="nav-item @if($index ==0 ) active @endif">
@@ -111,13 +114,19 @@
 
 
 
-
+@php
+	$index++;
+@endphp
             @endforeach
         </ul>
     </div>
 </div>
+
 <div class="tab-content  kt-margin-t-20">
-    @foreach($selectedCurrencies as $index=>$currency)
+	@php
+		$index = 0 ;
+	@endphp
+    @foreach($selectedCurrencies as $name=>$currency)
 
     <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_{{ $index }}" role="tabpanel">
         <div class="kt-portlet">
@@ -1037,6 +1046,9 @@
             </div>
         </div>
     </div>
+	@php
+		$index++;
+	@endphp
     @endforeach
 </div>
 

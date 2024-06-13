@@ -50,6 +50,6 @@ class CreateInternalMoneyTransfersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('money_transfers');
+        Schema::dropIfExists('internal_money_transfers');
     }
 }

@@ -333,7 +333,7 @@ class MoneyPaymentController
 
 
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['paid_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
 			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
 		}
 
@@ -441,12 +441,10 @@ class MoneyPaymentController
 		$totalWithholdAmount= 0 ;
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{
-			if(isset($settlementArr['paid_amount'])&&$settlementArr['paid_amount'] > 0){
+			if(isset($settlementArr['settlement_amount'])&&$settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $company->id ;
 				$settlementArr['supplier_name'] = $supplierName ;
-				$settlementArr['settlement_amount'] = $settlementArr['paid_amount'];
 				$withholdAmount = $settlementArr['withhold_amount']?? 0;
-
 				$totalWithholdAmount +=   $withholdAmount;
 				$moneyPayment->settlements()->create($settlementArr);
 			}

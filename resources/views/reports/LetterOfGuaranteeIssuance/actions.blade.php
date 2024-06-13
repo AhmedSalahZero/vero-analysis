@@ -67,7 +67,7 @@
                                          @foreach($model->advancedPaymentHistories as $index=>$advancedPaymentHistory)
                                          <tr>
                                              <td> {{ ++$index }} </td>
-                                             <td>{{$advancedPaymentHistory->getDateFormatted() }}</td>
+                                             <td class="text-nowrap">{{$advancedPaymentHistory->getDateFormatted() }}</td>
                                              <td> {{ $advancedPaymentHistory->getAmountFormatted() }} </td>
                                              <td>
                                                  <a data-toggle="modal" data-target="#edit-advanced-payment-lg-{{ $advancedPaymentHistory->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>

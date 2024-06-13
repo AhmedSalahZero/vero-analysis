@@ -35,16 +35,10 @@ begin
 		select count(*) , max(full_date) into _number_of_cheques_existence , _max_full_date from overdraft_against_commercial_paper_limits where cheque_id = new.cheque_id and is_active = 1  ; 
 	
 		select lending_rate into _lending_rate from lending_information where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and for_commercial_papers_due_within_days >= _days_count order by for_commercial_papers_due_within_days asc limit 1;
-		-- if(new.limit = -1 and (_cheque_status = 'rejected' or _cheque_status = 'collected')) 
-		-- then 
-		-- set new.limit = 0 ;
 		set new.limit =  LEAST(_lending_rate /100 * _cheque_amount , _max_lending_limit_per_customer)  ;
-		-- else 
-		-- end if ;
 		if(_cheque_status = 'collected'
 			and   _number_of_cheques_existence > 1 
 			and new.full_date = _max_full_date 
-			-- and EXTRACT(DAY from new.full_date) = EXTRACT(DAY from _actual_collection_date ) and EXTRACT(MONTH from new.full_date) = EXTRACT(MONTH from _actual_collection_date ) and  EXTRACT(YEAR from new.full_date) = EXTRACT(YEAR from _actual_collection_date )
 		 )
 		 then 
 			 set new.limit = new.limit * -1 ;
@@ -90,16 +84,10 @@ begin
 		select count(*) , max(full_date) into _number_of_cheques_existence , _max_full_date from overdraft_against_commercial_paper_limits where cheque_id = new.cheque_id and is_active = 1  ; 
 	
 		select lending_rate into _lending_rate from lending_information where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and for_commercial_papers_due_within_days >= _days_count order by for_commercial_papers_due_within_days asc limit 1;
-		-- if(new.limit = -1 and (_cheque_status = 'rejected' or _cheque_status = 'collected')) 
-		-- then 
-		-- set new.limit = 0 ;
 		set new.limit =  LEAST(_lending_rate /100 * _cheque_amount , _max_lending_limit_per_customer)  ;
-		-- else 
-		-- end if ;
 		if(_cheque_status = 'collected'
 			and   _number_of_cheques_existence > 1 
 			and new.full_date = _max_full_date 
-			-- and EXTRACT(DAY from new.full_date) = EXTRACT(DAY from _actual_collection_date ) and EXTRACT(MONTH from new.full_date) = EXTRACT(MONTH from _actual_collection_date ) and  EXTRACT(YEAR from new.full_date) = EXTRACT(YEAR from _actual_collection_date )
 		 )
 		 then 
 			 set new.limit = new.limit * -1 ;

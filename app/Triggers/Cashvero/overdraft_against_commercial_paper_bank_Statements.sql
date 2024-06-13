@@ -19,8 +19,7 @@
 						declare _i integer default 0 ;
 						declare _j integer default 0 ;
 						declare _max_limit decimal (14,2) default 0; 
-						-- drop table if exists overdraft_against_commercial_paper_temp;
-						-- CREATE TEMPORARY TABLE overdraft_against_commercial_paper_temp (_overdraft_against_commercial_paper_id int , customer_id int ,id int   , amount decimal (14,2) , days_count int ) ; 
+						
 						select deposit_date into _deposit_date  from cheques join money_received 
 						on money_received.id = cheques.money_received_id
 						where money_received.id = _money_received_id ;
@@ -39,9 +38,7 @@
 						and money_received.company_id = _company_id 
 						and overdraft_against_commercial_papers.id = _overdraft_against_commercial_paper_id
 						and cheques.deposit_date <= _full_date
-						and ( cheques.status = 'under-collection' or  (cheques.status='collected' and cheques.actual_collection_date >  _deposit_date && cheques.deposit_date <= _deposit_date)  )
-						
-						;
+						and ( cheques.status = 'under-collection' or  (cheques.status='collected' and cheques.actual_collection_date >  _deposit_date && cheques.deposit_date <= _deposit_date)  );
 						
 						
 						
