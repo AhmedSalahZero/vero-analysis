@@ -159,7 +159,7 @@ class InternalMoneyTransfer extends Model
     }
 	public function overdraftAgainstCommercialPaperBankStatements()
     {
-        return $this->hasMany(overdraftAgainstCommercialPaperBankStatement::class, 'internal_money_transfer_id', 'id');
+	return $this->hasMany(OverdraftAgainstCommercialPaperBankStatement::class, 'internal_money_transfer_id', 'id');
     }
 	public function cashInSafeStatements():HasMany
 	{
