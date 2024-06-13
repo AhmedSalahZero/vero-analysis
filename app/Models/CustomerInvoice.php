@@ -203,6 +203,10 @@ class CustomerInvoice extends Model implements IInvoice
 		$result = [];
 
 		foreach($invoices as $index=>$invoiceArr){
+			if($inEditMode && $invoiceArr['settlement_amount'] == 0 && ($invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] == 0) ){
+				continue ;
+			}
+			
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
