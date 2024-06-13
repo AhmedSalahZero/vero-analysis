@@ -28,43 +28,46 @@ class BuyOrSellCurrency extends Model
 		];
 	}
     protected $guarded = ['id'];
-
-    public function getTransferDays()
-    {
-        return $this->transfer_days ?: 0 ;
-    }
-	public function getReceivingDateFormatted()
+	public function getType()
 	{
-		
-		return Carbon::make($this->getTransferDate())->addDay($this->getTransferDays())->format('d-m-Y') ;
+		return $this->type;
 	}
-    public function setTransferDateAttribute($value)
+    // public function getTransferDays()
+    // {
+    //     return $this->transfer_days ?: 0 ;
+    // }
+	// public function getReceivingDateFormatted()
+	// {
+		
+	// 	return Carbon::make($this->getTransferDate())->addDay($this->getTransferDays())->format('d-m-Y') ;
+	// }
+    public function setTransactionDateAttribute($value)
     {
         if (!$value) {
             return null ;
         }
         $date = explode('/', $value);
         if (count($date) != 3) {
-            $this->attributes['transfer_date'] = $value;
+            $this->attributes['transaction_date'] = $value;
 
             return  ;
         }
         $month = $date[0];
         $day = $date[1];
         $year = $date[2];
-        $this->attributes['transfer_date'] = $year . '-' . $month . '-' . $day;
+        $this->attributes['transaction_date'] = $year . '-' . $month . '-' . $day;
     }
 
-    public function getTransferDate()
+    public function getTransactionDate()
     {
-        return $this->transfer_date ;
+        return $this->transaction_date ;
     }
 
-    public function getTransferDateFormatted()
+    public function getTransactionDateFormatted()
     {
-        $transferDate = $this->getTransferDate() ;
+        $transactionDate = $this->getTransactionDate() ;
 
-        return $transferDate ? Carbon::make($transferDate)->format('d-m-Y') : null ;
+        return $transactionDate ? Carbon::make($transactionDate)->format('d-m-Y') : null ;
     }
 
     public function fromBank()
@@ -101,22 +104,44 @@ class BuyOrSellCurrency extends Model
         return $this->from_account_number ;
     }
 
-    public function getCurrency()
+    public function getCurrencyToBuy()
     {
-        return $this->currency ;
+        return $this->currency_to_buy ;
     }
-	public function getCurrencyFormatted()
+	public function getCurrencyToBuyFormatted()
     {
-        return $this->getCurrency() ;
+        return $this->getCurrencyToBuy() ;
     }
-    public function getAmount()
+	public function getCurrencyToSell()
     {
-        return $this->amount ?: 0;
+        return $this->currency_to_sell ;
+    }
+	public function getCurrencyToSellFormatted()
+    {
+        return $this->getCurrencyToSell() ;
+    }
+	public function getExchangeRate()
+	{
+		return $this->exchange_rate;
+	}
+    public function getAmountToSell()
+    {
+        return $this->currency_to_sell_amount ?: 0;
     }
 	
-    public function getAmountFormatted()
+    public function getAmountToSellFormatted()
     {
-        return number_format($this->getAmount(), 0);
+        return number_format($this->getAmountToSell(), 0);
+    }
+	
+	public function getAmountToBuy()
+    {
+        return $this->currency_to_buy_amount ?: 0;
+    }
+	
+    public function getAmountToBuyFormatted()
+    {
+        return number_format($this->getAmountToBuy(), 0);
     }
 
     public function toBank()
@@ -148,23 +173,23 @@ class BuyOrSellCurrency extends Model
     }
 	public function currentAccountBankStatements()
     {
-        return $this->hasMany(CurrentAccountBankStatement::class, 'internal_money_transfer_id', 'id');
+        return $this->hasMany(CurrentAccountBankStatement::class, 'buy_or_sell_currency_id', 'id');
     }
     public function cleanOverdraftBankStatements()
     {
-        return $this->hasMany(CleanOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
+        return $this->hasMany(CleanOverdraftBankStatement::class, 'buy_or_sell_currency_id', 'id');
     }
 	public function fullySecuredOverdraftBankStatements()
     {
-        return $this->hasMany(FullySecuredOverdraftBankStatement::class, 'internal_money_transfer_id', 'id');
+        return $this->hasMany(FullySecuredOverdraftBankStatement::class, 'buy_or_sell_currency_id', 'id');
     }
 	public function overdraftAgainstCommercialPaperBankStatements()
     {
-        return $this->hasMany(overdraftAgainstCommercialPaperBankStatement::class, 'internal_money_transfer_id', 'id');
+        return $this->hasMany(overdraftAgainstCommercialPaperBankStatement::class, 'buy_or_sell_currency_id', 'id');
     }
 	public function cashInSafeStatements():HasMany
 	{
-		return $this->hasMany(CashInSafeStatement::class,'internal_money_transfer_id','id');
+		return $this->hasMany(CashInSafeStatement::class,'buy_or_sell_currency_id','id');
 	}
     public function deleteRelations()
     {
@@ -188,7 +213,7 @@ class BuyOrSellCurrency extends Model
 	/**
 	 * * هنا لما بنحول من بنك او الى بنك بغض النظر عن نوع الحساب
 	 */
-	public function handleBankTransfer(int $companyId , int $fromFinancialInstitutionId , AccountType $fromAccountType , string $fromAccountNumber ,string $transferDate  , $debitAmount , $creditAmount)
+	public function handleBankTransfer(int $companyId , int $fromFinancialInstitutionId , AccountType $fromAccountType , string $fromAccountNumber ,string $transactionDate  , $debitAmount , $creditAmount)
 	{
 		if($fromAccountType && $fromAccountType->isCurrentAccount()){
 			/**
@@ -197,9 +222,9 @@ class BuyOrSellCurrency extends Model
 			$fromCurrentAccount = FinancialInstitutionAccount::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
 			CurrentAccountBankStatement::create([
 				'financial_institution_account_id'=>$fromCurrentAccount->id ,
-				'internal_money_transfer_id'=>$this->id  ,
+				'buy_or_sell_currency_id'=>$this->id  ,
 				'company_id'=>$companyId ,
-				'date' => $transferDate , 
+				'date' => $transactionDate , 
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
 			]);
@@ -215,9 +240,9 @@ class BuyOrSellCurrency extends Model
 			CleanOverdraftBankStatement::create([
 				'type'=>CleanOverdraftBankStatement::MONEY_TRANSFER ,
 				'clean_overdraft_id'=>$fromCleanOverdraft->id ,
-				'internal_money_transfer_id'=>$this->id ,
+				'buy_or_sell_currency_id'=>$this->id ,
 				'company_id'=>$companyId ,
-				'date' => $transferDate , 
+				'date' => $transactionDate , 
 				'limit' =>$fromCleanOverdraft->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
@@ -232,9 +257,9 @@ class BuyOrSellCurrency extends Model
 			FullySecuredOverdraftBankStatement::create([
 				'type'=>FullySecuredOverdraftBankStatement::MONEY_TRANSFER ,
 				'fully_secured_overdraft_id'=>$fromFullySecuredOverdraft->id ,
-				'internal_money_transfer_id'=>$this->id ,
+				'buy_or_sell_currency_id'=>$this->id ,
 				'company_id'=>$companyId ,
-				'date' => $transferDate , 
+				'date' => $transactionDate , 
 				'limit' =>$fromFullySecuredOverdraft->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
@@ -250,9 +275,9 @@ class BuyOrSellCurrency extends Model
 			OverdraftAgainstCommercialPaperBankStatement::create([
 				'type'=>OverdraftAgainstCommercialPaperBankStatement::MONEY_TRANSFER ,
 				'overdraft_against_commercial_paper_id'=>$fromOverdraftAgainstCommercialPaper->id ,
-				'internal_money_transfer_id'=>$this->id ,
+				'buy_or_sell_currency_id'=>$this->id ,
 				'company_id'=>$companyId ,
-				'date' => $transferDate , 
+				'date' => $transactionDate , 
 				'limit' =>$fromOverdraftAgainstCommercialPaper->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
@@ -282,20 +307,25 @@ class BuyOrSellCurrency extends Model
 					'credit'=> $creditAmount 
 				]);
 	}
-	public function handleBankToBankTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , string $transferDate , string $receivingDate, $transferAmount)
+	public function handleBankToBankTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , string $transactionDate , string $receivingDate, $transferFromAmount,$transferToAmount = null )
 	{
-		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate , 0,$transferAmount);
-		$this->handleBankTransfer($companyId , $toFinancialInstitutionId , $toAccountType , $toAccountNumber ,$receivingDate , $transferAmount,0);
+		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transactionDate , 0,$transferFromAmount);
+		$this->handleBankTransfer($companyId , $toFinancialInstitutionId , $toAccountType , $toAccountNumber ,$receivingDate , $transferToAmount,0);
 	}
-	public function handleBankToSafeTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , int $toBranchId , string $currencyName , string $transferDate , $transferAmount)
+	public function handleBankToSafeTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , int $toBranchId ,string $currencyToBuyName , string $transactionDate , $transferFromAmount,$transferToAmount)
 	{
-		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate ,0, $transferAmount);
-		$this->handleSafeTransfer($companyId,$transferDate,$transferAmount,0,$toBranchId ,$currencyName,1);
+		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transactionDate ,0, $transferFromAmount);
+		$this->handleSafeTransfer($companyId,$transactionDate,$transferToAmount,0,$toBranchId ,$currencyToBuyName,1);
 	}
-	public function handleSafeToBankTransfer( int $companyId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , int $fromBranchId , string $currencyName , string $transferDate , $transferAmount)
+	public function handleSafeToBankTransfer( int $companyId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , int $fromBranchId , string $currencyToBuyName , string $transactionDate , $transferFromAmount,$transferToAmount)
 	{
-		$this->handleSafeTransfer($companyId,$transferDate,0,$transferAmount,$fromBranchId ,$currencyName,1);
-		$this->handleBankTransfer($companyId , $toFinancialInstitutionId ,  $toAccountType , $toAccountNumber , $transferDate , $transferAmount,0);
+		$this->handleSafeTransfer($companyId,$transactionDate,0,$transferFromAmount,$fromBranchId ,$currencyToBuyName,1);
+		$this->handleBankTransfer($companyId , $toFinancialInstitutionId ,  $toAccountType , $toAccountNumber , $transactionDate , $transferToAmount,0);
+	}
+	public function handleSafeToSafeTransfer( int $companyId , int $fromBranchId , string $currencyToBuyName , int $toBranchId , string $currencyToSellName , $exchangeRate , string $transactionDate , $transferFromAmount,$transferToAmount)
+	{
+		$this->handleSafeTransfer($companyId,$transactionDate,0,$transferFromAmount,$fromBranchId ,$currencyToBuyName,1);
+		$this->handleSafeTransfer($companyId,$transactionDate,$transferToAmount,0,$toBranchId ,$currencyToSellName,$exchangeRate);
 	}
 	public function fromBranch()
 	{
@@ -312,6 +342,10 @@ class BuyOrSellCurrency extends Model
 	public function getToBranchName()
 	{
 		return $this->toBranch ? $this->toBranch->getName()  : __('N/A');  
+	}
+	public function getToBranchId()
+	{
+		return $this->toBranch ? $this->toBranch->id  :0;  
 	}
 	public function getChequeNumber()
 	{

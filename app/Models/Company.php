@@ -183,6 +183,7 @@ class Company extends Model implements HasMedia
 	}
 	public function bankToBankBuyOrSellCurrencies()
 	{
+	
 		return $this->buyOrSellCurrencies()->where('type',BuyOrSellCurrency::BANK_TO_BANK);
 	}
 	public function safeToBankBuyOrSellCurrencies()

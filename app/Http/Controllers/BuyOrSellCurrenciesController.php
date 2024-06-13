@@ -68,8 +68,9 @@ class BuyOrSellCurrenciesController
 		$bankToBankStartDate = $filterDates[BuyOrSellCurrency::BANK_TO_BANK]['startDate'] ?? null ;
 		$bankToBankEndDate = $filterDates[BuyOrSellCurrency::BANK_TO_BANK]['endDate'] ?? null ;
 		$bankToBankBuyOrSellCurrencies = $company->bankToBankBuyOrSellCurrencies ;
-		$bankToBankBuyOrSellCurrencies =  $bankToBankBuyOrSellCurrencies->filterByTransferDate($bankToBankStartDate,$bankToBankEndDate) ;
+		$bankToBankBuyOrSellCurrencies =  $bankToBankBuyOrSellCurrencies->filterByTransactionDate($bankToBankStartDate,$bankToBankEndDate) ;
 		$bankToBankBuyOrSellCurrencies =  $currentType == BuyOrSellCurrency::BANK_TO_BANK ? $this->applyFilter($request,$bankToBankBuyOrSellCurrencies):$bankToBankBuyOrSellCurrencies ;
+
 
 		/**
 		 * * end of bank to bank buy or sell currency 
@@ -83,7 +84,7 @@ class BuyOrSellCurrenciesController
 		$safeToBankStartDate = $filterDates[BuyOrSellCurrency::SAFE_TO_BANK]['startDate'] ?? null ;
 		$safeToBankEndDate = $filterDates[BuyOrSellCurrency::SAFE_TO_BANK]['endDate'] ?? null ;
 		$safeToBankBuyOrSellCurrencies = $company->safeToBankBuyOrSellCurrencies ;
-		$safeToBankBuyOrSellCurrencies =  $safeToBankBuyOrSellCurrencies->filterByTransferDate($safeToBankStartDate,$safeToBankEndDate) ;
+		$safeToBankBuyOrSellCurrencies =  $safeToBankBuyOrSellCurrencies->filterByTransactionDate($safeToBankStartDate,$safeToBankEndDate) ;
 		$safeToBankBuyOrSellCurrencies =  $currentType == BuyOrSellCurrency::SAFE_TO_BANK ? $this->applyFilter($request,$safeToBankBuyOrSellCurrencies):$safeToBankBuyOrSellCurrencies ;
 
 		/**
@@ -98,7 +99,7 @@ class BuyOrSellCurrenciesController
 		$bankToSafeStartDate = $filterDates[BuyOrSellCurrency::BANK_TO_SAFE]['startDate'] ?? null ;
 		$bankToSafeEndDate = $filterDates[BuyOrSellCurrency::BANK_TO_SAFE]['endDate'] ?? null ;
 		$bankToSafeBuyOrSellCurrencies = $company->bankToSafeBuyOrSellCurrencies ;
-		$bankToSafeBuyOrSellCurrencies =  $bankToSafeBuyOrSellCurrencies->filterByTransferDate($bankToSafeStartDate,$bankToSafeEndDate) ;
+		$bankToSafeBuyOrSellCurrencies =  $bankToSafeBuyOrSellCurrencies->filterByTransactionDate($bankToSafeStartDate,$bankToSafeEndDate) ;
 		$bankToSafeBuyOrSellCurrencies =  $currentType == BuyOrSellCurrency::BANK_TO_SAFE ? $this->applyFilter($request,$bankToSafeBuyOrSellCurrencies):$bankToSafeBuyOrSellCurrencies ;
 
 		/**
@@ -113,7 +114,7 @@ class BuyOrSellCurrenciesController
 		$safeToSafeStartDate = $filterDates[BuyOrSellCurrency::SAFE_TO_SAFE]['startDate'] ?? null ;
 		$safeToSafeEndDate = $filterDates[BuyOrSellCurrency::SAFE_TO_SAFE]['endDate'] ?? null ;
 		$safeToSafeBuyOrSellCurrencies = $company->safeToSafeBuyOrSellCurrencies ;
-		$safeToSafeBuyOrSellCurrencies =  $bankToSafeBuyOrSellCurrencies->filterByTransferDate($safeToSafeStartDate,$safeToSafeEndDate) ;
+		$safeToSafeBuyOrSellCurrencies =  $safeToSafeBuyOrSellCurrencies->filterByTransactionDate($safeToSafeStartDate,$safeToSafeEndDate) ;
 		$safeToSafeBuyOrSellCurrencies =  $currentType == BuyOrSellCurrency::SAFE_TO_SAFE ? $this->applyFilter($request,$safeToSafeBuyOrSellCurrencies):$safeToSafeBuyOrSellCurrencies ;
 
 		/**
@@ -172,13 +173,15 @@ class BuyOrSellCurrenciesController
 		];
 	}
 	
-	public function store(Company $company , string $type  , Request $request){
-		$internalMoneyTransfer = new BuyOrSellCurrency ;
-		$internalMoneyTransfer->type = $type ;
+	public function store(Company $company  , Request $request){
+		$buyOrSellCurrency = new BuyOrSellCurrency ;
+		$type = $request->get('type');
 		$transferDate = $request->get('transaction_date') ;
 		$receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
-		$transferAmount = $request->get('amount') ;
-		$internalMoneyTransfer->storeBasicForm($request);
+		$transferFromAmount = $request->get('currency_to_sell_amount') ;
+		$transferToAmount = $request->get('currency_to_buy_amount') ;
+		$exchangeRate  = $request->get('exchange_rate');
+		$buyOrSellCurrency->storeBasicForm($request);
 		$fromFinancialInstitutionId = $request->get('from_bank_id');
 		$toFinancialInstitutionId = $request->get('to_bank_id');
 		$fromAccountTypeId = $request->get('from_account_type_id');
@@ -187,19 +190,24 @@ class BuyOrSellCurrenciesController
 		$toAccountNumber = $request->get('to_account_number');
 		$toBranchId = $request->get('to_branch_id');
 		$fromBranchId = $request->get('from_branch_id');
-		$currencyName = $request->get('currency');	
+		$currencyToSellName = $request->get('currency_to_sell');	
+		$currencyToBuyName = $request->get('currency_to_buy');	
+
 		$fromAccountType = AccountType::find($fromAccountTypeId);
 		$toAccountType = AccountType::find($toAccountTypeId);
 		if($type === BuyOrSellCurrency::BANK_TO_BANK){
-			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
+			$buyOrSellCurrency->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferFromAmount,$transferToAmount);
 		}
 		elseif($type === BuyOrSellCurrency::BANK_TO_SAFE ){
-			$internalMoneyTransfer->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyName , $transferDate,$transferAmount);
+			$buyOrSellCurrency->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyToBuyName , $transferDate,$transferFromAmount,$transferToAmount);
 		}
 		elseif($type === BuyOrSellCurrency::SAFE_TO_BANK ){
-			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
+			$buyOrSellCurrency->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyToBuyName , $transferDate,$transferFromAmount,$transferToAmount);
 		}
+		elseif($type === BuyOrSellCurrency::SAFE_TO_SAFE ){
 		
+			$buyOrSellCurrency->handleSafeToSafeTransfer($company->id  ,$fromBranchId , $currencyToBuyName , $toBranchId , $currencyToSellName , $exchangeRate , $transferDate,$transferFromAmount,$transferToAmount);
+		}
 		$activeTab = $type ; 
 		
 	
@@ -207,25 +215,24 @@ class BuyOrSellCurrenciesController
 		
 	}
 
-	public function edit(Company $company,string $type,BuyOrSellCurrency $internalMoneyTransfer)
+	public function edit(Company $company,BuyOrSellCurrency $buyOrSellCurrency)
 	{
-		$formName = $type . '-form';
-        return view('buy-or-sell-currency.'.$formName ,$this->getCommonViewVars($company,$type,$internalMoneyTransfer));
+        return view('buy-or-sell-currency.form' ,$this->getCommonViewVars($company,$buyOrSellCurrency));
     }
 	
-	public function update(Company $company , string $type , Request $request , BuyOrSellCurrency $internalMoneyTransfer){
-		
-		$internalMoneyTransfer->deleteRelations();
-		$internalMoneyTransfer->delete();
-		$this->store($company,$type,$request);
+	public function update(Company $company , Request $request , BuyOrSellCurrency $buyOrSellCurrency){
+		$type = $buyOrSellCurrency->getType();
+		$buyOrSellCurrency->deleteRelations();
+		$buyOrSellCurrency->delete();
+		$this->store($company,$request);
 		$activeTab = $type ;
 		return redirect()->route('buy-or-sell-currencies.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
-	public function destroy(Company $company , string $type, BuyOrSellCurrency $internalMoneyTransfer)
+	public function destroy(Company $company , BuyOrSellCurrency $buyOrSellCurrency)
 	{
-		$internalMoneyTransfer->deleteRelations();
-		$internalMoneyTransfer->delete();
+		$buyOrSellCurrency->deleteRelations();
+		$buyOrSellCurrency->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 }
