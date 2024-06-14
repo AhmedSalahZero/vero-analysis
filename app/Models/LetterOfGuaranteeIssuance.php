@@ -48,10 +48,7 @@ class LetterOfGuaranteeIssuance extends Model
 		
 		return $this->source ?: self::LG_FACILITY ;
 	}
-	// public function isAdvancedPayment()
-	// {
-	// 	return $this->getSource() === self::ADV
-	// }
+
 	public function isCertificateOfDepositSource()
 	{
 		$accountTypeId = $this->getCdOrTdAccountTypeId() ;
@@ -387,6 +384,17 @@ class LetterOfGuaranteeIssuance extends Model
 		return number_format($this->getLgCurrentAmount());
 	}
 	
-	
+	public function deleteAllRelations():self
+	{
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->advancedPaymentHistories);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeCashCoverStatements);
+		$this->currentAccountCreditBankStatement ? $this->currentAccountCreditBankStatement->delete() : null;
+		return $this;
+	}
+		
 
 }

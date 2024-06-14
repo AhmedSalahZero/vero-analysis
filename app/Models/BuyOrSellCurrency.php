@@ -185,7 +185,7 @@ class BuyOrSellCurrency extends Model
     }
 	public function overdraftAgainstCommercialPaperBankStatements()
     {
-        return $this->hasMany(overdraftAgainstCommercialPaperBankStatement::class, 'buy_or_sell_currency_id', 'id');
+        return $this->hasMany(OverdraftAgainstCommercialPaperBankStatement::class, 'buy_or_sell_currency_id', 'id');
     }
 	public function cashInSafeStatements():HasMany
 	{

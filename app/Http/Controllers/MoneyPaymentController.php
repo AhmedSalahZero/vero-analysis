@@ -42,6 +42,9 @@ class MoneyPaymentController
 		$collection = $collection
 		->when($request->has('value'),function($collection) use ($request,$value,$searchFieldName){
 			return $collection->filter(function($moneyPayment) use ($value,$searchFieldName){
+				/**
+				 * @var MoneyPayment $moneyPayment
+				 */
 				$currentValue = $moneyPayment->{$searchFieldName} ;
 				// $moneyPaymentRelationName cash-in-safe -> cashInSafe relation ship name
 				$moneyPaymentRelationName = dashesToCamelCase(Request('active')) ;
@@ -56,7 +59,7 @@ class MoneyPaymentController
 					$currentValue = $moneyPayment->getCashPaymentBranchName() ;
 				}
 				if($searchFieldName == 'delivery_bank_id'){
-					$currentValue = $moneyPayment->getDeliveryBankName() ;
+					$currentValue = $moneyPayment->payableCheque ? $moneyPayment->payableCheque->getDeliveryBankName() :0 ;
 				}
 				return false !== stristr($currentValue , $value);
 			});

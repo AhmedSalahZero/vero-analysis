@@ -198,9 +198,7 @@ class LetterOfGuaranteeIssuanceController
 	}
 
 	public function update(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);
+		$letterOfGuaranteeIssuance->deleteAllRelations();
 		$letterOfGuaranteeIssuance->delete();
 		$this->store($company,$request,$source);
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
@@ -381,13 +379,7 @@ class LetterOfGuaranteeIssuanceController
 	{
 		
 		
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->advancedPaymentHistories);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountDebitBankStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountCreditBankStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements);
-		$letterOfGuaranteeIssuance->currentAccountCreditBankStatement ? $letterOfGuaranteeIssuance->currentAccountCreditBankStatement->delete() : null;
+		$letterOfGuaranteeIssuance->deleteAllRelations();
 		
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 

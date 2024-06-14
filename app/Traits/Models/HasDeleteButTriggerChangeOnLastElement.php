@@ -12,7 +12,7 @@ trait HasDeleteButTriggerChangeOnLastElement
 	public static function deleteButTriggerChangeOnLastElement(Collection $statements):void
 	{
 		$length = count($statements);
-		$statements->each(function($statements,$index) use ($length){
+		$statements->each(function($statement,$index) use ($length){
 			/**
 			 * * لو هو اخر عنصر اللي هو تاريخ الاصغر ما بينهم .. في الحاله دي هنحذفه بالطريقة اللي بتشغل ال
 			 * * observers
@@ -30,9 +30,9 @@ trait HasDeleteButTriggerChangeOnLastElement
 			
 		
 			if($index == $length-1){
-				$statements->delete();
+				$statement->delete();
 			}else{
-				DB::table((new self)->getTable())->where('id',$statements->id)->delete();
+				DB::table((new self)->getTable())->where('id',$statement->id)->delete();
 			}
 		});
 		
