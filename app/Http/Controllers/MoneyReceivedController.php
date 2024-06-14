@@ -631,16 +631,7 @@ class MoneyReceivedController
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
 			$moneyReceived->cheque->update(array_merge($data,['updated_at'=>now()]));
 			
-			// if(!$moneyReceived->cheque->overdraftAgainstCommercialPaperLimits->count()){
-			
-			// 	$moneyReceived->cheque->handleOverdraftAgainstCommercialPaperLimit();
-			// }else{
-	
-				
-			// 	$moneyReceived->cheque->overdraftAgainstCommercialPaperLimits()->where('limit','<',0)->update([
-			// 		'updated_at'=>now()
-			// 	]);
-			// }
+		
 			
 		}
 		if($request->ajax()){

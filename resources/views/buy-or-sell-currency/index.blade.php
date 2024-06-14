@@ -55,19 +55,16 @@ use App\Models\BuyOrSellCurrency ;
 				
 				<li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::BANK_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::BANK_TO_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Bank To SAFE') }}
+                        <i class="fa fa-money-check-alt"></i> {{ __('Bank To Safe') }}
                     </a>
                 </li>
 				
 				<li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::SAFE_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::SAFE_TO_SAFE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('SAFE To SAFE') }}
+                        <i class="fa fa-money-check-alt"></i> {{ __('Safe To Safe') }}
                     </a>
                 </li>
 				
-				
-				
-
             </ul>
 
             <div class="flex-tabs">
