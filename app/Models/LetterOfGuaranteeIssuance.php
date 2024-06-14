@@ -388,14 +388,11 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->advancedPaymentHistories);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeStatements);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeCashCoverStatements);
-		$this->currentAccountCreditBankStatement ? $this->currentAccountCreditBankStatement->delete() : null;
-		CurrentAccountBankStatement::where('letter_of_guarantee_issuance_id',$this->id)->get()->each(function(CurrentAccountBankStatement $currentAccountBankStatement){
-			$currentAccountBankStatement->delete();
-		});
+		
 		return $this;
 	}
 		

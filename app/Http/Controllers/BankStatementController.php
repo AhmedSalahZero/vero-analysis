@@ -51,6 +51,7 @@ class BankStatementController
 			$results = DB::table('current_account_bank_statements')
 			->where('date', '>=', $startDate)
 			->where('date', '<=', $endDate)
+			->where('is_active',1)
 			->where('current_account_bank_statements.financial_institution_account_id',$financialInstitutionAccount->id)
 			->where('current_account_bank_statements.company_id',$company->id)
 			->join('financial_institution_accounts','financial_institution_account_id','=','financial_institution_accounts.id')
