@@ -178,7 +178,10 @@ class User extends Authenticatable implements HasMedia
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
 	}
 	
-
+	public function overdraftAgainstAssignmentOfContract()
+	{
+		return $this->hasMany(OverdraftAgainstAssignmentOfContract::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
+	}
 	
 	public function isFreeTrialAccount()
 	{

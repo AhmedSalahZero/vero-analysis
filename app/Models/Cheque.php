@@ -281,8 +281,6 @@ class Cheque extends Model
 		 * * collected to be under collection 
 		 */
 		if($model->isUnderCollection()  &&  $oldStatus == self::COLLECTED ){
-			logger('from 3');
-			
 			$negativeOverdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->where('limit','<',0)->first();
 			$negativeOverdraftAgainstCommercialPaperLimit ? $negativeOverdraftAgainstCommercialPaperLimit->update(['is_active'=>0])  : null ; 
 			$negativeOverdraftAgainstCommercialPaperLimit ? DB::table('overdraft_against_commercial_paper_limits')->where('id',$negativeOverdraftAgainstCommercialPaperLimit->id)->delete(): null ;
@@ -296,7 +294,6 @@ class Cheque extends Model
 			/**
 			 * * هنضيف رو جديد بنفس القيمة ولكن بالسالب
 			 */
-			logger('from 2');
 			
 			$model->handleOverdraftAgainstCommercialPaperLimit();
 			return ;
@@ -311,7 +308,6 @@ class Cheque extends Model
 		 * * overdraft against commercial paper 
 		 */
 		if($model->isUnderCollection() && $currentAccountType && !$currentAccountType->isOverdraftAgainstCommercialPaperAccount()){
-			logger('from 4');
 			$model->deleteOverdraftAgainstCommercialPapersLimits();	
 			return ;
 		}

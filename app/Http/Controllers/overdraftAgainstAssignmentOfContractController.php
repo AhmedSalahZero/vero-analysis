@@ -4,14 +4,16 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
-use App\Models\OverdraftAgainstCommercialPaper;
+use App\Models\LendingInformation;
+use App\Models\LendingInformationAgainstAssignmentOfContract;
+use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class OverdraftAgainstCommercialPaperController
+class overdraftAgainstAssignmentOfContractController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -47,9 +49,9 @@ class OverdraftAgainstCommercialPaperController
 	public function index(Company $company,Request $request,FinancialInstitution $financialInstitution)
 	{
 		
-		$overdraftAgainstCommercialPapers = $company->overdraftAgainstCommercialPapers->where('financial_institution_id',$financialInstitution->id) ;
+		$odAgainstAssignmentOfContracts = $company->overdraftAgainstAssignmentOfContracts->where('financial_institution_id',$financialInstitution->id) ;
 
-		$overdraftAgainstCommercialPapers =   $this->applyFilter($request,$overdraftAgainstCommercialPapers) ;
+		$odAgainstAssignmentOfContracts =   $this->applyFilter($request,$odAgainstAssignmentOfContracts) ;
 		$searchFields = [
 			'contract_start_date'=>__('Contract Start Date'),
 			'contract_end_date'=>__('Contract End Date'),
@@ -60,13 +62,14 @@ class OverdraftAgainstCommercialPaperController
 			'balance_date'=>__('Balance Date'),
 			
 		];
+		$customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
 
-        return view('reports.overdraft-against-commercial-paper.index', [
+        return view('reports.overdraft-against-assignment-of-contract.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
 			'financialInstitution'=>$financialInstitution,
-			'overdraftAgainstCommercialPapers'=>$overdraftAgainstCommercialPapers,
-		
+			'odAgainstAssignmentOfContracts'=>$odAgainstAssignmentOfContracts,
+			'customers'=>$customers
 		]);
     }
 	public function create(Company $company,FinancialInstitution $financialInstitution)
@@ -74,7 +77,7 @@ class OverdraftAgainstCommercialPaperController
 		// $customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-        return view('reports.overdraft-against-commercial-paper.form',[
+        return view('reports.overdraft-against-assignment-of-contract.form',[
 			'banks'=>$banks,
 			// 'customers'=>$customers,
 			'selectedBranches'=>$selectedBranches,
@@ -95,36 +98,37 @@ class OverdraftAgainstCommercialPaperController
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		/**
-		 * @var OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper 
+		 * @var OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract 
 		 */
-		$overdraftAgainstCommercialPaper = $financialInstitution->overdraftAgainstCommercialPapers()->create($data);
-		$type = $request->get('type','overdraft-against-commercial-paper');
+		$odAgainstAssignmentOfContract = $financialInstitution->overdraftAgainstAssignmentOfContracts()->create($data);
+		$type = $request->get('type','overdraft-against-assignment-of-contract');
 		$activeTab = $type ; 
 		
-		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
+		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
 		foreach($lendingInformation as $lendingInformationArr){
-			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
+			$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
 			]));
 		}
-		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
 
-	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
+	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract){
 		$banks = Bank::pluck('view_name','id');
+
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		// $customers = Partner::where('is_customer',1)->where('company_id',$company->id)->pluck('name','id')->toArray();
-        return view('reports.overdraft-against-commercial-paper.form',[
+        return view('reports.overdraft-against-assignment-of-contract.form',[
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
 			// 'customers'=>$customers,
-			'model'=>$overdraftAgainstCommercialPaper
+			'model'=>$odAgainstAssignmentOfContract
 		]);
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
+	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract){
 		// $infos =  $request->get('infos',[]) ;
 		$infos =  $request->get('infos',[]) ;
 		$data['updated_by'] = auth()->user()->id ;
@@ -133,30 +137,63 @@ class OverdraftAgainstCommercialPaperController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		
-		$overdraftAgainstCommercialPaper->update($data);
-		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
-		$overdraftAgainstCommercialPaper->lendingInformation()->delete();
+		$odAgainstAssignmentOfContract->update($data);
+		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
+		$odAgainstAssignmentOfContract->lendingInformation()->delete();
 		foreach($infos as $lendingInformationArr){
-			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
+			$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
 				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
 			]));
 		}
-		$type = $request->get('type','overdraft-against-commercial-paper');
+		$type = $request->get('type','overdraft-against-assignment-of-contract');
 		$activeTab = $type ;
-		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 		
 		
 	}
 	
-	public function destroy(Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper)
+	public function destroy(Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract)
 	{
-		$overdraftAgainstCommercialPaper->lendingInformation->each(function($lendingInformation){
+		$odAgainstAssignmentOfContract->lendingInformation->each(function($lendingInformation){
 			$lendingInformation->delete();
 		});
-		$overdraftAgainstCommercialPaper->delete();
+		$odAgainstAssignmentOfContract->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
+	public function applyLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract )
+	{
 
+		$odAgainstAssignmentOfContract->lendingInformation()->create([
+			'company_id'=>$company->id ,
+			'lending_rate'=>$request->get('lending_rate'),
+			'customer_id'=>$request->get('customer_id'),
+			'contract_id'=>$request->get('contract_id')
+		]);
+		return redirect()->back()->with('success',__('Done'));
 	
+	}
+	public function editLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
+	{
+		dd($lendingInformation);
+		$odAgainstAssignmentOfContract->lendingInformation()->create([
+			'company_id'=>$company->id ,
+			'lending_rate'=>$request->get('lending_rate'),
+			'customer_id'=>$request->get('customer_id'),
+			'contract_id'=>$request->get('contract_id')
+		]);
+		
+		return response()->json([
+			'status'=>true ,
+			'reloadCurrentPage'=>true 
+		]);
+	}
+	public function deleteLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
+	{
+		$lendingInformation->delete();
+		
+		
+		return redirect()->back()->with('success',__('Done'));
+
+	}
 	
 }

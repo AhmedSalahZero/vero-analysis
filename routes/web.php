@@ -401,6 +401,19 @@ Route::middleware([])->group(function () {
 				 Route::put('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/update/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@update')->name('update.overdraft.against.commercial.paper');
 				 Route::delete('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@destroy')->name('delete.overdraft.against.commercial.paper');
 
+				 
+				 
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract', 'OverdraftAgainstAssignmentOfContractController@index')->name('view.overdraft.against.assignment.of.contract');
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/create', 'OverdraftAgainstAssignmentOfContractController@create')->name('create.overdraft.against.assignment.of.contract');
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/create', 'OverdraftAgainstAssignmentOfContractController@store')->name('store.overdraft.against.assignment.of.contract');
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/edit/{odAgainstAssignmentOfContract}', 'OverdraftAgainstAssignmentOfContractController@edit')->name('edit.overdraft.against.assignment.of.contract');
+				 Route::put('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/update/{odAgainstAssignmentOfContract}', 'OverdraftAgainstAssignmentOfContractController@update')->name('update.overdraft.against.assignment.of.contract');
+				 Route::delete('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/delete/{odAgainstAssignmentOfContract}', 'OverdraftAgainstAssignmentOfContractController@destroy')->name('delete.overdraft.against.assignment.of.contract');
+				 
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/lending-information/{odAgainstAssignmentOfContract}', 'OverdraftAgainstAssignmentOfContractController@applyLendingInformation')->name('lending.information.apply.for.against.assignment.of.contract');
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/edit-lending-information/{lendingInformation}', 'OverdraftAgainstAssignmentOfContractController@editLendingInformation')->name('lending.information.edit.for.against.assignment.of.contract');
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/delete-lending-information/{lendingInformation}', 'OverdraftAgainstAssignmentOfContractController@deleteLendingInformation')->name('lending.information.delete.for.against.assignment.of.contract');
+				 
 					/**
 					 * * start certificates of deposit
 					 */
@@ -614,6 +627,7 @@ Route::middleware([])->group(function () {
                 Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
                 Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
                 Route::get('send-cheques-to-under-collection-safe/{moneyReceived}', 'MoneyReceivedController@sendToUnderCollection')->name('cheque.send.to.under.collection');
+                Route::get('down-payments/get-contracts-for-customer-with-start-and-end-date', 'MoneyReceivedController@getContractsForCustomerWithStartAndEndDate')->name('get.contracts.for.customer.with.start.and.end.date'); // ajax request
                 Route::get('down-payments/get-contracts-for-customer', 'MoneyReceivedController@getContractsForCustomer')->name('get.contracts.for.customer'); // ajax request
                 Route::get('down-payments/get-contracts-for-supplier', 'MoneyPaymentController@getContractsForCustomer')->name('get.contracts.for.supplier'); // ajax request
                 Route::get('down-payments/get-sales-orders-for-contract/{contract_id}/{currency?}', 'MoneyReceivedController@getSalesOrdersForContract'); // ajax request

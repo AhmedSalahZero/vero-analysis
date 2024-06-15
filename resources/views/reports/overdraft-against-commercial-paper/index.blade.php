@@ -39,7 +39,7 @@
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link {{ !Request('active') || Request('active') == 'overdraft-against-commercial-paper' ?'active':'' }}" data-toggle="tab" href="#overdraft-against-commercial-paper" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Over Draft Against Commercial Paper Table') }}
+                        <i class="fa fa-money-check-alt"></i> {{ __('Overdraft Against Commercial Paper Table') }}
                     </a>
                 </li>
                 
