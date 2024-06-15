@@ -70,6 +70,10 @@ class AccountType extends Model
 	{
 		return $this->slug === self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER ;
 	}
+	public function isOverdraftAgainstAssignmentOfContractAccount():bool
+	{
+		return $this->slug === self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS ;
+	}
 	public function isCurrentAccount():bool
 	{
 		return $this->slug === self::CURRENT_ACCOUNT ;

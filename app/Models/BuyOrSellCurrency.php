@@ -187,6 +187,10 @@ class BuyOrSellCurrency extends Model
     {
         return $this->hasMany(OverdraftAgainstCommercialPaperBankStatement::class, 'buy_or_sell_currency_id', 'id');
     }
+	public function overdraftAgainstAssignmentOfContractBankStatements()
+    {
+        return $this->hasMany(OverdraftAgainstAssignmentOfContractBankStatement::class, 'buy_or_sell_currency_id', 'id');
+    }
 	public function cashInSafeStatements():HasMany
 	{
 		return $this->hasMany(CashInSafeStatement::class,'buy_or_sell_currency_id','id');
@@ -201,6 +205,9 @@ class BuyOrSellCurrency extends Model
 		});
 		$this->overdraftAgainstCommercialPaperBankStatements->each(function (OverdraftAgainstCommercialPaperBankStatement $overdraftAgainstCommercialPaperBankStatement) {
 			$overdraftAgainstCommercialPaperBankStatement->delete();
+		});
+		$this->overdraftAgainstAssignmentOfContractBankStatements->each(function (OverdraftAgainstAssignmentOfContractBankStatement $odAgainstAssignmentOfContractBankStatement) {
+			$odAgainstAssignmentOfContractBankStatement->delete();
 		});
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
 			$currentAccountBankStatement->delete();
@@ -279,6 +286,24 @@ class BuyOrSellCurrency extends Model
 				'company_id'=>$companyId ,
 				'date' => $transactionDate , 
 				'limit' =>$fromOverdraftAgainstCommercialPaper->getLimit(),
+				'credit'=>$creditAmount,
+				'debit'=>$debitAmount
+			]);
+		}
+		
+		if($fromAccountType && $fromAccountType->isOverdraftAgainstAssignmentOfContractAccount()){
+			/**
+			 * @var OverdraftAgainstAssignmentOfContract $fromOverdraftAgainstAssignmentOfContract
+			 */
+
+			 $fromOverdraftAgainstAssignmentOfContract = OverdraftAgainstAssignmentOfContract::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			OverdraftAgainstAssignmentOfContractBankStatement::create([
+				'type'=>OverdraftAgainstAssignmentOfContractBankStatement::MONEY_TRANSFER ,
+				'overdraft_against_assignment_of_contract_id'=>$fromOverdraftAgainstAssignmentOfContract->id ,
+				'buy_or_sell_currency_id'=>$this->id ,
+				'company_id'=>$companyId ,
+				'date' => $transactionDate , 
+				'limit' =>$fromOverdraftAgainstAssignmentOfContract->getLimit(),
 				'credit'=>$creditAmount,
 				'debit'=>$debitAmount
 			]);

@@ -302,7 +302,16 @@ class MoneyReceivedController
 		]);
 	}
 	public function getContractsForCustomer(Company $company , Request $request ){
+
 		$contracts = Contract::where('partner_id',$request->get('customerId'))->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
+		return response()->json([
+			'status'=>true ,
+			'contracts'=>$contracts
+		]);
+	}
+	public function getContractsForCustomerWithStartAndEndDate(Company $company , Request $request ){
+
+		$contracts = Contract::where('partner_id',$request->get('customerId'))->where('currency',$request->get('currency'))->get();
 		return response()->json([
 			'status'=>true ,
 			'contracts'=>$contracts

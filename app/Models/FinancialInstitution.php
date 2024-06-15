@@ -141,6 +141,10 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'financial_institution_id','id');
 	}
+	public function overdraftAgainstAssignmentOfContracts()
+	{
+		return $this->hasMany(OverdraftAgainstAssignmentOfContract::class , 'financial_institution_id','id');
+	}
 	/**
 	 * * use getCurrentAvailableLetterOfGuaranteeFacility instead
 	 */

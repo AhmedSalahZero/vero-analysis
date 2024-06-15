@@ -5,6 +5,7 @@ use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstCommercialPaper;
 
 trait HasCreditStatements
@@ -28,6 +29,10 @@ trait HasCreditStatements
 		elseif($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_COMMERCIAL_PAPER){
 			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,$companyId,$bankId);
 			$this->storeOverdraftAgainstCommercialPaperCreditBankStatement($moneyType,$overdraftAgainstCommercialPaper,$statementDate,$paidAmount);
+		}
+		elseif($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS){
+			$odAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,$companyId,$bankId);
+			$this->storeOverdraftAgainstAssignmentOfContractCreditBankStatement($moneyType,$odAgainstAssignmentOfContract,$statementDate,$paidAmount);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$companyId,$bankId);
@@ -104,4 +109,20 @@ trait HasCreditStatements
 		]) ;
 
 	}
+	
+	public function storeOverdraftAgainstAssignmentOfContractCreditBankStatement(string $moneyType , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract , string $date , $paidAmount )
+	{
+		return  $this->overdraftAgainstAssignmentOfContractCreditBankStatement()->create([
+			'type'=>$moneyType ,
+			'overdraft_against_assignment_of_contract_id'=>$odAgainstAssignmentOfContract->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$odAgainstAssignmentOfContract->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>0,
+			'credit'=>$paidAmount
+		]) ;
+
+	}
+	
 }

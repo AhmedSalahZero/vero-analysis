@@ -6,15 +6,17 @@
         width: 5% !important;
         min-width: 5% !important;
         max-width: 5% !important;
-		
+
     }
-	.z-index-6{
-		position:relative;
-		z-index:1;	
-	}
-.mt--30{
-	margin-top:-30px;
-}
+
+    .z-index-6 {
+        position: relative;
+        z-index: 1;
+    }
+
+    .mt--30 {
+        margin-top: -30px;
+    }
 
 
 
@@ -273,15 +275,15 @@
 
 
                 <div class="table-custom-container position-relative  ">
-				{{-- {{ dd(get_defined_vars()) }} --}}
-					@if(!$isCurrentAccount)
+                    {{-- {{ dd(get_defined_vars()) }} --}}
+                    @if(!$isCurrentAccount)
                     <div class="d-flex z-index-6" style="justify-content:right">
-					<a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id ]) }}" class="btn active-style btn-icon-sm align-self-center">
-                        <i class="fas fa-book"></i>
-                        {{ __('Withdrawals Settlement Report') }}
-                    </a>
-					</div>
-					@endif
+                        <a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id ]) }}" class="btn active-style btn-icon-sm align-self-center">
+                            <i class="fas fa-book"></i>
+                            {{ __('Withdrawals Settlement Report') }}
+                        </a>
+                    </div>
+                    @endif
 
                     <div>
 
@@ -304,11 +306,11 @@
                                             {{ __('Limit') }}
                                         </th>
                                         @endif
-													@if($isAgainstCommercialPaper)
-													<th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        @if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract)
+                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Actual Limit') }}
                                         </th>
-													@endif 
+                                        @endif
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Beginning Balance') }}
                                         </th>
@@ -329,11 +331,11 @@
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Room') }}
                                         </th>
-										<th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
-										{!! __('Calculated <br> Interest') !!}
+                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                            {!! __('Calculated <br> Interest') !!}
                                         </th>
-										
-										
+
+
                                         @endif
 
                                         <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
@@ -362,9 +364,9 @@
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y') }}</td>
                                         @if(! $isCurrentAccount)
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->limit) }}</td>
-										@if($isAgainstCommercialPaper)
+                                        @if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract)
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->statement_limit) }}</td>
-										@endif 
+                                        @endif
                                         @endif
                                         <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($modelAsStdClass->beginning_balance) }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>

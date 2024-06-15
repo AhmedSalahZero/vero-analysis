@@ -52,7 +52,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Overdraft Against Commercial Paper Form') }}
+{{ __('Overdraft Against Assignment Of Contract Form') }}
 @endsection
 @section('content')
 <div class="row">
@@ -67,7 +67,8 @@
     </div>
 </div>
 </div> --}}
-<form method="post" action="{{ isset($model) ?  route('update.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'overdraftAgainstCommercialPaper'=>$model->id]) :route('store.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="kt-form kt-form--label-right">
+
+<form method="post" action="{{ isset($model) ?  route('update.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'odAgainstAssignmentOfContract'=>$model->id]) :route('store.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-received-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
     {{-- <input type="hidden" name="financial_institutions_id" value="{{ $financialInstitution->id }}"> --}}
@@ -83,7 +84,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Overdraft Against Commercial Paper')}}
+                            {{ __((isset($model) ? 'Edit' : 'Add') . ' Overdraft Against Assignment Of Contract')}}
                         </h3>
                     </div>
                 </div>
@@ -188,7 +189,7 @@
                             </div>
 
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Max Lending Limit Per Customer')" :type="'text'" :placeholder="__('Max Lending Limit Per Customer')" :name="'max_lending_limit_per_customer'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                <x-form.input :model="$model??null" :label="__('Max Lending Limit Per Contract')" :type="'text'" :placeholder="__('Max Lending Limit Per Contract')" :name="'max_lending_limit_per_contract'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                             </div>
 
 
@@ -206,7 +207,7 @@
 
 
 
-                        <div class="form-group row" style="flex:1;">
+                        {{-- <div class="form-group row" style="flex:1;">
 
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
@@ -230,6 +231,7 @@
                                                 @foreach($model->lendingInformation as $info)
                                                 @include('reports.overdraft-against-commercial-paper.repeater' , [
                                                 'infos'=>$info,
+
                                                 ])
                                                 @endforeach
                                                 @else
@@ -267,7 +269,7 @@
 
                             </div>
 
-                        </div>
+                        </div> --}}
 
 
 
@@ -301,13 +303,13 @@
                                 @foreach($model->lendingInformation as $info)
                                 @include('reports.overdraft-against-commercial-paper.repeater' , [
                                 'infos'=>$info,
-                                'customers'=>$customers
+                                'contracts'=>$contracts
 
                                 ])
                                 @endforeach
                                 @else
                                 @include('reports.overdraft-against-commercial-paper.repeater' , [
-                                'customers'=>$customers
+                                'contracts'=>$contracts
                                 ])
                                 @endif
 

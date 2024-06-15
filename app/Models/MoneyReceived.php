@@ -425,6 +425,10 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(OverdraftAgainstCommercialPaperBankStatement::class,'money_received_id','id');
 	}
+	public function overdraftAgainstAssignmentOfContractDebitBankStatement()
+	{
+		return $this->hasOne(OverdraftAgainstAssignmentOfContractBankStatement::class,'money_received_id','id');
+	}
 	public function cashInSafeDebitStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
@@ -493,6 +497,9 @@ class MoneyReceived extends Model
 		}
 		if($this->overdraftAgainstCommercialPaperDebitBankStatement){
 			return $this->overdraftAgainstCommercialPaperDebitBankStatement;
+		}	
+		if($this->overdraftAgainstAssignmentOfContractDebitBankStatement){
+			return $this->overdraftAgainstAssignmentOfContractDebitBankStatement;
 		}	
 		if($this->cashInSafeDebitStatement){
 			return $this->cashInSafeDebitStatement;

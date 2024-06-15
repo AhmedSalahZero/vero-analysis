@@ -29,7 +29,7 @@
         <a class="dropdown-item" href="{{ route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Fully Secured Overdraft')}}</a>
         <a class="dropdown-item" href="{{ route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Clean Overdraft')}}</a>
         <a class="dropdown-item" href="{{ route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Overdraft Aganist Commercial Papers')}}</a>
-        <a class="dropdown-item" href="#">{{__('Overdraft Aganist Contracts Assignment')}}</a>
+        <a class="dropdown-item" href="{{ route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Overdraft Aganist Contracts Assignment')}}</a>
         <a class="dropdown-item" href="#">{{__('Discounting Cheques')}}</a>
         <a class="dropdown-item" href="{{ route('view.letter.of.guarantee.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Guarantee')}}</a>
         <a class="dropdown-item" href="{{ route('view.letter.of.credit.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Credit')}}</a>

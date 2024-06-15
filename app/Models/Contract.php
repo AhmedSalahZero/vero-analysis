@@ -7,6 +7,7 @@ use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Contract extends Model
 {
@@ -127,6 +128,9 @@ class Contract extends Model
 	{
 		return $this->exchange_rate ?: 1 ;
 	}
-	
+	public static function getForParentAndCurrency(int $partnerId , string $currencyName):Collection
+	{
+		return self::where('partner_id',$partnerId)->where('currency',$currencyName)->get();
+	}	
 	
 }

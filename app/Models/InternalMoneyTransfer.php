@@ -159,7 +159,11 @@ class InternalMoneyTransfer extends Model
     }
 	public function overdraftAgainstCommercialPaperBankStatements()
     {
-	return $this->hasMany(OverdraftAgainstCommercialPaperBankStatement::class, 'internal_money_transfer_id', 'id');
+		return $this->hasMany(OverdraftAgainstCommercialPaperBankStatement::class, 'internal_money_transfer_id', 'id');
+    }
+	public function overdraftAgainstAssignmentOfContractBankStatements()
+    {
+		return $this->hasMany(OverdraftAgainstAssignmentOfContractBankStatement::class, 'internal_money_transfer_id', 'id');
     }
 	public function cashInSafeStatements():HasMany
 	{
@@ -175,6 +179,9 @@ class InternalMoneyTransfer extends Model
 		});
 		$this->overdraftAgainstCommercialPaperBankStatements->each(function (OverdraftAgainstCommercialPaperBankStatement $overdraftAgainstCommercialPaperBankStatement) {
 			$overdraftAgainstCommercialPaperBankStatement->delete();
+		});
+		$this->overdraftAgainstAssignmentOfContractBankStatements->each(function (OverdraftAgainstAssignmentOfContractBankStatement $odAgainstAssignmentOfContractBankStatement) {
+			$odAgainstAssignmentOfContractBankStatement->delete();
 		});
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
 			$currentAccountBankStatement->delete();
@@ -257,6 +264,25 @@ class InternalMoneyTransfer extends Model
 				'debit'=>$debitAmount
 			]);
 		}
+		
+		if($fromAccountType && $fromAccountType->isOverdraftAgainstAssignmentOfContractAccount()){
+			/**
+			 * @var OverdraftAgainstAssignmentOfContract $fromOverdraftAgainstAssignmentOfContract
+			 */
+
+			 $fromOverdraftAgainstAssignmentOfContract = OverdraftAgainstAssignmentOfContract::findByAccountNumber($fromAccountNumber,$companyId,$fromFinancialInstitutionId);
+			OverdraftAgainstAssignmentOfContractBankStatement::create([
+				'type'=>OverdraftAgainstAssignmentOfContractBankStatement::MONEY_TRANSFER ,
+				'overdraft_against_assignment_of_contract_id'=>$fromOverdraftAgainstAssignmentOfContract->id ,
+				'internal_money_transfer_id'=>$this->id ,
+				'company_id'=>$companyId ,
+				'date' => $transferDate , 
+				'limit' =>$fromOverdraftAgainstAssignmentOfContract->getLimit(),
+				'credit'=>$creditAmount,
+				'debit'=>$debitAmount
+			]);
+		}
+		
 		
 		
 	}

@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -51,7 +52,12 @@ class BankStatementController
 			$results = DB::table('current_account_bank_statements')
 			->where('date', '>=', $startDate)
 			->where('date', '<=', $endDate)
-			->where('is_active',1)
+			/**
+			 * * is_active =1 
+			 * * علشان الكوميشن ما تجيش في حاله ال
+			 * * lg issuance
+			 */
+			->where('is_active',1) 
 			->where('current_account_bank_statements.financial_institution_account_id',$financialInstitutionAccount->id)
 			->where('current_account_bank_statements.company_id',$company->id)
 			->join('financial_institution_accounts','financial_institution_account_id','=','financial_institution_accounts.id')
@@ -72,7 +78,7 @@ class BankStatementController
 				 ->where('clean_overdraft_id',$cleanOverdraft->id)
 				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
 				 ->where('clean_overdrafts.currency','=',$currencyName)
-				 ->orderByRaw('full_date desc , priority asc ')
+				 ->orderByRaw('full_date desc')
 				 ->get();
 		}
 		elseif($accountType->isFullySecuredOverdraftAccount()){
@@ -84,7 +90,7 @@ class BankStatementController
 				 ->where('fully_secured_overdraft_id',$fullySecuredOverdraft->id)
 				 ->join('fully_secured_overdrafts','fully_secured_overdraft_bank_statements.fully_secured_overdraft_id','=','fully_secured_overdrafts.id')
 				 ->where('fully_secured_overdrafts.currency','=',$currencyName)
-				 ->orderByRaw('full_date desc , priority asc ')
+				 ->orderByRaw('full_date desc')
 				 ->get();
 		}
 		elseif($accountType->isOverdraftAgainstCommercialPaperAccount()){
@@ -96,8 +102,21 @@ class BankStatementController
 				 ->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaper->id)
 				 ->join('overdraft_against_commercial_papers','overdraft_against_commercial_paper_bank_statements.overdraft_against_commercial_paper_id','=','overdraft_against_commercial_papers.id')
 				 ->where('overdraft_against_commercial_papers.currency','=',$currencyName)
-				 ->orderByRaw('full_date desc , priority asc ')
+				 ->orderByRaw('full_date desc')
 				 ->selectRaw('* , overdraft_against_commercial_paper_bank_statements.limit as statement_limit')
+				 ->get();
+		}
+		elseif($accountType->isOverdraftAgainstAssignmentOfContractAccount()){
+			$overdraftAgainstAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+			$results = DB::table('overdraft_against_assignment_of_contract_bank_statements')
+				 ->where('overdraft_against_assignment_of_contract_bank_statements.company_id',$company->id)
+				 ->where('date', '>=', $startDate)
+				 ->where('date', '<=', $endDate)
+				 ->where('overdraft_against_assignment_of_contract_id',$overdraftAgainstAgainstAssignmentOfContract->id)
+				 ->join('overdraft_against_assignment_of_contracts','overdraft_against_assignment_of_contract_bank_statements.overdraft_against_assignment_of_contract_id','=','overdraft_against_assignment_of_contracts.id')
+				 ->where('overdraft_against_assignment_of_contracts.currency','=',$currencyName)
+				 ->orderByRaw('full_date desc')
+				 ->selectRaw('* , overdraft_against_assignment_of_contract_bank_statements.limit as statement_limit')
 				 ->get();
 		}
 
@@ -112,7 +131,8 @@ class BankStatementController
 			'financialInstitutionName'=>$financialInstitutionName,
 			'accountTypeName'=>$accountTypeName,
 			'accountNumber'=>$accountNumber,
-			'isAgainstCommercialPaper'=>$accountType->isOverdraftAgainstCommercialPaperAccount()
+			'isAgainstCommercialPaper'=>$accountType->isOverdraftAgainstCommercialPaperAccount(),
+			'isAgainstAssignmentOfContract'=>$accountType->isOverdraftAgainstAssignmentOfContractAccount()
         ]);
     }
 }

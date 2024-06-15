@@ -5,6 +5,7 @@ use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstCommercialPaper;
 
 trait HasDebitStatements 
@@ -28,6 +29,10 @@ trait HasDebitStatements
 		if($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_COMMERCIAL_PAPER){
 			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
 			$this->storeOverdraftAgainstCommercialPaperDebitBankStatement($moneyType,$overdraftAgainstCommercialPaper,$date,$debit);
+		}
+		if($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS){
+			$odAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
+			$this->storeOverdraftAgainstAssignmentOfContractDebitBankStatement($moneyType,$odAgainstAssignmentOfContract,$date,$debit);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
@@ -78,6 +83,22 @@ trait HasDebitStatements
 			'credit'=>0
 		]) ;
 	}
+	
+	public function storeOverdraftAgainstAssignmentOfContractDebitBankStatement(string $moneyType , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract , string $date , $debit )
+	{
+
+		return $this->overdraftAgainstAssignmentOfContractDebitBankStatement()->create([
+			'type'=>$moneyType ,
+			'overdraft_against_assignment_of_contract_id'=>$odAgainstAssignmentOfContract->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$odAgainstAssignmentOfContract->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>$debit,
+			'credit'=>0
+		]) ;
+	}
+	
 	public function storeCashInSafeDebitStatement(string $date , $debit , string $currencyName,int $branchId,$exchangeRate)
 	{
 		return $this->cashInSafeDebitStatement()->create([
