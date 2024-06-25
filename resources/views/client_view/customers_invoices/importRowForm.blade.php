@@ -31,7 +31,7 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label>{{__('Customer Name')}} <span class="required">*</span></label>
+                                <label>{{__('Customer Name')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="customer_name" value="{{$customerInvoiceTest->customer_name}}" class="form-control" placeholder="{{__('Customer Name')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -59,14 +59,14 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-3">
-                                <label>{{__('Invoice Number')}} <span class="required">*</span></label>
+                                <label>{{__('Invoice Number')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="invoice_number" value="{{$customerInvoiceTest->invoice_number}}" class="form-control" placeholder="{{__('Invoice Number')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Invoice Date')}} <span class="required">*</span></label>
+                                <label>{{__('Invoice Date')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <input type="date" name="invoice_date" value="{{$customerInvoiceTest->invoice_date}}" class="form-control"  placeholder="Select date" />
@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Due Within')}} <span class="required">*</span></label>
+                                <label>{{__('Due Within')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="due_within" value="{{$customerInvoiceTest->due_within}}"  class="form-control" placeholder="{{__('Due Within')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -166,14 +166,14 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label>{{__('Invoice Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Invoice Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="invoice_amount" value="{{$customerInvoiceTest->invoice_amount}}" id="invoice_amount" class="form-control" placeholder="{{__('Invoice Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                                <label>{{__('Select Currency')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select name="currency"  class="form-control">
@@ -212,7 +212,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Deduction Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Deduction Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="deduction_amount_one" value="{{$customerInvoiceTest->deduction_amount_one}}"  class="form-control deduction_amounts" placeholder="{{__('Deduction Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -226,7 +226,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Deduction Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Deduction Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="deduction_amount_two" value="{{$customerInvoiceTest->deduction_amount_two}}"  class="form-control deduction_amounts" placeholder="{{__('Deduction Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -242,7 +242,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Deduction Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Deduction Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="deduction_amount_three" value="{{$customerInvoiceTest->deduction_amount_three}}"  class="form-control deduction_amounts" placeholder="{{__('Deduction Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -256,7 +256,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Deduction Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Deduction Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="deduction_amount_four" value="{{$customerInvoiceTest->deduction_amount_four}}"  class="form-control deduction_amounts" placeholder="{{__('Deduction Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -272,7 +272,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Deduction Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Deduction Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="deduction_amount_five" value="{{$customerInvoiceTest->deduction_amount_five}}"  class="form-control deduction_amounts" placeholder="{{__('Deduction Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -286,7 +286,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{__('Deduction Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Deduction Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="deduction_amount_six" value="{{$customerInvoiceTest->deduction_amount_six}}"  class="form-control deduction_amounts" placeholder="{{__('Deduction Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -323,14 +323,14 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label>{{__('Invoices Due Notification Days')}} <span class="required">*</span></label>
+                                <label>{{__('Invoices Due Notification Days')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="invoices_due_notification_days" value="{{$customerInvoiceTest->invoices_due_notification_days}}" class="form-control" placeholder="{{__('Invoices Due Notification Days')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>{{__('Past Due Invoices Notification Days')}} <span class="required">*</span></label>
+                                <label>{{__('Past Due Invoices Notification Days')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="past_due_invoices_notification_days" value="{{$customerInvoiceTest->past_due_invoices_notification_days}}" class="form-control" placeholder="{{__('Past Due Invoices Notification Days')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>

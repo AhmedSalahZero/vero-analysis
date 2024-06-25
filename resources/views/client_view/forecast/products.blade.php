@@ -41,7 +41,7 @@
                 @for ($number = 1; $number <= $sales_forecast->number_of_products; $number++)
                     <div class="row">
                         <div class="col-md-6" >
-                            <label> <b> {{ __('Product Name') . ' ' .$number }} </b><span class="required">*</span></label>
+                            <label> <b> {{ __('Product Name') . ' ' .$number }} </b>@include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group">
                                     <input type="text" step="any" class="form-control" placeholder="{{__("Insert Name")}}" name="product_name[]" value="{{@$products[$number-1]['name']}}">
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label><b>{{ __('Category') }} </b><span class="required">*</span></label>
+                            <label><b>{{ __('Category') }} </b>@include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="category[]" class="form-control" >

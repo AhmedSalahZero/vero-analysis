@@ -97,7 +97,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
 
-                                                    <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
+                                                    <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} @include('star')</label>
 
                                                     <select class="form-control kt-select2" id="kt_select2_9" name="others_target[]" multiple="multiple">
                                                         @foreach ($selector_products as $product)

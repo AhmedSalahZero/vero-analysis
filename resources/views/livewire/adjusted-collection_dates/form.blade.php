@@ -36,7 +36,7 @@
                         <div class="kt-portlet__body">
                             <div class="form-group row">
                                 <div class="col-md-12">
-                                    <label>{{ __('Adjusted Collection Date') }} <span class="required">*</span></label>
+                                    <label>{{ __('Adjusted Collection Date') }} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <input type="date" wire:model="date" name="date" class="form-control" />

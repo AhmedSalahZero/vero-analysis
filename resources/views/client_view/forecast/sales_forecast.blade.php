@@ -299,7 +299,7 @@
                         <!--begin: Datatable -->
                         <div class="row">
                             <div class="col-md-6">
-                                <label>{{ __('Target Base') }} <span class="required">*</span></label>
+                                <label>{{ __('Target Base') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date validated">
                                         <select name="target_base" class="form-control" id="target_base">
@@ -387,7 +387,7 @@
                             <div class="col-md-3"
                                 style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years'? 'block': 'none' }}"
                                 id="growth_rate_field">
-                                <label>{{ __('Growth Rate %') }} <span class="required">*</span></label>
+                                <label>{{ __('Growth Rate %') }} @include('star')</label>
                                 <div class="kt-input-icon validated">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control" name="growth_rate"
@@ -401,7 +401,7 @@
                             <div class="col-md-{{ @$sales_forecast_data['new_start'] == 'annual_target' && @$sales_forecast_data['target_base'] == 'new_start'? '6': '3' }}"
                                 style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years' ||@$sales_forecast_data['new_start'] == 'annual_target'? 'block': 'none' }}"
                                 id="sales_target_field">
-                                <label>{{ __('Annual Sales Target') }} <span class="required">*</span></label>
+                                <label>{{ __('Annual Sales Target') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group validated">
                                         <input type="number" step="any" class="form-control" name="sales_target"
@@ -443,7 +443,7 @@
                             <div class="col-md-6"
                                 style="display:{{ @$sales_forecast_data['add_new_products'] == 1 ? 'block' : 'none' }}"
                                 id="number_of_products_field" data-old-value="{{ @$sales_forecast_data['number_of_products'] ?: 0  }}">
-                                <label>{{ __('How Many Products') }} <span class="required">*</span></label>
+                                <label>{{ __('How Many Products') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group validated">
                                         <input type="number" step="any" class="form-control" name="number_of_products"
@@ -464,7 +464,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group  form-group-marginless">
-                                    <label>{{ __('Seasonality') }} <span class="required">*</span></label>
+                                    <label>{{ __('Seasonality') }} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date validated">
 

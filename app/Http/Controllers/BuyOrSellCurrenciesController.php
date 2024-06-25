@@ -202,7 +202,7 @@ class BuyOrSellCurrenciesController
 			$buyOrSellCurrency->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyToBuyName , $transferDate,$transferFromAmount,$transferToAmount);
 		}
 		elseif($type === BuyOrSellCurrency::SAFE_TO_BANK ){
-			$buyOrSellCurrency->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyToBuyName , $transferDate,$transferFromAmount,$transferToAmount);
+			$buyOrSellCurrency->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyToSellName , $transferDate,$transferFromAmount,$transferToAmount);
 		}
 		elseif($type === BuyOrSellCurrency::SAFE_TO_SAFE ){
 		

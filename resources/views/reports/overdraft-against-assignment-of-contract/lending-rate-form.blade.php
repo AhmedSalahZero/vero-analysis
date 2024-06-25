@@ -1,5 +1,5 @@
 <div class="col-lg-3" data-dd="{{ isset($lendingInformationAgainstAssignmentOfContract) ? 1 : -1 }}">
-    <label>{{__('Select Customer')}} <span class="required">*</span></label>
+    <label>{{__('Select Customer')}} @include('star')</label>
     <div class="input-group">
         <select data-live-search="true" name="customer_id" class="form-control kt-bootstrap-select select2-select select2 ajax-get-contracts-for-customer-{{ isset($lendingInformationAgainstAssignmentOfContract) ? 'edit' : 'create' }}">
             @foreach($customers as $customerId => $customerName )
@@ -10,7 +10,7 @@
 </div>
 
 <div class="col-lg-3">
-    <label>{{__('Select Contract')}} <span class="required">*</span></label>
+    <label>{{__('Select Contract')}} @include('star')</label>
     <div class="input-group">
         <select name="contract_id" class="form-control append-contracts-{{ isset($lendingInformationAgainstAssignmentOfContract) ? 'edit' : 'create' }}">
             {{-- <option selected>{{__('Select')}}</option> --}}

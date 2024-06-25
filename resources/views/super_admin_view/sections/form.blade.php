@@ -28,7 +28,7 @@
                         <div class="form-group row section">
                             @foreach ($langs as $lang_row)
                                 <div class="col-lg-6">
-                                    <label>{{__('Section Name ') . $lang_row->name}} <span class="required">*</span></label>
+                                    <label>{{__('Section Name ') . $lang_row->name}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="name[{{$lang_row->code}}]" value="{{@$section_row['name'][$lang_row->code]}}" class="form-control" placeholder="{{__('Section Name ') . $lang_row->name}}" required>
                                         <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -50,14 +50,14 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>{{__('Route')}} <span class="required">*</span></label>
+                                <label>{{__('Route')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="route" value="{{@$section_row['route']}}"  class="form-control" placeholder="{{__('Route')}}" >
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <label>{{__('Sub Of')}} <span class="required">*</span>    </label>
+                                <label>{{__('Sub Of')}} @include('star')    </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select name="sub_of" class="form-control kt-select2" id="kt_select2_5"  required>
@@ -77,14 +77,14 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <label>{{__('Icon')}} <span class="required">*</span></label>
+                                <label>{{__('Icon')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="icon" value="{{@$section_row['icon']}}" class="form-control" placeholder="{{__('Icon')}}" required>
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <label>{{__('Order')}} <span class="required">*</span></label>
+                                <label>{{__('Order')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="number" name="order" value="{{@$section_row['order']}}" class="form-control" placeholder="{{__('Order')}}" required>
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>

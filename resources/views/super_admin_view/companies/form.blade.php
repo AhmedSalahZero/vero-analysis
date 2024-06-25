@@ -39,7 +39,7 @@
                         <div class="form-group row col-12">
                             @foreach ($langs as $lang_row)
                                 <div class="col-6">
-                                    <label>{{__('Company Name ') . $lang_row->name}} <span class="required">*</span></label>
+                                    <label>{{__('Company Name ') . $lang_row->name}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="name[{{$lang_row->code}}]" value="{{@$row['name'][$lang_row->code]}}" class="form-control" placeholder="{{__('Company Name ') . $lang_row->name}}" required>
                                         <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -67,7 +67,7 @@
 						
 						
 						   <div class="col-6">
-                                    <label>{{__('Main Functional Currency') . $lang_row->name}} <span class="required">*</span></label>
+                                    <label>{{__('Main Functional Currency') . $lang_row->name}} @include('star')</label>
                                     <div class="kt-input-icon">
 										<select name="main_functional_currency" class="form-control">
 											@foreach(getCurrencies() as $currencyName => $currencyNameFormatted)
@@ -80,7 +80,7 @@
                                 </div>
 
                             <div class="col-6">
-                                <label>{{__('Company Image')}} <span class="required">*</span></label>
+                                <label>{{__('Company Image')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="file" class="form-control" name="image" >
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>

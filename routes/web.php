@@ -311,11 +311,6 @@ Route::middleware([])->group(function () {
 				  * * لعرض الاكونتات الخاصة بالعميل في بنك معين او مؤسسة مالية
 				  */
 				 Route::get('financial-institutions/{financialInstitution}/bank-accounts', 'FinancialInstitutionController@viewAllAccounts')->name('view.all.bank.accounts');
-				 // Route::get('financial-institutions/{financialInstitution}/bank-accounts/create','CertificatesOfDepositsController@create')->name('create.certificates.of.deposit');
-				 // Route::post('financial-institutions/{financialInstitution}/bank-accounts/create','CertificatesOfDepositsController@store')->name('store.certificates.of.deposit');
-				 // Route::get('financial-institutions/{financialInstitution}/bank-accounts/edit/{certificatesOfDeposit}','CertificatesOfDepositsController@edit')->name('edit.certificates.of.deposit');
-				 // Route::put('financial-institutions/{financialInstitution}/bank-accounts/update/{certificatesOfDeposit}','CertificatesOfDepositsController@update')->name('update.certificates.of.deposit');
-				 // Route::delete('financial-institutions/{financialInstitution}/bank-accounts/delete/{certificatesOfDeposit}','CertificatesOfDepositsController@destroy')->name('delete.certificates.of.deposit');
 
 				 Route::post('add-new-partner','AddNewCustomerController@addNew')->name('add.new.partner');
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');

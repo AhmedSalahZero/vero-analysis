@@ -217,7 +217,7 @@
 
                                 <?php $sales_forecast['others_products_previous_year'] = isset($sales_forecast['others_products_previous_year']) ? $sales_forecast['others_products_previous_year'] : old('others_products_previous_year'); ?>
 
-                                <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
+                                <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} @include('star')</label>
 
                                 <select class="form-control kt-select2" id="kt_select2_9" name="others_products_previous_year[]" multiple="multiple">
                                     @foreach ($selector_products_previous_year??[] as $product)
@@ -311,7 +311,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <?php $sales_forecast['others_products_previous_3_year'] = isset($sales_forecast['others_products_previous_3_year']) ? $sales_forecast['others_products_previous_3_year'] : old('others_products_previous_3_year'); ?>
-                                <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} <span class="required">*</span></label>
+                                <label>{{ __('Show From Others (Multi-Selector  - Maximum 5 )') }} @include('star')</label>
 
                                 <select class="form-control kt-select2" id="kt_select2_8" name="others_products_previous_3_year[]" multiple="multiple">
                                     @foreach ($selector_products_previous_3_year??[] as $product)
@@ -389,7 +389,7 @@
                     <!--begin: Datatable -->
                     <div class="row">
                         <div class="col-md-6">
-                            <label>{{ __('Target Base') }} <span class="required">*</span></label>
+                            <label>{{ __('Target Base') }} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date validated">
 
@@ -414,7 +414,7 @@
 
 
                         <div class="col-md-2" style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years'? 'block': 'none' }}" id="quantity_growth_rate_field">
-                            <label>{{ __('Quantity Growth Rate %') }} <span class="required">*</span></label>
+                            <label>{{ __('Quantity Growth Rate %') }} @include('star')</label>
                             <div class="kt-input-icon validated">
                                 <div class="input-group">
                                     <input type="number" step="any" class="form-control" name="quantity_growth_rate" value="{{ @$sales_forecast_data['quantity_growth_rate'] }}" id="quantity_growth_rate">
@@ -425,7 +425,7 @@
                             </div>
                         </div>
                         <div class="col-md-2" style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years' ? 'block': 'none' }}" id="prices_increase_rate_field">
-                            <label>{{ __('Prices Increase Rate') }} <span class="required">*</span></label>
+                            <label>{{ __('Prices Increase Rate') }} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group validated">
                                     <input type="number" step="any" class="form-control" name="prices_increase_rate" value="{{ @$sales_forecast_data['prices_increase_rate'] }}" id="prices_increase_rate">
@@ -436,7 +436,7 @@
                             </div>
                         </div>
                         <div class="col-md-2" style="display: {{ @$sales_forecast_data['target_base'] == 'previous_year' || @$sales_forecast_data['target_base'] == 'previous_3_years' ? 'block': 'none' }}" id="other_products_growth_rate_field">
-                            <label>{{ __('Other Products Growth Rate') }} <span class="required">*</span></label>
+                            <label>{{ __('Other Products Growth Rate') }} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group validated">
                                     <input type="number" step="any" class="form-control" name="other_products_growth_rate" value="{{ @$sales_forecast_data['other_products_growth_rate'] }}" id="other_products_growth_rate">
@@ -471,7 +471,7 @@
                             </label>
                         </div>
                         <div class="col-md-6" style="display:{{ @$sales_forecast_data['add_new_products'] == 1 ? 'block' : 'none' }}" id="number_of_products_field" data-old-value="{{ @$sales_forecast_data['number_of_products'] ?: 0  }}">
-                            <label>{{ __('How Many Products') }} <span class="required">*</span></label>
+                            <label>{{ __('How Many Products') }} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group validated">
                                     <input type="number" step="any" class="form-control" name="number_of_products" value="{{ @$sales_forecast_data['number_of_products'] }}" id="number_of_products">
@@ -489,7 +489,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group  form-group-marginless">
-                                <label>{{ __('Seasonality') }} <span class="required">*</span></label>
+                                <label>{{ __('Seasonality') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date validated">
 

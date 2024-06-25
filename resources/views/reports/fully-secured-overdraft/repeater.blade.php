@@ -27,7 +27,7 @@
 
 
                     <div class="col-lg-3">
-                        <label>{{__('Select Customer')}} <span class="required">*</span></label>
+                        <label>{{__('Select Customer')}} @include('star')</label>
                         <div class="input-group">
                             <select @if($isRepeater) name="customer_name" @else name="infos[0][customer_name]" @endif class="form-control repeater-select">
                                 <option selected>{{__('Select')}}</option>

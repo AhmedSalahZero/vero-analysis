@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>{{__('Select Currency')}} <span class="required">*</span>    </label>
+                                <label>{{__('Select Currency')}} @include('star')    </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select name="currency" class="form-control">

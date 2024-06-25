@@ -35,7 +35,7 @@
                     <div class="kt-portlet__body">
                         @for ($number = 1; $number <= $sales_forecast->number_of_products; $number++)
                             <div class="col-md-12" >
-                                <label> <b> {{ __('Category Name') . ' ' .$number }} </b><span class="required">*</span></label>
+                                <label> <b> {{ __('Category Name') . ' ' .$number }} </b>@include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="text" step="any" class="form-control" name="category_name[]" value="{{@$categories[$number-1]['name']}}" placeholder="{{__("Insert Name")}}">

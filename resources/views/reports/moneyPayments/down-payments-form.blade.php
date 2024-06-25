@@ -83,7 +83,7 @@ $selectedBanks = [];
         <div class="kt-portlet__body">
             <div class="form-group row">
                 <div class="col-md-2">
-                    <label>{{__('Select Money Type')}} <span class="required">*</span></label>
+                    <label>{{__('Select Money Type')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select required name="type" id="type" class="form-control">
@@ -185,7 +185,7 @@ $selectedBanks = [];
 
     <div class="col-md-4">
 
-        <label>{{__('Supplier Name')}} <span class="required">*</span></label>
+        <label>{{__('Supplier Name')}} @include('star')</label>
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -203,7 +203,7 @@ $selectedBanks = [];
     </div>
 
     <div class="col-md-1">
-        <label>{{__('Currency')}} <span class="required">*</span></label>
+        <label>{{__('Currency')}} @include('star')</label>
         <div class="kt-input-icon">
             <div class="input-group date">
                 <select name="currency" class="form-control current-currency ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract ajax-get-invoice-numbers">
@@ -270,7 +270,7 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45 ">
-                        <label>{{__('Select Delivery Branch')}} <span class="required">*</span></label>
+                        <label>{{__('Select Delivery Branch')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="delivery_branch_id" class="form-control">
@@ -284,21 +284,21 @@ $selectedBanks = [];
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label>{{__('Received Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Received Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount() :0 }}" name="paid_amount[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::CASH_PAYMENT.'-received-amount' }}" placeholder="{{__('Received Amount')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
                     <div class="col-md-3 width-12">
-                        <label>{{__('Receipt Number')}} <span class="required">*</span></label>
+                        <label>{{__('Receipt Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input type="text" name="receipt_number" value="{{ isset($model) ?  $model->getCashPaymentReceiptNumber()  : '' }}" class="form-control" placeholder="{{__('Receipt Number')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
                     <div class="col-md-3 width-12">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -324,7 +324,7 @@ $selectedBanks = [];
         <div class="form-group">
             <div class="row">
                 <div class="col-md-5 width-45">
-                    <label>{{__('Select Delivery Bank')}} <span class="required">*</span></label>
+                    <label>{{__('Select Delivery Bank')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
 
@@ -338,7 +338,7 @@ $selectedBanks = [];
                     </div>
                 </div>
                 <div class="col-md-2 ">
-                    <label>{{__('Deposit Amount')}} <span class="required">*</span></label>
+                    <label>{{__('Deposit Amount')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::CASH_IN_BANK .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
                     </div>
@@ -347,7 +347,7 @@ $selectedBanks = [];
 
 
                 <div class="col-md-2 width-12">
-                    <label>{{__('Account Type')}} <span class="required">*</span></label>
+                    <label>{{__('Account Type')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select name="account_type[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -361,7 +361,7 @@ $selectedBanks = [];
                 </div>
 
                 <div class="col-md-2 width-12">
-                    <label>{{__('Account Number')}} <span class="required">*</span></label>
+                    <label>{{__('Account Number')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select data-current-selected="{{ isset($model) ? $model->getCashInBankAccountNumber(): 0 }}" name="account_number[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control js-account-number">
@@ -373,7 +373,7 @@ $selectedBanks = [];
 
 
                 <div class="col-md-1">
-                    <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                    <label>{{__('Exchange Rate')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                     </div>
@@ -419,7 +419,7 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Payment Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Payment Bank')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
@@ -434,7 +434,7 @@ $selectedBanks = [];
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Type')}} <span class="required">*</span></label>
+                        <label>{{__('Account Type')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="account_type[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -448,7 +448,7 @@ $selectedBanks = [];
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Number')}} <span class="required">*</span></label>
+                        <label>{{__('Account Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-current-selected="{{ isset($model) ? $model->getOutgoingTransferAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control js-account-number">
@@ -459,7 +459,7 @@ $selectedBanks = [];
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Cheque Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Cheque Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getPaidAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="paid_amount[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::PAYABLE_CHEQUE .'-paid-amount' }}">
                         </div>
@@ -468,7 +468,7 @@ $selectedBanks = [];
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Due Date')}} <span class="required">*</span></label>
+                        <label>{{__('Due Date')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
@@ -483,14 +483,14 @@ $selectedBanks = [];
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Cheque Number')}} <span class="required">*</span></label>
+                        <label>{{__('Cheque Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input type="text" name="cheque_number" value="{{ isset($model) && $model->cheque ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                         </div>
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -499,7 +499,7 @@ $selectedBanks = [];
 
 
                     {{-- <div class="col-md-4">
-                        <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                        <label>{{__('Select Currency')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select name="currency" class="form-control">
@@ -532,7 +532,7 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Payment Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Payment Bank')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
@@ -546,7 +546,7 @@ $selectedBanks = [];
                         </div>
                     </div>
                     <div class="col-md-2 ">
-                        <label>{{__('Outgoing Transfer Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Outgoing Transfer Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
                         </div>
@@ -555,7 +555,7 @@ $selectedBanks = [];
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Type')}} <span class="required">*</span></label>
+                        <label>{{__('Account Type')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="account_type[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -569,7 +569,7 @@ $selectedBanks = [];
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Number')}} <span class="required">*</span></label>
+                        <label>{{__('Account Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-current-selected="{{ isset($model) ? $model->getOutgoingTransferAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control js-account-number">
@@ -581,7 +581,7 @@ $selectedBanks = [];
 
 
                     <div class="col-md-1">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -641,7 +641,7 @@ $selectedBanks = [];
 
 
                             <div class="col-md-2">
-                                <label>{{__('Paid Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Paid Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input name="purchases_orders_amounts[][paid_amounts]" placeholder="{{ __('Paid Amount') }}" type="text" class="form-control js-paid-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
                                 </div>

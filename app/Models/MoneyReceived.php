@@ -22,18 +22,20 @@ class MoneyReceived extends Model
 	const CHEQUE_COLLECTED = 'cheque-collected';
 	public static function generateComment(self $moneyReceived,string $lang)
 	{
+		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
+		
 		$customerName = $moneyReceived->getCustomerName();
 		if($moneyReceived->isCheque()){
-			return __('Cheque From :name With Number #:number ',['name'=>$customerName,'number'=>$moneyReceived->getChequeNumber()],$lang) ;
+			return __('Cheque From :name With Number #:number Settled Invoices [ :numbers ]',['name'=>$customerName,'number'=>$moneyReceived->getChequeNumber(),'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInSafe()){
-			return __('Cash In Safe From :name',['name'=>$customerName],$lang) ;
+			return __('Cash In Safe From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInBank()){
-			return __('Cash In Bank From :name',['name'=>$customerName],$lang) ;
+			return __('Cash In Bank From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isIncomingTransfer()){
-			return __('Incoming Transfer From :name',['name'=>$customerName],$lang) ;
+			return __('Incoming Transfer From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 	}
 	protected static function booted()

@@ -135,7 +135,7 @@
                                         <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>{{__('Add Maturity Amount To Account')}} <span class="required">*</span></label>
+                                        <label>{{__('Add Maturity Amount To Account')}} @include('star')</label>
                                         <div class="input-group">
                                             <select required name="maturity_amount_added_to_account_id" class="form-control repeater-select js-append-current-accounts">
                                                 {{-- <option selected>{{__('Select')}}</option> --}}

@@ -49,7 +49,7 @@
                             <label>{{ __('Select Currency') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="currency" required class="form-control current-currency  kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name">
+                                    <select js-when-change-trigger-change-account-type data-live-search="true" data-actions-box="true" name="currency" required class="form-control current-currency  kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name">
                                         @foreach(getCurrency() as $currency=>$currencyName)
                                         <option @if($currency == $selectedCurrency)  selected @endif value="{{ $currency }}">{{ touppercase($currencyName) }}</option>
                                         @endforeach
@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="col-md-5 width-45">
-                            <label>{{__('Select Bank')}} <span class="required">*</span></label>
+                            <label>{{__('Select Bank')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
 
@@ -75,7 +75,7 @@
 
 
                         <div class="col-md-2 width-12">
-                            <label>{{__('Account Type')}} <span class="required">*</span></label>
+                            <label>{{__('Account Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="account_type" class="form-control js-update-account-number-based-on-account-type">
@@ -89,7 +89,7 @@
                         </div>
 
                         <div class="col-md-2 width-12">
-                            <label>{{__('Account Number')}} <span class="required">*</span></label>
+                            <label>{{__('Account Number')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required data-current-selected="{{ isset($model) ? $model->getCashInBankAccountNumber(): 0 }}" name="account_number" class="form-control js-account-number">

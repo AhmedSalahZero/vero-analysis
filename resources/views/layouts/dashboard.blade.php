@@ -909,7 +909,7 @@ $(document).find('select.select2-select2').each(function(index, value) {
 
     <!--end::Layout Skins -->
     <link rel="shortcut icon" href="{{url('assets/media/logos/logo_va.png')}}" />
-    @toastr_css
+    {{-- @toastr_css --}}
     @yield('css')
     @stack('css')
     <style>
@@ -1221,8 +1221,8 @@ $(document).find('select.select2-select2').each(function(index, value) {
     <!--begin::Page Scripts(used by this page) -->
     {{-- <script src="{{url('assets/js/demo4/pages/dashboard.js')}}" type="text/javascript"></script> --}}
     {{-- @jquery --}}
-    @toastr_js
-    @toastr_render
+    {{-- @toastr_js
+    @toastr_render --}}
     @yield('js')
 
     <script src="{{url('datatable/datatable.js')}}" type="text/javascript"></script>
@@ -1732,7 +1732,43 @@ $(document).find('select.select2-select2').each(function(index, value) {
         }
 
     </script>
+	
+	@if($errors->any())
+	<script>
+	 Swal.fire({
+            title: "{{ __('Error') }}"
+            , text: "{{ $errors->first() }}"
+            , icon: 'error'
+        });
+	</script>
+	
+	@endif 
+	
+	@if(session()->has('fail'))
+	<script>
+	 Swal.fire({
+            title: "{{ __('Error') }}"
+            , text: "{{ session()->get('fail') }}"
+            , icon: 'error'
+        });
+	</script>
+	
+	@endif 
+	
+	@if(session()->has('success'))
+	<script>
+	 Swal.fire({
+            title: "{{ __('Success') }}"
+            , text: "{{ session()->get('success') }}"
+            , icon: 'success'
+        });
+	</script>
+	
+	@endif 
+	
+{{-- <script>
 
+</script> --}}
 </body>
 
 <!-- end::Body -->

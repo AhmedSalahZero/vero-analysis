@@ -120,7 +120,7 @@
                             </div>
 
                           <div class="col-md-2">
-                                <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                                <label>{{__('Select Currency')}} @include('star')</label>
                                 <div class="input-group">
                                     <select name="currency" class="form-control repeater-select">
                                         <option selected>{{__('Select')}}</option>

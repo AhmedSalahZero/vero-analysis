@@ -91,7 +91,7 @@
                             <div class="kt-portlet__body">
                                 <div class="form-group row">
                                     <div class="col-lg-3">
-                                        <label>{{__('Select Financial Institution Type')}} <span class="required">*</span> </label>
+                                        <label>{{__('Select Financial Institution Type')}} @include('star') </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="type" class="form-control select2-select" data-live-search="true" data-actions-box="true" id="type">
@@ -105,7 +105,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-5 bank_class hidden">
-                                        <label>{{__('Select Bank ')}} <span class="required">*</span> </label>
+                                        <label>{{__('Select Bank ')}} @include('star') </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="bank_id" data-live-search="true" data-actions-box="true" class="form-control select2-select ">
@@ -119,7 +119,7 @@
                                     </div>
 
                                     <div class="col-lg-5 financial-institution-name">
-                                        <label>{{__('Financial Institution Name')}} <span class="required">*</span></label>
+                                        <label>{{__('Financial Institution Name')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <input value="{{ isset($model) ? $model->getName() : null  }}" type="text" name="name" class="form-control" placeholder="{{__('Financial Institution Name')}}">
                                         </div>
@@ -127,7 +127,7 @@
 
 
                                     <div class="col-lg-4">
-                                        <label>{{__('Branch Name')}} <span class="required">*</span></label>
+                                        <label>{{__('Branch Name')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <input value="{{ isset($model) ? $model->getBranchName() : null  }}" type="text" name="branch_name" class="form-control" placeholder="{{__('Branch Name')}}">
                                         </div>
@@ -149,7 +149,7 @@
                             <div class="kt-portlet__body">
                                 <div class="form-group row">
                                     <div class="col-lg-4">
-                                        <label>{{__('Company Account Number')}} <span class="required">*</span></label>
+                                        <label>{{__('Company Account Number')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <input type="text" value="{{ isset($model) ? $model->getCompanyAccountNumber() : old('company_account_number') }}" name="company_account_number" class="form-control" placeholder="{{__('Company Account Number')}}">
                                         </div>
@@ -160,7 +160,7 @@
 
 
                                 <div class="col-lg-3">
-                                    <label>{{__('Balance Date')}} <span class="required">*</span></label>
+                                    <label>{{__('Balance Date')}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <input type="text" name="balance_date" value="{{ isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : null }}" class="form-control" readonly placeholder="{{ __('Select Balance Date') }}" id="kt_datepicker_2" />

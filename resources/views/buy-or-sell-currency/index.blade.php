@@ -116,8 +116,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Bank') }}</th>
                                     <th>{{ __('From Account Type') }}</th>
@@ -138,8 +138,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                           
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
                                     <td>{{ $model->getFromBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
@@ -222,8 +222,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Bank') }}</th>
                                     <th>{{ __('From Account Type') }}</th>
@@ -245,8 +245,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                           
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
                                     <td>{{ $model->getFromBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
@@ -325,8 +325,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
 									<th>{{ __('From Branch') }}</th>
                                     <th>{{ __('To Bank') }}</th>
@@ -348,8 +348,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                           
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
 									<td class="text-uppercase">{{ $model->getFromBranchName() }}</td>
                                     <td>{{ $model->getToBankName() }}</td>
@@ -440,8 +440,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
 									<th>{{ __('From Branch') }}</th>
 									<th>{{ __('To Branch') }}</th>
@@ -464,8 +464,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                           
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
 									<td class="text-uppercase">{{ $model->getFromBranchName(true) }}</td>
 									<td class="text-uppercase">{{ $model->getToBranchName() }}</td>

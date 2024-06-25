@@ -202,6 +202,9 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		$result = [];
 		foreach($invoices as $index=>$invoiceArr){
+			if($inEditMode && $invoiceArr['settlement_amount'] == 0 && $invoiceArr['net_balance'] == 0 ){
+				continue ;
+			}
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
@@ -214,6 +217,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
 			$result[$index]['invoice_due_date'] = Carbon::make($invoiceArr['invoice_due_date'])->format('d-m-Y');
 		}
+
 		return $result;
 	}
 	public static function getSettlementsTemplate()
@@ -280,20 +284,20 @@ class SupplierInvoice extends Model implements IInvoice
 			<div class="col-md-2 width-12">
 				<label> '. __('Net Balance') .' </label>
 				<div class="kt-input-icon">
-					<input name="settlements[][net_balance]" type="text" disabled class="form-control js-net-balance">
+					<input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
 				</div>
 			</div>
 
 
 
 			<div class="col-md-2 width-12">
-				<label> '. __('Settlement Amount') .' <span class="required">*</span></label>
+				<label> '. __('Settlement Amount') .' <span class="text-danger ">*</span></label>
 				<div class="kt-input-icon">
 					<input name="settlements[][settlement_amount]" placeholder="'.__('Settlement Amount').'" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
 				</div>
 			</div>
 			<div class="col-md-2 width-12">
-				<label>'. __('Withhold Amount') .' <span class="required">*</span></label>
+				<label>'. __('Withhold Amount') .' <span class="text-danger ">*</span> </label>
 				<div class="kt-input-icon">
 					<input name="settlements[][withhold_amount]" placeholder="'.__('Withhold Amount').'" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
 				</div>

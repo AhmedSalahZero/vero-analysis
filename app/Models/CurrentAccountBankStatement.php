@@ -29,10 +29,10 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	protected static function boot()
     {
         parent::boot();
- 
         static::addGlobalScope('only_active',function(Builder $builder){
 			$builder->where('is_active',1); 
 		});
+
     }
 	
 

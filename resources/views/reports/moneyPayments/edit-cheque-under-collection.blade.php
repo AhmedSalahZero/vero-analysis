@@ -86,7 +86,7 @@ use App\Models\MoneyReceived;
                         </div>
 
                         <div class="col-md-9 mb-3">
-                            <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
+                            <label>{{__('Drawal Bank')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date ">
                                     <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::CASH_IN_BANK  }}]" class="form-control js-drawl-bank">
@@ -104,7 +104,7 @@ use App\Models\MoneyReceived;
                     <div class="row mb-3">
 
                         <div class="col-md-4">
-                            <label>{{__('Account Type')}} <span class="required">*</span></label>
+                            <label>{{__('Account Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-currency="{{ $model->getCurrency() }}" name="account_type[{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -119,7 +119,7 @@ use App\Models\MoneyReceived;
                         </div>
 
                         <div class="col-md-2 width-12">
-                            <label>{{__('Account Number')}} <span class="required">*</span></label>
+                            <label>{{__('Account Number')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-current-selected="{{ $model->getChequeAccountNumber() }}" name="account_number[{{ MoneyReceived::CHEQUE_UNDER_COLLECTION }}]" class="form-control js-account-number">
@@ -130,14 +130,14 @@ use App\Models\MoneyReceived;
                         </div>
 
                         <div class="col-md-3 mb-3">
-                            <label>{{__('Account Balance')}} <span class="required">*</span></label>
+                            <label>{{__('Account Balance')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <input value="{{ $model->cheque->getAccountBalance() }}" required value="0" readonly type="text" name="cheque_account_balance" class="form-control" placeholder="{{__('Account Balance')}}">
                                 <x-tool-tip title="{{__('Kash Vero')}}" />
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label>{{__('Clearance Days')}} <span class="required">*</span></label>
+                            <label>{{__('Clearance Days')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <input value="{{ $model->cheque->getClearanceDays() }}" required name="clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
                                 <x-tool-tip title="{{__('Kash Vero')}}" />
@@ -164,7 +164,7 @@ use App\Models\MoneyReceived;
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                <label>{{__('Select Drawee Bank')}} <span class="required">*</span></label>
+                                <label>{{__('Select Drawee Bank')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select name="drawee_bank_id" class="form-control ">
@@ -178,7 +178,7 @@ use App\Models\MoneyReceived;
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <label>{{__('Cheque Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Cheque Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="cheque_amount" class="form-control only-greater-than-or-equal-zero-allowed js-cheque-received-amount">
                                     <x-tool-tip title="{{__('Please insert the cheque amount')}}" />
@@ -187,7 +187,7 @@ use App\Models\MoneyReceived;
 
 
                             <div class="col-md-2">
-                                <label>{{__('Cheque Due Date')}} <span class="required">*</span></label>
+                                <label>{{__('Cheque Due Date')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <input type="text" value="{{ isset($model) ?$model->cheque->getDueDate():0 }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
@@ -202,7 +202,7 @@ use App\Models\MoneyReceived;
 
 
                             <div class="col-md-2">
-                                <label>{{__('Cheque Number')}} <span class="required">*</span></label>
+                                <label>{{__('Cheque Number')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="cheque_number" value="{{ isset($model) ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}" />
@@ -211,7 +211,7 @@ use App\Models\MoneyReceived;
 
 
                             {{-- <div class="col-md-4">
-                        <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                        <label>{{__('Select Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="currency" class="form-control">

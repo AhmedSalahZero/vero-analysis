@@ -252,7 +252,6 @@ class MoneyPaymentController
 		/**
 		 * * for contracts
 		 */
-
 		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
@@ -262,6 +261,7 @@ class MoneyPaymentController
 			$q->has('contracts');
 		})
 		->pluck('name','id')->toArray();
+	
 		$contracts = [];
 		
         return view($viewName,[
@@ -373,9 +373,9 @@ class MoneyPaymentController
 
 		$relationData = [];
 		$relationName = null ;
-		$paidAmount = 0 ;
 		$exchangeRate = $request->input('exchange_rate.'.$moneyType,1) ;
 		$paidAmount = $request->input('paid_amount.'.$moneyType ,0) ;
+		$paidAmount = unformat_number($paidAmount);
 		if($moneyType == MoneyPayment::CASH_PAYMENT){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['delivery_branch_id'] = $this->generateBranchId($paymentBranchName,$company->id) ;
@@ -416,8 +416,11 @@ class MoneyPaymentController
 		 */
 
 		 $moneyPayment = MoneyPayment::create($data);
+
 		 $relationData['company_id'] = $company->id ;
 		 $moneyPayment->$relationName()->create($relationData);
+		 $moneyPayment = $moneyPayment->refresh();
+		 
 		$statementDate = $moneyPayment->getStatementDate();
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
@@ -444,11 +447,14 @@ class MoneyPaymentController
 		$totalWithholdAmount= 0 ;
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{
-			if(isset($settlementArr['settlement_amount'])&&$settlementArr['settlement_amount'] > 0){
+			$settlementArr['settlement_amount']  = isset($settlementArr['settlement_amount']) ? unformat_number($settlementArr['settlement_amount']) : 0 ;
+			if($settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $company->id ;
 				$settlementArr['supplier_name'] = $supplierName ;
-				$withholdAmount = $settlementArr['withhold_amount']?? 0;
+				$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0;
+				$settlementArr['withhold_amount'] = $withholdAmount ;
 				$totalWithholdAmount +=   $withholdAmount;
+				unset($settlementArr['net_balance']);
 				$moneyPayment->settlements()->create($settlementArr);
 			}
 		}

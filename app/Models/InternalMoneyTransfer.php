@@ -20,26 +20,51 @@ class InternalMoneyTransfer extends Model
 	const SAFE_TO_BANK = 'safe-to-bank';
 	
 	
-	public static function generateComment(self $internalMoneyTransfer,string $lang)
+	public static function generateFromAccountComment(self $internalMoneyTransfer,string $lang)
 	{
-		if($internalMoneyTransfer->isBankToBank()){
-			return __('From Bank :from To Bank :to',['from'=>$internalMoneyTransfer->getFromBankName(),'to'=>$internalMoneyTransfer->getToBankName()],$lang) ;
+		if($internalMoneyTransfer->isBankToBank() ){
+			return __('From :from Account No :no',['from'=>$internalMoneyTransfer->getFromBankName(),'no'=>$internalMoneyTransfer->getFromAccountNumber()],$lang) ;
 		}
 		if($internalMoneyTransfer->isBankToSafe()){
-			return __('From Bank :from To Safe',['from'=>$internalMoneyTransfer->getFromBankName()],$lang) ;
+			return __('From :from Account No :no To Safe',['from'=>$internalMoneyTransfer->getFromBankName(),'no'=>$internalMoneyTransfer->getFromAccountNumber()],$lang) ;
 		}
 		if($internalMoneyTransfer->isSafeToBank()){
-			return __('From Safe To Bank :to',['to'=>$internalMoneyTransfer->getToBankName()],$lang) ;
+			return __('From :branchName Safe',['branchName'=>$internalMoneyTransfer->getFromBranchName()],$lang) ;
 		}
 		
+	}	
+	public static function generateToAccountComment(self $internalMoneyTransfer,string $lang)
+	{
+
+		if($internalMoneyTransfer->isBankToBank()  ){
+			return __('To :to Account No :no',['to'=>$internalMoneyTransfer->getToBankName(),'no'=>$internalMoneyTransfer->getToAccountNumber()],$lang) ;
+		}
+		if($internalMoneyTransfer->isBankToSafe()){
+			return __('To :branchName Safe',['branchName'=>$internalMoneyTransfer->getToBranchName()],$lang) ;
+		}
+		if($internalMoneyTransfer->isSafeToBank()){
+			return __('To :to Account No :no',['to'=>$internalMoneyTransfer->getToBankName(),'no'=>$internalMoneyTransfer->getToAccountNumber()],$lang) ;
+			
+		}
 	}
 	protected static function booted()
 	{
 		self::creating(function (InternalMoneyTransfer $internalMoneyTransfer): void {
-			$internalMoneyTransfer->comment_en = self::generateComment($internalMoneyTransfer,'en');
-			$internalMoneyTransfer->comment_ar = self::generateComment($internalMoneyTransfer,'ar');
+			$internalMoneyTransfer->from_comment_en = self::generateFromAccountComment($internalMoneyTransfer,'en');
+			$internalMoneyTransfer->from_comment_ar = self::generateFromAccountComment($internalMoneyTransfer,'ar');			
+			$internalMoneyTransfer->to_comment_en = self::generateToAccountComment($internalMoneyTransfer,'en');
+			$internalMoneyTransfer->to_comment_ar = self::generateToAccountComment($internalMoneyTransfer,'ar');
 		});
 	}
+	public function isCredit()
+	{
+		return (bool) $this->is_credit ;
+	}
+	public function isDebit()
+	{
+		return (bool) $this->is_debit ;
+	}
+	
 	public static function getAllTypes()
 	{
 		return [

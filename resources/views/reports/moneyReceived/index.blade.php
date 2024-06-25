@@ -403,7 +403,7 @@ use App\Models\MoneyReceived;
                                                                     </div>
 
                                                                     <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Collection Fees')}} <span class="required">*</span></label>
+                                                                        <label>{{__('Collection Fees')}} @include('star')</label>
                                                                         <div class="kt-input-icon">
                                                                             <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
                                                                         </div>

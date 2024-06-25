@@ -306,7 +306,7 @@
 					
 					      <div class="col-md-4">
 
-                    <label>{{__('Name')}} <span class="required">*</span></label>
+                    <label>{{__('Name')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -330,8 +330,8 @@
 						</div>
 						
 						<div class="col-md-3">
-							<label for="end_Date">{{ __('End Date') }}</label>
-							<input id="end_Date" type="date" value="{{ $endDate }}" class="form-control" name="end_Date" >
+							<label for="end_date">{{ __('End Date') }}</label>
+							<input id="end_date" type="date" value="{{ $endDate }}" class="form-control" name="end_date" >
 						</div>
 						<div class="col-md-1">
 							<label for="button"></label>
