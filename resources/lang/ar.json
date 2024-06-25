@@ -1163,6 +1163,16 @@
 "Please Select :attribute":"برجاء ادخال :attribute",
 "Collection Date - Max Date Of Today":"تاريخ التحصيل (بحد اقصى تاريخ اليوم)",
 "Deposit Date - Max Date Of Today":"تاريخ الايداع (بحد اقصى تاريخ اليوم)",
-"Account Type":"نوع الحساب"
-
+"Account Type":"نوع الحساب",
+"Cheque From :name With Number #:number":"شيك من :name يحمل الرقم :number",
+"Cheque To :name With Number #:number":"شيك الي :name يحمل الرقم :number",
+"Cash In Safe From :name":"كاش من :name",
+"Cash In Bank From :name":"كاش من :name",
+"Incoming Transfer From :name":"كاش من :name",
+"Outgoing Transfer To :name":"كاش من :name",
+"From Bank :from To Bank :to":"من بنك :from الي بنك :to",
+"From Bank :from To Safe":"من بنك :from الي الخزنة",
+"From Safe To Bank :to":"من الخزنة الي بنك :to",
+"From Safe To Safe":"من خزنة الي خزنة",
+"Cash Payment To :name":"دفع كاش الي :name"
 }

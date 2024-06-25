@@ -71,7 +71,6 @@ class BankStatementController
 			->orderByRaw('current_account_bank_statements.full_date desc')
 			->get();
 			
-			
 		}
 		elseif($accountType->isCleanOverdraftAccount()){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);

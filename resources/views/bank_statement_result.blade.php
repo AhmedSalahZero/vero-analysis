@@ -376,7 +376,7 @@
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->room) }}</td>
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->interest_amount) }}</td>
                                         @endif
-                                        <td class="sub-text-bg text-center max-w-amount">{{ __('Comment ') }}</td>
+                                        <td class="sub-text-bg text-center max-w-amount">{{ getBankStatementComment($modelAsStdClass) }}</td>
 
                                         @if(! $isCurrentAccount)
                                         <td class="sub-text-bg text-center max-w-amount">{{ __('Settlement Status To Be Here') }}</td>
