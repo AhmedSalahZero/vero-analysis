@@ -6,6 +6,8 @@ use App\Interfaces\Models\Interfaces\IHaveStatement;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * * هو نوع من انواع حسابات التسهيل البنكية (زي القرض يعني بس فية فرق بينهم ) وبيسمى حد جاري مدين بدون ضمان
@@ -74,5 +76,88 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 	{
 		 return 'fully_secured_overdraft_id';
 	}
+	
+	public static function getCommonQueryForCashDashboard(Company $company , string $currencyName , string $date )
+	{
+		return DB::table('fully_secured_overdrafts')
+			->where('currency', '=', $currencyName)
+			->where('company_id', $company->id)
+			->where('contract_start_date', '<=', $date)
+			->orderBy('fully_secured_overdrafts.id');
+	}
+	public static function hasAnyRecord(Company $company,string $currency)
+	{
+		return DB::table('fully_secured_overdrafts')->where('company_id',$company->id)
+		->where('currency',$currency)
+		->exists();
+	}
+	public static function getCashDashboardDataForFinancialInstitution(array &$totalRoomForEachFullySecuredOverdraftId,Company $company , array $fullySecuredOverdraftIds , string $currencyName , string $date , int $financialInstitutionBankId , &$totalFullySecuredOverdraftRoom  ):array 
+	{
+			
+				foreach($fullySecuredOverdraftIds as $fullySecuredOverdraftId){
+					$fullySecuredOverdraftStatement = DB::table('fully_secured_overdraft_bank_statements')
+						->where('fully_secured_overdraft_bank_statements.company_id', $company->id)
+						->where('date', '<=', $date)
+						->join('fully_secured_overdrafts', 'fully_secured_overdraft_bank_statements.fully_secured_overdraft_id', '=', 'fully_secured_overdrafts.id')
+						->where('fully_secured_overdrafts.currency', '=', $currencyName)
+						->where('fully_secured_overdraft_id',$fullySecuredOverdraftId)
+						->where('financial_institution_id',$financialInstitutionBankId)
+						->orderByRaw('full_date desc , fully_secured_overdraft_bank_statements.id desc')
+						->first();
+						
+						$fullySecuredOverdraftRoom = $fullySecuredOverdraftStatement ? $fullySecuredOverdraftStatement->room : 0 ;
+						$totalFullySecuredOverdraftRoom += $fullySecuredOverdraftRoom ;
+						$fullySecuredOverdraft = FullySecuredOverdraft::find($fullySecuredOverdraftId);
+						$financialInstitution = FinancialInstitution::find($financialInstitutionBankId);
+						$financialInstitutionName = $financialInstitution->getName();
+						if($fullySecuredOverdraft->financial_institution_id ==$financialInstitution->id ){
+							$totalRoomForEachFullySecuredOverdraftId[$currencyName][]  = [
+								'item'=>$financialInstitutionName ,
+								'available_room'=>$fullySecuredOverdraftRoom,
+								'limit'=>$fullySecuredOverdraftStatement  ? $fullySecuredOverdraftStatement->limit : 0 ,
+								'end_balance'=>$fullySecuredOverdraftStatement ?  $fullySecuredOverdraftStatement->end_balance : 0 
+							] ;
+						}
+				}
+				
+				return $totalRoomForEachFullySecuredOverdraftId ;
+				
+	}
+	
+	public static function getCashDashboardDataForYear(array &$fullySecuredOverdraftCardData,Builder $fullySecuredOverdraftCardCommonQuery , Company $company , array $fullySecuredOverdraftIds , string $currencyName , string $date , int $year ):array 
+	{
+				$outstanding = 0 ;
+				$room = 0 ;
+				$interestAmount = 0 ;
+				foreach($fullySecuredOverdraftIds as $fullySecuredOverdraftId){
+						$totalRoomForFullySecuredOverdraftId = DB::table('fully_secured_overdraft_bank_statements')
+						->where('fully_secured_overdraft_bank_statements.company_id', $company->id)
+						->where('date', '<=', $date)
+						->join('fully_secured_overdrafts', 'fully_secured_overdraft_bank_statements.fully_secured_overdraft_id', '=', 'fully_secured_overdrafts.id')
+						->where('fully_secured_overdrafts.currency', '=', $currencyName)
+						->where('fully_secured_overdraft_id',$fullySecuredOverdraftId)
+						->orderByRaw('date desc , fully_secured_overdraft_bank_statements.id desc')
+						->first();
+						$outstanding = $totalRoomForFullySecuredOverdraftId ? $outstanding + $totalRoomForFullySecuredOverdraftId->end_balance : $outstanding ;
+						$room = $totalRoomForFullySecuredOverdraftId ? $room + $totalRoomForFullySecuredOverdraftId->room : $room ;
+						$interestAmount = $interestAmount +  DB::table('fully_secured_overdraft_bank_statements')
+						->where('fully_secured_overdraft_bank_statements.company_id', $company->id)
+						->whereRaw('year(date) = '.$year)
+						->join('fully_secured_overdrafts', 'fully_secured_overdraft_bank_statements.fully_secured_overdraft_id', '=', 'fully_secured_overdrafts.id')
+						->where('fully_secured_overdrafts.currency', '=', $currencyName)
+						->where('fully_secured_overdraft_id',$fullySecuredOverdraftId)
+						->orderByRaw('date desc , fully_secured_overdraft_bank_statements.id desc')
+						->sum('interest_amount');
+				}
+				$fullySecuredOverdraftCardData[$currencyName] = [
+					'limit' =>  $fullySecuredOverdraftCardCommonQuery->sum('limit'),
+					'outstanding' => $outstanding,
+					'room' => $room ,
+					'interest_amount'=>$interestAmount
+				];
+				return $fullySecuredOverdraftCardData;
+	}
+	
+	
 	
 }

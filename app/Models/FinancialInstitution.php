@@ -43,6 +43,18 @@ class FinancialInstitution extends Model
 	{
 		$builder->where('type',self::BANK);
 	}
+	public function scopeOnlyHasCleanOverdrafts(Builder $builder){
+		$builder
+		->has('cleanOverdrafts');
+	}
+	public function scopeOnlyHasOverdraftAgainstCommercialPapers(Builder $builder){
+		$builder
+		->has('overdraftAgainstCommercialPapers');
+	}
+	public function scopeOnlyHasFullySecuredOverdrafts(Builder $builder){
+		$builder
+		->has('fullySecuredOverdrafts');
+	}
 	public function scopeOnlyHasOverdrafts(Builder $builder){
 		$builder
 		->has('cleanOverdrafts')

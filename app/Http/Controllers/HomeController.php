@@ -336,7 +336,7 @@ class HomeController extends Controller
 			$start_date = $request['start_date'];
 			$end_date = $request['end_date'];
 		}
-		
+		// dd('ww');
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 		
 		$db_names = array_keys($exportableFields);
@@ -386,6 +386,7 @@ class HomeController extends Controller
 				unset($types[$type]);
 			}
 		}
+	
 
 		return view('client_view.home_dashboard.dashboard_breakdown', compact(
 			'company',

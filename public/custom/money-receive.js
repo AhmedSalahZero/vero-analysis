@@ -275,13 +275,15 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	let currency = $(this).closest('form').find('select.current-currency').val()
 	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
+	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	console.log(val , currency , financialInstitutionBankId)
+	// console.log(val , currency , financialInstitutionBankId)
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
 	}
 	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+	console.log(parent)
 	$.ajax({
 		url,
 		data,
@@ -293,7 +295,9 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 				var val = res.data[key]
 				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+				
 			}
+	
 			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
@@ -303,7 +307,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 
 $(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
 	let parent = $(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type') ;
-
+	
 	$('.js-update-account-number-based-on-account-type').trigger('change')
 	if(parseInt(parent)){
 		parent.trigger('change')

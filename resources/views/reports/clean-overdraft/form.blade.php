@@ -80,7 +80,6 @@
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
                             <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')"></x-sectionTitle>
-                            {{-- {{ __((isset($model) ? 'Edit' : 'Add') . ' Clean Overdraft')}} --}}
                         </h3>
                     </div>
                 </div>
@@ -370,7 +369,6 @@
         const interestRate = borrowingRate + bankMaringRate;
         $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);
     })
-    $('input[name="borrowing_rate"]').trigger('change')
-
+    $('input[name="borrowing_rate"]').trigger('change');
 </script>
 @endsection

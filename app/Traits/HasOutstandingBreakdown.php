@@ -30,7 +30,7 @@ trait HasOutstandingBreakdown
 		$outstandingBalance = $request->get('outstanding_balance',0);
 		$this->outstandingBreakdowns()->delete();
 		$this->bankStatements()->where('type','outstanding_balance')->delete();
-		if($outstandingBalance > 0) {
+		if($outstandingBalance >= 0) {
 			/**
 			 * @var CleanOverdraftBankStatement $bankStatement
 			 */
