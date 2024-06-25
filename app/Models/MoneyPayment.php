@@ -18,6 +18,28 @@ class MoneyPayment extends Model
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
 	
+	public static function generateComment(self $moneyPayment,string $lang)
+	{
+		$supplierName = $moneyPayment->getSupplierName();
+		if($moneyPayment->isPayableCheque()){
+			return __('Cheque To :name With Number #:number ',['name'=>$supplierName,'number'=>$moneyPayment->getPayableChequeNumber()],$lang) ;
+		}
+		if($moneyPayment->isCashPayment()){
+			return __('Cash Payment To :name',['name'=>$supplierName],$lang) ;
+		}
+		if($moneyPayment->isOutgoingTransfer()){
+			return __('Outgoing Transfer To :name',['name'=>$supplierName],$lang) ;
+		}
+	}
+	protected static function booted()
+	{
+		self::creating(function (self $moneyPayment): void {
+			$moneyPayment->comment_en = self::generateComment($moneyPayment,'en');
+			$moneyPayment->comment_ar = self::generateComment($moneyPayment,'ar');
+		});
+		
+	}
+	
 	
 	public static function getAllTypes()
 	{

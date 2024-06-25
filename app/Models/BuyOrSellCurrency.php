@@ -18,6 +18,47 @@ class BuyOrSellCurrency extends Model
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
 	const SAFE_TO_SAFE = 'safe-to-safe';
+	
+	public static function generateComment(self $buyOrSellCurrency,string $lang)
+	{
+		if($buyOrSellCurrency->isBankToBank()){
+			return __('From Bank :from To Bank :to',['from'=>$buyOrSellCurrency->getFromBankName(),'to'=>$buyOrSellCurrency->getToBankName()],$lang) ;
+		}
+		if($buyOrSellCurrency->isBankToSafe()){
+			return __('From Bank :from To Safe',['from'=>$buyOrSellCurrency->getFromBankName()],$lang) ;
+		}
+		if($buyOrSellCurrency->isSafeToBank()){
+			return __('From Safe To Bank :to',['to'=>$buyOrSellCurrency->getToBankName()],$lang) ;
+		}
+		if($buyOrSellCurrency->isSafeToSafe()){
+			return __('From Safe To Safe',[],$lang) ;
+		}
+		
+	}
+	protected static function booted()
+	{
+		self::creating(function (self $buyOrSellCurrency): void {
+			$buyOrSellCurrency->comment_en = self::generateComment($buyOrSellCurrency,'en');
+			$buyOrSellCurrency->comment_ar = self::generateComment($buyOrSellCurrency,'ar');
+		});
+	}
+	public function isBankToBank()
+	{
+		return $this->getType() == self::BANK_TO_BANK;
+	}
+	public function isBankToSafe()
+	{
+		return $this->getType() == self::BANK_TO_SAFE;
+	}
+	public function isSafeToBank()
+	{
+		return $this->getType() == self::SAFE_TO_BANK;
+	}
+	public function isSafeToSafe()
+	{
+		return $this->getType() == self::SAFE_TO_SAFE;
+	}
+	
 	public static function getAllTypes()
 	{
 		return [

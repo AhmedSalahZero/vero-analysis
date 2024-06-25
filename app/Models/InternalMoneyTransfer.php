@@ -12,12 +12,34 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * * هنا عميلة تحويل الاموال من حساب بنك الي حساب بنكي اخر
  * * عن طريق بسحب كريدت من حساب احطة دبت في حساب تاني
  */
-class InternalMoneyTransfer extends Model
+class InternalMoneyTransfer extends Model 
 {
 	use HasBasicStoreRequest ;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
+	
+	
+	public static function generateComment(self $internalMoneyTransfer,string $lang)
+	{
+		if($internalMoneyTransfer->isBankToBank()){
+			return __('From Bank :from To Bank :to',['from'=>$internalMoneyTransfer->getFromBankName(),'to'=>$internalMoneyTransfer->getToBankName()],$lang) ;
+		}
+		if($internalMoneyTransfer->isBankToSafe()){
+			return __('From Bank :from To Safe',['from'=>$internalMoneyTransfer->getFromBankName()],$lang) ;
+		}
+		if($internalMoneyTransfer->isSafeToBank()){
+			return __('From Safe To Bank :to',['to'=>$internalMoneyTransfer->getToBankName()],$lang) ;
+		}
+		
+	}
+	protected static function booted()
+	{
+		self::creating(function (InternalMoneyTransfer $internalMoneyTransfer): void {
+			$internalMoneyTransfer->comment_en = self::generateComment($internalMoneyTransfer,'en');
+			$internalMoneyTransfer->comment_ar = self::generateComment($internalMoneyTransfer,'ar');
+		});
+	}
 	public static function getAllTypes()
 	{
 		return [
@@ -27,7 +49,23 @@ class InternalMoneyTransfer extends Model
 		];
 	}
     protected $guarded = ['id'];
-
+	public function getType()
+	{
+		return $this->type ;
+	}
+	public function isBankToBank()
+	{
+		return $this->getType() == self::BANK_TO_BANK;
+	}
+	public function isBankToSafe()
+	{
+		return $this->getType() == self::BANK_TO_SAFE;
+	}
+	public function isSafeToBank()
+	{
+		return $this->getType() == self::SAFE_TO_BANK;
+	}
+	
     public function getTransferDays()
     {
         return $this->transfer_days ?: 0 ;

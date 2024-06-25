@@ -29,6 +29,7 @@ use App\Models\IncomeStatementItem;
 use App\Models\IncomeStatementSubItem;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
+use App\Models\MoneyReceived;
 use App\Models\NewProductAllocationBase;
 use App\Models\ProductSeasonality;
 use App\Models\QuantityExistingProductAllocationBase;
@@ -5014,4 +5015,24 @@ if (!function_exists('getFixedLoanTypes')) {
 	function getDifferenceBetweenTwoDatesInDays(Carbon $firstDate, Carbon $secondDate)
 	{
 		return $secondDate->diffInDays($firstDate);
+	}
+	function getBankStatementComment($stdClass){
+		$lang = app()->getLocale() ;
+		$tableName = null ;
+		if($id = $stdClass->money_received_id){
+			$tableName = 'money_received';
+		}
+		elseif($id = $stdClass->money_payment_id){
+			$tableName = 'money_payments';
+		}
+		elseif($id = $stdClass->buy_or_sell_currency_id){
+			$tableName = 'buy_or_sell_currencies';
+		}
+		elseif($id = $stdClass->internal_money_transfer_id){
+			$tableName = 'internal_money_transfers';
+		}
+		if(is_null($tableName)){
+			return __('N/A',[],$lang);
+		}
+		return DB::table($tableName)->find($id)->{'comment_'.$lang};
 	}

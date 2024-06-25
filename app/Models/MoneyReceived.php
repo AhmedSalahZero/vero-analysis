@@ -20,7 +20,30 @@ class MoneyReceived extends Model
 	const CHEQUE_UNDER_COLLECTION  = 'cheque-under-collection';
 	const CHEQUE_REJECTED  = 'cheque-rejected';
 	const CHEQUE_COLLECTED = 'cheque-collected';
-	
+	public static function generateComment(self $moneyReceived,string $lang)
+	{
+		$customerName = $moneyReceived->getCustomerName();
+		if($moneyReceived->isCheque()){
+			return __('Cheque From :name With Number #:number ',['name'=>$customerName,'number'=>$moneyReceived->getChequeNumber()],$lang) ;
+		}
+		if($moneyReceived->isCashInSafe()){
+			return __('Cash In Safe From :name',['name'=>$customerName],$lang) ;
+		}
+		if($moneyReceived->isCashInBank()){
+			return __('Cash In Bank From :name',['name'=>$customerName],$lang) ;
+		}
+		if($moneyReceived->isIncomingTransfer()){
+			return __('Incoming Transfer From :name',['name'=>$customerName],$lang) ;
+		}
+	}
+	protected static function booted()
+	{
+		self::creating(function (self $moneyReceived): void {
+			$moneyReceived->comment_en = self::generateComment($moneyReceived,'en');
+			$moneyReceived->comment_ar = self::generateComment($moneyReceived,'ar');
+		});
+		
+	}
 	public static function getAllTypes()
 	{
 		return [
