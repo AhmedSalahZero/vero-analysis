@@ -21,7 +21,8 @@
         overflow: visible !important;
     }
 
-    input.form-control[disabled] {
+    input.form-control[disabled]
+	{
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }
@@ -114,7 +115,7 @@
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
-                                        <a data-toggle="modal" data-target="#apply-expense-{{ $odAgainstAssignmentOfContract->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Amount To Be Decreased') }}" href="#"><i class=" fa fa-balance-scale"></i></a>
+                                        <a data-toggle="modal" data-target="#apply-expense-{{ $odAgainstAssignmentOfContract->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Assign Contract') }}" href="#"><i class=" fa fa-balance-scale"></i></a>
                                         <div class="modal fade" id="apply-expense-{{ $odAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
@@ -148,9 +149,11 @@
                                                                                     <th>{{ __('#') }}</th>
                                                                                     <th>{{ __('Customer') }}</th>
                                                                                     <th>{{ __('Contract') }}</th>
+                                                                                    <th>{{ __('Amount') }}</th>
                                                                                     <th>{{ __('Start Date') }}</th>
                                                                                     <th>{{ __('End Date') }}</th>
-                                                                                    <th>{{ __('Lending Rate %') }}</th>
+                                                                                    <th>{{ __('Lending %') }}</th>
+                                                                                    <th>{{ __('Lending Amount') }}</th>
                                                                                     <th>{{ __('Actions') }}</th>
                                                                                 </tr>
                                                                             </thead>
@@ -160,9 +163,11 @@
                                                                                     <td> {{ ++$index }} </td>
                                                                                     <td class="text-nowrap">{{$lendingInformationAgainstAssignmentOfContract->getCustomerName() }}</td>
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractName() }} </td>
+                                                                                    <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractAmountFormatted() }} </td>
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractStartDate() }} </td>
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractEndDate() }} </td>
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingRateFormatted() . ' %' }} </td>
+                                                                                    <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingAmountFormatted() }} </td>
                                                                                     <td>
                                                                                         <a data-toggle="modal" data-target="#edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
 
@@ -387,7 +392,8 @@
                     let options = '';
                     for (index in res.contracts) {
 						var contract = res.contracts[index] ;
-                        options += `<option data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" value="${contract.id}">${contract.name}</option>`
+						
+                        options += `<option data-amount="${number_format(contract.amount)}"  data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" value="${contract.id}">${contract.name}</option>`
                     }
                     parent.find('.append-contracts-create').empty().append(options);
 					parent.find('.append-contracts-create').trigger('change')
@@ -399,6 +405,7 @@
 				const selectedOption = $(this).find('option:selected')
 				$(parent).find('.contract-start-date-class-create').val($(selectedOption).data('start-date'))
 				$(parent).find('.contract-end-date-class-create').val($(selectedOption).data('end-date'))
+				$(parent).find('.contract-amount-class-create').val($(selectedOption).data('amount'))
 				
 	})
 	$('select.ajax-get-contracts-for-customer-create').trigger('change')
