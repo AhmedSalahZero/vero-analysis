@@ -35,11 +35,15 @@ trait HasOutstandingBreakdown
 			 * @var CleanOverdraftBankStatement $bankStatement
 			 */
 			foreach($request->get('outstanding_breakdowns',[]) as $outstandingBreakdownArr){
+				$settlementDate = $outstandingBreakdownArr['settlement_date'];
+				if(!$settlementDate){
+					continue;
+				}
 				unset($outstandingBreakdownArr['id']);
 				$outstandingBreakdownArr['company_id'] = $company->id ;
 				$outstandingBreakdownArr['model_type'] = get_class($this);
 				$outstandingBreakdownArr['amount'] = number_unformat($outstandingBreakdownArr['amount']);
-				$balanceDate = Carbon::make($outstandingBreakdownArr['settlement_date'])->format('Y-m-d');
+				$balanceDate = Carbon::make($settlementDate)->format('Y-m-d');
 				$this->bankStatements()->create([
 				'type'=>'outstanding_balance',
 				'money_received_id'=>0 ,

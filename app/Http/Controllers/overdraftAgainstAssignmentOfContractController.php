@@ -33,7 +33,6 @@ class OverdraftAgainstAssignmentOfContractController
 					$currentValue = $moneyReceived->getBankName() ;  
 				}
 				return false !== stristr($currentValue , $value);
-				
 			});
 		})
 		->when($request->get('from') , function($collection) use($dateFieldName,$from){
