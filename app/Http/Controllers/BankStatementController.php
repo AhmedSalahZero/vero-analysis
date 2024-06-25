@@ -19,14 +19,18 @@ class BankStatementController
 {
     use GeneralFunctions;
 
-    public function index(Company $company)
+    public function index(Company $company,Request $request)
     {
+		$selectedAccountTypeName = $request->get('accountType');
+		$selectedCurrency  = $request->get('currency');
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
         return view('bank_statement_form', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
-			'accountTypes'=>$accountTypes
+			'accountTypes'=>$accountTypes,
+			'selectedAccountTypeName'=>$selectedAccountTypeName,
+			'selectedCurrency'=>$selectedCurrency
         ]);
     }
 

@@ -559,5 +559,19 @@
         }
     });
 
+
+
 </script>
+<script>
+    $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {
+        let borrowingRate = $('input[name="borrowing_rate"]').val();
+        borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0;
+        let bankMaringRate = $('input[name="bank_margin_rate"]').val();
+        bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
+        const interestRate = borrowingRate + bankMaringRate;
+        $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);
+    })
+    $('input[name="borrowing_rate"]').trigger('change');
+</script>
+
 @endsection

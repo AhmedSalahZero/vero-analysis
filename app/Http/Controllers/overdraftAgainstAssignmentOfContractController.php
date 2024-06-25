@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class overdraftAgainstAssignmentOfContractController
+class OverdraftAgainstAssignmentOfContractController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{

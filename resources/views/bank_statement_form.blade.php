@@ -51,7 +51,7 @@
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="currency" required class="form-control current-currency  kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name">
                                         @foreach(getCurrency() as $currency=>$currencyName)
-                                        <option value="{{ $currency }}">{{ touppercase($currencyName) }}</option>
+                                        <option @if($currency == $selectedCurrency)  selected @endif value="{{ $currency }}">{{ touppercase($currencyName) }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -81,7 +81,7 @@
                                     <select required name="account_type" class="form-control js-update-account-number-based-on-account-type">
                                         <option value="" selected>{{__('Select')}}</option>
                                         @foreach($accountTypes as $index => $accountType)
-                                        <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                        <option @if($selectedAccountTypeName == $accountType->getModelName())  selected @endif value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                         @endforeach
                                     </select>
                                 </div>

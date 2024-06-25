@@ -38,6 +38,18 @@ class AccountType extends Model
 	{
 		return $builder->onlySlugs([self::CERTIFICATE_OF_DEPOSIT,self::TIME_OF_DEPOSIT]);
 	}
+	public function scopeOnlyCleanOverdraft(Builder $builder)
+	{
+		return $builder->onlySlugs([self::CLEAN_OVERDRAFT]);
+	}
+	public function scopeOnlyFullySecuredOverdraft(Builder $builder)
+	{
+		return $builder->onlySlugs([self::FULLY_SECURED_OVERDRAFT]);
+	}
+	public function scopeOnlyOverdraftAgainstCommercialPaper(Builder $builder)
+	{
+		return $builder->onlySlugs([self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER]);
+	}
 	public function scopeOnlyCdAccounts(Builder $builder)
 	{
 		return $builder->onlySlugs([self::CERTIFICATE_OF_DEPOSIT]);

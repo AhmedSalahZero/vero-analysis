@@ -23,7 +23,7 @@
 
         </div>
     @endif
-    <div class="kt-portlet__body table-responsive">
+    <div class=" @if('kt_table_with_no_pagination_no_scroll_no_entries' != $tableClass ) kt-portlet__body @endif table-responsive">
 
         <!--begin: Datatable -->
         <table class="table table-striped- {{$tableClass}} table-bordered table-hover table-checkable  " >

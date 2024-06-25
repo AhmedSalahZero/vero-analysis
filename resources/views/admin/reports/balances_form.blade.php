@@ -492,7 +492,7 @@
 
 $(function(){
 
-	$('#{{$currencyName}}report__table .dt-buttons.btn-group').prepend('<a href="{{ route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0]) }}" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> {{ $currencyName }} {{ $customersOrSupplierStatementText . ' '. __("Report") }} </a>')
+	$('#{{$currencyName}}report__table .dt-buttons.btn-group').prepend('<a href="{{ route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0,"all_partners"=>1 ]) }}" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> {{ $currencyName }} {{ $customersOrSupplierStatementText . ' '. __("Report") }} </a>')
 })
 
 </script>

@@ -301,6 +301,7 @@
         <div class="kt-portlet__body  kt-portlet__body--fit">
             <div class="row row-no-padding row-col-separator-xl">
 				<form class="w-full mt-3 ml-3">
+				<input type="hidden" name="all_partners" value="{{ $showAllPartner??0 }}">
 					<div class="row align-items-center">
 					
 					      <div class="col-md-4">

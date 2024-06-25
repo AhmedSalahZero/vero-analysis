@@ -221,6 +221,7 @@ Route::middleware([])->group(function () {
                     Route::any('/income-statement-revenue-dashboard', 'HomeController@incomeStatementDashboard')->name('income.statement.dashboard');
                     Route::get('/HomePage', 'HomeController@welcomePage')->name('viewHomePage');
                     Route::any('/breakdown', 'HomeController@dashboardBreakdownAnalysis')->name('dashboard.breakdown');
+					Route::get('ajax-refresh-limits-chart','CustomerInvoiceDashboardController@refreshBankMovementChart')->name('refresh.chart.limits.data') ; // ajax request
                     Route::any('/income-statement-breakdown-dashboard/{reportType}/{incomeStatement?}', 'HomeController@dashboardBreakdownIncomeStatementAnalysis')->name('dashboard.breakdown.incomeStatement');
                     Route::any('/balance-sheet-breakdown-dashboard/{reportType}/{balanceSheet?}', 'HomeController@dashboardBreakdownBalanceSheetAnalysis')->name('dashboard.breakdown.balanceSheet');
                     Route::any('/cash-flow-statement-breakdown-dashboard/{reportType}/{cashFlowStatement?}', 'HomeController@dashboardBreakdownCashFlowStatementAnalysis')->name('dashboard.breakdown.cashFlowStatement');

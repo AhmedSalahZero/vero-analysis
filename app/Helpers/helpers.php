@@ -4670,11 +4670,8 @@ function getPositions(): array
 }
 function getCurrency()
 {
-	return [
-		'egp' => __('EGP'),
-		'usd' => __('USD'),
-		'euro' => __('EURO')
-	];
+	return getCurrencies();
+	
 }
 
 function getAddNewFieldRule($fieldName)
