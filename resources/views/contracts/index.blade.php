@@ -240,7 +240,7 @@
 
 
                 <a href="{{ route('contracts.create',['company'=>$company->id,'type'=>$type]) }}" class="btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto">
-                    <span class="plus-class">+</span>{{ __('Create') }}"
+                    <span class="plus-class">+</span>{{ __('Create') }}
                 </a>
             </div>
 

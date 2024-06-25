@@ -37,9 +37,6 @@ class LetterOfGuaranteeIssuanceController
 		->when($request->has('value'),function($collection) use ($request,$value,$searchFieldName){
 			return $collection->filter(function($letterOfGuaranteeIssuance) use ($value,$searchFieldName){
 				$currentValue = $letterOfGuaranteeIssuance->{$searchFieldName} ;
-				// if($searchFieldName == 'bank_id'){
-				// 	$currentValue = $letterOfGuaranteeIssuance->getBankName() ;
-				// }
 				return false !== stristr($currentValue , $value);
 			});
 		})
@@ -279,6 +276,7 @@ class LetterOfGuaranteeIssuanceController
 	 */
 	public function applyAmountToBeDecreased(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
 	{
+		
 		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
 		/**
 		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $letterOfGuaranteeIssuanceAdvancedPaymentHistory
@@ -351,6 +349,7 @@ class LetterOfGuaranteeIssuanceController
 			'debit'=>$cashCoverAmount,
 			'date'=>$decreaseDate
 		]);
+
 		return response()->json([
 			'status'=>true ,
 			'reloadCurrentPage'=>true 

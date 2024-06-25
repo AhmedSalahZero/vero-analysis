@@ -42,6 +42,22 @@ class LendingInformationAgainstAssignmentOfContract extends Model
 		return $this->contract ? $this->contract->getEndDate():__('N/A');
 		
 	}
+	public function getContractAmount()
+	{
+		return $this->contract ? $this->contract->getAmount():0;
+	}
+	public function getContractAmountFormatted()
+	{
+		return number_format($this->getContractAmount());
+	}
+	public function getLendingAmount()
+	{
+		return $this->getLendingRate() / 100 * $this->getContractAmount();
+	}
+	public function getLendingAmountFormatted():string 
+	{
+		return number_format($this->getLendingAmount());
+	}
 	public function getContractName()
 	{
 		return $this->contract ? $this->contract->getName():__('N/A');
