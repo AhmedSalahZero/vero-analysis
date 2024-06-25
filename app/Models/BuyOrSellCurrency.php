@@ -19,27 +19,43 @@ class BuyOrSellCurrency extends Model
 	const SAFE_TO_BANK = 'safe-to-bank';
 	const SAFE_TO_SAFE = 'safe-to-safe';
 	
-	public static function generateComment(self $buyOrSellCurrency,string $lang)
+	public static function generateBuyAccountComment(self $buyOrSellCurrency,string $lang)
 	{
-		if($buyOrSellCurrency->isBankToBank()){
-			return __('From Bank :from To Bank :to',['from'=>$buyOrSellCurrency->getFromBankName(),'to'=>$buyOrSellCurrency->getToBankName()],$lang) ;
+		if($buyOrSellCurrency->isBankToBank() ){
+			return __('Sold :amount :currency From :from Account No :no',['from'=>$buyOrSellCurrency->getFromBankName(),'no'=>$buyOrSellCurrency->getFromAccountNumber(),'amount'=>$buyOrSellCurrency->getAmountToSellFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToSellFormatted()],$lang) ;
 		}
 		if($buyOrSellCurrency->isBankToSafe()){
-			return __('From Bank :from To Safe',['from'=>$buyOrSellCurrency->getFromBankName()],$lang) ;
+			return __('Sold :amount :currency From :from Account No :no To Safe',['from'=>$buyOrSellCurrency->getFromBankName(),'no'=>$buyOrSellCurrency->getFromAccountNumber(),'amount'=>$buyOrSellCurrency->getAmountToSellFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToSellFormatted()],$lang) ;
 		}
 		if($buyOrSellCurrency->isSafeToBank()){
-			return __('From Safe To Bank :to',['to'=>$buyOrSellCurrency->getToBankName()],$lang) ;
+			return __('Sold :amount :currency From :branchName Safe',['branchName'=>$buyOrSellCurrency->getFromBranchName(),'amount'=>$buyOrSellCurrency->getAmountToSellFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToSellFormatted()],$lang) ;
 		}
 		if($buyOrSellCurrency->isSafeToSafe()){
-			return __('From Safe To Safe',[],$lang) ;
+			return __('Sold :amount :currency From :branchName Safe',['branchName'=>$buyOrSellCurrency->getFromBranchName(),'amount'=>$buyOrSellCurrency->getAmountToSellFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToSellFormatted()],$lang) ;
 		}
-		
+	}	
+	public static function generateSellAccountComment(self $buyOrSellCurrency,string $lang)
+	{
+		if($buyOrSellCurrency->isBankToBank()  ){
+			return __('Sold For :amount :currency To :to Account No :no',['to'=>$buyOrSellCurrency->getToBankName(),'no'=>$buyOrSellCurrency->getToAccountNumber(),'amount'=>$buyOrSellCurrency->getAmountToBuyFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToBuyFormatted() ],$lang) ;
+		}
+		if($buyOrSellCurrency->isBankToSafe()){
+			return __('Sold For :amount :currency To :branchName Safe',['branchName'=>$buyOrSellCurrency->getToBranchName(),'amount'=>$buyOrSellCurrency->getAmountToBuyFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToBuyFormatted()],$lang) ;
+		}
+		if($buyOrSellCurrency->isSafeToBank()){
+			return __('Sold For :amount :currency To :to Account No :no',['to'=>$buyOrSellCurrency->getToBankName(),'no'=>$buyOrSellCurrency->getToAccountNumber(),'amount'=>$buyOrSellCurrency->getAmountToBuyFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToBuyFormatted()],$lang) ;
+		}
+		if($buyOrSellCurrency->isSafeToSafe()){
+			return __('Sold For :amount :currency To :branchName Safe',['branchName'=>$buyOrSellCurrency->getToBranchName(),'amount'=>$buyOrSellCurrency->getAmountToBuyFormatted(),'currency'=>$buyOrSellCurrency->getCurrencyToBuyFormatted()],$lang) ;
+		}
 	}
 	protected static function booted()
 	{
 		self::creating(function (self $buyOrSellCurrency): void {
-			$buyOrSellCurrency->comment_en = self::generateComment($buyOrSellCurrency,'en');
-			$buyOrSellCurrency->comment_ar = self::generateComment($buyOrSellCurrency,'ar');
+			$buyOrSellCurrency->buy_comment_en = self::generateBuyAccountComment($buyOrSellCurrency,'en');
+			$buyOrSellCurrency->buy_comment_ar = self::generateBuyAccountComment($buyOrSellCurrency,'ar');			
+			$buyOrSellCurrency->sell_comment_en = self::generateSellAccountComment($buyOrSellCurrency,'en');
+			$buyOrSellCurrency->sell_comment_ar = self::generateSellAccountComment($buyOrSellCurrency,'ar');
 		});
 	}
 	public function isBankToBank()
@@ -383,15 +399,15 @@ class BuyOrSellCurrency extends Model
 		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transactionDate ,0, $transferFromAmount);
 		$this->handleSafeTransfer($companyId,$transactionDate,$transferToAmount,0,$toBranchId ,$currencyToBuyName,1);
 	}
-	public function handleSafeToBankTransfer( int $companyId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , int $fromBranchId , string $currencyToBuyName , string $transactionDate , $transferFromAmount,$transferToAmount)
+	public function handleSafeToBankTransfer( int $companyId , AccountType $toAccountType , string $toAccountNumber , int $toFinancialInstitutionId , int $fromBranchId , string $currencyToSellName , string $transactionDate , $transferFromAmount,$transferToAmount)
 	{
-		$this->handleSafeTransfer($companyId,$transactionDate,0,$transferFromAmount,$fromBranchId ,$currencyToBuyName,1);
+		$this->handleSafeTransfer($companyId,$transactionDate,0,$transferFromAmount,$fromBranchId ,$currencyToSellName,1);
 		$this->handleBankTransfer($companyId , $toFinancialInstitutionId ,  $toAccountType , $toAccountNumber , $transactionDate , $transferToAmount,0);
 	}
 	public function handleSafeToSafeTransfer( int $companyId , int $fromBranchId , string $currencyToBuyName , int $toBranchId , string $currencyToSellName , $exchangeRate , string $transactionDate , $transferFromAmount,$transferToAmount)
 	{
-		$this->handleSafeTransfer($companyId,$transactionDate,0,$transferFromAmount,$fromBranchId ,$currencyToBuyName,1);
-		$this->handleSafeTransfer($companyId,$transactionDate,$transferToAmount,0,$toBranchId ,$currencyToSellName,$exchangeRate);
+		$this->handleSafeTransfer($companyId,$transactionDate,0,$transferFromAmount,$fromBranchId ,$currencyToSellName,1);
+		$this->handleSafeTransfer($companyId,$transactionDate,$transferToAmount,0,$toBranchId ,$currencyToBuyName,$exchangeRate);
 	}
 	public function fromBranch()
 	{

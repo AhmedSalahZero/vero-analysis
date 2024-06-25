@@ -207,6 +207,8 @@ class FinancialInstitutionController
 	{
 		$accounts = $request->get('accounts',[]) ;
 		$financialInstitution->storeNewAccounts($accounts,null,true);
+		return redirect()->route('view.all.bank.accounts',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ])->with('success',__('Item Has Been Delete Successfully'));
+		
 	}
 	/**
 	 * * عرض كل الحسابات الخاصة بالبنك

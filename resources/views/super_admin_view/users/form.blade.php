@@ -28,7 +28,7 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row col-12 col-12">
                             <div class="col-12">
-                                <label>{{__('Name')}} <span class="required">*</span></label>
+                                <label>{{__('Name')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="name" value="{{@$user_row['name']}}" class="form-control" placeholder="{{__('Name')}}" required>
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -49,14 +49,14 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row col-12">
                             <div class="col-6">
-                                <label>{{__('Email')}} <span class="required">*</span></label>
+                                <label>{{__('Email')}} @include('star')</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text">@</span></div>
                                     <input required type="email" name="email" value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Email')}}" aria-describedby="basic-addon1">
                                 </div>
                             </div>
                             <div class="col-6">
-                                <label>{{__('User Image')}} <span class="required">*</span></label>
+                                <label>{{__('User Image')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="file" class="form-control" name="avatar" >
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>
@@ -66,14 +66,14 @@
                         @if(!isset($user))
                         <div class="form-group row col-12">
                             <div class="col-6">
-                                <label>{{__('Password')}} <span class="required">*</span></label>
+                                <label>{{__('Password')}} @include('star')</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-key"></i></span></div>
                                     <input required id="password" type="password" name="password"  value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
                                 </div>
                             </div>
                             <div class="col-6">
-                                <label>{{__('Confirm Password')}} <span class="required">*</span></label>
+                                <label>{{__('Confirm Password')}} @include('star')</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-key"></i></span></div>
                                     <input required id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
@@ -123,7 +123,7 @@
 
                             </div>
 							<div class="col-6 max-users-div mt-3">
-								   <label>{{__('Max Users Allowed')}} <span class="required">*</span></label>
+								   <label>{{__('Max Users Allowed')}} @include('star')</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text">#</span></div>
                                     <input type="text" name="max_users" value="{{$user_row['max_users'] ?? 10 }}" class="form-control" placeholder="{{__('Max Users Allowed')}}" aria-describedby="basic-addon1">

@@ -5,7 +5,6 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\OverdraftAgainstCommercialPaper;
-use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -109,7 +109,7 @@ use App\Models\MoneyReceived ;
                                     </div>
 
                                     <div class="col-md-9 mb-3">
-                                        <label>{{__('Drawal Bank')}} <span class="required">*</span></label>
+                                        <label>{{__('Drawal Bank')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date ">
                                                 <select js-when-change-trigger-change-account-type data-financial-institution-id required name="drawl_bank_id" class="form-control js-drawl-bank">
@@ -126,7 +126,7 @@ use App\Models\MoneyReceived ;
 
 
                                     <div class="col-md-3 ">
-                                        <label>{{__('Account Type')}} <span class="required">*</span></label>
+                                        <label>{{__('Account Type')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
@@ -140,7 +140,7 @@ use App\Models\MoneyReceived ;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label>{{__('Account Number')}} <span class="required">*</span></label>
+                                        <label>{{__('Account Number')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="account_number" class="form-control js-account-number">
@@ -166,7 +166,7 @@ use App\Models\MoneyReceived ;
                                         </div>
                                     </div>
                                     <div class="col-md-2 mb-3">
-                                        <label>{{__('Clearance Days')}} <span class="required">*</span></label>
+                                        <label>{{__('Clearance Days')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <input value="0" required name="clearance_days" step="any" min="0" class="form-control only-greater-than-zero-or-equal-allowed" placeholder="{{__('Clearance Days')}}">
                                             <x-tool-tip title="{{__('Kash Vero')}}" />

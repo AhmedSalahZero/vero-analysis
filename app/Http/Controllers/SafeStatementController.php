@@ -34,12 +34,12 @@ class SafeStatementController
 		->where('date','<=',$endDate)
 		->orderByRaw('date asc , created_at asc')
 		->get();
-if(!count($results)){
-	return redirect()
-						->back()
-						->with('fail',__('No Data Found'))	
-						;
-}
+			if(!count($results)){
+				return redirect()
+									->back()
+									->with('fail',__('No Data Found'))	
+									;
+			}
 		
 		return view('safe_statement_result',[
 			'results'=>$results,

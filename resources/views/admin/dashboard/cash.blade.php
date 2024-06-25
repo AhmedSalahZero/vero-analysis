@@ -509,7 +509,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-3 hidden">
-                                                <label>{{__('Account Type')}} <span class="required">*</span></label>
+                                                <label>{{__('Account Type')}} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select class="form-control js-update-account-number-based-on-account-type">
@@ -760,7 +760,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-3 hidden">
-                                                <label>{{__('Account Type')}} <span class="required">*</span></label>
+                                                <label>{{__('Account Type')}} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select class="form-control js-update-account-number-based-on-account-type">
@@ -1004,7 +1004,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-3 hidden">
-                                                <label>{{__('Account Type')}} <span class="required">*</span></label>
+                                                <label>{{__('Account Type')}} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select class="form-control js-update-account-number-based-on-account-type">

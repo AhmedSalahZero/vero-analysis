@@ -406,9 +406,9 @@ class MoneyReceivedController
 		
 		$relationData = [];
 		$relationName = null ;
-		$receivedAmount = 0 ;
 		$exchangeRate = $request->input('exchange_rate.'.$moneyType,1) ;
 		$receivedAmount = $request->input('received_amount.'.$moneyType ,0) ;
+		$receivedAmount = unformat_number($receivedAmount);
 		if($moneyType == MoneyReceived::CASH_IN_SAFE){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
@@ -463,7 +463,7 @@ class MoneyReceivedController
 		$receivingBranchId = $relationData['receiving_branch_id'] ?? null ;
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
-		
+		$moneyReceived = $moneyReceived->refresh();
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$receivedAmount,$currency,$receivingBranchId);
 		
 		/**
@@ -487,11 +487,14 @@ class MoneyReceivedController
 		$totalWithholdAmount= 0 ;
 		foreach($request->get('settlements',[]) as $settlementArr)
 		{
-			if(isset($settlementArr['settlement_amount'])&&$settlementArr['settlement_amount'] > 0){
+			$settlementArr['settlement_amount'] = isset($settlementArr['settlement_amount']) ?  unformat_number($settlementArr['settlement_amount']) :  0 ;  
+			if($settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $company->id ;
 				$settlementArr['customer_name'] = $customerName ;
-				$withholdAmount = $settlementArr['withhold_amount'] ?? 0 ;
+				$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0 ;
+				$settlementArr['withhold_amount'] = $withholdAmount ;
 				$totalWithholdAmount += $withholdAmount  ;
+				unset($settlementArr['net_balance']);
 				$moneyReceived->settlements()->create($settlementArr);
 			}
 		}

@@ -83,7 +83,7 @@ use App\Models\MoneyReceived ;
         <div class="kt-portlet__body">
             <div class="form-group row">
                 <div class="col-md-2">
-                    <label>{{__('Select Money Type')}} <span class="required">*</span></label>
+                    <label>{{__('Select Money Type')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select required name="type" id="type" class="form-control">
@@ -275,7 +275,7 @@ use App\Models\MoneyReceived ;
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45 ">
-                        <label>{{__('Select Receiving Branch')}} <span class="required">*</span></label>
+                        <label>{{__('Select Receiving Branch')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="receiving_branch_id" class="form-control">
@@ -289,21 +289,21 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label>{{__('Received Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Received Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount() :0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_SAFE .'-received-amount' }}" placeholder="{{__('Received Amount')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
                     <div class="col-md-3 width-12">
-                        <label>{{__('Receipt Number')}} <span class="required">*</span></label>
+                        <label>{{__('Receipt Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input type="text" name="receipt_number" value="{{ isset($model) ?  $model->getCashInSafeReceiptNumber()  : '' }}" class="form-control" placeholder="{{__('Receipt Number')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
                     <div class="col-md-3 width-12">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -329,7 +329,7 @@ use App\Models\MoneyReceived ;
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Receiving Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Receiving Bank')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
@@ -343,7 +343,7 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
                     <div class="col-md-2 ">
-                        <label>{{__('Deposit Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Deposit Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_BANK .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
                         </div>
@@ -352,7 +352,7 @@ use App\Models\MoneyReceived ;
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Type')}} <span class="required">*</span></label>
+                        <label>{{__('Account Type')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="account_type[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -366,7 +366,7 @@ use App\Models\MoneyReceived ;
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Number')}} <span class="required">*</span></label>
+                        <label>{{__('Account Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-current-selected="{{ isset($model) ? $model->getCashInBankAccountNumber(): 0 }}" name="account_number[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control js-account-number">
@@ -378,7 +378,7 @@ use App\Models\MoneyReceived ;
 
 
                     <div class="col-md-1">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -424,7 +424,7 @@ use App\Models\MoneyReceived ;
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Drawee Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Drawee Bank')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 {{-- drawee_bank_id
@@ -442,7 +442,7 @@ use App\Models\MoneyReceived ;
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Cheque Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Cheque Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}">
                         </div>
@@ -452,7 +452,7 @@ use App\Models\MoneyReceived ;
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Due Date')}} <span class="required">*</span></label>
+                        <label>{{__('Due Date')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
@@ -467,14 +467,14 @@ use App\Models\MoneyReceived ;
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Cheque Number')}} <span class="required">*</span></label>
+                        <label>{{__('Cheque Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input type="text" name="cheque_number" value="{{ isset($model) && $model->cheque ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                         </div>
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -502,7 +502,7 @@ use App\Models\MoneyReceived ;
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Receiving Bank')}} <span class="required">*</span></label>
+                        <label>{{__('Select Receiving Bank')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
@@ -516,7 +516,7 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
                     <div class="col-md-2 ">
-                        <label>{{__('Incoming Transfer Amount')}} <span class="required">*</span></label>
+                        <label>{{__('Incoming Transfer Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::INCOMING_TRANSFER .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
                         </div>
@@ -525,7 +525,7 @@ use App\Models\MoneyReceived ;
 
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Type')}} <span class="required">*</span></label>
+                        <label>{{__('Account Type')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="account_type[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -539,7 +539,7 @@ use App\Models\MoneyReceived ;
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Number')}} <span class="required">*</span></label>
+                        <label>{{__('Account Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-current-selected="{{ isset($model) ? $model->getIncomingTransferAccountNumber() : 0 }}" name="account_number[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control js-account-number">
@@ -551,7 +551,7 @@ use App\Models\MoneyReceived ;
 
 
                     <div class="col-md-1">
-                        <label>{{__('Exchange Rate')}} <span class="required">*</span></label>
+                        <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
                         </div>
@@ -612,7 +612,7 @@ use App\Models\MoneyReceived ;
 
 
                             <div class="col-md-2">
-                                <label>{{__('Received Amount')}} <span class="required">*</span></label>
+                                <label>{{__('Received Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input name="sales_orders_amounts[][received_amounts]" placeholder="{{ __('Received Amount') }}" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
                                 </div>

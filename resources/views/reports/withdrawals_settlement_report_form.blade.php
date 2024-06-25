@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label>{{__('Select Banks')}} <span class="required">*</span></label>
+                            <label>{{__('Select Banks')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="financial_institution_ids[]" class="form-control current-currency select2-select"  data-live-search="true" data-actions-box="true" multiple>

@@ -2,20 +2,18 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
-   
-
     .max-w-serial {
         width: 5% !important;
         min-width: 5% !important;
         max-width: 5% !important;
     }
 
-   
 
 
-   
 
- 
+
+
+
 
 
 
@@ -285,7 +283,7 @@
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
                                             {{ __('Beginning Balance') }}
                                         </th>
-                                        
+
 
                                         <th class="view-table-th max-w-currency    header-th  align-middle text-center">
                                             {{ __('Debit') }}
@@ -294,13 +292,16 @@
                                         <th class="view-table-th max-w-amount    header-th  align-middle text-center">
                                             {{ __('Credit') }}
                                         </th>
-<th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
-                                                 {{ __('End Balance') }}
+                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                            {{ __('End Balance') }}
+                                        </th>
+										  <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                            {{ __('Comment') }}
                                         </th>
 
 
 
-                                      
+
 
 
 
@@ -324,7 +325,8 @@
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>
                                         <td class="sub-text-bg text-center max-w-currency">{{ number_format($modelAsStdClass->credit) }}</td>
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->end_balance) }}</td>
-                                       
+                                        <td class="sub-text-bg text-left max-w-amount">{{ getBankStatementComment($modelAsStdClass) }}</td>
+
 
                                     </tr>
 

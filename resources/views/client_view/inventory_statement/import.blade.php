@@ -46,7 +46,7 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label>{{ __('Import File') }} <span class="required">*</span></label>
+                                <label>{{ __('Import File') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="file" name="excel_file" class="form-control"
                                         placeholder="{{ __('Import File') }}">
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>{{ __('Date Formatting') }} <span class="required">*</span></label>
+                                <label>{{ __('Date Formatting') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <select name="format" class="form-control" required>
                                         <option value="">{{__('Select')}}</option>

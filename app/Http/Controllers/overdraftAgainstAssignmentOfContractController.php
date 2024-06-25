@@ -4,7 +4,6 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
-use App\Models\LendingInformation;
 use App\Models\LendingInformationAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\Partner;
@@ -34,6 +33,7 @@ class OverdraftAgainstAssignmentOfContractController
 					$currentValue = $moneyReceived->getBankName() ;  
 				}
 				return false !== stristr($currentValue , $value);
+				
 			});
 		})
 		->when($request->get('from') , function($collection) use($dateFieldName,$from){

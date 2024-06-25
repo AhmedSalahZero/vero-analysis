@@ -183,13 +183,13 @@ License: You must have a valid license purchased only from themeforest(the above
                                             <div class="kt-portlet__body">
                                                 <div class="form-group row col-12 col-12">
                                                     <div class="col-6">
-                                                        <label>{{__('Name')}} <span class="required">*</span></label>
+                                                        <label>{{__('Name')}} @include('star')</label>
                                                         <div class="kt-input-icon">
                                                             <input type="text" name="name" value="" class="form-control" placeholder="{{__('Name')}}" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
-                                                        <label>{{__('Email')}} <span class="required">*</span></label>
+                                                        <label>{{__('Email')}} @include('star')</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend"><span class="input-group-text">@</span></div>
                                                             <input type="email" name="email" value="" class="form-control" placeholder="{{__('Email')}}" aria-describedby="basic-addon1">
@@ -198,13 +198,13 @@ License: You must have a valid license purchased only from themeforest(the above
                                                 </div>
                                                 <div class="form-group row col-12 col-12">
                                                     <div class="col-6">
-                                                        <label>{{__('User Image')}} <span class="required">*</span></label>
+                                                        <label>{{__('User Image')}} @include('star')</label>
                                                         <div class="kt-input-icon">
                                                             <input type="file" class="form-control" name="avatar">
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
-                                                        <label>{{__('Phone Number')}} <span class="required">*</span></label>
+                                                        <label>{{__('Phone Number')}} @include('star')</label>
                                                         <div class="kt-input-icon">
                                                             <input type="number" name="phone" class="form-control" placeholder="{{__('Phone Number')}}" value="" required>
                                                         </div>
@@ -212,14 +212,14 @@ License: You must have a valid license purchased only from themeforest(the above
                                                 </div>
                                                 <div class="form-group row col-12">
                                                     <div class="col-6">
-                                                        <label>{{__('Password')}} <span class="required">*</span></label>
+                                                        <label>{{__('Password')}} @include('star')</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-key"></i></span></div>
                                                             <input id="password" type="password" name="password" value="{{@$user_row['email']}}" class="form-control" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
-                                                        <label>{{__('Confirm Password')}} <span class="required">*</span></label>
+                                                        <label>{{__('Confirm Password')}} @include('star')</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-key"></i></span></div>
                                                             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{__('Password')}}" aria-describedby="basic-addon1">
@@ -241,13 +241,13 @@ License: You must have a valid license purchased only from themeforest(the above
                                             <div class="kt-portlet__body">
                                                 <div class="form-group row col-12">
                                                     <div class="col-6">
-                                                        <label>{{__('Company Name En')}} <span class="required">*</span></label>
+                                                        <label>{{__('Company Name En')}} @include('star')</label>
                                                         <div class="kt-input-icon">
                                                             <input type="text" name="company_name[en]" class="form-control" placeholder="{{__('Company Name')}}" value="" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
-                                                        <label>{{__('Company Image')}} <span class="required">*</span></label>
+                                                        <label>{{__('Company Image')}} @include('star')</label>
                                                         <div class="kt-input-icon">
                                                             <input type="file" class="form-control" name="company_avatar">
                                                         </div>

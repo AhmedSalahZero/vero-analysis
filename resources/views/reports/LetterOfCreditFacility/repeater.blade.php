@@ -15,7 +15,7 @@
 
 				
                     <div class="col-lc-2">
-                        <label>{{__('Select LC Type')}} <span class="required">*</span></label>
+                        <label>{{__('Select LC Type')}} @include('star')</label>
                         <div class="input-group">
                             <select @if($isRepeater) name="lc_type" @else name="termAndConditions[0][lc_type]" @endif class="form-control repeater-select">
                                 <option selected>{{__('Select')}}</option>
@@ -72,7 +72,7 @@
 
 
 					  <div class="col-lc-2">
-                        <label>{{__('Commission Interval')}} <span class="required">*</span></label>
+                        <label>{{__('Commission Interval')}} @include('star')</label>
                         <div class="input-group">
                             <select @if($isRepeater) name="commission_interval" @else name="termAndConditions[0][commission_interval]" @endif class="form-control repeater-select">
                                 <option selected>{{__('Select')}}</option>

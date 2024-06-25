@@ -63,7 +63,7 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>{{ __('Import File') }} <span class="required">*</span></label>
+                                <label>{{ __('Import File') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input required type="file" name="excel_file" class="form-control" placeholder="{{ __('Import File') }}">
                                     <x-tool-tip title="{{ __('Vero Analysis') }}" />
@@ -73,7 +73,7 @@
                         @if($modelName != 'LabelingItem')
 
                         <div class="col-md-6">
-                            <label>{{ __('Date Formatting') }} <span class="required">*</span></label>
+                            <label>{{ __('Date Formatting') }} @include('star')</label>
                             <div class="kt-input-icon">
                                 <select name="format" class="form-control" required>
                                     <option value="">{{ __('Select') }}</option>
@@ -107,7 +107,7 @@
                     @endif
                     @if ($active_job)
                     <div class="kt-section__content uploading_div">
-                        <label class="text-success text-xl-center"> <b> {{ __('Uploading') }}</b> <span class="required">*</span></label>
+                        <label class="text-success text-xl-center"> <b> {{ __('Uploading') }}</b> @include('star')</label>
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped progress-bar-animated  bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                         </div>
@@ -140,7 +140,7 @@
                     <div class="col-md-8">
 
                         <div class="kt-section__content text-center ">
-                            <label id="saving_data" class="text-success text-xl-center"> <b> {{ __('Saving Data') }}</b> <span class="required">*</span></label>
+                            <label id="saving_data" class="text-success text-xl-center"> <b> {{ __('Saving Data') }}</b> @include('star')</label>
                             <div class="progress ">
                                 <div id="progress_id" class="progress-bar progress-bar-striped progress-bar-animated  bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
                                 </div>

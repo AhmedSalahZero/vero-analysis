@@ -90,7 +90,7 @@
                             <div class="kt-portlet__body">
                                 <div class="form-group row">
                                     <div class="col-lg-2">
-                                        <label>{{__('Account Number')}} <span class="required">*</span></label>
+                                        <label>{{__('Account Number')}} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <input type="text" value="{{ isset($model) ? $model->getAccountNumber() : old('account_number') }}" name="account_number" class="form-control" placeholder="{{__('Account Number')}}">
                                         </div>

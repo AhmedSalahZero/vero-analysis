@@ -5018,8 +5018,10 @@ if (!function_exists('getFixedLoanTypes')) {
 	}
 	function getBankStatementComment($stdClass){
 		$lang = app()->getLocale() ;
+		$columnNameWithoutLang = 'comment_';
 		$tableName = null ;
 		if($id = $stdClass->money_received_id){
+			
 			$tableName = 'money_received';
 		}
 		elseif($id = $stdClass->money_payment_id){
@@ -5027,12 +5029,32 @@ if (!function_exists('getFixedLoanTypes')) {
 		}
 		elseif($id = $stdClass->buy_or_sell_currency_id){
 			$tableName = 'buy_or_sell_currencies';
+			if($stdClass->is_debit){
+				$columnNameWithoutLang = 'buy_comment_';
+			}else{
+				$columnNameWithoutLang = 'sell_comment_';
+			}
 		}
 		elseif($id = $stdClass->internal_money_transfer_id){
 			$tableName = 'internal_money_transfers';
+			if($stdClass->is_debit){
+				$columnNameWithoutLang = 'from_comment_';
+			}else{
+				$columnNameWithoutLang = 'to_comment_';
+			}
 		}
 		if(is_null($tableName)){
 			return __('N/A',[],$lang);
 		}
-		return DB::table($tableName)->find($id)->{'comment_'.$lang};
+		$raw = DB::table($tableName)->find($id);
+		return $raw ? $raw->{$columnNameWithoutLang.$lang} : __('N/A' ,[],$lang);
+	}
+	function getKeysWithSettlementAmount(array $items,string $keyName):string {
+		$result = [];
+		foreach($items as $key => $arr){
+			if(isset($arr[$keyName]) && $arr[$keyName] > 0){
+				$result[] = $key ;
+			}
+		}
+		return implode(',',$result) ;
 	}

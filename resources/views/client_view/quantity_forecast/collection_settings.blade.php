@@ -101,7 +101,7 @@
                         <div class="row">
                             {{-- A --}}
                             <div class="col-md-3">
-                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                <label>{{ __('Rate %') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                <label>{{ __('Due Days') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -122,7 +122,7 @@
                             </div>
                             {{-- B --}}
                             <div class="col-md-3">
-                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                <label>{{ __('Rate %') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                <label>{{ __('Due Days') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -145,7 +145,7 @@
                         <div class="row">
                             {{-- C --}}
                             <div class="col-md-3">
-                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                <label>{{ __('Rate %') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                <label>{{ __('Due Days') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -166,7 +166,7 @@
                             </div>
                             {{-- D --}}
                             <div class="col-md-3">
-                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                <label>{{ __('Rate %') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -176,7 +176,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                <label>{{ __('Due Days') }} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" step="any" class="form-control"
@@ -232,7 +232,7 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -242,7 +242,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -257,7 +257,7 @@
                                         <div class="row">
                                             {{-- B --}}
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -267,7 +267,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -282,7 +282,7 @@
                                         <div class="row">
                                             {{-- C --}}
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -292,7 +292,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -307,7 +307,7 @@
                                         <div class="row">
                                             {{-- D --}}
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -317,7 +317,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -374,7 +374,7 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -384,7 +384,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -399,7 +399,7 @@
                                         <div class="row">
                                             {{-- B --}}
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -409,7 +409,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -424,7 +424,7 @@
                                         <div class="row">
                                             {{-- C --}}
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -434,7 +434,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -449,7 +449,7 @@
                                         <div class="row">
                                             {{-- D --}}
                                             <div class="col-md-6">
-                                                <label>{{ __('Rate %') }} <span class="required">*</span></label>
+                                                <label>{{ __('Rate %') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"
@@ -459,7 +459,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{ __('Due Days') }} <span class="required">*</span></label>
+                                                <label>{{ __('Due Days') }} @include('star')</label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         <input type="number" step="any" class="form-control"

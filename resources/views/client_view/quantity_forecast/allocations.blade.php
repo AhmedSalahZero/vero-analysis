@@ -191,7 +191,7 @@
                                     <div class="col-md-6"
                                         style="display:{{ @$allocations_setting['add_new_items'] == 1 ? 'block' : 'none' }}"
                                         id="number_of_items">
-                                        <label>{{ __('How Many ? ') }} <span class="required">*</span></label>
+                                        <label>{{ __('How Many ? ') }} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group validated">
                                                 <input type="number" step="any" class="form-control"

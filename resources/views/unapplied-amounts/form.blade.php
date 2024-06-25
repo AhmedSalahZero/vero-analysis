@@ -81,7 +81,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
 
                         <div class="col-md-5">
-                            <label>{{$customerNameText}} <span class="required">*</span></label>
+                            <label>{{$customerNameText}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -97,7 +97,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
                         </div>
 
                         <div class="col-md-2">
-                            <label>{{__('Select Currency')}} <span class="required">*</span></label>
+                            <label>{{__('Select Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select readonly name="currency" class="form-control current-currency ajax-get-invoice-numbers">

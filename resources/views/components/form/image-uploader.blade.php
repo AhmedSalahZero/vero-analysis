@@ -109,7 +109,7 @@
 	@endif 
 	
 	@if($required)
-	<span class="required">*</span>
+	@include('star')
 	@endif 
 	 </label>
     @endif

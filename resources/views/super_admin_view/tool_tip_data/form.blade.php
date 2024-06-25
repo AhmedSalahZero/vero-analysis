@@ -24,13 +24,13 @@
                         <div class="form-group row section">
 
                                 <div class="col-lg-6">
-                                    <label>{{__('Model Name')}} <span class="required">*</span></label>
+                                    <label>{{__('Model Name')}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="model_name"   class="form-control" placeholder="{{__('Model Name')}}" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <label>{{__('Section Name')}} <span class="required">*</span></label>
+                                    <label>{{__('Section Name')}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="section_name"   class="form-control" placeholder="{{__('Section Name')}}" required>
                                     </div>

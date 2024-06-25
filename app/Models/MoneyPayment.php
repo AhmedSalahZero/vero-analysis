@@ -21,14 +21,16 @@ class MoneyPayment extends Model
 	public static function generateComment(self $moneyPayment,string $lang)
 	{
 		$supplierName = $moneyPayment->getSupplierName();
+		$paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
+		
 		if($moneyPayment->isPayableCheque()){
-			return __('Cheque To :name With Number #:number ',['name'=>$supplierName,'number'=>$moneyPayment->getPayableChequeNumber()],$lang) ;
+			return __('Cheque To :name With Number #:number Paid Invoices [ :numbers ]',['name'=>$supplierName,'number'=>$moneyPayment->getPayableChequeNumber(),'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 		if($moneyPayment->isCashPayment()){
-			return __('Cash Payment To :name',['name'=>$supplierName],$lang) ;
+			return __('Cash Payment To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 		if($moneyPayment->isOutgoingTransfer()){
-			return __('Outgoing Transfer To :name',['name'=>$supplierName],$lang) ;
+			return __('Outgoing Transfer To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 	}
 	protected static function booted()
@@ -456,7 +458,6 @@ class MoneyPayment extends Model
 	 */
 	public function getStatementDate()
 	{
-		// dd($this->isOutgoingTransfer(),$this->getOutgoingTransferDueDate());
 		if($this->isPayableCheque()){
 			return $this->getPayableChequeDueDate();
 		}

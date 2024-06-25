@@ -29,7 +29,7 @@
                         <div class="form-group row section">
 
                                 <div class="col-md-12">
-                                    <label>{{__('Role Name')}} <span class="required">*</span></label>
+                                    <label>{{__('Role Name')}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="role" value="{{isset($role) ? $role->name : old('name')}}" class="form-control" placeholder="{{__('Role Name')}}" required>
                                         <x-tool-tip title="{{__('Kash Vero')}}"/>

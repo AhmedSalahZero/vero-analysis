@@ -143,7 +143,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group  form-group-marginless">
-                                        <label style="font-size: 1.7rem">{{ __('Seasonality For Product '. (($has_product_item == true) ? 'Item' : '')).$number }} <span class="required">*</span></label>
+                                        <label style="font-size: 1.7rem">{{ __('Seasonality For Product '. (($has_product_item == true) ? 'Item' : '')).$number }} @include('star')</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date validated">
                                                 <select name="seasonality[{{$key}}]" class="form-control seasonality">
