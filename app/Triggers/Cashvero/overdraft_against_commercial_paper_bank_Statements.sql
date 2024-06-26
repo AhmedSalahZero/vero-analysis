@@ -1,124 +1,20 @@
-				delimiter ; 		
-				drop procedure if exists calculate_limit_overdraft_against_commercial_bank_statements ;
-				delimiter // 
-				create procedure calculate_limit_overdraft_against_commercial_bank_statements(in _overdraft_against_commercial_paper_id int ,in _money_received_id int , in _full_date datetime , in _company_id integer , out _limit decimal(14,2))
-				begin
-						declare _counter integer default 0 ;
-						declare _lending_counter integer default 0 ;
-					--	declare _current_customer_name varchar(255) default null ;
-						declare _previous_commercial_due_within integer default 0 ;
-						declare _current_lending_rate integer default 0 ;
-						declare _current_commercial_due_within integer default 0 ;
-						declare _current_days_count_for_current_group integer default 0 ;
-					--	declare _current_customer_id integer default 0 ;
-						declare _current_received_amount decimal(14,2) default 0 ;
-						-- declare _current_total_received_amount decimal(14,2) default 0 ;
-						declare _total_limit decimal(14,2) default 0 ;
-						declare _max_lending_limit_per_customer decimal(14,2) default 0 ;
-						declare _deposit_date datetime default null;
-						declare _i integer default 0 ;
-						declare _j integer default 0 ;
-						declare _max_limit decimal (14,2) default 0; 
-						
-						select deposit_date into _deposit_date  from cheques join money_received 
-						on money_received.id = cheques.money_received_id
-						where money_received.id = _money_received_id ;
-						select count(*)  into _lending_counter from lending_information where overdraft_against_commercial_paper_id = _overdraft_against_commercial_paper_id ;
-						select `limit`,max_lending_limit_per_customer into _max_limit , _max_lending_limit_per_customer from overdraft_against_commercial_papers where id = _overdraft_against_commercial_paper_id ;
-						
-						
-						select count(days_count)  into   _counter	
-						from money_received 
-						join 
-						cheques 
-						on money_received.id = cheques.money_received_id 
-						join overdraft_against_commercial_papers
-						on cheques.drawl_bank_id = overdraft_against_commercial_papers.financial_institution_id 
-						where  cheques.status = 'under-collection'
-						and money_received.company_id = _company_id 
-						and overdraft_against_commercial_papers.id = _overdraft_against_commercial_paper_id
-						and cheques.deposit_date <= _full_date
-						and ( cheques.status = 'under-collection' or  (cheques.status='collected' and cheques.actual_collection_date >  _deposit_date && cheques.deposit_date <= _deposit_date)  );
-						
-						
-						
-						
-						if
-						_counter > 0 
-						 then 
-						 
-						 repeat 
-						select days_count , sum(received_amount)   into    _current_days_count_for_current_group , _current_received_amount 
-						from money_received 
-						join 
-						cheques 
-						on money_received.id = cheques.money_received_id 
-						join overdraft_against_commercial_papers
-						on cheques.drawl_bank_id = overdraft_against_commercial_papers.financial_institution_id 
-						  
-						where money_received.company_id = _company_id 
-						
-						and overdraft_against_commercial_papers.id = _overdraft_against_commercial_paper_id
-						
-						and cheques.deposit_date <= _full_date and
-						
-						( cheques.status = 'under-collection' or  (cheques.status='collected' and cheques.actual_collection_date >  _deposit_date && cheques.deposit_date <= _deposit_date)  )
-						
-						
-						group by days_count
-						limit _i , 1 ;
-						
-						
-						-- repeater hear 
-						
-						repeat 
-						select for_commercial_papers_due_within_days,lending_rate   into _current_commercial_due_within,_current_lending_rate  from lending_information where overdraft_against_commercial_paper_id = _overdraft_against_commercial_paper_id order by for_commercial_papers_due_within_days asc , id asc limit _j, 1 ;
-						if(_current_days_count_for_current_group >= _previous_commercial_due_within and _current_days_count_for_current_group <= _current_commercial_due_within)
-						then 
-						--	set _current_total_received_amount = ifnull(_current_total_received_amount ,0);
-							set _current_received_amount = _current_received_amount * _current_lending_rate / 100;
-							set _total_limit = _total_limit + LEAST(_current_received_amount,_max_lending_limit_per_customer) ;  
-						end if ; 
-						
-						set _previous_commercial_due_within = _current_commercial_due_within+1; 
-						set _j = _j + 1 ;
-						until _j >= _lending_counter  end repeat ;
-						
-						
-						
-						
-						set _i = _i + 1 ;
-						set _j = 0 ;
-						set _previous_commercial_due_within = 0 ;
-						
-						
-						until _i >= _counter  end repeat ;
-						
-						end if;
-						set _limit = LEAST(_max_limit , _total_limit )  ;
-						-- second phase
 				
-					
-						
-						
-						
-						
-				end //
 				delimiter ;
 				drop trigger if exists before_insert_overdraft_against_commercial_paper ;
 				delimiter // 
 				create  trigger before_insert_overdraft_against_commercial_paper before insert on `overdraft_against_commercial_paper_bank_statements` for each row 
 				begin 
 					declare _last_end_balance decimal(14,2) default 0 ;
+					declare _delete_limit decimal(14,2) default 0 ;
 					declare _previous_date date default null ;
 						declare _current_interest_rate decimal(5,2) default 0 ;
 						declare _interest_rate decimal(5,2) default 0 ;
 						declare _min_interest_rate decimal(5,2) default 0 ; 
 						declare _count_all_rows integer default 0 ; 
-						declare _last_delete_id integer default 0 ; 
+						declare _last_id integer default 0 ; 
 						declare interest_type_text varchar(100) default 'interest';
 						declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-						declare _limit decimal (14,2) default 0 ;
+						declare _accumulated_limit decimal (14,2) default 0 ;
 						-- في حالة الانشاء
 						set new.created_at = CURRENT_TIMESTAMP;
 						select date , end_balance  into _previous_date,_last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
@@ -126,9 +22,14 @@
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.money_received_id , new.full_date , new.company_id,_limit);
-					set new.limit = _limit;
-					set new.room = _limit +  new.end_balance ;
+				--	call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.money_received_id , new.full_date , new.company_id,_limit);
+				
+					select `accumulated_limit` ,id ,`limit` into _accumulated_limit,_last_id,_delete_limit from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
+					insert into debugging (message) values ('update supposed second');
+					
+					insert into debugging (message) values (concat('debugging id from insert = ',_last_id,'and current acc limit = ',_accumulated_limit,'and limit ', _delete_limit));					
+					set new.limit = _accumulated_limit;
+					set new.room = _accumulated_limit  +  new.end_balance ;
 					set new.is_debit = if(new.debit > 0 , 1 , 0);
 					set new.is_credit = if(new.debit > 0 , 0 , 1);
 					
@@ -167,7 +68,6 @@
 				end //
 				delimiter ;
 				drop trigger if exists  before_update_overdraft_against_commercial_paper ;
-				drop trigger if exists  calculate_overdraft_against_commercial_paper_limit ;
 				 
 				drop procedure if exists resettlement_overdraft_against_commercial_paper_from ;
 				
@@ -247,8 +147,9 @@
 						declare _last_bank_statement_date datetime default null ;
 						declare _last_id integer default 0 ;
 							declare _current_interest_amount decimal(14,2) default 0;
+							declare _delete_limit decimal(14,2) default 0;
 							declare _largest_end_balance decimal(14,2) default 0;
-							declare _limit decimal(14,2) default 0;
+							declare _accumulated_limit decimal(14,2) default 0;
 							declare _highest_debt_balance_rate decimal(5,2) default 0 ;
 						-- declare _bank_statement_start_from_date datetime default null ;
 							declare _overdraft_against_commercial_paper_to_be_settled_after integer default 0 ;
@@ -266,15 +167,16 @@
 						
 						
 					end if;
-						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select date,end_balance into _previous_date, _last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
-										call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.money_received_id , new.full_date , new.company_id,_limit);
-
+					select `accumulated_limit` , id,`limit` into _accumulated_limit,_delete_limit, _last_id from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
+					insert into debugging (message) values (concat('debugging id from update = ',_last_id,'and current accumulated limit = ',_accumulated_limit,'and limit',_delete_limit));
+					insert into debugging (message) values ('update supposed second');
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					set new.limit = _limit;
-					set new.room = _limit +  new.end_balance ;
+					set new.limit = _accumulated_limit;
+					set new.room = _accumulated_limit +  new.end_balance ;
 					
 					
 

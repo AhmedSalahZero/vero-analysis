@@ -97,9 +97,9 @@
                                                 <select name="type" class="form-control select2-select" data-live-search="true" data-actions-box="true" id="type">
                                                     {{-- <option value="">{{__('Select')}}</option> --}}
                                                     <option @if(isset($model) && $model->isBank() ) selected @endif value="bank">{{__('Banks')}}</option>
-                                                    <option @if(isset($model) && $model->isLeasingCompanies() ) selected @endif value="leasing_companies">{{__('Leasing Companies')}}</option>
-                                                    <option @if(isset($model) && $model->isFactoringCompanies() ) selected @endif value="factoring_companies">{{__('Factoring Companies')}}</option>
-                                                    <option @if(isset($model) && $model->isMortgageCompanies() ) selected @endif value="mortgage_companies">{{__('Mortgage Companies')}}</option>
+                                                    {{-- <option @if(isset($model) && $model->isLeasingCompanies() ) selected @endif value="leasing_companies">{{__('Leasing Companies')}}</option> --}}
+                                                    {{-- <option @if(isset($model) && $model->isFactoringCompanies() ) selected @endif value="factoring_companies">{{__('Factoring Companies')}}</option> --}}
+                                                    {{-- <option @if(isset($model) && $model->isMortgageCompanies() ) selected @endif value="mortgage_companies">{{__('Mortgage Companies')}}</option> --}}
                                                 </select>
                                             </div>
                                         </div>
