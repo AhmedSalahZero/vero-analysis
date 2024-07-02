@@ -280,12 +280,15 @@
 {{-- {{ dd(get_defined_vars()) }} --}}
                 <div class="text-right">
 
-                    <a href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                    {{-- <a 
+					href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}"
+					
+					 class="btn  active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
                         {{ __('Unapplied Amount Settlement') }}
-                    </a>
+                    </a> --}}
 
-                    <a href="#" class="btn  active-style btn-icon-sm align-self-center">
+                    <a href="#" onclick="return false " class="btn  disabled active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
                         {{ __('Downpayment Amount Settlement') }}
                     </a>
@@ -348,7 +351,7 @@
                                         </th>
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {!! __('Unapplied Amount <br> Settlement') !!}
+                                            {!! __('Downpayment Amount <br> Settlement') !!}
                                         </th>
                                     </tr>
 
@@ -393,7 +396,7 @@
 										
                                         <td class="sub-text-bg  text-center">
                                             @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn btn-sm btn-primary">{{ __('Settlement') }}</a>
+                                            <a onclick="return false" href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn disabled btn-sm btn-primary">{{ __('Settlement') }}</a>
                                             @endif
                                         </td>
 										

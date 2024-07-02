@@ -262,7 +262,109 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+		
+		
+		  <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+               
+						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Total Cash Facilities') }} </h3>
+                   
+                </div>
+            </div>
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl">
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::Limit-->
+                        <div class="kt-widget24 text-center">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Limit') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-brand">
+                                    {{ number_format($totalCard[$currency]['limit'] ?? 0,0) }}
+                                </span>
+                            </div>
+
+
+                        </div>
+
+                        <!--end::Total Profit-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Feedbacks-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Outstanding') }}
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-warning">
+                                    {{ number_format($totalCard[$currency]['outstanding']??0,0) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Feedbacks-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Orders-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Available') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-danger">
+                                    {{ number_format($totalCard[$currency]['room']??0,0) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Orders-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Users-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                     {{ __('Interest') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-success">
+                                   {{ number_format($totalCard[$currency]['interest_amount']??0,0) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Users-->
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+        {{-- <div class="row">
             <div class="col-md-4">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
@@ -348,7 +450,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
 
             {{-- Fully Secured Overdraft  --}}
@@ -845,14 +947,14 @@
             </div>
             @endif
             {{-- End Clean Overdraft --}}
-			
-			
-			
-			
-			
-			
-			
-			{{-- start Overdraft Against Commercial Paper --}}
+
+
+
+
+
+
+
+            {{-- start Overdraft Against Commercial Paper --}}
             @if($hasOverdraftAgainstCommercialPaper[$currency] ?? false )
             <div class="col-md-4">
                 <div class="kt-portlet ">
@@ -931,7 +1033,7 @@
                                 </div>
                             </div>
                         </div>
-                      
+
                     </div>
                 </div>
             </div>
@@ -1089,237 +1191,237 @@
             </div>
             @endif
             {{-- End Overdraft Against Commercial Paper --}}
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
+
+
+
         </div>
-		 {{-- Title --}}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="kt-portlet ">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __('Long Term Cash Facilities Position') }}
-                        </h3>
+        {{-- Title --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title head-title text-primary">
+                                {{ __('Long Term Cash Facilities Position') }}
+                            </h3>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!--begin:: Widgets/Stats-->
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title head-title text-primary">
+                        {{ __('Medium Term Loans Position') }}
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl">
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::Limit-->
+                        <div class="kt-widget24 text-center">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Limit') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-brand">
+                                  -
+                                </span>
+                            </div>
+
+
+                        </div>
+
+                        <!--end::Total Profit-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Feedbacks-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Outstanding') }}
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-warning">
+                                    -
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Feedbacks-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Orders-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Next Due Amount') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-danger">
+                                  -
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Orders-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Users-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Date') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-success">
+                                  -
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Users-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end:: Widgets/Stats-->
+
+        <!--begin:: Widgets/Stats-->
+        {{-- <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title head-title text-primary">
+                        {{ __('Leasing Facilitiess Position') }}
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body  kt-portlet__body--fit">
+                <div class="row row-no-padding row-col-separator-xl">
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::Total Profit-->
+                        <div class="kt-widget24 text-center">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Limit') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-brand">
+                                    50,000,000
+                                </span>
+                            </div>
+
+
+                        </div>
+
+                        <!--end::Total Profit-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Feedbacks-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Outstanding') }}
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-warning">
+                                    42,500,000
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!--end::New Feedbacks-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Orders-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Next Due Amount') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-danger">
+                                    1,250,000
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Orders-->
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-xl-3">
+
+                        <!--begin::New Users-->
+                        <div class="kt-widget24">
+                            <div class="kt-widget24__details">
+                                <div class="kt-widget24__info">
+                                    <h4 class="kt-widget24__title font-size">
+                                        {{ __('Date') }}
+                                    </h4>
+
+                                </div>
+                            </div>
+                            <div class="kt-widget24__details">
+                                <span class="kt-widget24__stats kt-font-success">
+                                    01-June-2024
+                                </span>
+                            </div>
+                        </div>
+
+                        <!--end::New Users-->
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
     </div>
 
-    <!--begin:: Widgets/Stats-->
-    <div class="kt-portlet">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{ __('Medium Term Loans Position') }}
-                </h3>
-            </div>
-        </div>
-        <div class="kt-portlet__body  kt-portlet__body--fit">
-            <div class="row row-no-padding row-col-separator-xl">
-                <div class="col-md-6 col-lg-3 col-xl-3">
 
-                    <!--begin::Limit-->
-                    <div class="kt-widget24 text-center">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Limit') }}
-                                </h4>
-
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-brand">
-                                25,000,000
-                            </span>
-                        </div>
-
-
-                    </div>
-
-                    <!--end::Total Profit-->
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::New Feedbacks-->
-                    <div class="kt-widget24">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Outstanding') }}
-                                </h4>
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-warning">
-                                15,000,000
-                            </span>
-                        </div>
-
-                    </div>
-
-                    <!--end::New Feedbacks-->
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::New Orders-->
-                    <div class="kt-widget24">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Next Due Amount') }}
-                                </h4>
-
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-danger">
-                                750,000
-                            </span>
-                        </div>
-                    </div>
-
-                    <!--end::New Orders-->
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::New Users-->
-                    <div class="kt-widget24">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Date') }}
-                                </h4>
-
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-success">
-                                01-October-2024
-                            </span>
-                        </div>
-                    </div>
-
-                    <!--end::New Users-->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--end:: Widgets/Stats-->
-
-    <!--begin:: Widgets/Stats-->
-    <div class="kt-portlet">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{ __('Leasing Facilitiess Position') }}
-                </h3>
-            </div>
-        </div>
-        <div class="kt-portlet__body  kt-portlet__body--fit">
-            <div class="row row-no-padding row-col-separator-xl">
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::Total Profit-->
-                    <div class="kt-widget24 text-center">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Limit') }}
-                                </h4>
-
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-brand">
-                                50,000,000
-                            </span>
-                        </div>
-
-
-                    </div>
-
-                    <!--end::Total Profit-->
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::New Feedbacks-->
-                    <div class="kt-widget24">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Outstanding') }}
-                                </h4>
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-warning">
-                                42,500,000
-                            </span>
-                        </div>
-
-                    </div>
-
-                    <!--end::New Feedbacks-->
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::New Orders-->
-                    <div class="kt-widget24">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Next Due Amount') }}
-                                </h4>
-
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-danger">
-                                1,250,000
-                            </span>
-                        </div>
-                    </div>
-
-                    <!--end::New Orders-->
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3">
-
-                    <!--begin::New Users-->
-                    <div class="kt-widget24">
-                        <div class="kt-widget24__details">
-                            <div class="kt-widget24__info">
-                                <h4 class="kt-widget24__title font-size">
-                                    {{ __('Date') }}
-                                </h4>
-
-                            </div>
-                        </div>
-                        <div class="kt-widget24__details">
-                            <span class="kt-widget24__stats kt-font-success">
-                                01-June-2024
-                            </span>
-                        </div>
-                    </div>
-
-                    <!--end::New Users-->
-                </div>
-            </div>
-        </div>
-    </div>
-	
-    </div>
-
-   
 
     @php
     $index++;

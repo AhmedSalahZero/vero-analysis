@@ -311,7 +311,10 @@ class MoneyReceivedController
 	}
 	public function getContractsForCustomerWithStartAndEndDate(Company $company , Request $request ){
 
-		$contracts = Contract::where('partner_id',$request->get('customerId'))->where('currency',$request->get('currency'))->get();
+		$contracts = Contract::where('partner_id',$request->get('customerId'))
+		->whereDoesntHave('lendingInformationForAgainstAssignmentContract')
+		->where('currency',$request->get('currency'))->get();
+
 		return response()->json([
 			'status'=>true ,
 			'contracts'=>$contracts

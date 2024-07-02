@@ -2,6 +2,7 @@
 
 namespace App\ReadyFunctions;
 
+use App\Helpers\HArr;
 use App\Models\CustomerInvoice;
 use App\Traits\Services\IsAgingService;
 use Exception;
@@ -35,17 +36,22 @@ class ChequeAgingService
         $modelModelName = $fullModelName::MONEY_MODEL_NAME ;
 		$chequeModelName = $fullModelName::AGING_CHEQUE_MODEL_NAME;
 		 $chequeTypesForSafe = ('\App\Models\\'.$chequeModelName)::getChequeTypesForAging() ;
+	
         $result = [];
 		/**
 		 * * هنا شرط الديو ديت اكبر من او يساوي
 		 */
-        $invoices = ('\App\Models\\'.$chequeModelName)::whereIn('status',$chequeTypesForSafe)->where('due_date', '>=', $this->aging_date)->where('company_id', $this->company_id);
+
+        $invoices = ('\App\Models\\'.$chequeModelName)::whereIn('status',$chequeTypesForSafe)
+		->where('due_date', '>=', $this->aging_date)
+		->where('company_id', $this->company_id);
         if (count($clientNames)) {
             $invoices->whereHas($modelModelName,function($q) use($clientNames,$clientNameColumnName){
                 $q->whereIn($clientNameColumnName,$clientNames);
             });
         }
         $invoices = $invoices->get();
+		
         /**
          * @var CustomerInvoice[] $invoices
          */
@@ -90,6 +96,9 @@ class ChequeAgingService
             $result['total_of_due'][$dueName] = isset($result['total_of_due'][$dueName]) ? $result['total_of_due'][$dueName] + $netBalance : $netBalance ;
 			if($dueName == 'coming_due'){
 				$result['total_per_date_for_coming'][$invoiceDueDate] =  isset($result['total_per_date_for_coming'][$invoiceDueDate]) ? $result['total_per_date_for_coming'][$invoiceDueDate] + $netBalance :$netBalance;  
+			}
+			if($dueName == 'current_due'){
+				$result['total_per_date_for_current'][$invoiceDueDate] =  isset($result['total_per_date_for_current'][$invoiceDueDate]) ? $result['total_per_date_for_current'][$invoiceDueDate] + $netBalance :$netBalance;  
 			}
             if ($netBalance) {
                 $result['total_clients_due'][$dueName][$clientName] = $clientName ;
@@ -137,8 +146,9 @@ class ChequeAgingService
 		$totalsArray = $agings['total'] ?? [] ;
 		$formattedForTable = $totalsArray ;
 		$formattedForChat = [];
-
-		foreach($agings['total_per_date_for_coming'] ?? [] as $date => $value){
+		
+		$dates = array_keys(array_merge($agings['total_per_date_for_current']??[] ,$agings['total_per_date_for_coming']??[] ));
+		foreach(HArr::sumAtDates([$agings['total_per_date_for_coming']??[] , $agings['total_per_date_for_current'] ?? []],$dates) ?? [] as $date => $value){
 			$formattedForChat[]  =['date'=>$date , 'value'=>$value];
 		}
 	
