@@ -32,7 +32,7 @@
         <a class="dropdown-item" href="{{ route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Overdraft Aganist Contracts Assignment')}}</a>
         {{-- <a class="dropdown-item" href="#">{{__('Discounting Cheques')}}</a> --}}
         <a class="dropdown-item" href="{{ route('view.letter.of.guarantee.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Guarantee')}}</a>
-        {{-- <a class="dropdown-item" href="{{ route('view.letter.of.credit.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Credit')}}</a> --}}
+        <a class="dropdown-item" href="{{ route('view.letter.of.credit.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Letter Of Credit')}}</a>
         {{-- <a class="dropdown-item" href="{{ route('fixed.loan.fixed.at.end.php',['company'=>$company->id , 'financialInstitution'=>$financialInstitutionBank->id ]) }}">{{__('Medium Term Loans')}}</a> --}}
         {{-- <a class="dropdown-item" href="#">{{__('Direct Lease')}}</a>
         <a class="dropdown-item" href="#">{{__('Sales & Lease Back')}}</a>
