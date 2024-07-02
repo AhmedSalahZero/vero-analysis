@@ -71,7 +71,12 @@
                         </ul> --}}
                         <div class="kt-portlet__body">
                             <div class="kt-list-timeline">
+							
 							@foreach(getUploadParamsFromType() as $elementModelName => $params )
+							@if(in_array($elementModelName,['ExportAnalysis','LabelingItem','CustomerInvoice','SupplierInvoice']))
+							@continue
+							@endif 
+							
 							@can($params['viewPermissionName'])
                                 <div class="kt-list-timeline__items">
 
@@ -104,12 +109,29 @@
                                         <span class="kt-list-timeline__time disable"> <a href="{{ route('admin.view.financial.statement',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
                                     </div>
                                 </div>
+									<br>
+									
+                                @endcan 
+								
+								@can('view cash management')
+
+
+                                <div class="kt-list-timeline__items">
+                                    <div class="kt-list-timeline__item">
+                                        <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
+                                        <span class="kt-list-timeline__text">
+                                            <h4> {{ __("View Cash Management") }} </h4>
+                                        </span>
+
+                                        <span class="kt-list-timeline__time disable"> <a href="{{ route('view.financial.institutions',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
+                                    </div>
+                                </div>
                                 @endcan
 								
 								
 								   <br>
 
-@if(auth()->user()->isSuperAdmin())
+{{-- @if(auth()->user()->isSuperAdmin())
                                 <div class="kt-list-timeline__items">
                                     <div class="kt-list-timeline__item">
                                         <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
@@ -120,7 +142,7 @@
                                         <span class="kt-list-timeline__time disable"> <a href="{{ route('admin.create.expense',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
                                     </div>
                                 </div>
-								@endif
+								@endif --}}
 								
                             </div>
                         </div>
