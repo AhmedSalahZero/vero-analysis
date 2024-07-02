@@ -2944,7 +2944,9 @@ function getPermissions():array
 
 
 
-
+ [
+            'name'=>'view cash management',
+        ],
 
 
         [
