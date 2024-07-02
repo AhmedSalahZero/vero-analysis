@@ -170,8 +170,8 @@ class CustomerInvoiceDashboardController extends Controller
 				->where('financial_institution_id', $financialInstitutionBankId)
 				->where('currency', $currencyName)
 				->orderBy('certificates_of_deposits.end_date', 'desc')
-				->first();
-                $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitutionAmount ? $certificateOfDepositsForCurrentFinancialInstitutionAmount->amount : 0;
+				->sum('amount');
+                $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitutionAmount ? $certificateOfDepositsForCurrentFinancialInstitutionAmount : 0;
 				
 				
 				$timeDepositsForCurrentFinancialInstitutionAmount = DB::table('time_of_deposits')
@@ -180,8 +180,9 @@ class CustomerInvoiceDashboardController extends Controller
 				->where('financial_institution_id', $financialInstitutionBankId)
 				->where('currency', $currencyName)
 				->orderBy('time_of_deposits.end_date', 'desc')
-				->first();
-                $totalTimeDepositsForCurrentFinancialInstitutionAmount += $timeDepositsForCurrentFinancialInstitutionAmount ? $timeDepositsForCurrentFinancialInstitutionAmount->amount : 0;
+				->sum('amount');
+				
+                $totalTimeDepositsForCurrentFinancialInstitutionAmount += $timeDepositsForCurrentFinancialInstitutionAmount ? $timeDepositsForCurrentFinancialInstitutionAmount : 0;
                
 				
 
@@ -217,7 +218,8 @@ class CustomerInvoiceDashboardController extends Controller
 			
 			
 			#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
-			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0);
+			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
+			// dd($totalCard);
 		}
 	
         return view('admin.dashboard.cash', [
@@ -270,7 +272,6 @@ class CustomerInvoiceDashboardController extends Controller
 		$bankStatementName = $fullName::getBankStatementTableName() ;
 		$foreignKeyInStatementTable = $fullName::getForeignKeyInStatementTable();
 		$foreignKeyName = $fullName::generateForeignKeyFormModelName();
-		// $bankStatementNameFullClassName = '\App\Models\\'.$bankStatementName ; 
 		$dateBeforeWeeks = Carbon::make($date)->subWeeks($numberOfWeeks)->format('Y-m-d');
 		$model = new  $fullName ;
 		$tableName = $model->getTable();
@@ -319,9 +320,14 @@ class CustomerInvoiceDashboardController extends Controller
 		
 	}
 	public function sumForTotalCard(array $oldArr  , array $newItems ):array{
-		foreach($newItems as $key => $value){
-			$oldArr[$key]   =  isset($oldArr[$key]) ? $oldArr[$key] + $value : $value ;
+		// dd($newItems,'old',$oldArr);
+		foreach($newItems as $index => $oldItems){
+			foreach($oldItems as $key => $value){
+				// dd($value);
+				$oldArr[$key]   =  isset($oldArr[$key]) ? $oldArr[$key] + $value : $value ;
+			}
 		}
+		// dd($oldArr);
 		return $oldArr;
 	}
 
@@ -348,12 +354,14 @@ class CustomerInvoiceDashboardController extends Controller
              * * Customers Cheques Aging & Supplier Cheques Aging
              */
             $agingsForCheques = $chequeAgingService->__execute($clientNames, $modelType) ;
+		
             $agingsForCheques = $chequeAgingService->formatForDashboard($agingsForCheques,$modelType);
 
             $dashboardResult['invoices_aging'][$modelType] = $agingsForInvoices ;
-
+			
             $dashboardResult['cheques_aging'][$modelType] = $agingsForCheques ;
-        }
+			
+		}
 
         return view('admin.dashboard.forecast', [
             'company' => $company,

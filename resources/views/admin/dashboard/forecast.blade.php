@@ -169,6 +169,7 @@
                             </tr>
                         </thead>
                         <tbody>
+						{{-- {{ dd($dashboardResult['invoices_aging'][$modelType]) }} --}}
                             @php
                             $total = 0 ;
                             @endphp
@@ -236,9 +237,8 @@
 							@php
 								$total = 0 ;
 							@endphp
-				
                             @foreach ($dashboardResult['cheques_aging'][$modelType]['table'] ?? [] as $dueType => $dueWithValue)
-                            @if($dueType == 'coming_due')
+                            @if($dueType == 'coming_due' || $dueType =='current_due')
                             @foreach($dueWithValue as $daysInternal => $totalForDaysInterval)
                             <tr>
                             <td>{{ camelizeWithSpace($dueType,'_') }} {{ $daysInternal }} {{ __('Days') }} </td>
@@ -756,7 +756,6 @@
                         dataItem.show(1000);
                     }
                 })
-
                 series.dataItems.each(function(dataItem) {
                     if (dataItem.dataContext.region == name) {
                         dataItem.show(1000, 0, ["valueX"]);
@@ -784,7 +783,7 @@
         
 		   var chartData = @json(($dashboardResult['cheques_aging'][$modelType]['chart'] ?? []));
             chart.data = chartData;
-
+console.log('chart data',chartData);
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
 

@@ -1,7 +1,7 @@
 @php
 	$mode = isset($lendingInformationAgainstAssignmentOfContract) ? 'edit' : 'create';
 @endphp
-<div class="col-lg-3" data-dd="{{ isset($lendingInformationAgainstAssignmentOfContract) ? 1 : -1 }}">
+<div class="col-lg-2" data-dd="{{ isset($lendingInformationAgainstAssignmentOfContract) ? 1 : -1 }}">
     <label>{{__('Select Customer')}} @include('star')</label>
     <div class="input-group">
         <select data-live-search="true" name="customer_id_{{ $mode }}" class="form-control kt-bootstrap-select select2-select select2 ajax-get-contracts-for-customer-{{ $mode }}">
@@ -14,7 +14,7 @@
 
 
 
-<div class="col-md-2">
+<div class="col-md-3">
     <label>{{__('Select Contract')}} @include('star')</label>
     <div class="input-group">
         <select name="contract_id_{{ $mode }}" class="form-control append-contracts-{{ $mode }}">

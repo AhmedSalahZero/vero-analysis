@@ -7,6 +7,8 @@ use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
 
 class Contract extends Model
@@ -132,5 +134,8 @@ class Contract extends Model
 	{
 		return self::where('partner_id',$partnerId)->where('currency',$currencyName)->get();
 	}	
-	
+	public function lendingInformationForAgainstAssignmentContract():HasOne
+	{
+		return $this->hasOne(LendingInformationAgainstAssignmentOfContract::class,'contract_id','id');
+	}
 }
