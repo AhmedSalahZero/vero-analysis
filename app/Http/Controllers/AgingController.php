@@ -70,7 +70,7 @@ class AgingController
 		
 		$aginDate = $request->get('again_date');
 		$clientNames = $request->get('clients');
-		
+	
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
 		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
 		$weeksDates =formatWeeksDatesFromStartDate($aginDate);

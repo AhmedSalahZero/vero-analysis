@@ -220,6 +220,8 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(OverdraftAgainstAssignmentOfContract::class , 'company_id','id');
 	}
-
-
+	public function financialInstitutions()
+	{
+		return $this->hasMany(FinancialInstitution::class,'company_id','id');
+	}
 }

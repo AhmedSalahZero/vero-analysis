@@ -76,7 +76,7 @@ trait IsOverdraft
 	}
 	public static function findByFinancialInstitutionIds(array $overdraftIds):array
 	{
-		return self::where('financial_institution_id',$overdraftIds)->pluck('id')->toArray();
+		return self::whereIn('financial_institution_id',$overdraftIds)->pluck('id')->toArray();
 	}
 	/**
 	 * * هو عدد الايام اللي اجباري تسدد السحبات فيها 

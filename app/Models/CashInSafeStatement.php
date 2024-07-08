@@ -173,5 +173,9 @@ class CashInSafeStatement extends Model
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
+	public function branch()
+	{
+		return $this->belongsTo(Branch::class,'branch_id','id');
+	}
 	
 }
