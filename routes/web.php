@@ -512,6 +512,7 @@ Route::middleware([])->group(function () {
 					Route::get('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@index')->name('view.withdrawals.settlement.report');
 					Route::post('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@result')->name('result.withdrawals.settlement.report');
 
+					Route::get('refresh-withdrawal-dues-report','WithdrawalsSettlementReportController@refreshReport')->name('refresh.withdrawal.report'); // ajax
 
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');

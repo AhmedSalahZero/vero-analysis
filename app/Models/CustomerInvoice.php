@@ -299,8 +299,8 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return DB::table('customer_invoices')
 		->when($id,function($q) use ($id){
-			$q->where('id',$id)
-		;})
+			$q->where('id',$id);
+		})
 		->select('currency')
 		->where('currency','!=','')
 		->where('company_id',getCurrentCompanyId())

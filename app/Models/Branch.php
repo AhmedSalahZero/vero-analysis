@@ -24,4 +24,8 @@ class Branch extends Model
 	public static function getBranchesForCurrentCompany(int $companyId){
 		return Branch::where('company_id',$companyId)->pluck('name','id')->toArray();
 	}
+	public function cashInSafeStatements()
+	{
+		return $this->hasMany(CashInSafeStatement::class,'branch_id','id');
+	}
 }

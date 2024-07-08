@@ -51,7 +51,6 @@
         <div class="kt-portlet__head-label w-full">
             <h3 class="kt-portlet__head-title head-title text-primary w-full">
 
-                {{-- <x-sectionTitle :title="__('Dashboard Results')"></x-sectionTitle> --}}
 
                 <div class="row mb-3">
                     <div class="col-md-2">
@@ -110,11 +109,6 @@
                 </a>
             </li>
 
-
-
-
-
-
             @php
             $index++;
             @endphp
@@ -147,9 +141,27 @@
                         <!--begin::Total Profit-->
                         <div class="kt-widget24 text-center">
                             <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size text-uppercase">
+                                <div class="kt-widget24__info w-100">
+                                    <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
                                         {{ __('Cash & Banks' )  . ' [ ' . $currency . ' ]' }}
+										{{-- @php
+											$currentModalId = 'current_account';
+										@endphp
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ __('Current Account') }}</button>
+										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['current_account'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Current Account Details')])
+									 --}}
+									
+									
+									
+									
+									
+										@php
+											$currentModalId = 'safe';
+										@endphp
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ __('Details') }}</button>
+										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['cash_in_safe'] ?? [],$details[$name]['current_account'])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
+									
+									
                                     </h4>
 
                                 </div>
@@ -169,19 +181,30 @@
                         <!--end::Total Profit-->
                     </div>
                     <div class="col-md-6 col-lg-3 col-xl-3">
-
                         <!--begin::New Feedbacks-->
                         <div class="kt-widget24">
                             <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size  text-uppercase">
+                                <div class="kt-widget24__info w-100">
+                                    <h4 class="kt-widget24__title font-size  text-uppercase d-flex justify-content-between align-items-center">
                                         {{ __('Time Deposit') . ' [ ' . $currency . ' ]' }}
+										@php
+											$currentModalId = 'time_of_deposits_details';
+										@endphp
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ __('Details') }}</button>
+										
+										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['time_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Time Of Deposits Details')])
+										
+										
+										
+										
                                     </h4>
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning text-uppercase">
                                     {{ number_format($reports['time_deposits'][$currency] ?? 0 ) }}
+									
+									
                                 </span>
                             </div>
                             <div class="progress progress--sm">
@@ -197,9 +220,17 @@
                         <!--begin::New Orders-->
                         <div class="kt-widget24">
                             <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size text-uppercase">
+                                <div class="kt-widget24__info w-100">
+                                    <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
                                         {{ __('Certificate Of Deposit') . ' [ ' . $currency . ' ] ' }}
+										@php
+											$currentModalId = 'certificate_of_deposits_details';
+										@endphp
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ __('Details') }}</button>
+										
+										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['certificate_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Certificate Of Deposits Details')])
+									
+										
                                     </h4>
 
                                 </div>
@@ -1420,8 +1451,6 @@
         </div> --}}
 
     </div>
-
-
 
     @php
     $index++;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\HDate;
 use App\Models\AccountType;
+use App\Models\CashInSafeStatement;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
@@ -17,13 +18,13 @@ use App\ReadyFunctions\InvoiceAgingService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class CustomerInvoiceDashboardController extends Controller
 {
     public function viewCashDashboard(Company $company, Request $request)
     {
-		
 			// start fully SecuredOverdraft
 		 
 			$allFullySecuredOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasFullySecuredOverdrafts()->get();
@@ -60,7 +61,7 @@ class CustomerInvoiceDashboardController extends Controller
 		$year = explode('-',$date)[0];
 		$date = Carbon::make($date)->format('Y-m-d');
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
-
+		$details = [];
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
 		
@@ -71,13 +72,16 @@ class CustomerInvoiceDashboardController extends Controller
             $totalTimeDepositsForCurrentFinancialInstitutionAmount = 0 ;
 			
 			$cashInSafeStatementAmountForCurrency = 0 ;
-			$cashInSafeStatementAmountForCurrency = DB::table('cash_in_safe_statements')
-			->where('date', '<=', $date)
+			$cashInSafeStatementAmountForCurrency = CashInSafeStatement::
+			where('date', '<=', $date)
 			->where('company_id', $company->id)
 			->where('currency', $currencyName)
 			->orderByRaw('full_date desc')->limit(1)->first();
+			$details[$currencyName]['cash_in_safe'][] = [
+				'amount'=>$cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0 ,
+				'branch_name'=>$cashInSafeStatementAmountForCurrency && $cashInSafeStatementAmountForCurrency->branch ? $cashInSafeStatementAmountForCurrency->branch->getName() : __('N/A'),
+			] ;
 			$cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
-			
 			
 			// start fully secured overdraft
 			$totalFullySecuredOverdraftRoom = 0 ;
@@ -109,7 +113,7 @@ class CustomerInvoiceDashboardController extends Controller
    
             
             foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
-				
+				$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
 				/**
 				 * * start clean overdraft
 				 */
@@ -152,11 +156,15 @@ class CustomerInvoiceDashboardController extends Controller
                 ->orderBy('current_account_bank_statements.full_date', 'desc')
                 ->limit(1)
                 ->first();
-				// start testing
-
-				// end testing
-
-
+				
+		
+					$details[$currencyName]['current_account'][] = [
+						'amount'=>$currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0 ,
+						'account_number'=>$currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->account_number : 0,
+						'financial_institution_name'=>$currentFinancialInstitution->getName()
+					] ;
+					
+				
                 $currentAccountEndBalanceForCurrency = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0;
 
                 $currentAccountInBanks += $currentAccountEndBalanceForCurrency ;
@@ -164,24 +172,40 @@ class CustomerInvoiceDashboardController extends Controller
                 /**
                  * * حساب certificates_of_deposits
                  */
-                $certificateOfDepositsForCurrentFinancialInstitutionAmount = DB::table('certificates_of_deposits')
+                $certificateOfDepositsForCurrentFinancialInstitution = DB::table('certificates_of_deposits')
 				->where('company_id', $company->id)
 				->where('status',CertificatesOfDeposit::RUNNING)
 				->where('financial_institution_id', $financialInstitutionBankId)
 				->where('currency', $currencyName)
 				->orderBy('certificates_of_deposits.end_date', 'desc')
-				->sum('amount');
-                $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitutionAmount ? $certificateOfDepositsForCurrentFinancialInstitutionAmount : 0;
+				->get();
+				$certificateOfDepositsForCurrentFinancialInstitutionDetails = $this->getKeysFromStdClass($certificateOfDepositsForCurrentFinancialInstitution,['account_number','amount'],['financial_institution_name'=>$currentFinancialInstitution->getName()]);
+				foreach($certificateOfDepositsForCurrentFinancialInstitutionDetails as $certificateOfDepositsForCurrentFinancialInstitutionDetail){
+					$details[$currencyName]['certificate_of_deposits'][] = $certificateOfDepositsForCurrentFinancialInstitutionDetail ;
+				}
+				
+                $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitution ? $certificateOfDepositsForCurrentFinancialInstitution->sum('amount') : 0;
 				
 				
-				$timeDepositsForCurrentFinancialInstitutionAmount = DB::table('time_of_deposits')
+				
+				
+				
+				$timeDepositsForCurrentFinancialInstitution = DB::table('time_of_deposits')
 				->where('company_id', $company->id)
 				->where('status',TimeOfDeposit::RUNNING)
 				->where('financial_institution_id', $financialInstitutionBankId)
 				->where('currency', $currencyName)
 				->orderBy('time_of_deposits.end_date', 'desc')
-				->sum('amount');
+				->get();
 				
+				$timeDepositsForCurrentFinancialInstitutionDetails = $this->getKeysFromStdClass($timeDepositsForCurrentFinancialInstitution,['account_number','amount'],['financial_institution_name'=>$currentFinancialInstitution->getName()]);
+				foreach($timeDepositsForCurrentFinancialInstitutionDetails as $timeDepositsForCurrentFinancialInstitutionDetail){
+					$details[$currencyName]['time_of_deposits'][] = $timeDepositsForCurrentFinancialInstitutionDetail ;
+				}
+				
+				$timeDepositsForCurrentFinancialInstitutionAmount = $timeDepositsForCurrentFinancialInstitution->sum('amount');
+				
+		
                 $totalTimeDepositsForCurrentFinancialInstitutionAmount += $timeDepositsForCurrentFinancialInstitutionAmount ? $timeDepositsForCurrentFinancialInstitutionAmount : 0;
                
 				
@@ -211,6 +235,7 @@ class CustomerInvoiceDashboardController extends Controller
             $reports['cash_and_banks'][$currencyName] = $cashInSafeStatementAmountForCurrency + $currentAccountInBanks ;
             $reports['certificate_of_deposits'][$currencyName] =$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount  ;
             $reports['time_deposits'][$currencyName] = $totalTimeDepositsForCurrentFinancialInstitutionAmount ;
+			
             // $reports['credit_facilities_room'][$currencyName] = $totalCleanOverdraftRoom + $totalCleanOverdraftAgainstCommercialRoom ;
 
             $currentTotal = $reports['cash_and_banks'][$currencyName] + $reports['time_deposits'][$currencyName] + $reports['certificate_of_deposits'][$currencyName]  ;
@@ -221,7 +246,6 @@ class CustomerInvoiceDashboardController extends Controller
 			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
 			// dd($totalCard);
 		}
-	
         return view('admin.dashboard.cash', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
@@ -230,6 +254,7 @@ class CustomerInvoiceDashboardController extends Controller
 			'allCurrencies'=>$allCurrencies,
             'selectedFinancialInstitutionsIds' => $selectedFinancialInstitutionBankIds,
 			'totalCard'=>$totalCard,
+			'details'=>$details,
 			
 			// cleanOverdraft
 			
@@ -333,42 +358,50 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function viewForecastDashboard(Company $company, Request $request)
     {
-        $dashboardResult = [];
-        $invoiceTypesModels = ['CustomerInvoice', 'SupplierInvoice'] ;
+		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
+		$details = [];
+		$dashboardResult = [];
+		$overdraftAccountTypes = AccountType::onlyOverdraftsAccounts()->get();
+		$invoiceTypesModels = ['CustomerInvoice', 'SupplierInvoice'] ;
         $startDate = $request->get('start_date', now()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::make($startDate)->addYear()->format('Y-m-d'));
-        // $startDate = $request->get('start_date', now()->addYear()->format('Y-m-d'));
-        $aginDate = $startDate ;
+		$aginDate = $startDate ;
+        $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
 		$invoiceAgingService = new InvoiceAgingService($company->id, $aginDate);
 		$chequeAgingService = new ChequeAgingService($company->id, $aginDate);
-
-        foreach ($invoiceTypesModels as $modelType) {
-            $clientNames = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id);
-
-            /**
-             * * Customers Invoices Aging & Supplier Invoices Aging
-             */
-            $agingsForInvoices = $invoiceAgingService->__execute($clientNames, $modelType) ;
-            $agingsForInvoices = $invoiceAgingService->formatForDashboard($agingsForInvoices,$modelType);
-            /**
-             * * Customers Cheques Aging & Supplier Cheques Aging
-             */
-            $agingsForCheques = $chequeAgingService->__execute($clientNames, $modelType) ;
-		
-            $agingsForCheques = $chequeAgingService->formatForDashboard($agingsForCheques,$modelType);
-
-            $dashboardResult['invoices_aging'][$modelType] = $agingsForInvoices ;
+		$allFinancialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray(); 
+		foreach($selectedCurrencies as $currencyName)
+		{
+			foreach ($invoiceTypesModels as $modelType) {
+				$clientNames = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id,$currencyName);
+	
+				/**
+				 * * Customers Invoices Aging & Supplier Invoices Aging
+				 */
+				$agingsForInvoices = $invoiceAgingService->__execute($clientNames, $modelType) ;
+				$agingsForInvoices = $invoiceAgingService->formatForDashboard($agingsForInvoices,$modelType);
+				/**
+				 * * Customers Cheques Aging & Supplier Cheques Aging
+				 */
+				$agingsForCheques = $chequeAgingService->__execute($clientNames, $modelType) ;
 			
-            $dashboardResult['cheques_aging'][$modelType] = $agingsForCheques ;
-			
+				$agingsForCheques = $chequeAgingService->formatForDashboard($agingsForCheques,$modelType);
+	
+				$dashboardResult['invoices_aging'][$modelType][$currencyName] = $agingsForInvoices ;
+				
+				$dashboardResult['cheques_aging'][$modelType][$currencyName] = $agingsForCheques ;
+				
+			}
 		}
-
         return view('admin.dashboard.forecast', [
             'company' => $company,
 			'dashboardResult'=>$dashboardResult,
 			'invoiceTypesModels'=>$invoiceTypesModels,
 			'startDate'=>$startDate,
-			'endDate'=>$endDate
+			'endDate'=>$endDate,
+			'overdraftAccountTypes'=>$overdraftAccountTypes,
+			'selectedCurrencies'=>$selectedCurrencies,
+			'allFinancialInstitutionIds'=>$allFinancialInstitutionIds
         ]);
 
         return view('admin.dashboard.forecast', ['company' => $company]);
@@ -493,4 +526,15 @@ class CustomerInvoiceDashboardController extends Controller
 			'showAllPartner'=>$showAllPartner
         ]);
     }
+	protected function getKeysFromStdClass(?\Illuminate\Support\Collection $stdClass , array $keys,array $additionalData = []):array 
+{
+	$result = [];
+	foreach($stdClass as $index => $stdObject)
+	{
+		$stdArray = (array) $stdObject;
+		$result[] = array_merge( Arr::only($stdArray , $keys) , $additionalData );
+	}
+	return $result ;
+	
+}
 }

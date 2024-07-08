@@ -144,9 +144,10 @@ trait IsInvoice
     {
         return $this->invoice_number ;
     }
-	public static function getAllUniqueCustomerNames(int $companyId)
+	public static function getAllUniqueCustomerNames(int $companyId , $currencyName)
 	{
 		return self::where('company_id',$companyId)
+		->where('currency',$currencyName)
 		->get()->pluck(self::CLIENT_NAME_COLUMN_NAME,self::CLIENT_NAME_COLUMN_NAME)->toArray();
 	}
 	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, string $customerName,string $startDate , string $endDate):float
