@@ -157,7 +157,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	const moneyReceivedId = +$('#js-money-received-id').val()
 	let customerInvoiceId = $('#customer_name').val()
 	customerInvoiceId = customerInvoiceId ? customerInvoiceId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
-	let currency = $('select.current-currency').val()
+	let currency = $('select.current-invoice-currency').val()
+	currency =currency ? currency : $('select.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 
 	const companyId = $('body').attr('data-current-company-id')

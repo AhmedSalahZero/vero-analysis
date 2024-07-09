@@ -26,10 +26,12 @@ class CustomerInvoiceDashboardController extends Controller
     public function viewCashDashboard(Company $company, Request $request)
     {
 			// start fully SecuredOverdraft
-		 
 			$allFullySecuredOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasFullySecuredOverdrafts()->get();
 			$fullySecuredOverdraftAccountTypes = AccountType::onlyFullySecuredOverdraft()->get();
 			$fullySecuredOverdraftCardData = [];
+			$cdAccountTypeId = AccountType::onlyCdAccounts()->first()->id ;
+			$tdAccountTypeId = AccountType::onlyTdAccounts()->first()->id ;
+			
 			
 			$totalRoomForEachFullySecuredOverdraftId =  [];
 			// end fully SecuredOverdraft
@@ -114,6 +116,8 @@ class CustomerInvoiceDashboardController extends Controller
             
             foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
 				$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
+				$financialInstitutionName = $currentFinancialInstitution->getName();
+				
 				/**
 				 * * start clean overdraft
 				 */
@@ -173,36 +177,86 @@ class CustomerInvoiceDashboardController extends Controller
                  * * حساب certificates_of_deposits
                  */
                 $certificateOfDepositsForCurrentFinancialInstitution = DB::table('certificates_of_deposits')
-				->where('company_id', $company->id)
-				->where('status',CertificatesOfDeposit::RUNNING)
-				->where('financial_institution_id', $financialInstitutionBankId)
-				->where('currency', $currencyName)
+				->where('certificates_of_deposits.company_id', $company->id)
+				->where('certificates_of_deposits.status',CertificatesOfDeposit::RUNNING)
+				->where('certificates_of_deposits.financial_institution_id', $financialInstitutionBankId)
+				->where('certificates_of_deposits.currency', $currencyName)
+				
+				->leftJoin('fully_secured_overdrafts',function($q) use($cdAccountTypeId) {
+					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','certificates_of_deposits.account_number')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$cdAccountTypeId);
+				})
+				->leftJoin('letter_of_guarantee_issuances',function($q) use($cdAccountTypeId) {
+					$q->on('letter_of_guarantee_issuances.cd_or_td_account_number','=','certificates_of_deposits.account_number')->where('letter_of_guarantee_issuances.cd_or_td_account_type_id',$cdAccountTypeId);
+				})
+				/**
+				 * ! مؤجلة لحين الانتهاء من جدول ال 
+				 * ! credit issuance
+				 */
+				// ->leftJoin('letter_of_credit_issuances',function($q) use($cdAccountTypeId) {
+				// 	$q->on('letter_of_credit_issuances.cd_or_td_account_number','=','certificates_of_deposits.account_number')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$cdAccountTypeId);
+				// })
+				
 				->orderBy('certificates_of_deposits.end_date', 'desc')
+				
+				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , certificates_of_deposits.account_number as account_number,certificates_of_deposits.amount as amount, case when fully_secured_overdrafts.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "'.  __('Overdraft') 
+				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "' .  __('LG') 
+				/**
+				 * ! مؤجلة لحين الانتهاء من جدول ال 
+				 * ! credit issuance
+				 */
+				// .'" when letter_of_credit_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LC') 
+				.
+				'"  else "'. __('Free To Use') .'" end as blocked')
 				->get();
-				$certificateOfDepositsForCurrentFinancialInstitutionDetails = $this->getKeysFromStdClass($certificateOfDepositsForCurrentFinancialInstitution,['account_number','amount'],['financial_institution_name'=>$currentFinancialInstitution->getName()]);
-				foreach($certificateOfDepositsForCurrentFinancialInstitutionDetails as $certificateOfDepositsForCurrentFinancialInstitutionDetail){
-					$details[$currencyName]['certificate_of_deposits'][] = $certificateOfDepositsForCurrentFinancialInstitutionDetail ;
+				// $certificateOfDepositsForCurrentFinancialInstitutionDetails = $this->getKeysFromStdClass($certificateOfDepositsForCurrentFinancialInstitution,['account_number','amount'],['financial_institution_name'=>$currentFinancialInstitution->getName()]);
+				foreach($certificateOfDepositsForCurrentFinancialInstitution as $certificateOfDepositsForCurrentFinancialInstitutionDetail){
+					$details[$currencyName]['certificate_of_deposits'][] = (array)$certificateOfDepositsForCurrentFinancialInstitutionDetail ;
 				}
+				
+				
+				
 				
                 $totalCertificateOfDepositsForCurrentFinancialInstitutionAmount += $certificateOfDepositsForCurrentFinancialInstitution ? $certificateOfDepositsForCurrentFinancialInstitution->sum('amount') : 0;
 				
 				
 				
 				
-				
+
 				$timeDepositsForCurrentFinancialInstitution = DB::table('time_of_deposits')
-				->where('company_id', $company->id)
-				->where('status',TimeOfDeposit::RUNNING)
-				->where('financial_institution_id', $financialInstitutionBankId)
-				->where('currency', $currencyName)
+				->where('time_of_deposits.company_id', $company->id)
+				->where('time_of_deposits.status',TimeOfDeposit::RUNNING)
+				->where('time_of_deposits.financial_institution_id', $financialInstitutionBankId)
+				->where('time_of_deposits.currency', $currencyName)
+				->leftJoin('fully_secured_overdrafts',function($q) use($tdAccountTypeId) {
+					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','time_of_deposits.account_number')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$tdAccountTypeId);
+				})
+				->leftJoin('letter_of_guarantee_issuances',function($q) use($tdAccountTypeId) {
+					$q->on('letter_of_guarantee_issuances.cd_or_td_account_number','=','time_of_deposits.account_number')->where('letter_of_guarantee_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
+				})
+				/**
+				 * ! مؤجلة لحين الانتهاء من جدول ال 
+				 * ! credit issuance
+				 */
+				// ->leftJoin('letter_of_credit_issuances',function($q) use($tdAccountTypeId) {
+				// 	$q->on('letter_of_credit_issuances.cd_or_td_account_number','=','time_of_deposits.account_number')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
+				// })
 				->orderBy('time_of_deposits.end_date', 'desc')
+				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
+				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LG') 
+				/**
+				 * ! مؤجلة لحين الانتهاء من جدول ال 
+				 * ! credit issuance
+				 */
+				// .'" when letter_of_credit_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LC') 
+				.
+				'"  else "'. __('Free To Use') .'" end as blocked')
 				->get();
-				
-				$timeDepositsForCurrentFinancialInstitutionDetails = $this->getKeysFromStdClass($timeDepositsForCurrentFinancialInstitution,['account_number','amount'],['financial_institution_name'=>$currentFinancialInstitution->getName()]);
-				foreach($timeDepositsForCurrentFinancialInstitutionDetails as $timeDepositsForCurrentFinancialInstitutionDetail){
-					$details[$currencyName]['time_of_deposits'][] = $timeDepositsForCurrentFinancialInstitutionDetail ;
+				;
+			
+				foreach($timeDepositsForCurrentFinancialInstitution as $timeDepositsForCurrentFinancialInstitutionDetail){
+					$details[$currencyName]['time_of_deposits'][] = (array)$timeDepositsForCurrentFinancialInstitutionDetail ;
 				}
-				
+			
 				$timeDepositsForCurrentFinancialInstitutionAmount = $timeDepositsForCurrentFinancialInstitution->sum('amount');
 				
 		

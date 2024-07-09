@@ -99,6 +99,7 @@ use \App\Models\TimeOfDeposit;
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Intreset Rate') }}</th>
                                     <th>{{ __('Interest Amount') }}</th>
+                                    <th>{{ __('Blocked Against') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -115,6 +116,7 @@ use \App\Models\TimeOfDeposit;
                                     <td class="text-uppercase">{{ $model->getCurrency() }}</td>
                                     <td>{{ $model->getInterestRateFormatted() }}</td>
                                     <td>{{ $model->getInterestAmountFormatted() }}</td>
+                                    <td>{{ $model->getBlockedAgainstFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
@@ -336,6 +338,7 @@ use \App\Models\TimeOfDeposit;
                                     <th>{{ __('Interest Amount') }}</th>
                                     <th>{{ __('Deposit Date') }}</th>
                                     <th>{{ __('Actual Interest Amount') }}</th>
+                                    <th>{{ __('Blocked Against') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -354,7 +357,7 @@ use \App\Models\TimeOfDeposit;
                                     <td>{{ $model->getInterestAmountFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getDepositDateFormatted() }}</td>
                                     <td>{{ $model->getActualInterestAmountFormatted() }}</td>
-									
+									     <td>{{ $model->getBlockedAgainstFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
@@ -488,6 +491,7 @@ use \App\Models\TimeOfDeposit;
                                     <th>{{ __('Interest Amount') }}</th>
                                     <th>{{ __('Deposit Date') }}</th>
                                     <th>{{ __('Actual Interest Amount') }}</th>
+                                    <th>{{ __('Blocked Against') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -506,6 +510,7 @@ use \App\Models\TimeOfDeposit;
                                     <td>{{ $model->getInterestAmountFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getDepositDateFormatted() }}</td>
                                     <td>{{ $model->getActualInterestAmountFormatted() }}</td>
+                                    <td>{{ $model->getBlockedAgainstFormatted() }}</td>
 									
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	 */
 class TimeOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';
@@ -231,5 +232,9 @@ class TimeOfDeposit extends Model
 	{
 		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
 	} 
+	public function fullySecuredCleanOverdraft()
+	{
+		return $this->hasOne(FullySecuredOverdraft::class,'account_number','cd_or_td_account_id');
+	}
 	
 }

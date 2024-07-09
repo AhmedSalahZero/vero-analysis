@@ -19,9 +19,9 @@
                             <tr>
 							
 								
-                                <th class="text-center">{{ __('Financial Insitution / Branch Name') }}</th>
-                                <th class="text-center">{{ __('Account Number') }}</th>
-                                <th class="text-center"> {!! __('Amount') !!} </th>
+                                <th class="text-center w-60-percentage">{{ __('Financial Insitution / Branch Name') }}</th>
+                                <th class="text-center w-20-percentage">{{ __('Account Number') }}</th>
+                                <th class="text-center w-20-percentage"> {!! __('Amount') !!} </th>
 								
 							
                             
@@ -40,15 +40,15 @@
                             <tr>
                                
 					
-                                <td>
+                                <td class="w-60-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{  isset($detailItem['branch_name']) ? $detailItem['branch_name'] : $detailItem['financial_institution_name'] }}">
+                                            <input disabled type="text" class="form-control text-left" value="{{  isset($detailItem['branch_name']) ? $detailItem['branch_name'] : $detailItem['financial_institution_name'] }}">
                                         </div>
                                     </div>
                                 </td>
 								
-								 <td>
+								 <td class="w-20-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center" value="{{   $detailItem['account_number'] ?? '-' }}">
@@ -57,7 +57,7 @@
                                 </td>
 								
 
-                                <td>
+                                <td class="w-20-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center" value="{{ number_format($detailItem['amount']) }}">

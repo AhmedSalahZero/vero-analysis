@@ -161,13 +161,14 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	const moneyPaymentId = +$('#js-money-payment-id').val()
 	let supplierInvoiceId = $('#supplier_name').val()
 	supplierInvoiceId = supplierInvoiceId ? supplierInvoiceId : $(this).closest('[data-repeater-item]').find('select.supplier-name-js').val()
-	let currency = $('.current-currency').val()
+	let currency = $('select.current-invoice-currency').val()
+	 currency =currency ? currency :  $('.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-payment/get-invoice-numbers/' + supplierInvoiceId + '/' + currency
-
+	
 	if (supplierInvoiceId) {
 		$.ajax({
 			url,

@@ -362,7 +362,7 @@ class MoneyPaymentController
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency']);
 		$currencyName = $data['currency'];
 		$data['supplier_name'] = $supplierName;
 		$data['user_id'] = auth()->user()->id ;
