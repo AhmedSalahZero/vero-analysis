@@ -140,6 +140,15 @@ class MoneyReceived extends Model
 	{
 		return strtoupper($this->currency);
 	}
+	public function getReceivingCurrency()
+	{
+		return $this->receiving_currency;
+	}
+	
+	public function getReceivingCurrencyFormatted()
+	{
+		return strtoupper($this->getReceivingCurrency());
+	}
 
 	public function getExchangeRate()
 	{

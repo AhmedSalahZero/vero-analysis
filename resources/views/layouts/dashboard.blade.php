@@ -23,6 +23,18 @@
 
 
     <style>
+	.w-60-percentage{
+		width:60% !important;
+		
+	}
+	.w-40-percentage{
+		width:40% !important;
+	}
+	.w-20-percentage{
+		width:20% !important;
+		
+	}
+	
 	.flex-tabs{
 		display:flex;
 		gap:10px;

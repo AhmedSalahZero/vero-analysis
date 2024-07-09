@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	 */
 class CertificatesOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';

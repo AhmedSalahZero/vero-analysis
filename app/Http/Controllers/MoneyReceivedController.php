@@ -399,7 +399,7 @@ class MoneyReceivedController
 		$customerName = $customer->getName();
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency']);
 		$isDownPayment = $request->has('sales_orders_amounts');
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['customer_name'] = $customerName;

@@ -128,6 +128,16 @@ class MoneyPayment extends Model
 		return strtoupper($this->currency);
 	}
 
+	public function getPaymentCurrency()
+	{
+		return $this->payment_currency;
+	}
+	
+	public function getPaymentCurrencyFormatted()
+	{
+		return strtoupper($this->getPaymentCurrency());
+	}
+	
 	public function getExchangeRate()
 	{
 		

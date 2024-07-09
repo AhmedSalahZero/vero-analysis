@@ -99,10 +99,15 @@ use App\Models\MoneyReceived ;
                 </div>
 
                 <div class="col-md-2">
-                    <label>{{__('Select Currency')}} @include('star')</label>
+                    <label>{{__('Select Invoice Currency')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                            <select name="currency" class="form-control 
+							currency-class
+							invoice-currency-class
+							{{-- current-currency --}}
+							current-invoice-currency
+							 ajax-get-invoice-numbers">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                 @php
@@ -117,7 +122,7 @@ use App\Models\MoneyReceived ;
                 </div>
 
 
-                <div class="col-md-5">
+                <div class="col-md-3">
 
                     <label>{{__('Customer Name')}} @include('star')</label>
                     <div class="kt-input-icon">
@@ -135,6 +140,31 @@ use App\Models\MoneyReceived ;
 
                 </div>
 
+
+     <div class="col-md-2 ">
+                    <label>{{__('Select Receiving Currency')}} @include('star')</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <select when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+							current-currency
+							currency-class
+							receiving-currency-class
+							{{-- 
+							 ajax-get-invoice-numbers --}}
+							">
+                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                @php
+                                $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                $selected = $selected ? 'selected':'';
+                                @endphp
+                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+				
                 <div class="col-md-2">
                     <label>{{__('Select Money Type')}} @include('star')</label>
                     <div class="kt-input-icon">
@@ -271,7 +301,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-3">
                         <label>{{__('Received Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount() :0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_SAFE .'-received-amount' }}" placeholder="{{__('Received Amount')}}">
+                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount() :0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_SAFE .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}" placeholder="{{__('Received Amount')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
@@ -282,12 +312,22 @@ use App\Models\MoneyReceived ;
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
-                    <div class="col-md-3 width-12">
+                      <div class="col-md-3 width-12">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
+                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}">
                         </div>
                     </div>
+					
+					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                        <label>{{__('Amount')}} @include('star')</label>
+                        <div class="kt-input-icon">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}">
+                        </div>
+                    </div>
+					
+					
+					
                 </div>
             </div>
         </div>
@@ -324,7 +364,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-2 ">
                         <label>{{__('Deposit Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_BANK .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
+                            <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_BANK .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}" placeholder="{{__('Insert Amount')}}">
                         </div>
                     </div>
 
@@ -356,10 +396,17 @@ use App\Models\MoneyReceived ;
                     </div>
 
 
-                    <div class="col-md-1">
+                      <div class="col-md-1">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
+                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}">
+                        </div>
+                    </div>
+					
+					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                        <label>{{__('Amount')}} @include('star')</label>
+                        <div class="kt-input-icon">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}">
                         </div>
                     </div>
 
@@ -425,7 +472,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-2 width-12">
                         <label>{{__('Cheque Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}">
+                            <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}] " class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">
                         </div>
                     </div>
 
@@ -454,10 +501,17 @@ use App\Models\MoneyReceived ;
                         </div>
                     </div>
 
-                    <div class="col-md-2 width-12">
+                      <div class="col-md-2 width-12">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
+                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">
+                        </div>
+                    </div>
+					
+					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                        <label>{{__('Amount')}} @include('star')</label>
+                        <div class="kt-input-icon">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CHEQUE }}">
                         </div>
                     </div>
 
@@ -497,7 +551,7 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-2 ">
                         <label>{{__('Incoming Transfer Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input  data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::INCOMING_TRANSFER .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
+                            <input  data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::INCOMING_TRANSFER .'-received-amount' }} main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
                         </div>
                     </div>
 
@@ -532,9 +586,17 @@ use App\Models\MoneyReceived ;
                     <div class="col-md-1">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
+                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}">
                         </div>
                     </div>
+					
+					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                        <label>{{__('Amount')}} @include('star')</label>
+                        <div class="kt-input-icon">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}">
+                        </div>
+                    </div>
+					
 
 
                 </div>
@@ -636,10 +698,51 @@ use App\Models\MoneyReceived ;
     $(document).on('change', '.settlement-amount-class', function() {
 
     })
-    $(function() {
+   
+	 $(function() {
         $('#type').trigger('change');
     })
-
+	$(document).on('change','select#type',function(e){
+		const moneyType = $(this).val();
+		const activeClass = 'js-'+moneyType+'-received-amount';
+		const invoiceCurrency = $('select.invoice-currency-class').val();
+		const receivingCurrency = $('select.receiving-currency-class').val();
+		if(invoiceCurrency != receivingCurrency){
+			$('.main-amount-class[data-type="'+moneyType+'"]').removeClass(activeClass)
+				$('.amount-after-exchange-rate-class[data-type="'+moneyType+'"]').addClass(activeClass)
+		}
+		else{
+						$('.main-amount-class[data-type="'+moneyType+'"]').addClass(activeClass)
+				$('.amount-after-exchange-rate-class[data-type="'+moneyType+'"]').removeClass(activeClass)
+		}
+	})
+	$(document).on('change','select.currency-class',function(){
+		const invoiceCurrency = $('select.invoice-currency-class').val();
+		const receivingCurrency = $('select.receiving-currency-class').val();
+		const moneyType = $('select#type').val();
+		if(invoiceCurrency != receivingCurrency){
+			$('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')	
+			
+		}else{
+				// hide 
+	
+			$('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')	
+		}
+		
+	})
+	$(document).on('change','.recalculate-amount-class',function(){
+		const moneyType = $(this).attr('data-type')
+		const amount = $('.main-amount-class[data-type="'+moneyType+'"]').val();
+		const exchangeRate = $('.exchange-rate-class[data-type="'+moneyType+'"]').val();
+		const amountAfterExchangeRate = amount * exchangeRate ;
+		console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
+		// console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
+		$('.amount-after-exchange-rate-class[data-type="'+moneyType+'"]').val(amountAfterExchangeRate).trigger('change')
+		$('.js-settlement-amount:eq(0)').trigger('change')
+	})
+	$(document).on('change','select[when-change-trigger-account-type-change]',function(e){
+		$('select.js-update-account-number-based-on-account-type').trigger('change')
+	});
 </script>
 
 @endsection

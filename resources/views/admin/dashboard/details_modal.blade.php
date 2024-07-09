@@ -19,9 +19,10 @@
                             <tr>
 							
 								
-								    <th class="text-center">{{ __('Financial Institutin') }}</th>
-                                <th class="text-center">{{ __('Account Number') }}</th>
-                                <th class="text-center"> {!! __('Amount') !!} </th>
+								    <th class="text-center w-40-percentage">{{ __('Financial Institutin') }}</th>
+                                <th class="text-center w-20-percentage">{{ __('Account Number') }}</th>
+                                <th class="text-center w-20-percentage"> {!! __('Amount') !!} </th>
+                                <th class="text-center w-20-percentage"> {!! __('Blocked Against') !!} </th>
 								
 							
                             
@@ -38,15 +39,15 @@
 							
                        
                             <tr>
-                                <td>
-                                    <div class="kt-input-icon">
+                                <td class="w-40-percentage">
+                                    <div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="numeric" step="0.1" class="form-control" value="{{$detailItem['financial_institution_name'] }}">
+                                            <input disabled type="text" step="0.1" class="form-control" value="{{$detailItem['financial_institution_name'] }}">
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="kt-input-icon">
+                                <td class="w-20-percentage">
+                                    <div class="kt-input-icon " >
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center" value="{{  $detailItem['account_number'] }}">
                                         </div>
@@ -54,8 +55,8 @@
                                 </td>
 
 
-                                <td>
-                                    <div class="kt-input-icon">
+                                <td class="w-20-percentage">
+                                    <div class="kt-input-icon ">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center" value="{{ number_format($detailItem['amount']) }}">
 											@php
@@ -65,7 +66,17 @@
                                     </div>
                                 </td>
 
-                              
+                               
+							   <td class="w-20-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center" value="{{ $detailItem['blocked'] ?? '-' }}">
+											
+                                        </div>
+                                    </div>
+                                </td>
+
+
 								
 								
 								    
