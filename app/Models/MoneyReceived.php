@@ -494,7 +494,11 @@ class MoneyReceived extends Model
 	}
 	public function getMoneyTypeFormatted()
 	{
-		return camelizeWithSpace($this->getMoneyType()) ;
+		$moneyType = $this->getMoneyType();
+		if($moneyType == 'money-received'){
+			$moneyType = 'invoice-settlement';
+		}
+		return camelizeWithSpace($moneyType) ;
 	}
 	public function getContractId()
 	{
