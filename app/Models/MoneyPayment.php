@@ -420,7 +420,11 @@ class MoneyPayment extends Model
 	}
 	public function getMoneyTypeFormatted()
 	{
-		return camelizeWithSpace($this->getMoneyType()) ;
+		$moneyType = $this->getMoneyType();
+		if($moneyType == 'money-payment'){
+			$moneyType = 'invoice-settlement';
+		}
+		return camelizeWithSpace($moneyType) ;
 	}
 	public function getContractId()
 	{

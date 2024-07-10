@@ -86,7 +86,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	let onlyOneSalesOrder = +$('#ajax-sales-order-item').attr('data-single-model')
 	let specificSalesOrder = $('#ajax-sales-order-item').val()
 	const downPaymentId = +$('#js-down-payment-id').val()
-	let contractId = $('#contract-id').val()
+	let contractId = $('select#contract-id').val()
 	contractId = contractId ? contractId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
 	let currency = $('select.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
