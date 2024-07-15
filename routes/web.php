@@ -44,6 +44,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 Route::middleware([])->group(function () {
     Route::any('FreeUserSubscription', 'UserController@freeSubscription')->name('free.user.subscription');
     Auth::routes();
+    
     Route::group(
         [
             'prefix' => LaravelLocalization::setLocale(),
