@@ -50,7 +50,7 @@ jobs:
     - name: run migration
       run: php artisan migrate --force  
     - name: restart queue
-      run: sudo systemctl status supervisor
+      run: sudo supervisorctl status
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
