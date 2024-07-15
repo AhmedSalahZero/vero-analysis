@@ -18,9 +18,9 @@ jobs:
     - name: copy env
       run:  php -r "file_exists('.env') || copy('.env.example', '.env');"
     - name: install composer
-      run:  composer update --ignore-platform-reqs
+      run:  composer update 
     - name: generate key
-      run:  composer update --ignore-platform-reqs
+      run:  php artisan key:generate
     - name: clear view
       run: php artisan view:clear
     - name: FTP-Deploy-Action
