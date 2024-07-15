@@ -11,6 +11,14 @@ jobs:
     - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
+    - name: copy env
+      run:  php -r "file_exists('.env') || copy('.env.example', '.env');"
+    - name: install composer
+      run:  composer update --ignore-platform-reqs
+    - name: generate key
+      run:  composer update --ignore-platform-reqs
+    - name: clear view
+      run: php artisan view:clear
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -18,8 +26,4 @@ jobs:
         server-dir: public_html/system.veroanalysis.com/
         username: veroanalysis
         password: Aa@112233@aA
-    - name: Storage link
-      run:  php74 /opt/cpanel/composer/bin/composer update --ignore-platform-reqs
-    - name: Storage link
-      run: php artisan run:test
-      #run: /user/local/bin/ea-php74 /home/veroanalysis/public_html/system.veroanalysis.com/artisan run:test
+    
