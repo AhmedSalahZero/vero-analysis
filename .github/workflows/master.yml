@@ -46,7 +46,7 @@ jobs:
     - name: Install Composer dependencies
       run: composer update --no-progress --prefer-dist --optimize-autoloader
     - name: Storage link
-      run: php artisan storage:link --force
+      run: php artisan storage:link 
     - name: run migration
       run: php artisan migrate --force
     - name: FTP-Deploy-Action
