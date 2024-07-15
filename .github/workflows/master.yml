@@ -34,16 +34,25 @@ jobs:
          extensions: mbstring, dom, fileinfo, mysql
     - name: Start mysql service
       run: sudo /etc/init.d/mysql start 
-    - name: Prepare the application
-      run: |
-         
-
+    - name: Get composer cache directory 
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+    - name: Cache composer dependencies
+      uses: actions/cache@v3
+      with:
+           path: ${{ steps.composer-cache.outputs.dir }}
+           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+           restore-keys: ${{ runner.os }}-composer-
+    - name: Install Composer dependencies
+      run: composer update --no-progress --prefer-dist --optimize-autoloader
+    - name: Storage link
+      run: php artisan storage:link --force
     - name: run migration
       run: php artisan migrate --force
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-         server: thetailorsweb.com
+         server: thetailorswe`b.com
          server-dir: public_html/system.veroanalysis.com/
          username: veroanalysis
          password: Aa@112233@aA
