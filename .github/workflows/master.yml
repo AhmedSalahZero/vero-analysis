@@ -30,6 +30,9 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
          php-version: 7.4.0
+         extensions: mbstring, dom, fileinfo, mysql
+    - name: Start mysql service
+      run: sudo /etc/init.d/mysql start
     - name: copy env
       run:  php -r "copy('.env.production', '.env');"
     
