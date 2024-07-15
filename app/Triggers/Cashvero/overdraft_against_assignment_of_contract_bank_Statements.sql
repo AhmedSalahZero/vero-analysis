@@ -9,7 +9,7 @@
 						declare _previous_commercial_due_within integer default 0 ;
 						declare _current_lending_rate integer default 0 ;
 						declare _current_commercial_due_within integer default 0 ;
-						declare _current_days_count_for_current_group integer default 0 ;
+						-- declare _current_days_count_for_current_group integer default 0 ;
 					--	declare _current_contract_id integer default 0 ;
 						declare _current_received_amount decimal(14,2) default 0 ;
 						-- declare _current_total_received_amount decimal(14,2) default 0 ;
@@ -23,7 +23,7 @@
 						select deposit_date into _deposit_date  from cheques join money_received 
 						on money_received.id = cheques.money_received_id
 						where money_received.id = _money_received_id ;
-						select count(*)  into _lending_counter from lending_information where overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id ;
+						select count(*)  into _lending_counter from lending_information_against_assignment_of_contracts where overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id ;
 						select `limit`,max_lending_limit_per_contract into _max_limit , _max_lending_limit_per_contract from overdraft_against_assignment_of_contracts where id = _overdraft_against_assignment_of_contract_id ;
 						
 						
@@ -48,7 +48,11 @@
 						 then 
 						 
 						 repeat 
-						select days_count , sum(received_amount)   into    _current_days_count_for_current_group , _current_received_amount 
+						select 
+						-- days_count ,
+						 sum(received_amount)   into    
+						 -- _current_days_count_for_current_group ,
+						  _current_received_amount 
 						from money_received 
 						join 
 						cheques 
@@ -72,15 +76,24 @@
 						-- repeater hear 
 						
 						repeat 
-						select for_assignment_of_contracts_due_within_days,lending_rate   into _current_commercial_due_within,_current_lending_rate  from lending_information where overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id order by for_assignment_of_contracts_due_within_days asc , id asc limit _j, 1 ;
-						if(_current_days_count_for_current_group >= _previous_commercial_due_within and _current_days_count_for_current_group <= _current_commercial_due_within)
-						then 
+						select 
+						-- for_assignment_of_contracts_due_within_days,
+						lending_rate   into 
+						-- _current_commercial_due_within,
+						_current_lending_rate  from lending_information_against_assignment_of_contracts where overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id 
+						-- order by for_assignment_of_contracts_due_within_days asc , id asc
+						
+						 limit _j, 1 ;
+					--	if(_current_days_count_for_current_group >= _previous_commercial_due_within 
+						-- and _current_days_count_for_current_group <= _current_commercial_due_within
+					--	)
+					--	then 
 						--	set _current_total_received_amount = ifnull(_current_total_received_amount ,0);
 							set _current_received_amount = _current_received_amount * _current_lending_rate / 100;
 							set _total_limit = _total_limit + LEAST(_current_received_amount,_max_lending_limit_per_contract) ;  
-						end if ; 
+					--	end if ; 
 						
-						set _previous_commercial_due_within = _current_commercial_due_within+1; 
+					--	set _previous_commercial_due_within = _current_commercial_due_within+1; 
 						set _j = _j + 1 ;
 						until _j >= _lending_counter  end repeat ;
 						
@@ -183,7 +196,7 @@
 					select sum(settlement_amount) into _total_settlements from overdraft_against_assignment_of_contract_withdrawals where overdraft_against_assignment_of_contract_id =  _overdraft_against_assignment_of_contract_id ;
 					set _current_debit = _current_debit - _total_settlements ;
 					
-							call start_settlement_process_overdraft_against_assignment_of_contract(_type,0 , _overdraft_against_assignment_of_contract_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
+							call start_settlement_process_overdraft_against_contract(_type,0 , _overdraft_against_assignment_of_contract_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
 					
 					
 				end //
@@ -323,7 +336,11 @@
 						-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
 							-- select full_date  into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id order by full_date desc , priority asc limit 1 ;
 							select full_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id order by full_date desc , priority asc , id asc limit 1 ; 
-							select oldest_full_date,origin_update_row_is_debit into _start_update_from_date_time,_origin_update_row_is_debit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id  ; 
+							select oldest_full_date
+							-- ,origin_update_row_is_debit
+							 into _start_update_from_date_time
+							-- ,_origin_update_row_is_debit
+							 from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id  ; 
 			--				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id ; 
 							-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 						
@@ -376,10 +393,10 @@
 				end //
 
 				delimiter ;
-				drop procedure if exists start_settlement_process_overdraft_against_assignment_of_contract;
+				drop procedure if exists start_settlement_process_overdraft_against_contract;
 				delimiter //
 				-- هنا هنبدا نضيف سحبة جديدة لو البنك استيت منت كان كريدت اما لو كان دبت (يعني) الدبت اكبر من الصفر وقتها هنبدا نسدد 
-				create procedure start_settlement_process_overdraft_against_assignment_of_contract(in _type varchar(255) ,in _bank_statement_id integer , in _overdraft_against_assignment_of_contract_id integer , in _debit decimal , in _credit decimal , in _company_id integer , in _date_for_settlement date)
+				create procedure start_settlement_process_overdraft_against_contract(in _type varchar(255) ,in _bank_statement_id integer , in _overdraft_against_assignment_of_contract_id integer , in _debit decimal , in _credit decimal , in _company_id integer , in _date_for_settlement date)
 				-- new.id , new.overdraft_against_assignment_of_contract_id , new.debit  , new.credit , new.company_id , new.date
 				begin 
 					declare _overdraft_against_assignment_of_contract_to_be_settled_after integer default 0 ;
@@ -453,9 +470,9 @@
 					
 				end //
 				delimiter ; 
-				drop trigger if exists insert_into_overdraft_withdrawal_after_insert_assignment_of_contract ;
+				drop trigger if exists insert_into_overdraft_withdrawal_after_insert_ass_of_contract ;
 				delimiter // 
-				create  trigger insert_into_overdraft_withdrawal_after_insert_assignment_of_contract after insert on `overdraft_against_assignment_of_contract_bank_statements` for each row 
+				create  trigger insert_into_overdraft_withdrawal_after_insert_ass_of_contract after insert on `overdraft_against_assignment_of_contract_bank_statements` for each row 
 				begin 
 					declare _date_for_settlement date default new.date ;
 					if  new.type = 'payable_cheque'
@@ -474,15 +491,15 @@
 					
 					end if  ;
 					if new.is_credit > 0 then
-						call start_settlement_process_overdraft_against_assignment_of_contract(new.type,new.id , new.overdraft_against_assignment_of_contract_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
+						call start_settlement_process_overdraft_against_contract(new.type,new.id , new.overdraft_against_assignment_of_contract_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
 					end if;
 				end //
 
 
 				delimiter ;
-				drop procedure if exists end_of_month_overdraft_against_assignment_of_contract_interests ;
+				drop procedure if exists end_of_month_overdraft_against_ass_of_contract_interests ;
 				delimiter // 
-				create procedure end_of_month_overdraft_against_assignment_of_contract_interests()
+				create procedure end_of_month_overdraft_against_ass_of_contract_interests()
 				begin 
 					declare current_id integer default 0 ;
 					declare _overdraft_against_assignment_of_contract_bank_statement_id integer default 0 ;
@@ -516,14 +533,14 @@
 					
 				end //
 				delimiter ; 
-				DROP EVENT IF EXISTS `end_of_month_overdraft_against_assignment_of_contract_interests_event`;
+				DROP EVENT IF EXISTS `end_of_month_overdraft_against_ass_of_contract_interests_event`;
 				DELIMITER $$
-				CREATE EVENT `end_of_month_overdraft_against_assignment_of_contract_interests_event`
+				CREATE EVENT `end_of_month_overdraft_against_ass_of_contract_interests_event`
 				ON SCHEDULE EVERY  1 day
 				STARTS '2022-03-31 23:30:00'
 				ON COMPLETION PRESERVE
 				DO BEGIN
-				call end_of_month_overdraft_against_assignment_of_contract_interests();
+				call end_of_month_overdraft_against_ass_of_contract_interests();
 				END$$
 				DELIMITER ;
 				

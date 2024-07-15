@@ -1,8 +1,11 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\Contract;
 use App\Models\FinancialInstitution;
 use App\Models\LendingInformationAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstAssignmentOfContract;
@@ -87,7 +90,7 @@ class OverdraftAgainstAssignmentOfContractController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','max_lending_limit_per_customer'];
+		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','max_lending_limit_per_contract'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		$data = $request->only( $this->getCommonDataArr());
@@ -162,11 +165,20 @@ class OverdraftAgainstAssignmentOfContractController
 	}
 	public function applyLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract )
 	{
+		$contractId = $request->get('contract_id_create') ;
+		$contract = Contract::find($contractId);
 		$odAgainstAssignmentOfContract->lendingInformation()->create([
 			'company_id'=>$company->id ,
 			'lending_rate'=>$request->get('lending_rate_create'),
 			'customer_id'=>$request->get('customer_id_create'),
-			'contract_id'=>$request->get('contract_id_create')
+			'contract_id'=>$contractId
+		]);
+	
+		$contract->update([
+			'account_type'=>AccountType::onlyAgainstAssignmentOfContract()->first()->id ,
+			'account_number'=>$odAgainstAssignmentOfContract->getAccountNumber(),
+			'status'=>Contract::RUNNING_AND_AGAINST,
+			'updated_at'=>now()
 		]);
 		return redirect()->back()->with('success',__('Done'));
 	
@@ -187,11 +199,21 @@ class OverdraftAgainstAssignmentOfContractController
 	}
 	public function deleteLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
 	{
+		
+		$lendingInformation->contract 
+		//  && $lendingInformation->overdraftAgainstAssignmentOfContract->lendingInformation->count() == 1
+		 
+		 ? $lendingInformation->contract->update([
+			'status'=>Contract::RUNNING,
+			'account_type'=>null,
+			'account_number'=>null 
+		]) : null;
 		$lendingInformation->delete();
-		
-		
 		return redirect()->back()->with('success',__('Done'));
-
+	}
+	public function applyAgainstLending(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
+	{
+		$lendingInformation->contract->update();
 	}
 	
 }

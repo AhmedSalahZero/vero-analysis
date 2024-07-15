@@ -409,6 +409,9 @@ Route::middleware([])->group(function () {
 				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/lending-information/{odAgainstAssignmentOfContract}', 'OverdraftAgainstAssignmentOfContractController@applyLendingInformation')->name('lending.information.apply.for.against.assignment.of.contract');
 				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/edit-lending-information/{lendingInformation}', 'OverdraftAgainstAssignmentOfContractController@editLendingInformation')->name('lending.information.edit.for.against.assignment.of.contract');
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/delete-lending-information/{lendingInformation}', 'OverdraftAgainstAssignmentOfContractController@deleteLendingInformation')->name('lending.information.delete.for.against.assignment.of.contract');
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/apply-against-lending/{lendingInformation}', 'OverdraftAgainstAssignmentOfContractController@applyAgainstLending')->name('apply.against.lending');
+				 Route::put('contract/{contract}/{type}/mark-as-finished', 'ContractsController@markAsFinished')->name('contract.mark.as.finished');
+				 Route::put('contract/{contract}/{type}/mark-as-running-and-against', 'ContractsController@markAsRunningAndAgainst')->name('contract.mark.as.running.and.against');
 				 
 					/**
 					 * * start certificates of deposit

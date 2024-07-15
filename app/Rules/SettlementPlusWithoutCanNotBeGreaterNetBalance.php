@@ -33,8 +33,8 @@ class SettlementPlusWithoutCanNotBeGreaterNetBalance implements ImplicitRule
 			$currentNetBalance = isset($invoiceArr['net_balance'])  ? unformat_number($invoiceArr['net_balance']) : 0 ;
 			$settlementAmount = isset($invoiceArr['settlement_amount']) ? unformat_number($invoiceArr['settlement_amount']) : 0 ;
 			$withoutAmount =  isset($invoiceArr['withhold_amount']) ? unformat_number($invoiceArr['withhold_amount']) : 0 ;
-		
 			if($currentNetBalance < $settlementAmount+ $withoutAmount){
+				// dd($this->settlements,$invoiceArr,$currentNetBalance , $settlementAmount+ $withoutAmount ,$currentNetBalance < $settlementAmount+ $withoutAmount);
 				$this->errorMessage = __('Invalid Settlement Amount For Invoice Number '  . $invoiceNumber);
 				return false ;
 			}

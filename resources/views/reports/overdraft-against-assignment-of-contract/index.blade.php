@@ -169,6 +169,10 @@
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingRateFormatted() . ' %' }} </td>
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingAmountFormatted() }} </td>
                                                                                     <td>
+                                                                                        <a 
+																						{{-- data-toggle="modal" --}}
+																						 href="{{ route('apply.against.lending',['company'=>$company->id , 'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id]) }}"
+																						 data-target="#apply-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Apply Against Lending') }}"><i class="fa fa-balance-scale"></i></a>
                                                                                         <a data-toggle="modal" data-target="#edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
 
                                                                                         <div class="modal fade" id="edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -392,7 +396,6 @@
                     let options = '';
                     for (index in res.contracts) {
 						var contract = res.contracts[index] ;
-						
                         options += `<option data-amount="${number_format(contract.amount)}"  data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" value="${contract.id}">${contract.name}</option>`
                     }
                     parent.find('.append-contracts-create').empty().append(options);

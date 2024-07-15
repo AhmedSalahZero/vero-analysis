@@ -48,8 +48,9 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		foreach(Company::all() as $company){
-				CurrentAccountBankStatement::updateNonActiveDaily($company);
-		}
+		logger('pppppppppppppppppp');
+		// foreach(Company::all() as $company){
+		// 		CurrentAccountBankStatement::updateNonActiveDaily($company);
+		// }
 	}
 }

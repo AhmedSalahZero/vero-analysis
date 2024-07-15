@@ -50,6 +50,10 @@ class AccountType extends Model
 	{
 		return $builder->onlySlugs([self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER]);
 	}
+	public function scopeOnlyAgainstAssignmentOfContract(Builder $builder)
+	{
+		return $builder->onlySlugs([self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
+	}
 	public function scopeOnlyCdAccounts(Builder $builder)
 	{
 		return $builder->onlySlugs([self::CERTIFICATE_OF_DEPOSIT]);
