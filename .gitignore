@@ -18,7 +18,7 @@ storage/framework/cache/data
 storage/framework/sessions/*
 storage/framework/sessions/*
 storage/framework/testing/*
-storage/framework/views/*.php
+storage/framework/views/*
 *.zip
 _ide_helper.php
 _ide_helper_models.php
