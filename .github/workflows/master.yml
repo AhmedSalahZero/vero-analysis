@@ -8,6 +8,7 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     env:
+       DB_HOST: veroanalysis.com
        DB_DATABASE: veroanalysis_db
        DB_USERNAME: veroanalysis_production
        DB_PASSWORD: ho_OQYRjSqGB
