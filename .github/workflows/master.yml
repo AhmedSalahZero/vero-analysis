@@ -52,7 +52,7 @@ jobs:
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-         server: thetailorswe`b.com
+         server: thetailorsweb.com
          server-dir: public_html/system.veroanalysis.com/
          username: veroanalysis
          password: Aa@112233@aA
