@@ -31,6 +31,8 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 bootstrap
     - name: clear view
-      run: php artisan view:clear
+      run: php artisan view:clear 
+    - name: run logger
+      run: php artisan run:test
     
     
