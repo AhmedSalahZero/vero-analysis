@@ -48,11 +48,8 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		logger('pppppppppppppppppp');
-		$content = "some text here";
-$fp = fopen( "myText.txt","wb");
-fwrite($fp,$content);
-fclose($fp);
+		echo 'salah helmy';
+		echo getcwd();
 		
 		
 		// foreach(Company::all() as $company){
