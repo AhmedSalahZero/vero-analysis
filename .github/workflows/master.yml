@@ -19,7 +19,7 @@ jobs:
         username: veroanalysis
         password: Aa@112233@aA
     - name: Storage link
-      run:  ea-php74 /opt/cpanel/composer/bin/composer update --ignore-platform-reqs
+      run:  php74 /opt/cpanel/composer/bin/composer update --ignore-platform-reqs
     - name: Storage link
       run: php artisan run:test
       #run: /user/local/bin/ea-php74 /home/veroanalysis/public_html/system.veroanalysis.com/artisan run:test
