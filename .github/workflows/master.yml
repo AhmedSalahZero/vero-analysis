@@ -36,7 +36,7 @@ jobs:
       run: sudo /etc/init.d/mysql start 
     - name: Prepare the application
       run: |
-          php artisan key:generate
+         
     - name: clear view
       run: php artisan view:clear 
     - name: run migration
