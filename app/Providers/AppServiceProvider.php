@@ -153,9 +153,14 @@ class AppServiceProvider extends ServiceProvider
 		View::share('langs', $languages);
 		// View::share('langs',Language::all());
 		View::share('lang', app()->getLocale());
-
-		$currentCompany = Company::find(Request()->segment(2));
-
+		$currentCompany = null ;
+		try {
+			$currentCompany = Company::find(Request()->segment(2));
+		}
+		catch(\Exception $e){
+			
+		}
+		
 		if ($currentCompany) {
 			$excelType ='SalesGathering';
 			if(in_array('uploading',Request()->segments())){
