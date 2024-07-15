@@ -66,7 +66,6 @@ Route::middleware([])->group(function () {
             // Route::resource('deduction', 'DeductionController');
             Route::resource('toolTipData', 'ToolTipDataController');
 
-            // Route::resource('Roles&Permissions', 'RolesAndPermissionsController');
             Route::group(['prefix' => 'RolesPermissions/{scope}/', 'as' => 'roles.permissions.'], function () {
                 Route::get('/index', 'RolesAndPermissionsController@index')->name('index');
                 Route::get('/create', 'RolesAndPermissionsController@create')->name('create');
