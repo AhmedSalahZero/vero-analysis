@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -99,7 +98,7 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 				 * * overdraft_against_commercial_paper_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
-				logger('is changged'. $isChanged);
+				// logger('is changged'. $isChanged);
 				if($isChanged){
 					$oldOverdraftAgainstCommercialPaperId=$model->getRawOriginal('overdraft_against_commercial_paper_id');
 					// $oldBankStatementId=$model->getRawOriginal('id');

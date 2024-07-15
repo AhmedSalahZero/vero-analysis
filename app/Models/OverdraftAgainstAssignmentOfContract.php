@@ -24,7 +24,7 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 	}	
 	public function lendingInformation():HasMany
 	{
-		return $this->hasMany(LendingInformationAgainstAssignmentOfContract::class , 'overdraft_against_assignment_of_contracts_id','id');
+		return $this->hasMany(LendingInformationAgainstAssignmentOfContract::class , 'overdraft_against_assignment_of_contract_id','id');
 	}
 	public static function generateForeignKeyFormModelName():string 
 	{

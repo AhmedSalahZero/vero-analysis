@@ -18,3 +18,5 @@ jobs:
         server-dir: public_html/system.veroanalysis.com/
         username: veroanalysis
         password: Aa@112233@aA
+    - name: Storage link
+      run: php artisan run:test

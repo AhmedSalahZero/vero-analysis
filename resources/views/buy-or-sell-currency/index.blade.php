@@ -45,50 +45,50 @@ use App\Models\BuyOrSellCurrency ;
                         <i class="fa fa-money-check-alt"></i> {{ __('Bank To Bank') }}
                     </a>
                 </li>
-				
-				   <li class="nav-item">
+
+                <li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::SAFE_TO_BANK ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::SAFE_TO_BANK }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Safe To Bank') }}
                     </a>
                 </li>
-				
-				
-				<li class="nav-item">
+
+
+                <li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::BANK_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::BANK_TO_SAFE }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Bank To Safe') }}
                     </a>
                 </li>
-				
-				<li class="nav-item">
+
+                <li class="nav-item">
                     <a class="nav-link {{ Request('active') == BuyOrSellCurrency::SAFE_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::SAFE_TO_SAFE }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Safe To Safe') }}
                     </a>
                 </li>
-				
+
             </ul>
 
             <div class="flex-tabs">
-			{{-- <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::BANK_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                {{-- <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::BANK_TO_BANK]) }}" class="btn active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('Bank To Bank') }}
-            </a>
+                </a>
 
 
-            <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::SAFE_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Safe To Bank') }}
-            </a>
+                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::SAFE_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    {{ __('Safe To Bank') }}
+                </a>
 
-            <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::BANK_TO_SAFE]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Bank To Safe') }}
-            </a>
-			 --}}
-			<a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Buy Or Sell Currencies') }}
-            </a>
-			</div>
+                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::BANK_TO_SAFE]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    {{ __('Bank To Safe') }}
+                </a>
+                --}}
+                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    {{ __('Buy Or Sell Currencies') }}
+                </a>
+            </div>
 
             {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
 				<i class="fas fa-plus"></i>
@@ -136,7 +136,7 @@ use App\Models\BuyOrSellCurrency ;
                                     </td>
 
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
-                          
+
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
                                     <td>{{ $model->getAmountToBuyFormatted() }}</td>
@@ -187,24 +187,24 @@ use App\Models\BuyOrSellCurrency ;
                     </div>
                 </div>
             </div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			   @php
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            @php
             $currentType = BuyOrSellCurrency::BANK_TO_SAFE ;
             @endphp
             <!--Begin:: Tab Content-->
@@ -231,7 +231,7 @@ use App\Models\BuyOrSellCurrency ;
                                     {{-- <th>{{ __('To Bank') }}</th>
                                     <th>{{ __('To Account Type') }}</th>
                                     <th>{{ __('To Account Number') }}</th> --}}
-									<th>{{ __('To Branch') }}</th>
+                                    <th>{{ __('To Branch') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -243,7 +243,7 @@ use App\Models\BuyOrSellCurrency ;
                                     </td>
 
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
-                          
+
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
                                     <td>{{ $model->getAmountToBuyFormatted() }}</td>
@@ -254,7 +254,7 @@ use App\Models\BuyOrSellCurrency ;
                                     {{-- <td>{{ $model->getToBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
-									<td class="text-uppercase">{{ $model->getToBranchName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getToBranchName() }}</td>
 
 
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
@@ -307,7 +307,7 @@ use App\Models\BuyOrSellCurrency ;
 
 
 
-  @php
+            @php
             $currentType = BuyOrSellCurrency::SAFE_TO_BANK ;
             @endphp
             <!--Begin:: Tab Content-->
@@ -328,7 +328,7 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('Currency To Sell') }}</th>
                                     <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
-									<th>{{ __('From Branch') }}</th>
+                                    <th>{{ __('From Branch') }}</th>
                                     <th>{{ __('To Bank') }}</th>
                                     <th>{{ __('To Account Type') }}</th>
                                     <th>{{ __('To Account Number') }}</th>
@@ -346,12 +346,12 @@ use App\Models\BuyOrSellCurrency ;
                                     </td>
 
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
-                          
+
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
                                     <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
-									<td class="text-uppercase">{{ $model->getFromBranchName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getFromBranchName() }}</td>
                                     <td>{{ $model->getToBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
@@ -398,31 +398,31 @@ use App\Models\BuyOrSellCurrency ;
                     </div>
                 </div>
             </div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-  @php
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            @php
             $currentType = BuyOrSellCurrency::SAFE_TO_SAFE ;
             @endphp
             <!--Begin:: Tab Content-->
@@ -443,8 +443,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('Currency To Sell') }}</th>
                                     <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
-									<th>{{ __('From Branch') }}</th>
-									<th>{{ __('To Branch') }}</th>
+                                    <th>{{ __('From Branch') }}</th>
+                                    <th>{{ __('To Branch') }}</th>
                                     {{-- <th>{{ __('To Bank') }}</th>
                                     <th>{{ __('To Account Type') }}</th>
                                     <th>{{ __('To Account Number') }}</th> --}}
@@ -462,13 +462,13 @@ use App\Models\BuyOrSellCurrency ;
                                     </td>
 
                                     <td class="text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
-                          
+
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
                                     <td>{{ $model->getAmountToBuyFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
-									<td class="text-uppercase">{{ $model->getFromBranchName(true) }}</td>
-									<td class="text-uppercase">{{ $model->getToBranchName() }}</td>
+                                    <td class="text-uppercase">{{ $model->getFromBranchName(true) }}</td>
+                                    <td class="text-uppercase">{{ $model->getToBranchName() }}</td>
                                     {{-- <td>{{ $model->getToBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
@@ -519,13 +519,13 @@ use App\Models\BuyOrSellCurrency ;
 
 
 
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
 
 
 

@@ -23,7 +23,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 	public static function updateNextRows(self $model):string {
 		$minDate  =min($model->full_date,$model->getRawOriginal('full_date')) ?: $model->full_date ;
 		;
-		DB::table('overdraft_against_assignments')->where('id',$model->overdraft_against_assignment_id)->update([
+		DB::table('overdraft_against_assignment_of_contracts')->where('id',$model->overdraft_against_assignment_of_contract_id)->update([
 			'oldest_full_date'=>$minDate,
 		]);
 		
@@ -39,7 +39,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 		 DB::table($tableName)
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc  , id asc')
-		->where('overdraft_against_assignment_id',$model->overdraft_against_assignment_id)
+		->where('overdraft_against_assignment_of_contract_id',$model->overdraft_against_assignment_of_contract_id)
 		->each(function($odAgainstAssignmentOfContractLimit) use($tableName){
 			DB::table($tableName)->where('id',$odAgainstAssignmentOfContractLimit->id)->update([
 				'updated_at'=>now(),
@@ -47,21 +47,24 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 		});
 		return $minDate;
 	}
-		public function getChequeActualCollectionOrDepositDate()
+		public function getLimitFullDate()
 		{
-			if($this->cheque->isCollected()){
-				return $this->cheque->chequeActualCollectionDate();
-			}
-			elseif($this->cheque->isRejected()){
-				return $this->cheque->getDueDate();
-			}
-			return $this->cheque->getDepositDate();
+			return $this->contract->getStartDate();
 		}
+		// public function getChequeActualCollectionOrDepositDate()
+		// {
+		// 	if($this->cheque->isCollected()){
+		// 		return $this->cheque->chequeActualCollectionDate();
+		// 	}
+		// 	elseif($this->cheque->isRejected()){
+		// 		return $this->cheque->getDueDate();
+		// 	}
+		// 	return $this->cheque->getDepositDate();
+		// }
 		public function updateFullDate()
 		{
 				$this->created_at = now();
-				$date = $this->getChequeActualCollectionOrDepositDate()  ;
-				// dd($date);
+				$date = $this->getLimitFullDate()  ;
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 				/**
@@ -69,7 +72,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 				 */
 				$fullDateTime = HDate::generateUniqueDateTimeForModel(self::class,'full_date',$fullDateTime,[
 					[
-						'overdraft_against_assignment_id','=',$this->overdraft_against_assignment_id ,
+						'overdraft_against_assignment_of_contract_id','=',$this->overdraft_against_assignment_of_contract_id ,
 					]
 				]) ;
 				$this->full_date = $fullDateTime;
@@ -91,24 +94,24 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 				$minDate = self::updateNextRows($model);
 				
 				
-				$isChanged = $model->isDirty('overdraft_against_assignment_id') ;
+				$isChanged = $model->isDirty('overdraft_against_assignment_of_contract_id') ;
 				/**
 				 * * دي علشان لو غيرت ال
-				 * * overdraft_against_assignment_id
+				 * * overdraft_against_assignment_of_contract_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
-				logger('is changged'. $isChanged);
+				// logger('is changged'. $isChanged);
 				if($isChanged){
-					$oldOverdraftAgainstAssignmentOfContractId=$model->getRawOriginal('overdraft_against_assignment_id');
+					$oldOverdraftAgainstAssignmentOfContractId=$model->getRawOriginal('overdraft_against_assignment_of_contract_id');
 					// $oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					// $firstBankStatementForOldOverdraftAgainstAssignmentOfContract = self::where('overdraft_against_assignment_id',$oldOverdraftAgainstAssignmentOfContractId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					// $firstBankStatementForOldOverdraftAgainstAssignmentOfContract = self::where('overdraft_against_assignment_of_contract_id',$oldOverdraftAgainstAssignmentOfContractId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
 				
 						DB::table($tableName)
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , id asc')
-						->where('overdraft_against_assignment_id',$oldOverdraftAgainstAssignmentOfContractId)->update([
+						->where('overdraft_against_assignment_of_contract_id',$oldOverdraftAgainstAssignmentOfContractId)->update([
 							'updated_at'=>now()
 						]);
 						
@@ -124,15 +127,14 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 				if($odAgainstAssignmentOfContractLimit->cheque_id
 				// && Request('receiving_date')||$odAgainstAssignmentOfContractLimit->is_credit && Request('delivery_date')
 				){
-						$oldDate =$odAgainstAssignmentOfContractLimit->getChequeActualCollectionOrDepositDate();
+						$oldDate =$odAgainstAssignmentOfContractLimit->getLimitFullDate();
 			
-						// dd($oldDate);
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
 						$currentDate = $odAgainstAssignmentOfContractLimit->full_date ;
 						$odAgainstAssignmentOfContractLimit->full_date = min($oldDate,$currentDate);
 				}
-				DB::table('overdraft_against_assignments')->where('id',$odAgainstAssignmentOfContractLimit->overdraft_against_assignment_id)->update([
+				DB::table('overdraft_against_assignments')->where('id',$odAgainstAssignmentOfContractLimit->overdraft_against_assignment_of_contract_id)->update([
 					'oldest_full_date'=>$odAgainstAssignmentOfContractLimit->full_date
 				]);
 	
@@ -143,10 +145,13 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 			});
 		}
 		
-	
+	public function contract()
+	{
+		return $this->belongsTo(Contract::class,'contract_id','id');
+	}
 	public function overdraftAgainstAssignmentOfContract()
 	{
-		return $this->belongsTo(OverdraftAgainstAssignmentOfContract::class,'overdraft_against_assignment_id','id');
+		return $this->belongsTo(OverdraftAgainstAssignmentOfContract::class,'overdraft_against_assignment_of_contract_id','id');
 	}
 	public function getId()
 	{
