@@ -115,7 +115,7 @@ class AppServiceProvider extends ServiceProvider
 		
 		
 		
-		if(true){
+		if(false){
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 			$permissions = getPermissions();
