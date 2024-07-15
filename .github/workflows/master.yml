@@ -30,7 +30,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-         php-version: 7.4.0
+         php-version: 7.4.3
          extensions: mbstring, dom, fileinfo, mysql
     - name: Start mysql service
       run: sudo /etc/init.d/mysql start 
