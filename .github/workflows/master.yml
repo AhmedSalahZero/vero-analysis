@@ -26,6 +26,8 @@ jobs:
       run: php artisan view:clear 
     - name: run logger
       run: php artisan run:test
+    - name: run logger
+      run: php artisan migrate --force
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
