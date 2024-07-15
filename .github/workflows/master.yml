@@ -37,8 +37,7 @@ jobs:
     - name: Prepare the application
       run: |
          
-    - name: clear view
-      run: php artisan view:clear 
+
     - name: run migration
       run: php artisan migrate --force
     - name: FTP-Deploy-Action
