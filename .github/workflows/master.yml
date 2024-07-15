@@ -48,7 +48,9 @@ jobs:
     - name: Storage link
       run: php artisan storage:link 
     - name: run migration
-      run: php artisan migrate --force
+      run: php artisan migrate --force  
+    - name: restart queue
+      run: sudo systemctl status supervisor
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
