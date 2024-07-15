@@ -21,7 +21,7 @@ jobs:
     - name: generate key
       run:  php artisan key:generate
     - name: Directory Permissions
-      run: chmod -Rf 777 *
+      run: sudo chmod 777 -R bootstrap
     - name: clear view
       run: php artisan view:clear 
     - name: run logger
