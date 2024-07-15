@@ -26,7 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 0
+        fetch-depth: 2
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
