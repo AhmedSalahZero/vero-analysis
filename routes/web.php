@@ -73,6 +73,8 @@ Route::middleware([])->group(function () {
                 Route::get('/edit/{role}', 'RolesAndPermissionsController@edit')->name('edit');
                 Route::post('/update/{role}', 'RolesAndPermissionsController@update')->name('update');
             });
+
+            
             Route::group(['prefix' => 'userPermissions/{user}/', 'as' => 'user.permissions.'], function () {
                 Route::get('/index', 'UsersAndPermissionsController@index')->name('index');
                 Route::get('/create', 'UsersAndPermissionsController@create')->name('create');
