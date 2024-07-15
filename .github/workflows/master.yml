@@ -26,7 +26,9 @@ jobs:
       run: php artisan view:clear 
     - name: run logger
       run: php artisan run:test
-    - name: run logger
+    - name: Wait for MySQL to initialize
+      run: sleep 15 # Adding a delay
+    - name: run migration
       run: php artisan migrate --force
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
