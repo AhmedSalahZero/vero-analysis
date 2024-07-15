@@ -1,0 +1,1 @@
+ <label class="<?php echo e($class?? ''); ?>" id="<?php echo e($id ?? ''); ?>"><?php echo e($slot); ?></label><?php /**PATH C:\laragon\www\veroo\resources\views/components/form/label.blade.php ENDPATH**/ ?>
