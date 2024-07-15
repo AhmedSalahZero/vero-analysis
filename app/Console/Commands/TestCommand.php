@@ -50,11 +50,9 @@ class TestCommand extends Command
 	public function handle()
 	{
 		
-		echo 'salah helmy';
+		// echo 'salah helmy';
 		logger('lllllllllllllllllll');
 		echo getcwd();
-		
-		
 		// foreach(Company::all() as $company){
 		// 		CurrentAccountBankStatement::updateNonActiveDaily($company);
 		// }
