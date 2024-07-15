@@ -49,8 +49,6 @@ jobs:
          username: veroanalysis
          password: Aa@112233@aA
          exclude: |
-            **/.git*
-            **/.git*/**
             **/node_modules/**
     
     
