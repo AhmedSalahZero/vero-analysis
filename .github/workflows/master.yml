@@ -11,13 +11,6 @@ jobs:
     - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
-    - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-         server: thetailorsweb.com
-         server-dir: public_html/system.veroanalysis.com/
-         username: veroanalysis
-         password: Aa@112233@aA
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
@@ -34,5 +27,13 @@ jobs:
       run: php artisan view:clear 
     - name: run logger
       run: php artisan run:test
+    - name: FTP-Deploy-Action
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+         server: thetailorsweb.com
+         server-dir: public_html/system.veroanalysis.com/
+         username: veroanalysis
+         password: Aa@112233@aA
+   
     
     
