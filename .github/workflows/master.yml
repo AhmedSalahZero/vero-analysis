@@ -36,7 +36,6 @@ jobs:
       run: sudo /etc/init.d/mysql start 
     - name: Prepare the application
       run: |
-          php -r "file_exists('.env') || copy('.env.example', '.env');"
           php artisan key:generate
     - name: clear view
       run: php artisan view:clear 
