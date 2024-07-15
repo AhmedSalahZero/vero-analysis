@@ -16,7 +16,7 @@ jobs:
       with:
          php-version: 7.4.0
     - name: copy env
-      run:  php -r "file_exists('.env') || copy('.env.example', '.env');"
+      run:  php -r "file_exists('.env') || copy('.env.production', '.env');"
     - name: install composer
       run:  composer update 
     - name: generate key
