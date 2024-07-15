@@ -7,6 +7,21 @@ jobs:
   FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
+    env:
+       DB_DATABASE: veroanalysis_db
+       DB_USERNAME: veroanalysis_production
+       DB_PASSWORD: ho_OQYRjSqGB
+       BROADCAST_DRIVER: log
+    services:
+           mysql:
+            image: mysql:5.7
+            env:
+                MYSQL_ALLOW_EMPTY_PASSWORD: false
+                MYSQL_ROOT_PASSWORD: password
+                MYSQL_DATABASE: laravel
+            ports:
+                   - 3306/tcp
+            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2.1.0
       with:
