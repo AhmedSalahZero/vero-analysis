@@ -49,9 +49,11 @@ class TestCommand extends Command
 	public function handle()
 	{
 		logger('pppppppppppppppppp');
-		DB::table('debugging')->insert([
-			'message'=>'ali'
-		]);
+		$content = "some text here";
+$fp = fopen( "myText.txt","wb");
+fwrite($fp,$content);
+fclose($fp);
+		
 		
 		// foreach(Company::all() as $company){
 		// 		CurrentAccountBankStatement::updateNonActiveDaily($company);
