@@ -15,10 +15,10 @@ storage/debugbar
 storage/dompdf
 storage/logs
 storage/framework/cache/data
-storage/framework/sessions/*
-storage/framework/sessions/*
-storage/framework/testing/*
-storage/framework/views/*
+storage/framework/sessions/*.php
+storage/framework/sessions/*.php
+storage/framework/testing/*.php
+storage/framework/views/*.php
 *.zip
 _ide_helper.php
 _ide_helper_models.php
