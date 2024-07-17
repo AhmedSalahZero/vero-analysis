@@ -14,7 +14,7 @@ class RemoveTestColumnFromCompaniesTable extends Migration
     public function up()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->removeColumn('test');
+			$table->dropColumn('test');
 			DB::table('notifications')->delete();
         });
     }
