@@ -143,6 +143,10 @@ use App\NotificationSetting ;
                                 <div class="col-md-4 ">
                                     <x-form.input :default-value="1" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'supplier_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
+								 <div class="col-md-4 ">
+                                    <x-form.input :default-value="NotificationSetting::PENDING_PAYABLE_CHEQUES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Pending Payable Cheques Notifications Days')" :type="'text'" :placeholder="__('Pending Payable Cheques Notifications Days')" :name="'pending_payable_cheques_notifications_days'" :required="true"></x-form.input>
+                                </div>
+								
                             </div>
                         </div>
                     </div>

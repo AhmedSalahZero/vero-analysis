@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\CheckDueAndPastedInvoicesJob;
 use App\Models\Cheque;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\CustomerInvoice;
 use App\Models\Partner;
+use App\Models\PayableCheque;
 use App\Models\SupplierInvoice;
 use App\Models\TablesField;
 use App\Notifications\DueInvoiceNotification;
@@ -49,6 +51,19 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+	
+		// $companyId = 85 ; 
+		// $dateFormat = 'Y-m-d';
+		// $pendingPayableChequeNotificationDays =3; 
+		// $dayBeforeDayDate = Carbon::make(now()->format($dateFormat))->subDay()->format($dateFormat);
+		
+		// $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($pendingPayableChequeNotificationDays)->format($dateFormat);
+		// $pendingPayableCheques = PayableCheque::where('company_id', $companyId)
+		// ->where('status',PayableCheque::PENDING)
+		// ->whereBetween('due_date', [$beforeIntervalDate, $dayBeforeDayDate])->get();
+		// dd($pendingPayableCheques,$beforeIntervalDate,$dayBeforeDayDate);
+		// dd('e');
+		CheckDueAndPastedInvoicesJob::dispatch();
 		
 		// echo 'salah helmy';
 		logger('lllllllllllllllllll');

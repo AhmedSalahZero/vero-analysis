@@ -215,7 +215,6 @@ class SalesGatheringTestController extends Controller
 	{
 		$companyId = $company->id;
 		$class = '\App\Models\\'.$modelName ;
-		dd($modelName);
 		$model = new $class;
 		foreach((array)$request->get('tableIds') as $tableId){
 			foreach((array)$request->get($tableId) as  $tableDataArr){

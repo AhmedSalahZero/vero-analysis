@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\NotificationSetting;
 use App\Traits\StaticBoot;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -124,10 +125,20 @@ class Company extends Model implements HasMedia
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getCustomerComingDuesInvoicesNotificationsDays() : NotificationSetting::CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS ;
 	}
+	public function getSupplierComingDuesInvoicesNotificationsDays():int
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getSupplierComingDuesInvoicesNotificationsDays() : NotificationSetting::SUPPLIER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS ;
+	}
 	public function getCustomerPastDuesInvoicesNotificationsDays():int
 	{
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getCustomerPastDuesInvoicesNotificationsDays() : NotificationSetting::CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS ;
+	}
+	public function getSupplierPastDuesInvoicesNotificationsDays():int
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getSupplierPastDuesInvoicesNotificationsDays() : NotificationSetting::SUPPLIER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS ;
 	}
 	public function getChequesInSafeNotificationDays():int
 	{
@@ -138,6 +149,11 @@ class Company extends Model implements HasMedia
 	{
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getChequesUnderCollectionNotificationsDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
+	}
+	public function getPendingPayableChequeNotificationDays()
+	{
+		$notificationSetting = $this->notificationSetting ;
+		return  $notificationSetting  ? $notificationSetting->getPendingPayableChequeNotificationDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
 	}
 	public function letterOfGuaranteeIssuances()
 	{
@@ -183,7 +199,6 @@ class Company extends Model implements HasMedia
 	}
 	public function bankToBankBuyOrSellCurrencies()
 	{
-	
 		return $this->buyOrSellCurrencies()->where('type',BuyOrSellCurrency::BANK_TO_BANK);
 	}
 	public function safeToBankBuyOrSellCurrencies()
@@ -223,5 +238,9 @@ class Company extends Model implements HasMedia
 	public function financialInstitutions()
 	{
 		return $this->hasMany(FinancialInstitution::class,'company_id','id');
+	}
+	public function getNotificationsBasedOnType($type):Collection
+	{
+		return $this->notifications->where('data.tap_type',$type);
 	}
 }
