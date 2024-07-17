@@ -1,9 +1,9 @@
 <!-- begin:: Header -->
 @php
-	$notificationTypes=['customer'=>__('Customer'),'receivable_cheque'=>__('Receivable Cheques'),'supplier'=>__('Supplier')];
+$notificationTypes=\App\Notification::getAllTypesFormatted();
 @endphp
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
-{{-- {{ dd() }} --}}
+    {{-- {{ dd() }} --}}
 
 
     <div class="kt-container ">
@@ -30,9 +30,8 @@
         <div class="kt-header__topbar kt-grid__item">
 
 
-
             <!--begin: Notifications -->
-			@if(isset($company) && count($company->notifications))
+            @if(isset($company) && count($company->notifications))
             <div class="kt-header__topbar kt-grid__item ">
                 <div class="kt-header__topbar-item dropdown">
                     <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
@@ -51,7 +50,7 @@
 
                         <!--<span class="kt-badge kt-badge--light"></span>-->
                     </div>
-                    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+                    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl dropdown-menu-xl">
                         <form>
 
                             <!--begin: Head -->
@@ -61,34 +60,39 @@
                                     &nbsp;
                                     <span class="btn btn-success btn-sm btn-bold btn-font-md">{{ $company->unreadNotifications->count() . ' '.__(' new') }}</span>
                                 </h3>
+
                                 <ul class="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-success kt-notification-item-padding-x" role="tablist">
-								@php
-									$notificationTypeIndex = 0 ;
-								@endphp
-									@foreach($notificationTypes as $notificationTypeId => $notificationTypeTitle )
+                                    @php
+                                    $notificationTypeIndex = 0 ;
+                                    @endphp
+                                    @foreach($notificationTypes as $notificationTypeId => $notificationTypeTitle )
                                     <li class="nav-item">
-                                        <a class="nav-link active show" data-toggle="tab" href="#topbar_{{ convertStringToClass($notificationTypeId) }}" role="tab" aria-selected="true">{{ __('Customer') }}</a>
+                                        <a class="nav-link @if($notificationTypeIndex == 0) active  show  @endif   {{ $notificationTypeIndex }} " data-toggle="tab" href="#topbar_{{ convertStringToClass($notificationTypeId) }}" role="tab" aria-selected="true">{{$notificationTypeTitle }}</a>
                                     </li>
-									@endforeach 
-                                
-									
+                                    @php
+                                    $notificationTypeIndex = $notificationTypeIndex + 1 ;
+                                    @endphp
+                                    @endforeach
+
+
                                 </ul>
                             </div>
                             <!--end: Head -->
                             <div class="tab-content">
-								@php
-									$notificationTypeIndex = 0 ;
-								@endphp
-										@foreach($notificationTypes as $notificationTypeId => $notificationTypeTitle )
-                                <div class="tab-pane @if($notificationTypeIndex == 0) active show @endif " id="topbar_{{ convertStringToClass($notificationTypeId) }}" role="tabpanel">
+                                @php
+                                $notificationTypeIndex = 0 ;
+                                @endphp
+                                @foreach($notificationTypes as $notificationTypeId => $notificationTypeTitle )
+                                <div class="tab-pane @if($notificationTypeIndex == 0) active show  @endif  {{ $notificationTypeIndex }} " data-innn="{{ $company->notifications->where('data.tap_type',$notificationTypeId)->count() }}" id="topbar_{{ convertStringToClass($notificationTypeId) }}" role="tabpanel">
                                     <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll overflow-auto" data-scroll="true" data-height="300" data-mobile-height="200">
                                         @foreach($company->notifications->where('data.tap_type',$notificationTypeId) as $notification)
-                                        <a href="#" class="kt-notification__item @if($notification->read()) kt-notification__item--read @endif">
+									
+                                        <a data-id="{{ $notification->id }}" data-toggle="modal" data-target="#notifications-modal{{ $notification->id }}" href="#" data-enlarge-content-js class="kt-notification__item @if($notification->read()) kt-notification__item--read @endif">
                                             <div class="kt-notification__item-icon">
                                                 <i class="flaticon2-favourite kt-font-danger"></i>
                                             </div>
                                             <div class="kt-notification__item-details">
-                                                <div class="kt-notification__item-title">
+                                                <div class="kt-notification__item-title" data-notification-content-id="{{ $notification->id }}">
                                                     {{ $notification->data['message_'.app()->getLocale()] }}
                                                 </div>
                                                 <div class="kt-notification__item-time">
@@ -96,19 +100,30 @@
                                                 </div>
                                             </div>
                                         </a>
+
+                                        
+
                                         @endforeach
-										
-                              
+
+
+                                    </div>
+
+                                    <div class="pb-4 text-center">
+                                        <a href="{{ route('view.notifications',['company'=>$company->id , 'type'=>$notificationTypeId ]) }}" class="btn active-style btn-sm btn-primary">{{ __('View All') }}</a>
                                     </div>
                                 </div>
-                                        @endforeach
+
+                                @php
+                                $notificationTypeIndex = $notificationTypeIndex + 1 ;
+                                @endphp
+                                @endforeach
 
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-			@endif
+            @endif
 
             <!--end: Notifications -->
 

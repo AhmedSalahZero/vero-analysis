@@ -85,7 +85,10 @@
         <ul style="margin-bottom:0 ;" class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
             @php
             $index = 0 ;
+	//		$selectedCurrencies = ['USD'=>'USD'];
             @endphp
+
+			
             @foreach($selectedCurrencies as $currencyUpper=>$currency)
 
             <li class="nav-item @if($index ==0 ) active @endif">
@@ -229,7 +232,7 @@
                     </table>
                 </div>
                 <div class="col-md-8">
-                    <div class="chartdivchart" id="chartdiv3_{{ $modelType.$currency }}"></div>
+                    <div class="chartdivchart" id="chartdiv__{{ $modelType.$currency }}"></div>
                 </div>
             </div>
         </div>
@@ -641,7 +644,7 @@
     }];
 
 </script>
-@foreach($selectedCurrencies as $currencyUpper=>$currency)
+	@foreach($selectedCurrencies as $currencyUpper=>$currency)
 @foreach($invoiceTypesModels as $modelType)
 <!-- Chart code -->
 <script>
@@ -652,12 +655,14 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdiv3_{{ $modelType.$currency }}", am4charts.XYChart);
+        var chart = am4core.create("chartdiv__{{ $modelType.$currency }}", am4charts.XYChart);
 
         // Add data
 
+
         chartData = @json(($dashboardResult['invoices_aging'][$modelType][$currency]['chart'] ?? []));
         chartData = chartData.reverse()
+		
         chart.data = chartData;
 
         // Create axes
@@ -678,15 +683,13 @@
         series.columns.template.adapter.add("fill", function(fill, target) {
             if (target.dataItem) {
                 switch (target.dataItem.dataContext.region) {
+					
                     case "Past Due":
                         return "#C70039";
-                        break;
                     case "Coming Due":
                         return "#1D9D23";
-                        break;
                     case "Current Due":
                         return "#000";
-                        break;
                 }
             }
             return fill;
@@ -694,9 +697,11 @@
 
         var axisBreaks = {};
         var legendData = [];
-
-        // Add ranges
-        function addRange(label, start, end, color) {
+		
+		
+		// Add ranges
+        var addRange = function (label, start, end, color) {
+			console.log('start',start,'end',end,chartData)
             var range = yAxis.axisRanges.create();
             range.category = start;
             range.endCategory = end;
@@ -718,7 +723,6 @@
             range.tick.strokeOpacity = 1;
             range.tick.stroke = am4core.color("#396478");
             range.tick.location = 0;
-
             range.locations.category = 1;
             var axisBreak = yAxis.axisBreaks.create();
             axisBreak.startCategory = start;
@@ -728,12 +732,12 @@
             axisBreak.startLine.disabled = true;
             axisBreak.endLine.disabled = true;
             axisBreaks[label] = axisBreak;
-
             legendData.push({
                 name: label
                 , fill: color
             });
         }
+
         let groups = [];
         for (i = 0; i < chartData.length; i++) {
             var currentCategory = chartData[i].region;
@@ -750,13 +754,20 @@
                 var index = groups.findIndex(obj => obj.name == currentCategory)
                 groups[index].last_due = currentState
             } else {
+				currentState = null
                 if (currentCategory == 'Coming Due') {
-                    currentState = '46-60 Days';
+                    currentState =getLastAppearanceOfKeyInObject(chartData,'Coming Due');
+                  //  currentState = '1-7 Days';
+					//'8-15 Days'
                 }
                 if (currentCategory == 'Past Due') {
-
-                    currentState = '-1-7 Days';
+				currentState =getLastAppearanceOfKeyInObject(chartData,'Past Due');
+                 //   currentState = '-1-7 Days';
                 }
+			 if (currentCategory == 'Current Due') {
+                    currentState = '0 Days';
+                }
+			
                 groups.push({
                     name: currentCategory
                     , first_due: currentState
@@ -764,16 +775,21 @@
                 })
             }
         }
+
+	
         for (var i = 0; i < groups.length; i++) {
             var color = '#000';
-            if (i == 1) {
+			 if (groups[i].name=="{{ __('Coming Due') }}" ) { // coming due 
                 color = '#1D9D23';
             }
-            if (i == 2) {
+            if (groups[i].name=="{{ __('Current Due') }}") {
+                color = '#000';
+            }
+            if (groups[i].name=="{{ __('Past Due') }}") {
                 color = '#C70039'
             }
 
-            addRange(groups[i].name, groups[i].first_due, groups[i].last_due, color);
+         //   addRange(groups[i].name, groups[i].first_due, groups[i].last_due, color);
 
         }
         chart.cursor = new am4charts.XYCursor();
@@ -784,43 +800,10 @@
         legend.reverseOrder = true;
 
         chart.legend = legend;
+		
         legend.data = legendData;
 
-        legend.itemContainers.template.events.on("toggled", function(event) {
-            var name = event.target.dataItem.dataContext.name;
-            var axisBreak = axisBreaks[name];
-            if (event.target.isActive) {
-                axisBreak.animate({
-                    property: "breakSize"
-                    , to: 0
-                }, 1000, am4core.ease.cubicOut);
-                yAxis.dataItems.each(function(dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.hide(1000, 500);
-                    }
-                })
-                series.dataItems.each(function(dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.hide(1000, 0, 0, ["valueX"]);
-                    }
-                })
-            } else {
-                axisBreak.animate({
-                    property: "breakSize"
-                    , to: 1
-                }, 1000, am4core.ease.cubicOut);
-                yAxis.dataItems.each(function(dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.show(1000);
-                    }
-                })
-                series.dataItems.each(function(dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.show(1000, 0, ["valueX"]);
-                    }
-                })
-            }
-        })
+       
 
     }); // end am4core.ready()
 
@@ -841,7 +824,6 @@
 
         var chartData = @json(($dashboardResult['cheques_aging'][$modelType][$currency]['chart'] ?? []));
         chart.data = chartData;
-        console.log('chart data', chartData);
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
 
@@ -914,7 +896,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivline1{{ $currencyUpper }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivline1{{ $currency }}", am4charts.XYChart);
 
         // Add data
         chart.data = ammount_array;
@@ -984,7 +966,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("withdrawal-dues-chart-{{ $currencyUpper }}", am4charts.XYChart);
+        var chart = am4core.create("withdrawal-dues-chart-{{ $currency }}", am4charts.XYChart);
 
         // Add data
         chart.data = [];
@@ -1053,7 +1035,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivline5{{ $currencyUpper }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivline5{{ $currency }}", am4charts.XYChart);
 
         // Add data
         chart.data = ammount_array;
@@ -1122,7 +1104,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivline6{{ $currencyUpper }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivline6{{ $currency }}", am4charts.XYChart);
 
         // Add data
         chart.data = ammount_array;
@@ -1197,7 +1179,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivmulti{{ $currencyUpper }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivmulti{{ $currency }}", am4charts.XYChart);
 
         //
 
@@ -1211,7 +1193,8 @@
         var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         dateAxis.renderer.minGridDistance = 50;
 
-        // Create series
+
+ // Create series
         function createAxisAndSeries(field, name, opposite, bullet) {
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             if (chart.yAxes.indexOf(valueAxis) != 0) {
@@ -1271,6 +1254,7 @@
             valueAxis.renderer.labels.template.fill = series.stroke;
             valueAxis.renderer.opposite = opposite;
         }
+       
 
         createAxisAndSeries("visits", "Cash Inflow", false, "circle");
         createAxisAndSeries("views", "Cash Outflow", true, "circle");
@@ -1282,7 +1266,44 @@
         // Add cursor
         chart.cursor = new am4charts.XYCursor();
 
-        // generate some random data, quite different range
+        
+
+    }); // end am4core.ready()
+	$(document).on('change','select[js-refresh-withdrawal-due-data-and-chart][data-currency="{{ $currency }}"]',function(){
+	const accountTypeId = $(this).val()
+	const currencyName = $(this).attr('data-currency')
+	const currentChartId = 'withdrawal-dues-chart-'+currencyName;
+	
+	$.ajax({
+		url:"{{ route('refresh.withdrawal.report',['company'=>$company->id]) }}",
+		data:{
+			accountTypeId,
+			currencyName
+		},
+		type:"get",
+		success:function(res){
+			let data = []
+			let chartData = []
+			let trs = '';
+			for(var item of res.data){
+				trs+= `<tr> 
+					<td>${item.due_date}</td>
+					<td class="text-center">${item.end_balance}</td>
+				 </tr>`
+				 chartData.push({date:item.due_date,value:item.end_balance})
+			}
+			$('#append-withdrawal-due-'+ currencyName).empty().append(trs)
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartData
+		}
+	})
+	})
+	
+</script>
+@endforeach 
+
+<script>
+ 
+		// generate some random data, quite different range
         function generateChartData() {
             var chartData = [];
             var firstDate = new Date();
@@ -1313,43 +1334,21 @@
             }
             return chartData;
         }
-
-    }); // end am4core.ready()
-	$(document).on('change','select[js-refresh-withdrawal-due-data-and-chart][data-currency="{{ $currency }}"]',function(){
-	const accountTypeId = $(this).val()
-	const currencyName = $(this).attr('data-currency')
-	const currentChartId = 'withdrawal-dues-chart-'+currencyName;
-	
-	$.ajax({
-		url:"{{ route('refresh.withdrawal.report',['company'=>$company->id]) }}",
-		data:{
-			accountTypeId,
-			currencyName
-		},
-		type:"get",
-		success:function(res){
-			let data = []
-			let chartData = []
-			let trs = '';
-			for(var item of res.data){
-				trs+= `<tr> 
-					<td>${item.due_date}</td>
-					<td class="text-center">${item.end_balance}</td>
-				 </tr>`
-				 chartData.push({date:item.due_date,value:item.end_balance})
-			}
-			console.log(chartData)
-			$('#append-withdrawal-due-'+ currencyName).empty().append(trs)
-			am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartData
-		}
-	})
-	})
-	
-</script>
-@endforeach 
-
-<script>
+       
 $('select[js-refresh-withdrawal-due-data-and-chart]').trigger('change')	
-</script>
 
+
+</script>
+<script>
+function getLastAppearanceOfKeyInObject(items,key)
+{
+	var result = '';
+	for(object of items){
+		if(object.region == key){
+			result = object.state;
+		}
+	}
+	return result ;
+}
+</script>
 @endsection

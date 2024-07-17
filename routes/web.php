@@ -355,7 +355,7 @@ Route::middleware([])->group(function () {
 
 
 
-
+					Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
 				 Route::resource('notifications-settings', 'NotificationSettingsController');
 				 Route::get('mark-notifications-as-read', 'NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
 

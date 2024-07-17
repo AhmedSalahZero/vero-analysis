@@ -34,7 +34,9 @@ class InvoiceAgingService
         $fullModelName = ("\App\Models\\" . $modelType) ;
         $clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
         $result = [];
-        $invoices = $fullModelName::where('invoice_date', '<=', $this->aging_date)->where('company_id', $this->company_id);
+        $invoices = $fullModelName::where('invoice_date', '<=', $this->aging_date)
+		->orderBy('invoice_due_date','asc')
+		->where('company_id', $this->company_id);
         if (count($clientNames)) {
             $invoices->whereIn($clientNameColumnName, $clientNames);
         }
@@ -54,6 +56,7 @@ class InvoiceAgingService
             }
             $dueNameWithDiffDays = $this->getDueNameWithDiffInDays($invoiceDueDate, $this->aging_date);
             $dueName = array_key_first($dueNameWithDiffDays);
+			
             $diffInDays = $dueNameWithDiffDays[$dueName];
             $dayInterval = $this->getDayInterval($diffInDays);
             if ($diffInDays == 0) {
@@ -116,7 +119,6 @@ class InvoiceAgingService
                 }
             }
         }
-
         return $result ;
     }
 

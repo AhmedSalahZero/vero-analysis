@@ -13,53 +13,67 @@
     <title>VERO ANALYSIS</title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {{-- <style>
-
-.kt-portlet .kt-portlet__body{
-	padding:25px !important;
-}
-</style> --}}
 
 
 
     <style>
-	.w-60-percentage{
-		width:60% !important;
-		
-	}
-	.w-40-percentage{
-		width:40% !important;
-	}
-	.w-20-percentage{
-		width:20% !important;
-		
-	}
-	
-	.flex-tabs{
-		display:flex;
-		gap:10px;
-	}
-	.text-green{
-		color:green !important;
-	}
-	.text-red{
-		color:red !important;
-	}
-	.show-class-js{
-		display:block !important;
-	}	
-	.table-condensed th{
-		background-color:white !important;
-	}
-	input,select,.dropdown-toggle.bs-placeholder{
-		border:1px solid #CCE2FD !important;
-	}
-	.flex-2{
-		flex:2 !important;
-	}
-	.text-main-color{
-		color:#0742A6 !important
-	}
+        #show-notification-here {
+            width: 50%;
+            background-color: red;
+
+        }
+
+    </style>
+    <style>
+        .w-60-percentage {
+            width: 60% !important;
+
+        }
+
+        .w-40-percentage {
+            width: 40% !important;
+        }
+
+        .w-20-percentage {
+            width: 20% !important;
+
+        }
+
+        .flex-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .text-green {
+            color: green !important;
+        }
+
+        .text-red {
+            color: red !important;
+        }
+
+        .show-class-js {
+            display: block !important;
+        }
+
+        .table-condensed th {
+            background-color: white !important;
+        }
+
+        input,
+        select,
+        .dropdown-toggle.bs-placeholder {
+            border: 1px solid #CCE2FD !important;
+        }
+
+        .flex-2 {
+            flex: 2 !important;
+        }
+
+        .text-main-color {
+            color: #0742A6 !important
+        }
+
         ::placeholder {
             color: lightgray !important;
             font-weight: 100;
@@ -489,7 +503,7 @@
                 $(this).closest('div[class*="col-md"]').find('.max-options-select').html('[{{ __("Max:") }}' + maxOption + ']');
 
             })
-$(document).find('select.select2-select2').each(function(index, value) {
+            $(document).find('select.select2-select2').each(function(index, value) {
                 let maxOption = maxOptions[index] !== undefined ? maxOptions[index] : 0;
 
                 if ($(this).selectpicker) {
@@ -1446,17 +1460,18 @@ $(document).find('select.select2-select2').each(function(index, value) {
 
 
 
-	@if(isset($company) && $company->id)
-	<script>
-	$(document).on('click','.js-mark-notifications-as-read',function(){
-		$.ajax({
-			url:"{{ route('mark.notifications.as.read',['company'=>$company->id]) }}",
-		})
-		
-	})
-	</script>
-	
-	@endif 
+    @if(isset($company) && $company->id)
+    <script>
+        $(document).on('click', '.js-mark-notifications-as-read', function() {
+            $.ajax({
+                url: "{{ route('mark.notifications.as.read',['company'=>$company->id]) }}"
+            , })
+
+        })
+
+    </script>
+
+    @endif
     @if(isset($company) && $company->id)
     @if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName )))
     <script>
@@ -1515,7 +1530,7 @@ $(document).find('select.select2-select2').each(function(index, value) {
             clearTimeout(wto);
             wto = setTimeout(() => {
 
-				// #FIXME:first start date and and end date , second start end
+                // #FIXME:first start date and and end date , second start end
                 let startDate = $('input[name="start_date"]').val();
                 let endDate = $('input[name="end_date"]').val();
                 let mainType = $('input[name="main_type"]').val();
@@ -1527,7 +1542,7 @@ $(document).find('select.select2-select2').each(function(index, value) {
                     let secondStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date_second"]').val();
                     let firstEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date"]').val();
                     let secondEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date_second"]').val();
-					console.log(firstStartDate , secondStartDate , firstEndDate ,secondEndDate)
+                    console.log(firstStartDate, secondStartDate, firstEndDate, secondEndDate)
                     if (Date.parse(firstStartDate) <= Date.parse(secondStartDate)) {
                         startDate = firstStartDate;
                     } else {
@@ -1627,10 +1642,10 @@ $(document).find('select.select2-select2').each(function(index, value) {
                             return window.location.reload()
 
                         }
-						if(res.redirectTo){
-							window.location.href=res.redirectTo;
-							return 
-						}
+                        if (res.redirectTo) {
+                            window.location.href = res.redirectTo;
+                            return
+                        }
                         if (res.status) {
                             if (res.showAlert) {
 
@@ -1682,20 +1697,20 @@ $(document).find('select.select2-select2').each(function(index, value) {
                         }
                     }
                     , error: function(res) {
-						let title = '{{ __("Something Went Wrong") }}';
-						if(res.responseJSON && res.responseJSON.message){
-							title = res.responseJSON.message ;
-						}
+                        let title = '{{ __("Something Went Wrong") }}';
+                        if (res.responseJSON && res.responseJSON.message) {
+                            title = res.responseJSON.message;
+                        }
                         $('.submit-form-btn').prop('disabled', false)
-						let message = null ;
-						if(res.responseJSON && res.responseJSON.errors){
-							message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0] 
-						}
-				
+                        let message = null;
+                        if (res.responseJSON && res.responseJSON.errors) {
+                            message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                        }
+
                         Swal.fire({
                             icon: 'error'
-                            , title: title,
-							text:message
+                            , title: title
+                            , text: message
 
                         })
 
@@ -1735,52 +1750,86 @@ $(document).find('select.select2-select2').each(function(index, value) {
     </script>
 
     <script>
-        function getDiffBetweenTwoDateInDays(firstDateAsString,secondDateAsString) {
+        function getDiffBetweenTwoDateInDays(firstDateAsString, secondDateAsString) {
             const date1 = new Date(firstDateAsString);
             const date2 = new Date(secondDateAsString);
             const diffTime = Math.abs(date2 - date1);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays 
+            return diffDays
         }
 
     </script>
-	
-	@if($errors->any())
-	<script>
-	 Swal.fire({
+
+    @if($errors->any())
+    <script>
+        Swal.fire({
             title: "{{ __('Error') }}"
             , text: "{{ $errors->first() }}"
             , icon: 'error'
         });
-	</script>
-	
-	@endif 
-	
-	@if(session()->has('fail'))
-	<script>
-	 Swal.fire({
+
+    </script>
+
+    @endif
+
+    @if(session()->has('fail'))
+    <script>
+        Swal.fire({
             title: "{{ __('Error') }}"
             , text: "{{ session()->get('fail') }}"
             , icon: 'error'
         });
-	</script>
-	
-	@endif 
-	
-	@if(session()->has('success'))
-	<script>
-	 Swal.fire({
+
+    </script>
+
+    @endif
+
+    @if(session()->has('success'))
+    <script>
+        Swal.fire({
             title: "{{ __('Success') }}"
             , text: "{{ session()->get('success') }}"
             , icon: 'success'
         });
-	</script>
-	
-	@endif 
-	
-{{-- <script>
 
-</script> --}}
+    </script>
+
+    @endif
+
+
+    <div class="modal fade " id="notifications-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Notification Detail') }}</h5>
+                    <button type="button" class="close" data-dismiss-modal-3="modal3" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body " >
+                    <h3 class="main-form-title " id="body-for-notification">
+						
+					</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss-modal-3="modal3">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+$(document).on('click','[data-enlarge-content-js]',function(e){
+	const id = $(this).attr('data-id')
+	const content = $(this).find('[data-notification-content-id="'+id+'"]').text()
+	$('#body-for-notification').html(content)
+	$('#body-for-notification').closest('.modal').modal('show')
+})
+$('button[data-dismiss-modal-3="modal3"]').click(function () {
+
+		$(this).closest('#notifications-modal').modal('hide');
+	});
+</script>
+
 </body>
 
 <!-- end::Body -->

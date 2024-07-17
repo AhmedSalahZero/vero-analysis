@@ -11,8 +11,11 @@ class NotificationSetting extends Model
 	
 	const CUSTOMER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS = 3;
 	const CUSTOMER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS = 1;
+	const SUPPLIER_COMING_DUES_INVOICES_NOTIFICATIONS_DAYS = 3;
+	const SUPPLIER_PAST_DUES_INVOICES_NOTIFICATIONS_DAYS = 1;
 	const CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS = 3;
 	const CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS = 0;
+	const PENDING_PAYABLE_CHEQUES_NOTIFICATIONS_DAYS = 3;
 	
 	public function getId()
 	{
@@ -59,6 +62,16 @@ class NotificationSetting extends Model
 	public function getChequesUnderCollectionNotificationsDays()
 	{
 		return $this->cheques_under_collection_notifications_days;
+	} 
+	
+	/**
+	 * * هو عبارة عن عدد الايام اللي المفروض ينبهني ان الشيك تم تحصيلة ولا لا لان ممكن يكون الشيك ارتد
+	 * * ودا هيتحسب من تاريخ ال
+	 * * expected_collection_date
+	 */
+	public function getPendingPayableChequeNotificationDays()
+	{
+		return $this->pending_payable_cheques_notifications_days;
 	}
 	
 	

@@ -93,6 +93,15 @@ class AppServiceProvider extends ServiceProvider
 			}) ;
 		});
 		
+		Collection::macro('filterByCreatedAt',function(?string $startDate, ?string $endDate  ){
+			/**
+			 * @var Collection $this 
+			 */
+			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
+				return $items->where('created_at','>=',$startDate)->where('created_at','<=',$endDate);
+			}) ;
+		});
+		
 		Collection::macro('filterByDeliveryDate',function(?string $startDate, ?string $endDate  ){
 			/**
 			 * @var Collection $this 

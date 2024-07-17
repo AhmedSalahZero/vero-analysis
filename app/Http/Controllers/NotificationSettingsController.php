@@ -9,7 +9,7 @@ class NotificationSettingsController
     use GeneralFunctions;
 	public function index(Company $company,Request $request)
 	{
-        return view('notifications.form', [
+        return view('notification-settings.form', [
 			'company'=>$company,
 			'model'=>$company->notificationSetting
 		]);
