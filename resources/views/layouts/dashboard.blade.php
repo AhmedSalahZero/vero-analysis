@@ -1003,7 +1003,7 @@
 
     <div class="text-center hide_class" id="loader_id">
         <img src="{{ asset('loading.gif') }}">
-        <p class="please_wait">Please Wait</p>
+        <p class="please_wait">{{ __('Please Wait') }}</p>
     </div>
     <!-- begin::Page loader -->
 
@@ -1032,6 +1032,11 @@
 
                 <!-- begin:: Header -->
                 @include('layouts.topbar')
+				@if(isset($company))
+				@foreach(\App\Notification::getAllMainTypes() as $notificationMainType => $notificationMainTitle)
+				@include('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle])
+				@endforeach
+				@endif 
                 <!-- end:: Header -->
                 <div class="kt-body kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch" id="kt_body">
                     <div class="kt-content kt-content--fit-top  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -1812,7 +1817,7 @@
 					</h3>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss-modal-3="modal3">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss-modal-3="modal3">{{ __('Close') }}</button>
                 </div>
             </div>
         </div>
@@ -1829,7 +1834,14 @@ $('button[data-dismiss-modal-3="modal3"]').click(function () {
 		$(this).closest('#notifications-modal').modal('hide');
 	});
 </script>
+<script>
+$(function(){
+	$('.trigger-change-after-page-open').trigger('change')
+})
+</script>
+<script>
 
+</script>
 </body>
 
 <!-- end::Body -->

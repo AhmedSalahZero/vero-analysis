@@ -78,7 +78,7 @@ class LetterOfCreditFacilityController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','contract_end_date','currency','limit','financial_duration','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','outstanding_amount'];
+		return ['contract_start_date','contract_end_date','currency','limit','financing_duration','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','outstanding_amount'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		$data = $request->only( $this->getCommonDataArr());
@@ -240,16 +240,6 @@ class LetterOfCreditFacilityController
 		]);
 	}
 
-	public function applyExpense(Company $company,Request $request,LetterOfCreditFacility $letterOfCreditFacility)
-	{
-		$letterOfCreditFacility->expenses()->create([
-			'date'=>Carbon::make($request->get('date'))->format('Y-m-d'),
-			'amount'=>$request->get('amount'),
-			'exchange_rate'=>$request->get('exchange_rate'),
-			'currency'=>$request->get('currency'),
-			'amount_in_main_currency'=>$request->get('amount_in_main_currency')
-		]);
-		dd($letterOfCreditFacility,$request->all());
-	}
+	
 
 }

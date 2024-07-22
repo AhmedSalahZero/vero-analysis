@@ -18,21 +18,22 @@ class LetterOfCreditIssuance extends Model
 	const AGAINST_CD ='against-cd';
 	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
 	const RUNNING = 'running';
-	const CANCELLED = 'cancelled';
+	const PAID = 'paid';
     const LC_FACILITY_BEGINNING_BALANCE = 'lc-facility-beginning-balance';
     const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
     const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
     const AGAINST_TD_BEGINNING_BALANCE = 'against-td-beginning-balance';
-	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
+	const FOR_PAID ='for-paid'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
+	// const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
 	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
 	public function isRunning()
 	{
 		return $this->getStatus() === self::RUNNING;
 	}
-	public function isCancelled()
+	public function isPaid()
 	{
-		return $this->getStatus() === self::CANCELLED;
+		return $this->getStatus() === self::PAID;
 	}
 
 	public function getStatus()
@@ -234,27 +235,27 @@ class LetterOfCreditIssuance extends Model
 		return $this->lc_duration_months;
 	}
 
-	public function getRenewalDate()
+	public function getDueDate()
 	{
-		return $this->renewal_date;
+		return $this->due_date;
 	}
-	public function getRenewalDateFormatted()
+	public function getDueDateFormatted()
 	{
-		$renewalDate = $this->getRenewalDate() ;
-		return $renewalDate ? Carbon::make($renewalDate)->format('d-m-Y'):null ;
+		$dueDate = $this->getDueDate() ;
+		return $dueDate ? Carbon::make($dueDate)->format('d-m-Y'):null ;
 	}
-	public function setRenewalDateAttribute($value)
+	public function setDueDateAttribute($value)
 	{
 		$date = explode('/',$value);
 		if(count($date) != 3){
-			$this->attributes['renewal_date'] =  $value ;
+			$this->attributes['due_date'] =  $value ;
 			return ;
 		}
 		$month = $date[0];
 		$day = $date[1];
 		$year = $date[2];
 
-		$this->attributes['renewal_date'] = $year.'-'.$month.'-'.$day;
+		$this->attributes['due_date'] = $year.'-'.$month.'-'.$day;
 	}
 
 	public function getLcAmount()
@@ -269,7 +270,17 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->lc_currency ;
 	}
-
+	public function getLcCurrentAmount()
+	{
+		return $this->getLcAmount() 
+		// - $this->advancedPaymentHistories->sum('amount')
+		;
+	}
+	public function getLcCurrentAmountFormatted()
+	{
+		return number_format($this->getLcCurrentAmount());
+	}
+	
 	public function getCasCoverRate()
 	{
 		return $this->cash_cover_rate?:0;
@@ -317,11 +328,11 @@ class LetterOfCreditIssuance extends Model
 	}
 	public function letterOfCreditStatements()
 	{
-		return $this->hasMany(LetterOfCreditStatement::class,'letter_of_Credit_issuance_id','id');
+		return $this->hasMany(LetterOfCreditStatement::class,'letter_of_credit_issuance_id','id');
 	}
 	public function letterOfCreditCashCoverStatements()
 	{
-		return $this->hasMany(LetterOfCreditCashCoverStatement::class,'letter_of_Credit_issuance_id','id');
+		return $this->hasMany(LetterOfCreditCashCoverStatement::class,'letter_of_credit_issuance_id','id');
 	}
 	
 	public function currentAccountCreditBankStatement()
@@ -335,11 +346,11 @@ class LetterOfCreditIssuance extends Model
 	
 	public function currentAccountDebitBankStatement()
 	{
-		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_Credit_issuance_id','id')->where('is_debit',1);
+		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('is_debit',1);
 	}
 	public function currentAccountDebitBankStatements()
 	{
-		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_Credit_issuance_id','id')->where('is_debit',1)->orderBy('full_date','desc');
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('is_debit',1)->orderBy('full_date','desc');
 	}
 	/**
 	 * * علشان نجيب الاربعه مع بعض مرة واحدة
@@ -367,12 +378,24 @@ class LetterOfCreditIssuance extends Model
 		}
 		return 0 ;
 	}
-	public function advancedPaymentHistories():HasMany
+	
+	public function deleteAllRelations():self
 	{
-		return $this->hasMany(LetterOfCreditIssuanceAdvancedPaymentHistory::class , 'letter_of_Credit_issuance_id','id');
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditStatements);
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditCashCoverStatements);
+		
+		return $this;
+	}	
+	public function expenses()
+	{
+		return $this->hasMany(LcIssuanceExpense::class , 'lc_issuance_id','id');
 	}
-	
-	
-	
+	public function getFinancialInstitutionId()
+	{
+		return $this->financial_institution_id ;
+	}	
 
 }

@@ -13,7 +13,8 @@ class CreateLetterOfCreditFacilitiesTable extends Migration
      */
     public function up()
     {
-		SChema::dropIfExists('letter_of_credit_facilities');
+		// 
+		Schema::dropIfExists('letter_of_credit_facilities');
         Schema::create('letter_of_credit_facilities', function (Blueprint $table) {
             $table->integer('id', true);
             $table->integer('financial_institution_id')->nullable();

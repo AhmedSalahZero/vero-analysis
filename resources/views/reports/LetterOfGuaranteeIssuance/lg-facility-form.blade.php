@@ -89,7 +89,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
                                     <h3 class="kt-portlet__head-title head-title text-primary">
-                                        {{__('Letter Of Guarntee Type')}}
+                                        {{__('Letter Of Guarantee Type')}}
                                     </h3>
                                 </div>
                             </div>
@@ -276,7 +276,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
                                     <h3 class="kt-portlet__head-title head-title text-primary">
-                                        {{__('Letter Of Guarntee Information')}}
+                                        {{__('Letter Of Guarantee Information')}}
                                     </h3>
                                 </div>
                             </div>

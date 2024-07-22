@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 @section('css')
 @php
-use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfCreditIssuance;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -61,7 +61,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ isset($model) ?  route('update.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.credit.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
@@ -78,7 +78,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{ __((isset($model) ? 'Edit' : 'Add') . ' Against Time Of Deposit Letter Of Guarantee Issuance')}}
+                                    {{ __((isset($model) ? 'Edit' : 'Add') . ' Against Time Of Deposit Letter Of Credit Issuance')}}
                                 </h3>
                             </div>
                         </div>
@@ -89,7 +89,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
                                     <h3 class="kt-portlet__head-title head-title text-primary">
-                                        {{__('Letter Of Guarantee Type')}}
+                                        {{__('Letter Of Credit Type')}}
                                     </h3>
                                 </div>
                             </div>
@@ -147,23 +147,23 @@ use App\Models\LetterOfGuaranteeIssuance;
                                   
 
                                     <div class="col-md-4">
-                                        <label> {{ __('LG Type') }}
+                                        <label> {{ __('LC Type') }}
                                             @include('star')
                                         </label>
 
-                                        <select js-update-outstanding-balance-and-limits id="lg-type" name="lg_type" class="form-control js-toggle-bond">
+                                        <select js-update-outstanding-balance-and-limits id="lc-type" name="lc_type" class="form-control js-toggle-bond">
                                             {{-- <option selected>{{__('Select')}}</option> --}}
-                                            @foreach(getLgTypes() as $name => $nameFormatted )
-                                            <option value="{{ $name  }}" @if(isset($model) && $model->getLgType() == $name ) selected @endif > {{ $nameFormatted }}</option>
+                                            @foreach(getLcTypes() as $name => $nameFormatted )
+                                            <option value="{{ $name  }}" @if(isset($model) && $model->getLcType() == $name ) selected @endif > {{ $nameFormatted }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
                                     <div class="col-md-4 ">
-                                        <x-form.input :id="'current-lg-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :id="'current-lc-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LC Type Outstanding Balance')" :type="'text'" :placeholder="__('LC Type Outstanding Balance')" :name="'lc_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-4">
-                                        <x-form.input :model="$model??null" :label="__('LG Code')" :type="'text'" :placeholder="__('LG Code')" :name="'lg_code'" :class="''" :required="true"></x-form.input>
+                                        <x-form.input :model="$model??null" :label="__('LC Code')" :type="'text'" :placeholder="__('LC Code')" :name="'lc_code'" :class="''" :required="true"></x-form.input>
                                     </div>
 
 
@@ -298,7 +298,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
                                     <h3 class="kt-portlet__head-title head-title text-primary">
-                                        {{__('Letter Of Guarantee Information')}}
+                                        {{__('Letter Of Credit Information')}}
                                     </h3>
                                 </div>
                             </div>
@@ -309,32 +309,32 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                     <div class="col-md-3">
 
-                                        <x-form.date :classes="'recalc-renewal-date issuance-date-js'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
+                                        <x-form.date :classes="'recalc-due-date issuance-date-js'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LG Duration Months')" :type="'numeric'" :placeholder="__('LG Duration Months')" :name="'lg_duration_months'" :class="'recalc-renewal-date lg-duration-months-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration Months')" :type="'numeric'" :placeholder="__('LC Duration Months')" :name="'lc_duration_months'" :class="'recalc-due-date lc-duration-months-js'" :required="true"></x-form.input>
                                     </div>
 
 
                                     <div class="col-md-3">
 
-                                        <x-form.date :classes="'renewal-date-js'" :readonly="true" :label="__('Renewal Date')" :required="true" :model="$model??null" :name="'renewal_date'" :placeholder="__('Select Renewal Date')"></x-form.date>
+                                        <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label>{{__('LG Currency')}}
+                                        <label>{{__('LC Currency')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLgCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -345,15 +345,15 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :id="'lg_commission_rate-id'" :default-value="0" :model="$model??null" :label="__('LG Commission Rate %')" :type="'text'" :placeholder="__('LG Commission Rate %')" :name="'lg_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lg-commission-amount-js lg-commission-rate-js'" :required="true"></x-form.input>
+                                        <x-form.input :id="'lc_commission_rate-id'" :default-value="0" :model="$model??null" :label="__('LC Commission Rate %')" :type="'text'" :placeholder="__('LC Commission Rate %')" :name="'lc_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lc-commission-amount-js lc-commission-rate-js'" :required="true"></x-form.input>
                                     </div>
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LG Commission Amount')" :type="'text'" :placeholder="__('LG Commission Amount')" :name="'lg_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lg-commission-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LC Commission Amount')" :type="'text'" :placeholder="__('LC Commission Amount')" :name="'lc_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lc-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-3">
-                                        <x-form.input :id="'min_lg_commission_fees_id'" :default-value="0" :readonly="false" :model="$model??null" :label="__('Min LG Commission Fees')" :type="'text'" :placeholder="__('Min LG Commission Fees')" :name="'min_lg_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                        <x-form.input :id="'min_lc_commission_fees_id'" :default-value="0" :readonly="false" :model="$model??null" :label="__('Min LC Commission Fees')" :type="'text'" :placeholder="__('Min LC Commission Fees')" :name="'min_lc_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-3">
                                         <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="false" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
@@ -362,14 +362,14 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                     <div class="col-md-3">
-                                        <label>{{__('LG Commission Interval')}}
+                                        <label>{{__('LC Commission Interval')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lg_commission_interval" class="form-control repeater-select">
+                                            <select name="lc_commission_interval" class="form-control repeater-select">
                                                 {{-- <option selected>{{__('Select')}}</option> --}}
                                                 @foreach(getCommissionInterval() as $key => $title )
-                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getLcCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -564,40 +564,40 @@ use App\Models\LetterOfGuaranteeIssuance;
             </script>
 
             <script>
-                $(document).on('change', '.recalc-renewal-date', function(e) {
+                $(document).on('change', '.recalc-due-date', function(e) {
                     e.preventDefault()
                     let date = $('.issuance-date-js').val();
                     date = date.replaceAll('-', '/')
 
                     const issuanceDate = new Date(date);
-                    const duration = $('.lg-duration-months-js').val();
+                    const duration = $('.lc-duration-months-js').val();
                     if (issuanceDate || duration == '0') {
                         const numberOfMonths = duration
 
-                        let renewalDate = issuanceDate.addMonths(numberOfMonths)
+                        let dueDate = issuanceDate.addMonths(numberOfMonths)
 
-                        renewalDate = formatDateForSelect2(renewalDate)
-                        $('.renewal-date-js').val(renewalDate).trigger('change')
+                        dueDate = formatDateForSelect2(dueDate)
+                        $('.due-date-js').val(dueDate).trigger('change')
                     }
 
                 })
                 $(document).on('change', '.recalculate-cash-cover-amount-js', function() {
-                    const lgAmount = number_unformat($('.lg-amount-js').val())
+                    const lcAmount = number_unformat($('.lc-amount-js').val())
                     const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
-                    const cashCoverAmount = lgAmount * cashCoverRateJs
+                    const cashCoverAmount = lcAmount * cashCoverRateJs
                     $('.cash-cover-amount-js').val(cashCoverAmount)
                 })
 
-                $(document).on('change', '.recalculate-lg-commission-amount-js', function() {
-                    const lgAmount = number_unformat($('.lg-amount-js').val())
-                    const rate = number_unformat($('.lg-commission-rate-js').val()) / 100
-                    const lgCommissionAmount = lgAmount * rate
-                    $('.lg-commission-amount-js').val(lgCommissionAmount)
+                $(document).on('change', '.recalculate-lc-commission-amount-js', function() {
+                    const lcAmount = number_unformat($('.lc-amount-js').val())
+                    const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
+                    const lcCommissionAmount = lcAmount * rate
+                    $('.lc-commission-amount-js').val(lcCommissionAmount)
                 })
 
-                $('.recalc-renewal-date').trigger('change')
+                $('.recalc-due-date').trigger('change')
                 $('.recalculate-cash-cover-amount-js').trigger('change')
-                $('.recalculate-lg-commission-amount-js').trigger('change')
+                $('.recalculate-lc-commission-amount-js').trigger('change')
 
             </script>
             <script>
@@ -618,28 +618,28 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
                     e.preventDefault()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
-                    const lgType = $('select#lg-type').val()
+                    const lcType = $('select#lc-type').val()
 					const accountTypeId = $('select#account_type_id').val()
 					const accountNumber	 = $('[js-cd-or-td-account-number]').val()
 					
                     $.ajax({
-                        url: "{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}"
+                        url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
                             financialInstitutionId
-                            , lgType,
+                            , lcType,
 							accountTypeId,
 							accountNumber
                         }
                         , type: "GET"
                         , success: function(res) {
                             $('#limit-id').val(res.limit).prop('disabled', true)
-                            $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
+                            $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('disabled', true)
-                            $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
-                            $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
-                    //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
-                            $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
-                            $('#cash-cover-rate-id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
+                            $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('disabled', true)
+                            $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
+                    //        $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
+                            $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
+                            $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
                             $('[js-update-contracts-based-on-customers]').trigger('change')
                         }
                     })

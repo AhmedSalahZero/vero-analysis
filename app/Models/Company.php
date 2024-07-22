@@ -159,6 +159,10 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(LetterOfGuaranteeIssuance::class , 'company_id','id');
 	}
+	public function letterOfCreditIssuances()
+	{
+		return $this->hasMany(LetterOfCreditIssuance::class , 'company_id','id');
+	}
 	public function openingBalance()
 	{
 		return $this->hasOne(OpeningBalance::class,'company_id');
@@ -166,6 +170,10 @@ class Company extends Model implements HasMedia
     public function lgOpeningBalance()
 	{
 		return $this->hasOne(LgOpeningBalance::class,'company_id');
+	}
+	public function lcOpeningBalance()
+	{
+		return $this->hasOne(LcOpeningBalance::class,'company_id');
 	}
 	public function contracts()
 	{

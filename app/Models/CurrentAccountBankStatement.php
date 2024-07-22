@@ -198,6 +198,10 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	{
 		return $this->belongsTo(LetterOfGuaranteeIssuanceAdvancedPaymentHistory::class,'lg_advanced_payment_history_id','id');
 	}	
+	public function lcIssuanceExpense():BelongsTo
+	{
+		return $this->belongsTo(LcIssuanceExpense::class,'lc_issuance_expense_id','id');
+	}	
 	public static function updateNonActiveDaily(Company $company)
 	{
 		// logger('first row here loooo');

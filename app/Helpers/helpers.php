@@ -3046,7 +3046,9 @@ function getPermissions():array
 		[
             'name'=>'view letter of guarantee issuance'
         ],
-
+		[
+            'name'=>'view letter of credit issuance'
+        ],
 		[
             'name'=>'view cash dashboard'
         ],
@@ -4166,9 +4168,24 @@ function getHeaderMenu()
 	$canViewBankStatement = $user->can('view bank statement report') ;
 	$canViewWeeklyCashFlow = $user->can('view weekly cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
+	$notificationsSubItems = \App\Notification::formatForMenuItem();
+	$notificationsSubItems[]	= [
+		'title'=>__('Notification Settings'),
+	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
+	'show'=>$user->can('view notification settings'),
+
+	];
+	// dd($notificationsSubItems);
+	
 	$cashManagementSubItems = [
 
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
+		'notifications'=>[
+			'title'=>__('Notifications'),
+			'link'=>'#',
+			'show'=>true,
+			'submenu'=>$notificationsSubItems
+		],
 		'cash-dashboard'=>[
 			'title'=>__('Cash Dashboard'),
 			'show'=>true ,
@@ -4357,22 +4374,14 @@ function getHeaderMenu()
 
 					'title'=>__('LGs Opening Balances'),
 					'link'=>route('lg-opening-balance.index',['company'=>$companyId]),
-					'show'=>true ,
-					// 'submenu'=>[
-					// 	[
-					// 		'title'=>__('100% Cash Cover LGs'),
-					// 		'link'=>route('view.safe.statement',['company'=>$company->id]) ,
-					// 		'show'=>true,
-					// 		'submenu'=>[]
-					// 	],
-					// 	[
-					// 		'title'=>__('LGs Against CDs Or TDs'),
-					// 		'link'=>route('view.bank.statement',['company'=>$company->id]),
-					// 		'show'=>true,
-					// 		'submenu'=>[]
-					// 	]
-					// ]
-						]
+					'show'=>true
+						],
+						[
+
+							'title'=>__('LCs Opening Balances'),
+							'link'=>route('lc-opening-balance.index',['company'=>$companyId]),
+							'show'=>true
+								]
 
 			]
 		]
@@ -4383,31 +4392,26 @@ function getHeaderMenu()
 			'show'=>$user->can('view letter of guarantee issuance'),
 			'submenu'=>[]
 		],
-		'view le'=>[
+		'view letter of credit issuance'=>[
 			'title'=>__('LC Issuance'),
-			'link'=>'#',
-			'show'=>true,
+			'link'=>route('view.letter.of.credit.issuance', ['company'=>$companyId]),
+			'show'=>$user->can('view letter of credit issuance'),
 			'submenu'=>[]
 		]
 		,
-		'settings'=>[
-			'title'=>__('Settings'),
-			'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-			'show'=>$user->can('view cashvero settings'),
-			'submenu'=>[
+		// 'settings'=>[
+		// 	'title'=>__('Settings'),
+		// 	'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+		// 	'show'=>$user->can('view cashvero settings'),
+		// 	'submenu'=>[
 
 
 
-				[
-					'title'=>__('Notification Settings'),
-				'link'=>route('notifications-settings.index', ['company'=>$companyId]),
-				'show'=>$user->can('view notification settings'),
+				
+		// 	]
+		// ],
 
-				]
-			]
-		],
-
-
+		
 
 
 
@@ -4578,6 +4582,7 @@ function getLgTypes():array
 {
 	return LgTypes::getAll();
 }
+
 function getLcTypes():array
 {
 	return LcTypes::getAll();
@@ -5059,4 +5064,14 @@ if (!function_exists('getFixedLoanTypes')) {
 			}
 		}
 		return implode(',',$result) ;
+	}
+	function getAllDataKey(array $items):array 
+	{
+		$result = [];
+		foreach($items as $key => $value){
+			if(Str::startsWith($key,'data-')){
+				$result[$key] = $value ;
+			}
+		}
+		return $result ;
 	}

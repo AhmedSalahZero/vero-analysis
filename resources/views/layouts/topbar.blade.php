@@ -1,7 +1,7 @@
 <!-- begin:: Header -->
-@php
+{{-- @php
 $notificationTypes=\App\Notification::getAllTypesFormatted();
-@endphp
+@endphp --}}
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
     {{-- {{ dd() }} --}}
 
@@ -16,12 +16,8 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
             </a>
         </div>
 
-        @if(true)
         @include('layouts.new-topbar')
 
-        @else
-        @include('layouts.old-topbar')
-        @endif
         <!-- end: Header Menu -->
 
         <!-- begin:: Header Topbar -->
@@ -31,7 +27,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
 
 
             <!--begin: Notifications -->
-            @if(isset($company) && count($company->notifications))
+            {{-- @if(isset($company) && count($company->notifications))
             <div class="kt-header__topbar kt-grid__item ">
                 <div class="kt-header__topbar-item dropdown">
                     <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
@@ -45,7 +41,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                             </svg>
 
                             <!--<i class="flaticon2-bell-alarm-symbol"></i>-->
-                            {{-- <span class="kt-pulse__ring"></span> --}}
+                    
                         </span>
 
                         <!--<span class="kt-badge kt-badge--light"></span>-->
@@ -123,7 +119,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                     </div>
                 </div>
             </div>
-            @endif
+            @endif --}}
 
             <!--end: Notifications -->
 
