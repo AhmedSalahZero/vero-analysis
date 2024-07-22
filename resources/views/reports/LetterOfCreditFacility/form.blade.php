@@ -293,7 +293,7 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Financial Duration')" :type="'text'" :placeholder="__('Financial Duration')" :name="'financial_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                             </div>
 							
                             <div class="col-md-4 ">

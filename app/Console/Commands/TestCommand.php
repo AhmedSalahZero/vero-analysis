@@ -63,6 +63,7 @@ class TestCommand extends Command
 		// ->whereBetween('due_date', [$beforeIntervalDate, $dayBeforeDayDate])->get();
 		// dd($pendingPayableCheques,$beforeIntervalDate,$dayBeforeDayDate);
 		// dd('e');
+		// dd(getAllDataKey(['data-x'=>'x','ahmed'=>'salah','ee'=>'e']));
 		CheckDueAndPastedInvoicesJob::dispatch();
 		
 		// echo 'salah helmy';

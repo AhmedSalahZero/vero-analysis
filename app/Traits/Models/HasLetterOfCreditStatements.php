@@ -35,16 +35,5 @@ trait HasLetterOfCreditStatements
 
 	}
 
-	
-	// public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId)
-	// {
-	// 	return $this->currentAccountDebitBankStatement()->create([
-	// 		'financial_institution_account_id'=>$financialInstitutionAccountId,
-	// 		'company_id'=>$this->company_id ,
-	// 		'credit'=>0,
-	// 		'debit'=>$debit,
-	// 		'date'=>$date
-	// 	]);
-	// }
 
 }

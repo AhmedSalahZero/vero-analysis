@@ -319,6 +319,7 @@ Route::middleware([])->group(function () {
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
 				 Route::resource('lg-opening-balance', 'LgOpeningBalancesController');
+				 Route::resource('lc-opening-balance', 'LcOpeningBalancesController');
 				//  Route::resource('buy-or-sell-currencies', 'InternalMoneyTransferController');
 				 //
 				 Route::get('internal-money-transfers','InternalMoneyTransferController@index')->name('internal-money-transfers.index');
@@ -478,13 +479,30 @@ Route::middleware([])->group(function () {
                     Route::post('letter-of-guarantee-issuance/cancel/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@cancel')->name('cancel.letter.of.guarantee.issuance');
                     Route::post('letter-of-guarantee-issuance/apply-amount-to-be-decreased/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@applyAmountToBeDecreased')->name('advanced.lg.payment.apply.amount.to.be.decreased');
                     Route::post('letter-of-guarantee-issuance/edit-amount-to-be-decreased/{lgAdvancedPaymentHistory}/{source}', 'LetterOfGuaranteeIssuanceController@editAmountToBeDecreased')->name('advanced.lg.payment.edit.amount.to.be.decreased');
-					
-					Route::post('letter-of-credit-facility/{letterOfCreditFacility}','LetterOfCreditFacilityController@applyExpense')->name('apply.lc.expense');
-					
-					
                     Route::get('letter-of-guarantee-issuance/delete-advanced-payment/{lgAdvancedPaymentHistory}', 'LetterOfGuaranteeIssuanceController@deleteAdvancedPayment')->name('delete.lg.advanced.payment');
                     Route::post('letter-of-guarantee-issuance/back-to-running/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@bankToRunningStatus')->name('back.to.running.letter.of.guarantee.issuance');
-
+					
+					
+					// letter of credit issuance
+					
+					Route::get('letter-of-credit-issuance', 'LetterOfCreditIssuanceController@index')->name('view.letter.of.credit.issuance');
+                    Route::get('letter-of-credit-issuance/create/{source}', 'LetterOfCreditIssuanceController@create')->name('create.letter.of.credit.issuance');
+                    Route::post('letter-of-credit-issuance/create/{source}', 'LetterOfCreditIssuanceController@store')->name('store.letter.of.credit.issuance');
+                    Route::get('letter-of-credit-issuance/edit/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@edit')->name('edit.letter.of.credit.issuance');
+                    Route::put('letter-of-credit-issuance/update/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@update')->name('update.letter.of.credit.issuance');
+                    Route::delete('letter-of-credit-issuance/delete/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@destroy')->name('delete.letter.of.credit.issuance');
+                    Route::post('letter-of-credit-issuance/cancel/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@markAsPaid')->name('make.letter.of.credit.issuance.as.paid');
+                    // Route::post('letter-of-credit-issuance/apply-amount-to-be-decreased/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@applyAmountToBeDecreased')->name('advanced.lc.payment.apply.amount.to.be.decreased');
+                    // Route::post('letter-of-credit-issuance/edit-amount-to-be-decreased/{lcAdvancedPaymentHistory}/{source}', 'LetterOfCreditIssuanceController@editAmountToBeDecreased')->name('advanced.lc.payment.edit.amount.to.be.decreased');
+                    // Route::get('letter-of-credit-issuance/delete-advanced-payment/{lcAdvancedPaymentHistory}', 'LetterOfCreditIssuanceController@deleteAdvancedPayment')->name('delete.lc.advanced.payment');
+                    Route::post('letter-of-credit-issuance/back-to-running/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@bankToRunningStatus')->name('back.to.running.letter.of.credit.issuance');
+					Route::get('financial-institutions/update-outstanding-balance-and-limits-for-lc', 'LetterOfCreditIssuanceController@updateOutstandingBalanceAndLimits')->name('update.letter.of.credit.outstanding.balance.and.limit');
+					Route::post('letter-of-credit-issuance/apply-expense/{letterOfCreditIssuance}','LetterOfCreditIssuanceController@applyExpense')->name('apply.lc.issuance.expense');
+					Route::post('letter-of-credit-issuance/update-expense/{expense}','LetterOfCreditIssuanceController@updateExpense')->name('update.lc.issuance.expense');
+					Route::get('letter-of-credit-issuance/delete-expense/{expense}','LetterOfCreditIssuanceController@deleteExpense')->name('delete.lc.issuance.expense');
+					
+					// end letter of credit issuance
+					
                     Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility', 'LetterOfCreditFacilityController@index')->name('view.letter.of.credit.facility');
                     Route::get('financial-institutions/{financialInstitution}/letter-of-credit-facility/create', 'LetterOfCreditFacilityController@create')->name('create.letter.of.credit.facility');
                     Route::post('financial-institutions/{financialInstitution}/letter-of-credit-facility/create', 'LetterOfCreditFacilityController@store')->name('store.letter.of.credit.facility');

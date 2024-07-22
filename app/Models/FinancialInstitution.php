@@ -35,6 +35,11 @@ class FinancialInstitution extends Model
 		if($source === LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ){
 			return $builder;
 		}
+		
+		if($source === LetterOfCreditIssuance::LC_FACILITY){
+			return $builder->has('LetterOfCreditFacilities');
+		}
+		
 
 		dd('invalid source for financial insiutution');
 	}
@@ -168,10 +173,21 @@ class FinancialInstitution extends Model
 	{
 		return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
 	}
+	
+	
+	/**
+	 * * use getCurrentAvailableLetterOfCreditFacility instead
+	 */
 	public function LetterOfCreditFacilities()
 	{
 		return $this->hasMany(LetterOfCreditFacility::class , 'financial_institution_id','id');
 	}
+	public function getCurrentAvailableLetterOfCreditFacility():?LetterOfCreditFacility
+	{
+		return $this->LetterOfCreditFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
+	}
+	
+	
 	public function storeNewAccounts(array $accounts,string $startDate = null,$inAddAdditionalAccountForm = false)
 	{
 		foreach($accounts as $index=>$accountArr){

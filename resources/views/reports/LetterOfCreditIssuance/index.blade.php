@@ -1,14 +1,12 @@
 @extends('layouts.dashboard')
 @section('css')
 @php
-use App\Enums\LgTypes;
-use App\Models\LetterOfGuaranteeIssuance;
-
-$bidbondType = LgTypes::BID_BOND ;
-$finalLGSType = LgTypes::FINAL_LGS ;
-$advancedPaymentLgsType = LgTypes::ADVANCED_PAYMENT_LGS;
-$performanceLgType = LgTypes::PERFORMANCE_LG ; 
-$allLgs = LgTypes::getAll() ;
+use App\Enums\LcTypes;
+use App\Models\LetterOfCreditIssuance;
+$slightLcType = LcTypes::SIGHT_LC ;
+$deferredType = LcTypes::DEFERRED ;
+$cashAgainstDocumentType = LcTypes::CASH_AGAINST_DOCUMENT ;
+$allLcs = LcTypes::getAll() ;
 $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 
@@ -42,18 +40,18 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Letter Of Guarantee Issuance ')  }}
+{{ __('Letter Of Credit Issuance ')  }}
 @endsection
 @section('content')
 
 <div class="kt-portlet kt-portlet--tabs">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+            <ul class="nav nav-tabs nav-tabs-space-lc nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 @php
                 $index = 0 ;
                 @endphp
-                @foreach($allLgs as $type => $name)
+                @foreach($allLcs as $type => $name)
                 <li class="nav-item">
                     <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || Request('active',$currentActiveTab) == $type ?'active':'' }}" data-toggle="tab" href="#{{ $type }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{$name .' '. __('Table') }}
@@ -67,21 +65,21 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
             </ul>
 
             <div class="flex-tabs">
-				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+				<a href="{{ route('create.letter.of.credit.issuance',['company'=>$company->id,'source'=>LetterOfCreditIssuance::LC_FACILITY  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New From LG Facility') }}
+					{{ __('New From LC Facility') }}
 				</a>
-				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_CD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+				<a href="{{ route('create.letter.of.credit.issuance',['company'=>$company->id,'source'=>LetterOfCreditIssuance::AGAINST_CD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New LG Agnist CDs') }}
+					{{ __('New LC Agnist CDs') }}
 				</a>
-				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_TD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+				<a href="{{ route('create.letter.of.credit.issuance',['company'=>$company->id,'source'=>LetterOfCreditIssuance::AGAINST_TD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New LG Agnist TDs') }}
+					{{ __('New LC Agnist TDs') }}
 				</a>
-				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+				<a href="{{ route('create.letter.of.credit.issuance',['company'=>$company->id,'source'=>LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New LG 100% Cash Cover') }}
+					{{ __('New LC 100% Cash Cover') }}
 				</a>
 			</div >
 
@@ -90,13 +88,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
             @php
-            $currentTab = $bidbondType ;
+            $currentTab = $slightLcType ;
             @endphp
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $bidbondType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $slightLcType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLgs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
-                        <x-export-letter-of-guarantee-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY])}}" />
+                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLcs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
+                        <x-export-letter-of-credit-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.credit.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfCreditIssuance::LC_FACILITY])}}" />
                     </x-table-title.with-two-dates>
 
                     <div class="kt-portlet__body">
@@ -111,12 +109,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
 									
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Code') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
-                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -130,22 +128,22 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+                                    <td class="text-uppercase">{{ $model->getLcCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                          @include('reports.LetterOfGuaranteeIssuance.actions')
-										@if(!$model->isCancelled())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
+                                          @include('reports.LetterOfCreditIssuance.actions')
+										@if(!$model->isPaid())
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
+                                                        <form action="{{ route('delete.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -187,13 +185,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 
             @php
-            $currentTab = $finalLGSType ;
+            $currentTab = $deferredType ;
             @endphp
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $bidbondType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $slightLcType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLgs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
-                        <x-export-letter-of-guarantee-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY])}}" />
+                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLcs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
+                        <x-export-letter-of-credit-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.credit.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfCreditIssuance::LC_FACILITY])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -206,12 +204,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Amount') }}</th>
 							
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -225,21 +223,21 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getSourceFormatted() }}</td>
                                     <td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-uppercase">{{ $model->getLcCode() }}</td>
+                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                          @include('reports.LetterOfGuaranteeIssuance.actions')
-											@if(!$model->isCancelled())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
+                                          @include('reports.LetterOfCreditIssuance.actions')
+											@if(!$model->isPaid())
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
+                                                        <form action="{{ route('delete.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -278,13 +276,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 
             @php
-            $currentTab = $advancedPaymentLgsType ;
+            $currentTab = $cashAgainstDocumentType ;
             @endphp
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $advancedPaymentLgsType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $cashAgainstDocumentType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLgs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
-                        <x-export-letter-of-guarantee-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY])}}" />
+                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLcs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
+                        <x-export-letter-of-credit-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.credit.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfCreditIssuance::LC_FACILITY])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -297,12 +295,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Current Amount') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Amount') }}</th>
+                                    <th class="text-center align-middle">{{ __('LC Current Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
+                                    <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -316,28 +314,28 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<td>{{ $model->getSourceFormatted() }}</td>
 									<td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }}</td>
+                                    <td class="text-uppercase">{{ $model->getLcCode() }}</td>
+                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLcCurrentAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
+                                    <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                        	  @include('reports.LetterOfGuaranteeIssuance.actions')
+                                        	  @include('reports.LetterOfCreditIssuance.actions')
 											  
-											@if(!$model->advancedPaymentHistories->count() && !$model->isCancelled())  
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}">
+											{{-- @if(!$model->advancedPaymentHistories->count() && !$model->isPaid())   --}}
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}">
 											<i class="fa fa-pen-alt"></i>
 											
 											</a>
-											@endif
-											@if(!$model->isCancelled())
+											{{-- @endif --}}
+											@if(!$model->isPaid())
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
+                                                        <form action="{{ route('delete.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -374,91 +372,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 
 
-            @php
-            $currentTab = $performanceLgType ;
-            @endphp
-            <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $performanceLgType  || Request('active',$currentActiveTab) == $currentTab ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLgs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
-                        <x-export-letter-of-guarantee-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="{{route('create.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$currentTab,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY])}}" />
-                    </x-table-title.with-two-dates>
-
-
-                    <div class="kt-portlet__body">
-
-                        <!--begin: Datatable -->
-                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                            <thead>
-                                <tr class="table-standard-color">
-                                    <th class="text-center align-middle">{{ __('#') }}</th>
-                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
-                                    <th class="text-center align-middle"> {!! __('Source') !!} </th>
-                                    <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Amount') }}</th>
-                                    <th class="text-center align-middle">{!! __('Purchase <br> Order Date') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Control') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($models[$currentTab] as $index=>$model)
-                                <tr>
-                                    <td>
-                                        {{ $index+1 }}
-                                    </td>
-                                    <td>{{ $model->getTransactionName() }}</td>
-                                    <td>{{ $model->getSourceFormatted() }}</td>
-                                    <td>{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
-
-                                    <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-                                          @include('reports.LetterOfGuaranteeIssuance.actions')
-
-					@if(!$model->isCancelled())
-                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
-                    <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                    <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <form action="{{ route('delete.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
-                                    @csrf
-                                    @method('delete')
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                        <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-					@endif 
-                    </span>
-                    </td>
-                    </tr>
-                    @endforeach
-                    </tbody>
-                    </table>
-
-                    <!--end: Datatable -->
-                </div>
-            </div>
+        </div>
         </div>
 
 
@@ -540,6 +454,18 @@ $("button[data-dismiss=modal2]").click(function(){
 });
 
 </script>
+<script>
+    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+        const parent = $(this).closest('.modal-body');
+        const amount = parseFloat($(parent).find('.amount-js').val())
+        const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
+        const amountInMainCurrency = parseFloat(amount * exchangeRate);
+        $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency)
+        $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
+    })
+
+</script>
+
 @endsection
 @push('js')
 {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
