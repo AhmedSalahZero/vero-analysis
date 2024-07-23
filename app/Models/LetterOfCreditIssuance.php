@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\LcTypes;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use App\Traits\Models\HasLetterOfCreditCashCoverStatements;
 use App\Traits\Models\HasLetterOfCreditStatements;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfCreditIssuance extends Model
 {
-	use HasBasicStoreRequest,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements;
+	use HasBasicStoreRequest,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
 	const LC_FACILITY = 'lc-facility';
 	const AGAINST_TD ='against-td';
 	const AGAINST_CD ='against-cd';
@@ -23,8 +24,7 @@ class LetterOfCreditIssuance extends Model
     const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
     const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
     const AGAINST_TD_BEGINNING_BALANCE = 'against-td-beginning-balance';
-	const FOR_PAID ='for-paid'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
-	// const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
+	const FOR_PAID ='for-paid'; // هي الفلوس اللي انت حيطتها بسبب انه عمل تاكيد انه دفع
 	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
 	public function isRunning()
@@ -305,7 +305,18 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_number;
 	}
-
+	public function getInterestRate()
+	{
+		return $this->interest_rate ?: 0;
+	}
+	public function getLimit()
+	{
+		$financialInstitutionId = $this->financial_institution_id;
+		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+        $letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
+		$letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
+		return  $letterOfCreditFacility ? $letterOfCreditFacility->getLimit() : 0;
+	}
 	public function getLcCommissionRate()
 	{
 		return $this->lc_commission_rate ?: 0;
@@ -322,19 +333,42 @@ class LetterOfCreditIssuance extends Model
 	{
 		return number_format($this->getLcCommissionAmount());
 	}
-	public function getLcCommissionInterval()
-	{
-		return $this->lc_commission_interval ;
-	}
+	// public function getLcCommissionInterval()
+	// {
+	// 	return $this->lc_commission_interval ;
+	// }
 	public function letterOfCreditStatements()
 	{
-		return $this->hasMany(LetterOfCreditStatement::class,'letter_of_credit_issuance_id','id');
+		return $this->hasMany(LetterOfCreditStatement::class,'letter_of_credit_issuance_id','id')->orderBy('full_date','desc');
 	}
 	public function letterOfCreditCashCoverStatements()
 	{
-		return $this->hasMany(LetterOfCreditCashCoverStatement::class,'letter_of_credit_issuance_id','id');
+		return $this->hasMany(LetterOfCreditCashCoverStatement::class,'letter_of_credit_issuance_id','id')->orderBy('full_date','desc');
 	}
+	public function lcOverdraftCreditBankStatement()
+	{
+		return $this->hasOne(LcOverdraftBankStatement::class,'lc_issuance_id','id')->where('is_credit',1)->orderBy('full_date','desc');
+	}
+	public function lcOverdraftBankStatements()
+	{
+		return $this->hasMany(LcOverdraftBankStatement::class,'lc_issuance_id','id')->orderBy('full_date','desc');
+	}
+	public function handleLcCreditBankStatement(string $moneyType  , string $date , $paidAmount,$source)
+	{
 	
+		return $this->lcOverdraftBankStatements()->create([
+			'source'=>$source,
+			'type'=>$moneyType ,
+			'lc_issuance_id'=>$this->id ,
+			'company_id'=>$this->company_id ,
+			'date'=>$date,
+			'limit'=>$this->getLimit(),
+			'beginning_balance'=>0 ,
+			'debit'=>0,
+			'credit'=>$paidAmount
+		]);
+	}
+
 	public function currentAccountCreditBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_Credit_issuance_id','id')->where('is_credit',1);
@@ -386,6 +420,7 @@ class LetterOfCreditIssuance extends Model
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditCashCoverStatements);
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->lcOverdraftBankStatements);
 		
 		return $this;
 	}	
@@ -397,5 +432,6 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->financial_institution_id ;
 	}	
+	
 
 }

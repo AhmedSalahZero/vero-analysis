@@ -17,6 +17,7 @@ class AccountType extends Model
 	CONST CLEAN_OVERDRAFT = 'clean-overdraft';
 	CONST OVERDRAFT_AGAINST_COMMERCIAL_PAPER = 'overdraft-against-commercial-paper';
 	CONST OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS= 'overdraft-against-assignment-of-contracts';
+	const LETTER_OF_CREDIT_LCS = 'letter-of-credit-lcs';
 	CONST CERTIFICATE_OF_DEPOSIT= 'certificate-of-deposit-cd';
 	CONST TIME_OF_DEPOSIT= 'time-of-deposit-td';
 	protected $guarded =[

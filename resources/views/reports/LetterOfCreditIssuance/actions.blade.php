@@ -163,7 +163,7 @@
              <form action="{{ route('make.letter.of.credit.issuance.as.paid',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource() ]) }}" method="post">
                  @csrf
                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Cancel This Letter ?') }}</h5>
+                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This As Paid ?') }}</h5>
                      <button type="button" class="close" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>

@@ -55,7 +55,7 @@ use App\Models\LetterOfCreditIssuance;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Letter Of Gurantee Issuance Form') }}
+{{ __('Letter Of Credit Issuance Form') }}
 @endsection
 @section('content')
 <div class="row">
@@ -100,7 +100,7 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="col-md-6">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
-                                     <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
@@ -110,10 +110,10 @@ use App\Models\LetterOfCreditIssuance;
                                             @endforeach
                                         </select>
                                     </div>
-									
 
-									
-									
+
+
+
                                     <div class="col-md-4">
                                         <x-form.input :id="'limit-id'" :default-value="0" :model="$model??null" :label="__('LC Limit')" :type="'text'" :placeholder="__('LC Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
@@ -149,7 +149,7 @@ use App\Models\LetterOfCreditIssuance;
                             </div>
                         </div>
 
-                      
+
 
 
 
@@ -317,7 +317,9 @@ use App\Models\LetterOfCreditIssuance;
                                             </select>
                                         </div>
                                     </div>
-							
+                                    <div class="col-md-3">
+                                        <x-form.input :id="'interest-rate-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Interest Rate %')" :type="'text'" :placeholder="__('Interest Rate %')" :name="'interest_rate'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                    </div>
                                     <div class="col-md-3">
                                         <x-form.input :id="$source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
                                     </div>
@@ -326,7 +328,7 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
                                     </div>
-							
+
 
 
 
@@ -339,360 +341,380 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LC Commission Amount')" :type="'text'" :placeholder="__('LC Commission Amount')" :name="'lc_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lc-commission-amount-js'" :required="true"></x-form.input>
                                     </div>
-                                 
-									<div class="col-md-3">
+
+                                    <div class="col-md-3">
                                         <x-form.input :id="'min_lc_commission_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LC Commission Fees')" :type="'text'" :placeholder="__('Min LC Commission Fees')" :name="'min_lc_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
-									
+
                                     <div class="col-md-3">
                                         <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
 
 
 
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <label>{{__('LC Commission Interval')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="input-group">
-                                            <select name="lc_commission_interval" class="form-control repeater-select">
-                                                {{-- <option selected>{{__('Select')}}</option> --}}
-                                                @foreach(getCommissionInterval() as $key => $title )
-                                                <option value="{{ $key }}" @if(isset($model) && $model->getLcCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
+                                    @include('star')
+                                    </label>
+                                    <div class="input-group">
+                                        <select name="lc_commission_interval" class="form-control repeater-select">
+                                            @foreach(getCommissionInterval() as $key => $title )
+                                            <option value="{{ $key }}" @if(isset($model) && $model->getLcCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                </div> --}}
+
+
+
+                                <div class="col-md-3">
+                                    <label>{{__('Account Type')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                @foreach($accountTypes as $index => $accountType)
+                                                <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-
                                     </div>
+                                </div>
 
-
-
-                                    <div class="col-md-3">
-                                        <label>{{__('Account Type')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
-                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                                    @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                <div class="col-md-3">
+                                    <label>{{__('Deducted From Account # (Cover & Commission)')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <option value="" selected>{{__('Select')}}</option>
+                                            </select>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-3">
-                                        <label>{{__('Deducted From Account # (Cover & Commission)')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
 
 
-
-                                    {{-- <div class="col-md-3">
+                                <div class="col-md-3 ">
+                                    <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                </div>
+                                {{-- <div class="col-md-3">
                                         <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Number')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
                                     </div> --}}
 
 
-                                </div>
                             </div>
                         </div>
-
-
-
-
-
-
-
-
-
-
-                        <x-submitting />
-                    </form>
-
-                    <!--end::Form-->
-
-                    <!--end::Portlet-->
                 </div>
-            </div>
 
-            @endsection
-            @section('js')
-            <!--begin::Page Scripts(used by this page) -->
-            <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
-            <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
-            </script>
-            <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
-            </script>
-            <script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
-            </script>
-            <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
-            </script>
-            <script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
-            <script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
-            </script>
-            <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
-            <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
-            <script>
 
-            </script>
 
-            <script>
-                $(document).find('.datepicker-input').datepicker({
-                    dateFormat: 'mm-dd-yy'
-                    , autoclose: true
-                })
-                $('#m_repeater_0').repeater({
-                    initEmpty: false
-                    , isFirstItemUndeletable: true
-                    , defaultValues: {
-                        'text-input': 'foo'
-                    },
 
-                    show: function() {
-                        $(this).slideDown();
-                        $('input.trigger-change-repeater').trigger('change')
-                        $(document).find('.datepicker-input').datepicker({
-                            dateFormat: 'mm-dd-yy'
-                            , autoclose: true
-                        })
-                        $(this).find('.only-month-year-picker').each(function(index, dateInput) {
-                            reinitalizeMonthYearInput(dateInput)
-                        });
-                        $('input:not([type="hidden"])').trigger('change');
-                        $(this).find('.dropdown-toggle').remove();
-                        $(this).find('select.repeater-select').selectpicker("refresh");
 
-                    },
 
-                    hide: function(deleteElement) {
-                        if ($('#first-loading').length) {
-                            $(this).slideUp(deleteElement, function() {
 
-                                deleteElement();
-                                //   $('select.main-service-item').trigger('change');
-                            });
-                        } else {
-                            if (confirm('Are you sure you want to delete this element?')) {
-                                $(this).slideUp(deleteElement, function() {
 
-                                    deleteElement();
-                                    $('input.trigger-change-repeater').trigger('change')
 
-                                });
-                            }
-                        }
-                    }
+
+                <x-submitting />
+        </form>
+
+        <!--end::Form-->
+
+        <!--end::Portlet-->
+    </div>
+</div>
+
+@endsection
+@section('js')
+<!--begin::Page Scripts(used by this page) -->
+<script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
+<script>
+
+</script>
+
+<script>
+    $(document).find('.datepicker-input').datepicker({
+        dateFormat: 'mm-dd-yy'
+        , autoclose: true
+    })
+    $('#m_repeater_0').repeater({
+        initEmpty: false
+        , isFirstItemUndeletable: true
+        , defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function() {
+            $(this).slideDown();
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
+            $(this).find('.only-month-year-picker').each(function(index, dateInput) {
+                reinitalizeMonthYearInput(dateInput)
+            });
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+
+        },
+
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
+
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
                 });
+            } else {
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
+
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
+
+                    });
+                }
+            }
+        }
+    });
 
 
 
 
-                $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
-                    const customerName = $('#new_customer_name').val()
-                    const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>'Customer']) }}"
-                    if (customerName) {
-                        $.ajax({
-                            url
-                            , data: {
-                                customerName
-                            }
-                            , type: "post"
-                            , success: function(response) {
-                                if (response.status) {
-                                    $('select#customer_name').append('<option selected value="' + response.customer.id + '"> ' + customerName + ' </option>  ')
-                                    $('#add-new-customer-modal').modal('hide')
-                                } else {
-                                    Swal.fire({
-                                        icon: "error"
-                                        , title: response.message
-                                    })
-                                }
-                            }
+    $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
+        const customerName = $('#new_customer_name').val()
+        const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>'Customer']) }}"
+        if (customerName) {
+            $.ajax({
+                url
+                , data: {
+                    customerName
+                }
+                , type: "post"
+                , success: function(response) {
+                    if (response.status) {
+                        $('select#customer_name').append('<option selected value="' + response.customer.id + '"> ' + customerName + ' </option>  ')
+                        $('#add-new-customer-modal').modal('hide')
+                    } else {
+                        Swal.fire({
+                            icon: "error"
+                            , title: response.message
                         })
                     }
-                })
+                }
+            })
+        }
+    })
 
-            </script>
+</script>
 
-            <script>
-                let oldValForInputNumber = 0;
-                $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('focus', function() {
-                    oldValForInputNumber = $(this).val();
-                    $(this).val('')
-                })
-                $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('blur', function() {
+<script>
+    let oldValForInputNumber = 0;
+    $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('focus', function() {
+        oldValForInputNumber = $(this).val();
+        $(this).val('')
+    })
+    $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('blur', function() {
 
-                    if ($(this).val() == '') {
-                        $(this).val(oldValForInputNumber)
-                    }
-                })
+        if ($(this).val() == '') {
+            $(this).val(oldValForInputNumber)
+        }
+    })
 
-                $(document).on('change', 'input:not([placeholder])[type="number"],input:not([placeholder])[type="password"],input:not([placeholder])[type="text"],input:not([placeholder])[type="email"],input:not(.exclude-text)', function() {
-                    if (!$(this).hasClass('exclude-text')) {
-                        let val = $(this).val()
-                        val = number_unformat(val)
-                        $(this).parent().find('input[type="hidden"]').val(val)
+    $(document).on('change', 'input:not([placeholder])[type="number"],input:not([placeholder])[type="password"],input:not([placeholder])[type="text"],input:not([placeholder])[type="email"],input:not(.exclude-text)', function() {
+        if (!$(this).hasClass('exclude-text')) {
+            let val = $(this).val()
+            val = number_unformat(val)
+            $(this).parent().find('input[type="hidden"]').val(val)
 
-                    }
-                })
+        }
+    })
 
-            </script>
+</script>
 
-            <script src="/custom/money-receive.js">
+<script src="/custom/money-receive.js">
 
-            </script>
+</script>
 
-            <script>
-                $(document).on('change', '.recalc-due-date', function(e) {
-                    e.preventDefault()
-                    let date = $('.issuance-date-js').val();
-                    date = date.replaceAll('-', '/')
+<script>
+    $(document).on('change', '.recalc-due-date', function(e) {
+        e.preventDefault()
+        let date = $('.issuance-date-js').val();
+        date = date.replaceAll('-', '/')
 
-                    const issuanceDate = new Date(date);
-                    const duration = $('.lc-duration-months-js').val();
-                    if (issuanceDate || duration == '0') {
-                        const numberOfMonths = duration
+        const issuanceDate = new Date(date);
+        const duration = $('.lc-duration-months-js').val();
+        if (issuanceDate || duration == '0') {
+            const numberOfMonths = duration
 
-                        let dueDate = issuanceDate.addMonths(numberOfMonths)
+            let dueDate = issuanceDate.addMonths(numberOfMonths)
 
-                        dueDate = formatDateForSelect2(dueDate)
-                        $('.due-date-js').val(dueDate).trigger('change')
-                    }
+            dueDate = formatDateForSelect2(dueDate)
+            $('.due-date-js').val(dueDate).trigger('change')
+        }
 
-                })
-                $(document).on('change', '.recalculate-cash-cover-amount-js', function() {
-                    const lcAmount = number_unformat($('.lc-amount-js').val())
-                    const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
-                    const cashCoverAmount = lcAmount * cashCoverRateJs
-                    $('.cash-cover-amount-js').val(cashCoverAmount)
-                })
+    })
+    $(document).on('change', '.recalculate-cash-cover-amount-js', function() {
+        const lcAmount = number_unformat($('.lc-amount-js').val())
+        const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
+        const cashCoverAmount = lcAmount * cashCoverRateJs
+        $('.cash-cover-amount-js').val(cashCoverAmount)
+    })
 
-                $(document).on('change', '.recalculate-lc-commission-amount-js', function() {
-                    const lcAmount = number_unformat($('.lc-amount-js').val())
-                    const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
-                    const lcCommissionAmount = lcAmount * rate
-                    $('.lc-commission-amount-js').val(lcCommissionAmount)
-                })
+    $(document).on('change', '.recalculate-lc-commission-amount-js', function() {
+        const lcAmount = number_unformat($('.lc-amount-js').val())
+        const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
+        const lcCommissionAmount = lcAmount * rate
+        $('.lc-commission-amount-js').val(lcCommissionAmount)
+    })
 
-                $('.recalc-due-date').trigger('change')
-                $('.recalculate-cash-cover-amount-js').trigger('change')
-                $('.recalculate-lc-commission-amount-js').trigger('change')
+    $('.recalc-due-date').trigger('change')
+    $('.recalculate-cash-cover-amount-js').trigger('change')
+    $('.recalculate-lc-commission-amount-js').trigger('change')
 
-            </script>
-            <script>
-                $(document).on('change', '.js-toggle-bond', function() {
-                    const isBond = $(this).val() == 'bid-bond'
-                    if (isBond) {
-                        $('.show-only-bond').removeClass('hidden')
-                        $('.hide-only-bond').addClass('hidden')
-                    } else {
-                        $('.hide-only-bond').removeClass('hidden')
-                        $('.show-only-bond').addClass('hidden')
-                    }
-                })
-                $('.js-toggle-bond').trigger('change')
+</script>
+<script>
+    $(document).on('change', '.js-toggle-bond', function() {
+        const isBond = $(this).val() == 'bid-bond'
+        if (isBond) {
+            $('.show-only-bond').removeClass('hidden')
+            $('.hide-only-bond').addClass('hidden')
+        } else {
+            $('.hide-only-bond').removeClass('hidden')
+            $('.show-only-bond').addClass('hidden')
+        }
+    })
+    $('.js-toggle-bond').trigger('change')
 
-            </script>
-            <script>
-                $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
-                    e.preventDefault()
-                    const financialInstitutionId = $('select#financial-instutition-id').val()
-                    const lcType = $('select#lc-type').val()
-                    $.ajax({
-                        url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
-                        , data: {
-                            financialInstitutionId
-                            , lcType
-                        }
-                        , type: "GET"
-                        , success: function(res) {
-                            $('#limit-id').val(res.limit).prop('disabled', true)
-                            $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('disabled', true)
-                            $('#total-room-id').val(res.total_room).prop('disabled', true)
-                            $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('disabled', true)
-                            $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
-                            $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
-                            $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
-                            $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
-                            $('[js-update-contracts-based-on-customers]').trigger('change')
-                        }
-                    })
-                })
-
-            </script>
-            @if(!isset($model))
-            <script>
-                $('[js-update-outstanding-balance-and-limits]').trigger('change')
-
-            </script>
-            @endif
-            <script>
-                $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
-                    const customerId = $('select#customer_name').val()
-                    if (!customerId) {
-                        return;
-                    }
-                    $.ajax({
-                        url: "{{route('update.contracts.based.on.customer',['company'=>$company->id])}}"
-                        , data: {
-                            customerId
-                        , }
-                        , type: "GET"
-                        , success: function(res) {
-                            var contractsOptions = '';
-                            var currentSelectedId = $('select#contract-id').attr('data-current-selected')
-                            for (var contractId in res.contracts) {
-                                var contractName = res.contracts[contractId];
-                                contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
-                            }
-                            $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
-                            $('select#contract-id').trigger('change')
-                        }
-                    })
-                })
+</script>
+<script>
+    $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
+        e.preventDefault()
+        const financialInstitutionId = $('select#financial-instutition-id').val()
+        const lcType = $('select#lc-type').val()
+        $.ajax({
+            url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
+            , data: {
+                financialInstitutionId
+                , lcType
+            }
+            , type: "GET"
+            , success: function(res) {
+                $('#limit-id').val(res.limit).prop('disabled', true)
+                $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('disabled', true)
+                $('#total-room-id').val(res.total_room).prop('disabled', true)
+                $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('disabled', true)
+                $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
+                $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
+                $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
+                $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
                 $('[js-update-contracts-based-on-customers]').trigger('change')
+            }
+        })
+    })
 
-            </script>
+</script>
+@if(!isset($model))
+<script>
+    $('[js-update-outstanding-balance-and-limits]').trigger('change')
+
+</script>
+@endif
+<script>
+    $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
+        const customerId = $('select#customer_name').val()
+        if (!customerId) {
+            return;
+        }
+        $.ajax({
+            url: "{{route('update.contracts.based.on.customer',['company'=>$company->id])}}"
+            , data: {
+                customerId
+            , }
+            , type: "GET"
+            , success: function(res) {
+                var contractsOptions = '';
+                var currentSelectedId = $('select#contract-id').attr('data-current-selected')
+                for (var contractId in res.contracts) {
+                    var contractName = res.contracts[contractId];
+                    contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+                }
+                $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
+                $('select#contract-id').trigger('change')
+            }
+        })
+    })
+    $('[js-update-contracts-based-on-customers]').trigger('change')
+
+</script>
 
 
 
 
 
-            <script>
-                $(document).on('change', '[js-update-purchase-orders-based-on-contract]', function(e) {
-                    const contractId = $('select#contract-id').val()
-                    if (!contractId) {
-                        return
-                    }
-                    $.ajax({
-                        url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
-                        , data: {
-                            contractId
-                        , }
-                        , type: "GET"
-                        , success: function(res) {
-                            var purchaseOrdersOptions = '';
-                            var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
-                            for (var purchaseOrderId in res.purchase_orders) {
-                                var contractName = res.purchase_orders[purchaseOrderId];
-                                purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
-                            }
-                            $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
-                        }
-                    })
-                })
-                $('[js-update-purchase-orders-based-on-contract]').trigger('change')
+<script>
+    $(document).on('change', '[js-update-purchase-orders-based-on-contract]', function(e) {
+        const contractId = $('select#contract-id').val()
+        if (!contractId) {
+            return
+        }
+        $.ajax({
+            url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
+            , data: {
+                contractId
+            , }
+            , type: "GET"
+            , success: function(res) {
+                var purchaseOrdersOptions = '';
+                var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
+                for (var purchaseOrderId in res.purchase_orders) {
+                    var contractName = res.purchase_orders[purchaseOrderId];
+                    purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
+                }
+                $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
+            }
+        })
+    })
+    $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
-            </script>
-               @include('reports.LetterOfCreditIssuance.commonJs')
-            @endsection
+</script>
+@include('reports.LetterOfCreditIssuance.commonJs')
+
+<script>
+    $(document).on('change', 'select#financial-instutition-id', function() {
+        const financialInstitutionId = $(this).val();
+        $.ajax({
+            url: "{{ route('get.interest.rate.for.financial.institution.id',['company'=>$company->id]) }}"
+            , data: {
+                financialInstitutionId
+            }
+            , success: function(res) {
+                $('#interest-rate-id').val(res.interest_rate)
+            }
+        })
+    })
+    $(function() {
+        $('select#financial-instutition-id').trigger('change')
+    })
+
+</script>
+@endsection

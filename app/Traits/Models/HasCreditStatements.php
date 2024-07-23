@@ -5,6 +5,7 @@ use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\LetterOfCreditIssuance;
 use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstCommercialPaper;
 
@@ -125,5 +126,6 @@ trait HasCreditStatements
 		]) ;
 
 	}
+	
 	
 }
