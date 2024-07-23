@@ -496,7 +496,7 @@ Route::middleware([])->group(function () {
                     // Route::post('letter-of-credit-issuance/edit-amount-to-be-decreased/{lcAdvancedPaymentHistory}/{source}', 'LetterOfCreditIssuanceController@editAmountToBeDecreased')->name('advanced.lc.payment.edit.amount.to.be.decreased');
                     // Route::get('letter-of-credit-issuance/delete-advanced-payment/{lcAdvancedPaymentHistory}', 'LetterOfCreditIssuanceController@deleteAdvancedPayment')->name('delete.lc.advanced.payment');
                     Route::post('letter-of-credit-issuance/back-to-running/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@bankToRunningStatus')->name('back.to.running.letter.of.credit.issuance');
-					Route::get('financial-institutions/update-outstanding-balance-and-limits-for-lc', 'LetterOfCreditIssuanceController@updateOutstandingBalanceAndLimits')->name('update.letter.of.credit.outstanding.balance.and.limit');
+					Route::get('financial-institutions/update-outstanding-balance-and-limits-for-lc', 'LetterOfCreditFacilityController@updateOutstandingBalanceAndLimits')->name('update.letter.of.credit.outstanding.balance.and.limit');
 					Route::post('letter-of-credit-issuance/apply-expense/{letterOfCreditIssuance}','LetterOfCreditIssuanceController@applyExpense')->name('apply.lc.issuance.expense');
 					Route::post('letter-of-credit-issuance/update-expense/{expense}','LetterOfCreditIssuanceController@updateExpense')->name('update.lc.issuance.expense');
 					Route::get('letter-of-credit-issuance/delete-expense/{expense}','LetterOfCreditIssuanceController@deleteExpense')->name('delete.lc.issuance.expense');
@@ -548,7 +548,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
 					Route::get('money-received/get-net-balance-based-on-account-number', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumber')->name('update.balance.and.net.balance.based.on.account.number');
 					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
-				Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
+					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 
 
 
@@ -560,7 +560,7 @@ Route::middleware([])->group(function () {
                     Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
-
+					Route::get('get-interest-rate-for-financial-institution-id','FinancialInstitutionController@getInterestRateForFinancialInstitution')->name('get.interest.rate.for.financial.institution.id');
 
 					Route::get('money-payment', 'MoneyPaymentController@index')->name('view.money.payment');
                     Route::get('money-payment/create/{model?}', 'MoneyPaymentController@create')->name('create.money.payment');

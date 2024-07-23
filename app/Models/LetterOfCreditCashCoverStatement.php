@@ -122,8 +122,8 @@ class LetterOfCreditCashCoverStatement extends Model
 			
 			static::deleting(function(LetterOfCreditCashCoverStatement $letterOfCreditCashCoverStatement){
 				$oldDate = null ;
-				if($letterOfCreditCashCoverStatement->is_debit && Request('cancellation_date')||$letterOfCreditCashCoverStatement->is_credit && Request('issuance_date')){
-						$oldDate = Carbon::make(Request('cancellation_date',Request('issuance_date')))->format('Y-m-d');
+				if($letterOfCreditCashCoverStatement->is_debit && Request('payment_date')||$letterOfCreditCashCoverStatement->is_credit && Request('issuance_date')){
+						$oldDate = Carbon::make(Request('payment_date',Request('issuance_date')))->format('Y-m-d');
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
 						$currentDate = $letterOfCreditCashCoverStatement->full_date ;

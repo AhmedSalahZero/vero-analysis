@@ -306,7 +306,10 @@ use App\Models\LetterOfCreditIssuance;
                                             </select>
                                         </div>
                                     </div>
-
+									<div class="col-md-3">
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Interest Rate %')" :type="'text'" :placeholder="__('Interest Rate %')" :name="'interest_rate'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                    </div>
+									
                                     <div class="col-md-3">
                                         <x-form.input :id="$source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
                                     </div>
@@ -337,20 +340,19 @@ use App\Models\LetterOfCreditIssuance;
 
 
 
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <label>{{__('LC Commission Interval')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
                                             <select name="lc_commission_interval" class="form-control repeater-select">
-                                                {{-- <option selected>{{__('Select')}}</option> --}}
                                                 @foreach(getCommissionInterval() as $key => $title )
                                                 <option value="{{ $key }}" @if(isset($model) && $model->getLcCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
 
-                                    </div>
+                                    </div> --}}
 
 
 

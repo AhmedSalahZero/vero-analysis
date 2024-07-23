@@ -5,6 +5,7 @@ use App\Models\Branch;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\LetterOfCreditFacility;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -224,6 +225,18 @@ class FinancialInstitutionController
 		// return view();
 	}
 
-	
+	public function getInterestRateForFinancialInstitution(Company $company , Request $request)
+	{
+		$financialInstitutionId = $request->get('financialInstitutionId');
+		$letterOfCreditFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfCreditFacility() ;
+		$interestRate =  0 ; 
+		if($letterOfCreditFacility instanceof LetterOfCreditFacility){
+			$interestRate = $letterOfCreditFacility->interest_rate ;
+		}
+		
+		return response()->json([
+			'interest_rate'=>$interestRate
+		]);
+	}	
 	
 }

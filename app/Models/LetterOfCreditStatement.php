@@ -126,8 +126,8 @@ class LetterOfCreditStatement extends Model
 			
 			static::deleting(function(LetterOfCreditStatement $letterOfCreditStatement){
 				$oldDate = null ;
-				if($letterOfCreditStatement->is_debit && Request('cancellation_date')||$letterOfCreditStatement->is_credit && Request('issuance_date')){
-						$oldDate = Carbon::make(Request('cancellation_date',Request('issuance_date')))->format('Y-m-d');
+				if($letterOfCreditStatement->is_debit && Request('payment_date')||$letterOfCreditStatement->is_credit && Request('issuance_date')){
+						$oldDate = Carbon::make(Request('payment_date',Request('issuance_date')))->format('Y-m-d');
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
 						$currentDate = $letterOfCreditStatement->full_date ;
