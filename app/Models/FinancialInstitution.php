@@ -266,7 +266,10 @@ class FinancialInstitution extends Model
 		return $this->hasMany(TimeOfDeposit::class , 'financial_institution_id','id')
 		->where('status',TimeOfDeposit::BROKEN);
 	}
-	
+	public function letterOfCreditIssuances():HasMany
+	{
+		return $this->hasMany(LetterOfCreditIssuance::class ,'financial_institution_id','id');
+	}	
 
 
 
