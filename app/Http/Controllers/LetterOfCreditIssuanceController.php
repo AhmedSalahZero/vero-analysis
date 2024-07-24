@@ -16,7 +16,6 @@ use App\Models\Partner;
 use App\Models\PurchaseOrder;
 use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
-use App\Traits\Models\HasCreditStatements;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -335,6 +334,14 @@ class LetterOfCreditIssuanceController
 		// $expense->deleteAllRelations();
 		$expense->delete();
 		return redirect()->back()->with('success',__('Expense Deleted Successfully'));
+	}
+	public function getRemainingBalance(Company $company , Request $request){
+		$letterOfCreditIssuance = LetterOfCreditIssuance::find($request->get('letterOfCreditIssuanceId'));
+		$remainingBalance = $letterOfCreditIssuance->getRemainingBalance();
+		return response()->json([
+			'status'=>true ,
+			'remaining_balance'=> $remainingBalance
+		]);
 	}
 
 }

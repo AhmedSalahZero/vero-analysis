@@ -322,6 +322,15 @@ Route::middleware([])->group(function () {
 				 Route::resource('lc-opening-balance', 'LcOpeningBalancesController');
 				//  Route::resource('buy-or-sell-currencies', 'InternalMoneyTransferController');
 				 //
+				 
+				 
+				 Route::get('lc-settlement-internal-money-transfers','LcSettlementInternalMoneyTransferController@index')->name('lc-settlement-internal-money-transfers.index');
+				 Route::get('lc-settlement-internal-money-transfers/create','LcSettlementInternalMoneyTransferController@create')->name('lc-settlement-internal-money-transfers.create');
+				 Route::post('lc-settlement-internal-money-transfers/store','LcSettlementInternalMoneyTransferController@store')->name('lc-settlement-internal-money-transfers.store');
+				 Route::get('lc-settlement-internal-money-transfers/{lc_settlement_internal_transfer}/edit','LcSettlementInternalMoneyTransferController@edit')->name('lc-settlement-internal-money-transfers.edit');
+				 Route::put('lc-settlement-internal-money-transfers/{lc_settlement_internal_transfer}/update','LcSettlementInternalMoneyTransferController@update')->name('lc-settlement-internal-money-transfers.update');
+				 Route::delete('lc-settlement-internal-money-transfers/{lc_settlement_internal_transfer}/delete','LcSettlementInternalMoneyTransferController@destroy')->name('lc-settlement-internal-money-transfers.destroy');
+				 
 				 Route::get('internal-money-transfers','InternalMoneyTransferController@index')->name('internal-money-transfers.index');
 				 Route::get('internal-money-transfers/{type}/create','InternalMoneyTransferController@create')->name('internal-money-transfers.create');
 				 Route::post('internal-money-transfers/{type}/store','InternalMoneyTransferController@store')->name('internal-money-transfers.store');
@@ -352,6 +361,7 @@ Route::middleware([])->group(function () {
 				 Route::delete('contracts/{contract}/{type}','ContractsController@destroy')->name('contracts.destroy');
 				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
 				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
+				 Route::get('financial-institutions/get-lc-issuance-based-of-financial-institution', 'FinancialInstitutionController@getLcIssuanceBasedOnFinancialInstitution')->name('update.lc.issuance.based.on.financial.institution');
 
 
 
@@ -500,6 +510,7 @@ Route::middleware([])->group(function () {
 					Route::post('letter-of-credit-issuance/apply-expense/{letterOfCreditIssuance}','LetterOfCreditIssuanceController@applyExpense')->name('apply.lc.issuance.expense');
 					Route::post('letter-of-credit-issuance/update-expense/{expense}','LetterOfCreditIssuanceController@updateExpense')->name('update.lc.issuance.expense');
 					Route::get('letter-of-credit-issuance/delete-expense/{expense}','LetterOfCreditIssuanceController@deleteExpense')->name('delete.lc.issuance.expense');
+					Route::get('letter-of-credit-issuance-remaining-balance', 'LetterOfCreditIssuanceController@getRemainingBalance')->name('get.remaining.balance.lc.issuance');
 					
 					// end letter of credit issuance
 					

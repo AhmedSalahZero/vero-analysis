@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Models\LcSettlementInternalMoneyTransfer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class LcOverdraftBankStatement extends Model
 	protected $guarded =[
 		'id'
 	];
-	const MONEY_TRANSFER  = 'money-transfer';
+	const LC_OVERDRAFT_MONEY_TRANSFER  = 'lc-overdraft-money-transfer';
 	public $oldFullDate = null;
 	public static function updateNextRows(self $model):string 
 	{
@@ -166,9 +167,9 @@ class LcOverdraftBankStatement extends Model
 	// 	return $this->full_date;
 	// }
 	
-	public function internalMoneyTransfer()
+	public function lcSettlementInternalMoneyTransfer()
 	{
-		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
+		return $this->belongsTo(LcSettlementInternalMoneyTransfer::class,'lc_settlement_internal_money_transfer_id','id');
 	}
 	public function lcOverdraftCreditBankStatement()
 	{

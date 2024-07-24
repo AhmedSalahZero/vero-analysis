@@ -408,7 +408,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
                                 </div>
 
-<div class="col-md-3 ">
+                                <div class="col-md-3 ">
                                     <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                 </div>
 

@@ -432,6 +432,10 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->financial_institution_id ;
 	}	
-	
+	public function getRemainingBalance()
+	{
+		$lastBankStatement = $this->lcOverdraftBankStatements->first() ;
+		return  $lastBankStatement ? $lastBankStatement->end_balance : 0 ;
+	}	
 
 }

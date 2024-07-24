@@ -3093,6 +3093,9 @@ function getPermissions():array
             'name'=>'view internal money transfer'
         ],
 		[
+            'name'=>'view lc settlement internal transfer'
+        ],
+		[
 			'name'=>'view buy or sell currency'
 		],
 		[
@@ -4314,7 +4317,12 @@ function getHeaderMenu()
 					'show'=>$user->can('view money payment'),
 					'submenu'=>[]
 				],
-
+				[
+					'title'=>__('Lc Settlement Internal Transfer'),
+					'link'=>route('lc-settlement-internal-money-transfers.index', ['company'=>$companyId]),
+					'show'=>$user->can('view lc settlement internal transfer'),
+					'submenu'=>[]
+						],
 				[
 			'title'=>__('Internal Money Transfer'),
 			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),

@@ -179,6 +179,10 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Contract::class,'company_id','id');
 	}
+	public function lcSettlementInternalMoneyTransfers()
+	{
+		return $this->hasMany(LcSettlementInternalMoneyTransfer::class,'company_id','id');
+	}
 	public function internalMoneyTransfers()
 	{
 		return $this->hasMany(InternalMoneyTransfer::class,'company_id','id');
@@ -194,6 +198,10 @@ class Company extends Model implements HasMedia
 	public function bankToSafeInternalMoneyTransfers()
 	{
 		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::BANK_TO_SAFE);
+	}	
+	public function bankToLcSettlementInternalMoneyTransfers()
+	{
+		return $this->lcSettlementInternalMoneyTransfers()->where('type',LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT);
 	}
 	
 	
