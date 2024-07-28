@@ -270,7 +270,25 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(LetterOfCreditIssuance::class ,'financial_institution_id','id');
 	}	
-
+	public function getAllAccountNumbers():array 
+	{
+		$currentAccountNumber = $this->accounts->pluck('account_number')->toArray();
+		$cleanOverdraftAccount = $this->cleanOverdrafts->pluck('account_number')->toArray();
+		$fullySecuredOverdraftAccount = $this->fullySecuredOverdrafts->pluck('account_number')->toArray();
+		$overdraftAgainstCommercialPaperAccount = $this->overdraftAgainstCommercialPapers->pluck('account_number')->toArray();
+		$overdraftAgainstAssignmentOfContractsAccount = $this->overdraftAgainstAssignmentOfContracts->pluck('account_number')->toArray();
+		$certificatesOfDepositsAccount = $this->certificatesOfDeposits->pluck('account_number')->toArray();
+		$timeOfDepositsAccount = $this->timeOfDeposits->pluck('account_number')->toArray();
+		return array_merge(
+			$currentAccountNumber ,
+			$cleanOverdraftAccount ,
+			$fullySecuredOverdraftAccount,
+			$overdraftAgainstCommercialPaperAccount,
+			$overdraftAgainstAssignmentOfContractsAccount,
+			$certificatesOfDepositsAccount,
+			$timeOfDepositsAccount
+		) ;
+	}
 
 
 

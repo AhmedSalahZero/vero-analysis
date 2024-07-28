@@ -19,9 +19,9 @@
                             <tr>
 							
 								
-                                <th class="text-center w-60-percentage">{{ __('Financial Insitution / Branch Name') }}</th>
-                                <th class="text-center w-20-percentage">{{ __('Account Number') }}</th>
-                                <th class="text-center w-20-percentage"> {!! __('Amount') !!} </th>
+                                <th class="text-center w-60-percentage text-capitalize">{{ __('Financial Institution / Branch Name') }}</th>
+                                <th class="text-center w-20-percentage text-capitalize">{{ __('Account Number') }}</th>
+                                <th class="text-center w-20-percentage text-capitalize"> {!! __('Amount') !!} </th>
 								
 							
                             
@@ -43,7 +43,7 @@
                                 <td class="w-60-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-left" value="{{  isset($detailItem['branch_name']) ? $detailItem['branch_name'] : $detailItem['financial_institution_name'] }}">
+                                            <input disabled type="text" class="form-control text-left ignore-global-style" value="{{  isset($detailItem['branch_name']) ? $detailItem['branch_name'] : $detailItem['financial_institution_name'] }}">
                                         </div>
                                     </div>
                                 </td>
@@ -51,7 +51,7 @@
 								 <td class="w-20-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{   $detailItem['account_number'] ?? '-' }}">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{   $detailItem['account_number'] ?? '-' }}">
                                         </div>
                                     </div>
                                 </td>
@@ -60,7 +60,7 @@
                                 <td class="w-20-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($detailItem['amount']) }}">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ number_format($detailItem['amount']) }}">
 											@php
 												$total +=$detailItem['amount'];
 											@endphp

@@ -39,7 +39,7 @@
 
     .kt-portlet {}
 
-    input.form-control[disabled],
+    input.form-control[disabled]:not(.ignore-global-style),
     input.form-control:not(.is-date-css)[readonly]:not(#kt_datepicker_2) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;

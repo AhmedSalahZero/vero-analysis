@@ -57,7 +57,7 @@
                         <label class="visibility-hidden"> {{__('Currency')}}
                             @include('star')
                         </label>
-                        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Dashboard Results') }}</h3>
+                        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Dashboard Results') }}</h3>
 
                     </div>
                     <div class="col-md-2">

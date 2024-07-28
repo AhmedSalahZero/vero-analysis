@@ -9,8 +9,14 @@ $banks = [];
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+
+td{
+	vertical-align:middle !important;
+}
+
 .color-green{
-	color:green !important;
+	color:white !important;
+	background-color:green !important;
 }
     button[type="submit"],
     button[type="button"] {
@@ -44,7 +50,7 @@ $banks = [];
         overflow: visible !important;
     }
 
-    input.form-control[disabled] {
+    input.form-control[disabled]:not(.ignore-global-style) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }
@@ -153,7 +159,7 @@ $banks = [];
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyPayment->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyPayment->id }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
-                                    <td class="@if($moneyPayment->payableCheque->getStatus() == 'paid') text-success color-green @endif ">{{ $moneyPayment->payableCheque->getStatusFormatted() }}</td>
+                                    <td class="@if($moneyPayment->payableCheque->getStatus() == 'paid') exclude-td font-weight-bold text-success color-green @endif ">{{ $moneyPayment->payableCheque->getStatusFormatted() }}</td>
                                     <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $moneyPayment->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>

@@ -25,16 +25,16 @@ class Notification extends Model
 	public static function getAllMainTypes():array 
 	{
 		return [
-			self::CUSTOMER_INVOICE_PAST_DUE => __('Customer Invoice Past '),
-			self::CUSTOMER_INVOICE_COMING_DUE => __('Customer Invoice Coming Due'),
-			self::CUSTOMER_INVOICE_CURRENT_DUE => __('Customer Invoice Current Due'),
-			self::SUPPLIER_INVOICE_PAST_DUE => __('Supplier Invoice Past Due'),
-			self::SUPPLIER_INVOICE_CURRENT_DUE => __('Supplier Invoice Current Due'),
-			self::SUPPLIER_INVOICE_COMING_DUE => __('Supplier Invoice Coming Due'),
+			self::CUSTOMER_INVOICE_PAST_DUE => __('Customer Invoice Past Dues'),
+			self::CUSTOMER_INVOICE_COMING_DUE => __('Customer Invoice Coming Dues'),
+			self::CUSTOMER_INVOICE_CURRENT_DUE => __('Customer Invoice Current Dues'),
+			self::SUPPLIER_INVOICE_PAST_DUE => __('Supplier Invoice Past Dues'),
+			self::SUPPLIER_INVOICE_CURRENT_DUE => __('Supplier Invoice Current Dues'),
+			self::SUPPLIER_INVOICE_COMING_DUE => __('Supplier Invoice Coming Dues'),
 			self::PENDING_PAYABLE_CHEQUES => __('Pending Payable Cheques'),
-			self::CHEQUE_PAST_DUE => __('Cheques Past Due'),
-			self::CHEQUE_CURRENT_DUE => __('Cheques Current Due'),
-			self::CHEQUE_UNDER_COLLECTION_TODAY => __('Cheques Under Collection Due'),
+			self::CHEQUE_PAST_DUE => __('Cheques Past Dues'),
+			self::CHEQUE_CURRENT_DUE => __('Cheques Current Dues'),
+			self::CHEQUE_UNDER_COLLECTION_TODAY => __('Cheques Under Collection Dues'),
 			self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS => __('Cheques Under Collection Since Days'),
 		
 		];
@@ -60,7 +60,7 @@ class Notification extends Model
 				]
 			],
 			self::RECEIVABLE_CHEQUE=> [
-				'title'=>__('Payable Cheques') ,
+				'title'=>__('Receivable Cheques') ,
 				'subitems'=>[
 					self::CHEQUE_PAST_DUE,
 					self::CHEQUE_CURRENT_DUE,
@@ -69,7 +69,7 @@ class Notification extends Model
 				]
 			],
 			self::PENDING_PAYABLE_CHEQUE=>[
-				'title'=>__('Receivable Cheques') ,
+				'title'=>__('Payable Cheques') ,
 				'subitems'=>[
 					self::PENDING_PAYABLE_CHEQUES
 				]

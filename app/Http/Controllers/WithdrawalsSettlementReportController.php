@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class WithdrawalsSettlementReportController
 {
-	const NUMBER_OF_INTERNAL_MONTHS = 3 ;
+	const NUMBER_OF_INTERNAL_MONTHS = 6 ;
     use GeneralFunctions;
     public function index(Company $company)
 	{
@@ -32,18 +32,18 @@ class WithdrawalsSettlementReportController
 		$startDate = now()->format('Y-m-d');
 		$endDate = Carbon::make($startDate)->addMonths(self::NUMBER_OF_INTERNAL_MONTHS)->format('Y-m-d');
 		$financialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray();
-		$overdraftWithdrawals = $this->getOverdraftWithdrawals($startDate , $endDate,$currencyName,$accountTypeId ,$company->id, $financialInstitutionIds);
+		$overdraftWithdrawals = $this->getOverdraftWithdrawalsWithoutStartDate( $endDate,$currencyName,$accountTypeId ,$company->id, $financialInstitutionIds);
 		$overdraftWithdrawals = $overdraftWithdrawals->take(6);
+
 		return response()->json([
 			'status'=>true ,
 			'data'=>$overdraftWithdrawals
 		]);
 	}
-	protected function getOverdraftWithdrawals(string $startDate , string $endDate , string $currency   , int $accountTypeId , int $companyId , array $financialInstitutionIds  )
+	protected function getOverdraftWithdrawals( string $startDate ,  string $endDate , string $currency   , int $accountTypeId , int $companyId , array $financialInstitutionIds  )
 	{
 		$accountType = AccountType::find($accountTypeId);
 		$fullClassName = ('\App\Models\\'.$accountType->model_name) ;
-		// $tableNameFormatted = $fullClassName::getTableNameFormatted();
 		$overdraftIds = $fullClassName::findByFinancialInstitutionIds($financialInstitutionIds);
 		$foreignKeyName = $fullClassName::generateForeignKeyFormModelName();
 		$withdrawalsTableName = $fullClassName::getWithdrawalTableName();
@@ -63,18 +63,40 @@ class WithdrawalsSettlementReportController
 		->orderByRaw('due_date asc')
 		->get();
 	}
+	protected function getOverdraftWithdrawalsWithoutStartDate(  string $endDate , string $currency   , int $accountTypeId , int $companyId , array $financialInstitutionIds  )
+	{
+		$accountType = AccountType::find($accountTypeId);
+		$fullClassName = ('\App\Models\\'.$accountType->model_name) ;
+		$overdraftIds = $fullClassName::findByFinancialInstitutionIds($financialInstitutionIds);
+		$foreignKeyName = $fullClassName::generateForeignKeyFormModelName();
+		$withdrawalsTableName = $fullClassName::getWithdrawalTableName();
+		$bankStatementTableName = $fullClassName::getBankStatementTableName();
+		$bankStatementIdName = $fullClassName::getBankStatementIdName();
+		
+		$tableName = (new $fullClassName)->getTable();
+		return DB::table($withdrawalsTableName)
+		->join($bankStatementTableName,$bankStatementIdName,'=',$bankStatementTableName.'.id')
+		->join($tableName,$bankStatementTableName.'.'.$foreignKeyName,'=',$tableName.'.id')
+		->join('financial_institutions','financial_institutions.id','=',$tableName.'.financial_institution_id')
+		->join('banks','banks.id','=','financial_institutions.bank_id')
+		->where($bankStatementTableName.'.company_id',$companyId)
+		->whereIn($bankStatementTableName.'.'.$foreignKeyName,$overdraftIds)
+		->where($bankStatementTableName.'.date','<=',$endDate )
+		->where('currency',$currency)
+		->orderByRaw('due_date asc')
+		->get();
+	}
 	public function result(Company $company , Request $request){
 		$startDate = $request->get('start_date');
 		$endDate  = $request->get('end_date');
 		$currency = $request->get('currency');
 		$financialInstitutionIds = $request->get('financial_institution_ids',[]);
 		$accountTypeId = $request->get('account_type') ;
-		// dd($startDate,$endDate,$currency,$financialInstitutionIds,$accountTypeId);
 		$accountType = AccountType::find($accountTypeId);
 		$fullClassName = ('\App\Models\\'.$accountType->model_name) ;
 		$tableNameFormatted = $fullClassName::getTableNameFormatted();
-		
-		$overdraftWithdrawals = $this->getOverdraftWithdrawals($startDate , $endDate,$currency,$accountTypeId ,$company->id, $financialInstitutionIds);
+		// dd('qqq');
+		$overdraftWithdrawals = $this->getOverdraftWithdrawals($startDate, $endDate,$currency,$accountTypeId ,$company->id, $financialInstitutionIds);
 
 	
 		return view('withdrawal_settlement_report_result',[

@@ -55,7 +55,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
         overflow: visible !important;
     }
 
-    input.form-control[disabled],
+    input.form-control[disabled]:not(.ignore-global-style),
     input.form-control:not(.is-date-css)[readonly] {
         background-color: #CCE2FD !important;
         font-weight: bold !important;

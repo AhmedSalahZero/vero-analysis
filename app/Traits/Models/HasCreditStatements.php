@@ -16,36 +16,35 @@ trait HasCreditStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-    // $company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,0,$paidAmount,$deliveryBranchId,$currencyName
-	public function handleCreditStatement(int $companyId , $bankId = null ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $statementDate = null,?float $paidAmount = null,$deliveryBranchId=null,?string $currencyName = null)
+	public function handleCreditStatement(int $companyId , $bankId = null ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $statementDate = null,?float $paidAmount = null,$deliveryBranchId=null,?string $currencyName = null , ?string $commentEn = null , ?string $commentAr = null)
 	{
 		// dd($statementDate);
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$companyId,$bankId);
-			$this->storeCleanOverdraftCreditBankStatement($moneyType,$cleanOverdraft,$statementDate,$paidAmount);
+			$this->storeCleanOverdraftCreditBankStatement($moneyType,$cleanOverdraft,$statementDate,$paidAmount,$commentEn,$commentAr);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::FULLY_SECURED_OVERDRAFT){
 			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,$companyId,$bankId);
-			$this->storeFullySecuredOverdraftCreditBankStatement($moneyType,$fullySecuredOverdraft,$statementDate,$paidAmount);
+			$this->storeFullySecuredOverdraftCreditBankStatement($moneyType,$fullySecuredOverdraft,$statementDate,$paidAmount,$commentEn,$commentAr);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_COMMERCIAL_PAPER){
 			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,$companyId,$bankId);
-			$this->storeOverdraftAgainstCommercialPaperCreditBankStatement($moneyType,$overdraftAgainstCommercialPaper,$statementDate,$paidAmount);
+			$this->storeOverdraftAgainstCommercialPaperCreditBankStatement($moneyType,$overdraftAgainstCommercialPaper,$statementDate,$paidAmount,$commentEn,$commentAr);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS){
 			$odAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,$companyId,$bankId);
-			$this->storeOverdraftAgainstAssignmentOfContractCreditBankStatement($moneyType,$odAgainstAssignmentOfContract,$statementDate,$paidAmount);
+			$this->storeOverdraftAgainstAssignmentOfContractCreditBankStatement($moneyType,$odAgainstAssignmentOfContract,$statementDate,$paidAmount,$commentEn,$commentAr);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$companyId,$bankId);
-			$this->storeCurrentAccountCreditBankStatement($statementDate,$paidAmount,$financialInstitutionAccount->id);
+			$this->storeCurrentAccountCreditBankStatement($statementDate,$paidAmount,$financialInstitutionAccount->id,$commentEn,$commentAr);
 		}
 		elseif($this->isCashPayment()){
-			$this->storeCashInSafeCreditStatement($statementDate,$paidAmount,$currencyName,$deliveryBranchId);
+			$this->storeCashInSafeCreditStatement($statementDate,$paidAmount,$currencyName,$deliveryBranchId,$commentEn,$commentAr);
 		}
 	}
 
-	public function storeCashInSafeCreditStatement(string $date , $paidAmount , string $currencyName,int $branchId)
+	public function storeCashInSafeCreditStatement(string $date , $paidAmount , string $currencyName,int $branchId,?string $commentEn , ?string $commentAr)
 	{
 		/**
 		 * @var MoneyPayment $this
@@ -55,21 +54,25 @@ trait HasCreditStatements
 			'currency'=>$currencyName ,
 			'company_id'=>$this->company_id ,
 			'credit'=>$paidAmount,
-			'date'=>$date
+			'date'=>$date,
+			'comment_en'=>$commentEn , 
+			'comment_ar'=>$commentAr
 		]);
 	}
 
-	public function storeCurrentAccountCreditBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId)
+	public function storeCurrentAccountCreditBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId,?string $commentEn = null , ?string $commentAr )
 	{
 		return $this->currentAccountCreditBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId ,
 			'company_id'=>$this->company_id ,
 			'credit'=>$paidAmount,
-			'date'=>$date
+			'date'=>$date,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]);
 	}
 
-	public function storeCleanOverdraftCreditBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount )
+	public function storeCleanOverdraftCreditBankStatement(string $moneyType , CleanOverdraft $cleanOverdraft , string $date , $paidAmount,?string $commentEn = null , ?string $commentAr )
 	{
 		return  $this->cleanOverdraftCreditBankStatement()->create([
 			'type'=>$moneyType ,
@@ -79,11 +82,13 @@ trait HasCreditStatements
 			'limit'=>$cleanOverdraft->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>0,
-			'credit'=>$paidAmount
+			'credit'=>$paidAmount,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]) ;
 
 	}
-	public function storeFullySecuredOverdraftCreditBankStatement(string $moneyType , FullySecuredOverdraft $fullySecuredOverdraft , string $date , $paidAmount )
+	public function storeFullySecuredOverdraftCreditBankStatement(string $moneyType , FullySecuredOverdraft $fullySecuredOverdraft , string $date , $paidAmount,?string $commentEn = null , ?string $commentAr )
 	{
 		return  $this->fullySecuredOverdraftCreditBankStatement()->create([
 			'type'=>$moneyType ,
@@ -93,11 +98,13 @@ trait HasCreditStatements
 			'limit'=>$fullySecuredOverdraft->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>0,
-			'credit'=>$paidAmount
+			'credit'=>$paidAmount,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]) ;
 
 	}
-	public function storeOverdraftAgainstCommercialPaperCreditBankStatement(string $moneyType , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper , string $date , $paidAmount )
+	public function storeOverdraftAgainstCommercialPaperCreditBankStatement(string $moneyType , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper , string $date , $paidAmount , ?string $commentEn = null , ?string $commentAr )
 	{
 		return  $this->overdraftAgainstCommercialPaperCreditBankStatement()->create([
 			'type'=>$moneyType ,
@@ -107,12 +114,14 @@ trait HasCreditStatements
 			'limit'=>$overdraftAgainstCommercialPaper->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>0,
-			'credit'=>$paidAmount
+			'credit'=>$paidAmount,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]) ;
 
 	}
 	
-	public function storeOverdraftAgainstAssignmentOfContractCreditBankStatement(string $moneyType , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract , string $date , $paidAmount )
+	public function storeOverdraftAgainstAssignmentOfContractCreditBankStatement(string $moneyType , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract , string $date , $paidAmount , ?string $commentEn = null , ?string $commentAr )
 	{
 		return  $this->overdraftAgainstAssignmentOfContractCreditBankStatement()->create([
 			'type'=>$moneyType ,
@@ -122,7 +131,9 @@ trait HasCreditStatements
 			'limit'=>$odAgainstAssignmentOfContract->getLimit(),
 			'beginning_balance'=>0 ,
 			'debit'=>0,
-			'credit'=>$paidAmount
+			'credit'=>$paidAmount,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]) ;
 
 	}

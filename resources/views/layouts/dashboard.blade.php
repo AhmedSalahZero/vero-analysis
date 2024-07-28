@@ -635,14 +635,7 @@
 
     </style>
 
-    {{-- <style>
-        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.dtfc-fixed-right):not(.active-style) {
-            color: black !important;
-            font-weight: bold !important;
-        }
-	
 
-    </style> --}}
 
     @if( !in_array('financial-statement',Request()->segments()) )
     <style>
@@ -662,11 +655,13 @@
             height: 100%;
         }
 
-        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style) {
+        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style):not(.exclude-td) {
             color: black !important;
             font-weight: bold !important;
         }
-
+td{
+	vertical-align:middle !important;
+}
     </style>
 
 

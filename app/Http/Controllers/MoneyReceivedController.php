@@ -668,12 +668,14 @@ class MoneyReceivedController
 		 * 
 		 * @var MoneyReceived $moneyReceived
 		 */
+		$collectionFeesAmount = $request->get('collection_fees',0) ;
 		$actualCollectionDate = $request->get('actual_collection_date')  ;
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::COLLECTED,
-			'collection_fees'=>$request->get('collection_fees'),
+			'collection_fees'=>$collectionFeesAmount,
 			'actual_collection_date'=>$actualCollectionDate
 		]);
+		$chequeNumber = $moneyReceived->cheque->getChequeNumber();
 		$accountType = AccountType::find($moneyReceived->cheque->account_type) ;
 		$currency = $moneyReceived->getCurrency();
 		$receivedAmount = $moneyReceived->getReceivedAmount();
@@ -686,6 +688,7 @@ class MoneyReceivedController
 		 */
 		
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$actualCollectionDate,$receivedAmount,$currency,null);
+		$moneyReceived->handleCreditStatement($company->id , $financialInstitutionId , $accountType,$accountNumber,'cheque-collection-fees',$actualCollectionDate,$collectionFeesAmount,null,$currency,__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'en' ),__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'ar' ));
 		if($request->ajax()){
 			return response()->json([
 				'status'=>true ,
@@ -703,10 +706,12 @@ class MoneyReceivedController
 			'actual_collection_date'=>null
 		]);
 
-		$currentStatement = $moneyReceived->getCurrentStatement() ;
-		if($currentStatement){
-			 $currentStatement->delete();
+		while($currentStatement = $moneyReceived->getCurrentStatement()){
+			$currentStatement->delete();
+			$moneyReceived = $moneyReceived->refresh();
 		}
+		// $moneyReceived->
+
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION])->with('success',__('Cheque Is Under Collection'));
 		
 	}

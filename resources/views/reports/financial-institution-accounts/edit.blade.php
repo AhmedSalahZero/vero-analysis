@@ -39,7 +39,7 @@
 
     .kt-portlet {}
 
-    input.form-control[disabled],
+    input.form-control[disabled]:not(.ignore-global-style),
     input.form-control:not(.is-date-css)[readonly]:not(#kt_datepicker_2) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;
@@ -54,8 +54,8 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-
-        <form method="post" action="{{ route('update.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$model->id]) }}" class="kt-form kt-form--label-right">
+{{-- {{ dd() }} --}}
+        <form method="post" action="{{ route('update.financial.institutions.account',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id , 'financialInstitutionAccount'=>$model->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input id="js-money-received-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             {{-- <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}"> --}}

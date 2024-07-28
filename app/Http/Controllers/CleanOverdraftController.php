@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreCleanOverdraftRequest;
+use App\Http\Requests\UpdateCleanOverdraftRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CleanOverdraft;
@@ -80,7 +82,7 @@ class CleanOverdraftController
 	{
 		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCleanOverdraftRequest $request){
 		
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
@@ -113,9 +115,7 @@ class CleanOverdraftController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,CleanOverdraft $cleanOverdraft){
-		// $infos =  $request->get('infos',[]) ;
-		
+	public function update(Company $company , UpdateCleanOverdraftRequest $request , FinancialInstitution $financialInstitution,CleanOverdraft $cleanOverdraft){
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){

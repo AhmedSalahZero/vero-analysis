@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreCertificateOfDepositRequest;
+use App\Http\Requests\UpdateCertificateOfDepositRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
@@ -11,7 +13,6 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class CertificatesOfDepositsController
 {
@@ -166,7 +167,7 @@ class CertificatesOfDepositsController
 	{
 		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCertificateOfDepositRequest $request){
 		
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['start_date','end_date'] as $dateField){
@@ -193,7 +194,7 @@ class CertificatesOfDepositsController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit){
+	public function update(Company $company , UpdateCertificateOfDepositRequest $request , FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit){
 		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());

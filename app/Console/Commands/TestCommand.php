@@ -8,6 +8,7 @@ use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\CustomerInvoice;
+use App\Models\FinancialInstitution;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\SupplierInvoice;
@@ -51,6 +52,9 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+		$financialInstitution = FinancialInstitution::find(24);
+		dd($financialInstitution->getAllAccountNumbers());
+		dd('good');
 	
 		// $companyId = 85 ; 
 		// $dateFormat = 'Y-m-d';

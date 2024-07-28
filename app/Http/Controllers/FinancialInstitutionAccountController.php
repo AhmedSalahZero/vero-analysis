@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\UpdateCurrentAccountRequest;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
@@ -17,10 +18,12 @@ class FinancialInstitutionAccountController
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
         return view('reports.financial-institution-accounts.edit',[
 			'selectedBranches'=>$selectedBranches,
-			'model'=>$financialInstitutionAccount
+			'model'=>$financialInstitutionAccount,
+			'financialInstitution'=>$financialInstitutionAccount->financialInstitution
 		]);
 	}
-	public function update(Company $company , Request $request , FinancialInstitutionAccount $financialInstitutionAccount){
+	public function update(Company $company , UpdateCurrentAccountRequest $request ,FinancialInstitution $financialInstitution , FinancialInstitutionAccount $financialInstitutionAccount){
+
 		$currency = $request->get('currency',$financialInstitutionAccount->getCurrency());
 		$financialInstitutionAccount->update([
 			'account_number'=>$request->get('account_number'),

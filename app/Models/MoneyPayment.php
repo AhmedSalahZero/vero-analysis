@@ -24,7 +24,7 @@ class MoneyPayment extends Model
 		$paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		
 		if($moneyPayment->isPayableCheque()){
-			return __('Cheque To :name With Number #:number Paid Invoices [ :numbers ]',['name'=>$supplierName,'number'=>$moneyPayment->getPayableChequeNumber(),'numbers'=>$paidInvoiceNumbers],$lang) ;
+			return __('Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ]',['name'=>$supplierName,'number'=>$moneyPayment->getPayableChequeNumber()?:Request('cheque_number'),'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 		if($moneyPayment->isCashPayment()){
 			return __('Cash Payment To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;

@@ -1164,10 +1164,10 @@
 "Collection Date - Max Date Of Today":"تاريخ التحصيل (بحد اقصى تاريخ اليوم)",
 "Deposit Date - Max Date Of Today":"تاريخ الايداع (بحد اقصى تاريخ اليوم)",
 "Account Type":"نوع الحساب",
-"Cheque To :name With Number #:number Paid Invoices [ :numbers ]":"شيك الي :name يحمل الرقم :number لدفع الفواتير [ :numbers ]",
-"Cheque From :name With Number #:number Settled Invoices [ :numbers ]":"شيك من :name يحمل الرقم :number لتسديد الفواتير رقم [ :numbers ]",
+"Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ]":"شيك الي :name يحمل الرقم :number لدفع الفواتير [ :numbers ]",
+"Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ]":"شيك من :name يحمل الرقم :number لتسديد الفواتير رقم [ :numbers ]",
 "Cash In Safe From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",
-"Cash In Bank From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",
+"Bank Deposit From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",
 "Incoming Transfer From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",
 "Outgoing Transfer To :name Paid Invoices [ :numbers ]":"كاش من :name لدفع الفواتير [ :numbers ]",
 "Sell For :amount :currency To :to Account No :no":"الي بنك رقم حساب :to :no",
@@ -1177,5 +1177,13 @@
 "From Safe To Safe":"من خزنة الي خزنة",
 "Cash Payment To :name Paid Invoices [ :numbers ]":"دفع كاش الي :name لدفع الفواتير [ :numbers ]",
 "To :branchName Safe":"الي الخزنة :branchName",
-"Sold :amount :currency From :branchName Safe":"من خزنة :branchName"
+"Sold :amount :currency From :branchName Safe":"من خزنة :branchName",
+"Cheque Collection Fees - Cheque [ :number ]":"مصاريف تحصيل الشيكات - شيك رقم [ :number ]",
+"Cash Cover [ :lgType ] Transaction Name [ :transactionName ]":"غطاء نقدي [ :lgType ] عن العملية [ :transactionName ]",
+"Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]":"مصاريف إصدار [ :lgType ] عن العملية [ :transactionName ]",
+"Commission Fees [ :lgType ] Transaction Name [ :transactionName ]":"عمولة [ :lgType ] عن العملية [ :transactionName ]",
+"Cash Cover [ :lcType ] Transaction Name [ :transactionName ]":"غطاء نقدي [ :lcType ] عن العملية [ :transactionName ]",
+"Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]":"مصاريف إصدار [ :lcType ] عن العملية [ :transactionName ]",
+"Commission Fees [ :lcType ] Transaction Name [ :transactionName ]":"عمولة [ :lcType ] عن العملية [ :transactionName ]"
+
 }

@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreOverdraftAgainstCommercialPaperRequest;
+use App\Http\Requests\UpdateOverdraftAgainstCommercialPaperRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
@@ -84,7 +86,7 @@ class OverdraftAgainstCommercialPaperController
 	{
 		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','max_lending_limit_per_customer'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreOverdraftAgainstCommercialPaperRequest $request){
 		
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
@@ -123,7 +125,7 @@ class OverdraftAgainstCommercialPaperController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
+	public function update(Company $company , UpdateOverdraftAgainstCommercialPaperRequest $request , FinancialInstitution $financialInstitution,OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper){
 		// $infos =  $request->get('infos',[]) ;
 		$infos =  $request->get('infos',[]) ;
 		$data['updated_by'] = auth()->user()->id ;

@@ -306,7 +306,7 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@addAccount')->name('financial.institution.add.account');
 				 Route::post('financial-institutions/{financialInstitution}/add-account', 'FinancialInstitutionController@storeAccount')->name('financial.institution.store.account');
 				 Route::get('financial-institution-accounts/edit/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@edit')->name('edit.financial.institutions.account');
-				 Route::put('financial-institution-accounts/update/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@update')->name('update.financial.institutions.account');
+				 Route::put('financial-institution-accounts/update/{financialInstitution}/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@update')->name('update.financial.institutions.account');
 				 Route::delete('financial-institution-accounts/delete/{financialInstitutionAccount}', 'FinancialInstitutionAccountController@destroy')->name('delete.financial.institutions.account');
 
 				 /**
@@ -656,7 +656,7 @@ Route::middleware([])->group(function () {
 
 				Route::post('send-cheques-to-collection', 'MoneyReceivedController@sendToCollection')->name('cheque.send.to.collection');
                 Route::get('send-cheques-to-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafe')->name('cheque.send.to.safe');
-                Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
+			Route::post('send-cheques-to-collection/{moneyReceived}', 'MoneyReceivedController@applyCollection')->name('cheque.apply.collection');
                 Route::get('send-cheques-to-rejected-safe/{moneyReceived}', 'MoneyReceivedController@sendToSafeAsRejected')->name('cheque.send.to.rejected.safe');
                 Route::get('send-cheques-to-under-collection-safe/{moneyReceived}', 'MoneyReceivedController@sendToUnderCollection')->name('cheque.send.to.under.collection');
                 Route::get('down-payments/get-contracts-for-customer-with-start-and-end-date', 'MoneyReceivedController@getContractsForCustomerWithStartAndEndDate')->name('get.contracts.for.customer.with.start.and.end.date'); // ajax request

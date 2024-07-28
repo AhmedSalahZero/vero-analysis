@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HHelpers;
 use App\Models\OpeningBalance;
+use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ,HasDebitStatements;
+	use IsMoney ,HasDebitStatements,HasCreditStatements;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
@@ -20,19 +21,21 @@ class MoneyReceived extends Model
 	const CHEQUE_UNDER_COLLECTION  = 'cheque-under-collection';
 	const CHEQUE_REJECTED  = 'cheque-rejected';
 	const CHEQUE_COLLECTED = 'cheque-collected';
+	const CHEQUE_COLLECTION_FEES = 'cheque-collection-fees';
 	public static function generateComment(self $moneyReceived,string $lang)
 	{
 		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		
 		$customerName = $moneyReceived->getCustomerName();
 		if($moneyReceived->isCheque()){
-			return __('Cheque From :name With Number #:number Settled Invoices [ :numbers ]',['name'=>$customerName,'number'=>$moneyReceived->getChequeNumber(),'numbers'=>$settledInvoiceNumbers],$lang) ;
+		
+			return __('Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ]',['name'=>$customerName,'number'=>$moneyReceived->getChequeNumber()?:Request('cheque_number'),'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInSafe()){
 			return __('Cash In Safe From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInBank()){
-			return __('Cash In Bank From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
+			return __('Bank Deposit From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isIncomingTransfer()){
 			return __('Incoming Transfer From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
@@ -561,5 +564,21 @@ class MoneyReceived extends Model
 			return $this->getChequeDueDate();
 		}
 		return $this->getReceivingDate();
+	}
+	public function overdraftAgainstCommercialPaperCreditBankStatement()
+	{
+		return $this->hasOne(OverdraftAgainstCommercialPaperBankStatement::class,'money_received_id','id');
+	}
+	public function currentAccountCreditBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'money_received_id','id');
+	}
+	public function cashInSafeCreditStatement()
+	{
+		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
+	}
+	public function overdraftAgainstAssignmentOfContractCreditBankStatement()
+	{
+		return $this->hasOne(OverdraftAgainstAssignmentOfContractBankStatement::class,'money_received_id','id');
 	}
 }

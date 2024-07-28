@@ -11,6 +11,7 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Http\Requests\StoreCurrentAccountRequest;
 
 class FinancialInstitutionController
 {
@@ -108,7 +109,8 @@ class FinancialInstitutionController
 	
 	public function create(Company $company)
 	{
-		$banks = Bank::pluck('view_name','id');
+		$exceptBanks = FinancialInstitution::where('company_id',$company->id)->pluck('bank_id')->toArray() ;
+		$banks = Bank::whereNotIn('id',$exceptBanks)->pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
         return view('reports.financial-institution.form',[
 			'banks'=>$banks,
@@ -154,7 +156,8 @@ class FinancialInstitutionController
 		][$moneyType];
 	}
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution){
-		$banks = Bank::pluck('view_name','id');
+		$exceptBanks = FinancialInstitution::where('company_id',$company->id)->pluck('bank_id')->toArray() ;
+		$banks = Bank::whereNotIn('id',$exceptBanks)->pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		
         return view('reports.financial-institution.form',[
@@ -204,7 +207,7 @@ class FinancialInstitutionController
 			'financialInstitution'=>$financialInstitution,
 		]);
 	}
-	public function storeAccount(Company $company , Request $request , FinancialInstitution $financialInstitution)
+	public function storeAccount(Company $company , StoreCurrentAccountRequest $request , FinancialInstitution $financialInstitution)
 	{
 		$accounts = $request->get('accounts',[]) ;
 		$financialInstitution->storeNewAccounts($accounts,null,true);

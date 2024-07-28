@@ -29,7 +29,6 @@ class LetterOfCreditIssuanceController
 		}
 		$searchFieldName = $request->get('field');
 		$dateFieldName =  'issuance_date' ; // change it
-		// $dateFieldName = $searchFieldName === 'balance_date' ? 'balance_date' : 'created_at';
 		$from = $request->get('from');
 		$to = $request->get('to');
 		$value = $request->query('value');
@@ -142,6 +141,7 @@ class LetterOfCreditIssuanceController
 		$lcCommissionAmount = $request->get('lc_commission_amount',0);
 		$minLcCommissionAmount = $request->get('min_lc_commission_fees',0);
 		$model->storeBasicForm($request);
+		$transactionName = $request->get('transaction_name');
 		$lcType = $request->get('lc_type');
 		$issuanceDate = $request->get('issuance_date');
 		$lcAmount = $request->get('lc_amount',0);
@@ -162,8 +162,8 @@ class LetterOfCreditIssuanceController
 	
 		$maxLcCommissionAmount = max($minLcCommissionAmount ,$lcCommissionAmount );
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId);
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId);
+		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId,0,1,__('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
+		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId,__('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		$model->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,0,$lcAmount,$currency,0,$cdOrTdId,'credit-lc-amount');
 		$model->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lc-amount');
 		
@@ -178,7 +178,7 @@ class LetterOfCreditIssuanceController
 		// 	}
 		// }else{
 		// }
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLcCommissionAmount , $financialInstitutionAccountId);
+		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLcCommissionAmount , $financialInstitutionAccountId,0,1,__('Commission Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Commission Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$request->get('lc_type')])->with('success',__('Data Store Successfully'));
 
 	}

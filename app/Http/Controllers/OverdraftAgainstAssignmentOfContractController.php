@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOverdraftAgainstAssignmentOfContractRequest;
+use App\Http\Requests\UpdateOverdraftAgainstAssignmentOfContractRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
@@ -92,7 +94,7 @@ class OverdraftAgainstAssignmentOfContractController
 	{
 		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','max_lending_limit_per_contract'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreOverdraftAgainstAssignmentOfContractRequest $request){
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
@@ -132,7 +134,7 @@ class OverdraftAgainstAssignmentOfContractController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract){
+	public function update(Company $company , UpdateOverdraftAgainstAssignmentOfContractRequest $request , FinancialInstitution $financialInstitution,OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract){
 		$infos =  $request->get('infos',[]) ;
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
