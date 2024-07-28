@@ -10,7 +10,7 @@ use App\Models\OverdraftAgainstCommercialPaper;
 
 trait HasDebitStatements 
 {
-		/**
+	/**
 	 * * هنا لو اليوزر ضاف فلوس في الحساب
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني

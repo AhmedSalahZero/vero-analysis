@@ -63,7 +63,7 @@
                             </div>
                         </div>
 						
-						   <div class="col-md-3">
+						   <div class="col-md-2">
                                         <label>{{__('Account Type')}}
                                             @include('star')
                                         </label>
@@ -80,7 +80,7 @@
                                     </div>
 									
 
-                        <div class="col-md-1">
+                        <div class="col-md-2">
                             <label>{{__('Select Currency')}}</label>
 
                             <div class="kt-input-icon">

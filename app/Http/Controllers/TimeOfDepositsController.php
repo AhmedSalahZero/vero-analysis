@@ -11,6 +11,8 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Http\Requests\StoreTimeOfDepositRequest;
+use App\Http\Requests\UpdateTimeOfDepositRequest;
 
 class TimeOfDepositsController
 {
@@ -165,7 +167,7 @@ class TimeOfDepositsController
 	{
 		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreTimeOfDepositRequest $request){
 		
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['start_date','end_date'] as $dateField){
@@ -192,7 +194,7 @@ class TimeOfDepositsController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit){
+	public function update(Company $company , UpdateTimeOfDepositRequest $request , FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit){
 		
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());

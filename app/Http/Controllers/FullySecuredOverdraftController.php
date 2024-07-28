@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreFullySecuredOverdraftRequest;
+use App\Http\Requests\UpdateFullySecuredOverdraftRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
@@ -81,7 +83,7 @@ class FullySecuredOverdraftController
 	{
 		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','cd_or_td_account_type_id','cd_or_td_account_number','cd_or_td_lending_percentage'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreFullySecuredOverdraftRequest $request){
 		
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
@@ -116,9 +118,7 @@ class FullySecuredOverdraftController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,FullySecuredOverdraft $fullySecuredOverdraft){
-		// $infos =  $request->get('infos',[]) ;
-		
+	public function update(Company $company , UpdateFullySecuredOverdraftRequest $request , FinancialInstitution $financialInstitution,FullySecuredOverdraft $fullySecuredOverdraft){
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){

@@ -4176,15 +4176,40 @@ function getHeaderMenu()
 		'title'=>__('Notification Settings'),
 	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
 	'show'=>$user->can('view notification settings'),
-
 	];
-	// dd($notificationsSubItems);
+	$notificationsSubItems[] = [
+		'title'=>__('General Settings'),
+		'link'=>'#',
+		'show'=>true ,
+		'submenu'=> [
+			[
+				'title'=>__('Customers'),
+				'link'=>'#',
+				'show'=>true 
+			],
+			[
+				'title'=>__('Suppliers'),
+				'link'=>'#',
+				'show'=>true 
+			],
+			[
+				'title'=>__('Business Sectors'),
+				'link'=>'#',
+				'show'=>true 
+			],
+			[
+				'title'=>__('Branches'),
+				'link'=>'#',
+				'show'=>true 
+			]
+		]
+	];
 	
 	$cashManagementSubItems = [
 
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
 		'notifications'=>[
-			'title'=>__('Notifications'),
+			'title'=>__('Notifications & Settings'),
 			'link'=>'#',
 			'show'=>true,
 			'submenu'=>$notificationsSubItems
@@ -5083,3 +5108,4 @@ if (!function_exists('getFixedLoanTypes')) {
 		}
 		return $result ;
 	}
+	

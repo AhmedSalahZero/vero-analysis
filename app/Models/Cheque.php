@@ -293,7 +293,15 @@ class Cheque extends Model
 
         return $date ? Carbon::make($date)->format('d-m-Y') : null ;
     }
-
+	public function accountType()
+	{
+		return $this->belongsTo(AccountType::class,'account_type','id');
+	}
+	public function getAccountTypeName()
+	{
+		$accountType = $this->accountType; 
+		return $accountType ? $accountType->getName() : __('N/A') ; 
+	}
     public function getAccountType()
     {
         return $this->account_type ;

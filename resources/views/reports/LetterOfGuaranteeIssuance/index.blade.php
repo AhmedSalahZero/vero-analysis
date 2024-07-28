@@ -34,7 +34,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
         overflow: visible !important;
     }
 
-    input.form-control[disabled] {
+    input.form-control[disabled]:not(.ignore-global-style) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }

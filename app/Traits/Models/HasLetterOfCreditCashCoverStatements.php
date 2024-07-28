@@ -48,7 +48,7 @@ trait HasLetterOfCreditCashCoverStatements
 			'date'=>$date,
 		]);
 	}
-	public function storeCurrentAccountCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lcAdvancedPaymentHistoryId = 0 ,  $isActive = 1)
+	public function storeCurrentAccountCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lcAdvancedPaymentHistoryId = 0 ,  $isActive = 1 , ?string $commentEn = null, ?string $commentAr = null)
 	{
 		return $this->currentAccountCreditBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
@@ -57,7 +57,9 @@ trait HasLetterOfCreditCashCoverStatements
 			'is_active'=>$isActive , // is active خاصة بجزئيه ال commission فقط
 			'credit'=>$credit,
 			'debit'=>0,
-			'date'=>$date
+			'date'=>$date,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]);
 	}
 }

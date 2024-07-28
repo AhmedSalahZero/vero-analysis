@@ -47,7 +47,7 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ $customerPastDue['data']['data_array'][$notificationHeader] ??'---' }}">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ $customerPastDue['data']['data_array'][$notificationHeader] ??'---' }}">
                                         </div>
                                     </div>
                                 </td>

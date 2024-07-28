@@ -155,16 +155,6 @@ class CleanOverdraftBankStatement extends Model
 		
 		$this->attributes['date'] = $year.'-'.$month.'-'.$day;
 	}
-	// public function getStartSettlementFromBankStatementDateTime()
-	// {
-	// 	if($this->type == MoneyPayment::PAYABLE_CHEQUE  ){
-	// 		return $this->moneyPayment->payableCheque->actual_payment_date ;
-	// 	}
-	// 	if($this->type == MoneyPayment::OUTGOING_TRANSFER  ){
-	// 		return $this->moneyPayment->outgoingTransfer->actual_payment_date ;
-	// 	}
-	// 	return $this->full_date;
-	// }
 	
 	public function internalMoneyTransfer()
 	{

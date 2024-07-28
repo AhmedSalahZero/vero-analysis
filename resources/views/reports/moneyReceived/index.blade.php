@@ -39,7 +39,7 @@ use App\Models\MoneyReceived;
         overflow: visible !important;
     }
 
-    input.form-control[disabled] {
+    input.form-control[disabled]:not(.ignore-global-style) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }
@@ -316,6 +316,7 @@ use App\Models\MoneyReceived;
                                     <th class="align-middle">{!! __('Cheque <br> Amount') !!}</th>
                                     <th class="align-middle">{!! __('Deposit <br> Date') !!}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
+                                    <th class="align-middle">{!! __('Account <br> Type') !!}</th>
                                     <th class="align-middle">{!! __('Account <br> Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque <br> Due Date') !!}</th>
                                     <th class="align-middle">{!! __('Clearance <br>Days') !!}</th>
@@ -333,6 +334,7 @@ use App\Models\MoneyReceived;
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap"> {{ $moneyReceived->cheque->getDueDateFormatted() }} </td>
                                     <td> {{ $moneyReceived->cheque->getClearanceDays() }} </td>
@@ -492,6 +494,7 @@ use App\Models\MoneyReceived;
                                     <th class="align-middle">{{ __('Due Date') }}</th>
                                     <th class="align-middle">{{ __('Deposit Date') }}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
+                                    <th class="align-middle">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account Number') }}</th>
                                     <th class="align-middle">{{ __('Collection Fees') }}</th>
                                     <th class="align-middle">{!! __('Cheque Actual <br> Collection Date') !!}</th>
@@ -508,6 +511,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDueDateFormatted()}} </td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
+                                    <td>{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
                                     <td class="text-nowrap"> {{ $moneyReceived->cheque->chequeActualCollectionDateFormatted() }} </td>
