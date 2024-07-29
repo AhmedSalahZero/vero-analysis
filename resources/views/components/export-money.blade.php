@@ -12,7 +12,7 @@ use App\Models\MoneyReceived ;
         <div class="kt-portlet__head-actions">
             &nbsp;
             @if($hasBatchCollection)
-            <a  data-money-type="{{ $moneyReceivedType }}" data-type="multi" data-toggle="modal" data-target="#send-to-under-collection-modal{{ $moneyReceivedType }}" id="js-send-to-under-collection-trigger{{ $moneyReceivedType }}" href="{{route('create.money.receive',['company'=>$company->id])}}" title="{{ __('Please Select More Than One Cheque') }}" class="btn  active-style btn-icon-sm js-can-trigger-cheque-under-collection-modal disabled">
+            <a data-money-type="{{ $moneyReceivedType }}" data-type="multi" data-toggle="modal" data-target="#send-to-under-collection-modal{{ $moneyReceivedType }}" id="js-send-to-under-collection-trigger{{ $moneyReceivedType }}" href="{{route('create.money.receive',['company'=>$company->id])}}" title="{{ __('Please Select More Than One Cheque') }}" class="btn  active-style btn-icon-sm js-can-trigger-cheque-under-collection-modal disabled">
                 <i class="fas fa-book"></i>
                 {{ __('Create Batch Send To Collection') }}
             </a>
@@ -81,10 +81,10 @@ use App\Models\MoneyReceived ;
             <div class="modal fade" id="send-to-under-collection-modal{{ $moneyReceivedType }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <form  data-money-type="{{ $moneyReceivedType }}" id="ajax-send-cheques-to-collection-id{{ $moneyReceivedType }}" class="ajax-send-cheques-to-collection" action="{{ route('cheque.send.to.collection',['company'=>$company->id]) }}" method="post">
+                        <form data-money-type="{{ $moneyReceivedType }}" id="ajax-send-cheques-to-collection-id{{ $moneyReceivedType }}" class="ajax-send-cheques-to-collection" action="{{ route('cheque.send.to.collection',['company'=>$company->id]) }}" method="post">
                             <input type="hidden" id="single-or-multi{{ $moneyReceivedType }}" value="single">
                             <input type="hidden" id="current-single-item{{ $moneyReceivedType }}" value="0">
-                            <input type="hidden" id="current-currency{{ $moneyReceivedType }}" class="current-currency"  value="">
+                            <input type="hidden" id="current-currency{{ $moneyReceivedType }}" class="current-currency" value="">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Send This Cheque / Cheques To Under Collection ?') }}</h5>
@@ -153,15 +153,13 @@ use App\Models\MoneyReceived ;
                                     <div class="col-md-2 mb-3">
                                         <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
                                         <div class="kt-input-icon">
-                                            <input   value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
-											
-                                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
                                         </div>
                                     </div>
-									  <div class="col-md-2 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
                                         <div class="kt-input-icon">
-                                            <input   value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
                                             {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
                                         </div>
                                     </div>

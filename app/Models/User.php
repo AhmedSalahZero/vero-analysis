@@ -114,6 +114,7 @@ class User extends Authenticatable implements HasMedia
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::IN_SAFE]) ;
 		})->values();
+		
 	}
 	/**
 	 * * هي الشيكات اللي اترفضت ورجعتها الخزنة تاني وليكن مثلا بسبب ان حساب العميل مفيهوش فلوس حاليا

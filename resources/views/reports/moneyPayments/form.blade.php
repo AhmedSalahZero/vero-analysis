@@ -13,6 +13,18 @@ $selectedBanks = [];
         text-align: left !important;
     }
 
+    .max-w-6 {
+        max-width: initial !important;
+        width: 6% !important;
+        flex: initial !important;
+    }
+
+    .max-w-11 {
+        max-width: initial !important;
+        width: 11% !important;
+        flex: initial !important;
+    }
+
     .width-8 {
         max-width: initial !important;
         width: 8% !important;
@@ -138,13 +150,13 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-				
-				  <div class="col-md-2">
+
+                <div class="col-md-2">
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
 
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select when-change-trigger-account-type-change  name="payment_currency" class="form-control
+                            <select when-change-trigger-account-type-change name="payment_currency" class="form-control
 							
 							currency-class
 							receiving-currency-class
@@ -162,7 +174,7 @@ $selectedBanks = [];
                         </div>
                     </div>
                 </div>
-				
+
 
                 <div class="col-md-2">
                     <label>{{__('Select Money Type')}} @include('star')</label>
@@ -224,7 +236,7 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45 ">
-                        <label>{{__('Select Delivery Branch')}} @include('star')</label>
+                        <label>{{__('Paying Branch')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="delivery_branch_id" class="form-control">
@@ -251,14 +263,14 @@ $selectedBanks = [];
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
-                      <div class="col-md-3 width-12">
+                    <div class="col-md-3 width-12">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                         </div>
                     </div>
-					
-					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+
+                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
@@ -269,83 +281,6 @@ $selectedBanks = [];
         </div>
     </div>
 
-
-    {{-- Bank Deposit Information--}}
-    {{-- Outgoing Transfer Information--}}
-    {{-- <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::CASH_IN_BANK }}">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
-                {{__('Bank Deposit Information')}}
-            </h3>
-        </div>
-    </div>
-
-    <div class="kt-portlet__body">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-5 width-45">
-                    <label>{{__('Select Delivery Bank')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-
-                            <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::CASH_IN_BANK  }}]" class="form-control ">
-                                @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankDeliveryBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2 ">
-                    <label>{{__('Deposit Amount')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::CASH_IN_BANK .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
-                    </div>
-                </div>
-
-
-
-                <div class="col-md-2 width-12">
-                    <label>{{__('Account Type')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select name="account_type[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control js-update-account-number-based-on-account-type">
-                                <option value="" selected>{{__('Select')}}</option>
-                                @foreach($accountTypes as $index => $accountType)
-                                <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2 width-12">
-                    <label>{{__('Account Number')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select data-current-selected="{{ isset($model) ? $model->getCashInBankAccountNumber(): 0 }}" name="account_number[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control js-account-number">
-                                <option value="" selected>{{__('Select')}}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-1">
-                    <label>{{__('Exchange Rate')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
-                    </div>
-                </div>
-
-
-            </div>
-        </div>
-
-    </div>
-    </div> --}}
 
 
 
@@ -369,10 +304,25 @@ $selectedBanks = [];
     {{-- Cheques Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::PAYABLE_CHEQUE }}">
         <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
+            <div class="kt-portlet__head-label flex-1">
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Payable Cheque Information')}}
                 </h3>
+                <div class=" flex-1 d-flex justify-content-end pt-3">
+                    <div class="col-md-2 mb-3">
+                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -380,11 +330,11 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-6  mb-3">
-                        <label>{{__('Select Payment Bank')}} @include('star')</label>
+                        <label> {!! __('Payment Bank') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
-                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::PAYABLE_CHEQUE  }}]" class="form-control ">
+                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::PAYABLE_CHEQUE  }}]" class="form-control financial-institution-id">
                                     @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                     <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getPayableChequePaymentBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                     @endforeach
@@ -394,8 +344,8 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    <div class="col-md-2">
-                        <label>{{__('Account Type')}} @include('star')</label>
+                    <div class="col-md-3">
+                        <label> {!! __('Account Type') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="account_type[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -409,8 +359,8 @@ $selectedBanks = [];
                     </div>
 
 
-                    <div class="col-md-2 ">
-                        <label>{{__('Account Number')}} @include('star')</label>
+                    <div class="col-md-2 width-12">
+                        <label> {!! __('Account Number') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-current-selected="{{ isset($model) ? $model->getPayableChequeAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-account-number">
@@ -444,21 +394,21 @@ $selectedBanks = [];
                     </div>
 
 
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label>{{__('Cheque Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input type="text" name="cheque_number" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                         </div>
                     </div>
 
-                   <div class="col-md-2">
+                    <div class="col-md-2 width-12">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                         </div>
                     </div>
-					
-					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+
+                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
@@ -490,10 +440,27 @@ $selectedBanks = [];
     {{-- Outgoing Transfer Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::OUTGOING_TRANSFER }}">
         <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
+            <div class="kt-portlet__head-label flex-1">
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Outgoing Transfer Information')}}
                 </h3>
+			
+				 <div class=" flex-1 d-flex justify-content-end pt-3">
+                    <div class="col-md-2 mb-3">
+                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                        </div>
+                    </div>
+                </div>
+				
             </div>
         </div>
 
@@ -501,11 +468,11 @@ $selectedBanks = [];
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45">
-                        <label>{{__('Select Payment Bank')}} @include('star')</label>
+                        <label> {!! __('Payment <br> Bank') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
-                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control ">
+                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control financial-institution-id">
                                     @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                     <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getOutgoingTransferDeliveryBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                     @endforeach
@@ -514,8 +481,8 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2 ">
-                        <label>{{__('Outgoing Transfer Amount')}} @include('star')</label>
+                    <div class="col-md-2 max-w-11">
+                        <label> {!! __('Outgoing <br> Transfer Amount') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
                         </div>
@@ -523,8 +490,8 @@ $selectedBanks = [];
 
 
 
-                    <div class="col-md-2 width-12">
-                        <label>{{__('Account Type')}} @include('star')</label>
+                    <div class="col-md-3">
+                        <label> {!! __('Account <br> Type') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="account_type[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control js-update-account-number-based-on-account-type">
@@ -538,7 +505,7 @@ $selectedBanks = [];
                     </div>
 
                     <div class="col-md-2 width-12">
-                        <label>{{__('Account Number')}} @include('star')</label>
+                        <label> {!! __('Account <br> Number') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-current-selected="{{ isset($model) ? $model->getOutgoingTransferAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control js-account-number">
@@ -549,14 +516,14 @@ $selectedBanks = [];
                     </div>
 
 
-                      <div class="col-md-1">
-                        <label>{{__('Exchange Rate')}} @include('star')</label>
+                    <div class="col-md-1 max-w-6">
+                        <label>{!! __('Exchange <br> Rate') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                         </div>
                     </div>
-					
-					 <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+
+                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
@@ -670,49 +637,76 @@ $selectedBanks = [];
     $(function() {
         $('#type').trigger('change');
     })
-	
-	$(document).on('change','select#type',function(e){
-		const moneyType = $(this).val();
-		const activeClass = 'js-'+moneyType+'-received-amount';
-		const invoiceCurrency = $('select.invoice-currency-class').val();
-		const receivingCurrency = $('select.receiving-currency-class').val();
-		if(invoiceCurrency != receivingCurrency){
-			$('.main-amount-class[data-type="'+moneyType+'"]').removeClass(activeClass)
-				$('.amount-after-exchange-rate-class[data-type="'+moneyType+'"]').addClass(activeClass)
-		}
-		else{
-						$('.main-amount-class[data-type="'+moneyType+'"]').addClass(activeClass)
-				$('.amount-after-exchange-rate-class[data-type="'+moneyType+'"]').removeClass(activeClass)
-		}
-	})
-	$(document).on('change','select.currency-class',function(){
-		const invoiceCurrency = $('select.invoice-currency-class').val();
-		const receivingCurrency = $('select.receiving-currency-class').val();
-		const moneyType = $('select#type').val();
-		if(invoiceCurrency != receivingCurrency){
-			$('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')	
-			
-		}else{
-				// hide 
-	
-			$('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')	
-		}
-		
-	})
-	$(document).on('change','.recalculate-amount-class',function(){
-		const moneyType = $(this).attr('data-type')
-		const amount = $('.main-amount-class[data-type="'+moneyType+'"]').val();
-		const exchangeRate = $('.exchange-rate-class[data-type="'+moneyType+'"]').val();
-		const amountAfterExchangeRate = amount * exchangeRate ;
-		console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
-		// console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
-		$('.amount-after-exchange-rate-class[data-type="'+moneyType+'"]').val(amountAfterExchangeRate).trigger('change')
-		$('.js-settlement-amount:eq(0)').trigger('change')
-	})
-$(document).on('change','select[when-change-trigger-account-type-change]',function(e){
-		$('select.js-update-account-number-based-on-account-type').trigger('change')
-	});	
+
+    $(document).on('change', 'select#type', function(e) {
+        const moneyType = $(this).val();
+        const activeClass = 'js-' + moneyType + '-received-amount';
+        const invoiceCurrency = $('select.invoice-currency-class').val();
+        const receivingCurrency = $('select.receiving-currency-class').val();
+        if (invoiceCurrency != receivingCurrency) {
+            $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+            $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        } else {
+            $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
+            $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        }
+    })
+    $(document).on('change', 'select.currency-class', function() {
+        const invoiceCurrency = $('select.invoice-currency-class').val();
+        const receivingCurrency = $('select.receiving-currency-class').val();
+        const moneyType = $('select#type').val();
+        if (invoiceCurrency != receivingCurrency) {
+            $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
+
+        } else {
+            // hide 
+
+            $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+        }
+
+    })
+    $(document).on('change', '.recalculate-amount-class', function() {
+        const moneyType = $(this).attr('data-type')
+        const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
+        const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
+        const amountAfterExchangeRate = amount * exchangeRate;
+        console.log(moneyType, amount, exchangeRate, amountAfterExchangeRate)
+        // console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
+        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
+        $('.js-settlement-amount:eq(0)').trigger('change')
+    })
+    $(document).on('change', 'select[when-change-trigger-account-type-change]', function(e) {
+        $('select.js-update-account-number-based-on-account-type').trigger('change')
+    });
 
 </script>
+<script>
+    $(document).on('change', '.js-account-number', function() {
+        const parent = $(this).closest('.js-section-parent');
+        const financialInstitutionId = parent.find('select.financial-institution-id').val()
+        const accountNumber = $(this).val();
+        const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+        $.ajax({
+            url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
+            , data: {
+                accountNumber
+                , accountType
+                , financialInstitutionId
+            }
+            , type: "get"
+            , success: function(res) {
+                if (res.balance_date) {
+                    $(parent).find('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+                }
+                if (res.net_balance_date) {
+                    $(parent).find('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                }
+                $(parent).find('.net-balance-js').val(number_format(res.net_balance))
+                $(parent).find('.balance-js').val(number_format(res.balance))
 
+            }
+        })
+    })
+
+</script>
 @endsection
