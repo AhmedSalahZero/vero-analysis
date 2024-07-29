@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountType;
-use App\Models\Branch;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;

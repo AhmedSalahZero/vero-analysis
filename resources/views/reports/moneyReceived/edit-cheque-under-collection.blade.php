@@ -288,5 +288,11 @@ use App\Models\MoneyReceived;
 <script src="/custom/money-receive.js">
 
 </script>
+<script>
 
+$(function(){
+		$('select.currency-class').trigger('change')
+		$('.recalculate-amount-class').trigger('change')
+	})
+	</script>
 @endsection
