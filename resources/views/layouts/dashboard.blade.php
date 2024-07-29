@@ -17,6 +17,9 @@
 
 
     <style>
+	.flex-1{
+		flex:1;
+	}
         #show-notification-here {
             width: 50%;
             background-color: red;

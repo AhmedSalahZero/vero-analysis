@@ -7,6 +7,12 @@ use App\Models\MoneyReceived;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+	th:not(.bank-max-width),
+	td:not(.bank-max-width){
+		text-wrap:nowrap !important;
+	}
+</style>
+<style>
     button[type="submit"],
     button[type="button"] {
         font-size: 1rem !important;
@@ -128,12 +134,12 @@ use App\Models\MoneyReceived;
                                 <tr class="table-standard-color">
                                     <th class="align-middle">{{ __('Select') }}</th>
                                     <th class="align-middle">{{ __('Type') }}</th>
-                                    <th class="align-middle">{{ __('Customer Name') }}</th>
+                                    <th class="align-middle bank-max-width">{{ __('Customer Name') }}</th>
                                     <th class="align-middle">{!! __('Receiving<br>Date') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
                                     <th class="align-middle">{{ __('Currency') }}</th>
-                                    <th class="align-middle" class="bank-max-width">{{ __('Drawee Bank') }}</th>
+                                    <th class="align-middle bank-max-width" >{{ __('Drawee Bank') }}</th>
                                     <th class="align-middle">{!! __('Due<br>Date') !!}</th>
                                     <th class="align-middle">{!! __('Due <br> After Days') !!}</th>
                                     <th class="align-middle">{!! __('Status') !!}</th>
@@ -147,7 +153,7 @@ use App\Models\MoneyReceived;
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
                                     <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="text-wrap bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -221,7 +227,7 @@ use App\Models\MoneyReceived;
                                     <th>{{ __('Select') }}</th>
 
                                     <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Customer Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Cheque Number') }}</th>
                                     <th>{{ __('Cheque Amount') }}</th>
@@ -239,7 +245,7 @@ use App\Models\MoneyReceived;
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" class="form-control checkbox js-send-to-collection" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}">
                                     </td>
 									   <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -311,12 +317,12 @@ use App\Models\MoneyReceived;
                                 <tr class="table-standard-color">
 
                                     <th class="align-middle">{!! __('Type') !!}</th>
-                                    <th class="align-middle">{!! __('Customer <br> Name') !!}</th>
+                                    <th class="align-middle bank-max-width">{!! __('Customer Name') !!}</th>
                                     <th class="align-middle">{!! __('Cheque <br> Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque <br> Amount') !!}</th>
                                     <th class="align-middle">{!! __('Deposit <br> Date') !!}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
-                                    <th class="align-middle">{!! __('Account <br> Type') !!}</th>
+                                    <th class="align-middle bank-max-width">{!! __('Account <br> Type') !!}</th>
                                     <th class="align-middle">{!! __('Account <br> Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque <br> Due Date') !!}</th>
                                     <th class="align-middle">{!! __('Clearance <br>Days') !!}</th>
@@ -329,12 +335,12 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedChequesUnderCollection as $moneyReceived)
                                 <tr>
   									 <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
-                                    <td>{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap"> {{ $moneyReceived->cheque->getDueDateFormatted() }} </td>
                                     <td> {{ $moneyReceived->cheque->getClearanceDays() }} </td>
@@ -488,13 +494,13 @@ use App\Models\MoneyReceived;
                                 <tr class="table-standard-color">
 
                                     <th class="align-middle">{{ __('Type') }}</th>
-                                    <th class="align-middle">{{ __('Customer Name') }}</th>
+                                    <th class="align-middle bank-max-width">{{ __('Customer Name') }}</th>
                                     <th class="align-middle">{{ __('Cheque Number') }}</th>
                                     <th class="align-middle">{{ __('Cheque Amount') }}</th>
                                     <th class="align-middle">{{ __('Due Date') }}</th>
                                     <th class="align-middle">{{ __('Deposit Date') }}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
-                                    <th class="align-middle">{{ __('Account Type') }}</th>
+                                    <th class="align-middle bank-max-width">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account Number') }}</th>
                                     <th class="align-middle">{{ __('Collection Fees') }}</th>
                                     <th class="align-middle">{!! __('Cheque Actual <br> Collection Date') !!}</th>
@@ -505,13 +511,13 @@ use App\Models\MoneyReceived;
                                 @foreach($collectedCheques as $moneyReceived)
                                 <tr>
  									  <td >{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDueDateFormatted()}} </td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
-                                    <td>{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
                                     <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
                                     <td class="text-nowrap"> {{ $moneyReceived->cheque->chequeActualCollectionDateFormatted() }} </td>
@@ -550,12 +556,12 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Customer Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
                                     <th>{{ __('Transfer Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('Account Type') }}</th>
+                                    <th class="bank-max-width">{{ __('Account Type') }}</th>
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
@@ -566,12 +572,12 @@ use App\Models\MoneyReceived;
 
                                 <tr>
 								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $money->getCustomerName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $money->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $money->getIncomingTransferReceivingBankName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getIncomingTransferReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
-                                    <td>{{ $money->getIncomingTransferAccountTypeName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getIncomingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getIncomingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -636,7 +642,7 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Customer Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th>{{ __('Received Amount') }}</th>
@@ -650,7 +656,7 @@ use App\Models\MoneyReceived;
 
                                 <tr>
                                     <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getCustomerName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCashInSafeBranchName() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -725,12 +731,12 @@ use App\Models\MoneyReceived;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Customer Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Customer Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th class="bank-max-width">{{ __('Receiving Bank') }}</th>
                                     <th>{{ __('Deposit Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('Account Type') }}</th>
+                                    <th class="bank-max-width">{{ __('Account Type') }}</th>
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
@@ -743,10 +749,10 @@ use App\Models\MoneyReceived;
 								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $money->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $money->getCashInBankReceivingBankName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getCashInBankReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
-                                    <td>{{ $money->getCashInBankAccountTypeName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getCashInBankAccountTypeName() }}</td>
                                     <td>{{ $money->getCashInBankAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">

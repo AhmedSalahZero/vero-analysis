@@ -9,7 +9,10 @@ $banks = [];
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
-
+th:not(.bank-max-width),
+	td:not(.bank-max-width){
+		text-wrap:nowrap !important;
+	}
 td{
 	vertical-align:middle !important;
 }
@@ -137,16 +140,15 @@ td{
                                 <tr class="table-standard-color">
                                     <th class="align-middle">{{ __('Select') }}</th>
                                     <th class="align-middle">{{ __('Type') }}</th>
-                                    <th class="align-middle">{{ __('Status') }}</th>
-                                    <th class="align-middle">{{ __('Supplier Name') }}</th>
+                                    <th class="align-middle bank-max-width">{{ __('Status') }}</th>
+                                    <th class="align-middle bank-max-width">{{ __('Supplier Name') }}</th>
                                     <th class="align-middle">{!! __('Payment <br> Date') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
                                     <th class="align-middle">{{ __('Currency') }}</th>
-                                    <th class="align-middle " class="bank-max-width">{{ __('Payment Bank') }}</th>
-                                    <th class="align-middle">{{ __('Account Type') }}</th>
+                                    <th class="align-middle bank-max-width ">{{ __('Payment Bank') }}</th>
+                                    <th class="align-middle bank-max-width">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account No') }}</th>
-									
                                     <th class="align-middle">{!! __('Due<br>Date') !!}</th>
                                     <th class="align-middle">{!! __('Due <br> After Days') !!}</th>
                                     <th class="align-middle">{!! __('Status') !!}</th>
@@ -159,15 +161,15 @@ td{
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyPayment->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyPayment->id }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
-                                    <td class="@if($moneyPayment->payableCheque->getStatus() == 'paid') exclude-td font-weight-bold text-success color-green @endif ">{{ $moneyPayment->payableCheque->getStatusFormatted() }}</td>
-                                    <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyPayment->getSupplierName() }}</td>
+                                    <td class="bank-max-width @if($moneyPayment->payableCheque->getStatus() == 'paid') exclude-td font-weight-bold text-success color-green @endif ">{{ $moneyPayment->payableCheque->getStatusFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $moneyPayment->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
                                     <td class="bank-max-width ">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
-                                    <td class="">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->payableCheque->getDueAfterDays() }}</td>
@@ -175,7 +177,7 @@ td{
 										$dueStatus = $moneyPayment->payableCheque->getDueStatusFormatted() ;
 									@endphp
 									
-                                    <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">
+                                    <td class="font-weight-bold bank-max-width" style="color:{{ $dueStatus['color'] }}!important">
 									@if($moneyPayment->payableCheque->getStatus() == 'paid') 
 									-
 									@else  
@@ -184,12 +186,10 @@ td{
 									</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										{{-- @if(!$moneyPayment->isOpenBalance() && $moneyPayment->payableCheque->getStatus() == 'pending') --}}
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-											{{-- @endif 	 --}}
-											{{-- @if($moneyPayment->payableCheque->getStatus() == 'pending') --}}
+									
                                             <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Mark As Paid') }}" href=""><i class="fa fa-money-bill"></i></a>
-											{{-- @endif --}}
+								
 											@if(!$moneyPayment->isOpenBalance())
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyPayment->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -253,13 +253,13 @@ td{
                                 <tr class="table-standard-color">
                                     <th class="align-middle">{{ __('Select') }}</th>
 								
-                                    <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Supplier Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Status') }}</th>
+                                    <th class="bank-max-width">{{ __('Supplier Name') }}</th>
                                     <th>{{ __('Payment Date') }}</th>
                                     <th class="bank-max-width">{{ __('Payment Bank') }}</th>
                                     <th>{{ __('Transfer Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('Account Type') }}</th>
+                                    <th class="bank-max-width">{{ __('Account Type') }}</th>
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
@@ -272,13 +272,13 @@ td{
 								<td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $money->id }}" type="checkbox" name="second_to_collection[]" value="{{ $money->id }}" data-money-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
                                     </td>
-								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $money->getSupplierName() }}</td>
+								   <td class="bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $money->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $money->getDeliveryDateFormatted() }}</td>
-                                    <td>{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
                                     <td>{{ $money->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
-                                    <td>{{ $money->getOutgoingTransferAccountTypeName() }}</td>
+                                    <td class="bank-max-width">{{ $money->getOutgoingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getOutgoingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -343,7 +343,7 @@ td{
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Supplier Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Supplier Name') }}</th>
                                     <th>{{ __('Payment Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th>{{ __('Payment Amount') }}</th>
@@ -356,8 +356,8 @@ td{
                                 @foreach($cashPayments as $moneyPayment)
 
                                 <tr>
-                                    <td>{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
-                                    <td>{{ $moneyPayment->getSupplierName() }}</td>
+                                    <td class="bank-max-width">{{ $moneyPayment->getMoneyTypeFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $moneyPayment->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->getCashPaymentBranchName() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
