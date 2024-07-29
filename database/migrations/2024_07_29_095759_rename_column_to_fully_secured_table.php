@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnOpeningBalanceIdToCashInSafeStatementsTable extends Migration
+class RenameColumnToFullySecuredTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddColumnOpeningBalanceIdToCashInSafeStatementsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cash_in_safe_statements', function (Blueprint $table) {
-			$table->unsignedBigInteger('opening_balance_id')->after('money_payment_id')->nullable();
+        Schema::table('fully_secured_overdrafts', function (Blueprint $table) {
+			if(Schema::hasColumn('fully_secured_overdrafts','cd_or_td_account_number')){
+				$table->renameColumn('cd_or_td_account_number','cd_or_td_account_type_id');
+			}
         });
     }
 
@@ -25,7 +27,7 @@ class AddColumnOpeningBalanceIdToCashInSafeStatementsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cash_in_safe_statements', function (Blueprint $table) {
+        Schema::table('fully_secured', function (Blueprint $table) {
             //
         });
     }

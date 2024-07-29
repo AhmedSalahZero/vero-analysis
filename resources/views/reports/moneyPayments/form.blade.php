@@ -50,7 +50,7 @@ $selectedBanks = [];
 </style>
 @endsection
 @section('sub-header')
-{{ __('Money Payment Form') }}
+{{ __('Supplier Payment Form') }}
 @endsection
 @section('content')
 <div class="row">
@@ -60,7 +60,7 @@ $selectedBanks = [];
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Money Payment')}}
+                        {{__('Supplier Payment')}}
         </h3>
     </div>
 </div>
@@ -77,7 +77,7 @@ $selectedBanks = [];
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{__('Money Payment')}}
+                    {{__('Supplier Payment')}}
                 </h3>
             </div>
         </div>
@@ -170,7 +170,7 @@ $selectedBanks = [];
                         <div class="input-group date">
                             <select required name="type" id="type" class="form-control">
                                 <option value="" selected>{{__('Select')}}</option>
-                                <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ MoneyPayment::CASH_PAYMENT }}">{{__('Cash In Safe')}}</option>
+                                <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ MoneyPayment::CASH_PAYMENT }}">{{__('Cash Payment')}}</option>
                                 <option @if(isset($model) && $model->isPayableCheque() ) selected @endif value="{{ MoneyPayment::PAYABLE_CHEQUE }}">{{__('Payable Cheques')}}</option>
                                 <option @if(isset($model) && $model->isOutgoingTransfer()) selected @endif value="{{ MoneyPayment::OUTGOING_TRANSFER }}">{{__('Outgoing Transfer')}}</option>
                             </select>

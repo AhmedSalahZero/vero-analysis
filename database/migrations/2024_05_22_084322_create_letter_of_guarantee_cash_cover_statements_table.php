@@ -25,9 +25,6 @@ class CreateLetterOfGuaranteeCashCoverStatementsTable extends Migration
             $table->boolean('is_debit')->default(false);
             $table->boolean('is_credit')->default(true);
             $table->unsignedBigInteger('company_id');
-            // $table->unsignedBigInteger('money_received_id');
-            // $table->unsignedBigInteger('money_payment_id')->nullable();
-            // $table->unsignedBigInteger('opening_balance_id')->nullable();
             $table->date('date')->nullable();
             $table->dateTime('full_date')->nullable();
             $table->decimal('beginning_balance', 14)->default(0);
