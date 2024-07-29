@@ -283,7 +283,7 @@
 					set _fully_secured_overdraft_to_be_settled_after = ifnull(_fully_secured_overdraft_to_be_settled_after , 0) ; 
 
 					-- 
-					if  _fully_secured_overdraft_to_be_settled_after > 0 and _credit > 0   then  -- في الحاله دي هنسجل سحبه جديدة
+					if  _fully_secured_overdraft_to_be_settled_after > 0 and _credit > 0  and _type != 'interest' and _type != 'highest_debit_balance' and _type != 'fees'  then  -- في الحاله دي هنسجل سحبه جديدة
 						insert into fully_secured_overdraft_withdrawals (fully_secured_overdraft_bank_statement_id,fully_secured_overdraft_id , company_id  , max_settlement_days , due_date , settlement_amount , net_balance,created_at) values(_bank_statement_id,_fully_secured_overdraft_id,_company_id,_fully_secured_overdraft_to_be_settled_after,_due_date,0,_credit,CURRENT_TIMESTAMP);
 					end if ; 
 					if _fully_secured_overdraft_to_be_settled_after > 0 then  -- في الحاله دي هنضيف القيم في جداول fully_secured_overdraft_settlements + fully_secured_overdraft_withdrawals
@@ -405,7 +405,7 @@
 				DELIMITER $$
 				CREATE EVENT `recalculate_end_of_month_fully_secured_overdraft_interests_event`
 				ON SCHEDULE EVERY  1 day
-				STARTS '2022-03-31 23:30:00'
+				STARTS '2022-03-31 23:59:00'
 				ON COMPLETION PRESERVE
 				DO BEGIN
 				call recalculate_end_of_month_fully_secured_overdraft_interests();

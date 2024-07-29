@@ -52,6 +52,9 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+		CleanOverdraftBankStatement::create([
+			''
+		]);
 		$financialInstitution = FinancialInstitution::find(24);
 		dd($financialInstitution->getAllAccountNumbers());
 		dd('good');
