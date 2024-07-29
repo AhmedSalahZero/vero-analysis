@@ -364,6 +364,8 @@ class MoneyPaymentController
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency','payment_currency']);
 		$currencyName = $data['currency'];
+		$paymentCurrency = $data['payment_currency'];
+		
 		$data['supplier_name'] = $supplierName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -373,9 +375,14 @@ class MoneyPaymentController
 
 		$relationData = [];
 		$relationName = null ;
-		$exchangeRate = $request->input('exchange_rate.'.$moneyType,1) ;
+		$exchangeRate = $currencyName == $paymentCurrency ? 1 : $request->input('exchange_rate.'.$moneyType,1) ;
+		
 		$paidAmount = $request->input('paid_amount.'.$moneyType ,0) ;
 		$paidAmount = unformat_number($paidAmount);
+		
+
+		$paidAmountInPayingCurrency = $paidAmount * $exchangeRate ;
+		
 		if($moneyType == MoneyPayment::CASH_PAYMENT){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['delivery_branch_id'] = $this->generateBranchId($paymentBranchName,$company->id) ;
@@ -408,6 +415,7 @@ class MoneyPaymentController
 		}
 		$isDownPayment = $request->has('purchases_orders_amounts') ;
 		$data['paid_amount'] = $paidAmount ;
+		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
@@ -425,7 +433,7 @@ class MoneyPaymentController
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
-		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmount,$deliveryBranchId,$currencyName);
+		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$paymentCurrency);
 		/**
 		 * * For Money Received Only
 		 */

@@ -262,7 +262,6 @@ class MoneyReceivedController
 	{
 		$isDownPayment = Request()->has('type');
 		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies($customerInvoiceId);
-		
 		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
@@ -400,6 +399,8 @@ class MoneyReceivedController
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency','receiving_currency']);
+		$currency = $data['currency'] ;
+		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->has('sales_orders_amounts');
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['customer_name'] = $customerName;
@@ -409,9 +410,13 @@ class MoneyReceivedController
 		
 		$relationData = [];
 		$relationName = null ;
-		$exchangeRate = $request->input('exchange_rate.'.$moneyType,1) ;
+		$exchangeRate = $currency == $receivingCurrency ? 1 : $request->input('exchange_rate.'.$moneyType,1) ;
 		$receivedAmount = $request->input('received_amount.'.$moneyType ,0) ;
 		$receivedAmount = unformat_number($receivedAmount);
+		
+		$amountInReceivingCurrency = $receivedAmount *  $exchangeRate ;
+
+		
 		if($moneyType == MoneyReceived::CASH_IN_SAFE){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
@@ -445,6 +450,7 @@ class MoneyReceivedController
 		}
 		$isDownPayment = $request->has('sales_orders_amounts') ;
 		$data['received_amount'] = $receivedAmount ;
+		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-received' ;
 		$data['contract_id'] = $contractId ;
@@ -467,7 +473,7 @@ class MoneyReceivedController
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
 		$moneyReceived = $moneyReceived->refresh();
-		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$receivedAmount,$currency,$receivingBranchId);
+		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		
 		/**
 		 * * For Money Received Only
@@ -574,7 +580,8 @@ class MoneyReceivedController
 				'singleModel'=>$customerInvoiceId,
 				'accountTypes'=>$accountTypes,
 				'financialInstitutionBanks'=>$financialInstitutionBanks,
-				'currencies'=>$currencies
+				'currencies'=>$currencies,
+				
 			]); 
 		}
         return view($viewName,[

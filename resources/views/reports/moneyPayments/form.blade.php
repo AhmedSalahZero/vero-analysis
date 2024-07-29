@@ -163,7 +163,7 @@ $selectedBanks = [];
 							
 							 current-currency">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                @foreach(getCurrencies() as $currencyId=>$currentName)
                                 @php
                                 $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                 $selected = $selected ? 'selected':'';
@@ -273,7 +273,7 @@ $selectedBanks = [];
                     <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                         </div>
                     </div>
                 </div>
@@ -411,7 +411,7 @@ $selectedBanks = [];
                     <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                         </div>
                     </div>
 
@@ -526,7 +526,7 @@ $selectedBanks = [];
                     <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_main_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                         </div>
                     </div>
 
@@ -643,13 +643,13 @@ $selectedBanks = [];
         const activeClass = 'js-' + moneyType + '-received-amount';
         const invoiceCurrency = $('select.invoice-currency-class').val();
         const receivingCurrency = $('select.receiving-currency-class').val();
-        if (invoiceCurrency != receivingCurrency) {
-            $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-            $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        } else {
-            $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-            $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        }
+      //  if (invoiceCurrency != receivingCurrency) {
+      //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+      //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
+      //  } else {
+      //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
+      //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+      //  }
     })
     $(document).on('change', 'select.currency-class', function() {
         const invoiceCurrency = $('select.invoice-currency-class').val();
@@ -707,6 +707,9 @@ $selectedBanks = [];
             }
         })
     })
-
+$(function(){
+		$('select.currency-class').trigger('change')
+			$('.recalculate-amount-class').trigger('change')
+	})
 </script>
 @endsection
