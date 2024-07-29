@@ -444,7 +444,7 @@ $selectedBanks = [];
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Outgoing Transfer Information')}}
                 </h3>
-				
+			
 				 <div class=" flex-1 d-flex justify-content-end pt-3">
                     <div class="col-md-2 mb-3">
                         <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
