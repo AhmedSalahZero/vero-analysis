@@ -153,7 +153,7 @@ use App\Models\MoneyReceived ;
 							 ajax-get-invoice-numbers --}}
 							">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                @foreach(getCurrencies() as $currencyId=>$currentName)
                                 @php
                                 $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                 $selected = $selected ? 'selected':'';

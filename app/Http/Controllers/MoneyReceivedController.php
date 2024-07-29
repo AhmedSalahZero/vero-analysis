@@ -262,7 +262,6 @@ class MoneyReceivedController
 	{
 		$isDownPayment = Request()->has('type');
 		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies($customerInvoiceId);
-		
 		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
@@ -581,7 +580,8 @@ class MoneyReceivedController
 				'singleModel'=>$customerInvoiceId,
 				'accountTypes'=>$accountTypes,
 				'financialInstitutionBanks'=>$financialInstitutionBanks,
-				'currencies'=>$currencies
+				'currencies'=>$currencies,
+				
 			]); 
 		}
         return view($viewName,[

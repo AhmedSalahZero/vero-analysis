@@ -163,7 +163,7 @@ $selectedBanks = [];
 							
 							 current-currency">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                @foreach(getCurrencies() as $currencyId=>$currentName)
                                 @php
                                 $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                 $selected = $selected ? 'selected':'';
