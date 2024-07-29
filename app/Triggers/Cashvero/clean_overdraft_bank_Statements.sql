@@ -281,7 +281,7 @@
 					set _clean_overdraft_to_be_settled_after = ifnull(_clean_overdraft_to_be_settled_after , 0) ; 
 
 					-- 
-					if  _clean_overdraft_to_be_settled_after > 0 and _credit > 0   then  -- في الحاله دي هنسجل سحبه جديدة
+					if  _clean_overdraft_to_be_settled_after > 0 and _credit > 0 and _type != 'interest' and _type != 'highest_debit_balance' and _type != 'fees'   then  -- في الحاله دي هنسجل سحبه جديدة
 						insert into clean_overdraft_withdrawals (clean_overdraft_bank_statement_id,clean_overdraft_id , company_id  , max_settlement_days , due_date , settlement_amount , net_balance,created_at) values(_bank_statement_id,_clean_overdraft_id,_company_id,_clean_overdraft_to_be_settled_after,_due_date,0,_credit,CURRENT_TIMESTAMP);
 					end if ; 
 					if _clean_overdraft_to_be_settled_after > 0 then  -- في الحاله دي هنضيف القيم في جداول clean_overdraft_settlements + clean_overdraft_withdrawals
@@ -403,7 +403,7 @@
 				DELIMITER $$
 				CREATE EVENT `recalculate_end_of_month_clean_overdraft_interests_event`
 				ON SCHEDULE EVERY  1 day
-				STARTS '2022-03-31 23:30:00'
+				STARTS '2022-03-31 23:59:00'
 				ON COMPLETION PRESERVE
 				DO BEGIN
 				call recalculate_end_of_month_clean_overdraft_interests();
@@ -413,7 +413,7 @@
 				DELIMITER $$
 				CREATE EVENT `refresh_customer_invoices_status_event`
 				ON SCHEDULE EVERY  1 day
-				STARTS '2022-03-31 23:30:00'
+				STARTS '2022-03-31 23:59:00'
 				ON COMPLETION PRESERVE
 				DO BEGIN
 				call refresh_customer_invoices_status();
