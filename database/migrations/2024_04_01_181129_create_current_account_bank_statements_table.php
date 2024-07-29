@@ -21,8 +21,6 @@ class CreateCurrentAccountBankStatementsTable extends Migration
 			$table->unsignedBigInteger('money_received_id');// i will not use foreign key here
 			$table->unsignedBigInteger('money_payment_id');// i will not use foreign key here
 			
-			// $table->foreign('financial_institution_account_id')->references('id')->on('financial_institution_accounts');
-			
 			$table->boolean('is_debit')->default(0);
 			$table->boolean('is_credit')->default(1);
 

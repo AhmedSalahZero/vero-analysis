@@ -216,7 +216,7 @@ class MoneyPayment extends Model
 	
 	
 	/**
-	 * * For Money Payment Only
+	 * * For Supplier Payment Only
 	 */
     public function settlements()
     {

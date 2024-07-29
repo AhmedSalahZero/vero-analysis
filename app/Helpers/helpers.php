@@ -3087,7 +3087,7 @@ function getPermissions():array
             'name'=>'view money received'
         ],
 		[
-            'name'=>'view money payment'
+            'name'=>'view supplier payment'
         ],
 		[
             'name'=>'view internal money transfer'
@@ -4337,9 +4337,9 @@ function getHeaderMenu()
 					'submenu'=>[]
 				],
 				[
-					'title'=>__('Money Payment'),
+					'title'=>__('Supplier Payment'),
 					'link'=>route('view.money.payment', ['company'=>$companyId]),
-					'show'=>$user->can('view money payment'),
+					'show'=>$user->can('view supplier payment'),
 					'submenu'=>[]
 				],
 				[

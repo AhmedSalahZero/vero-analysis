@@ -20,9 +20,6 @@ class CreateLcOverdraftBankStatementsTable extends Migration
             $table->boolean('is_credit')->default(true);
             $table->integer('priority')->default(3)->comment('عباره عن اولويه التسديد بمعني لما يحين وقت التسديد مين هيتسدد الاول لان الفؤائد بتسدد الاول');
             $table->unsignedInteger('lc_issuance_id');
-            // $table->unsignedBigInteger('money_received_id');
-            // $table->unsignedBigInteger('buy_or_sell_currency_id')->nullable();
-            // $table->unsignedBigInteger('money_payment_id')->nullable();
             $table->unsignedBigInteger('internal_money_transfer_id')->nullable();
             $table->unsignedBigInteger('company_id');
             $table->date('date');
