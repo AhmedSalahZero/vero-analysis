@@ -359,11 +359,10 @@ Route::middleware([])->group(function () {
 				 Route::get('contracts/{contract}/edit/{type}','ContractsController@edit')->name('contracts.edit');
 				 Route::put('contracts/{contract}/{type}','ContractsController@update')->name('contracts.update');
 				 Route::delete('contracts/{contract}/{type}','ContractsController@destroy')->name('contracts.destroy');
+				 Route::get('get-contracts-for-customer-or-supplier','ContractsController@getContractsForCustomerOrSupplier')->name('get.contracts.for.customer.or.supplier');
 				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
 				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
 				 Route::get('financial-institutions/get-lc-issuance-based-of-financial-institution', 'FinancialInstitutionController@getLcIssuanceBasedOnFinancialInstitution')->name('update.lc.issuance.based.on.financial.institution');
-
-
 
 
 					Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
