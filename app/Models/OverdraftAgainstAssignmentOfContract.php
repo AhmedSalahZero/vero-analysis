@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Interfaces\Models\Interfaces\IHaveStatement;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
+use App\Traits\Models\HasAccumulatedLimit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -12,8 +13,26 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft;
-	
+	use HasOutstandingBreakdown , IsOverdraft , HasAccumulatedLimit;
+	public static function boot()
+	{
+		parent::boot();
+		static::updated(function(OverdraftAgainstAssignmentOfContract $overdraftAgainstAssignmentOfContract){
+			$overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
+		});
+		static::deleted(function(OverdraftAgainstAssignmentOfContract $overdraftAgainstAssignmentOfContract){
+			$overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements->each(function($overdraftAgainstAssignmentOfContractBankStatement){
+				$overdraftAgainstAssignmentOfContractBankStatement->delete();
+			});
+			$overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankLimits->each(function($overdraftAgainstAssignmentOfContractBankLimit){
+				$overdraftAgainstAssignmentOfContractBankLimit->delete();
+			});
+		});
+	}
+	public function overdraftAgainstAssignmentOfContractBankLimits()
+	{
+		return $this->hasMany(OverdraftAgainstAssignmentOfContractLimit::class,'overdraft_against_assignment_of_contract_id','id');
+	}
 	public function overdraftAgainstAssignmentOfContractBankStatements()
 	{
 		return $this->hasMany(OverdraftAgainstAssignmentOfContractBankStatement::class,'overdraft_against_assignment_of_contract_id','id');
@@ -54,5 +73,35 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 	{
 		 return 'overdraft_against_assignment_of_contract_id';
 	}
+	public function contracts():HasMany
+	{
+		return $this->hasMany(Contract::class , 'overdraft_against_assignment_of_contract_id','id');
+	}
+	
+	
+	public function triggerChangeOnContracts()
+	{
+		
+		$this->contracts->each(function(Contract $contract){
+			$contract->update([
+				'updated_at'=>now()
+			]);
+		
+	});
+	}
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	{
+		$accounts = [];
+		$overdraftAgainstAssignmentOfContracts = self::where('company_id',$companyId)->where('currency',$currencyName)
+		->where('financial_institution_id',$financialInstitutionId)->get();
+		foreach($overdraftAgainstAssignmentOfContracts as $overdraftAgainstAssignmentOfContract){
+			$limitStatement = $overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankLimits->sortByDesc('full_date')->first() ;
+			if($limitStatement && $limitStatement->accumulated_limit >0 ){
+				$accounts[$overdraftAgainstAssignmentOfContract->account_number] = $overdraftAgainstAssignmentOfContract->account_number;
+			}
+		}
+		
+		return  $accounts ;
+	}	
 	
 }

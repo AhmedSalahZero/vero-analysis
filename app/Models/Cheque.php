@@ -354,7 +354,6 @@ class Cheque extends Model
 
                 if ($model->isInSafe() || $model->isRejected()) {
                     $model->deleteOverdraftAgainstCommercialPapersLimits();
-
                     return ;
                 }
                 /**

@@ -1,129 +1,11 @@
-				delimiter ; 		
-				drop procedure if exists calculate_limit_overdraft_against_contract_bank_statements ;
-				delimiter // 
-				create procedure calculate_limit_overdraft_against_contract_bank_statements(in _overdraft_against_assignment_of_contract_id int ,in _money_received_id int , in _full_date datetime , in _company_id integer , out _limit decimal(14,2))
-				begin
-						declare _counter integer default 0 ;
-						declare _lending_counter integer default 0 ;
-					--	declare _current_contract_name varchar(255) default null ;
-						declare _previous_commercial_due_within integer default 0 ;
-						declare _current_lending_rate integer default 0 ;
-						declare _current_commercial_due_within integer default 0 ;
-						-- declare _current_days_count_for_current_group integer default 0 ;
-					--	declare _current_contract_id integer default 0 ;
-						declare _current_received_amount decimal(14,2) default 0 ;
-						-- declare _current_total_received_amount decimal(14,2) default 0 ;
-						declare _total_limit decimal(14,2) default 0 ;
-						declare _max_lending_limit_per_contract decimal(14,2) default 0 ;
-						declare _deposit_date datetime default null;
-						declare _i integer default 0 ;
-						declare _j integer default 0 ;
-						declare _max_limit decimal (14,2) default 0; 
-						
-						select deposit_date into _deposit_date  from cheques join money_received 
-						on money_received.id = cheques.money_received_id
-						where money_received.id = _money_received_id ;
-						select count(*)  into _lending_counter from lending_information_against_assignment_of_contracts where overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id ;
-						select `limit`,max_lending_limit_per_contract into _max_limit , _max_lending_limit_per_contract from overdraft_against_assignment_of_contracts where id = _overdraft_against_assignment_of_contract_id ;
-						
-						
-						select count(days_count)  into   _counter	
-						from money_received 
-						join 
-						cheques 
-						on money_received.id = cheques.money_received_id 
-						join overdraft_against_assignment_of_contracts
-						on cheques.drawl_bank_id = overdraft_against_assignment_of_contracts.financial_institution_id 
-						where  cheques.status = 'under-collection'
-						and money_received.company_id = _company_id 
-						and overdraft_against_assignment_of_contracts.id = _overdraft_against_assignment_of_contract_id
-						and cheques.deposit_date <= _full_date
-						and ( cheques.status = 'under-collection' or  (cheques.status='collected' and cheques.actual_collection_date >  _deposit_date && cheques.deposit_date <= _deposit_date)  );
-						
-						
-						
-						
-						if
-						_counter > 0 
-						 then 
-						 
-						 repeat 
-						select 
-						-- days_count ,
-						 sum(received_amount)   into    
-						 -- _current_days_count_for_current_group ,
-						  _current_received_amount 
-						from money_received 
-						join 
-						cheques 
-						on money_received.id = cheques.money_received_id 
-						join overdraft_against_assignment_of_contracts
-						on cheques.drawl_bank_id = overdraft_against_assignment_of_contracts.financial_institution_id 
-						  
-						where money_received.company_id = _company_id 
-						
-						and overdraft_against_assignment_of_contracts.id = _overdraft_against_assignment_of_contract_id
-						
-						and cheques.deposit_date <= _full_date and
-						
-						( cheques.status = 'under-collection' or  (cheques.status='collected' and cheques.actual_collection_date >  _deposit_date && cheques.deposit_date <= _deposit_date)  )
-						
-						
-						group by days_count
-						limit _i , 1 ;
-						
-						
-						-- repeater hear 
-						
-						repeat 
-						select 
-						-- for_assignment_of_contracts_due_within_days,
-						lending_rate   into 
-						-- _current_commercial_due_within,
-						_current_lending_rate  from lending_information_against_assignment_of_contracts where overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id 
-						-- order by for_assignment_of_contracts_due_within_days asc , id asc
-						
-						 limit _j, 1 ;
-					--	if(_current_days_count_for_current_group >= _previous_commercial_due_within 
-						-- and _current_days_count_for_current_group <= _current_commercial_due_within
-					--	)
-					--	then 
-						--	set _current_total_received_amount = ifnull(_current_total_received_amount ,0);
-							set _current_received_amount = _current_received_amount * _current_lending_rate / 100;
-							set _total_limit = _total_limit + LEAST(_current_received_amount,_max_lending_limit_per_contract) ;  
-					--	end if ; 
-						
-					--	set _previous_commercial_due_within = _current_commercial_due_within+1; 
-						set _j = _j + 1 ;
-						until _j >= _lending_counter  end repeat ;
-						
-						
-						
-						
-						set _i = _i + 1 ;
-						set _j = 0 ;
-						set _previous_commercial_due_within = 0 ;
-						
-						
-						until _i >= _counter  end repeat ;
-						
-						end if;
-						set _limit = LEAST(_max_limit , _total_limit )  ;
-						-- second phase
 				
-					
-						
-						
-						
-						
-				end //
 				delimiter ;
 				drop trigger if exists before_insert_overdraft_against_assignment_of_contract ;
 				delimiter // 
 				create  trigger before_insert_overdraft_against_assignment_of_contract before insert on `overdraft_against_assignment_of_contract_bank_statements` for each row 
 				begin 
-					declare _last_end_balance decimal(14,2) default 0 ;
-					declare _previous_date date default null ;
+						declare _last_end_balance decimal(14,2) default 0 ;
+						declare _previous_date date default null ;
 						declare _current_interest_rate decimal(5,2) default 0 ;
 						declare _interest_rate decimal(5,2) default 0 ;
 						declare _min_interest_rate decimal(5,2) default 0 ; 
@@ -131,6 +13,7 @@
 						declare _last_delete_id integer default 0 ; 
 						declare interest_type_text varchar(100) default 'interest';
 						declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+						declare _accumulated_limit decimal (14,2) default 0 ;
 						declare _limit decimal (14,2) default 0 ;
 						-- في حالة الانشاء
 						set new.created_at = CURRENT_TIMESTAMP;
@@ -139,9 +22,14 @@
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					call calculate_limit_overdraft_against_contract_bank_statements(new.overdraft_against_assignment_of_contract_id , new.money_received_id , new.full_date , new.company_id,_limit);
-					set new.limit = _limit;
-					set new.room = _limit +  new.end_balance ;
+					-- call calculate_limit_overdraft_against_contract_bank_statements(new.overdraft_against_assignment_of_contract_id , new.money_received_id , new.full_date , new.company_id,_limit);
+					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
+					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
+					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
+					set _accumulated_limit = least(_limit,_accumulated_limit);
+					
+					set new.limit = _accumulated_limit;
+					set new.room = _accumulated_limit +  new.end_balance ;
 					set new.is_debit = if(new.debit > 0 , 1 , 0);
 					set new.is_credit = if(new.debit > 0 , 0 , 1);
 					
@@ -262,6 +150,7 @@
 							declare _current_interest_amount decimal(14,2) default 0;
 							declare _largest_end_balance decimal(14,2) default 0;
 							declare _limit decimal(14,2) default 0;
+							declare _accumulated_limit decimal(14,2) default 0;
 							declare _highest_debt_balance_rate decimal(5,2) default 0 ;
 						-- declare _bank_statement_start_from_date datetime default null ;
 							declare _overdraft_against_assignment_of_contract_to_be_settled_after integer default 0 ;
@@ -283,11 +172,13 @@
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
-										call calculate_limit_overdraft_against_contract_bank_statements(new.overdraft_against_assignment_of_contract_id , new.money_received_id , new.full_date , new.company_id,_limit);
-
+								--		call calculate_limit_overdraft_against_contract_bank_statements(new.overdraft_against_assignment_of_contract_id , new.money_received_id , new.full_date , new.company_id,_limit);
+					select `accumulated_limit`  into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
+					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					set new.limit = _limit;
-					set new.room = _limit +  new.end_balance ;
+					set _accumulated_limit = least(_limit,_accumulated_limit);
+					set new.limit = _accumulated_limit;
+					set new.room = _accumulated_limit +  new.end_balance ;
 					
 					
 

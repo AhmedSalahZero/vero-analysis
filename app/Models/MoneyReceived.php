@@ -530,9 +530,6 @@ class MoneyReceived extends Model
 		if($this->cleanOverdraftDebitBankStatement){
 			return $this->cleanOverdraftDebitBankStatement ;
 		}
-		if($this->overdraftDebitBankStatement){
-			return $this->overdraftDebitBankStatement ;
-		}
 		if($this->fullySecuredOverdraftDebitBankStatement){
 			return $this->fullySecuredOverdraftDebitBankStatement;
 		}
@@ -541,7 +538,10 @@ class MoneyReceived extends Model
 		}	
 		if($this->overdraftAgainstAssignmentOfContractDebitBankStatement){
 			return $this->overdraftAgainstAssignmentOfContractDebitBankStatement;
-		}	
+		}
+		if($this->overdraftDebitBankStatement){
+			return $this->overdraftDebitBankStatement ;
+		}
 		if($this->cashInSafeDebitStatement){
 			return $this->cashInSafeDebitStatement;
 		}

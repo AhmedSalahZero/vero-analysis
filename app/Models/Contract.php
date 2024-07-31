@@ -34,10 +34,15 @@ class Contract extends Model
         /**
          * @var AccountType $accountType
          */
-        $accountType = AccountType::find($this->getAccountType());
-        $overdraftAgainstAssignmentOfContract = OverdraftAgainstAssignmentOfContract::where('account_number', $this->getAccountNumber())->first();
+        // $accountType = AccountType::find($this->getAccountType());
+        $overdraftAgainstAssignmentOfContract = $this->overdraftAgainstAssignmentOfContract;
+		// dd($overdraftAgainstAssignmentOfContract);
+		//  OverdraftAgainstAssignmentOfContract::where('account_number', $this->getAccountNumber())->first();
 
-        if ($accountType && $accountType->isOverdraftAgainstAssignmentOfContractAccount() && $overdraftAgainstAssignmentOfContract) {
+        if (
+			// $accountType && $accountType->isOverdraftAgainstAssignmentOfContractAccount() &&
+		
+		 $overdraftAgainstAssignmentOfContract) {
             $this->overdraftAgainstAssignmentOfContractLimits()->create([
                 'company_id' => $this->company_id,
                 'overdraft_against_assignment_of_contract_id' => $overdraftAgainstAssignmentOfContract->id
@@ -66,13 +71,14 @@ class Contract extends Model
 		
 		static::updated(
             function (self $model) {
+				logger('start updated ....');
                 $oldStatus = $model->getRawOriginal('status');
-                $oldAccountTypeId = $model->getRawOriginal('account_type');
-                $currentAccountTypeId = $model->getAccountType();
-                $currentAccountType = AccountType::find($currentAccountTypeId);
-                $oldAccountType = AccountType::find($oldAccountTypeId);
-                $oldAccountNumber = $model->getRawOriginal('account_number');
-                $currentAccountNumber = $model->getAccountNumber();
+                // $oldAccountTypeId = $model->getRawOriginal('account_type');
+                // $currentAccountTypeId = $model->getAccountType();
+                // $currentAccountType = AccountType::find($currentAccountTypeId);
+                // $oldAccountType = AccountType::find($oldAccountTypeId);
+                // $oldAccountNumber = $model->getRawOriginal('account_number');
+                // $currentAccountNumber = $model->getAccountNumber();
 				// dd($model->isRunningAndAgainst() , $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() , $currentAccountType , $model->overdraftAgainstAssignmentOfContractLimits->count());
 
                 /**
@@ -83,7 +89,7 @@ class Contract extends Model
                     $negativeOverdraftAgainstAssignmentOfContractLimit = $model->overdraftAgainstAssignmentOfContractLimits->where('limit', '<', 0)->first();
                     $negativeOverdraftAgainstAssignmentOfContractLimit ? $negativeOverdraftAgainstAssignmentOfContractLimit->update(['is_active' => 0]) : null ;
                     $negativeOverdraftAgainstAssignmentOfContractLimit ? DB::table('overdraft_against_assignment_of_contract_limits')->where('id', $negativeOverdraftAgainstAssignmentOfContractLimit->id)->delete() : null ;
-
+					logger('frrrr');
                     return ;
                 }
                 /**
@@ -94,6 +100,7 @@ class Contract extends Model
                     /**
                      * * هنضيف رو جديد بنفس القيمة ولكن بالسالب
                      */
+					logger('from oo');
 
                     $model->handleOverdraftAgainstAssignmentOfContractLimit();
 
@@ -101,6 +108,7 @@ class Contract extends Model
                 }
 
                 if ($model->isRunning() ) {
+					logger('from qq');
                     $model->deleteOverdraftAgainstAssignmentOfContractsLimits();
                     return ;
                 }
@@ -108,11 +116,12 @@ class Contract extends Model
                  * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت لاي اكونت تاني غير
                  * * overdraft against commercial paper
                  */
-                if ($model->isRunningAndAgainst() && $currentAccountType && !$currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
-                    $model->deleteOverdraftAgainstAssignmentOfContractsLimits();
-
-                    return ;
-                }
+                // if ($model->isRunningAndAgainst() && $currentAccountType && !$currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
+				// 	logger('from fff');
+					
+                //     $model->deleteOverdraftAgainstAssignmentOfContractsLimits();
+                //     return ;
+                // }
 
                 /**
                  * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت ل
@@ -123,38 +132,48 @@ class Contract extends Model
                  * * overdraft against commercial paper
                  * *
                  */
-                if ($model->isRunningAndAgainst() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && !$model->overdraftAgainstAssignmentOfContractLimits->count() && $oldAccountType && !$oldAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
-                    $model->handleOverdraftAgainstAssignmentOfContractLimit();
+                // if ($model->isRunningAndAgainst() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && !$model->overdraftAgainstAssignmentOfContractLimits->count() && $oldAccountType && !$oldAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
+				// 	logger('from bbb');
+					
+                //     $model->handleOverdraftAgainstAssignmentOfContractLimit();
 
-                    return ;
-                }
+                //     return ;
+                // }
                 /**
                  * * في حالة لو غير رقم الحساب ال
                  * * overdraft against commercial paper
                  * * وحطها في حساب تاني حتى لو كانت بنك مختلف
                  */
+                // if ($model->isRunningAndAgainst() && $oldAccountType && $oldAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountNumber != $oldAccountNumber) {
+				// 	logger('from lllt');
+					
+                //     $model->overdraftAgainstAssignmentOfContractLimits->each(function ($overdraftAgainstAssignmentOfContract) use ($model, $currentAccountNumber) {
+                //         $overdraftAgainstAssignmentOfContract->update([
+                //             'overdraft_against_assignment_of_contract_id' => DB::table('overdraft_against_assignment_of_contracts')->where('company_id', $model->company_id)->where('account_number', $currentAccountNumber)->first()->id,
+                //         ]);
+                //     });
 
-                if ($model->isRunningAndAgainst() && $oldAccountType && $oldAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountNumber != $oldAccountNumber) {
-                    $model->overdraftAgainstAssignmentOfContractLimits->each(function ($overdraftAgainstAssignmentOfContract) use ($model, $currentAccountNumber) {
-                        $overdraftAgainstAssignmentOfContract->update([
-                            'overdraft_against_assignment_of_contract_id' => DB::table('overdraft_against_assignment_of_contracts')->where('company_id', $model->company_id)->where('account_number', $currentAccountNumber)->first()->id,
-                        ]);
-                    });
-
-                    return ;
-                }
+                //     return ;
+                // }
                 /**
                  * * في حالة لو هو في الخزنة اول مرة وبالتالي مفيش
                  * * limits
                  */
-                if ($model->isRunningAndAgainst() && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && !$model->overdraftAgainstAssignmentOfContractLimits->count()) {
+                if ($model->isRunningAndAgainst() 
+				// && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()
+			 	&& !$model->overdraftAgainstAssignmentOfContractLimits->count()) {
+					logger('from tty');
+					
                     $model->handleOverdraftAgainstAssignmentOfContractLimit();
                     return ;
                 }
+				
+		
                 $overdraftAgainstAssignmentOfContractLimit = $model->overdraftAgainstAssignmentOfContractLimits->sortBy('full_date')->first() ;
                 $overdraftAgainstAssignmentOfContractLimit ? $overdraftAgainstAssignmentOfContractLimit->update(['updated_at' => now(), 'full_date' => $overdraftAgainstAssignmentOfContractLimit->updateFullDate()]) : null;
             }
         );
+
 
         static::deleted(
             function (self $model) {
@@ -283,9 +302,13 @@ class Contract extends Model
     {
         return $this->account_type ;
     }
-	public function getAccountNumber()
-    {
-        return $this->account_number;
-    }
+	// public function getAccountNumber()
+    // {
+    //     return $this->account_number;
+    // }
+	public function overdraftAgainstAssignmentOfContract()
+	{
+		return $this->belongsTo(OverdraftAgainstAssignmentOfContract::class , 'overdraft_against_assignment_of_contract_id','id');
+	}
 	
 }

@@ -5,13 +5,11 @@
 				create  trigger before_insert_overdraft_against_commercial_paper before insert on `overdraft_against_commercial_paper_bank_statements` for each row 
 				begin 
 					declare _last_end_balance decimal(14,2) default 0 ;
-					declare _delete_limit decimal(14,2) default 0 ;
 					declare _previous_date date default null ;
 						declare _current_interest_rate decimal(5,2) default 0 ;
 						declare _interest_rate decimal(5,2) default 0 ;
 						declare _min_interest_rate decimal(5,2) default 0 ; 
 						declare _count_all_rows integer default 0 ; 
-						declare _last_id integer default 0 ; 
 						declare interest_type_text varchar(100) default 'interest';
 						declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 						declare _accumulated_limit decimal (14,2) default 0 ;
@@ -24,10 +22,7 @@
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 				--	call calculate_limit_overdraft_against_commercial_bank_statements(new.overdraft_against_commercial_paper_id , new.money_received_id , new.full_date , new.company_id,_limit);
 				
-					select `accumulated_limit` ,id ,`limit` into _accumulated_limit,_last_id,_delete_limit from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
-					insert into debugging (message) values ('update supposed second');
-					
-					insert into debugging (message) values (concat('debugging id from insert = ',_last_id,'and current acc limit = ',_accumulated_limit,'and limit ', _delete_limit));					
+					select `accumulated_limit`  into _accumulated_limit from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
 					set new.limit = _accumulated_limit;
 					set new.room = _accumulated_limit  +  new.end_balance ;
 					set new.is_debit = if(new.debit > 0 , 1 , 0);
@@ -147,7 +142,6 @@
 						declare _last_bank_statement_date datetime default null ;
 						declare _last_id integer default 0 ;
 							declare _current_interest_amount decimal(14,2) default 0;
-							declare _delete_limit decimal(14,2) default 0;
 							declare _largest_end_balance decimal(14,2) default 0;
 							declare _accumulated_limit decimal(14,2) default 0;
 							declare _highest_debt_balance_rate decimal(5,2) default 0 ;
@@ -171,9 +165,7 @@
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
-					select `accumulated_limit` , id,`limit` into _accumulated_limit,_delete_limit, _last_id from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
-					insert into debugging (message) values (concat('debugging id from update = ',_last_id,'and current accumulated limit = ',_accumulated_limit,'and limit',_delete_limit));
-					insert into debugging (message) values ('update supposed second');
+					select `accumulated_limit`  into _accumulated_limit from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 					set new.limit = _accumulated_limit;
 					set new.room = _accumulated_limit +  new.end_balance ;

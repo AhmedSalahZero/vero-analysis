@@ -139,7 +139,6 @@ class OverdraftAgainstCommercialPaperController
 		$overdraftAgainstCommercialPaper->lendingInformation()->delete();
 		foreach($infos as $lendingInformationArr){
 			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
-				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
 			]));
 		}
 		$type = $request->get('type','overdraft-against-commercial-paper');

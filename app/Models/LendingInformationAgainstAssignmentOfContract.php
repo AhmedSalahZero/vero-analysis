@@ -7,6 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class LendingInformationAgainstAssignmentOfContract extends Model
 {
     protected $guarded = ['id'];
+	
+	public static function boot()
+	{
+		parent::boot();
+		static::updated(function(self $lendingInformationAgainstAssignmentOfContract){
+			// $lendingInformationAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
+		});
+		static::deleting(function(self $lendingInformationAgainstAssignmentOfContract){
+			$lendingInformationAgainstAssignmentOfContract->contract->update([
+				'overdraft_against_assignment_of_contract_id'=>null ,
+				'updated_at'=>now()
+			]);
+		});
+		
+		static::deleted(function(self $lendingInformationAgainstAssignmentOfContract){
+			$lendingInformationAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
+		});
+	}
 	public function overdraftAgainstAssignmentOfContract()
 	{
 		return $this->belongsTo(OverdraftAgainstAssignmentOfContract::class,'overdraft_against_assignment_of_contract_id','id');

@@ -127,7 +127,7 @@
                                 <label>{{__('Select Currency')}} @include('star')</label>
                                 <div class="input-group">
                                     <select name="currency" class="form-control repeater-select">
-                                        <option selected>{{__('Select')}}</option>
+                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
                                         @endforeach

@@ -94,8 +94,6 @@ class ContractsController
 	}
 	public function edit(Request $request,Company $company,Contract $contract,string $type)
 	{
-	
-		
 		return view('contracts.form',$this->getCommonVars($company,$type,$contract));
 	}
 	public function update(Company $company , Request $request , Contract $contract,string $type){

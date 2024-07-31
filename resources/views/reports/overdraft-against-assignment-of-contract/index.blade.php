@@ -21,8 +21,7 @@
         overflow: visible !important;
     }
 
-    input.form-control[disabled]:not(.ignore-global-style)
-	{
+    input.form-control[disabled]:not(.ignore-global-style) {
         background-color: #CCE2FD !important;
         font-weight: bold !important;
     }
@@ -130,12 +129,12 @@
 
 
                                                         <div class="modal-body">
-														
-														<div class="row mb-3 ">
+
+                                                            <div class="row mb-3 ">
 
                                                                 @include('reports.overdraft-against-assignment-of-contract.lending-rate-form' , [
-																	
-																])
+
+                                                                ])
 
 
 
@@ -169,47 +168,13 @@
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingRateFormatted() . ' %' }} </td>
                                                                                     <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingAmountFormatted() }} </td>
                                                                                     <td>
-                                                                                        <a 
-																						{{-- data-toggle="modal" --}}
+                                                                                        {{-- <a 
+																						 data-toggle="modal"
 																						 href="{{ route('apply.against.lending',['company'=>$company->id , 'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id]) }}"
-																						 data-target="#apply-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Apply Against Lending') }}"><i class="fa fa-balance-scale"></i></a>
+                                                                                        data-target="#apply-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Apply Against Lending') }}"><i class="fa fa-balance-scale"></i></a> --}}
                                                                                         <a data-toggle="modal" data-target="#edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
 
-                                                                                        <div class="modal fade" id="edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                                                            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                                                                                <div class="modal-content">
-                                                                                                    <form action="{{ route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" method="post">
-                                                                                                        @csrf
-                                                                                                        <div class="modal-header">
-                                                                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Edit' )  }}</h5>
-                                                                                                            <button data-dismiss="modal2" type="button" class="close" aria-label="Close">
-                                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                                            </button>
-                                                                                                        </div>
-
-
-                                                                                                        <div class="modal-body">
-                                                                                                            <div class="row mb-3">
-
-                                                                                                                @include('reports.overdraft-against-assignment-of-contract.lending-rate-form',[
-																													'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract
-																												])
-
-
-
-                                                                                                            </div>
-                                                                                                        </div>
-
-
-                                                                                                        <div class="modal-footer">
-                                                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
-                                                                                                            <button data-url="{{  route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" type="submit" class="btn btn-primary submit-form-btn">{{ __('Confirm') }}</button>
-                                                                                                        </div>
-
-                                                                                                    </form>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
+                                                                                     
 
 
 
@@ -219,28 +184,7 @@
 
 
                                                                                         <a data-toggle="modal" data-target="#delete-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                                                                        <div class="modal fade" id="delete-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                                                <div class="modal-content">
-                                                                                                    <form action="" method="post">
-                                                                                                        @csrf
-                                                                                                        @method('delete')
-                                                                                                        <div class="modal-header">
-                                                                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                                                            <button type="button" class="close" data-dismiss="modal2" aria-label="Close">
-                                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                                            </button>
-                                                                                                        </div>
-                                                                                                        <div class="modal-footer">
-                                                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
-
-                                                                                                            <a href="{{ route('lending.information.delete.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" class="btn btn-danger">{{ __('Confirm Delete') }}</a>
-                                                                                                        </div>
-
-                                                                                                    </form>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
+                                                                                       
 
                                                                                     </td>
                                                                                 </tr>
@@ -291,8 +235,77 @@
                                                 </div>
                                             </div>
                                         </span>
+										
+										
+										
+											 	@foreach($odAgainstAssignmentOfContract->lendingInformation as $index=>$lendingInformationAgainstAssignmentOfContract)
+            <div class="modal fade" id="edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form action="{{ route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" method="post">
+                            @csrf
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Edit' )  }}</h5>
+                                <button data-dismiss="modal2" type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+
+                            <div class="modal-body">
+                                <div class="row mb-3">
+
+                                    @include('reports.overdraft-against-assignment-of-contract.lending-rate-form',[
+                                    'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract
+                                    ])
+
+
+
+                                </div>
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
+                                <button data-url="{{  route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" type="submit" class="btn btn-primary submit-form-btn">{{ __('Confirm') }}</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+			
+			
+			 <div class="modal fade" id="delete-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                                                <div class="modal-content">
+                                                                                                    <form action="" method="post">
+                                                                                                        @csrf
+                                                                                                        @method('delete')
+                                                                                                        <div class="modal-header">
+                                                                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                                                                            <button type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                                                                                                                <span aria-hidden="true">&times;</span>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                        <div class="modal-footer">
+                                                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
+
+                                                                                                            <a href="{{ route('lending.information.delete.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" class="btn btn-danger">{{ __('Confirm Delete') }}</a>
+                                                                                                        </div>
+
+                                                                                                    </form>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+																						
+@endforeach 
+
                                     </td>
                                 </tr>
+								
+								
+							
                                 @endforeach
                             </tbody>
                         </table>
@@ -302,6 +315,25 @@
                 </div>
             </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 
@@ -378,41 +410,42 @@
         $('.js-search-modal').trigger('change')
 
     })
-	
+
 </script>
-	<script>
-	$(document).on('change','select.ajax-get-contracts-for-customer-create',function(){
-		const customerId = $(this).val()
-		const parent = $(this).closest('.closest-parent-tr') ;
-		const currency  = parent.data('currency')
-		console.log(currency)
-		$.ajax({
-			url:"{{ route('get.contracts.for.customer.with.start.and.end.date',['company'=>$company->id]) }}",
-			data:{
-				customerId,
-				currency
-			},
-			success: function(res) {
-                    let options = '';
-                    for (index in res.contracts) {
-						var contract = res.contracts[index] ;
-                        options += `<option data-amount="${number_format(contract.amount)}"  data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" value="${contract.id}">${contract.name}</option>`
-                    }
-                    parent.find('.append-contracts-create').empty().append(options);
-					parent.find('.append-contracts-create').trigger('change')
+<script>
+    $(document).on('change', 'select.ajax-get-contracts-for-customer-create', function() {
+        const customerId = $(this).val()
+        const parent = $(this).closest('.closest-parent-tr');
+        const currency = parent.data('currency')
+        console.log(currency)
+        $.ajax({
+            url: "{{ route('get.contracts.for.customer.with.start.and.end.date',['company'=>$company->id]) }}"
+            , data: {
+                customerId
+                , currency
+            }
+            , success: function(res) {
+                let options = '';
+                for (index in res.contracts) {
+                    var contract = res.contracts[index];
+                    options += `<option data-amount="${number_format(contract.amount)}"  data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" value="${contract.id}">${contract.name}</option>`
                 }
-		})
-	})
-	$(document).on('change','select.append-contracts-create',function(){
-				const parent = $(this).closest('.closest-parent-tr') ;
-				const selectedOption = $(this).find('option:selected')
-				$(parent).find('.contract-start-date-class-create').val($(selectedOption).data('start-date'))
-				$(parent).find('.contract-end-date-class-create').val($(selectedOption).data('end-date'))
-				$(parent).find('.contract-amount-class-create').val($(selectedOption).data('amount'))
-				
-	})
-	$('select.ajax-get-contracts-for-customer-create').trigger('change')
-	</script>
+                parent.find('.append-contracts-create').empty().append(options);
+                parent.find('.append-contracts-create').trigger('change')
+            }
+        })
+    })
+    $(document).on('change', 'select.append-contracts-create', function() {
+        const parent = $(this).closest('.closest-parent-tr');
+        const selectedOption = $(this).find('option:selected')
+        $(parent).find('.contract-start-date-class-create').val($(selectedOption).data('start-date'))
+        $(parent).find('.contract-end-date-class-create').val($(selectedOption).data('end-date'))
+        $(parent).find('.contract-amount-class-create').val($(selectedOption).data('amount'))
+
+    })
+    $('select.ajax-get-contracts-for-customer-create').trigger('change')
+
+</script>
 @endsection
 @push('js')
 {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
