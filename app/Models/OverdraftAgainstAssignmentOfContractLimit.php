@@ -78,14 +78,36 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 				$this->full_date = $fullDateTime;
 				return $this->full_date ;
 		}
+		/**
+		 * * خاصة فقط بالجداول اللي ليها جدول لحساب الليمت بشكل منفصل
+		 */
+		protected static function updateBankStatement(self $overdraftAgainstAssignmentOfContractLimit){
+			$firstBankStatementRow = $overdraftAgainstAssignmentOfContractLimit
+			->overdraftAgainstAssignmentOfContract
+			->overdraftAgainstAssignmentOfContractBankStatements
+			->where('full_date','>=',$overdraftAgainstAssignmentOfContractLimit->full_date)
+			->sortBy('full_date')
+			->first();
+			logger('found'. ($firstBankStatementRow ? 'yes' : 'no'));
+			
+			/**
+			 * @var OverdraftAgainstAssignmentOfContractBankStatement $firstBankStatementRow ;
+			 */
+			 $firstBankStatementRow ? $firstBankStatementRow->update(['updated_at'=>now()]) : null ;
+			 
+			 
+		}
+		
 		protected static function booted(): void
 		{
 			static::creating(function(self $model){
 				$model->updateFullDate();
+				
 			});
 			
 			static::created(function(self $model){
 				self::updateNextRows($model);
+				self::updateBankStatement($model);
 			});
 			
 			static::updated(function (self $model) {
@@ -100,7 +122,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 				 * * overdraft_against_assignment_of_contract_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
-				// logger('is changged'. $isChanged);
+	
 				if($isChanged){
 					$oldOverdraftAgainstAssignmentOfContractId=$model->getRawOriginal('overdraft_against_assignment_of_contract_id');
 					// $oldBankStatementId=$model->getRawOriginal('id');
@@ -118,6 +140,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 					
 					
 				}
+				self::updateBankStatement($model);
 				
 			});
 			
@@ -134,7 +157,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 						$currentDate = $odAgainstAssignmentOfContractLimit->full_date ;
 						$odAgainstAssignmentOfContractLimit->full_date = min($oldDate,$currentDate);
 				}
-				DB::table('overdraft_against_assignments')->where('id',$odAgainstAssignmentOfContractLimit->overdraft_against_assignment_of_contract_id)->update([
+				DB::table('overdraft_against_assignment_of_contracts')->where('id',$odAgainstAssignmentOfContractLimit->overdraft_against_assignment_of_contract_id)->update([
 					'oldest_full_date'=>$odAgainstAssignmentOfContractLimit->full_date
 				]);
 	

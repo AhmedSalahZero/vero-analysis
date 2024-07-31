@@ -33,6 +33,7 @@ class WithdrawalsSettlementReportController
 		$endDate = Carbon::make($startDate)->addMonths(self::NUMBER_OF_INTERNAL_MONTHS)->format('Y-m-d');
 		$financialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray();
 		$overdraftWithdrawals = $this->getOverdraftWithdrawalsWithoutStartDate( $endDate,$currencyName,$accountTypeId ,$company->id, $financialInstitutionIds);
+	
 		$overdraftWithdrawals = $overdraftWithdrawals->take(6);
 
 		return response()->json([
@@ -83,6 +84,7 @@ class WithdrawalsSettlementReportController
 		->whereIn($bankStatementTableName.'.'.$foreignKeyName,$overdraftIds)
 		->where($bankStatementTableName.'.date','<=',$endDate )
 		->where('currency',$currency)
+		->where($withdrawalsTableName.'.net_balance','>',0)
 		->orderByRaw('due_date asc')
 		->get();
 	}

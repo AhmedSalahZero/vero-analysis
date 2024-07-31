@@ -99,7 +99,8 @@ class OverdraftAgainstAssignmentOfContractController
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
-		$lendingInformation = $request->get('infos',[]) ; 
+		// $lendingInformation = $request->get('infos',[]) ; 
+		// dd($lendingInformation);
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		/**
@@ -110,10 +111,10 @@ class OverdraftAgainstAssignmentOfContractController
 		$activeTab = $type ; 
 		
 		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
-		foreach($lendingInformation as $lendingInformationArr){
-			$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
-			]));
-		}
+		// foreach($lendingInformation as $lendingInformationArr){
+		// 	$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
+		// 	]));
+		// }
 		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
@@ -135,21 +136,23 @@ class OverdraftAgainstAssignmentOfContractController
 	}
 	
 	public function update(Company $company , UpdateOverdraftAgainstAssignmentOfContractRequest $request , FinancialInstitution $financialInstitution,OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract){
-		$infos =  $request->get('infos',[]) ;
+		// $infos =  $request->get('infos',[]) ;
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
-		
 		$odAgainstAssignmentOfContract->update($data);
+		$odAgainstAssignmentOfContract->triggerChangeOnContracts();
+		
+		// dd($odAgainstAssignmentOfContract,$data);
 		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
-		$odAgainstAssignmentOfContract->lendingInformation()->delete();
-		foreach($infos as $lendingInformationArr){
-			$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
-				// 'balance_date'=>$balanceDate  ? Carbon::make($balanceDate)->format('Y-m-d') : null 
-			]));
-		}
+		// dd($odAgainstAssignmentOfContract->lendingInformation);
+		// $odAgainstAssignmentOfContract->lendingInformation()->delete();
+		// foreach($infos as $lendingInformationArr){
+		// 	$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
+		// 	]));
+		// }
 		$type = $request->get('type','overdraft-against-assignment-of-contract');
 		$activeTab = $type ;
 		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
@@ -173,26 +176,40 @@ class OverdraftAgainstAssignmentOfContractController
 			'company_id'=>$company->id ,
 			'lending_rate'=>$request->get('lending_rate_create'),
 			'customer_id'=>$request->get('customer_id_create'),
-			'contract_id'=>$contractId
+			'contract_id'=>$contractId,
+			'updated_at'=>now()
 		]);
 	
 		$contract->update([
-			'account_type'=>AccountType::onlyAgainstAssignmentOfContract()->first()->id ,
-			'account_number'=>$odAgainstAssignmentOfContract->getAccountNumber(),
+			// 'account_type'=>AccountType::onlyAgainstAssignmentOfContract()->first()->id ,
+			// 'account_number'=>$odAgainstAssignmentOfContract->getAccountNumber(),
 			'status'=>Contract::RUNNING_AND_AGAINST,
-			'updated_at'=>now()
+			'updated_at'=>now(),
+			'overdraft_against_assignment_of_contract_id'=>$odAgainstAssignmentOfContract->id
 		]);
+		
 		return redirect()->back()->with('success',__('Done'));
 	
 	}
 	public function editLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
 	{
-		
+		$contractId = $request->get('contract_id_edit') ;
+		$contract = Contract::find($contractId);
 		$lendingInformation->update([
 			'lending_rate'=>$request->get('lending_rate_edit'),
 			'customer_id'=>$request->get('customer_id_edit'),
-			'contract_id'=>$request->get('contract_id_edit')
+			'contract_id'=>$contractId,
+			'updated_at'=>now()
 		]);
+		$contract->update([
+			'overdraft_against_assignment_of_contract_id'=>$lendingInformation->overdraftAgainstAssignmentOfContract->id,
+			'updated_at'=>now(),
+			// 'account_type'=>AccountType::onlyAgainstAssignmentOfContract()->first()->id ,
+			// 'account_number'=>$lendingInformation->overdraftAgainstAssignmentOfContract->getAccountNumber(),
+		]);
+		// static updated
+		// $lendingInformation->overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
+	
 	
 		return response()->json([
 			'status'=>true ,
@@ -207,15 +224,18 @@ class OverdraftAgainstAssignmentOfContractController
 		 
 		 ? $lendingInformation->contract->update([
 			'status'=>Contract::RUNNING,
-			'account_type'=>null,
-			'account_number'=>null 
+			// 'account_type'=>null,
+			// 'account_number'=>null ,
+			'overdraft_against_assignment_of_contract_id'=>null
 		]) : null;
+		
+		// $lendingInformation->overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
 		$lendingInformation->delete();
 		return redirect()->back()->with('success',__('Done'));
 	}
 	public function applyAgainstLending(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
 	{
-		$lendingInformation->contract->update();
+		// $lendingInformation->contract->update();
 	}
 	
 }

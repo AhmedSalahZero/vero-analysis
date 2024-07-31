@@ -76,6 +76,23 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 				$this->full_date = $fullDateTime;
 				return $this->full_date ;
 		}
+		/**
+		 * * خاصة فقط بالجداول اللي ليها جدول لحساب الليمت بشكل منفصل
+		 */
+		protected static function updateBankStatement(self $overdraftAgainstCommercialPaperLimit){
+			$firstBankStatementRow = $overdraftAgainstCommercialPaperLimit
+			->overdraftAgainstCommercialPaper
+			->overdraftAgainstCommercialPaperBankStatements
+			->where('full_date','>=',$overdraftAgainstCommercialPaperLimit->full_date)
+			->sortBy('full_date')
+			->first();
+			/**
+			 * @var OverdraftAgainstCommercialPaperBankStatement $firstBankStatementRow ;
+			 */
+			 $firstBankStatementRow ? $firstBankStatementRow->update(['updated_at'=>now()]) : null ;
+			 
+			 
+		}
 		protected static function booted(): void
 		{
 			static::creating(function(self $model){
@@ -84,6 +101,7 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 			
 			static::created(function(self $model){
 				self::updateNextRows($model);
+				self::updateBankStatement($model);
 			});
 			
 			static::updated(function (self $model) {
@@ -116,6 +134,10 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 					
 					
 				}
+				
+				
+				self::updateBankStatement($model);
+				
 				
 			});
 			

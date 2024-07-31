@@ -313,7 +313,6 @@ class MoneyReceivedController
 		$contracts = Contract::where('partner_id',$request->get('customerId'))
 		->whereDoesntHave('lendingInformationForAgainstAssignmentContract')
 		->where('currency',$request->get('currency'))->get();
-
 		return response()->json([
 			'status'=>true ,
 			'contracts'=>$contracts

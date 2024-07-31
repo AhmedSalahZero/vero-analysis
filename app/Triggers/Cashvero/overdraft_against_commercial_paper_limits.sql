@@ -44,7 +44,6 @@ begin
 			 set new.limit = new.limit * -1 ;
 		 end if;
 		set new.accumulated_limit = _previous_accumulated_limit + new.limit ;
-		insert into debugging (message) values (concat(' create supposed first',new.accumulated_limit));
 		
 		
 
@@ -130,7 +129,6 @@ begin
 		 end if;
 		set new.accumulated_limit = _previous_accumulated_limit + new.limit ;
 		
-		insert into debugging (message) values (concat(' update supposed first',new.accumulated_limit));
 
 	--	update overdraft_against_commercial_paper_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) >= date(new.full_date) order by full_date asc  ;
 	

@@ -35,7 +35,8 @@ begin
 		contracts.id = overdraft_against_assignment_of_contract_limits.contract_id 
 	--	join money_received 
 --		on cheques.money_received_id = money_received.id 
---		where contract_id = new.contract_id 
+		where contract_id = new.contract_id 
+	
 		and is_active = 1 
 		limit 1 ;
 		
@@ -46,10 +47,7 @@ begin
 		
 		 limit 1;
 		 
-		 insert into debugging (message) values ('dd');
-		 insert into debugging (message) values (concat('lending rate',_lending_rate));
-		 insert into debugging (message) values (concat('lending rate',_lending_rate,'contract amount',_contract_amount));
-		 insert into debugging (message) values (concat('lending rate',_lending_rate,'contract amount',_contract_amount,'max lending per contract',_max_lending_limit_per_contract));
+	
 		 
 
 		set new.limit =  LEAST(_lending_rate /100 * _contract_amount , _max_lending_limit_per_contract)  ;
@@ -81,7 +79,6 @@ begin
 		declare _max_full_date datetime default null ;
 		set new.created_at = CURRENT_TIMESTAMP;
 		
-		
 		select `limit`,max_lending_limit_per_contract into _max_limit , _max_lending_limit_per_contract from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id ;
 
 
@@ -101,7 +98,7 @@ begin
 		contracts.id = overdraft_against_assignment_of_contract_limits.contract_id 
 	--	join money_received 
 	--	on cheques.money_received_id = money_received.id 
-	--	where contract_id = new.contract_id 
+		where contract_id = new.contract_id 
 		and is_active = 1 
 		limit 1 ;
 		
@@ -112,6 +109,8 @@ begin
 		-- and for_assignment_of_contracts_due_within_days >= _days_count order by for_assignment_of_contracts_due_within_days asc
 		
 		 limit 1;
+		 
+		 
 		set new.limit =  LEAST(_lending_rate /100 * _contract_amount , _max_lending_limit_per_contract)  ;
 		if(_contract_status = 'finished'
 			and   _number_of_contracts_existence > 1 
