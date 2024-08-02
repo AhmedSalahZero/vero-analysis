@@ -409,7 +409,7 @@
 				call recalculate_end_of_month_clean_overdraft_interests();
 				END$$
 				DELIMITER ;
-				drop event if exists refresh_customer_invoices_status_event ;
+				drop event if exists `refresh_customer_invoices_status_event`;
 				DELIMITER $$
 				CREATE EVENT `refresh_customer_invoices_status_event`
 				ON SCHEDULE EVERY  1 day
@@ -421,6 +421,8 @@
 				DELIMITER ;
 				drop procedure if exists refresh_customer_invoices_status ;
 				delimiter // 
+				delete from `debugging`; 
+				insert into debugging (message) values ('salah');
 				create procedure refresh_customer_invoices_status() 
 				begin
 						update customer_invoices set updated_at = CURRENT_TIMESTAMP where net_balance > 0 ;

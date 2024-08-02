@@ -1,5 +1,5 @@
 drop trigger if exists refresh_calculation_before_insert_cash_in_safe_statements ;
-delimiter // 
+  delimiter //  
 create  trigger refresh_calculation_before_insert_cash_in_safe_statements before insert on `cash_in_safe_statements` for each row 
 begin 
 	declare _last_end_balance decimal(14,2) default 0 ;
@@ -17,7 +17,7 @@ begin
 	
 
 end //
-delimiter ; 
+ delimiter ; 
 drop trigger if exists refresh_calculation_before_update_cash_in_safe_statements ;
 delimiter // 
 create  trigger refresh_calculation_before_update_cash_in_safe_statements before update on `cash_in_safe_statements` for each row 

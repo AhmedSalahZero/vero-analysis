@@ -1,3 +1,5 @@
+delimiter ;
+drop trigger if exists before_update_cheques ;
 delimiter // 
 create  trigger before_update_cheques before update on `cheques` for each row 
 begin 	
