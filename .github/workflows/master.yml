@@ -51,6 +51,8 @@ jobs:
       run: php artisan migrate --force   
     - name: run sql file
       run: php artisan run:sql  
+    - name: cache clear
+      run: php artisan optimize:clear  
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
