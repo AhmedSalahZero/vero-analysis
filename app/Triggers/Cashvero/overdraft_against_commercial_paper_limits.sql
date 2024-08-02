@@ -65,22 +65,6 @@ create  trigger after_update_overdraft_against_commercial_paper_limits after upd
 begin 
 		update overdraft_against_commercial_paper_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) >= date(new.full_date) order by full_date asc  ;
 end //
--- delimiter ;
---drop procedure if exists refresh_limits_in_commercial_paper_statements;
--- delimiter // 
--- create procedure refresh_limits_in_commercial_paper_statements (in _current_row_full_date datetime , in _current_limit_row_id integer , in overdraft_against_assignment_of_contract_id integer , in _company_id integer )
--- begin
---	declare _next_row_full_date datetime default null ;
-	
-	-- select full_date into _next_row_full_date where company_id = _company_id and overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id and full_date > _current_row_full_date order by full_date asc limit 1 ;
---	update overdraft_against_assignment_of_contract_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = _company_id and overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id and full_date > _current_row_full_date order by full_date asc limit 1 ;
---	if _next_row_full_date
-	--	update overdraft_against_assignment_of_contract_bank_statements where company_id = _company_id and overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id 
---	then
-	
---	else 
---	end if;
--- end // 
 delimiter ; 
 drop trigger if exists before_update_overdraft_against_commercial_paper_limits ;
 delimiter // 

@@ -1,3 +1,5 @@
+delimiter ;
+drop trigger if exists `insert_total_paid_amount` ;
 DELIMITER //
 create trigger  `insert_total_paid_amount` after insert on `payment_settlements` for each row 
 BEGIN
@@ -13,7 +15,9 @@ BEGIN
 	
 	
 END //
-
+delimiter ;
+drop trigger if exists update_total_paid_amount ;
+delimiter // 
 create trigger  `update_total_paid_amount` after update on `payment_settlements` for each row 
 BEGIN
 	declare _settlement_amount decimal(14,2) ;
@@ -23,7 +27,9 @@ BEGIN
 	update `supplier_invoices` set paid_amount = _settlement_amount where new.invoice_number  = invoice_number and company_id = new.company_id ;
 	
 END//
-
+delimiter ;
+drop trigger if exists delete_total_paid_amount ;
+delimiter // 
 create trigger  `delete_total_paid_amount` after delete on `payment_settlements` for each row 
 BEGIN
 	declare _settlement_amount decimal(14,2) ;

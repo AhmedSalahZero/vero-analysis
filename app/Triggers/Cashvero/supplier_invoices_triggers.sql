@@ -1,6 +1,9 @@
 
 
 -- 1-1
+delimiter ;
+drop trigger if exists insert_net_invoice_amount_for_suppliers ;
+
 delimiter //
 CREATE TRIGGER `insert_net_invoice_amount_for_suppliers` BEFORE INSERT
 	ON `supplier_invoices` FOR EACH ROW
@@ -33,6 +36,7 @@ CREATE TRIGGER `insert_net_invoice_amount_for_suppliers` BEFORE INSERT
 		set new.withhold_amount_in_main_currency = (new.withhold_amount * new.exchange_rate);
 end//
 delimiter ;
+drop trigger if exists update_net_invoice_amount_for_suppliers ;
 delimiter // 
 	-- 1-1
 CREATE TRIGGER `update_net_invoice_amount_for_suppliers` BEFORE
@@ -67,7 +71,8 @@ UPDATE
 	set new.withhold_amount_in_main_currency = (new.withhold_amount * new.exchange_rate);
 		
 END//
-
+delimiter ;
+drop trigger if exists remove_supplier_after_delete_its_invoice ;
 delimiter //
 create trigger remove_supplier_after_delete_its_invoice  after delete 	ON `supplier_invoices` FOR EACH ROW
 begin 
