@@ -52,6 +52,7 @@ class CreateUploadExcelCommand extends Command
 						'view_name'=>$fieldTitle
 					   ]);
 				   }
+				   
 				   $table->timestamps();
 		   });
 	   }
