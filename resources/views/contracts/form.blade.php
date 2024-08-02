@@ -850,7 +850,7 @@ use App\Models\MoneyReceived ;
         const parent = $(this).closest('tr')
         const code = $(this).find('option:selected').data('code')
         const amount = $(this).find('option:selected').data('amount')
-        const currency = $(this).find('option:selected').data('currency')
+        const currency = $(this).find('option:selected').data('currency').toUpperCase()
         $(parent).find('.contract-code').val(code)
         $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
         // $(parent).find('.contract-currency').val(currency)

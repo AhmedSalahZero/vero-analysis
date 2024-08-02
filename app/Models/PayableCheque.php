@@ -20,6 +20,10 @@ class PayableCheque extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id');
 	}
+	public function cashExpenses()
+	{
+		return $this->belongsTo(CashExpense::class,'cash_expense_id');
+	}
 	public static function getChequeTypesForAging():array
 	{
 		return [

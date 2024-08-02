@@ -99,6 +99,7 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->hasMany(MoneyPayment::class , 'user_id','id')->where('company_id',getCurrentCompanyId());
 	}
+	
 	public function downPayment()
 	{
 		return $this->hasMany(DownPayment::class , 'user_id','id')->where('company_id',getCurrentCompanyId());

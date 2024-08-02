@@ -29,6 +29,10 @@ class OutgoingTransfer extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id');
 	}
+	public function cashExpense()
+	{
+		return $this->belongsTo(CashExpense::class,'cash_expense_id');
+	}
 	/**
 	 * * البنك اللي طلعنا منه التحويلة
 	 */

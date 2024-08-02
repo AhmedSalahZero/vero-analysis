@@ -52,12 +52,13 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		CleanOverdraftBankStatement::create([
-			''
-		]);
-		$financialInstitution = FinancialInstitution::find(24);
-		dd($financialInstitution->getAllAccountNumbers());
-		dd('good');
+		// dd(getTableNames('vero_analysis','q'));
+		// CleanOverdraftBankStatement::create([
+		// 	''
+		// ]);
+		// $financialInstitution = FinancialInstitution::find(24);
+		// dd($financialInstitution->getAllAccountNumbers());
+		// dd('good');
 	
 		// $companyId = 85 ; 
 		// $dateFormat = 'Y-m-d';

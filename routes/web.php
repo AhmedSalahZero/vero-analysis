@@ -363,9 +363,19 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
 				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
 				 Route::get('financial-institutions/get-lc-issuance-based-of-financial-institution', 'FinancialInstitutionController@getLcIssuanceBasedOnFinancialInstitution')->name('update.lc.issuance.based.on.financial.institution');
-
-
-					Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
+				 
+				 
+				 // 
+				 
+				 Route::get('cash-expense-category','CashExpenseCategoryController@index')->name('cash.expense.category.index');
+				 Route::get('cash-expense-category/create','CashExpenseCategoryController@create')->name('cash.expense.category.create');
+				 Route::post('cash-expense-category','CashExpenseCategoryController@store')->name('cash.expense.category.store');
+				 Route::get('cash-expense-category/{cashExpenseCategory}/edit','CashExpenseCategoryController@edit')->name('cash.expense.category.edit');
+				 Route::put('cash-expense-category/{cashExpenseCategory}','CashExpenseCategoryController@update')->name('cash.expense.category.update');
+				 Route::delete('cash-expense-category/{cashExpenseCategory}','CashExpenseCategoryController@destroy')->name('cash.expense.category.destroy');
+				 Route::get('update-expense-category-name-based-on-expense-category-category','CashExpenseCategoryController@updateExpenseCategoryNameBasedOnCategory')->name('update.expense.category.name.based.on.category');
+				 // 
+				 Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
 				 Route::resource('notifications-settings', 'NotificationSettingsController');
 				 Route::get('mark-notifications-as-read', 'NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
 
@@ -572,6 +582,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
 					Route::get('get-interest-rate-for-financial-institution-id','FinancialInstitutionController@getInterestRateForFinancialInstitution')->name('get.interest.rate.for.financial.institution.id');
 
+					// money payments
 					Route::get('money-payment', 'MoneyPaymentController@index')->name('view.money.payment');
                     Route::get('money-payment/create/{model?}', 'MoneyPaymentController@create')->name('create.money.payment');
                     Route::post('money-payment/create', 'MoneyPaymentController@store')->name('store.money.payment');
@@ -583,6 +594,22 @@ Route::middleware([])->group(function () {
 					Route::post('mark-payable-cheques-as-paid', 'MoneyPaymentController@markChequesAsPaid')->name('payable.cheque.mark.as.paid');
 					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
 
+					
+					// cash expense
+					
+					
+					Route::get('cash-expense', 'CashExpenseController@index')->name('view.cash.expense');
+                    Route::get('cash-expense/create/{model?}', 'CashExpenseController@create')->name('create.cash.expense');
+                    Route::post('cash-expense/create', 'CashExpenseController@store')->name('store.cash.expense');
+                    Route::get('cash-expense/edit/{cashExpense}', 'CashExpenseController@edit')->name('edit.cash.expense');
+                    Route::put('cash-expense/update/{cashExpense}', 'CashExpenseController@update')->name('update.cash.expense');
+                    Route::delete('cash-expense/delete/{cashExpense}', 'CashExpenseController@destroy')->name('delete.cash.expense');
+					Route::get('cash-expense/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'CashExpenseController@getAccountNumbersForAccountType'); // ajax request
+					Route::post('mark-payable-cheques-as-paid', 'CashExpenseController@markChequesAsPaid')->name('payable.cheque.mark.as.paid');
+					Route::post('mark-outgoing-transfer-as-paid', 'CashExpenseController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
+
+					
+					
 					Route::post('adjust-customer-due-invoices','WeeklyCashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
                     Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
                     Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');

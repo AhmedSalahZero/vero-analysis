@@ -124,6 +124,10 @@ class CashInSafeStatement extends Model
     {
         return $this->belongsTo(MoneyPayment::class, 'money_payment_id', 'id');
     }
+	public function cashExpense()
+		{
+			return $this->belongsTo(CashExpense::class, 'cash_expense_id', 'id');
+		}
 
     public function getId()
     {

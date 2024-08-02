@@ -130,6 +130,10 @@ class CleanOverdraftBankStatement extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
 	}
+	public function cashExpense()
+	{
+		return $this->belongsTo(CashExpense::class,'cash_expense_id','id');
+	}
 	public function withdrawals()
 	{
 		return $this->hasMany(CleanOverdraftWithdrawal::class,'clean_overdraft_bank_statement_id','id');

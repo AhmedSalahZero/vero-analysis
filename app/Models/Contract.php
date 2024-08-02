@@ -336,4 +336,11 @@ class Contract extends Model
 		$this->detachRelatedContracts();
 		$this->relateWithContracts($contractsToBeRelated);
 	}
+	public function cashExpenses()
+	{
+		return $this->belongsToMany(CashExpense::class ,'cash_expense_contract','contract_id','cash_expense_id')
+		->withTimestamps()
+		->withPivot(['amount'])
+		;
+	}
 }

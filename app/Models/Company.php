@@ -259,4 +259,23 @@ class Company extends Model implements HasMedia
 	{
 		return $this->notifications->where('data.tap_type',$type);
 	}
+	public function cashExpenses()
+	{
+		return $this->hasMany(CashExpense::class , 'company_id','id');
+	}
+	public function getCashPayments(?string $startDate = null , ?string $endDate = null):Collection
+	{
+		return $this->cashExpenses->where('type',CashExpense::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByPaymentDate($startDate,$endDate) ;
+	}
+	public function getOutgoingTransfer(?string $startDate = null ,?string $endDate = null):Collection
+	{
+		return $this->cashExpenses->where('type',CashExpense::OUTGOING_TRANSFER)->filterByPaymentDate($startDate,$endDate) ;
+	}	
+	public function getPayableCheques(?string $startDate = null , ?string $endDate = null):Collection
+	{
+		return $this->cashExpenses->where('type',CashExpense::PAYABLE_CHEQUE)->filterByPaymentDate($startDate,$endDate)->filter(function(CashExpense $cashExpense){
+			$payableCheque = $cashExpense->payableCheque ;
+			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
+		})->values();
+	}
 }

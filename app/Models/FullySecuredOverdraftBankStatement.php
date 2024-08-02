@@ -132,6 +132,10 @@ class FullySecuredOverdraftBankStatement extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
 	}
+	public function cashExpense()
+	{
+		return $this->belongsTo(CashExpense::class,'cash_expense_id','id');
+	}
 	public function withdrawals()
 	{
 		return $this->hasMany(FullySecuredOverdraftWithdrawal::class,'fully_secured_overdraft_bank_statement_id','id');
