@@ -421,8 +421,6 @@
 				DELIMITER ;
 				drop procedure if exists refresh_customer_invoices_status ;
 				delimiter // 
-				delete from `debugging`; 
-				insert into debugging (message) values ('salah');
 				create procedure refresh_customer_invoices_status() 
 				begin
 						update customer_invoices set updated_at = CURRENT_TIMESTAMP where net_balance > 0 ;
