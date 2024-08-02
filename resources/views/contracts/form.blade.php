@@ -59,7 +59,7 @@ use App\Models\MoneyReceived ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Contract Form') }}
+{{ $formTitle }}
 @endsection
 @section('content')
 <div class="row">
@@ -77,7 +77,7 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__('Contract Form')"></x-sectionTitle>
+                                    <x-sectionTitle :title="$formTitle"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -94,7 +94,7 @@ use App\Models\MoneyReceived ;
                         </div>
                         <div class="kt-portlet__body">
                             <input type="hidden" name="company_id" value="{{ $company->id }}">
-							<input type="hidden" name="model_type" value="{{ $type }}">
+                            <input id="model_type" type="hidden" name="model_type" value="{{ $type }}">
                             <div class="form-group row">
 
                                 <div class="col-md-4 ">
@@ -378,6 +378,132 @@ use App\Models\MoneyReceived ;
                         </x-tables.repeater-table>
                         {{-- end of fixed monthly repeating amount --}}
 
+                    </div>
+
+                </div>
+            </div>
+			
+			@if($type == 'Customer')
+
+            <div class="kt-portlet" id="connecting">
+
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{ __('Connecting With Suppliers Contracts') }}
+                        </h3>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+
+
+                    <div class="form-group row justify-content-center">
+                        @php
+                        $index = 0 ;
+                        @endphp
+
+
+
+                        {{-- start of fixed monthly repeating amount --}}
+                        @php
+                        $tableId = $contractsRelationName;
+
+                        $repeaterId = 'm_repeater_7';
+
+                        @endphp
+                        {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
+                        <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                            <x-slot name="ths">
+                                @foreach([
+                                // $salesOrderOrPurchaseNumberText =>'col-md-1',
+                                $reverseTypeText=>'col-md-3',
+                                __('Contract Name')=>'col-md-3',
+                                __('Contract Code')=>'col-md-2',
+                                __('Contract Amount')=>'col-md-2',
+                          //      __('Currency')=>'col-md-1',
+                                ] as $title=>$classes)
+                                <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
+                                @php
+                                $rows = isset($model) ? $model->relatedContracts :[-1] ;
+                                @endphp
+                                @foreach( count($rows) ? $rows : [-1] as $currentContract)
+                                @php
+                                if( !($currentContract instanceof (new \App\Models\Contract)) ){
+                                unset($currentContract);
+                                }
+                                @endphp
+                                <tr @if($isRepeater) data-repeater-item @endif>
+
+                                    <td class="text-center">
+                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <x-form.select :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ $type }}" :all="false" name="@if($isRepeater) partner_id @else {{ $tableId }}[0][partner_id] @endif"></x-form.select>
+                                        {{-- <x-modal.custom-collection :subModel="isset($subModel) ? $subModel : null " :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection> --}}
+                                    </td>
+
+                                    <td>
+                                        <x-form.select data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ $type }}" :all="false" name="@if($isRepeater) contract_id @else {{ $tableId }}[0][contract_id] @endif"></x-form.select>
+                                        {{-- <x-modal.custom-collection :subModel="isset($subModel) ? $subModel : null " :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection> --}}
+                                    </td>
+
+                                    <td>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-code" value="0">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-amount" value="0">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {{-- <td>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-currency" value="">
+                                            </div>
+                                        </div>
+                                    </td> --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                </tr>
+                                @endforeach
+
+                            </x-slot>
+
+
+
+
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
+
 
 
 
@@ -457,10 +583,16 @@ use App\Models\MoneyReceived ;
 
 
                     </div>
-
-
                 </div>
+
+
+
+
+
+
+
             </div>
+			@endif
 
 
 
@@ -710,6 +842,46 @@ use App\Models\MoneyReceived ;
                 }
             })
         }
+    })
+
+</script>
+<script>
+    $(document).on('change', 'select.contracts-js', function() {
+        const parent = $(this).closest('tr')
+        const code = $(this).find('option:selected').data('code')
+        const amount = $(this).find('option:selected').data('amount')
+        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        $(parent).find('.contract-code').val(code)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
+        // $(parent).find('.contract-currency').val(currency)
+
+    })
+    $(document).on('change', 'select.suppliers-or-customers-js', function() {
+        const parent = $(this).closest('tr')
+        const partnerId = parseInt($(this).val())
+        const model = $('#model_type').val()
+        let inEditMode = "{{ $inEditMode ?? 0 }}";
+
+        $.ajax({
+            url: "{{ route('get.contracts.for.customer.or.supplier',['company'=>$company->id]) }}"
+            , data: {
+                partnerId
+                , model
+                , inEditMode
+            }
+            , type: "get"
+            , success: function(res) {
+                let contracts = '';
+                const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
+                for (var contract of res.contracts) {
+                    contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
+                }
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+            }
+        })
+    })
+    $(function() {
+        $('select.suppliers-or-customers-js').trigger('change')
     })
 
 </script>

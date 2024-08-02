@@ -131,6 +131,10 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
 	}
+	public function cashExpense()
+	{
+		return $this->belongsTo(CashExpense::class,'cash_expense_id','id');
+	}
 	public function withdrawals()
 	{
 		return $this->hasMany(OverdraftAgainstAssignmentOfContractWithdrawal::class,'overdraft_against_assignment_of_contract_bank_statement_id','id');

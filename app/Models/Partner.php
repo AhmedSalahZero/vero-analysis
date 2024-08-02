@@ -37,6 +37,9 @@ class Partner extends Model
 	public function scopeOnlyCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}
+	public function scopeOnlyThatHaveContracts(Builder $query){
+		return $query->has('contracts');
+	}
 	public function scopeOnlyForCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}

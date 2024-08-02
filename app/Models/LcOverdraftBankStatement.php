@@ -123,14 +123,7 @@ class LcOverdraftBankStatement extends Model
 			});
 		}
 		
-	// public function moneyReceived()
-	// {
-	// 	return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
-	// }
-	// public function moneyPayment()
-	// {
-	// 	return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
-	// }
+
 	public function withdrawals()
 	{
 		return $this->hasMany(LcOverdraftWithdrawal::class,'lc_overdraft_bank_statement_id','id');
@@ -156,16 +149,7 @@ class LcOverdraftBankStatement extends Model
 		
 		$this->attributes['date'] = $year.'-'.$month.'-'.$day;
 	}
-	// public function getStartSettlementFromBankStatementDateTime()
-	// {
-	// 	if($this->type == MoneyPayment::PAYABLE_CHEQUE  ){
-	// 		return $this->moneyPayment->payableCheque->actual_payment_date ;
-	// 	}
-	// 	if($this->type == MoneyPayment::OUTGOING_TRANSFER  ){
-	// 		return $this->moneyPayment->outgoingTransfer->actual_payment_date ;
-	// 	}
-	// 	return $this->full_date;
-	// }
+
 	
 	public function lcSettlementInternalMoneyTransfer()
 	{
@@ -175,6 +159,7 @@ class LcOverdraftBankStatement extends Model
 	{
 		return $this->hasOne(LcOverdraftBankStatement::class,'money_payment_id','lc_issuance_id');
 	}
+
 	
 	
 	

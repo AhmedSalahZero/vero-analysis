@@ -6,6 +6,11 @@ use App\Models\Contract;
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
+    .main-td-background {
+        background-color: #0742A6;
+        color: white;
+    }
+
     #test_filter {
         display: none !important;
     }
@@ -292,7 +297,7 @@ use App\Models\Contract;
 
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
-			@foreach($contractStatues as $contractStatus)
+            @foreach($contractStatues as $contractStatus)
             @php
             $currentType = $contractStatus ;
             @endphp
@@ -334,8 +339,13 @@ use App\Models\Contract;
                             @php
                             $parent =$parnetAndSubData['parent'] ;
                             $subItems =$parnetAndSubData['sub_items'] ?? [];
+                            $contract = $parent['contract'] ;
+
                             @endphp
                             <tr class="group-color main-row-tr">
+
+
+
                                 <td class="black-text " style="cursor: pointer;" onclick="toggleRow('{{ $mainItemId }}')">
 
                                     <div class="d-flex align-items-center ">
@@ -373,12 +383,102 @@ use App\Models\Contract;
                                 </td>
 
 
-                                <td class="text-left text-capitalize"><b class="ml-3">
+                                <td class="text-left text-capitalize">
+
+                                    <div class="modal fade " id="details_model{{ $contract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                            <div class="modal-content" method="post">
+
+
+                                                @csrf
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" style="color:#0741A5 !important">{{ __('Connecting With Supplier Contracts Details') . ' [ ' . $contract->getName() .' ]'  }}</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="customize-elements">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center main-td-background">{!! __('Supplier Name') !!} </th>
+                                                                    <th class="text-center main-td-background">{!! __('Contract Name') !!} </th>
+                                                                    <th class="text-center main-td-background">{!! __('Contract Code') !!} </th>
+                                                                    <th class="text-center main-td-background">{!! __('Contract amount') !!} </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+
+                                                                @foreach($contract->relatedContracts as $realtedContract)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group">
+                                                                                <input disabled type="text" class="form-control" value="{{ $realtedContract->client ? $realtedContract->client->getName()  : __('N/A')  }}">
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group">
+                                                                                <input disabled type="text" class="form-control text-center" value="{{  $realtedContract->getName() }}">
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+
+
+                                                                    <td>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group">
+                                                                                <input disabled type="text" class="form-control text-center" value="{{ $realtedContract->getCode()  }}">
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+
+
+                                                                    <td>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group">
+                                                                                <input disabled type="text" class="form-control text-center text-capitalize" value="{{ $realtedContract->getAmountFormatted() . ' ' .$realtedContract->getCurrency() }}">
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+
+
+
+
+
+
+                                                                </tr>
+                                                                @endforeach
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary " data-dismiss="modal">{{ __('Close') }}</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <b class="ml-3">
+                                        @if($type == 'Customer')
+                                        <button data-toggle="modal" data-target="#details_model{{ $contract->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-eye"></i> </button>
+                                        <a href="{{ str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting'])) }}" title="{{ __('Connecting With Supplier Contracts') }}" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a>
+                                        @endif
                                         <span style="overflow: visible; position: relative; width: 110px;">
-											@if($currentType == Contract::RUNNING_AND_AGAINST)
-										
+                                            @if($currentType == Contract::RUNNING_AND_AGAINST)
+
                                             <a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
-											 <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="{{ route('contract.mark.as.finished', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}" method="post">
@@ -399,10 +499,10 @@ use App\Models\Contract;
                                                     </div>
                                                 </div>
                                             </div>
-											
-											@elseif($currentType == Contract::FINISHED)
-											 <a data-toggle="modal" data-target="#mark-as-running-and-against-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Running And Against') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
-											 <div class="modal fade" id="mark-as-running-and-against-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+                                            @elseif($currentType == Contract::FINISHED)
+                                            <a data-toggle="modal" data-target="#mark-as-running-and-against-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Running And Against') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
+                                            <div class="modal fade" id="mark-as-running-and-against-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="{{ route('contract.mark.as.running.and.against', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}" method="post">
@@ -423,8 +523,8 @@ use App\Models\Contract;
                                                     </div>
                                                 </div>
                                             </div>
-											
-											@endif 
+
+                                            @endif
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('contracts.edit', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
                                             </a>
@@ -455,7 +555,8 @@ use App\Models\Contract;
                                             </div>
 
                                         </span>
-                                    </b></td>
+                                    </b>
+                                </td>
 
 
 
@@ -518,205 +619,13 @@ use App\Models\Contract;
                     </div>
                 </div>
             </div>
-			@endforeach 
+            @endforeach
         </div>
     </div>
 
 
 
 </div>
-{{-- <div class="row">
-    <div class="col-md-12">
-
-
-
-
-
-        <div class="kt-portlet">
-
-
-            <div class="kt-portlet__body">
-
-                <span class="visibility-hidden">/</span>
-
-
-                <a href="{{ route('contracts.create',['company'=>$company->id,'type'=>$type]) }}" class="btn btn-bold btn-secondary flex-1 flex-grow-0 btn-border-radius mr-auto">
-<span class="plus-class">+</span>{{ __('Create') }}
-</a>
-</div>
-
-<x-table :tableClass="'kt_table_with_no_pagination_no_fixed  removeGlobalStyle ' ">
-    @slot('table_header')
-
-
-    <tr class=" text-center second-tr-bg">
-        <th class="text-center absorbing-column "></th>
-        <th></th>
-    </tr>
-    @endslot
-    @slot('table_body')
-    <tr class=" text-center first-tr-bg ">
-        <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
-        <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
-        <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Start Date') }}</b></td>
-        <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('End Date') }}</b></td>
-        <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Amount') }}</b></td>
-
-
-        <td style="color:white !important" class="text-center view-table-th ">
-            {{ __('Actions') }}
-        </td>
-    </tr>
-    @php
-    $id = 0 ;
-    @endphp
-    @foreach($items as $mainItemId => $parnetAndSubData )
-    @php
-    $parent =$parnetAndSubData['parent'] ;
-    $subItems =$parnetAndSubData['sub_items'] ?? [];
-    @endphp
-    <tr class="group-color main-row-tr">
-        <td class="black-text " style="cursor: pointer;" onclick="toggleRow('{{ $mainItemId }}')">
-
-            <div class="d-flex align-items-center ">
-                @if(count($subItems))
-                <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
-                @endif
-                <b class="text-capitalize ">{{ $parent['name'] }}</b>
-            </div>
-        </td>
-        <td class="text-center">
-            <b class="text-capitalize ">
-                <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
-            </b>
-
-        </td>
-        <td class="text-center">
-            <b class="text-capitalize  ">
-                <b class="text-capitalize ">{{ $parent['start_date'] }}</b>
-            </b>
-
-
-        </td>
-        <td class="text-center">
-            <b class="text-capitalize">
-                <b class="text-capitalize">{{ $parent['end_date'] }}</b>
-            </b>
-
-
-        </td>
-        <td class="text-center">
-            <b class="text-capitalize  ">
-                <b class="text-capitalize">{{ $parent['amount'] }}</b>
-            </b>
-
-        </td>
-
-
-        <td class="text-left text-capitalize"><b class="ml-3">
-                <span style="overflow: visible; position: relative; width: 110px;">
-                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('contracts.edit', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}"><i class="fa fa-pen-alt"></i></a>
-                    <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
-                    </a>
-
-                    <div id="modal-delete-{{ $mainItemId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">{{ __('Delete Contract ' .$parent['name']) }}</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
-                                </div>
-                                <form action="{{ route('contracts.destroy',['company'=>$company->id , 'contract'=> $mainItemId,'type'=>$type ]) }}" method="post" id="delete_form">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                    <div class="modal-footer">
-                                        <button class="btn btn-danger">
-                                            {{ __('Delete') }}
-                                        </button>
-                                        <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
-                                            {{ __('Close') }}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                </span>
-            </b></td>
-
-
-
-
-
-
-    </tr>
-
-    @foreach ($subItems as $subItemId => $titleAndValue)
-
-
-
-    <tr class="row{{ $mainItemId }}  text-center sub-item-row" style="display: none">
-        <td colspan="5" class="text-left  text-capitalize">
-            <table class="table ml-3 table-borderless">
-
-
-                <tr>
-                    @if(isset($titleAndValue['so_number'] ))
-                    <td>{{ __('So Number') }}</td>
-                    <td>{{ $titleAndValue['so_number'] }}</td>
-                    @elseif(isset($titleAndValue['po_number'] ))
-                    <td>{{ __('Po Number') }}</td>
-                    <td>{{ $titleAndValue['po_number'] }}</td>
-                    @endif
-
-                    <td>{{ __('Amount') }}</td>
-                    <td>{{ $titleAndValue['amount'] }}</td>
-
-                </tr>
-
-            </table>
-        </td>
-
-        <td>
-        </td>
-
-
-
-
-
-
-
-    </tr>
-
-    @endforeach
-
-
-    <?php $id++ ;?>
-    @endforeach
-
-
-
-
-
-    @endslot
-</x-table>
-
-</div>
-
-<!--begin::Modal Delete  -->
-
-
-
-
-
-</div>
-</div>
-</div>
-</div> --}}
-
 
 
 

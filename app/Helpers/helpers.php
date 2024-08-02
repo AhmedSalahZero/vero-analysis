@@ -3090,6 +3090,12 @@ function getPermissions():array
             'name'=>'view supplier payment'
         ],
 		[
+            'name'=>'view cash expenses'
+        ],
+		[
+            'name'=>'view cash expense categories'
+        ],
+		[
             'name'=>'view internal money transfer'
         ],
 		[
@@ -4343,6 +4349,18 @@ function getHeaderMenu()
 					'submenu'=>[]
 				],
 				[
+					'title'=>__('Cash Expenses'),
+					'link'=>route('view.cash.expense', ['company'=>$companyId]),
+					'show'=>$user->can('view cash expenses'),
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Cash Expense Categories'),
+				'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
+				'show'=>$user->can('view cash expense categories'),
+	
+				],
+				[
 					'title'=>__('Lc Settlement Internal Transfer'),
 					'link'=>route('lc-settlement-internal-money-transfers.index', ['company'=>$companyId]),
 					'show'=>$user->can('view lc settlement internal transfer'),
@@ -5067,6 +5085,9 @@ if (!function_exists('getFixedLoanTypes')) {
 		elseif($id = $stdClass->money_payment_id){
 			$tableName = 'money_payments';
 		}
+		elseif($id = $stdClass->cash_expense_id){
+			$tableName = 'cash_expenses';
+		}
 		elseif($id = $stdClass->buy_or_sell_currency_id){
 			$tableName = 'buy_or_sell_currencies';
 			if($stdClass->is_debit){
@@ -5108,4 +5129,13 @@ if (!function_exists('getFixedLoanTypes')) {
 		}
 		return $result ;
 	}
+	function getTableNames(){
+		return collect(DB::select('show tables'))->map(function ($val) {
+            foreach ($val as $key => $tbl) {
+                return $tbl;
+            }
+        });
+	}
+
+   
 	

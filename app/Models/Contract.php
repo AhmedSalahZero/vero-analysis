@@ -7,7 +7,9 @@ use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -177,6 +179,7 @@ class Contract extends Model
 
         static::deleted(
             function (self $model) {
+				$model->detachRelatedContracts();
                 $model->deleteOverdraftAgainstAssignmentOfContractsLimits();
             }
         );
@@ -302,13 +305,42 @@ class Contract extends Model
     {
         return $this->account_type ;
     }
-	// public function getAccountNumber()
-    // {
-    //     return $this->account_number;
-    // }
 	public function overdraftAgainstAssignmentOfContract()
 	{
 		return $this->belongsTo(OverdraftAgainstAssignmentOfContract::class , 'overdraft_against_assignment_of_contract_id','id');
 	}
+	/**
+	 * * عباره عن العقود اللي مربوطة بيها 
+	 * * بحيث لو هو عقد عميل هيكون مربوط باكثر من عقد من الموردين
+	 */
+	public function relatedContracts():HasMany
+	{
+		return $this->hasMany(Contract::class , 'parent_id');
+	}	
+	public function relateWithContracts(array $contractsToBeRelated):void
+	{
+		$ids = Arr::pluck($contractsToBeRelated,'contract_id');
 	
+		Contract::whereIn('id',$ids)->update([
+			'parent_id'=>$this->id 
+		]);
+	}
+	public function detachRelatedContracts():void
+	{
+		$this->relatedContracts()->update([
+			'parent_id'=>null 
+		]);
+	}
+	public function syncWithContracts(array $contractsToBeRelated):void
+	{
+		$this->detachRelatedContracts();
+		$this->relateWithContracts($contractsToBeRelated);
+	}
+	public function cashExpenses()
+	{
+		return $this->belongsToMany(CashExpense::class ,'cash_expense_contract','contract_id','cash_expense_id')
+		->withTimestamps()
+		->withPivot(['amount'])
+		;
+	}
 }

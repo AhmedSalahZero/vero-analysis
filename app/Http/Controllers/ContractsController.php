@@ -23,9 +23,9 @@ class ContractsController
 			Contract::FINISHED 
 		];
 		
-		$runningContracts = Contract::where('company_id',$company->id)->where('status',Contract::RUNNING )->where('model_type',$type)->get();
-		$runningAndAgainstContracts = Contract::where('company_id',$company->id)->where('status',Contract::RUNNING_AND_AGAINST )->where('model_type',$type)->get();
-		$finishedContracts = Contract::where('company_id',$company->id)->where('status',Contract::FINISHED )->where('model_type',$type)->get();
+		$runningContracts = Contract::where('company_id',$company->id)->where('status',Contract::RUNNING )->where('model_type',$type)->with(['relatedContracts'])->get();
+		$runningAndAgainstContracts = Contract::where('company_id',$company->id)->where('status',Contract::RUNNING_AND_AGAINST )->with(['relatedContracts'])->where('model_type',$type)->get();
+		$finishedContracts = Contract::where('company_id',$company->id)->where('status',Contract::FINISHED )->where('model_type',$type)->with(['relatedContracts'])->get();
 		$contracts = [
 			Contract::RUNNING=>$runningContracts ,
 			Contract::RUNNING_AND_AGAINST=>$runningAndAgainstContracts,
@@ -38,6 +38,7 @@ class ContractsController
 				$contractId = $contract->id ;
 				$items[$contractStatus][$contractId]['parent'] = [
 					'name'=>$contract->getName() ,
+					'contract'=>$contract,
 					'client_name'=>$contract->getClientName(),
 					'start_date'=>$contract->getStartDateFormatted(),
 					'end_date'=>$contract->getEndDateFormatted(),
@@ -64,17 +65,31 @@ class ContractsController
 		$salesOrderOrPurchaseNumberText =  $type == 'Supplier' ? __('PO Number') : __('SO Number'); 
 		$salesOrderOrPurchaseNoText =  $type == 'Supplier' ? 'po_number' : 'so_number'; 
 		$salesOrderOrPurchaseOrderRelationName = $type == 'Supplier' ? 'purchasesOrders' : 'salesOrders'; ;
+		$contractsRelationName = 'contracts' ;
 		$salesOrderOrPurchaseOrderObject =  $type == 'Supplier' ? new PurchaseOrder() : new SalesOrder(); 
 		$clients = Partner::onlyCompany($company->id);
+		$formTitle = __('Customer Contract Form');
+		
 		if($type == 'Supplier'){
 			$clients =$clients->onlySuppliers();
 			$salesOrderOrPurchaseOrderInformationText = __('Purchases Order Information');
+			$formTitle = __('Supplier Contract Form');
+			$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts();
+			$reverseTypeText = __('Customers');
 		}else{
 			$clients =$clients->onlyCustomers();
+			$clientsWithContracts = Partner::onlyCompany($company->id)->onlySuppliers()->onlyThatHaveContracts();
+			$reverseTypeText = __('Suppliers');
+			
 		}
 		$clients = $clients->get();
-		
+		$clientsWithContracts = $clientsWithContracts->get();
 		return [
+			'reverseTypeText'=>$reverseTypeText,
+			'contractsRelationName'=>$contractsRelationName,
+			'clientsWithContracts'=>$clientsWithContracts,
+			// 'suppliersOrCustomers'=>$suppliersOrCustomers,
+			'formTitle'=>$formTitle,
 			'company'=>$company,
 			'clients'=>$clients,
 			'type'=>$type,
@@ -83,13 +98,15 @@ class ContractsController
 			'salesOrderOrPurchaseNoText'=>$salesOrderOrPurchaseNoText,
 			'salesOrderOrPurchaseOrderObject'=>$salesOrderOrPurchaseOrderObject,
 			'salesOrderOrPurchaseOrderRelationName'=>$salesOrderOrPurchaseOrderRelationName,
-			'model'=>$model
+			'model'=>$model,
+			'inEditMode'=>isset($model)
 		]
 		;
 	}
 	public function store(Request $request, Company $company,string $type){
 			$contract = new Contract ;
 			$contract->storeBasicForm($request);
+			$contract->relateWithContracts($request->get('contracts',[]));
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function edit(Request $request,Company $company,Contract $contract,string $type)
@@ -99,6 +116,7 @@ class ContractsController
 	public function update(Company $company , Request $request , Contract $contract,string $type){
 		
 			$contract->storeBasicForm($request);
+			$contract->syncWithContracts($request->get('contracts',[]));
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function destroy(Company $company , Request $request , Contract $contract,string $type){
@@ -131,6 +149,21 @@ class ContractsController
 		return response()->json([
 			'purchase_orders'=>$purchaseOrders
 		]);
+	}
+	public function getContractsForCustomerOrSupplier(Company $company , Request $request){
+		$partner = Partner::find($request->get('partnerId'));
+		/**
+		 * @var Partner $partner 
+		 */
+		$contracts = $partner->contracts ;
+		if(!$request->boolean('inEditMode')){
+			$contracts = $contracts->where('parent_id',null)->values() ;
+		}
+		return response()->json([
+			'status'=>true ,
+			'contracts'=>$contracts 
+		]);
+		
 	}
 	
 }

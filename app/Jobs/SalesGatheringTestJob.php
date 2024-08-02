@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\CachingCompany;
+use App\Models\Contract;
 use App\Models\Customer;
 use App\Models\Partner;
 use Illuminate\Bus\Queueable;
@@ -70,6 +71,9 @@ class SalesGatheringTestJob implements ShouldQueue
 			if($modelName == 'CustomerInvoice' && is_array($value)){
 				$customerId = null ;
 				if($this->modelName == 'CustomerInvoice'){
+					/**
+					 * * insert customer invoices
+					 */
 					$customerId = 0 ;
 					$customerName = $value['customer_name'] ;
 					$value['currency'] = isset($value['currency']) ? strtoupper($value['currency']) : null;
@@ -85,7 +89,36 @@ class SalesGatheringTestJob implements ShouldQueue
 						]);
 						$customerId = $customer->id ;
 					}
-					;
+					
+					/**
+					 * * insert customer contracts
+					 */
+					
+					 
+					$contractName = $value['contract_name']??null ;
+					$contractCode = $value['contract_code']??null ;
+					$contractAmount = $value['contract_amount']??null ;
+					$contractDate = $value['contract_date'] ?? null ;
+					$contractFound =  DB::table('contracts')->where('company_id',$this->company_id)->where('code',$contractCode)->exists();
+					if($contractName && $contractCode && $contractAmount && $contractDate && !$contractFound){
+						$customer = Contract::create([
+							'status'=>Contract::RUNNING,
+							'model_type'=>'Customer',
+							'partner_id'=>$customerId,
+							'name'=>$contractName,
+							'code'=>$contractCode,
+							'company_id'=>$this->company_id ,
+							'start_date'=>$contractDate,
+							'duration'=>0,
+							'end_date'=>null,
+							'amount'=>$contractAmount ,
+							'currency'=>isset($value['currency']) ? strtoupper($value['currency']) : null,
+							'exchange_rate'=>isset($value['exchange_rate']) ? strtoupper($value['exchange_rate']) : 1
+						]);	
+					}
+					
+					
+					
 				}
 			$newItems[$key] = array_merge($value , [
 				'customer_id'=>$customerId
