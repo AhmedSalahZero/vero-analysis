@@ -29,7 +29,6 @@ class AppServiceProvider extends ServiceProvider
 	public function register()
 	{
 	
-
 		if ($this->app->isLocal()) {
 			$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 		}
@@ -39,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		// dd(phpinfo());
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');

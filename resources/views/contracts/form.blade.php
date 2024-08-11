@@ -431,7 +431,8 @@ use App\Models\MoneyReceived ;
                                 @endphp
                                 @foreach( count($rows) ? $rows : [-1] as $currentContract)
                                 @php
-                                if( !($currentContract instanceof (new \App\Models\Contract)) ){
+								$fullPath = new \App\Models\Contract ;
+                                if( !($currentContract instanceof $fullPath ) ){
                                 unset($currentContract);
                                 }
                                 @endphp
