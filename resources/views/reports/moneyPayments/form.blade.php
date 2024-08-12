@@ -249,7 +249,7 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label>{{__('Paid Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount() :0 }}" name="paid_amount[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}" placeholder="{{__('Paid Amount')}}">
@@ -309,13 +309,13 @@ $selectedBanks = [];
                     {{__('Payable Cheque Information')}}
                 </h3>
                 <div class=" flex-1 d-flex justify-content-end pt-3">
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
                             <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
                         <div class="kt-input-icon">
                             <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
@@ -446,13 +446,13 @@ $selectedBanks = [];
                 </h3>
 			
 				 <div class=" flex-1 d-flex justify-content-end pt-3">
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
                             <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
                         <div class="kt-input-icon">
                             <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">

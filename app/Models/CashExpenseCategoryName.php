@@ -12,7 +12,7 @@ class CashExpenseCategoryName extends Model
 	
 	public function cashExpenseCategory()
 	{
-		return $this->belongsTo(CashExpenseCategory::class,'cash_expense_category','id');
+		return $this->belongsTo(CashExpenseCategory::class,'cash_expense_category_id','id');
 	}
 	public function getName()
 	{

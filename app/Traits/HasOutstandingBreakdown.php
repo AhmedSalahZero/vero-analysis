@@ -51,6 +51,7 @@ trait HasOutstandingBreakdown
 				'date'=>$balanceDate,
 				'limit'=>$this->getLimit(),
 				'beginning_balance'=>0 ,
+				
 				'debit'=>0,
 				'credit'=> $outstandingBreakdownArr['amount'],
 				'is_credit'=>1 ,

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * * دا الشيك اللي بدفعه للموردين
  */
+
 class PayableCheque extends Model
 {
 
@@ -194,9 +195,28 @@ class PayableCheque extends Model
 	}
 	public function getDueAfterDays()
 	{
+		$secondDate = null ;
+		if($this->moneyPayment){
+			$secondDate = $this->moneyPayment->getDeliveryDate() ;
+		}
+		if($this->cashExpense){
+			$secondDate = $this->cashExpense->getPaymentDate() ;	
+		}
+		if(is_null($secondDate)){
+			return '-';
+		}
+		
 		$firstDate = Carbon::make($this->getDueDate());
-		$secondDate = Carbon::make($this->moneyPayment->getDeliveryDate());
+		$secondDate = Carbon::make($secondDate);
 		return getDiffBetweenTwoDatesInDays($firstDate , $secondDate);
+	}
+	public function getPaymentBankName()
+	{
+		return $this->financialInstitution->bank->getViewName();
+	}
+	public function financialInstitution()
+	{
+		return $this->belongsTo(FinancialInstitution::class , 'delivery_bank_id','id');
 	}
 	public function getAccountTypeId()
 	{

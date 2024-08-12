@@ -140,8 +140,10 @@ td{
                                 <tr class="table-standard-color">
                                     <th class="align-middle">{{ __('Select') }}</th>
                                     <th class="align-middle">{{ __('Type') }}</th>
-                                    <th class="align-middle bank-max-width">{{ __('Status') }}</th>
+                                    {{-- <th class="align-middle bank-max-width">{{ __('Status') }}</th> --}}
                                     {{-- <th class="align-middle bank-max-width">{{ __('Supplier Name') }}</th> --}}
+                                    <th class="align-middle">{!! __('Category <br> Name') !!}</th>
+                                    <th class="align-middle">{!! __('Expense <br> Name') !!}</th>
                                     <th class="align-middle">{!! __('Payment <br> Date') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Number') !!}</th>
                                     <th class="align-middle">{!! __('Cheque<br>Amount') !!}</th>
@@ -150,7 +152,7 @@ td{
                                     <th class="align-middle bank-max-width">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account No') }}</th>
                                     <th class="align-middle">{!! __('Due<br>Date') !!}</th>
-                                    <th class="align-middle">{!! __('Due <br> After Days') !!}</th>
+                                    {{-- <th class="align-middle">{!! __('Due <br> After Days') !!}</th> --}}
                                     <th class="align-middle">{!! __('Status') !!}</th>
                                     <th class="align-middle">{{ __('Control') }}</th>
                                 </tr>
@@ -164,15 +166,18 @@ td{
                                     <td class="bank-max-width @if($cashExpense->payableCheque->getStatus() == 'paid') exclude-td font-weight-bold text-success color-green @endif ">{{ $cashExpense->payableCheque->getStatusFormatted() }}</td>
                                     {{-- <td class="bank-max-width">{{ $cashExpense->getMoneyTypeFormatted() }}</td> --}}
                                     {{-- <td class="bank-max-width">{{ $cashExpense->getSupplierName() }}</td> --}}
+                                    <td class="text-nowrap">{{ $cashExpense->getExpenseCategoryName() }}</td>
+                                    <td class="text-nowrap">{{ $cashExpense->getExpenseName() }}</td>
                                     <td class="text-nowrap">{{ $cashExpense->getPaymentDateFormatted() }}</td>
                                     <td>{{ $cashExpense->payableCheque->getChequeNumber() }}</td>
                                     <td>{{ $cashExpense->getPaidAmountFormatted() }}</td>
                                     <td class="text-transform" data-currency="{{ $cashExpense->getCurrency() }}">{{ $cashExpense->getCurrencyFormatted() }}</td>
                                     <td class="bank-max-width ">{{ $cashExpense->payableCheque->getPaymentBankName() }}</td>
+                                    {{-- <td class="bank-max-width ">{{ $cashExpense->payableCheque->getPaymentBankName() }}</td> --}}
                                     <td class="bank-max-width">{{ $cashExpense->payableCheque->getAccountTypeName() }}</td>
                                     <td class="text-nowrap">{{ $cashExpense->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $cashExpense->payableCheque->getDueDateFormatted() }}</td>
-                                    <td>{{ $cashExpense->payableCheque->getDueAfterDays() }}</td>
+                                    {{-- <td>{{ $cashExpense->payableCheque->getDueAfterDays() }}</td> --}}
 									@php
 										$dueStatus = $cashExpense->payableCheque->getDueStatusFormatted() ;
 									@endphp
@@ -252,7 +257,8 @@ td{
                             <thead>
                                 <tr class="table-standard-color">
                                     <th class="align-middle">{{ __('Select') }}</th>
-								
+								 	<th class="align-middle">{!! __('Category <br> Name') !!}</th>
+                                    <th class="align-middle">{!! __('Expense <br> Name') !!}</th>
                                     {{-- <th class="bank-max-width">{{ __('Status') }}</th> --}}
                                     {{-- <th class="bank-max-width">{{ __('Supplier Name') }}</th> --}}
                                     <th>{{ __('Payment Date') }}</th>
@@ -274,6 +280,8 @@ td{
                                     </td>
 								   {{-- <td class="bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td> --}}
                                     {{-- <td class="bank-max-width">{{ $money->getSupplierName() }}</td> --}}
+									   <td class="text-nowrap">{{ $cashExpense->getExpenseCategoryName() }}</td>
+                                    <td class="text-nowrap">{{ $cashExpense->getExpenseName() }}</td>
                                     <td class="text-nowrap">{{ $money->getPaymentDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
                                     <td>{{ $money->getPaidAmountFormatted() }}</td>
@@ -343,7 +351,11 @@ td{
                             <thead>
                                 <tr class="table-standard-color">
                                     {{-- <th>{{ __('Type') }}</th> --}}
+                                    <th class="align-middle">{{ __('Select') }}</th>
+									
                                     {{-- <th class="bank-max-width">{{ __('Supplier Name') }}</th> --}}
+									<th class="align-middle">{!! __('Category <br> Name') !!}</th>
+                                    <th class="align-middle">{!! __('Expense <br> Name') !!}</th>
                                     <th>{{ __('Payment Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th>{{ __('Payment Amount') }}</th>
@@ -356,9 +368,18 @@ td{
                                 @foreach($cashPayments as $cashExpense)
 
                                 <tr>
+									
+								<td>
+                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $money->id }}" type="checkbox" name="second_to_collection[]" value="{{ $money->id }}" data-money-type="{{ CashExpense::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
+                                    </td>
+									       <td class="text-nowrap">{{ $cashExpense->getExpenseCategoryName() }}</td>
+                                    <td class="text-nowrap">{{ $cashExpense->getExpenseName() }}</td>
+                            
                                     {{-- <td class="bank-max-width">{{ $cashExpense->getMoneyTypeFormatted() }}</td> --}}
                                     {{-- <td class="bank-max-width">{{ $cashExpense->getSupplierName() }}</td> --}}
+									
                                     <td class="text-nowrap">{{ $cashExpense->getPaymentDateFormatted() }}</td>
+									
                                     <td>{{ $cashExpense->getCashPaymentBranchName() }}</td>
                                     <td>{{ $cashExpense->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $cashExpense->getCurrency() }}">{{ $cashExpense->getCurrencyFormatted() }}</td>
