@@ -40,6 +40,7 @@ class ContractsController
 					'name'=>$contract->getName() ,
 					'contract'=>$contract,
 					'client_name'=>$contract->getClientName(),
+					'contract_code'=>$contract->getCode(),
 					'start_date'=>$contract->getStartDateFormatted(),
 					'end_date'=>$contract->getEndDateFormatted(),
 					'amount'=>$contract->getAmountFormatted()

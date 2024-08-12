@@ -142,6 +142,15 @@ class CashExpense extends Model
 		
 		return $this->exchange_rate?:1;
 	}
+
+	public function getExpenseCategoryName():string
+	{
+		return $this->cashExpenseCategoryName && $this->cashExpenseCategoryName->cashExpenseCategory ? $this->cashExpenseCategoryName->cashExpenseCategory->getName() : __('N/A') ;
+	}
+	public function getExpenseName()
+	{
+		return  $this->cashExpenseCategoryName ? $this->cashExpenseCategoryName->getName() : __('N/A');
+	}
 	public function getPaymentBankName()
 	{
 		return '-';
@@ -297,7 +306,7 @@ class CashExpense extends Model
 	public function getPayableChequeDeliveryDate()
 	{
 		$payable = $this->payableCheque;
-		return $payable ? $payable->getDeliveryDate() : null;
+		return $payable ? $payable->getPaymentDate() : null;
 	}
 	public function getPayableChequeDeliveryDateFormattedForDatePicker()
 	{
@@ -478,8 +487,9 @@ class CashExpense extends Model
 		if($this->isOutgoingTransfer()){
 			return $this->getOutgoingTransferDueDate();
 		}
-		return $this->getDeliveryDate();
+		return $this->getPaymentDate();
 	}
+		
 	public function cashExpenseCategoryName():BelongsTo
 	{
 		return $this->belongsTo(CashExpenseCategoryName::class,'cash_expense_category_name_id','id');

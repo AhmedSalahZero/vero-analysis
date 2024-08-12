@@ -3081,6 +3081,9 @@ function getPermissions():array
             'name'=>'view weekly cash flow report'
         ],
 		[
+            'name'=>'view contract cash flow report'
+        ],
+		[
 			'name'=>'view withdrawals settlement report'
 		],
         [
@@ -4176,6 +4179,7 @@ function getHeaderMenu()
 	$canViewSafeStatement = $user->can('view safe statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
 	$canViewWeeklyCashFlow = $user->can('view weekly cash flow report');
+	$canViewContractCashFlow = $user->can('view contract cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
 	$notificationsSubItems = \App\Notification::formatForMenuItem();
 	$notificationsSubItems[]	= [
@@ -4207,7 +4211,12 @@ function getHeaderMenu()
 				'title'=>__('Branches'),
 				'link'=>'#',
 				'show'=>true 
-			]
+			],
+			[
+				'title'=>__('Cash Expense Categories'),
+			'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
+			'show'=>$user->can('view cash expense categories'),
+			],
 		]
 	];
 	
@@ -4354,14 +4363,9 @@ function getHeaderMenu()
 					'show'=>$user->can('view cash expenses'),
 					'submenu'=>[]
 				],
+				
 				[
-					'title'=>__('Cash Expense Categories'),
-				'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
-				'show'=>$user->can('view cash expense categories'),
-	
-				],
-				[
-					'title'=>__('Lc Settlement Internal Transfer'),
+					'title'=>__('LC Settlement Internal Transfer'),
 					'link'=>route('lc-settlement-internal-money-transfers.index', ['company'=>$companyId]),
 					'show'=>$user->can('view lc settlement internal transfer'),
 					'submenu'=>[]
@@ -4407,6 +4411,12 @@ function getHeaderMenu()
 							'show'=>$canViewWeeklyCashFlow ,
 							'submenu'=>[]
 						],
+						// [
+						// 	'title'=>__('Contract Cash Flow Report'),
+						// 	'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
+						// 	'show'=>$canViewContractCashFlow ,
+						// 	'submenu'=>[]
+						// ],
 						[
 							'title'=>__('Withdrawals Settlement Report'),
 							'link'=>route('view.withdrawals.settlement.report',['company'=>$companyId]),
@@ -4414,7 +4424,11 @@ function getHeaderMenu()
 							'submenu'=>[]
 						]
 					]
-						],
+						],[
+					'title'=>__('Opening Balances'),
+					'link'=>'#',
+					'show'=>true ,
+					'submenu'=>[
 						[
 							'title'=>__('Cash & Cheques Opening Balance'),
 						'link'=>route('opening-balance.index', ['company'=>$companyId]),
@@ -4433,6 +4447,9 @@ function getHeaderMenu()
 							'link'=>route('lc-opening-balance.index',['company'=>$companyId]),
 							'show'=>true
 								]
+					]
+						],
+						
 
 			]
 		]

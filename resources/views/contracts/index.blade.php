@@ -321,7 +321,8 @@ use App\Models\Contract;
                             @endslot
                             @slot('table_body')
                             <tr class=" text-center first-tr-bg ">
-                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
+                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Contract Name') }}</b></td>
+                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Contract Code') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Start Date') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('End Date') }}</b></td>
@@ -354,6 +355,12 @@ use App\Models\Contract;
                                         @endif
                                         <b class="text-capitalize ">{{ $parent['name'] }}</b>
                                     </div>
+                                </td>
+								 <td class="text-center">
+                                    <b class="text-capitalize ">
+                                        <b class="text-capitalize ">{{ $parent['contract_code'] }}</b>
+                                    </b>
+
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize ">
@@ -447,7 +454,7 @@ use App\Models\Contract;
                                                                             </div>
                                                                         </div>
                                                                     </td>
-
+																	
 
 
 
@@ -471,6 +478,7 @@ use App\Models\Contract;
 
                                     <b class="ml-3">
                                         @if($type == 'Customer')
+										                                        <button  type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="flaticon2-copy"></i> </button>
                                         <button data-toggle="modal" data-target="#details_model{{ $contract->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-eye"></i> </button>
                                         <a href="{{ str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting'])) }}" title="{{ __('Connecting With Supplier Contracts') }}" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a>
                                         @endif
@@ -576,16 +584,15 @@ use App\Models\Contract;
 
                                         <tr>
                                             @if(isset($titleAndValue['so_number'] ))
-                                            <td>{{ __('So Number') }}</td>
+                                            <td>{{ __('Sales Order Number') }}</td>
                                             <td>{{ $titleAndValue['so_number'] }}</td>
                                             @elseif(isset($titleAndValue['po_number'] ))
-                                            <td>{{ __('Po Number') }}</td>
+                                            <td>{{ __('Purchase Order Number') }}</td>
                                             <td>{{ $titleAndValue['po_number'] }}</td>
                                             @endif
 
                                             <td>{{ __('Amount') }}</td>
                                             <td>{{ $titleAndValue['amount'] }}</td>
-
                                         </tr>
 
                                     </table>
