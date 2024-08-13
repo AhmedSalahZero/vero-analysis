@@ -791,7 +791,9 @@ use App\Models\MoneyReceived ;
     let oldValForInputNumber = 0;
     $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('focus', function() {
         oldValForInputNumber = $(this).val();
-        $(this).val('')
+		if(isNumeric(oldValForInputNumber)){
+        	$(this).val('')
+		}
     })
     $('input:not([placeholder]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([readonly]):not(.exclude-text):not(.date-input)').on('blur', function() {
 
