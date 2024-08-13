@@ -177,11 +177,11 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                    <select  data-current-selected="{{ isset($model) && $model->getBeneficiaryId() == $customer->getId() ? $model->getBeneficiaryId() : 0  }}" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                                         {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                                        @foreach($beneficiaries as $customer)
-                                                        <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option>
-                                                        @endforeach
+                                                        {{-- @foreach($beneficiaries as $customer) --}}
+                                                        {{-- <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option> --}}
+                                                        {{-- @endforeach --}}
                                                     </select>
                                                 </div>
                                             </div>
@@ -616,6 +616,18 @@ use App\Models\LetterOfGuaranteeIssuance;
                         }
                         , type: "GET"
                         , success: function(res) {
+							let customerOptions = '';
+							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
+							
+							for(var customerId in res.customers ){
+								var customerName = res.customers[customerId];
+								var isSelected =  customerId  == currentSelectedCustomerId  ? 'selected' :'';
+								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
+							}
+							console.log('current selected',currentSelectedCustomerId);
+							$('select#customer_name').empty().append(customerOptions).trigger('change');
+							
+							
                             $('#limit-id').val(res.limit).prop('disabled', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('disabled', true)

@@ -7,9 +7,10 @@ use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
+use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -191,6 +192,15 @@ class LetterOfGuaranteeFacilityController
 	
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
 		$selectedLgType = $request->get('lgType');
+		$isBidBond = $selectedLgType == 'bid-bond'  ;
+		$customersArr =   Partner::onlyCustomers()->onlyForCompany($company->id)
+		->when(!$isBidBond,function(Builder $builder){
+			$builder->onlyThatHaveContracts();
+		})
+		->pluck('name','id')
+		->toArray();
+		
+		
 		$currentLgOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
         $letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
@@ -236,7 +246,8 @@ class LetterOfGuaranteeFacilityController
             'min_lg_commission_rate'=>$minLgCommissionRateForCurrentLgType,
 			'lg_commission_rate'=>$lgCommissionRate , 
             'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,
-            'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType
+            'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType,
+			'customers'=>$customersArr
 
 		]);
 	}
