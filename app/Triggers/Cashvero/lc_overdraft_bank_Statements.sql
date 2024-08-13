@@ -331,7 +331,7 @@
 				delimiter // 
 				create  trigger insert_into_overdraft_withdrawal_after_insert_lc_overdraft after insert on `lc_overdraft_bank_statements` for each row 
 				begin 
-					declare _date_for_settlement date default new.date ;
+					declare _date_for_settlement date default ifnull(new.outstanding_withdrawal_date,new.date) ;
 					-- if  new.type = 'payable_cheque'
 					-- then 
 					-- select actual_payment_date into  _date_for_settlement from payable_cheques join money_payments on 
