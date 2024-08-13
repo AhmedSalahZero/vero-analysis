@@ -102,7 +102,7 @@ class LetterOfCreditIssuanceController
 		
 		return [
 			'financialInstitutionBanks'=> FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get(),
-			'beneficiaries'=>Partner::onlyCustomers()->onlyForCompany($company->id)->get(),
+			'beneficiaries'=>Partner::onlySuppliers()->onlyForCompany($company->id)->get(),
 			'contracts'=>Contract::onlyForCompany($company->id)->get(),
 			'purchaseOrders'=>PurchaseOrder::onlyForCompany($company->id)->get(),
 			'accountTypes'=> AccountType::onlyCurrentAccount()->get(),

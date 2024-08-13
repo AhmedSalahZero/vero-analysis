@@ -642,7 +642,6 @@ class MoneyReceivedController
 	
 		$data['account_number'] = is_null($data['account_number']) ? $request->get('account_number') : $data['account_number'] ;
 		$data['status'] = Cheque::UNDER_COLLECTION;
-		// dd($data,$request->all());
 		
 		foreach($moneyReceivedIds as $moneyReceivedId){
 			/**
