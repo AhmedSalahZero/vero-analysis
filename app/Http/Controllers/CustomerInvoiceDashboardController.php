@@ -536,7 +536,9 @@ class CustomerInvoiceDashboardController extends Controller
 			$builder->whereIn('id',(array) $partnerId )->where('is_customer',$isCustomer)->where('is_supplier',$isSupplier);
 		})->whereHas($modelType,function(Builder $builder) use($currency){
 			$builder->where('currency',$currency);
-		})->pluck('name','id')->toArray();
+		})
+		->where('company_id',$company->id)
+		->pluck('name','id')->toArray();
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
