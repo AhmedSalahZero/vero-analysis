@@ -4206,6 +4206,10 @@ function getHeaderMenu()
 				'title'=>__('Business Sectors'),
 				'link'=>'#',
 				'show'=>true 
+			],[
+				'title'=>__('Sales Channels'),
+				'link'=>'#',
+				'show'=>true 
 			],
 			[
 				'title'=>__('Branches'),
