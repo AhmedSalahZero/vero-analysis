@@ -351,6 +351,7 @@
 				delimiter // 
 				create  trigger insert_into_overdraft_withdrawal_after_insert_commercial_paper after insert on `overdraft_against_commercial_paper_bank_statements` for each row 
 				begin 
+			
 					declare _date_for_settlement date default ifnull(new.outstanding_withdrawal_date,new.date) ;
 					if  new.type = 'payable_cheque'
 					then 
