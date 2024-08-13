@@ -24,9 +24,9 @@ trait HasOutstandingBreakdown
 	{
 		return $this->hasMany(OutstandingBreakdown::class , 'model_id','id')->where('model_type',self::class);	
 	}
-	
 	public function storeOutstandingBreakdown(Request $request , Company $company)
 	{
+		$balanceDate = $request->get('balance_date');
 		$outstandingBalance = $request->get('outstanding_balance',0);
 		$this->outstandingBreakdowns()->delete();
 		$this->bankStatements()->where('type','outstanding_balance')->delete();
@@ -43,24 +43,25 @@ trait HasOutstandingBreakdown
 				$outstandingBreakdownArr['company_id'] = $company->id ;
 				$outstandingBreakdownArr['model_type'] = get_class($this);
 				$outstandingBreakdownArr['amount'] = number_unformat($outstandingBreakdownArr['amount']);
-				$balanceDate = Carbon::make($settlementDate)->format('Y-m-d');
+				$withdrawalDate = Carbon::make($settlementDate)->format('Y-m-d');
 				$this->bankStatements()->create([
+				'outstanding_withdrawal_date'=> $withdrawalDate , 
 				'type'=>'outstanding_balance',
 				'money_received_id'=>0 ,
 				'company_id'=>$company->id ,
 				'date'=>$balanceDate,
 				'limit'=>$this->getLimit(),
 				'beginning_balance'=>0 ,
-				
 				'debit'=>0,
 				'credit'=> $outstandingBreakdownArr['amount'],
 				'is_credit'=>1 ,
 				'is_debit'=>0 
-				]);
+			]);
 			
-				$this->outstandingBreakdowns()->create($outstandingBreakdownArr);
+			$this->outstandingBreakdowns()->create($outstandingBreakdownArr);
 			}
 				
 		}
+		dd('good');
 	}
 }
