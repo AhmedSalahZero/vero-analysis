@@ -267,12 +267,7 @@ use App\Models\MoneyReceived ;
                                         @foreach([
                                         $salesOrderOrPurchaseNumberText =>'col-md-1',
                                         __('Amount')=>'col-md-1',
-
-
                                         __('Insert Execution Details')=>'col-md-1'
-
-
-
                                         ] as $title=>$classes)
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
@@ -314,17 +309,7 @@ use App\Models\MoneyReceived ;
                                             </td>
 
 
-                                            {{-- <td>
-                                                <div class="date-max-width">
-                                                    <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($salesOrder) ?  formatDateForDatePicker($salesOrder->getStartDate()) :  formatDateForDatePicker(now())" :label="__('Start Date')" :id="'start_date'" name="start_date"></x-calendar>
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="date-max-width">
-                                                    <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($salesOrder) ?  formatDateForDatePicker($salesOrder->getEndDate()) :  formatDateForDatePicker(now())" :label="__('End Date')" :id="'end_date'" name="end_date"></x-calendar>
-                                                </div>
-                                            </td> --}}
+                                         
 
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-active js-show-execution-percentage-modal">{{ __('Insert Execution Details') }}</button>
