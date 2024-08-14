@@ -796,7 +796,7 @@ class MoneyReceivedController
 		}
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 		if(!$accountNumberModel){
-			if(!$accountType){
+			if(!$accountType || !$accountNumberModel){
 				return response()->json(
 					[
 						'status'=>true ,
