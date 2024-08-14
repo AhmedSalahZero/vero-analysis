@@ -96,7 +96,7 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 		->where('financial_institution_id',$financialInstitutionId)->get();
 		foreach($overdraftAgainstAssignmentOfContracts as $overdraftAgainstAssignmentOfContract){
 			$limitStatement = $overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankLimits->sortByDesc('full_date')->first() ;
-			if($limitStatement && $limitStatement->accumulated_limit >0 ){
+			if(($limitStatement && $limitStatement->accumulated_limit >0) || in_array('bank-statement',Request()->segments())){
 				$accounts[$overdraftAgainstAssignmentOfContract->account_number] = $overdraftAgainstAssignmentOfContract->account_number;
 			}
 		}
