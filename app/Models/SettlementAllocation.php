@@ -17,7 +17,7 @@ class SettlementAllocation extends Model
 	
 	public function contract()
 	{
-		return $this->belongsTo(Contract::class,'supplier_contract_id','id');
+		return $this->belongsTo(Contract::class,'contract_id','id');
 	}
 	public function getInvoiceNumber()
 	{

@@ -252,6 +252,10 @@ class Contract extends Model
 	{
 		return number_format($this->getAmount(),0);
 	}
+	public function getAmountWithCurrency()
+	{
+		return $this->getAmountFormatted() . ' ' . $this->getCurrency();
+	}
 	public function getCurrency()
 	{
 		return $this->currency;

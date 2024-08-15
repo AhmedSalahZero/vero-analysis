@@ -685,14 +685,15 @@ $selectedBanks = [];
                             </x-slot>
                             <x-slot name="trs">
                                 @php
-                                $rows = isset($model) ? $model->settlementAllocations :[-1] ;
+                                $rows = [-1] ;
+                           ///     $rows = isset($model) ? $model->settlementAllocations :[-1] ;
 						
                                 @endphp
-                                @foreach( count($rows) ? $rows : [-1] as $currentContract)
+                                @foreach( count($rows) ? $rows : [-1] as $settlementAllocation)
                                 @php
 								$fullPath  = new \App\Models\SettlementAllocation;
-                                if( !($currentContract instanceof $fullPath) ){
-                                unset($currentContract);
+                                if( !($settlementAllocation instanceof $fullPath) ){
+                                unset($settlementAllocation);
                                 }
                                 @endphp
                                 <tr @if($isRepeater) data-repeater-item @endif>
@@ -705,11 +706,11 @@ $selectedBanks = [];
                                         </div>
                                     </td>
                                     <td>
-                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
+                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
                                     </td>
 
                                     <td>
-                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($settlementAllocation) ? $settlementAllocation->id : '' }}" :selectedValue="isset($settlementAllocation) ? $settlementAllocation->id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
                                     </td>
 
                                     <td>
@@ -731,85 +732,15 @@ $selectedBanks = [];
   										<td>
                                         <div class="kt-input-icon ">
                                             <div class="input-group">
-                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
                                             </div>
                                         </div>
                                     </td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                                 </tr>
 								
-								  <tr @if($isRepeater) data-repeater-item @endif>
-
-                                    <td class="text-center">
-                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
-                                        <div class="">
-                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                            </i>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
-                                    </td>
-
-                                    <td>
-                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
-                                    </td>
-
-                                    <td>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code" value="">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="kt-input-icon ">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-amount" value="0">
-                                            </div>
-                                        </div>
-                                    </td>
-                                  
-
-  										<td>
-                                        <div class="kt-input-icon ">
-                                            <div class="input-group">
-                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
-                                            </div>
-                                        </div>
-                                    </td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                </tr>
+							
 								
                                 @endforeach
 
@@ -1087,7 +1018,8 @@ $(function(){
                 for (var contract of res.contracts) {
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
-                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+				parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+				parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
