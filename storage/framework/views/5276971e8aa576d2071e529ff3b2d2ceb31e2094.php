@@ -728,11 +728,11 @@ $selectedBanks = [];
                                     </td>
                                     <td>
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($currentContract) && $currentContract->client ? $currentContract->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => 'select2-select suppliers-or-customers-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'selectedValue' => isset($currentContract) && $currentContract->client ? $currentContract->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => ' suppliers-or-customers-js ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select suppliers-or-customers-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['insideModalWithJs' => true,'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' suppliers-or-customers-js ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -742,11 +742,11 @@ $selectedBanks = [];
 
                                     <td>
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['dataCurrentSelected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => isset($currentContract) ? $currentContract->id : '','options' => [],'addNew' => false,'class' => 'select2-select  contracts-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'dataCurrentSelected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => isset($currentContract) ? $currentContract->id : '','options' => [],'addNew' => false,'class' => ' contracts-js   ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['data-current-selected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) ? $currentContract->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  contracts-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['insideModalWithJs' => true,'data-current-selected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) ? $currentContract->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' contracts-js   ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -1103,6 +1103,7 @@ $(function(){
     $(function() {
         $('select.suppliers-or-customers-js').trigger('change')
     })	
+
 	</script>
 	
 <?php $__env->stopSection(); ?>
