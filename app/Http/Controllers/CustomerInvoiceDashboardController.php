@@ -62,7 +62,7 @@ class CustomerInvoiceDashboardController extends Controller
 		$date = $date ? HDate::formatDateFromDatePicker($date) : $currentDate;
 		$year = explode('-',$date)[0];
 		$date = Carbon::make($date)->format('Y-m-d');
-		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
+		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
 	
 		$details = [];
 		
@@ -416,7 +416,7 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function viewForecastDashboard(Company $company, Request $request)
     {
-		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
+		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
 		$details = [];
 		$dashboardResult = [];
 		$overdraftAccountTypes = AccountType::onlyOverdraftsAccounts()->get();
