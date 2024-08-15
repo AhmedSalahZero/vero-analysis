@@ -107,7 +107,7 @@ class ContractsController
 	public function store(Request $request, Company $company,string $type){
 			$contract = new Contract ;
 			$contract->storeBasicForm($request);
-			$contract->relateWithContracts($request->get('contracts',[]));
+			// $contract->relateWithContracts($request->get('contracts',[]));
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function edit(Request $request,Company $company,Contract $contract,string $type)
@@ -117,7 +117,7 @@ class ContractsController
 	public function update(Company $company , Request $request , Contract $contract,string $type){
 		
 			$contract->storeBasicForm($request);
-			$contract->syncWithContracts($request->get('contracts',[]));
+			// $contract->syncWithContracts($request->get('contracts',[]));
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function destroy(Company $company , Request $request , Contract $contract,string $type){
