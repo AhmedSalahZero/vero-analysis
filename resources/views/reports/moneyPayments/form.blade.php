@@ -685,12 +685,12 @@ $selectedBanks = [];
                             </x-slot>
                             <x-slot name="trs">
                                 @php
-                                $rows = isset($model) ? $model->contracts :[-1] ;
+                                $rows = isset($model) ? $model->settlementAllocations :[-1] ;
 						
                                 @endphp
                                 @foreach( count($rows) ? $rows : [-1] as $currentContract)
                                 @php
-								$fullPath  = new \App\Models\Contract ;
+								$fullPath  = new \App\Models\SettlementAllocation;
                                 if( !($currentContract instanceof $fullPath) ){
                                 unset($currentContract);
                                 }
@@ -705,11 +705,11 @@ $selectedBanks = [];
                                         </div>
                                     </td>
                                     <td>
-                                        <x-form.select :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
+                                        <x-form.select :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
                                     </td>
 
                                     <td>
-                                        <x-form.select data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="contract_id"></x-form.select>
+                                        <x-form.select data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
                                     </td>
 
                                     <td>
@@ -731,7 +731,7 @@ $selectedBanks = [];
   										<td>
                                         <div class="kt-input-icon ">
                                             <div class="input-group">
-                                                <input  type="text" name="amount" class="form-control " value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
                                             </div>
                                         </div>
                                     </td>
@@ -844,7 +844,7 @@ $selectedBanks = [];
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                    <button type="button" class="btn btn-primary ">{{ __('Save') }}</button>
+                                                    {{-- <button type="button" class="btn btn-primary ">{{ __('Save') }}</button> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -963,8 +963,6 @@ $selectedBanks = [];
         const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
         const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
         const amountAfterExchangeRate = amount * exchangeRate;
-        console.log(moneyType, amount, exchangeRate, amountAfterExchangeRate)
-        // console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })
@@ -1010,7 +1008,43 @@ $(function(){
 
 
 <script>
-	
+ $(document).on('change', 'select.suppliers-or-customers-js', function() {
+        const parent = $(this).closest('tr')
+        const partnerId = parseInt($(this).val())
+        const model = $('#model_type').val()
+        let inEditMode = "{{ $inEditMode ?? 0 }}";
+
+        $.ajax({
+            url: "{{ route('get.contracts.for.customer.or.supplier',['company'=>$company->id]) }}"
+            , data: {
+                partnerId
+                , model
+                , inEditMode
+            }
+            , type: "get"
+            , success: function(res) {
+                let contracts = '';
+                const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
+                for (var contract of res.contracts) {
+                    contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
+                }
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+            }
+        })
+    })
+	$(document).on('change', 'select.contracts-js', function() {
+        const parent = $(this).closest('tr')
+        const code = $(this).find('option:selected').data('code')
+        const amount = $(this).find('option:selected').data('amount')
+        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        $(parent).find('.contract-code').val(code)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
+        // $(parent).find('.contract-currency').val(currency)
+
+    })
+    $(function() {
+        $('select.suppliers-or-customers-js').trigger('change')
+    })	
 	</script>
 	
 @endsection
