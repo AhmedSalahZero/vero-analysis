@@ -568,8 +568,341 @@ $selectedBanks = [];
 
             <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
-                    <?php echo SupplierInvoice::getSettlementsTemplate(); ?>
+              
+			  <div class=" kt-margin-b-10 border-class">
+		<div class="form-group row align-items-end">
 
+			<div class="col-md-1 width-10">
+				<label> <?php echo e(__('Invoice Number')); ?> </label>
+				<div class="kt-input-icon">
+					<div class="kt-input-icon">
+						<div class="input-group date">
+							<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-md-1 width-8">
+				<label> <?php echo e(__('Invoice Date')); ?>  </label>
+				<div class="kt-input-icon">
+					<div class="input-group date">
+						<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-1 width-8">
+				<label> <?php echo e(__('Due Date')); ?> </label>
+				<div class="kt-input-icon">
+					<div class="input-group date">
+						<input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
+						
+					</div>
+				</div>
+			</div>
+			
+
+			<div class="col-md-1 width-8">
+				<label> <?php echo e(__('Currency')); ?> </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
+				</div>
+			</div>
+
+			<div class="col-md-1 width-12">
+				<label>  <?php echo e(__('Net Invoice Amount')); ?> </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
+				</div>
+			</div>
+
+
+			<div class="col-md-2 width-12">
+				<label> <?php echo e(__('Paid Amount')); ?> </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
+				</div>
+			</div>
+
+			<div class="col-md-2 width-12">
+				<label>  <?php echo e(__('Net Balance')); ?>  </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
+				</div>
+			</div>
+
+
+
+			<div class="col-md-2 width-12">
+				<label> <?php echo e(__('Settlement Amount')); ?> <span class="text-danger ">*</span></label>
+				<div class="kt-input-icon">
+					<input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+				</div>
+			</div>
+			<div class="col-md-2 width-12">
+				<label> <?php echo e(__('Withhold Amount')); ?>  <span class="text-danger ">*</span> </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
+				</div>
+			</div>
+			<div class="col-md-1">
+			   <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
+                                            <?php echo e(__('Allocate')); ?>
+
+                                        </button>
+										
+										  <div class="modal fade modal-class-js"  id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel"><?php echo e(__('Allocate')); ?></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                   
+                    <div class="form-group row justify-content-center">
+                        <?php
+                        $index = 0 ;
+                        ?>
+
+                        
+                        <?php
+                        $tableId = 'allocations';
+
+                        $repeaterId = 'm_repeater--0';
+
+                        ?>
+                        
+                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initialJs' => false,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component->withName('tables.repeater-table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+                             <?php $__env->slot('ths'); ?> 
+                                <?php $__currentLoopData = [
+                                __('Customer')=>'col-md-3',
+                                __('Contract Name')=>'col-md-3',
+                                __('Contract Code')=>'col-md-2',
+                                __('Contract Amount')=>'col-md-2 custom-contract-amount-css',
+                                __('Allocate Amount')=>'col-md-2 custom-contract-amount-css',
+                                ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ''.e($classes).'','title' => $title]]); ?>
+<?php $component->withName('tables.repeater-table-th'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['class' => ''.e($classes).'','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($title)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                             <?php $__env->endSlot(); ?>
+                             <?php $__env->slot('trs'); ?> 
+                                <?php
+                                $rows = isset($model) ? $model->contracts :[-1] ;
+						
+                                ?>
+                                <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currentContract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+								$fullPath  = new \App\Models\Contract ;
+                                if( !($currentContract instanceof $fullPath) ){
+                                unset($currentContract);
+                                }
+                                ?>
+                                <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+
+                                    <td class="text-center">
+                                        <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($currentContract) && $currentContract->client ? $currentContract->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => 'select2-select suppliers-or-customers-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'name' => 'partner_id']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select suppliers-or-customers-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                    </td>
+
+                                    <td>
+                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['dataCurrentSelected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => isset($currentContract) ? $currentContract->id : '','options' => [],'addNew' => false,'class' => 'select2-select  contracts-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'name' => 'contract_id']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['data-current-selected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) ? $currentContract->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  contracts-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                    </td>
+
+                                    <td>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-code" value="">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="kt-input-icon ">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-amount" value="0">
+                                            </div>
+                                        </div>
+                                    </td>
+                                  
+
+  										<td>
+                                        <div class="kt-input-icon ">
+                                            <div class="input-group">
+                                                <input  type="text" name="amount" class="form-control " value="<?php echo e(isset($currentContract) ? $currentContract->pivot->amount : 0); ?>">
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+                             <?php $__env->endSlot(); ?>
+
+
+
+
+                         <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                    <button type="button" class="btn btn-primary "><?php echo e(__('Save')); ?></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+			</div>
+
+		</div>
+
+	</div>
+			  
+			  
                 </div>
             </div>
 
@@ -729,7 +1062,15 @@ $(function(){
 		$('select.currency-class').trigger('change')
 			$('.recalculate-amount-class').trigger('change')
 	})
+	
+		
 </script>
+
+
+<script>
+	
+	</script>
+	
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/moneyPayments/form.blade.php ENDPATH**/ ?>

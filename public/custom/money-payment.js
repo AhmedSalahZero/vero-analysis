@@ -189,9 +189,15 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			
 			// second add settlements repeater 
 			var lastNode = $('.js-template .js-duplicate-node').clone(true)
+			
 			$('.js-append-to').empty()
 			for (var i in res.invoices) {
 				var invoiceNumber = res.invoices[i].invoice_number
+				
+				lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',invoiceNumber));
+				lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',invoiceNumber));
+			//console.log($(lastNode).find('[name]'))
+				
 				var currency = res.invoices[i].currency
 				var netInvoiceAmount = res.invoices[i].net_invoice_amount
 				var netBalance = res.invoices[i].net_balance
@@ -201,9 +207,12 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var settlementAmount = res.invoices[i].settlement_amount
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
+				
 				domInvoiceNumber.val(invoiceNumber)
 				domInvoiceNumber.attr('name', 'settlements[' + invoiceNumber + '][invoice_number]')
+				
 				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceNumber == specificInvoiceNumber)) {
+
 					$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-invoice-due-date').val(invoiceDueDate)
 					$(lastNode).find('.js-net-invoice-amount').val(number_format(netInvoiceAmount, 2))
@@ -219,16 +228,76 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
+					// $(lastNode).find('.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][')
+					var replaceWith = $(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
+					console.log('-----')
+					console.log(replaceWith)
+					console.log('--')
+					$(lastNode).find('select.suppliers-or-customers-js').attr('name',replaceWith)
+					
 					
 					$('.js-append-to').append(lastNode)
+					
 					var lastNode = $('.js-template .js-duplicate-node').clone(true)
 		
 				}
 
 			}
 			if(res.invoices.length == 0){
+		
+		
+				
 				$('.js-append-to').append(lastNode)
 			}
+			console.log('from 33')
+			$('.repeater-class').repeater({            
+				initEmpty: false,
+				  isFirstItemUndeletable: true,
+				defaultValues: {
+					'text-input': 'foo'
+				},
+				 
+				show: function() {
+					$(this).slideDown();   
+					
+					$(this).find('[name]').attr('name',$(this).find('[name]').attr('name').replace('allocations[','allocations['+invoiceNumber+']['));
+					  
+					$('input.trigger-change-repeater').trigger('change')   
+					 $(this).find('.only-month-year-picker').each(function(index,dateInput){
+						reinitalizeMonthYearInput(dateInput)
+					 });
+					 $(document).find('.datepicker-input:not(.only-month-year-picker)').datepicker({
+								dateFormat: 'mm-dd-yy'
+								, autoclose: true
+							})
+					$('input:not([type="hidden"])').trigger('change');
+					$(this).find('.dropdown-toggle').remove();
+					$(this).find('select.repeater-select').selectpicker("refresh");
+						
+				},
+	
+				hide: function(deleteElement) {
+					if($('#first-loading').length){
+							$(this).slideUp(deleteElement,function(){
+					   
+								   deleteElement();
+								//   $('select.main-service-item').trigger('change');
+						});
+					}
+					else{
+						 if(confirm('Are you sure you want to delete this element?')) {
+						$(this).slideUp(deleteElement,function(){
+					   
+								   deleteElement();
+								  $('select.main-service-item').trigger('change');
+								$('input.trigger-change-repeater').trigger('change')                         
+								  
+						});
+					}         
+					}
+						   }
+			});
+	
 			$('.js-append-to').find('.js-settlement-amount:first-of-type').trigger('change')
 
 		})

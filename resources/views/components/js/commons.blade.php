@@ -54,7 +54,7 @@
                  $(document).on('change','select:visible[class*="revenue_business_line_class"]',function(event){
                     if($(this).val() && $(this).val() != 'Add New')
                     {
-                        // console.log($(this).closest('.repeater-class').repeaterVal());
+                    
                        // if in repeater so the name attribute has numeric [0] 
 
                        let repeaterFieldIndex = $(this).attr('name').match(/\d+/) ;

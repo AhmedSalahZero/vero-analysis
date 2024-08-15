@@ -1171,14 +1171,12 @@
 "Bank Deposit From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",
 "Incoming Transfer From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",
 "Outgoing Transfer To :name Paid Invoices [ :numbers ]":"كاش من :name لدفع الفواتير [ :numbers ]",
-"Outgoing Transfer To Paid Invoices [ :numbers ]":"كاش من لدفع الفواتير [ :numbers ]",
 "Sell For :amount :currency To :to Account No :no":"الي بنك رقم حساب :to :no",
 "From :to Account No :no":"من :from  حساب رقم :to",
 "Sold :amount :currency From :from Account No :no To Safe":"من :from  حساب رقم :no الي الخزنة",
 "From Safe To :to":"من الخزنة الي بنك :to",
 "From Safe To Safe":"من خزنة الي خزنة",
 "Cash Payment To :name Paid Invoices [ :numbers ]":"دفع كاش الي :name لدفع الفواتير [ :numbers ]",
-"Cash Payment To Paid Invoices [ :numbers ]":"دفع كاش الي لدفع الفواتير [ :numbers ]",
 "To :branchName Safe":"الي الخزنة :branchName",
 "Sold :amount :currency From :branchName Safe":"من خزنة :branchName",
 "Cheque Collection Fees - Cheque [ :number ]":"مصاريف تحصيل الشيكات - شيك رقم [ :number ]",
@@ -1187,6 +1185,9 @@
 "Commission Fees [ :lgType ] Transaction Name [ :transactionName ]":"عمولة [ :lgType ] عن العملية [ :transactionName ]",
 "Cash Cover [ :lcType ] Transaction Name [ :transactionName ]":"غطاء نقدي [ :lcType ] عن العملية [ :transactionName ]",
 "Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]":"مصاريف إصدار [ :lcType ] عن العملية [ :transactionName ]",
-"Commission Fees [ :lcType ] Transaction Name [ :transactionName ]":"عمولة [ :lcType ] عن العملية [ :transactionName ]"
+"Commission Fees [ :lcType ] Transaction Name [ :transactionName ]":"عمولة [ :lcType ] عن العملية [ :transactionName ]",
+"Cash Payment To Pay :expenseName":"دفع ندقي للمصروف :expenseName",
+"Outgoing Transfer To Pay :expenseName":"تحويل بنكي للمصروف :expenseName",
+"Payable Cheque To Pay :expenseName [ :chequeNumber ]":"صرف شيك للمصروف :expenseName [ :chequeNumber ]"
 
 }

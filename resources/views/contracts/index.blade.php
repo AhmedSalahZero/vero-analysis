@@ -384,7 +384,7 @@ use App\Models\Contract;
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize  ">
-                                        <b class="text-capitalize">{{ $parent['amount'] }}</b>
+                                        <b class="text-capitalize">{{ $parent['amount'] .' '. $parent['currency'] }}</b>
                                     </b>
 
                                 </td>
@@ -392,7 +392,7 @@ use App\Models\Contract;
 
                                 <td class="text-left text-capitalize">
 
-                                    <div class="modal fade " id="details_model{{ $contract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    {{-- <div class="modal fade " id="details_model{{ $contract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                             <div class="modal-content" method="post">
 
@@ -472,15 +472,15 @@ use App\Models\Contract;
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
 
 
                                     <b class="ml-3">
                                         @if($type == 'Customer')
 										                                        <button  type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="flaticon2-copy"></i> </button>
-                                        <button data-toggle="modal" data-target="#details_model{{ $contract->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-eye"></i> </button>
-                                        <a href="{{ str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting'])) }}" title="{{ __('Connecting With Supplier Contracts') }}" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a>
+                                        {{-- <button data-toggle="modal" data-target="#details_model{{ $contract->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-eye"></i> </button> --}}
+                                        {{-- <a href="{{ str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting'])) }}" title="{{ __('Connecting With Supplier Contracts') }}" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a> --}}
                                         @endif
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             @if($currentType == Contract::RUNNING_AND_AGAINST)
@@ -592,7 +592,7 @@ use App\Models\Contract;
                                             @endif
 
                                             <td>{{ __('Amount') }}</td>
-                                            <td>{{ $titleAndValue['amount'] }}</td>
+                                            <td>{{ $titleAndValue['amount']  }}</td>
                                         </tr>
 
                                     </table>

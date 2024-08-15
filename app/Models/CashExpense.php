@@ -21,16 +21,16 @@ class CashExpense extends Model
 	public static function generateComment(self $cashExpense,string $lang)
 	{
 		// $supplierName = $cashExpense->getSupplierName();
-		$paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
+		// $paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		
 		if($cashExpense->isPayableCheque()){
-			return __('Payable Cheque To With Number [:number ] Paid Invoices [ :numbers ]',['number'=>$cashExpense->getPayableChequeNumber()?:Request('cheque_number'),'numbers'=>$paidInvoiceNumbers],$lang) ;
+			return __('Payable Cheque To Pay :expenseName [ :chequeNumber ]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'chequeNumber'=>Request('cheque_number')],$lang) ;
 		}
 		if($cashExpense->isCashPayment()){
-			return __('Cash Payment To Paid Invoices [ :numbers ]',['numbers'=>$paidInvoiceNumbers],$lang) ;
+			return __('Cash Payment To Pay :expenseName',['expenseName'=>$cashExpense->getExpenseCategoryName()],$lang) ;
 		}
 		if($cashExpense->isOutgoingTransfer()){
-			return __('Outgoing Transfer To Paid Invoices [ :numbers ]',['numbers'=>$paidInvoiceNumbers],$lang) ;
+			return __('Outgoing Transfer To Pay :expenseName',['expenseName'=>$cashExpense->getExpenseCategoryName()],$lang) ;
 		}
 	}
 	protected static function booted()
@@ -145,6 +145,7 @@ class CashExpense extends Model
 
 	public function getExpenseCategoryName():string
 	{
+	
 		return $this->cashExpenseCategoryName && $this->cashExpenseCategoryName->cashExpenseCategory ? $this->cashExpenseCategoryName->cashExpenseCategory->getName() : __('N/A') ;
 	}
 	public function getExpenseName()

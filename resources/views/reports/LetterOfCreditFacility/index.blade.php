@@ -134,7 +134,7 @@
                                                                         <th class="text-center">{!! __('LC Type') !!} </th>
                                                                         <th class="text-center">{!! __('Cash Cover') !!} </th>
                                                                         <th class="text-center"> {!! __('Commission %') !!} </th>
-                                                                        <th class="text-center">{{ __('Commission Interval') }}</th>
+                                                                        {{-- <th class="text-center">{{ __('Commission Interval') }}</th> --}}
                                                                         <th class="text-center"> {!! __('Min Commission Fees') !!} </th>
                                                                         <th class="text-center"> {!! __('Issuance Fees') !!} </th>
 
@@ -171,14 +171,6 @@
                                                                         </td>
 
 
-                                                                        <td>
-                                                                            <div class="kt-input-icon">
-                                                                                <div class="input-group">
-                                                                                    <input disabled type="text" class="form-control text-center text-capitalize" value="{{ $termAndCondition->getCommissionInterval() }}">
-
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
 
                                                                         <td>
                                                                             <div class="kt-input-icon">

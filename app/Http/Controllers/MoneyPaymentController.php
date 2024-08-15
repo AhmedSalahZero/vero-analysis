@@ -231,6 +231,8 @@ class MoneyPaymentController
 
 	public function create(Company $company,$supplierInvoiceId = null)
 	{
+		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
+		
 		$currencies = DB::table('supplier_invoices')
 		->when($supplierInvoiceId,function($q) use($supplierInvoiceId) {
 			$q->where('id',$supplierInvoiceId);
@@ -272,7 +274,8 @@ class MoneyPaymentController
 			'currencies'=>$currencies,
 			'accountTypes'=>$accountTypes,
 			'suppliers'=>$suppliers,
-			'contracts'=>$contracts
+			'contracts'=>$contracts,
+			'clientsWithContracts'=>$clientsWithContracts
 		]);
     }
 
@@ -354,6 +357,7 @@ class MoneyPaymentController
 	}
 
 	public function store(Company $company , StoreMoneyPaymentRequest $request){
+		dd($request->all());
 		$moneyType = $request->get('type');
 		$bankId = null;
 		$contractId = $request->get('contract_id');
@@ -502,6 +506,7 @@ class MoneyPaymentController
 
 	}
 	public function edit(Company $company , Request $request , moneyPayment $moneyPayment ,$supplierInvoiceId = null){
+		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		$currencies = DB::table('customer_invoices')
 		->select('currency')
 		->where('company_id',$company->id)
@@ -551,7 +556,8 @@ class MoneyPaymentController
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'model'=>$moneyPayment,
 			'singleModel'=>$supplierInvoiceId,
-			'currencies'=>$currencies
+			'currencies'=>$currencies,
+			'clientsWithContracts'=>$clientsWithContracts 
 		]);
 
 	}

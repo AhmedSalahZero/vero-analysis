@@ -103,10 +103,10 @@ class LetterOfCreditFacilityController
 			$currentCashCover = $termAndConditionArr['cash_cover_rate'];
 			
 			$currentLcType = $termAndConditionArr['lc_type'] ;
-			if($currentOutstandingBalance){
+			// if($currentOutstandingBalance){
 				$letterOfCreditFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
-			}
+			// }
 			if($currentOutstandingBalance > 0){
 				$letterOfCreditFacility->handleLetterOfCreditStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
 				

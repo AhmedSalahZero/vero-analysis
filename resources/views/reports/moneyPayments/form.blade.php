@@ -562,7 +562,300 @@ $selectedBanks = [];
 
             <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
-                    {!! SupplierInvoice::getSettlementsTemplate() !!}
+              
+			  <div class=" kt-margin-b-10 border-class">
+		<div class="form-group row align-items-end">
+
+			<div class="col-md-1 width-10">
+				<label> {{ __('Invoice Number') }} </label>
+				<div class="kt-input-icon">
+					<div class="kt-input-icon">
+						<div class="input-group date">
+							<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-md-1 width-8">
+				<label> {{ __('Invoice Date') }}  </label>
+				<div class="kt-input-icon">
+					<div class="input-group date">
+						<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-1 width-8">
+				<label> {{ __('Due Date') }} </label>
+				<div class="kt-input-icon">
+					<div class="input-group date">
+						<input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
+						
+					</div>
+				</div>
+			</div>
+			
+
+			<div class="col-md-1 width-8">
+				<label> {{ __('Currency') }} </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
+				</div>
+			</div>
+
+			<div class="col-md-1 width-12">
+				<label>  {{ __('Net Invoice Amount') }} </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
+				</div>
+			</div>
+
+
+			<div class="col-md-2 width-12">
+				<label> {{ __('Paid Amount') }} </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
+				</div>
+			</div>
+
+			<div class="col-md-2 width-12">
+				<label>  {{ __('Net Balance') }}  </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
+				</div>
+			</div>
+
+
+
+			<div class="col-md-2 width-12">
+				<label> {{ __('Settlement Amount') }} <span class="text-danger ">*</span></label>
+				<div class="kt-input-icon">
+					<input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+				</div>
+			</div>
+			<div class="col-md-2 width-12">
+				<label> {{ __('Withhold Amount') }}  <span class="text-danger ">*</span> </label>
+				<div class="kt-input-icon">
+					<input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
+				</div>
+			</div>
+			<div class="col-md-1">
+			   <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
+                                            {{ __('Allocate') }}
+                                        </button>
+										
+										  <div class="modal fade modal-class-js"  id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Allocate') }}</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                   
+                    <div class="form-group row justify-content-center">
+                        @php
+                        $index = 0 ;
+                        @endphp
+
+                        {{-- start of fixed monthly repeating amount --}}
+                        @php
+                        $tableId = 'allocations';
+
+                        $repeaterId = 'm_repeater--0';
+
+                        @endphp
+                        {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
+                        <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                            <x-slot name="ths">
+                                @foreach([
+                                __('Customer')=>'col-md-3',
+                                __('Contract Name')=>'col-md-3',
+                                __('Contract Code')=>'col-md-2',
+                                __('Contract Amount')=>'col-md-2 custom-contract-amount-css',
+                                __('Allocate Amount')=>'col-md-2 custom-contract-amount-css',
+                                ] as $title=>$classes)
+                                <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
+                                @php
+                                $rows = isset($model) ? $model->contracts :[-1] ;
+						
+                                @endphp
+                                @foreach( count($rows) ? $rows : [-1] as $currentContract)
+                                @php
+								$fullPath  = new \App\Models\Contract ;
+                                if( !($currentContract instanceof $fullPath) ){
+                                unset($currentContract);
+                                }
+                                @endphp
+                                <tr @if($isRepeater) data-repeater-item @endif>
+
+                                    <td class="text-center">
+                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <x-form.select :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
+                                    </td>
+
+                                    <td>
+                                        <x-form.select data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="contract_id"></x-form.select>
+                                    </td>
+
+                                    <td>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-code" value="">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="kt-input-icon ">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-amount" value="0">
+                                            </div>
+                                        </div>
+                                    </td>
+                                  
+
+  										<td>
+                                        <div class="kt-input-icon ">
+                                            <div class="input-group">
+                                                <input  type="text" name="amount" class="form-control " value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                </tr>
+                                @endforeach
+
+                            </x-slot>
+
+
+
+
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                    <button type="button" class="btn btn-primary ">{{ __('Save') }}</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+			</div>
+
+		</div>
+
+	</div>
+			  
+			  
                 </div>
             </div>
 
@@ -711,5 +1004,13 @@ $(function(){
 		$('select.currency-class').trigger('change')
 			$('.recalculate-amount-class').trigger('change')
 	})
+	
+		
 </script>
+
+
+<script>
+	
+	</script>
+	
 @endsection

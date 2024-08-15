@@ -24,6 +24,7 @@ use App\Models\Country;
 use App\Models\CustomerInvoice;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use App\Models\IncomeStatementSubItem;
@@ -4002,10 +4003,11 @@ function getEndYearMonthFrom(int $month, int $year)
 }
 function getCurrenciesForSuppliersAndCustomers():array
 {
-	return array_merge(
-		CustomerInvoice::getCurrencies(),
-		SupplierInvoice::getCurrencies()
-	);
+	return FinancialInstitutionAccount::pluck('currency','currency')->toArray();
+	// return array_merge(
+	// 	CustomerInvoice::getCurrencies(),
+	// 	SupplierInvoice::getCurrencies()
+	// );
 }
 function getCurrencies()
 {
