@@ -636,13 +636,13 @@ $selectedBanks = [];
 
 
 
-			<div class="col-md-2 width-12">
+			<div class="col-md-1">
 				<label> <?php echo e(__('Settlement Amount')); ?> <span class="text-danger ">*</span></label>
 				<div class="kt-input-icon">
 					<input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
 				</div>
 			</div>
-			<div class="col-md-2 width-12">
+			<div class="col-md-1">
 				<label> <?php echo e(__('Withhold Amount')); ?>  <span class="text-danger ">*</span> </label>
 				<div class="kt-input-icon">
 					<input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
