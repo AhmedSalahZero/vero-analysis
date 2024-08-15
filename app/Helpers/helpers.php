@@ -4001,9 +4001,9 @@ function getEndYearMonthFrom(int $month, int $year)
 
 
 }
-function getCurrenciesForSuppliersAndCustomers():array
+function getCurrenciesForSuppliersAndCustomers(int $companyId):array
 {
-	return FinancialInstitutionAccount::pluck('currency','currency')->toArray();
+	return FinancialInstitutionAccount::where('company_id',$companyId)->pluck('currency','currency')->toArray();
 	// return array_merge(
 	// 	CustomerInvoice::getCurrencies(),
 	// 	SupplierInvoice::getCurrencies()
