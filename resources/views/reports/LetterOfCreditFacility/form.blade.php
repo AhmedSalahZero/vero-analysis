@@ -221,22 +221,7 @@
 
 
 
-                            <div class="col-lc-2">
-                                <label >
-								{!! __('Commission <br> Interval') !!}
-                                    @include('star')
-                                </label>
-                                <div class="input-group">
-                                    <select name="termAndConditions[{{ $index }}][commission_interval]" class="form-control repeater-select">
-                                        {{-- <option selected>{{__('Select')}}</option> --}}
-                                        @foreach(getCommissionInterval() as $name => $nameFormatted )
-                                        {{ logger($name) }}
-                                        <option value="{{ $name  }}" @if(isset($termAndCondition) && ($termAndCondition->getCommissionInterval() == $name ) ) selected @elseif(!isset($termAndCondition) && $name == 'monthly') selected @endif > {{ $nameFormatted }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-							
+                         		
 							
 							   <div class="col-2">
                                 <label class="form-label font-weight-bold">	{!! __('Min Commissions <br> Fees Amount') !!}

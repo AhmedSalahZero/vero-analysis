@@ -586,13 +586,11 @@ $selectedBanks = [];
                         <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                             <x-slot name="ths">
                                 @foreach([
-                                // $salesOrderOrPurchaseNumberText =>'col-md-1',
                                 __('Customer')=>'col-md-3',
                                 __('Contract Name')=>'col-md-3',
                                 __('Contract Code')=>'col-md-2',
                                 __('Contract Amount')=>'col-md-2 custom-contract-amount-css',
                                 __('Allocate Amount')=>'col-md-2 custom-contract-amount-css',
-                          //      __('Currency')=>'col-md-1',
                                 ] as $title=>$classes)
                                 <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                 @endforeach
@@ -619,17 +617,17 @@ $selectedBanks = [];
                                         </div>
                                     </td>
                                     <td>
-                                        <x-form.select :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="@if($isRepeater) partner_id @else {{ $tableId }}[0][partner_id] @endif"></x-form.select>
+                                        <x-form.select :pleaseSelect="true" :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="@if($isRepeater) partner_id @else {{ $tableId }}[0][partner_id] @endif"></x-form.select>
                                     </td>
 
                                     <td>
-                                        <x-form.select data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="@if($isRepeater) contract_id @else {{ $tableId }}[0][contract_id] @endif"></x-form.select>
+                                        <x-form.select :pleaseSelect="true"  data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="@if($isRepeater) contract_id @else {{ $tableId }}[0][contract_id] @endif"></x-form.select>
                                     </td>
 
                                     <td>
                                         <div class="kt-input-icon">
                                             <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code" value="''">
+                                                <input disabled type="text" class="form-control contract-code" value="">
                                             </div>
                                         </div>
                                     </td>
@@ -642,7 +640,7 @@ $selectedBanks = [];
                                     </td>
                                   
 
-  <td>
+  										<td>
                                         <div class="kt-input-icon ">
                                             <div class="input-group">
                                                 <input  type="text" name="amount" class="form-control " value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">

@@ -379,7 +379,7 @@ use App\Models\Contract;
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize  ">
-                                        <b class="text-capitalize"><?php echo e($parent['amount']); ?></b>
+                                        <b class="text-capitalize"><?php echo e($parent['amount'] .' '. $parent['currency']); ?></b>
                                     </b>
 
                                 </td>
@@ -387,95 +387,15 @@ use App\Models\Contract;
 
                                 <td class="text-left text-capitalize">
 
-                                    <div class="modal fade " id="details_model<?php echo e($contract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                            <div class="modal-content" method="post">
-
-
-                                                <?php echo csrf_field(); ?>
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" style="color:#0741A5 !important"><?php echo e(__('Connecting With Supplier Contracts Details') . ' [ ' . $contract->getName() .' ]'); ?></h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="customize-elements">
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="text-center main-td-background"><?php echo __('Supplier Name'); ?> </th>
-                                                                    <th class="text-center main-td-background"><?php echo __('Contract Name'); ?> </th>
-                                                                    <th class="text-center main-td-background"><?php echo __('Contract Code'); ?> </th>
-                                                                    <th class="text-center main-td-background"><?php echo __('Contract amount'); ?> </th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-
-
-                                                                <?php $__currentLoopData = $contract->relatedContracts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $realtedContract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="kt-input-icon">
-                                                                            <div class="input-group">
-                                                                                <input disabled type="text" class="form-control" value="<?php echo e($realtedContract->client ? $realtedContract->client->getName()  : __('N/A')); ?>">
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="kt-input-icon">
-                                                                            <div class="input-group">
-                                                                                <input disabled type="text" class="form-control text-center" value="<?php echo e($realtedContract->getName()); ?>">
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-
-
-                                                                    <td>
-                                                                        <div class="kt-input-icon">
-                                                                            <div class="input-group">
-                                                                                <input disabled type="text" class="form-control text-center" value="<?php echo e($realtedContract->getCode()); ?>">
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-
-
-                                                                    <td>
-                                                                        <div class="kt-input-icon">
-                                                                            <div class="input-group">
-                                                                                <input disabled type="text" class="form-control text-center text-capitalize" value="<?php echo e($realtedContract->getAmountFormatted() . ' ' .$realtedContract->getCurrency()); ?>">
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-																	
-
-
-
-
-
-                                                                </tr>
-                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary " data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
 
 
 
                                     <b class="ml-3">
                                         <?php if($type == 'Customer'): ?>
 										                                        <button  type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="flaticon2-copy"></i> </button>
-                                        <button data-toggle="modal" data-target="#details_model<?php echo e($contract->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-eye"></i> </button>
-                                        <a href="<?php echo e(str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting']))); ?>" title="<?php echo e(__('Connecting With Supplier Contracts')); ?>" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a>
+                                        
+                                        
                                         <?php endif; ?>
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <?php if($currentType == Contract::RUNNING_AND_AGAINST): ?>

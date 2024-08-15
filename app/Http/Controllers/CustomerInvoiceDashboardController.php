@@ -63,7 +63,11 @@ class CustomerInvoiceDashboardController extends Controller
 		$year = explode('-',$date)[0];
 		$date = Carbon::make($date)->format('Y-m-d');
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers() ;
+	
 		$details = [];
+		
+		
+		
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
 		
@@ -298,7 +302,7 @@ class CustomerInvoiceDashboardController extends Controller
 			
 			#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
 			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
-			// dd($totalCard);
+		
 		}
         return view('admin.dashboard.cash', [
             'company' => $company,

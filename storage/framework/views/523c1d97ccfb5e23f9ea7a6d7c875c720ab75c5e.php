@@ -308,8 +308,8 @@ td{
                                     </td>
 								   
                                     
-									   <td class="text-nowrap"><?php echo e($cashExpense->getExpenseCategoryName()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($cashExpense->getExpenseName()); ?></td>
+									   <td class="text-nowrap"><?php echo e($money->getExpenseCategoryName()); ?></td>
+                                    <td class="text-nowrap"><?php echo e($money->getExpenseName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($money->getPaymentDateFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getOutgoingTransferDeliveryBankName()); ?></td>
                                     <td><?php echo e($money->getPaidAmountFormatted()); ?></td>
@@ -320,8 +320,8 @@ td{
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$money->isOpenBalance()): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$money->id])); ?>"><i class="fa fa-pen-alt"></i></a>
-<?php endif; ?> 
-<?php if(!$money->isOpenBalance()): ?>
+										<?php endif; ?> 
+										<?php if(!$money->isOpenBalance()): ?>
                                             <a data-toggle="modal" data-target="#delete-transfer-id-<?php echo e($money->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-<?php echo e($money->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -419,7 +419,7 @@ td{
                                 <tr>
 									
 								<td>
-                                        <input style="max-height:25px;" id="cash-send-to-collection<?php echo e($money->id); ?>" type="checkbox" name="second_to_collection[]" value="<?php echo e($money->id); ?>" data-money-type="<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>" class="form-control checkbox js-send-to-collection">
+                                        <input style="max-height:25px;" id="cash-send-to-collection<?php echo e($cashExpense->id); ?>" type="checkbox" name="second_to_collection[]" value="<?php echo e($cashExpense->id); ?>" data-money-type="<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>" class="form-control checkbox js-send-to-collection">
                                     </td>
 									       <td class="text-nowrap"><?php echo e($cashExpense->getExpenseCategoryName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($cashExpense->getExpenseName()); ?></td>

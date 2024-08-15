@@ -4,7 +4,8 @@
 'relationName'=>$relationName,
 'repeaterId'=>$repeaterId,
 'tableName'=>$tableName ?? '',
-'parentClass'=>$parentClass ?? ''
+'parentClass'=>$parentClass ?? '',
+'initialJs'=>true 
 ]); ?>
 <?php foreach (array_filter(([
 	'repeater-with-select2'=>true,
@@ -12,7 +13,8 @@
 'relationName'=>$relationName,
 'repeaterId'=>$repeaterId,
 'tableName'=>$tableName ?? '',
-'parentClass'=>$parentClass ?? ''
+'parentClass'=>$parentClass ?? '',
+'initialJs'=>true 
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -23,7 +25,7 @@
 <?php unset($__defined_vars); ?>
 <div class="col-md-12 <?php echo e($parentClass); ?>  js-parent-to-table" style="display:none">
     <hr style="width:100%;">
-    <table id="<?php echo e($repeaterId); ?>" class="table  <?php echo e($repeaterId); ?> table-white repeater-class repeater <?php echo e($tableName); ?>"  >
+    <table <?php if($initialJs): ?> id="<?php echo e($repeaterId); ?>"  <?php endif; ?> class="table  <?php echo e($repeaterId); ?> table-white repeater-class repeater <?php echo e($tableName); ?>"  >
         <thead>
             <tr>
                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -98,6 +100,7 @@
 
     </table>
 </div>
+<?php if($initialJs): ?>
 <?php $__env->startPush('js_end'); ?>
 	<script>
 	$('#'+"<?php echo e($repeaterId); ?>").repeater({            
@@ -147,4 +150,5 @@
         });
 	</script>
 <?php $__env->stopPush(); ?>
+<?php endif; ?> 
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/tables/repeater-table.blade.php ENDPATH**/ ?>

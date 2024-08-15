@@ -280,8 +280,8 @@ td{
                                     </td>
 								   {{-- <td class="bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td> --}}
                                     {{-- <td class="bank-max-width">{{ $money->getSupplierName() }}</td> --}}
-									   <td class="text-nowrap">{{ $cashExpense->getExpenseCategoryName() }}</td>
-                                    <td class="text-nowrap">{{ $cashExpense->getExpenseName() }}</td>
+									   <td class="text-nowrap">{{ $money->getExpenseCategoryName() }}</td>
+                                    <td class="text-nowrap">{{ $money->getExpenseName() }}</td>
                                     <td class="text-nowrap">{{ $money->getPaymentDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
                                     <td>{{ $money->getPaidAmountFormatted() }}</td>
@@ -292,8 +292,8 @@ td{
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
-@endif 
-@if(!$money->isOpenBalance())
+										@endif 
+										@if(!$money->isOpenBalance())
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -370,7 +370,7 @@ td{
                                 <tr>
 									
 								<td>
-                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $money->id }}" type="checkbox" name="second_to_collection[]" value="{{ $money->id }}" data-money-type="{{ CashExpense::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
+                                        <input style="max-height:25px;" id="cash-send-to-collection{{ $cashExpense->id }}" type="checkbox" name="second_to_collection[]" value="{{ $cashExpense->id }}" data-money-type="{{ CashExpense::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
                                     </td>
 									       <td class="text-nowrap">{{ $cashExpense->getExpenseCategoryName() }}</td>
                                     <td class="text-nowrap">{{ $cashExpense->getExpenseName() }}</td>
