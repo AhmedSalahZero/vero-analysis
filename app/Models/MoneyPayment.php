@@ -479,5 +479,9 @@ class MoneyPayment extends Model
 			return $this->getOutgoingTransferDueDate();
 		}
 		return $this->getDeliveryDate();
+	}
+	public function settlementAllocations()
+	{
+		return $this->hasMany(SettlementAllocation::class,'money_payment_id','id');
 	}	
 }

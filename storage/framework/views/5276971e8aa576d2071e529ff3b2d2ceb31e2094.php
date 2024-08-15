@@ -707,12 +707,12 @@ $selectedBanks = [];
                              <?php $__env->endSlot(); ?>
                              <?php $__env->slot('trs'); ?> 
                                 <?php
-                                $rows = isset($model) ? $model->contracts :[-1] ;
+                                $rows = isset($model) ? $model->settlementAllocations :[-1] ;
 						
                                 ?>
                                 <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currentContract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
-								$fullPath  = new \App\Models\Contract ;
+								$fullPath  = new \App\Models\SettlementAllocation;
                                 if( !($currentContract instanceof $fullPath) ){
                                 unset($currentContract);
                                 }
@@ -728,11 +728,11 @@ $selectedBanks = [];
                                     </td>
                                     <td>
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($currentContract) && $currentContract->client ? $currentContract->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => 'select2-select suppliers-or-customers-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'name' => 'partner_id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($currentContract) && $currentContract->client ? $currentContract->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => 'select2-select suppliers-or-customers-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select suppliers-or-customers-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select suppliers-or-customers-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -742,11 +742,11 @@ $selectedBanks = [];
 
                                     <td>
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['dataCurrentSelected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => isset($currentContract) ? $currentContract->id : '','options' => [],'addNew' => false,'class' => 'select2-select  contracts-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'name' => 'contract_id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['dataCurrentSelected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => isset($currentContract) ? $currentContract->id : '','options' => [],'addNew' => false,'class' => 'select2-select  contracts-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['data-current-selected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) ? $currentContract->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  contracts-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['data-current-selected' => ''.e(isset($currentContract) ? $currentContract->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($currentContract) ? $currentContract->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  contracts-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -773,7 +773,7 @@ $selectedBanks = [];
   										<td>
                                         <div class="kt-input-icon ">
                                             <div class="input-group">
-                                                <input  type="text" name="amount" class="form-control " value="<?php echo e(isset($currentContract) ? $currentContract->pivot->amount : 0); ?>">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="<?php echo e(isset($currentContract) ? $currentContract->pivot->amount : 0); ?>">
                                             </div>
                                         </div>
                                     </td>
@@ -891,7 +891,7 @@ $selectedBanks = [];
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-                                                    <button type="button" class="btn btn-primary "><?php echo e(__('Save')); ?></button>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -1021,8 +1021,6 @@ $selectedBanks = [];
         const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
         const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
         const amountAfterExchangeRate = amount * exchangeRate;
-        console.log(moneyType, amount, exchangeRate, amountAfterExchangeRate)
-        // console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })
@@ -1068,7 +1066,43 @@ $(function(){
 
 
 <script>
-	
+ $(document).on('change', 'select.suppliers-or-customers-js', function() {
+        const parent = $(this).closest('tr')
+        const partnerId = parseInt($(this).val())
+        const model = $('#model_type').val()
+        let inEditMode = "<?php echo e($inEditMode ?? 0); ?>";
+
+        $.ajax({
+            url: "<?php echo e(route('get.contracts.for.customer.or.supplier',['company'=>$company->id])); ?>"
+            , data: {
+                partnerId
+                , model
+                , inEditMode
+            }
+            , type: "get"
+            , success: function(res) {
+                let contracts = '';
+                const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
+                for (var contract of res.contracts) {
+                    contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
+                }
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+            }
+        })
+    })
+	$(document).on('change', 'select.contracts-js', function() {
+        const parent = $(this).closest('tr')
+        const code = $(this).find('option:selected').data('code')
+        const amount = $(this).find('option:selected').data('amount')
+        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        $(parent).find('.contract-code').val(code)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
+        // $(parent).find('.contract-currency').val(currency)
+
+    })
+    $(function() {
+        $('select.suppliers-or-customers-js').trigger('change')
+    })	
 	</script>
 	
 <?php $__env->stopSection(); ?>
