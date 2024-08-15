@@ -23,7 +23,8 @@
 'previousSelectMustBeSelected'=>false ,
 'previousSelectSelector'=>'' ,
 'previousSelectTitle'=>'',
-'previousSelectNameInDB'=>''
+'previousSelectNameInDB'=>'',
+'insideModalWithJs'=>false 
 ]); ?>
 <?php foreach (array_filter(([
 'selectedValue'=>'',
@@ -50,7 +51,8 @@
 'previousSelectMustBeSelected'=>false ,
 'previousSelectSelector'=>'' ,
 'previousSelectTitle'=>'',
-'previousSelectNameInDB'=>''
+'previousSelectNameInDB'=>'',
+'insideModalWithJs'=>false 
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -86,9 +88,11 @@ $isSelect2 = false ;
 
 <?php
 $basicClasses = $isSelect2 ? "form-control mb-1 select select2-select" :"form-control mb-1 select ";
+$basicClasses = $insideModalWithJs ? str_replace($insideModalWithJs,'select2-select','select3-select') : $basicClasses ;
+
 ?>
 
-<select <?php if($addNewModalModalName): ?> data-modal-name="<?php echo e($addNewModalModalName); ?>" data-modal-type="<?php echo e($addNewModalModalType); ?>" <?php endif; ?>  <?php if($disabled): ?> disabled <?php endif; ?> <?php echo e($attributes->merge(['class'=>$basicClasses])); ?> data-live-search="true" data-add-new="<?php echo e($addNew ? 1 : 0); ?>" data-all="<?php echo e($all ? 1 :0); ?>" <?php if($multiple): ?> multiple <?php endif; ?>>
+<select  <?php if($addNewModalModalName): ?> data-modal-name="<?php echo e($addNewModalModalName); ?>" data-modal-type="<?php echo e($addNewModalModalType); ?>" <?php endif; ?>  <?php if($disabled): ?> disabled <?php endif; ?> <?php echo e($attributes->merge(['class'=>$basicClasses])); ?> data-live-search="true" data-add-new="<?php echo e($addNew ? 1 : 0); ?>" data-all="<?php echo e($all ? 1 :0); ?>" <?php if($multiple): ?> multiple <?php endif; ?>>
 
     <?php if($pleaseSelect): ?>
     <option value="" selected><?php echo e(__('Please Select')); ?></option>

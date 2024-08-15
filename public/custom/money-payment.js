@@ -265,8 +265,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 										, autoclose: true
 									})
 							$('input:not([type="hidden"])').trigger('change');
-							$(this).find('.dropdown-toggle').remove();
-							$(this).find('select.repeater-select').selectpicker("refresh");
+							$(this).find('.select3-select').selectpicker();
+					
 								
 						},
 						
@@ -296,8 +296,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 							}
 								   }
 					});
-					
-				
+			
+					$(lastNode).find('.select3-select').selectpicker();
 					$(lastNode).find('select.suppliers-or-customers-js').attr('name',$(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
 					var currentName = $(lastNode).find('select.contracts-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
 					$(lastNode).find('select.contracts-js').attr('name',currentName).attr('data-invoice-number',invoiceNumber)
