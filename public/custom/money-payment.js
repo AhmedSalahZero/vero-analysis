@@ -197,7 +197,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',invoiceNumber));
 				lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',invoiceNumber));
 			
-				
+				var currentSettlementAllocation = res.invoices[i].settlement_allocations;
 				var currency = res.invoices[i].currency
 				var netInvoiceAmount = res.invoices[i].net_invoice_amount
 				var netBalance = res.invoices[i].net_balance
@@ -230,10 +230,14 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
 					// $(lastNode).find('.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][')
 					
-					
-					
+					var editAllocationRow = generateAllocationRow(currentSettlementAllocation,res.clientsWithContracts)
+					if(currentSettlementAllocation.length){
+						$(lastNode).find('table.m_repeater--0 tbody[data-repeater-list]').empty().append(editAllocationRow)
+						
+					}
+			
 					$('.js-append-to').append(lastNode)
-					
+					$(lastNode).find('select.suppliers-or-customers-js').trigger('change')
 					
 					
 					$(lastNode).find('.repeater-class').repeater({            
@@ -296,7 +300,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 							}
 								   }
 					});
-			
+					console.log('eee')
+					console.log($(lastNode).find('select.suppliers-or-customers-js'))
 					$(lastNode).find('.select3-select').selectpicker();
 					$(lastNode).find('select.suppliers-or-customers-js').attr('name',$(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
 					var currentName = $(lastNode).find('select.contracts-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
@@ -332,6 +337,72 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 })
 $('select.ajax-get-invoice-numbers').trigger('change')
 $('select.ajax-get-purchases-orders-for-contract').trigger('change')
+function generateAllocationRow(settlementAllocations , clientsWithContracts)
+{
+	var rows = '';
+	var partnersSelect = '<select name="partner_id" data-name="partner_id" class="suppliers-or-customers-js select3-select"> ';
+
+	for(var settlementIndex in settlementAllocations){
+		var currentSettlementAllocation = settlementAllocations[settlementIndex];
+		for(var clientId in clientsWithContracts ){
+			var currentClientName = clientsWithContracts[clientId]
+			var currentSelectClient = clientId == currentSettlementAllocation.partner_id ? 'selected':''  ; 
+			partnersSelect+=`<option  value="${clientId}" ${currentSelectClient}> ${currentClientName} </option> `;
+			
+		}
+		partnersSelect+= '</select>'
+		var currentRow = 	`<tr data-repeater-item >
+
+		<td class="text-center">
+		
+			<div class="">
+				<i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+				</i>
+			</div>
+		</td>
+		<td>
+				${partnersSelect}
+		</td>
+
+		<td>
+				<select data-name="contract_id" data-current-selected="${currentSettlementAllocation.contract_id}"  class="contracts-js select3-select" data-current-selected="" name="contract_id" >
+				
+				</select>
+		</td>
+
+		<td>
+			<div class="kt-input-icon">
+				<div class="input-group">
+					<input disabled type="text" class="form-control contract-code" value="${currentSettlementAllocation.contract_code}">
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="kt-input-icon ">
+				<div class="input-group">
+					<input disabled type="text" class="form-control contract-amount" value="${currentSettlementAllocation.contract_amount}">
+				</div>
+			</div>
+		</td>
+	  
+
+			  <td>
+			<div class="kt-input-icon ">
+				<div class="input-group">
+					<input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="${currentSettlementAllocation.allocation_amount}">
+				</div>
+			</div>
+		</td>
+
+	</tr>`;
+	rows += currentRow;
+
+}
+return rows ;	
+	
+	
+
+}
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {

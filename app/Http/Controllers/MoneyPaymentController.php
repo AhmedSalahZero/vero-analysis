@@ -343,17 +343,20 @@ class MoneyPaymentController
 			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
 		}
 
-		$invoices = $this->formatInvoices($invoices,$inEditMode);
+		$invoices = $this->formatInvoices($invoices,$inEditMode,$moneyPayment);
+		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->pluck('name','id')->toArray();
+		
 			return response()->json([
 				'status'=>true ,
 				'invoices'=>$invoices,
 				'currencies'=>$allCurrencies,
-				'selectedCurrency'=>$selectedCurrency
+				'selectedCurrency'=>$selectedCurrency,
+				'clientsWithContracts'=>$clientsWithContracts
 			]);
 
 	}
-	protected function formatInvoices(array $invoices,int $inEditMode){
-		return SupplierInvoice::formatInvoices($invoices,$inEditMode);
+	protected function formatInvoices(array $invoices,int $inEditMode, $moneyPayment){
+		return SupplierInvoice::formatInvoices($invoices,$inEditMode,$moneyPayment);
 	}
 
 	public function store(Company $company , StoreMoneyPaymentRequest $request){

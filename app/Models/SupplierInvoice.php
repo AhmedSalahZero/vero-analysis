@@ -198,7 +198,7 @@ class SupplierInvoice extends Model implements IInvoice
 		return $this->belongsTo(Partner::class,self::CLIENT_ID_COLUMN_NAME,'id');
 	}
 	
-	public static function formatInvoices(array $invoices,int $inEditMode):array 
+	public static function formatInvoices(array $invoices,int $inEditMode,$moneyPayment):array 
 	{
 		$result = [];
 		foreach($invoices as $index=>$invoiceArr){
@@ -216,8 +216,15 @@ class SupplierInvoice extends Model implements IInvoice
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
 			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
 			$result[$index]['invoice_due_date'] = Carbon::make($invoiceArr['invoice_due_date'])->format('d-m-Y');
+			$result[$index]['settlement_allocations'] = $inEditMode ? $moneyPayment->settlementAllocations->where('invoice_number',$invoiceArr['invoice_number'])->map(function(SettlementAllocation $settlementAllocation){
+				$settlementAllocation->contract_code = $settlementAllocation->contract->getCode();
+				$settlementAllocation->contract_amount = $settlementAllocation->contract->getAmountWithCurrency();
+				return $settlementAllocation;
+			}) : [];
+			
+			
+			
 		}
-
 		return $result;
 	}
 	public static function getSettlementsTemplate()
