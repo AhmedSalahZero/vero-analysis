@@ -511,7 +511,6 @@ class MoneyPaymentController
 		 * @var SupplierInvoice $supplierInvoice
 		 */
 		$activeTab = $moneyType;
-dd('good');
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 
 	}

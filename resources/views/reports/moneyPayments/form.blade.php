@@ -752,6 +752,65 @@ $selectedBanks = [];
 
 
                                 </tr>
+								
+								  <tr @if($isRepeater) data-repeater-item @endif>
+
+                                    <td class="text-center">
+                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
+                                    </td>
+
+                                    <td>
+                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                    </td>
+
+                                    <td>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-code" value="">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="kt-input-icon ">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-amount" value="0">
+                                            </div>
+                                        </div>
+                                    </td>
+                                  
+
+  										<td>
+                                        <div class="kt-input-icon ">
+                                            <div class="input-group">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                </tr>
+								
                                 @endforeach
 
                             </x-slot>

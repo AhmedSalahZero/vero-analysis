@@ -459,6 +459,7 @@ class MoneyPayment extends Model
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
+		$this->settlementAllocations()->delete();
 		$this->unappliedAmounts()->delete();
 		$currentStatement = $this->getCurrentStatement() ;
 		if($currentStatement){
