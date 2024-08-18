@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\HasLastStatementAmount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class OverdraftAgainstCommercialPaperBankStatement extends Model
 {
-	
+		
 	protected $guarded =[
 		'id'
 	];
@@ -165,5 +166,6 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
-	
+
+		
 }

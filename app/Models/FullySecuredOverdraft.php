@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * * هو نوع من انواع حسابات التسهيل البنكية (زي القرض يعني بس فية فرق بينهم ) وبيسمى حد جاري مدين بدون ضمان
@@ -20,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 class FullySecuredOverdraft extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
-	use HasOutstandingBreakdown , IsOverdraft;
+	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount;
 	
 	public function fullySecuredOverdraftBankStatements()
 	{
@@ -158,6 +160,14 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 				return $fullySecuredOverdraftCardData;
 	}
 	
-	
+	public function getType()
+	{
+		return __('Fully Secured Overdraft');
+	}	
+	public function getCurrencyFormatted()
+	{
+		return Str::upper($this->getCurrency());
+	}
+		
 	
 }

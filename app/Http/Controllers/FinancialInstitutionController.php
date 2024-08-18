@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreCurrentAccountRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CertificatesOfDeposit;
@@ -11,7 +12,6 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use App\Http\Requests\StoreCurrentAccountRequest;
 
 class FinancialInstitutionController
 {
@@ -219,8 +219,17 @@ class FinancialInstitutionController
 	 */
 	public function viewAllAccounts(Company $company , Request $request , FinancialInstitution $financialInstitution)
 	{
+		$bankAccounts = [
+			$financialInstitution->accounts ,
+			$financialInstitution->timeOfDeposits ,
+			$financialInstitution->certificatesOfDeposits ,
+			$financialInstitution->fullySecuredOverdrafts ,
+			$financialInstitution->cleanOverdrafts ,
+			$financialInstitution->overdraftAgainstCommercialPapers ,
+			$financialInstitution->overdraftAgainstAssignmentOfContracts ,
+		];
 		return view('bank-accounts.index',[
-			'bankAccounts'=>$financialInstitution->accounts,
+			'allBankAccounts'=>$bankAccounts,
 			'financialInstitution'=>$financialInstitution,
 			'company'=>$company,
 			'filterDate'=>now()->format('Y-m-d'),

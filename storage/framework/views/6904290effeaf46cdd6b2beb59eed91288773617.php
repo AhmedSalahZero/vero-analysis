@@ -18,9 +18,12 @@
                         <thead>
                             <tr>
 								
-                                <th class="text-center w-60-percentage text-capitalize th-main-color"><?php echo e(__('Financial Institution / Branch Name')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"><?php echo e(__('Account Number')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"> <?php echo __('Amount'); ?> </th>
+                                <th class="text-center w-50-percentage text-capitalize th-main-color"><?php echo e(__('Financial Institution')); ?></th>
+                           
+                                <th class="text-center  text-capitalize th-main-color"> <?php echo __('Limit'); ?> </th>
+                                <th class="text-center  text-capitalize th-main-color"> <?php echo __('Outstanding'); ?> </th>
+                                <th class="text-center  text-capitalize th-main-color"> <?php echo __('Room'); ?> </th>
+                                <th class="text-center  text-capitalize th-main-color"> <?php echo __('Cash Cover'); ?> </th>
 								
 							
                             
@@ -29,8 +32,7 @@
                         <tbody>
 						
 							<?php
-								$total = 0 ;
-								
+								$totals = [] ;
 								
 							?>
                             <?php $__currentLoopData = $detailItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detailItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -39,33 +41,25 @@
                             <tr>
                                
 					
-                                <td class="w-60-percentage">
+                                <td class="w-50-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-left ignore-global-style" value="<?php echo e(isset($detailItem['branch_name']) ? $detailItem['branch_name'] : $detailItem['financial_institution_name']); ?>">
                                         </div>
                                     </div>
                                 </td>
-								
-								 <td class="w-20-percentage">
+								<?php $__currentLoopData = ['limit','outstanding_balance','room','cash_cover']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $colName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <td >
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e($detailItem['account_number'] ?? '-'); ?>">
-                                        </div>
-                                    </div>
-                                </td>
-								
-
-                                <td class="w-20-percentage">
-                                    <div class="kt-input-icon">
-                                        <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($detailItem['amount'])); ?>">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($detailItem[$colName])); ?>">
 											<?php
-												$total +=$detailItem['amount'];
+												$totals[$colName]= isset($totals[$colName]) ? $totals[$colName] +  $detailItem[$colName] : $detailItem[$colName] ;
 											?>
                                         </div>
                                     </div>
                                 </td>
+								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                               
 								
@@ -83,15 +77,14 @@
 							</td>
 							
 							
-							<td>
 							
-							</td>
+							<?php $__currentLoopData = ['limit','outstanding_balance','room','cash_cover']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $colName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 							<td class="text-center">
 							
-							<?php echo e(number_format($total)); ?>
+							<?php echo e(number_format($totals[$colName])); ?>
 
 							</td>
-						
+							<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
 							
 						 </tr>
                         </tbody>
@@ -109,4 +102,4 @@
         </form>
     </div>
 </div>
-<?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/dashboard/details_cash_in_safe_modal.blade.php ENDPATH**/ ?>
+<?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/dashboard/lg-lc-details.blade.php ENDPATH**/ ?>

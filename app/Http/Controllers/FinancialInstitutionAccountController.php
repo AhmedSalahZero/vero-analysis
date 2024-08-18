@@ -62,6 +62,12 @@ class FinancialInstitutionAccountController
 		$financialInstitutionAccount->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
+	public function lockOrUnlock(Company $company , FinancialInstitutionAccount $financialInstitutionAccount)
+	{
+		$financialInstitutionAccount->is_active = ! $financialInstitutionAccount->isActive();
+		$financialInstitutionAccount->save();
+		return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
+	}
 	public function getAccountNumbersBasedOnCurrency(Company $company , Request $request , FinancialInstitution $financialInstitution,?string $currency)
 	{
 		$financialInstitution->accounts;

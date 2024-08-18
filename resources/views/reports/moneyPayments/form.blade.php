@@ -9,6 +9,17 @@ $selectedBanks = [];
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+	input, select, .dropdown-toggle.bs-placeholder {
+		border:1px solid #CCE2FD !important	
+	}
+	.form-control:disabled, .form-control[readonly]{
+		background-color: #f7f8fa;
+  		  opacity: 1;
+	}
+	.action-class{
+		color:white  !important;
+		background-color:#0742A6 !important;
+	}
     label {
         text-align: left !important;
     }
@@ -674,13 +685,13 @@ $selectedBanks = [];
                         <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                             <x-slot name="ths">
                                 @foreach([
-                                __('Customer')=>'col-md-3',
-                                __('Contract Name')=>'col-md-3',
-                                __('Contract Code')=>'col-md-2',
-                                __('Contract Amount')=>'col-md-2 custom-contract-amount-css',
-                                __('Allocate Amount')=>'col-md-2 custom-contract-amount-css',
+                                __('Customer')=>'th-main-color',
+                                __('Contract Name')=>'th-main-color',
+                                __('Contract Code')=>'th-main-color',
+                                __('Contract Amount')=>'th-main-color',
+                                __('Allocate Amount')=>'th-main-color',
                                 ] as $title=>$classes)
-                                <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th class="{{ $classes }}"  :title="$title"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -706,22 +717,22 @@ $selectedBanks = [];
                                         </div>
                                     </td>
                                     <td>
-                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
+                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js custom-w-25" data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
                                     </td>
 
                                     <td>
-                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($settlementAllocation) ? $settlementAllocation->id : '' }}" :selectedValue="isset($settlementAllocation) ? $settlementAllocation->id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($settlementAllocation) ? $settlementAllocation->id : '' }}" :selectedValue="isset($settlementAllocation) ? $settlementAllocation->id : ''" :options="[]" :add-new="false" class=" contracts-js   custom-w-25" data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
                                     </td>
 
                                     <td>
-                                        <div class="kt-input-icon">
+                                        <div class="kt-input-icon custom-w-20">
                                             <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code" value="">
+                                                <input disabled type="text" class="form-control contract-code " value="">
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="kt-input-icon ">
+                                        <div class="kt-input-icon custom-w-15">
                                             <div class="input-group">
                                                 <input disabled type="text" class="form-control contract-amount" value="0">
                                             </div>
@@ -730,9 +741,9 @@ $selectedBanks = [];
                                   
 
   										<td>
-                                        <div class="kt-input-icon ">
+                                        <div class="kt-input-icon custom-w-15">
                                             <div class="input-group">
-                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
                                             </div>
                                         </div>
                                     </td>
@@ -1019,7 +1030,7 @@ $(function(){
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
 				parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-				parent.find('select.contracts-js').selectpicker("refresh")
+			//	parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
@@ -1038,5 +1049,4 @@ $(function(){
     })	
 
 	</script>
-	
 @endsection

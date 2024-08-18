@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
-use App\Interfaces\Models\Interfaces\IHaveStatement;
+
 use App\Models\AccountInterest;
+use App\Traits\HasLastStatementAmount;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class FinancialInstitutionAccount extends Model
 {
+	use HasLastStatementAmount ;
     protected $guarded = ['id'];
-
+	
     public function financialInstitution()
     {
         return $this->belongsTo(FinancialInstitution::class, 'financial_institution_id', 'id');
@@ -104,13 +108,17 @@ class FinancialInstitutionAccount extends Model
 	{
 		return __('Current');
 	}
-	public function isBlocked():bool
+	public function isActive():bool
 	{
-		return false;
+		return $this->is_active;
 	}
-	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId , $onlyActiveAccounts = true ):array
 	{
+		$allAccounts = Request()->has('allAccounts') &&  Request()->get('allAccounts') === 'true' ;
 		return self::where('company_id',$companyId)
+		->when(!$allAccounts,function(Builder $builder) use ($onlyActiveAccounts){
+			$builder->where('is_active',$onlyActiveAccounts);
+		})
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
 	}
@@ -131,4 +139,22 @@ class FinancialInstitutionAccount extends Model
    {
 		return 'financial_institution_account_id';
    }
+ 
+	public static function getLastAmountFormatted(int $companyId , string $currencyName , int $financialInstitutionId ) 
+	{
+		
+		$row = 	DB::table(self::getBankStatementTableName())
+                ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
+                ->where('financial_institution_accounts.company_id', $companyId)
+                ->where('currency', $currencyName)
+                ->where('financial_institution_accounts.financial_institution_id', '=', $financialInstitutionId)
+                ->orderBy(self::getBankStatementTableName().'.full_date', 'desc')
+                ->limit(1)
+                ->first();
+		return $row ? number_format($row->end_balance) : 0;
+	}	
+	public static function getBankStatementTableName()
+	{
+		return 'current_account_bank_statements';
+	}
 }

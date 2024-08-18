@@ -416,6 +416,7 @@ class LetterOfCreditIssuance extends Model
 	public function deleteAllRelations():self
 	{
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditStatements);

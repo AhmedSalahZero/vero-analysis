@@ -189,7 +189,6 @@ class LetterOfGuaranteeFacilityController
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	public function updateOutstandingBalanceAndLimits(Request $request , Company $company ){
-	
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
 		$selectedLgType = $request->get('lgType');
 		$isBidBond = $selectedLgType == 'bid-bond'  ;
@@ -219,6 +218,7 @@ class LetterOfGuaranteeFacilityController
 			$accountTypeId = $request->get('accountTypeId');
 			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
 			->where('company_id',$company->id)
+			->where('currency',getCurrentCompany()->getMainFunctionalCurrency())
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('lg_type',$lgTypeId)
 			->when($request->has('accountTypeId'),function(Builder $builder) use ($request,$accountTypeId){
@@ -238,6 +238,7 @@ class LetterOfGuaranteeFacilityController
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
+
 		return response()->json([
 			'limit'=>number_format($limit) ,
 			'total_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),

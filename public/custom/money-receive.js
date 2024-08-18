@@ -276,7 +276,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
 	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
 	const moneyType = $(this).closest('form').attr('data-money-type')
-	const data = []
+	let data = []
 	let currency = $(this).closest('form').find('select.current-currency').val()
 	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
@@ -288,10 +288,9 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 		return
 	}
 	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
-
 	$.ajax({
 		url,
-		data,
+		data:{allAccounts:window.location.href.split('/').includes('bank-statement')},
 		success: function (res) {
 			options = ''
 			var selectToAppendInto = $(parent).find('.js-account-number')

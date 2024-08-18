@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LgTypes;
 use App\Helpers\HDate;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
@@ -199,13 +200,73 @@ class LetterOfGuaranteeStatement extends Model
 	{
 		return $this->belongsTo(LetterOfGuaranteeIssuance::class,'lg_facility_id','id');
 	} 
-
-	// public function cashInSafes()
-	// {
-	// 	return $this->belongsTo(OpeningBalance::class,'opening_balance_id','id') ;
-	// }
-	// public function getExchangeRate()
-	// {
-	// 	return $this->exchange_rate ?:1 ;
-	// }
+	public static function getTotalOutstandingBalanceForAllLgTypes(int $companyId , int $financialInstitutionId,string $currencyName):float 
+	{
+		$totalLastOutstandingBalanceOfFourTypes = 0 ;
+		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
+			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
+			->where('company_id',$companyId)
+			->where('financial_institution_id',$financialInstitutionId)
+			->where('currency',$currencyName)
+			->where('lg_type',$lgTypeId)
+			->orderByRaw('full_date desc')
+			->first();
+			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
+			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
+		}
+		return abs($totalLastOutstandingBalanceOfFourTypes) ; 
+	}
+	public static function getDashboardDataForFinancialInstitution(int $companyId , int $financialInstitutionId,string $currencyName,string $lgType)
+	{
+			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
+			->where('company_id',$companyId)
+			->where('financial_institution_id',$financialInstitutionId)
+			->where('currency',$currencyName)
+			->where('lg_type',$lgType)
+			->orderByRaw('full_date desc')
+			->first();
+			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
+			return abs($letterOfGuaranteeStatementEndBalance);
+	} 
+	public static function getDashboardOutstandingPerLgTypeFormattedData(array &$charts , Company $company  , string $currencyName , string $date , string $lgTypeId ):void
+	{
+		$rowPerType  = DB::table('letter_of_guarantee_statements')
+		->where('company_id',$company->id )
+		// ->where('financial_institution_id',$financialInstitutionId)
+		->where('currency',$currencyName)
+		->where('date','<=',$date)
+		->where('lg_type',$lgTypeId)
+		->orderByRaw('full_date desc')
+		->first();
+		$charts['outstanding_per_lg_type'][$currencyName][] = ['type'=>LgTypes::getAll()[$lgTypeId] , 'outstanding'=>$rowPerType ? abs($rowPerType->end_balance) : 0] ;
+	}
+	public static function getDashboardOutstandingPerFinancialInstitutionFormattedData(array &$charts , Company $company  , string $currencyName , string $date , int $financialInstitutionId , string $financialInstitutionName ):void
+	{
+		$rowPerType  = DB::table('letter_of_guarantee_statements')
+		->where('company_id',$company->id )
+		->where('financial_institution_id',$financialInstitutionId)
+		->where('currency',$currencyName)
+		->where('date','<=',$date)
+		// ->where('lg_type',$lgTypeId)
+		->orderByRaw('full_date desc')
+		->first();
+		$charts['outstanding_per_financial_institution'][$currencyName][] = ['type'=>$financialInstitutionName , 'outstanding'=>$rowPerType ? abs($rowPerType->end_balance) : 0] ;
+	}
+	public static function getTotalCashCoverForAllLgTypes(int $companyId , int $financialInstitutionId,string $currency):float 
+	{
+		$totalLastCashCoverOfFourTypes = 0 ;
+		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
+			$letterOfGuaranteeCashCover = DB::table('letter_of_guarantee_cash_cover_statements')
+			->where('company_id',$companyId)
+			->where('currency',$currency)
+			->where('financial_institution_id',$financialInstitutionId)
+			->where('lg_type',$lgTypeId)
+			->orderByRaw('full_date desc')
+			->first();
+			$letterOfGuaranteeCashCoverEndBalance = $letterOfGuaranteeCashCover ? $letterOfGuaranteeCashCover->end_balance : 0 ;
+			$totalLastCashCoverOfFourTypes += $letterOfGuaranteeCashCoverEndBalance;
+		}
+		return abs($totalLastCashCoverOfFourTypes) ; 
+	}
+	
 }

@@ -1186,8 +1186,8 @@
 "Cash Cover [ :lcType ] Transaction Name [ :transactionName ]":"غطاء نقدي [ :lcType ] عن العملية [ :transactionName ]",
 "Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]":"مصاريف إصدار [ :lcType ] عن العملية [ :transactionName ]",
 "Commission Fees [ :lcType ] Transaction Name [ :transactionName ]":"عمولة [ :lcType ] عن العملية [ :transactionName ]",
-"Cash Payment To Pay :expenseName":"دفع ندقي للمصروف :expenseName",
-"Outgoing Transfer To Pay :expenseName":"تحويل بنكي للمصروف :expenseName",
-"Payable Cheque To Pay :expenseName [ :chequeNumber ]":"صرف شيك للمصروف :expenseName [ :chequeNumber ]"
+"Cash Payment To Pay [:expenseName - :expenseNameName]":"دفع ندقي للمصروف [:expenseName - :expenseNameName] ",
+"Outgoing Transfer To Pay [:expenseName - :expenseNameName]":"تحويل بنكي للمصروف [:expenseName - :expenseNameName]",
+"Payable Cheque To Pay [:expenseName - :expenseNameName] [ :chequeNumber ]":"صرف شيك للمصروف [:expenseName - :expenseNameName] [ :chequeNumber ]"
 
 }

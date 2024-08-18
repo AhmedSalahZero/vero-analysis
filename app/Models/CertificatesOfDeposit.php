@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\HasLastStatementAmount;
 use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 /**
 	 * * توفر شهادات الإيداع ) (CDsللمدخر ين طر يقة لكسب معدل فائدة أعلى على مدخراتك مقابل الموافقة على حجز
@@ -16,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	 */
 class CertificatesOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';
@@ -233,6 +235,17 @@ class CertificatesOfDeposit extends Model
 	{
 		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
 	} 
-
+	public function getType()
+	{
+		return __('Certificate Of Deposit');
+	}
+	public function getCurrencyFormatted()
+	{
+		return Str::upper($this->getCurrency());
+	}
+	public function getLastAmountFormatted()
+	{
+		return number_format($this->amount) ;
+	}
 
 }

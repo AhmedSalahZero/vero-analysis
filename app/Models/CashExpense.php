@@ -24,13 +24,13 @@ class CashExpense extends Model
 		// $paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		
 		if($cashExpense->isPayableCheque()){
-			return __('Payable Cheque To Pay :expenseName [ :chequeNumber ]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'chequeNumber'=>Request('cheque_number')],$lang) ;
+			return __('Payable Cheque To Pay [:expenseName - :expenseNameName] [ :chequeNumber ]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName(),'chequeNumber'=>Request('cheque_number')],$lang) ;
 		}
 		if($cashExpense->isCashPayment()){
-			return __('Cash Payment To Pay :expenseName',['expenseName'=>$cashExpense->getExpenseCategoryName()],$lang) ;
+			return __('Cash Payment To Pay [:expenseName - :expenseNameName]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName()],$lang) ;
 		}
 		if($cashExpense->isOutgoingTransfer()){
-			return __('Outgoing Transfer To Pay :expenseName',['expenseName'=>$cashExpense->getExpenseCategoryName()],$lang) ;
+			return __('Outgoing Transfer To Pay [:expenseName - :expenseNameName]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName()],$lang) ;
 		}
 	}
 	protected static function booted()
