@@ -30,9 +30,10 @@
     <style>
         .w-60-percentage {
             width: 60% !important;
-
         }
-
+.w-50-percentage {
+            width: 50% !important;
+        }
         .w-40-percentage {
             width: 40% !important;
         }
@@ -584,7 +585,11 @@
     <link href="<?php echo e(url('assets/css/custom.css')); ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(url('datatable/datatable.css')); ?>" rel="stylesheet" type="text/css" />
     <!--end::Global Theme Styles -->
-    <style>
+    <style>	
+		.th-main-color{
+			        background-color: #0742A6 !important; 
+					color:white !important ;
+		}
         .bg-green {
             background-color: green;
         }

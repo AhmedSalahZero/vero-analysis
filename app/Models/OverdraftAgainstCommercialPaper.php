@@ -3,18 +3,20 @@
 namespace App\Models;
 
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OverdraftAgainstCommercialPaper extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft;
+	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount;
 	
 	public function overdraftAgainstCommercialPaperBankStatements()
 	{
@@ -160,4 +162,13 @@ public static function getAllAccountNumberForCurrency($companyId , $currencyName
 		
 		return  $accounts ;
 	}			
+	public function getType()
+	{
+		return __('Overdraft Against Commercial Paper');
+	}
+	public function getCurrencyFormatted()
+	{
+		return Str::upper($this->getCurrency());
+	}
+	
 }

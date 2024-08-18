@@ -17,10 +17,10 @@
                             <tr>
 
 
-                                <th class="text-center w-40-percentage text-capitalize"><?php echo e(__('Financial Institution')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize"><?php echo e(__('Account Number')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize"> <?php echo __('Amount'); ?> </th>
-                                <th class="text-center w-20-percentage text-capitalize"> <?php echo __('Blocked Against'); ?> </th>
+                                <th class="text-center w-40-percentage text-capitalize th-main-color"><?php echo e(__('Financial Institution')); ?></th>
+                                <th class="text-center w-20-percentage text-capitalize th-main-color"><?php echo e(__('Account Number')); ?></th>
+                                <th class="text-center w-20-percentage text-capitalize th-main-color"> <?php echo __('Amount'); ?> </th>
+                                <th class="text-center w-20-percentage text-capitalize th-main-color"> <?php echo __('Blocked Against'); ?> </th>
 
 
 

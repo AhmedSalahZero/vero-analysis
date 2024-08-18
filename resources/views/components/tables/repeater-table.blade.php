@@ -12,7 +12,7 @@
     <table @if($initialJs) id="{{ $repeaterId }}"  @endif class="table  {{ $repeaterId }} table-white repeater-class repeater {{ $tableName }}"  >
         <thead>
             <tr>
-                <x-tables.repeater-table-th class="col-md-1" :title="__('Action')"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th class="col-md-1 action-class" :title="__('Action')"></x-tables.repeater-table-th>
                 {{ $ths }}
 
             </tr>

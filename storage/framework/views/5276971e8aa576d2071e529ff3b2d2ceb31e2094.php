@@ -8,6 +8,17 @@ $selectedBanks = [];
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
+	input, select, .dropdown-toggle.bs-placeholder {
+		border:1px solid #CCE2FD !important	
+	}
+	.form-control:disabled, .form-control[readonly]{
+		background-color: #f7f8fa;
+    opacity: 1;
+	}
+	.action-class{
+		color:white  !important;
+		background-color:#0742A6 !important;
+	}
     label {
         text-align: left !important;
     }
@@ -686,11 +697,11 @@ $selectedBanks = [];
 <?php $component->withAttributes(['initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
                              <?php $__env->slot('ths'); ?> 
                                 <?php $__currentLoopData = [
-                                __('Customer')=>'col-md-3',
-                                __('Contract Name')=>'col-md-3',
-                                __('Contract Code')=>'col-md-2',
-                                __('Contract Amount')=>'col-md-2 custom-contract-amount-css',
-                                __('Allocate Amount')=>'col-md-2 custom-contract-amount-css',
+                                __('Customer')=>'th-main-color',
+                                __('Contract Name')=>'th-main-color',
+                                __('Contract Code')=>'th-main-color',
+                                __('Contract Amount')=>'th-main-color',
+                                __('Allocate Amount')=>'th-main-color',
                                 ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ''.e($classes).'','title' => $title]]); ?>
@@ -729,11 +740,11 @@ $selectedBanks = [];
                                     </td>
                                     <td>
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'selectedValue' => isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => ' suppliers-or-customers-js ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'selectedValue' => isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => ' suppliers-or-customers-js custom-w-25','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['insideModalWithJs' => true,'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' suppliers-or-customers-js ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['insideModalWithJs' => true,'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' suppliers-or-customers-js custom-w-25','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -743,11 +754,11 @@ $selectedBanks = [];
 
                                     <td>
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'dataCurrentSelected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => isset($settlementAllocation) ? $settlementAllocation->id : '','options' => [],'addNew' => false,'class' => ' contracts-js   ','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'dataCurrentSelected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => isset($settlementAllocation) ? $settlementAllocation->id : '','options' => [],'addNew' => false,'class' => ' contracts-js   custom-w-25','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['insideModalWithJs' => true,'data-current-selected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) ? $settlementAllocation->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' contracts-js   ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['insideModalWithJs' => true,'data-current-selected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) ? $settlementAllocation->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' contracts-js   custom-w-25','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -756,14 +767,14 @@ $selectedBanks = [];
                                     </td>
 
                                     <td>
-                                        <div class="kt-input-icon">
+                                        <div class="kt-input-icon custom-w-20">
                                             <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code" value="">
+                                                <input disabled type="text" class="form-control contract-code " value="">
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="kt-input-icon ">
+                                        <div class="kt-input-icon custom-w-15">
                                             <div class="input-group">
                                                 <input disabled type="text" class="form-control contract-amount" value="0">
                                             </div>
@@ -772,9 +783,9 @@ $selectedBanks = [];
                                   
 
   										<td>
-                                        <div class="kt-input-icon ">
+                                        <div class="kt-input-icon custom-w-15">
                                             <div class="input-group">
-                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="<?php echo e(isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0); ?>">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="<?php echo e(isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0); ?>">
                                             </div>
                                         </div>
                                     </td>
@@ -1077,7 +1088,7 @@ $(function(){
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
 				parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-				parent.find('select.contracts-js').selectpicker("refresh")
+			//	parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
@@ -1096,7 +1107,6 @@ $(function(){
     })	
 
 	</script>
-	
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/moneyPayments/form.blade.php ENDPATH**/ ?>

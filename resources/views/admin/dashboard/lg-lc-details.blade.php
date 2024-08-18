@@ -18,9 +18,12 @@
                         <thead>
                             <tr>
 								
-                                <th class="text-center w-60-percentage text-capitalize th-main-color">{{ __('Financial Institution / Branch Name') }}</th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color">{{ __('Account Number') }}</th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"> {!! __('Amount') !!} </th>
+                                <th class="text-center w-50-percentage text-capitalize th-main-color">{{ __('Financial Institution') }}</th>
+                           
+                                <th class="text-center  text-capitalize th-main-color"> {!! __('Limit') !!} </th>
+                                <th class="text-center  text-capitalize th-main-color"> {!! __('Outstanding') !!} </th>
+                                <th class="text-center  text-capitalize th-main-color"> {!! __('Room') !!} </th>
+                                <th class="text-center  text-capitalize th-main-color"> {!! __('Cash Cover') !!} </th>
 								
 							
                             
@@ -29,8 +32,7 @@
                         <tbody>
 						
 							@php
-								$total = 0 ;
-								
+								$totals = [] ;
 								
 							@endphp
                             @foreach($detailItems as $detailItem)
@@ -39,33 +41,25 @@
                             <tr>
                                
 					
-                                <td class="w-60-percentage">
+                                <td class="w-50-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-left ignore-global-style" value="{{  isset($detailItem['branch_name']) ? $detailItem['branch_name'] : $detailItem['financial_institution_name'] }}">
                                         </div>
                                     </div>
                                 </td>
-								
-								 <td class="w-20-percentage">
+								@foreach(['limit','outstanding_balance','room','cash_cover'] as $colName)
+                                <td >
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{   $detailItem['account_number'] ?? '-' }}">
-                                        </div>
-                                    </div>
-                                </td>
-								
-
-                                <td class="w-20-percentage">
-                                    <div class="kt-input-icon">
-                                        <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ number_format($detailItem['amount']) }}">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ number_format($detailItem[$colName]) }}">
 											@php
-												$total +=$detailItem['amount'];
+												$totals[$colName]= isset($totals[$colName]) ? $totals[$colName] +  $detailItem[$colName] : $detailItem[$colName] ;
 											@endphp
                                         </div>
                                     </div>
                                 </td>
+								@endforeach
 
                               
 								
@@ -83,14 +77,13 @@
 							</td>
 							
 							
-							<td>
 							
-							</td>
+							@foreach(['limit','outstanding_balance','room','cash_cover'] as $colName)
 							<td class="text-center">
 							
-							{{ number_format($total) }}
+							{{ number_format($totals[$colName]) }}
 							</td>
-						
+							@endforeach 
 							
 						 </tr>
                         </tbody>

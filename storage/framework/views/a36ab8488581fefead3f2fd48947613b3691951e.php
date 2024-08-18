@@ -1,16 +1,10 @@
 <?php $attributes = $attributes->exceptProps([
 'title'=>$title,
-'helperTitle'=>$hasHelper ?? '',
-// 'helperPrependTitle'=> '',
-// 'helperAppendTitle'=> '',
-
+'helperTitle'=>$hasHelper ?? ''
 ]); ?>
 <?php foreach (array_filter(([
 'title'=>$title,
-'helperTitle'=>$hasHelper ?? '',
-// 'helperPrependTitle'=> '',
-// 'helperAppendTitle'=> '',
-
+'helperTitle'=>$hasHelper ?? ''
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -21,7 +15,7 @@
 <?php unset($__defined_vars); ?>
 
 <th <?php echo e($attributes->merge(['class'=>'form-label font-weight-bold  text-center align-middle'])); ?>>
-	<div class="d-flex align-items-center justify-content-center">
+	<div class="d-flex align-items-center justify-content-center ">
 	<span><?php echo $title; ?></span>
     <?php if($helperTitle): ?>
     <span class="kt-input-icon__icon kt-input-icon__icon--right ml-2" tabindex="0" role="button" data-toggle="kt-tooltip" data-trigger="focus" title="<?php echo e(str_replace('{title}',$title,$helperTitle)); ?>">

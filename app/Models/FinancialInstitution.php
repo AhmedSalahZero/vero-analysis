@@ -8,6 +8,7 @@ use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -173,7 +174,10 @@ class FinancialInstitution extends Model
 	{
 		return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
 	}
-	
+	// public function getCurrentAvailableLetterOfGuaranteeFacilities():?Collection
+	// {
+	// 	return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->get();
+	// }
 	
 	/**
 	 * * use getCurrentAvailableLetterOfCreditFacility instead

@@ -17,10 +17,10 @@
                             <tr>
 
 
-                                <th class="text-center w-40-percentage text-capitalize">{{ __('Financial Institution') }}</th>
-                                <th class="text-center w-20-percentage text-capitalize">{{ __('Account Number') }}</th>
-                                <th class="text-center w-20-percentage text-capitalize"> {!! __('Amount') !!} </th>
-                                <th class="text-center w-20-percentage text-capitalize"> {!! __('Blocked Against') !!} </th>
+                                <th class="text-center w-40-percentage text-capitalize th-main-color">{{ __('Financial Institution') }}</th>
+                                <th class="text-center w-20-percentage text-capitalize th-main-color">{{ __('Account Number') }}</th>
+                                <th class="text-center w-20-percentage text-capitalize th-main-color"> {!! __('Amount') !!} </th>
+                                <th class="text-center w-20-percentage text-capitalize th-main-color"> {!! __('Blocked Against') !!} </th>
 
 
 

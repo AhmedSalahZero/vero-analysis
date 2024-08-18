@@ -26,6 +26,15 @@ class LetterOfGuaranteeIssuance extends Model
 	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
 	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
+	public static function lgSources()
+	{
+		return [
+			self::LG_FACILITY => __('LG Facility'),
+			self::AGAINST_TD => __('Against TD'),
+			self::AGAINST_CD => __('Against CD'),
+			self::HUNDRED_PERCENTAGE_CASH_COVER=>__('100% Cash Cover')
+		];
+	}
 	public function isRunning()
 	{
 		return $this->getStatus() === self::RUNNING;

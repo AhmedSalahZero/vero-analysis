@@ -83,24 +83,51 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $__currentLoopData = $bankAccounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$bankAccount): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php $__currentLoopData = $allBankAccounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$bankAccounts): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+								<?php $__currentLoopData = $bankAccounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bankAccount): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+								
                                 <tr>
                                     <td>
                                         <?php echo e($index+1); ?>
 
                                     </td>
-                                    <td><?php echo e($bankAccount->getType()); ?></td>
+                                    <td class="text-left"><?php echo e($bankAccount->getType()); ?></td>
                                     <td class="text-nowrap"><?php echo e($bankAccount->getAccountNumber()); ?></td>
                                     <td><?php echo e($bankAccount->getCurrencyFormatted()); ?></td>
-                                    <td><?php echo e($bankAccount->getBalanceAmountFormatted()); ?></td>
+                                    <td><?php echo e($bankAccount->getLastAmountFormatted($company->id , $bankAccount->getCurrency(),$bankAccount->getFinancialInstitutionId())); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ])); ?>"><i class="fa fa-pen-alt"></i></a>
-                                            <a type="button" class="btn btn-secondary <?php if($bankAccount->isBlocked()): ?> btn-outline-danger <?php else: ?> btn-outline-success <?php endif; ?> btn-icon" title="Edit" href="<?php echo e(route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ])); ?>"><i class="fa <?php if($bankAccount->isBlocked()): ?> fa-lock <?php else: ?> fa-unlock <?php endif; ?>"></i></a>
+                                            <?php if($bankAccount instanceof \App\Models\FinancialInstitutionAccount): ?>
+											<a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ])); ?>"><i class="fa fa-pen-alt"></i></a>
+                                            
+											<a data-toggle="modal" data-target="#lock-or-unlock-financial-institution-bank-id-<?php echo e($bankAccount->id); ?>" type="button" class="btn btn-secondary <?php if(!$bankAccount->isActive()): ?> btn-outline-danger <?php else: ?> btn-outline-success <?php endif; ?> btn-icon" title="<?php echo e($bankAccount->isActive() ? __('Lock') : __('Unlock')); ?>" href="#"><i class="fa <?php if(!$bankAccount->isActive()): ?> fa-lock <?php else: ?> fa-unlock <?php endif; ?>"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($bankAccount->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($bankAccount->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                             <div class="modal fade" id="lock-or-unlock-financial-institution-bank-id-<?php echo e($bankAccount->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="<?php echo e(route('lock.or.unlock.financial.institutions.account',['company'=>$company->id,'financialInstitutionAccount'=>$bankAccount->id])); ?>" method="post">
+                                                            <?php echo csrf_field(); ?>
+                                                            <?php echo method_field('put'); ?>
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e($bankAccount->isActive() ? __('Do You Want To Lock This Account ?') : __('Do You Want To Unlock This Account ?')); ?></h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                                <button type="submit" class="btn <?php echo e($bankAccount->isActive() ? 'btn-danger' : 'btn-info'); ?>"><?php echo e($bankAccount->isActive() ? __('Confirm Lock') : __('Confirm Unlock')); ?></button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+											<?php endif; ?>
+											
+											<div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($bankAccount->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="<?php echo e(route('delete.financial.institutions.account',['company'=>$company->id,'financialInstitutionAccount'=>$bankAccount->id])); ?>" method="post">
@@ -124,6 +151,7 @@
                                         </span>
                                     </td>
                                 </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>

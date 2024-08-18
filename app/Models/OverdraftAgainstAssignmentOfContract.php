@@ -3,17 +3,19 @@
 namespace App\Models;
 
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
 use App\Traits\Models\HasAccumulatedLimit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft , HasAccumulatedLimit;
+	use HasOutstandingBreakdown , IsOverdraft , HasAccumulatedLimit,HasLastStatementAmount;
 	public static function boot()
 	{
 		parent::boot();
@@ -103,5 +105,13 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 		
 		return  $accounts ;
 	}	
-	
+	public function getType()
+	{
+		return __('Overdraft Against Contract Assignment');
+	}	
+	public function getCurrencyFormatted()
+	{
+		return Str::upper($this->getCurrency());
+	}
+
 }

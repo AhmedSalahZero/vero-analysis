@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Enums\LgTypes;
 use App\Helpers\HDate;
 use App\Models\AccountType;
 use App\Models\ActiveJob;
@@ -10,6 +11,8 @@ use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FullySecuredOverdraft;
+use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfGuaranteeStatement;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Models\Partner;
 use App\Models\TimeOfDeposit;
@@ -304,6 +307,7 @@ class CustomerInvoiceDashboardController extends Controller
 			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
 		
 		}
+	
         return view('admin.dashboard.cash', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
@@ -497,36 +501,180 @@ class CustomerInvoiceDashboardController extends Controller
     }
 
 
+	
+	
+	
+	
+	
+	
+	
 	public function viewLGLCDashboard(Company $company, Request $request)
     {
-		return view('admin.reports.lglc-report');
+			// start fully SecuredOverdraft
+			$allFullySecuredOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasFullySecuredOverdrafts()->get();
+			$fullySecuredOverdraftAccountTypes = AccountType::onlyFullySecuredOverdraft()->get();
+			$fullySecuredOverdraftCardData = [];
+			$cdAccountTypeId = AccountType::onlyCdAccounts()->first()->id ;
+			$tdAccountTypeId = AccountType::onlyTdAccounts()->first()->id ;
+			
+			
+			$charts =  [];
+			// end fully SecuredOverdraft
+			
+		// start cleanOverdraft
+		 
+		$allCleanOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasCleanOverdrafts()->get();
+		$cleanOverdraftAccountTypes = AccountType::onlyCleanOverdraft()->get();
+        $cleanOverdraftCardData = [];
+		$totalRoomForEachCleanOverdraftId =  [];
+        // end cleanOverdraft
+		
+		
+		// start overdraft Against Commercial Paper
+		 
+		$allOverdraftAgainstCommercialPaperBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasOverdraftAgainstCommercialPapers()->get();
+		$overdraftAgainstCommercialPaperAccountTypes = AccountType::onlyOverdraftAgainstCommercialPaper()->get();
+        $overdraftAgainstCommercialPaperCardData = [];
+		$totalRoomForEachOverdraftAgainstCommercialPaperId =  [];
+        // end overdraftAgainstCommercialPaper
+		
+		
+		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
+		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
+		$currentDate = now()->format('Y-m-d') ;
+        $date = $request->get('date');
+		$date = $date ? HDate::formatDateFromDatePicker($date) : $currentDate;
+		$year = explode('-',$date)[0];
+		$date = Carbon::make($date)->format('Y-m-d');
+		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
+	
+		$details = [];
+		
+		
+		
+        $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
+        $reports = [];
+		
+        foreach ($selectedCurrencies as $currencyName) {
+			
+			// start fully secured overdraft
+			// $totalFullySecuredOverdraftRoom = 0 ;
+			// $fullySecuredOverdraftCardCommonQuery = FullySecuredOverdraft::getCommonQueryForCashDashboard($company,$currencyName,$date);
+			// $fullySecuredOverdraftIds = $fullySecuredOverdraftCardCommonQuery->pluck('id')->toArray() ;
+			// $hasFullySecuredOverdraft[$currencyName] = FullySecuredOverdraft::hasAnyRecord($company,$currencyName); 
+			// end fully secured Overdraft
+			
+		
+			
+			
+			
+		
+			
+			
+			
+			
+			foreach(LgTypes::getAll() as $currentLgType => $currentLgTitle){
+				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType);
+				// LetterOfGuaranteeStatement::getDashboardDataForFinancialInstitution($totalRoomForEachFullySecuredOverdraftId,$company,$fullySecuredOverdraftIds,$currencyName,$date,$financialInstitutionBankId,$totalFullySecuredOverdraftRoom);
+			}
+			
+            foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
+		
+				$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
+				LetterOfGuaranteeStatement::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName());
+				
+				/**
+				 * * start fully Secured overdraft
+				 */
+				
+				 /**
+				  * * end fully Secured overdraft
+				  */
+		
 
-        // $fullClassName = ('\App\Models\\' . $modelType) ;
+        
+		
+				 
+				
+                /**
+                 * * حساب ال current account
+                 */
 
-        // $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
-        // $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
-        // $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
-        // $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
-        // $invoices = ('App\Models\\' . $modelType)::where('company_id', $company->id)
-        // ->where($clientIdColumnName, $partnerId)
-        // ->where('currency', $currency)
-        // ->get();
-        // $customer = Partner::find($partnerId);
-        // if (!count($invoices)) {
-        //     return  redirect()->back()->with('fail', __('No Data Found'));
-        // }
 
-        // return view('admin.reports.invoice-report', [
-        //     'invoices' => $invoices,
-        //     'partnerName' => $customer->getName(),
-        //     'partnerId' => $customer->getId(),
-        //     'currency' => $currency,
-        //     'isCollectedOrPaid' => 'is' . ucfirst($isCollectedOrPaid),
-        //     'moneyReceivedOrPaidText' => $moneyReceivedOrPaidText,
-        //     'moneyReceivedOrPaidUrlName' => $moneyReceivedOrPaidUrlName,
-		// 	'modelType'=>$modelType
-        // ]);
+                $lastLetterOfGuaranteeFacility = DB::table('letter_of_guarantee_facilities')
+                ->join('financial_institutions', 'letter_of_guarantee_facilities.financial_institution_id', '=', 'financial_institutions.id')
+                ->where('financial_institutions.company_id', $company->id)
+                ->where('currency', $currencyName)
+                ->where('contract_start_date', '<=', $date)
+                ->where('letter_of_guarantee_facilities.financial_institution_id', '=', $financialInstitutionBankId)
+                ->orderBy('contract_start_date', 'desc')
+                ->limit(1)
+				->first();
+				// getTotalOutstandingBalanceForAllLgTypes
+		
+					$details[$currencyName]['lg'][] = [
+						'limit'=>$currentLimit = $lastLetterOfGuaranteeFacility ? $lastLetterOfGuaranteeFacility->limit : 0 ,
+						'outstanding_balance'=> $currentOutstanding = LetterOfGuaranteeStatement::getTotalOutstandingBalanceForAllLgTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
+						'room'=> $currentRoom = $currentLimit - $currentOutstanding ,
+						'cash_cover'=> $currentCashCover = LetterOfGuaranteeStatement::getTotalCashCoverForAllLgTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
+						'financial_institution_name'=>$currentFinancialInstitution->getName()
+					] ;
+                $total['lg'][$currencyName]['limit'] = isset($total['lg'][$currencyName]['limit']) ? $total['lg'][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
+                $total['lg'][$currencyName]['outstanding_balance'] = isset($total['lg'][$currencyName]['outstanding_balance']) ? $total['lg'][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
+                $total['lg'][$currencyName]['room'] = isset($total['lg'][$currencyName]['room']) ? $total['lg'][$currencyName]['room'] + $currentRoom  : $currentRoom ;
+                $total['lg'][$currencyName]['cash_cover'] = isset($total['lg'][$currencyName]['cash_cover']) ? $total['lg'][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
+
+            }
+			// dd($charts);
+			// FullySecuredOverdraft::getCashDashboardDataForYear($fullySecuredOverdraftCardData,$fullySecuredOverdraftCardCommonQuery,$company,$fullySecuredOverdraftIds,$currencyName,$date,$year);
+			
+            $reports['lg'][$currencyName]['limit'] = $total['lg'][$currencyName]['limit'] ?? 0 ;
+            $reports['lg'][$currencyName]['outstanding_balance'] = $total['lg'][$currencyName]['outstanding_balance'] ?? 0 ;
+            $reports['lg'][$currencyName]['room'] = $total['lg'][$currencyName]['room'] ?? 0 ;
+            $reports['lg'][$currencyName]['cash_cover'] = $total['lg'][$currencyName]['cash_cover'] ?? 0 ;
+			// dd($reports);
+            // $reports['certificate_of_deposits'][$currencyName] =$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount  ;
+            // $reports['time_deposits'][$currencyName] = $totalTimeDepositsForCurrentFinancialInstitutionAmount ;
+			
+            // $reports['credit_facilities_room'][$currencyName] = $totalCleanOverdraftRoom + $totalCleanOverdraftAgainstCommercialRoom ;
+
+            // $currentTotal = $reports['cash_and_banks'][$currencyName] + $reports['time_deposits'][$currencyName] + $reports['certificate_of_deposits'][$currencyName]  ;
+            // $reports['total'][$currencyName] = isset($reports['total'][$currencyName]) ? $reports['total'][$currencyName] + $currentTotal : $currentTotal ;
+			
+			
+			#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
+			// $totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
+		
+		}
+
+        return view('admin.reports.lglc-report', [
+            'company' => $company,
+            'financialInstitutionBanks' => $financialInstitutionBanks,
+            'reports' => $reports,
+            'selectedCurrencies' => $selectedCurrencies,
+			'allCurrencies'=>$allCurrencies,
+            'selectedFinancialInstitutionsIds' => $selectedFinancialInstitutionBankIds,
+			'details'=>$details,
+			'charts'=>$charts,
+			'lgTypes'=>LgTypes::getAll(),
+			'lgSources'=>LetterOfGuaranteeIssuance::lgSources(),
+			
+			
+			
+			
+			
+			'fullySecuredOverdraftCardData' => $fullySecuredOverdraftCardData,
+			// 'totalRoomForEachFullySecuredOverdraftId'=>$totalRoomForEachFullySecuredOverdraftId,
+			'fullySecuredOverdraftAccountTypes'=>$fullySecuredOverdraftAccountTypes,
+			'allFullySecuredOverdraftBanks'=>$allFullySecuredOverdraftBanks,
+			'hasFullySecuredOverdraft'=>$hasFullySecuredOverdraft ??[],
+		
+				
+			
+        ]);
     }
+
 
     public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType)
     {

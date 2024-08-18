@@ -7,11 +7,15 @@ class HDate
 {
 	public static function formatDateFromDatePicker(?string $date):?string
 	{
+		$originDate = $date;
 		if(!$date){
 			return null ;
 		}
 		$date = explode('/',$date);
-		return $date[2] .'-'.$date[1] . '-'.$date[0];
+		if(isset($date[1])){
+			return $date[2] .'-'.$date[1] . '-'.$date[0];
+		}
+		return $originDate ;
 	}	
 	public static function generateUniqueDateTimeForModel(string $fullClassName , string $columnName , string $dateTime , array $additionalConditions)
 	{

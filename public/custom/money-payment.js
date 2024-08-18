@@ -254,7 +254,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					
 							$(this).closest('tbody').find('tr').each(function(trIndex,tr){
 								$(tr).find('[name]').each(function(i,element){
-									console.log(element)
 									var currentInvoiceNumber=$(this).closest('tbody').find('tr[data-invoice-number]').attr('data-invoice-number')
 									var currentName = $(this).attr('data-name');
 									$(element).attr('name','allocations['+currentInvoiceNumber+']['+trIndex+']['+currentName+']')
@@ -269,8 +268,10 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 										, autoclose: true
 									})
 							$('input:not([type="hidden"])').trigger('change');
+							$(this).find('.dropdown-toggle').remove();
 							$(this).find('.select3-select').selectpicker();
 					
+                 //   $(this).find('select.repeater-select').selectpicker("refresh");
 								
 						},
 						
@@ -300,8 +301,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 							}
 								   }
 					});
-					console.log('eee')
-					console.log($(lastNode).find('select.suppliers-or-customers-js'))
+					console.log($(lastNode).find('.select3-select').length)
 					$(lastNode).find('.select3-select').selectpicker();
 					$(lastNode).find('select.suppliers-or-customers-js').attr('name',$(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
 					var currentName = $(lastNode).find('select.contracts-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
