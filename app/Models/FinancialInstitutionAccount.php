@@ -117,7 +117,7 @@ class FinancialInstitutionAccount extends Model
 		$allAccounts = Request()->has('allAccounts') &&  Request()->get('allAccounts') === 'true' ;
 		return self::where('company_id',$companyId)
 		->when(!$allAccounts,function(Builder $builder) use ($onlyActiveAccounts){
-			$builder->where('is_active',$onlyActiveAccounts);
+			$builder->where('financial_institution_accounts.is_active',$onlyActiveAccounts);
 		})
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		

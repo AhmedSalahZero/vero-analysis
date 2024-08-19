@@ -36,13 +36,19 @@ class EmptyCashveroCommand extends Command
     {
 		// dd( DB::connection()->getDoctrineSchemaManager()->listTableNames());
 		foreach([
+			'cash_expenses',
+			'overdraft_against_commercial_papers',
+			'clean_overdrafts',
+			'overdraft_against_assignment_of_contracts',
+			'fully_secured_overdrafts',
+			'settlement_allocations',
 			'buy_or_sell_currencies',
 			'cash_in_banks','cash_in_safes','cash_in_safe_statements',
 			'cash_payments','certificates_of_deposits','cheques'
-			// ,'supplier_invoices' ,'clean_overdrafts','customer_invoices','financial_institutions','financial_institution_accounts','fully_secured_overdrafts',''
+			,'supplier_invoices' ,'clean_overdrafts','customer_invoices','financial_institutions','financial_institution_accounts','fully_secured_overdrafts'
 			,'clean_overdraft_bank_statements','clean_overdraft_withdrawals',
-			'current_account_bank_statements','debugging','down_payment_money_payment_settlements','down_payment_settlements','due_date_histories','fully_secured_overdraft_bank_statements','fully_secured_overdraft_withdrawals','incoming_transfers','internal_money_transfers','lc_facility_expenses','lc_hundred_percentage_cash_cover_opening_balances',
-			"lc_facility_expenses"
+			'notifications',
+			'current_account_bank_statements','debugging','down_payment_money_payment_settlements','down_payment_settlements','due_date_histories','fully_secured_overdraft_bank_statements','fully_secured_overdraft_withdrawals','incoming_transfers','internal_money_transfers','lc_hundred_percentage_cash_cover_opening_balances'
 , "lc_hundred_percentage_cash_cover_opening_balances"
 , "lending_information"
 , "lending_information_against_assignment_of_contracts"

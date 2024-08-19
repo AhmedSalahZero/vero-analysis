@@ -60,7 +60,7 @@ class BankStatementController
 			 * * علشان الكوميشن ما تجيش في حاله ال
 			 * * lg issuance
 			 */
-			->where('is_active',1) 
+			->where('current_account_bank_statements.is_active',1) 
 			->where('current_account_bank_statements.financial_institution_account_id',$financialInstitutionAccount->id)
 			->where('current_account_bank_statements.company_id',$company->id)
 			->join('financial_institution_accounts','financial_institution_account_id','=','financial_institution_accounts.id')

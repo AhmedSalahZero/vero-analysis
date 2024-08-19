@@ -9,6 +9,8 @@ use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
+use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfGuaranteeStatement;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\SupplierInvoice;
@@ -52,6 +54,10 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+		$company = Company::find(85);
+		$charts = [];
+		LetterOfGuaranteeStatement::getDashboardOutstandingTableFormattedData($charts,$company,'EGP','2024-06-03',24,'Fn Name');
+		dd($charts);
 		// dd(getTableNames('vero_analysis','q'));
 		// CleanOverdraftBankStatement::create([
 		// 	''
