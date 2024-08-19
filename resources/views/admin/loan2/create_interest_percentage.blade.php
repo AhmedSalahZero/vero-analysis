@@ -904,9 +904,7 @@ tbody td{
         }
 
         var endTime = performance.now()
-        // alert(((endTime - startTime)/1000))
-        // console.log(`Call to doSomething took  milliseconds`)
-        // alert(pricing);
+     
 
         formatTable(newDat, givenLoanAmount, fixedType, installmentAmountArr, getLoanVal);
 
@@ -927,7 +925,6 @@ tbody td{
         for (let j = (gracePeriod + installment_payment_interval); j <= (period / installment_payment_interval); j++) {
             if (j % (interval) == 0 && j != 0) // after one year
             {
-                console.log(11111111111);
                 installmentAmount = installmentAmount * (1 + (stepRate));
                 givenInstallmentAmountArr.push(installmentAmount);
             } else {
@@ -944,11 +941,8 @@ tbody td{
 
 
         let flatInterestAmount = ((totalGivenInstallment - givenLoanAmount) / givenLoanAmount) / (period / 12);
-        // console.log('before')
-        // console.log(flatInterestAmount );
         let trialInterest = roundUp(flatInterestAmount);
         // let trialInterest = flatInterestAmount * 1.2 ;
-        // console.log('after')
 
 
         return trialInterest;
@@ -995,7 +989,6 @@ tbody td{
 
 
         }
-        // console.log(days)
         return {
             "daysCount": days
         };
@@ -1133,7 +1126,6 @@ tbody td{
             // firstMonth = new Date(loanFactorStartDate.getTime()) ;
 
             loopDate = addMonths(loanFactorStartDate, installment_payment_interval);
-            // console.log (searchedInterestFactor);
             searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
@@ -1187,7 +1179,6 @@ tbody td{
     }
 
     function calcInstallmentFactor(installmentStartDate, intersetFactor, stepRate, stepFactor, interval, installment_payment_interval) {
-        // console.log(installmentStartDate);
 
         let firstInstallmentStartDate = installmentStartDate;
         installmentFactors = [];
@@ -1255,15 +1246,11 @@ tbody td{
             stepFactorOfDate = stepFactor['stepFactors'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
-            //    console.log(stepFactorOfDate);
 
             if (!stepFactorOfDate) {
                 break
             } else {
-                //    alert(i);
-                //    alert(period);
-                //    alert(interval);
-                // alert(i % period/interval);
+         
                 if ((i % (interval / installment_payment_interval)) == 0 && i != 0) {
                     loanAmount = loanAmount * (parseFloat(Math.pow((1 + parseFloat(stepRate)), 1)))
                 } else {

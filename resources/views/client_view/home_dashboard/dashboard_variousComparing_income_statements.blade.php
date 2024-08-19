@@ -1215,7 +1215,6 @@ $currentReportType = Request()->segment(5)
         var chart = am4core.create("chartdiv_pie{{convertStringToClass($mainItemName.$currentReportItem)}}", am4charts.PieChart);
         // Add data
         chart.data = @json(isset($charts['donutChart'][$mainItemName][$currentReportItem]) ? formatDataForDonutChart($charts['donutChart'][$mainItemName][$currentReportItem]) : []);
-        console.log(chart.data)
         // Add and configure Series
         var pieSeries = chart.series.push(new am4charts.PieSeries());
         pieSeries.dataFields.value = "value";
@@ -1283,7 +1282,6 @@ $currentReportType = Request()->segment(5)
 							
                             }
                         }).catch(err => {
-                            console.log(err)
                         }).finally(ee => {
                             startDateInput.removeAttribute('disabled')
                             endDateInput.removeAttribute('disabled')

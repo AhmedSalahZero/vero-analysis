@@ -478,7 +478,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                         const parentId = $(e.target.closest('tr')).data('model-id');
                         var parentRow = $(e.target).parent();
                         var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
-                        console.log(parentId, parentRow, subRows);
 
                         subRows.toggleClass('d-none');
                         if (subRows.hasClass('d-none')) {

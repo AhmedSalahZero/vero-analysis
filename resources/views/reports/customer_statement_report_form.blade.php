@@ -126,7 +126,6 @@
 			let select = '<select data-live-search="true" data-actions-box="true" name="customers[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple > ';
 			const salesPersons = res.data.customer_names ;
 			let options = '';
-			console.log('sale persons',salesPersons)
 			for(index in salesPersons  ){
 				options += '<option value="'+ salesPersons[index].customer_name +'">'+ salesPersons[index].customer_name +'</option>'
 			}

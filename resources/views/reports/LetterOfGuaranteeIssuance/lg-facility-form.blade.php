@@ -605,11 +605,13 @@ use App\Models\LetterOfGuaranteeIssuance;
                     e.preventDefault()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
+						const source = "{{ $source }}"
                     $.ajax({
                         url: "{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
                             financialInstitutionId
-                            , lgType
+                            , lgType,
+							source
                         }
                         , type: "GET"
                         , success: function(res) {
@@ -621,7 +623,6 @@ use App\Models\LetterOfGuaranteeIssuance;
 								var isSelected =  customerId  == currentSelectedCustomerId  ? 'selected' :'';
 								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
 							}
-							console.log('current selected',currentSelectedCustomerId);
 							$('select#customer_name').empty().append(customerOptions).trigger('change');
 							
 							

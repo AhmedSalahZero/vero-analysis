@@ -610,14 +610,30 @@ use App\Models\LetterOfGuaranteeIssuance;
                     e.preventDefault()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
+					const source = "{{ $source }}"
                     $.ajax({
                         url: "{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
                             financialInstitutionId
-                            , lgType
+                            , lgType,
+							source
                         }
                         , type: "GET"
                         , success: function(res) {
+							
+							
+							let customerOptions = '';
+							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
+							
+							for(var customerId in res.customers ){
+								var customerName = res.customers[customerId];
+								var isSelected =  customerId  == currentSelectedCustomerId  ? 'selected' :'';
+								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
+							}
+							$('select#customer_name').empty().append(customerOptions).trigger('change');
+							
+							
+							
                             $('#limit-id').val(res.limit).prop('disabled', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('disabled', true)

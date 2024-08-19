@@ -5,7 +5,6 @@
                     const accountNumber = $('[js-cd-or-td-account-number]').val();
                     let financialInstitutionId = $('#financial-instutition-id').val();
                     financialInstitutionId = financialInstitutionId ? financialInstitutionId : $('[name="financial_institution_id"]').val();
-					console.log(accountType,accountNumber,financialInstitutionId)
                     let url = "{{ route('update.balance.and.net.balance.based.on.account.number.ajax',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_number', accountNumber);

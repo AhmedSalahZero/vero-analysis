@@ -733,8 +733,6 @@ use App\Models\MoneyReceived ;
         const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
         const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
         const amountAfterExchangeRate = amount * exchangeRate;
-        console.log(moneyType, amount, exchangeRate, amountAfterExchangeRate)
-        // console.log(moneyType,amount,exchangeRate,amountAfterExchangeRate)
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })

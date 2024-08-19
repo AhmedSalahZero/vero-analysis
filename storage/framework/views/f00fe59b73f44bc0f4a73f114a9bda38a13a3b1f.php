@@ -1537,7 +1537,6 @@ td{
                     let secondStartDate = $('#report_type').closest('.kt-portlet__body').find('input[name="start_date_second"]').val();
                     let firstEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date"]').val();
                     let secondEndDate = $('#report_type').closest('.kt-portlet__body').find('input[name="end_date_second"]').val();
-                    console.log(firstStartDate, secondStartDate, firstEndDate, secondEndDate)
                     if (Date.parse(firstStartDate) <= Date.parse(secondStartDate)) {
                         startDate = firstStartDate;
                     } else {

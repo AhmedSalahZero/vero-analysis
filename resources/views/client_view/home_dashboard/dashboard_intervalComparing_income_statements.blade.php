@@ -511,7 +511,6 @@
 						
                         }
                     }).catch(err => {
-                        console.log(err)
                     }).finally(ee => {
                         startDateInput.removeAttribute('disabled')
                         endDateInput.removeAttribute('disabled')
@@ -542,7 +541,6 @@
                             endDateInput.value = res.data.dates.end_date
                         }
                     }).catch(err => {
-                        console.log(err)
                     }).finally(ee => {
                         startDateInput.removeAttribute('disabled')
                         endDateInput.removeAttribute('disabled')

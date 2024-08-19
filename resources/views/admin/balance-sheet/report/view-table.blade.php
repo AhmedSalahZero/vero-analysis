@@ -606,7 +606,6 @@ $tableId = 'kt_table_1';
                             const mainRowId = mainRow.getAttribute('data-model-id')
                             const subTrsForMainRow = getsubTrsForMainRow(mainRowId)
                             let totalSubRowForDate = 0
-                            console.log(subTrsForMainRow.length)
                             subTrsForMainRow.forEach(subTr => totalSubRowForDate += parseFloat(subTr.querySelector('input[data-date="' + date + '"]').value))
                             return totalSubRowForDate
                         }
@@ -741,7 +740,6 @@ $tableId = 'kt_table_1';
                                     var equation = generateEquationFromString(updateRow.getAttribute('data-equation'), date, updateAbleRowId)
                                     var equationValue = eval(equation)
 
-                                    console.log('----')
                                     updateTd.innerHTML = number_format(equationValue, 2)
                                     updateInput.value = equationValue
                                 }

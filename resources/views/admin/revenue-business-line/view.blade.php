@@ -36,7 +36,6 @@
                         var isJson = $(tdData).data('is-json');
                         var relationName = $(tdData).data('relation-name') || $(this).data('relation-name');
                         var data = $(this).text();
-						console.log(tdData,collectionItemId,relationName,data)
                
                         $.ajax({
                                 url:"{{ route('admin.edit.table.cell',getCurrentCompanyId()) }}",

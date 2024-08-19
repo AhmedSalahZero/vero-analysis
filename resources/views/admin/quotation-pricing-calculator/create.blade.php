@@ -889,7 +889,6 @@
         let options = "";
         let uniqueOptions = [];
 
-        console.log($('select:visible.main-service-item'));
 
         $('select.main-service-item:visible option:selected').each(function(index, item) {
             if (index == 0) {
@@ -965,14 +964,7 @@
     $(function() {
         $('[data-repeater-item]  input:not(:visible) , [data-repeater-item]  select:not(:visible)').prop('disabled', true);
     })
-    // let options = '['
-    // $('#youssef option').each(function(index,option){
-    //     // console.log();
-    //     options += ($(option).html() + ',') 
-    // });
-    // options = options.trim(',');
-    // options += ']';
-    // console.log(options)
+
 
 </script>
 @endsection

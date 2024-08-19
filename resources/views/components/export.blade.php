@@ -369,7 +369,6 @@
         }
         if (dateFrom && dateTo) {
             const url = $('#js-upload-type').val() == 'uploading' ? "{{ route('multipleRowsDelete',['company'=>$company->id , 'model'=>getLastSegmentInRequest()]) }}" : "{{ route('deleteMultiRowsFromCaching',['company'=>$company->id,'modelName'=>getLastSegmentInRequest()]) }}"
-            console.log('url', url)
             $('#js-delete_from_to').prop('disabled', true)
 
             $.ajax({
