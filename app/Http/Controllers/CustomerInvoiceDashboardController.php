@@ -530,15 +530,14 @@ class CustomerInvoiceDashboardController extends Controller
 		$source = $request->get('lgSource');
         $reports = [];
         foreach ($selectedCurrencies as $currencyName) {
-			
 			foreach($lgTypes as $currentLgType => $currentLgTitle){
 				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
 			}
-			
             foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
-		
+				
 				$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
-				LetterOfGuaranteeStatement::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source);
+				LetterOfGuaranteeStatement::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source,$lgTypes);
+					
 				$lastLetterOfGuaranteeFacility = DB::table('letter_of_guarantee_facilities')
                 ->join('financial_institutions', 'letter_of_guarantee_facilities.financial_institution_id', '=', 'financial_institutions.id')
                 ->where('financial_institutions.company_id', $company->id)
