@@ -262,7 +262,6 @@ $tableId = 'kt_table_1';
         const parentId = $(e.target.closest('tr')).data('model-id');
         var parentRow = $(e.target).parent();
         var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
-        console.log(parentId, parentRow, subRows);
 
         subRows.toggleClass('d-none');
         if (subRows.hasClass('d-none')) {

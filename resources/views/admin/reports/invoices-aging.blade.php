@@ -687,7 +687,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                 const parentId = $(e.target.closest('tr')).data('model-id');
                 var parentRow = $(e.target).parent();
                 var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
-                console.log(parentId, parentRow, subRows);
 
                 subRows.toggleClass('d-none');
                 if (subRows.hasClass('d-none')) {
@@ -913,7 +912,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
         // Add data
         chart.data = $('#total_{{ convertStringToClass($chartName) }}').data('total');
-        console.log(chart, chart.data, 'end if')
         // Add and configure Series
         var pieSeries = chart.series.push(new am4charts.PieSeries());
         pieSeries.dataFields.value = "value";

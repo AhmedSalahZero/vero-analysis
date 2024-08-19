@@ -54,7 +54,6 @@ use App\Models\LetterOfGuaranteeIssuance;
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
-<?php echo e(__('Letter Of Gurantee Issuance Form')); ?>
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
@@ -78,7 +77,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <?php echo e(__((isset($model) ? 'Edit' : 'Add') . ' Letter Of Guarantee Issuance')); ?>
+                                    <?php echo e(__((isset($model) ? 'Edit' : 'Add') . ' 100% Cash Cover Letter Of Guarantee Issuance')); ?>
 
                                 </h3>
                             </div>
@@ -112,7 +111,8 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-                                     <div class="col-md-6">
+
+                                    <div class="col-md-6">
                                         <label> <?php echo e(__('Bank')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -123,49 +123,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
-									
 
-									
-									
-                                    <div class="col-md-4">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'limit-id','defaultValue' => 0,'model' => $model??null,'label' => __('LG Limit'),'type' => 'text','placeholder' => __('LG Limit'),'name' => 'limit','class' => 'only-greater-than-zero-allowed','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('limit-id'),'default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Limit')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Limit')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('limit'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                    </div>
-                                    <div class="col-md-4">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'total-lg-for-all-types-id','defaultValue' => 0,'model' => $model??null,'label' => __('Total LGs Outstanding Balance'),'type' => 'text','name' => 'total_lg_outstanding_balance','class' => 'only-greater-than-zero-allowed','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('total-lg-for-all-types-id'),'default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Total LGs Outstanding Balance')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('total_lg_outstanding_balance'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                    </div>
-                                    <div class="col-md-4">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'total-room-id','defaultValue' => 0,'model' => $model??null,'label' => __('Total LGs Room'),'type' => 'text','placeholder' => __('Total LGs Room'),'name' => 'total_lg_outstanding_balance','class' => 'only-greater-than-zero-allowed','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('total-room-id'),'default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Total LGs Room')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Total LGs Room')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('total_lg_outstanding_balance'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                    </div>
 
                                     <div class="col-md-4">
                                         <label> <?php echo e(__('LG Type')); ?>
@@ -213,7 +171,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             </div>
                         </div>
 
-                      
+
 
 
 
@@ -243,8 +201,11 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select  data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId() : 0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
-                                            
+                                                    <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                        
+                                                        <?php $__currentLoopData = $beneficiaries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option <?php if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ): ?> selected <?php endif; ?> value="<?php echo e($customer->getId()); ?>"><?php echo e($customer->getName()); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -451,7 +412,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             </select>
                                         </div>
                                     </div>
-							
+
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => $source != LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2','defaultValue' => $source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 ,'readonly' => $source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER,'model' => $model??null,'label' => __('Cash Cover Rate %'),'type' => 'text','placeholder' => __('Cash Cover Rate %'),'name' => 'cash_cover_rate','class' => 'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js','required' => true]]); ?>
@@ -480,7 +441,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-							
+
 
 
 
@@ -513,28 +474,26 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-                                 
-									<div class="col-md-3">
+                                    <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'min_lg_commission_fees_id','defaultValue' => 0,'readonly' => true,'model' => $model??null,'label' => __('Min LG Commission Fees'),'type' => 'text','placeholder' => __('Min LG Commission Fees'),'name' => 'min_lg_commission_fees','class' => 'only-greater-than-or-equal-zero-allowed ','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'min_lg_commission_fees_id2','defaultValue' => 0,'readonly' => false,'model' => $model??null,'label' => __('Min LG Commission Fees'),'type' => 'text','placeholder' => __('Min LG Commission Fees'),'name' => 'min_lg_commission_fees','class' => 'only-greater-than-or-equal-zero-allowed ','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('min_lg_commission_fees_id'),'default-value' => 0,'readonly' => true,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Min LG Commission Fees')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Min LG Commission Fees')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('min_lg_commission_fees'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('min_lg_commission_fees_id2'),'default-value' => 0,'readonly' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Min LG Commission Fees')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Min LG Commission Fees')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('min_lg_commission_fees'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-									
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'issuance_fees_id','defaultValue' => 0,'readonly' => true,'model' => $model??null,'label' => __('Issuance Fees'),'type' => 'text','placeholder' => __('Issuance Fees'),'name' => 'issuance_fees','class' => 'only-greater-than-or-equal-zero-allowed ','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'issuance_fees_id2','defaultValue' => 0,'readonly' => false,'model' => $model??null,'label' => __('Issuance Fees'),'type' => 'text','placeholder' => __('Issuance Fees'),'name' => 'issuance_fees','class' => 'only-greater-than-or-equal-zero-allowed ','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('issuance_fees_id'),'default-value' => 0,'readonly' => true,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Issuance Fees')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Issuance Fees')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('issuance_fees'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('issuance_fees_id2'),'default-value' => 0,'readonly' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Issuance Fees')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Issuance Fees')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('issuance_fees'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -569,7 +528,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type ">
                                                     
                                                     <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
@@ -586,7 +545,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0); ?>" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0); ?>" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -595,7 +554,24 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    
+
+                                    <div class="col-md-3 mb-3">
+                                        <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
+                                        <div class="kt-input-icon">
+                                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
+                                            
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-3 mb-3">
+                                        <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
+                                        <div class="kt-input-icon">
+                                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
+                                            
+                                        </div>
+                                    </div>
+
 
 
                                 </div>
@@ -814,7 +790,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                     e.preventDefault()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
-						const source = "<?php echo e($source); ?>"
+					const source = "<?php echo e($source); ?>"
                     $.ajax({
                         url: "<?php echo e(route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
                         , data: {
@@ -824,6 +800,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                         }
                         , type: "GET"
                         , success: function(res) {
+							
+							
 							let customerOptions = '';
 							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
 							
@@ -833,6 +811,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
 							}
 							$('select#customer_name').empty().append(customerOptions).trigger('change');
+							
 							
 							
                             $('#limit-id').val(res.limit).prop('disabled', true)
@@ -913,7 +892,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
             </script>
-               <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.commonJs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.commonJs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
             <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfGuaranteeIssuance/lg-facility-form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfGuaranteeIssuance/hundred-percentage-cash-cover-form.blade.php ENDPATH**/ ?>

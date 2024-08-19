@@ -1071,14 +1071,12 @@
         obj = {};
 
         obj.date = getDateFormatted((new Date(start_date)));
-        console.log('first', obj.date);
         obj.loanFactor = 0;
         loanFactoriesArr.push(obj);
 
 
         obj = {};
         obj.date = getDateFormatted((new Date(loanFactorStartDate)));
-        console.log('second', obj.date);
         obj.loanFactor = loanFactor;
         loanFactoriesArr.push(obj);
 

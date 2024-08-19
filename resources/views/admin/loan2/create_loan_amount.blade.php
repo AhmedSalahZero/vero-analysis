@@ -848,7 +848,6 @@ tbody td{
 
         let installmentFactories = calcInstallmentFactor(new Date(installmentStartDate.getTime()), intersetFactor, stepRate, stepFactor, period, installment_payment_interval);
 
-        // console.log(new Date(installmentStartDate.getTime()))
         let installmentAmountArr = getInstallmentAmount(loanFactories, installmentFactories, stepRate, stepFactor, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))
             , period, installment_payment_interval, interval, loanAmount
 
@@ -1065,17 +1064,10 @@ tbody td{
             // firstMonth = new Date(loanFactorStartDate.getTime()) ;
 
             loopDate = addMonths(loanFactorStartDate, installment_payment_interval);
-            // console.log (searchedInterestFactor);
             searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
 
-            // let diffInDays = getDifferenceBetweenTwoDatesInDays(firstMonth , secondMonth) ;
-            // if(! searchedInterestFactor){
-            //     alert(end_date_end);
-            //     alert(loopDate);
-            //     break ;
-            // }
 
 
 
@@ -1119,7 +1111,6 @@ tbody td{
     }
 
     function calcInstallmentFactor(installmentStartDate, intersetFactor, stepRate, stepFactor, interval, installment_payment_interval) {
-        // console.log(installmentStartDate);
 
         let firstInstallmentStartDate = installmentStartDate;
         installmentFactors = [];
@@ -1186,7 +1177,6 @@ tbody td{
             stepFactorOfDate = stepFactor['stepFactors'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
-            //    console.log(stepFactorOfDate);
 
             if (!stepFactorOfDate) {
                 break

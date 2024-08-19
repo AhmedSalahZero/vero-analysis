@@ -417,7 +417,6 @@
         const customerId = $(this).val()
         const parent = $(this).closest('.closest-parent-tr');
         const currency = parent.data('currency')
-        console.log(currency)
         $.ajax({
             url: "{{ route('get.contracts.for.customer.with.start.and.end.date',['company'=>$company->id]) }}"
             , data: {

@@ -421,7 +421,6 @@ $user = auth()->user();
         e.which = 80; // # P code value
         e.ctrlKey = true; // Alt key pressed
         e.shiftLeftKey = true; // Alt key pressed
-        console.log(e)
         $(document).trigger(e);
     });
 

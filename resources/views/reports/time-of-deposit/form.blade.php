@@ -278,7 +278,6 @@
 					const amount = number_unformat($('#amount-id').val());
 					const intrestRate = number_unformat($('#interest-rate-id').val())
 					const diffBetweenEndDateAndStartDate = getDiffBetweenTwoDateInDays(startDate,endDate)
-					console.log(diffBetweenEndDateAndStartDate,amount,intrestRate)
 					if(diffBetweenEndDateAndStartDate && amount && intrestRate ){
 						const interestAmount = intrestRate / 100 /365  * diffBetweenEndDateAndStartDate *amount 
 						$('#interest-amount-id').val( number_format(interestAmount,2))

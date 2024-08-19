@@ -10,7 +10,6 @@
     setInterval(() => {
         let company_id = "{{ $company->id }}"
         axios.get('/removeSessionForRedirect').then(res => {
-            console.log(res.data.status)
             if (res.data.status) {
                 window.location.href = res.data.url
             }

@@ -1630,7 +1630,6 @@
 
 <script>
     $(document).on('change', 'select[js-refresh-limits-chart]', function(e) {
-        console.log(e.target)
         const modelName = $(this).attr('data-table');
         const currencyName = $(this).attr('data-currency')
         const bankId = $('.bank-id-js[data-currency="' + currencyName + '"][data-table="' + modelName + '"]').val();

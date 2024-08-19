@@ -117,6 +117,7 @@ class LetterOfGuaranteeIssuanceController
 
 	{
 		$formName = $source.'-form';
+		
         return view('reports.LetterOfGuaranteeIssuance.'.$formName,array_merge(
 			$this->commonViewVars($company,$source) ,
 			[
@@ -176,11 +177,9 @@ class LetterOfGuaranteeIssuanceController
 			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
 				$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
 				$isActive = now()->greaterThanOrEqualTo($currentDate);
-				logger('ppppppppp');
 				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId,0,$isActive,__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 			}
 		}else{
-			logger('ppppppppp');
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountId,0,1, __('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		}
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));

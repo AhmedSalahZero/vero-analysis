@@ -616,7 +616,6 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 		const amount = parseFloat($(parent).find('.amount-js').val()	)
 		const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
 		const amountInMainCurrency = parseFloat(amount * exchangeRate) ;
-		console.log(amountInMainCurrency,amount,exchangeRate,parent)
 		$(parent).find('.amount-in-main-currency-js-hidden').val( amountInMainCurrency)
 		$(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
 	})

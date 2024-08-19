@@ -720,10 +720,7 @@ use App\Models\MoneyReceived ;
     $(document).on('change', '.js-recalculate-amounts-in-popup', function() {
         let amount = $(this).val()
         amount = amount ? amount : 0;
-        console.log(amount)
         const parent = $(this).closest('[data-repeater-item]');
-        console.log(parent)
-        console.log($(parent).find('.execution-percentage-js').length)
 
         $(parent).find('.execution-percentage-js').each(function(index, element) {
             var executionPercentage = $(element).val();
@@ -797,7 +794,6 @@ use App\Models\MoneyReceived ;
     })
     $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
         const customerName = $('#new_customer_name').val()
-        console.log(customerName)
         const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>$type]) }}"
         if (customerName) {
             $.ajax({

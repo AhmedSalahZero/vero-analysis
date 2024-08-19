@@ -1248,7 +1248,6 @@ tbody td{
 
         }
 
-        console.log(stepFactor);
 
         return {
             "stepFactors": stepFactor
@@ -1402,7 +1401,6 @@ tbody td{
 
 
         }
-        // console.log(installmentFactors);
         return {
             "installmentFactors": installmentFactors
         };

@@ -639,8 +639,6 @@ $totalOfDepreactionAndAmortization = 0;
         // Add data
         var chartData = $('#monthly_data').data('total')
         chartData.forEach(function(objVal) {
-            // console.log(objVal.date);
-            // console.log(objVal);
             initialDate = getDateFormatted(new Date(objVal.date));
             if (initialDate.split('-').length == 4) {
                 year = initialDate.split('-')[1];
@@ -889,10 +887,7 @@ $totalOfDepreactionAndAmortization = 0;
 
 
         chartData = $('#accumulated_data').data('total');
-        //  console.log(chartData);
         chartData.forEach(function(objVal) {
-            // console.log(objVal.date);
-            // console.log(objVal);
             initialDate = getDateFormatted(new Date(objVal.date));
             if (initialDate.split('-').length == 4) {
                 year = initialDate.split('-')[1];
@@ -1013,7 +1008,6 @@ $totalOfDepreactionAndAmortization = 0;
                         endDateInput.value = res.data.dates.end_date
                     }
                 }).catch(err => {
-                    console.log(err)
                 }).finally(ee => {
                     startDateInput.removeAttribute('disabled')
                     endDateInput.removeAttribute('disabled')

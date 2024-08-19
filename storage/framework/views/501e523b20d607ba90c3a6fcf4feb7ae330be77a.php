@@ -6,18 +6,21 @@
 
 <?php $__env->startSection('dash_nav'); ?>
 <style>
+ .bank-max-width {
+        max-width: 50% !important;
+        min-width: 50% !important;
+        width: 50% !important;
+    }
     .chartdiv_two_lines {
         width: 100%;
-        height: 275px;
+        height:275px !important;
     }
 
     .chartDiv {
-        max-height: 275px !important;
+        max-height: 350px !important;
     }
 
-    .margin__left {
-        border-left: 2px solid #366cf3;
-    }
+   
 
     .sky-border {
         border-bottom: 1.5px solid #CCE2FD !important;
@@ -209,9 +212,8 @@
         
         <div class="row">
 
-            
-            
-            <div class="col-md-3">
+         
+            <div class="col-md-6">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
@@ -231,13 +233,11 @@
                         </div>
                        
                         
-                        
                     </div>
                 </div>
             </div>
 
-            
-			 <div class="col-md-3">
+			 <div class="col-md-6">
                 <div class="kt-portlet kt-portlet--tabs">
                      <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
@@ -277,7 +277,7 @@
             </div>
 			
 			
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="kt-portlet kt-portlet--tabs">
                      <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
@@ -335,18 +335,18 @@
 											
 											<div class="col-md-12 mt-4">
 											   <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries lg-details-table']); ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries remove-max-class lg-details-table']); ?>
 <?php $component->withName('table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['data-currency' => ''.e($currency).'']); ?>
                                                 <?php $__env->slot('table_header'); ?>
                                                 <tr class="table-active text-center">
-                                                    <th class="text-center"><?php echo e(__('Bank Name')); ?></th>
+                                                    <th class="text-center bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                                     <th class="text-center "><?php echo e(__('Type')); ?></th>
                                                     <th class="text-center "><?php echo e(__('Source')); ?></th>
                                                     <th class="text-center "><?php echo e(__('Outstanding')); ?></th>
-                                                    <th class="text-center "><?php echo e(__('Room')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Cash Cover')); ?></th>
                                                 </tr>
                                                 <?php $__env->endSlot(); ?>
                                                 <?php $__env->slot('table_body'); ?>
@@ -355,18 +355,18 @@
 												?>
 												<?php $__currentLoopData = $tablesData['outstanding_for_table'][$currency] ??[ ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $outstandingArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 												<tr>
-                                                    <td class=""> <?php echo e($outstandingArr['financial_institution_name']); ?> </td>
-                                                    <td class=""><?php echo e($outstandingArr['type']); ?></td>
+                                                    <td class="text-left bank-max-width" > <?php echo e($outstandingArr['financial_institution_name']); ?> </td>
+                                                    <td class="text-left"><?php echo e($outstandingArr['type']); ?></td>
                                                     <td class="text-center"><?php echo e($outstandingArr['source']); ?></td>
 													<?php
 														$currentOutstandingBalance = $outstandingArr['outstanding'] ;
-														$currentRoom = $outstandingArr['room'] ;
+														$currentCashCover = $outstandingArr['cash_cover'] ;
 														$totals['outstanding'] = isset($totals['outstanding']) ? $totals['outstanding'] + $currentOutstandingBalance : $currentOutstandingBalance;
-														$totals['room'] = isset($totals['room']) ? $totals['room'] + $currentRoom : $currentRoom;
+														$totals['cash_cover'] = isset($totals['cash_cover']) ? $totals['cash_cover'] + $currentCashCover : $currentCashCover;
 														
 													?>
                                                     <td class="text-center"><?php echo e(number_format($currentOutstandingBalance)); ?></td>
-                                                    <td class="text-center"><?php echo e(number_format($currentRoom)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($currentCashCover)); ?></td>
                                                 </tr>
 												<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                                 
@@ -376,7 +376,7 @@
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td><?php echo e(number_format($totals['outstanding'] ??0)); ?></td>
-                                                    <td><?php echo e(number_format($totals['room']??0)); ?></td>
+                                                    <td><?php echo e(number_format($totals['cash_cover']??0)); ?></td>
 
                                                 </tr>
                                                 <?php $__env->endSlot(); ?>
@@ -389,7 +389,7 @@
 											</div>
 
                                         </div>
-                                        <div class="chartdiv_two_lines" id="FullySecuredOverdraftchartdiv_two_lines_<?php echo e($currency); ?>"></div>
+                                        
                                     </div>
                                 </div>
 
@@ -617,9 +617,9 @@
         pieSeries.slices.template.strokeModifier = rgm;
         pieSeries.slices.template.strokeOpacity = 0.4;
         pieSeries.slices.template.strokeWidth = 0;
-        // chart.legend = new am4charts.Legend();
-        //        chart.legend.position = "right";
-        //    chart.legend.scrollable = true;
+         chart.legend = new am4charts.Legend();
+                chart.legend.position = "right";
+            chart.legend.scrollable = true;
 
 
     }); // end am4core.ready()
@@ -733,14 +733,12 @@
 
 <script>
     $(document).on('change', 'select[js-refresh-limits-chart]', function(e) {
-        console.log(e.target)
         const modelName = $(this).attr('data-table');
         const currencyName = $(this).attr('data-currency')
         const bankId = $('.bank-id-js[data-currency="' + currencyName + '"][data-table="' + modelName + '"]').val();
         const accountNumber = $('.js-account-number[data-currency="' + currencyName + '"][data-table="' + modelName + '"]').val();
         const date = $('#js-date').val();
         const currentChartId = modelName + 'chartdiv_two_lines_' + currencyName
-        console.log(currentChartId);
         if (!accountNumber) {
             return;
         }
@@ -793,22 +791,21 @@ $(document).on('change','[update-lg-table-and-charts]',function(){
 				var tableData =  res.tablesData.outstanding_for_table[currentCurrency] ; 
 				var mainRows = ' ';
 				var totalOutstanding = 0 ;
-				var totalRoom = 0 ;
+				var totalCashCover = 0 ;
 				for(var row of tableData){
 					var currentOutstanding = row.outstanding ;
 					totalOutstanding +=currentOutstanding;
-					var currentRoom = row.room ;
-					totalRoom += currentRoom ;
-					mainRows+= `<tr> <td>${row.financial_institution_name}</td> <td>${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentRoom)}</td> </tr>`;
+					var currentCashCover = row.cash_cover ;
+					totalCashCover += currentCashCover ;
+					mainRows+= `<tr> <td class="text-left bank-max-width">${row.financial_institution_name}</td> <td class="text-left">${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentCashCover)}</td> </tr>`;
 				}
 				// total row 
-				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalRoom)}</td> </tr>`
+				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalCashCover)}</td> </tr>`
 				$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty().append(mainRows)
-//				
 			}
-			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type[currentCurrency]
-			console.log($('#'+lgOutstandingPerLgFinancialInstitutionChartId).length);
-			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution[currentCurrency]
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type ? res.charts.outstanding_per_lg_type[currentCurrency] : []
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution ? res.charts.outstanding_per_financial_institution[currentCurrency] : []
+
 			
 		}
 	})

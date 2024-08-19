@@ -705,7 +705,6 @@ use App\Models\LetterOfCreditIssuance;
         const lcType = $('select#lc-type').val()
         const accountTypeId = $('select#account_type_id').val()
         const accountNumber = $('select[js-cd-or-td-account-number]').val()
-        console.log($('select[js-cd-or-td-account-number]'))
 
         $.ajax({
             url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"

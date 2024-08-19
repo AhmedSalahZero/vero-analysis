@@ -7,18 +7,21 @@
 
 @section('dash_nav')
 <style>
+ .bank-max-width {
+        max-width: 50% !important;
+        min-width: 50% !important;
+        width: 50% !important;
+    }
     .chartdiv_two_lines {
         width: 100%;
-        height: 275px;
+        height:275px !important;
     }
 
     .chartDiv {
-        max-height: 275px !important;
+        max-height: 350px !important;
     }
 
-    .margin__left {
-        border-left: 2px solid #366cf3;
-    }
+   
 
     .sky-border {
         border-bottom: 1.5px solid #CCE2FD !important;
@@ -292,9 +295,8 @@
         </div> --}}
         <div class="row">
 
-            {{-- Fully Secured Overdraft  --}}
-            {{-- @if($hasFullySecuredOverdraft[$currency]??false) --}}
-            <div class="col-md-3">
+         
+            <div class="col-md-6">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
@@ -313,18 +315,12 @@
                  
                         </div>
                        
-                        {{-- Chart --}}
-                        {{-- <div class="row">
-                            <div class="col-md-12">
-                                <div class="chartdiv" id="chartdiv2"></div>
-                            </div>
-                        </div> --}}
+                        
                     </div>
                 </div>
             </div>
 
-            {{-- Fully Secured Overdraft  Chart --}}
-			 <div class="col-md-3">
+			 <div class="col-md-6">
                 <div class="kt-portlet kt-portlet--tabs">
                      <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
@@ -364,7 +360,7 @@
             </div>
 			
 			
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="kt-portlet kt-portlet--tabs">
                      <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
@@ -421,14 +417,14 @@
                                             </div>
 											
 											<div class="col-md-12 mt-4">
-											  <x-table data-currency="{{ $currency }}" :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries lg-details-table'">
+											  <x-table data-currency="{{ $currency }}" :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries remove-max-class lg-details-table'">
                                                 @slot('table_header')
                                                 <tr class="table-active text-center">
-                                                    <th class="text-center">{{ __('Bank Name') }}</th>
+                                                    <th class="text-center bank-max-width">{{ __('Bank Name') }}</th>
                                                     <th class="text-center ">{{ __('Type') }}</th>
                                                     <th class="text-center ">{{ __('Source') }}</th>
                                                     <th class="text-center ">{{ __('Outstanding') }}</th>
-                                                    <th class="text-center ">{{ __('Room') }}</th>
+                                                    <th class="text-center ">{{ __('Cash Cover') }}</th>
                                                 </tr>
                                                 @endslot
                                                 @slot('table_body')
@@ -437,18 +433,18 @@
 												@endphp
 												@foreach($tablesData['outstanding_for_table'][$currency] ??[ ] as $outstandingArr )
 												<tr>
-                                                    <td class=""> {{ $outstandingArr['financial_institution_name'] }} </td>
-                                                    <td class="">{{ $outstandingArr['type'] }}</td>
+                                                    <td class="text-left bank-max-width" > {{ $outstandingArr['financial_institution_name'] }} </td>
+                                                    <td class="text-left">{{ $outstandingArr['type'] }}</td>
                                                     <td class="text-center">{{ $outstandingArr['source'] }}</td>
 													@php
 														$currentOutstandingBalance = $outstandingArr['outstanding'] ;
-														$currentRoom = $outstandingArr['room'] ;
+														$currentCashCover = $outstandingArr['cash_cover'] ;
 														$totals['outstanding'] = isset($totals['outstanding']) ? $totals['outstanding'] + $currentOutstandingBalance : $currentOutstandingBalance;
-														$totals['room'] = isset($totals['room']) ? $totals['room'] + $currentRoom : $currentRoom;
+														$totals['cash_cover'] = isset($totals['cash_cover']) ? $totals['cash_cover'] + $currentCashCover : $currentCashCover;
 														
 													@endphp
                                                     <td class="text-center">{{ number_format($currentOutstandingBalance) }}</td>
-                                                    <td class="text-center">{{ number_format($currentRoom) }}</td>
+                                                    <td class="text-center">{{ number_format($currentCashCover) }}</td>
                                                 </tr>
 												@endforeach 
                                                 
@@ -458,7 +454,7 @@
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>{{ number_format($totals['outstanding'] ??0) }}</td>
-                                                    <td>{{ number_format($totals['room']??0) }}</td>
+                                                    <td>{{ number_format($totals['cash_cover']??0) }}</td>
 
                                                 </tr>
                                                 @endslot
@@ -466,7 +462,7 @@
 											</div>
 
                                         </div>
-                                        <div class="chartdiv_two_lines" id="FullySecuredOverdraftchartdiv_two_lines_{{ $currency }}"></div>
+                                        {{-- <div class="chartdiv_two_lines" id="FullySecuredOverdraftchartdiv_two_lines_{{ $currency }}"></div> --}}
                                     </div>
                                 </div>
 
@@ -786,9 +782,9 @@
         pieSeries.slices.template.strokeModifier = rgm;
         pieSeries.slices.template.strokeOpacity = 0.4;
         pieSeries.slices.template.strokeWidth = 0;
-        // chart.legend = new am4charts.Legend();
-        //        chart.legend.position = "right";
-        //    chart.legend.scrollable = true;
+         chart.legend = new am4charts.Legend();
+                chart.legend.position = "right";
+            chart.legend.scrollable = true;
 
 
     }); // end am4core.ready()
@@ -902,14 +898,12 @@
 
 <script>
     $(document).on('change', 'select[js-refresh-limits-chart]', function(e) {
-        console.log(e.target)
         const modelName = $(this).attr('data-table');
         const currencyName = $(this).attr('data-currency')
         const bankId = $('.bank-id-js[data-currency="' + currencyName + '"][data-table="' + modelName + '"]').val();
         const accountNumber = $('.js-account-number[data-currency="' + currencyName + '"][data-table="' + modelName + '"]').val();
         const date = $('#js-date').val();
         const currentChartId = modelName + 'chartdiv_two_lines_' + currencyName
-        console.log(currentChartId);
         if (!accountNumber) {
             return;
         }
@@ -962,22 +956,21 @@ $(document).on('change','[update-lg-table-and-charts]',function(){
 				var tableData =  res.tablesData.outstanding_for_table[currentCurrency] ; 
 				var mainRows = ' ';
 				var totalOutstanding = 0 ;
-				var totalRoom = 0 ;
+				var totalCashCover = 0 ;
 				for(var row of tableData){
 					var currentOutstanding = row.outstanding ;
 					totalOutstanding +=currentOutstanding;
-					var currentRoom = row.room ;
-					totalRoom += currentRoom ;
-					mainRows+= `<tr> <td>${row.financial_institution_name}</td> <td>${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentRoom)}</td> </tr>`;
+					var currentCashCover = row.cash_cover ;
+					totalCashCover += currentCashCover ;
+					mainRows+= `<tr> <td class="text-left bank-max-width">${row.financial_institution_name}</td> <td class="text-left">${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentCashCover)}</td> </tr>`;
 				}
 				// total row 
-				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalRoom)}</td> </tr>`
+				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalCashCover)}</td> </tr>`
 				$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty().append(mainRows)
-//				
 			}
-			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type[currentCurrency]
-			console.log($('#'+lgOutstandingPerLgFinancialInstitutionChartId).length);
-			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution[currentCurrency]
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type ? res.charts.outstanding_per_lg_type[currentCurrency] : []
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution ? res.charts.outstanding_per_financial_institution[currentCurrency] : []
+
 			
 		}
 	})

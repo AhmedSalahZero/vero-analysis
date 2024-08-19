@@ -748,7 +748,6 @@
     $('select.js-condition-to-select').change(function() {
         const value = $(this).val();
         const conditionalValueTwoInput = $(this).closest('tr').find('input.conditional-b-input');
-        console.log(value, value == 'between-and-equal')
         if (value == 'between-and-equal' || value == 'between') {
             conditionalValueTwoInput.prop('disabled', false).trigger('change');
         } else {
@@ -776,7 +775,6 @@
 <script>
     const handlePaymentTermModal = function() {
         const parentTermsType = $(this).closest('select').val();
-        console.log(parentTermsType)
         const tableId = $(this).closest('table').attr('id');
         if (parentTermsType == 'customize') {
             $(this).closest('tr').find('#' + tableId + 'test-modal-id').modal('show')
@@ -797,11 +795,9 @@
     $(document).on('change', '.rate-element', function() {
         let total = 0;
         const parent = $(this).closest('tbody');
-        console.log(parent.find('.rate-element-hidden'));
         parent.find('.rate-element-hidden').each(function(index, element) {
             total += parseFloat($(element).val());
         });
-        console.log(total);
         parent.find('td.td-for-total-payment-rate').html(number_format(total, 2) + ' %');
 
     })
@@ -904,7 +900,6 @@ $(document).on('change','.js-toggle-how-many',function(){
 $(document).on('change','select.main_item_js',function(){
 	const selectedOption = $(this).find('option:selected');
 	const nameId = $(this).attr('data-name-id');
-	console.log(nameId);
 	const abb = $(selectedOption).attr('data-abb');
 	const code = $(selectedOption).attr('data-code');
 	

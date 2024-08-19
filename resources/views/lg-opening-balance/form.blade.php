@@ -776,7 +776,6 @@ use App\Models\LetterOfGuaranteeIssuance ;
 					let isSupplier = $(this).closest('.modal-parent--js.is-supplier-class').length ;
 					let isCustomer = $(this).closest('.modal-parent--js.is-customer-class').length ;
 					let type = isSupplier > 0 ?'Supplier':'Customer';
-					console.log(type)
 					route = 	route.replace('replace_with_actual_type',modalName);
 
                     $.ajax({

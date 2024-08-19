@@ -512,7 +512,7 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
-		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
+		// $selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
 		$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
 	
 		$currentDate = now()->format('Y-m-d') ;
@@ -532,7 +532,7 @@ class CustomerInvoiceDashboardController extends Controller
         foreach ($selectedCurrencies as $currencyName) {
 			
 			foreach($lgTypes as $currentLgType => $currentLgTitle){
-				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source);
+				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
 			}
 			
             foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {

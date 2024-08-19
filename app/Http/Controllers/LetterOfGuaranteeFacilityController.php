@@ -198,11 +198,16 @@ class LetterOfGuaranteeFacilityController
 		})
 		->pluck('name','id')
 		->toArray();
-		
+		// dd($request->all());
+		$currentSource = $request->get('source');
 		
 		$currentLgOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+		if(!$financialInstitution){
+			return ;
+		}
         $letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
+		
         $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
         $lgCommissionRate  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
         $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
@@ -227,8 +232,9 @@ class LetterOfGuaranteeFacilityController
 				if($accountType->isCertificateOfDeposit()){
 					$currentSource = LetterOfGuaranteeIssuance::AGAINST_CD;
 				}
-				$builder->where('source',$currentSource);
+				
 			})
+			->where('source',$currentSource)
 			->orderByRaw('full_date desc')
 			->first();
 			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
