@@ -204,16 +204,23 @@ class LetterOfGuaranteeStatement extends Model
 	public static function getTotalOutstandingBalanceForAllLgTypes(int $companyId , int $financialInstitutionId,string $currencyName):float 
 	{
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
-		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
-			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
-			->where('company_id',$companyId)
-			->where('financial_institution_id',$financialInstitutionId)
-			->where('currency',$currencyName)
-			->where('lg_type',$lgTypeId)
-			->orderByRaw('full_date desc')
-			->first();
-			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
-			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
+		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){	
+			foreach(LetterOfGuaranteeIssuance::lgSources() as $currentSourceId => $currentSourceTitle){
+				if($currentSourceId != LetterOfGuaranteeIssuance::LG_FACILITY ){
+					continue ;
+				}
+				$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
+					->where('company_id',$companyId)
+					->where('financial_institution_id',$financialInstitutionId)
+					->where('currency',$currencyName)
+					->where('lg_type',$lgTypeId)
+					->where('source',$currentSourceId)
+					->orderByRaw('full_date desc')
+					->first();
+					$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
+					$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
+			}
+			
 		}
 		return abs($totalLastOutstandingBalanceOfFourTypes) ; 
 	}
@@ -232,64 +239,78 @@ class LetterOfGuaranteeStatement extends Model
 	public static function getDashboardOutstandingPerLgTypeFormattedData(array &$charts , Company $company  , string $currencyName , string $date , string $lgTypeId , ?string $source , $selectedFinancialInstitutionBankIds ):void
 	{
 		$lgTitle = LgTypes::getAll()[$lgTypeId] ;
+		$sources = $source ? [$source => $source] : LetterOfGuaranteeIssuance::lgSources();
+		
 		$totalEndBalance = 0 ;
-		foreach($selectedFinancialInstitutionBankIds as $currentFinancialInstitutionId){
-			$rowPerType  = DB::table('letter_of_guarantee_statements')
-					->where('company_id',$company->id )
-					->where('financial_institution_id',$currentFinancialInstitutionId)
-					->where('currency',$currencyName)
-					->where('date','<=',$date)
-					->where('lg_type',$lgTypeId)
-					->when($source , function(Builder $builder) use ($source){
-						$builder->where('source',$source);
-					})
-					->orderByRaw('full_date desc')
-					->first();
-					if(!$rowPerType){
-						continue;
+		foreach($sources as $source => $sourceTitle){
+			foreach($selectedFinancialInstitutionBankIds as $currentFinancialInstitutionId){
+				$rowPerType  = DB::table('letter_of_guarantee_statements')
+						->where('company_id',$company->id )
+						->where('financial_institution_id',$currentFinancialInstitutionId)
+						->where('currency',$currencyName)
+						->where('date','<=',$date)
+						->where('lg_type',$lgTypeId)
+						->when($source , function(Builder $builder) use ($source){
+							$builder->where('source',$source);
+						})
+						->orderByRaw('full_date desc')
+						->first();
+						if(!$rowPerType){
+							continue;
+						}
+						$totalEndBalance += abs($rowPerType->end_balance) ;
 					}
-					$totalEndBalance += abs($rowPerType->end_balance) ;
-				}
+		}
+		
 				$charts['outstanding_per_lg_type'][$currencyName][] = ['type'=>$lgTitle , 'outstanding'=>$totalEndBalance] ;
 	}
-	public static function getDashboardOutstandingPerFinancialInstitutionFormattedData(array &$charts , Company $company  , string $currencyName , string $date , int $financialInstitutionId , string $financialInstitutionName , ?string $source):void
+	public static function getDashboardOutstandingPerFinancialInstitutionFormattedData(array &$charts , Company $company  , string $currencyName , string $date , int $financialInstitutionId , string $financialInstitutionName , ?string $source , $lgTypes):void
 	{
-		$rowsPerType  = DB::table('letter_of_guarantee_statements')
-		->where('company_id',$company->id )
-		->where('financial_institution_id',$financialInstitutionId)
-		->where('currency',$currencyName)
-		->where('date','<=',$date)
-		->when($source , function(Builder $builder) use ($source){
-			$builder->where('source',$source);
-		})
-		// ->where('lg_type',$lgTypeId)
-		->orderByRaw('full_date desc')
-		->get();
-		if(!count($rowsPerType)){return ;}
-		$charts['outstanding_per_financial_institution'][$currencyName][] = ['type'=>$financialInstitutionName , 'outstanding'=>$rowsPerType->sum(function($raw){return abs($raw->end_balance);})] ;
-	
-		// $charts['outstanding_per_financial_institution'][$currencyName][] = ['type'=>$financialInstitutionName , 'outstanding'=>$rowPerType ? abs($rowPerType->end_balance) : 0] ;
-	}
-	public static function getDashboardOutstandingTableFormattedData(array &$tablesData , Company $company  , string $currencyName , string $date , int $financialInstitutionId,string $lgTypeId , string $financialInstitutionName ,  $lastLetterOfGuaranteeFacility , ?string $source ):void
-	{
+		$sources = $source ? [$source => $source] : LetterOfGuaranteeIssuance::lgSources();
+		$totalEndBalance = 0 ;
+		// dd($sources);
+		foreach($sources as $currentSourceId => $sourceTitle){
+		foreach($lgTypes as $currentLgTypeId => $currentLgTypeTitle){
+			
 		$rowPerType  = DB::table('letter_of_guarantee_statements')
 		->where('company_id',$company->id )
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('currency',$currencyName)
 		->where('date','<=',$date)
-		->where('lg_type',$lgTypeId)
-		->when($source , function(Builder $builder) use ($source){
-			$builder->where('source',$source);
-		})
+		->where('source',$currentSourceId)
+		->where('lg_type',$currentLgTypeId)
 		->orderByRaw('full_date desc')
 		->first();
-		if(!$rowPerType){return ;}
-		$currentOutstandingBalance = abs($rowPerType->end_balance) ;
 		
-		$currentLimit = $lastLetterOfGuaranteeFacility ? $lastLetterOfGuaranteeFacility->limit : 0 ;
-		$tablesData['outstanding_for_table'][$currencyName][] = ['financial_institution_name'=>$financialInstitutionName , 'outstanding'=>$currentOutstandingBalance , 'source'=>LetterOfGuaranteeIssuance::lgSources()[$rowPerType->source] , 'type'=>LgTypes::getAll()[$rowPerType->lg_type] , 'limit'=>$currentLimit , 'cash_cover'=>LetterOfGuaranteeStatement::getTotalCashCoverForAllLgTypes($company->id,$financialInstitutionId,$currencyName,$lgTypeId)] ;
+		if(!$rowPerType){
+			continue;
+		}
+		$totalEndBalance += abs($rowPerType->end_balance) ;
+		}
+		}
+		$charts['outstanding_per_financial_institution'][$currencyName][] = ['type'=>$financialInstitutionName , 'outstanding'=>$totalEndBalance] ;
 	}
-	public static function getTotalCashCoverForAllLgTypes(int $companyId , int $financialInstitutionId,string $currency , ?string $type = null):float 
+	public static function getDashboardOutstandingTableFormattedData(array &$tablesData , Company $company  , string $currencyName , string $date , int $financialInstitutionId,string $lgTypeId , string $financialInstitutionName ,  $lastLetterOfGuaranteeFacility , ?string $source ):void
+	{
+		$allSources = $source ? [$source => $source] : LetterOfGuaranteeIssuance::lgSources() ; ;
+		foreach($allSources as $currentSourceId => $currentSourceTitle){
+			$rowPerType  = DB::table('letter_of_guarantee_statements')
+				->where('company_id',$company->id )
+				->where('financial_institution_id',$financialInstitutionId)
+				->where('currency',$currencyName)
+				->where('date','<=',$date)
+				->where('source',$currentSourceId)
+				->where('lg_type',$lgTypeId)
+				->orderByRaw('full_date desc')
+				->first();
+				if(!$rowPerType){continue ;}
+				$currentOutstandingBalance = abs($rowPerType->end_balance) ;
+				$currentLimit = $lastLetterOfGuaranteeFacility ? $lastLetterOfGuaranteeFacility->limit : 0 ;
+				$tablesData['outstanding_for_table'][$currencyName][] = ['financial_institution_name'=>$financialInstitutionName , 'outstanding'=>$currentOutstandingBalance , 'source'=>LetterOfGuaranteeIssuance::lgSources()[$rowPerType->source] , 'type'=>LgTypes::getAll()[$rowPerType->lg_type] , 'limit'=>$currentLimit , 'cash_cover'=>LetterOfGuaranteeStatement::getTotalCashCoverForAllLgTypes($company->id,$financialInstitutionId,$currencyName,$lgTypeId,$currentSourceId)] ;
+			
+		}
+		}
+	public static function getTotalCashCoverForAllLgTypes(int $companyId , int $financialInstitutionId,string $currency , ?string $type = null , ?string $source = null):float 
 	{
 		$totalLastCashCoverOfFourTypes = 0 ;
 		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
@@ -300,6 +321,9 @@ class LetterOfGuaranteeStatement extends Model
 			->where('lg_type',$lgTypeId)
 			->when($type , function(Builder $builder) use ($type){
 				$builder->where('lg_type',$type);
+			})
+			->when($source , function(Builder $builder) use ($source){
+				$builder->where('source',$source);
 			})
 			->orderByRaw('full_date desc')
 			->first();
