@@ -390,21 +390,20 @@
 
                                     <div class="col-md-12  margin__left">
 
-                                        <div class="row ">
-                                            {{-- <div class="col-12">
-                                                <h4> {{ __('Bank Movement') }} </h4>
-                                            </div> --}}
+                                        <div class="row common-parent">
+										<input type="hidden" class="current_currency" value="{{ $currency }}">
+                                          
                                             <div class="col-md-6">
-                                                <select data-currency="{{ $currency }}" data-table="FullySecuredOverdraft"  class="form-control bank-id-js">
+                                                <select update-lg-table-and-charts data-currency="{{ $currency }}"  id="financial_institution_id_{{ $currency }}" class="form-control ">
 														<option value="0">{{ __('All') }}</option>
 												
-                                                    @foreach($allFullySecuredOverdraftBanks as $bank)
+                                                    @foreach($financialInstitutions as $bank)
                                                     <option value="{{ $bank->id }}"> {{ $bank->getName() }} </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                             <div class="col-md-3">
-                                                <select name="lg_type" class="form-control">
+                                             <div class="col-md-3"  >
+                                                <select update-lg-table-and-charts id="lg_type_{{ $currency }}"  name="lg_type" class="form-control">
 														<option value="0">{{ __('All') }}</option>
 													@foreach($lgTypes as $lgTypeId => $lgTypeTitle)
 														<option value="{{ $lgTypeId }}">{{ $lgTypeTitle }}</option>
@@ -413,7 +412,7 @@
                                             </div>
 
                                             <div class="col-md-3">
-                                                <select name="lg_source" class="form-control">
+                                                <select name="lg_source" class="form-control" id="lg_source_{{ $currency }}" update-lg-table-and-charts>
 														<option value="0">{{ __('All') }}</option>
 													@foreach($lgSources as $lgSourceId => $lgSourceTitle)
 														<option value="{{ $lgSourceId }}">{{ $lgSourceTitle }}</option>
@@ -422,7 +421,7 @@
                                             </div>
 											
 											<div class="col-md-12 mt-4">
-											  <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries'">
+											  <x-table data-currency="{{ $currency }}" :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries lg-details-table'">
                                                 @slot('table_header')
                                                 <tr class="table-active text-center">
                                                     <th class="text-center">{{ __('Bank Name') }}</th>
@@ -433,32 +432,33 @@
                                                 </tr>
                                                 @endslot
                                                 @slot('table_body')
-
-
-<tr>
-
-                                                    <td class="">1</td>
-                                                    <td class="">1</td>
-                                                    <td class="text-center">2</td>
-                                                    <td class="text-center">3</td>
-                                                    <td class="text-center">4</td>
+												@php
+													$totals = [];
+												@endphp
+												@foreach($tablesData['outstanding_for_table'][$currency] ??[ ] as $outstandingArr )
+												<tr>
+                                                    <td class=""> {{ $outstandingArr['financial_institution_name'] }} </td>
+                                                    <td class="">{{ $outstandingArr['type'] }}</td>
+                                                    <td class="text-center">{{ $outstandingArr['source'] }}</td>
+													@php
+														$currentOutstandingBalance = $outstandingArr['outstanding'] ;
+														$currentRoom = $outstandingArr['room'] ;
+														$totals['outstanding'] = isset($totals['outstanding']) ? $totals['outstanding'] + $currentOutstandingBalance : $currentOutstandingBalance;
+														$totals['room'] = isset($totals['room']) ? $totals['room'] + $currentRoom : $currentRoom;
+														
+													@endphp
+                                                    <td class="text-center">{{ number_format($currentOutstandingBalance) }}</td>
+                                                    <td class="text-center">{{ number_format($currentRoom) }}</td>
                                                 </tr>
-                                                @foreach ($totalRoomForEachFullySecuredOverdraftId[$currency] ??[] as $key => $item)
-                                                {{-- <tr>
-
-                                                    <td class="">1</td>
-                                                    <td class="text-center">2</td>
-                                                    <td class="text-center">3</td>
-                                                    <td class="text-center">4</td>
-                                                </tr> --}}
-                                                @endforeach
+												@endforeach 
+                                                
 
                                                 <tr class="table-active text-center">
                                                     <td>{{__('Total')}}</td>
-                                                    <td>5</td>
-                                                    <td>5</td>
-                                                    <td>6</td>
-                                                    <td>7</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>{{ number_format($totals['outstanding'] ??0) }}</td>
+                                                    <td>{{ number_format($totals['room']??0) }}</td>
 
                                                 </tr>
                                                 @endslot
@@ -939,7 +939,51 @@
 
 </script>
 <script src="/custom/money-receive.js"></script>
+<script>
+$(document).on('change','[update-lg-table-and-charts]',function(){
+	const currentCurrency = $(this).closest('.common-parent').find('.current_currency').val();
+	const lgOutstandingPerLgTypeChartId = 'outstanding_per_lg_typechartdiv_available_room_'+currentCurrency;
+	const lgOutstandingPerLgFinancialInstitutionChartId = 'outstanding_per_financial_institutionchartdiv_available_room_'+currentCurrency;
+	const financialInstitutionId = $('select#financial_institution_id_'+currentCurrency).val();
+	const lgType = $('select#lg_type_'+currentCurrency).val();
+	const lgSource = $('select#lg_source_'+currentCurrency).val();
+	$.ajax({
+		url:"{{ route('view.lglc.dashboard',['company'=>$company->id]) }}",
+		data:{
+			financialInstitutionId,
+			lgType,
+			lgSource,
+			currencies:[currentCurrency]
+		},
+		success:function(res){
+			// format table 
+			$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty();
+			if(res.tablesData.outstanding_for_table){
+				var tableData =  res.tablesData.outstanding_for_table[currentCurrency] ; 
+				var mainRows = ' ';
+				var totalOutstanding = 0 ;
+				var totalRoom = 0 ;
+				for(var row of tableData){
+					var currentOutstanding = row.outstanding ;
+					totalOutstanding +=currentOutstanding;
+					var currentRoom = row.room ;
+					totalRoom += currentRoom ;
+					mainRows+= `<tr> <td>${row.financial_institution_name}</td> <td>${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentRoom)}</td> </tr>`;
+				}
+				// total row 
+				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalRoom)}</td> </tr>`
+				$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty().append(mainRows)
+//				
+			}
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type[currentCurrency]
+			console.log($('#'+lgOutstandingPerLgFinancialInstitutionChartId).length);
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution[currentCurrency]
+			
+		}
+	})
+})
 
+</script>
 {{-- <script src="{{url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')}}" type="text/javascript"></script> --}}
 
 <!--end::Page Scripts -->

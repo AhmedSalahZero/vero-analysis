@@ -46,8 +46,9 @@
     <?php endif; ?>
     <div class=" <?php if('kt_table_with_no_pagination_no_scroll_no_entries' != $tableClass ): ?> kt-portlet__body <?php endif; ?> table-responsive">
 
+
         <!--begin: Datatable -->
-        <table class="table table-striped- <?php echo e($tableClass); ?> table-bordered table-hover table-checkable  " >
+        <table  <?php echo e($attributes); ?>  class="table table-striped- <?php echo e($tableClass); ?> table-bordered table-hover table-checkable  " >
 
             <thead>
                 <?php echo e($table_header); ?>

@@ -15,5 +15,15 @@ class LgTypes
 			self::PERFORMANCE_LG=>__('Performance LG')
 		];
 	}
+	public static function only(array $keys):array 
+	{
+		$result = [];
+		foreach(self::getAll() as $currentLgType => $currentLgTitle){
+			if(in_array($currentLgType,$keys)){
+				$result[$currentLgType] = $currentLgTitle ;
+			}
+		}
+		return $result ;
+	}
 	 
 }

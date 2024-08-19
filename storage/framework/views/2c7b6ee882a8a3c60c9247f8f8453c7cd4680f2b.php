@@ -1495,7 +1495,6 @@
         const accountNumber = $('.js-account-number[data-currency="' + currencyName + '"][data-table="' + modelName + '"]').val();
         const date = $('#js-date').val();
         const currentChartId = modelName + 'chartdiv_two_lines_' + currencyName
-        console.log(currentChartId);
         if (!accountNumber) {
             return;
         }

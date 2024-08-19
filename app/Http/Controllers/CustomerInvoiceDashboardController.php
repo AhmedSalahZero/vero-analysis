@@ -500,48 +500,21 @@ class CustomerInvoiceDashboardController extends Controller
         ]);
     }
 
-
-	
-	
-	
-	
-	
-	
 	
 	public function viewLGLCDashboard(Company $company, Request $request)
     {
 			// start fully SecuredOverdraft
-			$allFullySecuredOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasFullySecuredOverdrafts()->get();
-			$fullySecuredOverdraftAccountTypes = AccountType::onlyFullySecuredOverdraft()->get();
-			$fullySecuredOverdraftCardData = [];
-			$cdAccountTypeId = AccountType::onlyCdAccounts()->first()->id ;
-			$tdAccountTypeId = AccountType::onlyTdAccounts()->first()->id ;
-			
-			
+			$financialInstitutions = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 			$charts =  [];
-			// end fully SecuredOverdraft
-			
-		// start cleanOverdraft
-		 
-		$allCleanOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasCleanOverdrafts()->get();
-		$cleanOverdraftAccountTypes = AccountType::onlyCleanOverdraft()->get();
-        $cleanOverdraftCardData = [];
-		$totalRoomForEachCleanOverdraftId =  [];
-        // end cleanOverdraft
-		
-		
-		// start overdraft Against Commercial Paper
-		 
-		$allOverdraftAgainstCommercialPaperBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasOverdraftAgainstCommercialPapers()->get();
-		$overdraftAgainstCommercialPaperAccountTypes = AccountType::onlyOverdraftAgainstCommercialPaper()->get();
-        $overdraftAgainstCommercialPaperCardData = [];
-		$totalRoomForEachOverdraftAgainstCommercialPaperId =  [];
-        // end overdraftAgainstCommercialPaper
-		
+			$tablesData = [];
+			$lgTypes = LgTypes::getAll() ;
+			$lgTypes = $request->ajax() && ! is_numeric($request->get('lgType')) ?  LgTypes::only((array) $request->get('lgType'))  : $lgTypes ; 
 		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
 		$selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
+		$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
+	
 		$currentDate = now()->format('Y-m-d') ;
         $date = $request->get('date');
 		$date = $date ? HDate::formatDateFromDatePicker($date) : $currentDate;
@@ -554,55 +527,19 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
+		$source = $request->get('lgSource');
         $reports = [];
-		
         foreach ($selectedCurrencies as $currencyName) {
 			
-			// start fully secured overdraft
-			// $totalFullySecuredOverdraftRoom = 0 ;
-			// $fullySecuredOverdraftCardCommonQuery = FullySecuredOverdraft::getCommonQueryForCashDashboard($company,$currencyName,$date);
-			// $fullySecuredOverdraftIds = $fullySecuredOverdraftCardCommonQuery->pluck('id')->toArray() ;
-			// $hasFullySecuredOverdraft[$currencyName] = FullySecuredOverdraft::hasAnyRecord($company,$currencyName); 
-			// end fully secured Overdraft
-			
-		
-			
-			
-			
-		
-			
-			
-			
-			
-			foreach(LgTypes::getAll() as $currentLgType => $currentLgTitle){
-				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType);
-				// LetterOfGuaranteeStatement::getDashboardDataForFinancialInstitution($totalRoomForEachFullySecuredOverdraftId,$company,$fullySecuredOverdraftIds,$currencyName,$date,$financialInstitutionBankId,$totalFullySecuredOverdraftRoom);
+			foreach($lgTypes as $currentLgType => $currentLgTitle){
+				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source);
 			}
 			
             foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
 		
 				$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
-				LetterOfGuaranteeStatement::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName());
-				
-				/**
-				 * * start fully Secured overdraft
-				 */
-				
-				 /**
-				  * * end fully Secured overdraft
-				  */
-		
-
-        
-		
-				 
-				
-                /**
-                 * * حساب ال current account
-                 */
-
-
-                $lastLetterOfGuaranteeFacility = DB::table('letter_of_guarantee_facilities')
+				LetterOfGuaranteeStatement::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source);
+				$lastLetterOfGuaranteeFacility = DB::table('letter_of_guarantee_facilities')
                 ->join('financial_institutions', 'letter_of_guarantee_facilities.financial_institution_id', '=', 'financial_institutions.id')
                 ->where('financial_institutions.company_id', $company->id)
                 ->where('currency', $currencyName)
@@ -611,7 +548,9 @@ class CustomerInvoiceDashboardController extends Controller
                 ->orderBy('contract_start_date', 'desc')
                 ->limit(1)
 				->first();
-				// getTotalOutstandingBalanceForAllLgTypes
+					foreach($lgTypes as $currentLgType => $currentLgTitle){
+						LetterOfGuaranteeStatement::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$lastLetterOfGuaranteeFacility,$source);
+					}
 		
 					$details[$currencyName]['lg'][] = [
 						'limit'=>$currentLimit = $lastLetterOfGuaranteeFacility ? $lastLetterOfGuaranteeFacility->limit : 0 ,
@@ -626,28 +565,21 @@ class CustomerInvoiceDashboardController extends Controller
                 $total['lg'][$currencyName]['cash_cover'] = isset($total['lg'][$currencyName]['cash_cover']) ? $total['lg'][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
 
             }
-			// dd($charts);
-			// FullySecuredOverdraft::getCashDashboardDataForYear($fullySecuredOverdraftCardData,$fullySecuredOverdraftCardCommonQuery,$company,$fullySecuredOverdraftIds,$currencyName,$date,$year);
-			
             $reports['lg'][$currencyName]['limit'] = $total['lg'][$currencyName]['limit'] ?? 0 ;
             $reports['lg'][$currencyName]['outstanding_balance'] = $total['lg'][$currencyName]['outstanding_balance'] ?? 0 ;
             $reports['lg'][$currencyName]['room'] = $total['lg'][$currencyName]['room'] ?? 0 ;
             $reports['lg'][$currencyName]['cash_cover'] = $total['lg'][$currencyName]['cash_cover'] ?? 0 ;
-			// dd($reports);
-            // $reports['certificate_of_deposits'][$currencyName] =$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount  ;
-            // $reports['time_deposits'][$currencyName] = $totalTimeDepositsForCurrentFinancialInstitutionAmount ;
-			
-            // $reports['credit_facilities_room'][$currencyName] = $totalCleanOverdraftRoom + $totalCleanOverdraftAgainstCommercialRoom ;
-
-            // $currentTotal = $reports['cash_and_banks'][$currencyName] + $reports['time_deposits'][$currencyName] + $reports['certificate_of_deposits'][$currencyName]  ;
-            // $reports['total'][$currencyName] = isset($reports['total'][$currencyName]) ? $reports['total'][$currencyName] + $currentTotal : $currentTotal ;
-			
-			
-			#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
-			// $totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
 		
 		}
-
+		
+		if($request->ajax()){
+			
+			return response()->json([
+				'tablesData'=>$tablesData ,
+				'charts'=>$charts
+			]);
+		}
+		
         return view('admin.reports.lglc-report', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
@@ -659,17 +591,8 @@ class CustomerInvoiceDashboardController extends Controller
 			'charts'=>$charts,
 			'lgTypes'=>LgTypes::getAll(),
 			'lgSources'=>LetterOfGuaranteeIssuance::lgSources(),
-			
-			
-			
-			
-			
-			'fullySecuredOverdraftCardData' => $fullySecuredOverdraftCardData,
-			// 'totalRoomForEachFullySecuredOverdraftId'=>$totalRoomForEachFullySecuredOverdraftId,
-			'fullySecuredOverdraftAccountTypes'=>$fullySecuredOverdraftAccountTypes,
-			'allFullySecuredOverdraftBanks'=>$allFullySecuredOverdraftBanks,
-			'hasFullySecuredOverdraft'=>$hasFullySecuredOverdraft ??[],
-		
+			'tablesData'=>$tablesData,
+			'financialInstitutions'=>$financialInstitutions
 				
 			
         ]);
@@ -694,8 +617,8 @@ class CustomerInvoiceDashboardController extends Controller
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
-        $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
-        $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
+        // $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
+        // $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();
         $startDate = $request->get('start_date', now()->subMonths(4)->format('Y-m-d'));
         $endDate = $request->get('end_date', now()->format('Y-m-d'));
@@ -745,4 +668,5 @@ class CustomerInvoiceDashboardController extends Controller
 	return $result ;
 	
 }
+	
 }

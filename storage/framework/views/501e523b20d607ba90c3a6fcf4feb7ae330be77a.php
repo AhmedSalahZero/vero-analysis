@@ -303,19 +303,20 @@
 
                                     <div class="col-md-12  margin__left">
 
-                                        <div class="row ">
-                                            
+                                        <div class="row common-parent">
+										<input type="hidden" class="current_currency" value="<?php echo e($currency); ?>">
+                                          
                                             <div class="col-md-6">
-                                                <select data-currency="<?php echo e($currency); ?>" data-table="FullySecuredOverdraft"  class="form-control bank-id-js">
+                                                <select update-lg-table-and-charts data-currency="<?php echo e($currency); ?>"  id="financial_institution_id_<?php echo e($currency); ?>" class="form-control ">
 														<option value="0"><?php echo e(__('All')); ?></option>
 												
-                                                    <?php $__currentLoopData = $allFullySecuredOverdraftBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php $__currentLoopData = $financialInstitutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <option value="<?php echo e($bank->id); ?>"> <?php echo e($bank->getName()); ?> </option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
-                                             <div class="col-md-3">
-                                                <select name="lg_type" class="form-control">
+                                             <div class="col-md-3"  >
+                                                <select update-lg-table-and-charts id="lg_type_<?php echo e($currency); ?>"  name="lg_type" class="form-control">
 														<option value="0"><?php echo e(__('All')); ?></option>
 													<?php $__currentLoopData = $lgTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lgTypeId => $lgTypeTitle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 														<option value="<?php echo e($lgTypeId); ?>"><?php echo e($lgTypeTitle); ?></option>
@@ -324,7 +325,7 @@
                                             </div>
 
                                             <div class="col-md-3">
-                                                <select name="lg_source" class="form-control">
+                                                <select name="lg_source" class="form-control" id="lg_source_<?php echo e($currency); ?>" update-lg-table-and-charts>
 														<option value="0"><?php echo e(__('All')); ?></option>
 													<?php $__currentLoopData = $lgSources; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lgSourceId => $lgSourceTitle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 														<option value="<?php echo e($lgSourceId); ?>"><?php echo e($lgSourceTitle); ?></option>
@@ -334,11 +335,11 @@
 											
 											<div class="col-md-12 mt-4">
 											   <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries']); ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries lg-details-table']); ?>
 <?php $component->withName('table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?>
+<?php $component->withAttributes(['data-currency' => ''.e($currency).'']); ?>
                                                 <?php $__env->slot('table_header'); ?>
                                                 <tr class="table-active text-center">
                                                     <th class="text-center"><?php echo e(__('Bank Name')); ?></th>
@@ -349,26 +350,33 @@
                                                 </tr>
                                                 <?php $__env->endSlot(); ?>
                                                 <?php $__env->slot('table_body'); ?>
-
-
-<tr>
-
-                                                    <td class="">1</td>
-                                                    <td class="">1</td>
-                                                    <td class="text-center">2</td>
-                                                    <td class="text-center">3</td>
-                                                    <td class="text-center">4</td>
+												<?php
+													$totals = [];
+												?>
+												<?php $__currentLoopData = $tablesData['outstanding_for_table'][$currency] ??[ ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $outstandingArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+												<tr>
+                                                    <td class=""> <?php echo e($outstandingArr['financial_institution_name']); ?> </td>
+                                                    <td class=""><?php echo e($outstandingArr['type']); ?></td>
+                                                    <td class="text-center"><?php echo e($outstandingArr['source']); ?></td>
+													<?php
+														$currentOutstandingBalance = $outstandingArr['outstanding'] ;
+														$currentRoom = $outstandingArr['room'] ;
+														$totals['outstanding'] = isset($totals['outstanding']) ? $totals['outstanding'] + $currentOutstandingBalance : $currentOutstandingBalance;
+														$totals['room'] = isset($totals['room']) ? $totals['room'] + $currentRoom : $currentRoom;
+														
+													?>
+                                                    <td class="text-center"><?php echo e(number_format($currentOutstandingBalance)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($currentRoom)); ?></td>
                                                 </tr>
-                                                <?php $__currentLoopData = $totalRoomForEachFullySecuredOverdraftId[$currency] ??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+												<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                                 
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                 <tr class="table-active text-center">
                                                     <td><?php echo e(__('Total')); ?></td>
-                                                    <td>5</td>
-                                                    <td>5</td>
-                                                    <td>6</td>
-                                                    <td>7</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td><?php echo e(number_format($totals['outstanding'] ??0)); ?></td>
+                                                    <td><?php echo e(number_format($totals['room']??0)); ?></td>
 
                                                 </tr>
                                                 <?php $__env->endSlot(); ?>
@@ -762,7 +770,51 @@
 
 </script>
 <script src="/custom/money-receive.js"></script>
+<script>
+$(document).on('change','[update-lg-table-and-charts]',function(){
+	const currentCurrency = $(this).closest('.common-parent').find('.current_currency').val();
+	const lgOutstandingPerLgTypeChartId = 'outstanding_per_lg_typechartdiv_available_room_'+currentCurrency;
+	const lgOutstandingPerLgFinancialInstitutionChartId = 'outstanding_per_financial_institutionchartdiv_available_room_'+currentCurrency;
+	const financialInstitutionId = $('select#financial_institution_id_'+currentCurrency).val();
+	const lgType = $('select#lg_type_'+currentCurrency).val();
+	const lgSource = $('select#lg_source_'+currentCurrency).val();
+	$.ajax({
+		url:"<?php echo e(route('view.lglc.dashboard',['company'=>$company->id])); ?>",
+		data:{
+			financialInstitutionId,
+			lgType,
+			lgSource,
+			currencies:[currentCurrency]
+		},
+		success:function(res){
+			// format table 
+			$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty();
+			if(res.tablesData.outstanding_for_table){
+				var tableData =  res.tablesData.outstanding_for_table[currentCurrency] ; 
+				var mainRows = ' ';
+				var totalOutstanding = 0 ;
+				var totalRoom = 0 ;
+				for(var row of tableData){
+					var currentOutstanding = row.outstanding ;
+					totalOutstanding +=currentOutstanding;
+					var currentRoom = row.room ;
+					totalRoom += currentRoom ;
+					mainRows+= `<tr> <td>${row.financial_institution_name}</td> <td>${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentRoom)}</td> </tr>`;
+				}
+				// total row 
+				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalRoom)}</td> </tr>`
+				$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty().append(mainRows)
+//				
+			}
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type[currentCurrency]
+			console.log($('#'+lgOutstandingPerLgFinancialInstitutionChartId).length);
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution[currentCurrency]
+			
+		}
+	})
+})
 
+</script>
 
 
 <!--end::Page Scripts -->
