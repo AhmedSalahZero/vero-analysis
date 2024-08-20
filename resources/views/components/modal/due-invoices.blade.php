@@ -3,7 +3,8 @@
 'pastDueCustomerInvoices',
 'weeks',
 'dates',
-'currentInvoiceType'
+'currentInvoiceType',
+'reportInterval'
 ])
 
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -28,7 +29,7 @@
                                 <th class="text-center"> {!! __('Net <br> Balance') !!} </th>
                                 <th class="text-center">{{ __('Due Date') }}</th>
                                 <th class="text-center"> {!! __('Collection <br> Percentage') !!} </th>
-                                <th class="text-center"> {!! __('Collection <br> Weeks') !!} </th>
+                                <th class="text-center"> {!! __('Collection <br> Date') !!} </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,8 +105,16 @@
                                       @foreach($weeks as $weekDate => $weekNo )
 									  @php
 										$startDate = $dates[$weekDate]['start_date'] ;
+									 	$title = __('Week ') . ' ' . $weekNo  . ' ( ' . $dates[$weekDate]['start_date'] . ' - ' . $dates[$weekDate]['end_date'] . ' )';
+										if($reportInterval == 'daily'){
+											$title  = $dates[$weekDate]['start_date'] ;
+										}
+										elseif($reportInterval == 'monthly'){
+											$title = $dates[$weekDate]['end_date'] ;
+										}
 									  @endphp
-									  <option @if($row && $row->week_start_date == $startDate ) selected @endif  class="text-center" value="{{ $startDate }}"> {{ __('Week ') . ' ' . $weekNo  . ' ( ' . $dates[$weekDate]['start_date'] . ' - ' . $dates[$weekDate]['end_date'] . ' )'}}   </option>
+									
+									  <option @if($row && $row->week_start_date == $startDate ) selected @endif  class="text-center" value="{{ $startDate }}"> {{ $title }}   </option>
 									  @endforeach 
                                     </select>
                                 </td>
