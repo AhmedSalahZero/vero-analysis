@@ -13,7 +13,7 @@ $selectedBanks = [];
 	}
 	.form-control:disabled, .form-control[readonly]{
 		background-color: #f7f8fa;
-    opacity: 1;
+  		  opacity: 1;
 	}
 	.action-class{
 		color:white  !important;
@@ -581,7 +581,7 @@ $selectedBanks = [];
                 <div class="col-md-12 js-duplicate-node">
               
 			  <div class=" kt-margin-b-10 border-class">
-		<div class="form-group row align-items-end">
+		<div class="form-group row align-items-end settlement-row-parent">
 
 			<div class="col-md-1 width-10">
 				<label> <?php echo e(__('Invoice Number')); ?> </label>
@@ -1088,7 +1088,7 @@ $(function(){
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
 				parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-			//	parent.find('select.contracts-js').selectpicker("refresh")
+				parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })

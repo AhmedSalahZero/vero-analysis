@@ -30,7 +30,7 @@ class LetterOfGuaranteeStatement extends Model
 		 * * ودا غلط مفروض التاريخ الاقل ما بين التاريخ الجديد و القديم للعنصر بحيث دايما يبدا يحدث من عنده
 		 */
 
-		 DB::table('letter_of_guarantee_statements')
+		 DB::table((new self)->getTable())
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , id asc')
 		->where('financial_institution_id',$model->financial_institution_id)
@@ -39,7 +39,7 @@ class LetterOfGuaranteeStatement extends Model
 		->where('cd_or_td_id',$model->cd_or_td_id)
 		->where('lg_type',$model->lg_type)
 		->each(function($letterOfGuaranteeStatement){
-			DB::table('letter_of_guarantee_statements')->where('id',$letterOfGuaranteeStatement->id)->update([
+			DB::table((new self)->getTable())->where('id',$letterOfGuaranteeStatement->id)->update([
 				'updated_at'=>now()
 			]);
 		});
@@ -47,6 +47,7 @@ class LetterOfGuaranteeStatement extends Model
 		return $minDate;
 
 	}
+	
 		protected static function booted(): void
 		{
 			static::creating(function(LetterOfGuaranteeStatement $model){
@@ -109,7 +110,7 @@ class LetterOfGuaranteeStatement extends Model
 					if(!$firstBankStatementForOld){
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
-						DB::table('letter_of_guarantee_statements')
+						DB::table((new self)->getTable())
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , id asc')
 						->where('lg_facility_id',$model->lg_facility_id)
@@ -201,7 +202,7 @@ class LetterOfGuaranteeStatement extends Model
 	{
 		return $this->belongsTo(LetterOfGuaranteeIssuance::class,'lg_facility_id','id');
 	} 
-	public static function getTotalOutstandingBalanceForAllLgTypes(int $companyId , int $financialInstitutionId,string $currencyName):float 
+	public static function getTotalOutstandingBalanceForAllTypes(int $companyId , int $financialInstitutionId,string $currencyName):float 
 	{
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){	
@@ -209,7 +210,7 @@ class LetterOfGuaranteeStatement extends Model
 				if($currentSourceId != LetterOfGuaranteeIssuance::LG_FACILITY ){
 					continue ;
 				}
-				$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
+				$letterOfGuaranteeStatement = DB::table((new self)->getTable())
 					->where('company_id',$companyId)
 					->where('financial_institution_id',$financialInstitutionId)
 					->where('currency',$currencyName)
@@ -226,7 +227,7 @@ class LetterOfGuaranteeStatement extends Model
 	}
 	public static function getDashboardDataForFinancialInstitution(int $companyId , int $financialInstitutionId,string $currencyName,string $lgType)
 	{
-			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
+			$letterOfGuaranteeStatement = DB::table((new self)->getTable())
 			->where('company_id',$companyId)
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('currency',$currencyName)
@@ -236,7 +237,7 @@ class LetterOfGuaranteeStatement extends Model
 			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
 			return abs($letterOfGuaranteeStatementEndBalance);
 	} 
-	public static function getDashboardOutstandingPerLgTypeFormattedData(array &$charts , Company $company  , string $currencyName , string $date , string $lgTypeId , ?string $source , $selectedFinancialInstitutionBankIds ):void
+	public static function getDashboardOutstandingPerTypeFormattedData(array &$charts , Company $company  , string $currencyName , string $date , string $lgTypeId , ?string $source , $selectedFinancialInstitutionBankIds ):void
 	{
 		$lgTitle = LgTypes::getAll()[$lgTypeId] ;
 		$sources = $source ? [$source => $source] : LetterOfGuaranteeIssuance::lgSources();
@@ -244,7 +245,7 @@ class LetterOfGuaranteeStatement extends Model
 		$totalEndBalance = 0 ;
 		foreach($sources as $source => $sourceTitle){
 			foreach($selectedFinancialInstitutionBankIds as $currentFinancialInstitutionId){
-				$rowPerType  = DB::table('letter_of_guarantee_statements')
+				$rowPerType  = DB::table((new self)->getTable())
 						->where('company_id',$company->id )
 						->where('financial_institution_id',$currentFinancialInstitutionId)
 						->where('currency',$currencyName)
@@ -268,11 +269,9 @@ class LetterOfGuaranteeStatement extends Model
 	{
 		$sources = $source ? [$source => $source] : LetterOfGuaranteeIssuance::lgSources();
 		$totalEndBalance = 0 ;
-		// dd($sources);
 		foreach($sources as $currentSourceId => $sourceTitle){
 		foreach($lgTypes as $currentLgTypeId => $currentLgTypeTitle){
-			
-		$rowPerType  = DB::table('letter_of_guarantee_statements')
+		$rowPerType  = DB::table((new self)->getTable())
 		->where('company_id',$company->id )
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('currency',$currencyName)
@@ -288,13 +287,13 @@ class LetterOfGuaranteeStatement extends Model
 		$totalEndBalance += abs($rowPerType->end_balance) ;
 		}
 		}
-		$charts['outstanding_per_financial_institution'][$currencyName][] = ['type'=>$financialInstitutionName , 'outstanding'=>$totalEndBalance] ;
+		$charts['lg_outstanding_per_financial_institution'][$currencyName][] = ['type'=>$financialInstitutionName , 'outstanding'=>$totalEndBalance] ;
 	}
 	public static function getDashboardOutstandingTableFormattedData(array &$tablesData , Company $company  , string $currencyName , string $date , int $financialInstitutionId,string $lgTypeId , string $financialInstitutionName ,  $lastLetterOfGuaranteeFacility , ?string $source ):void
 	{
 		$allSources = $source ? [$source => $source] : LetterOfGuaranteeIssuance::lgSources() ; ;
 		foreach($allSources as $currentSourceId => $currentSourceTitle){
-			$rowPerType  = DB::table('letter_of_guarantee_statements')
+			$rowPerType  = DB::table((new self)->getTable())
 				->where('company_id',$company->id )
 				->where('financial_institution_id',$financialInstitutionId)
 				->where('currency',$currencyName)
@@ -306,11 +305,11 @@ class LetterOfGuaranteeStatement extends Model
 				if(!$rowPerType){continue ;}
 				$currentOutstandingBalance = abs($rowPerType->end_balance) ;
 				$currentLimit = $lastLetterOfGuaranteeFacility ? $lastLetterOfGuaranteeFacility->limit : 0 ;
-				$tablesData['outstanding_for_table'][$currencyName][] = ['financial_institution_name'=>$financialInstitutionName , 'outstanding'=>$currentOutstandingBalance , 'source'=>LetterOfGuaranteeIssuance::lgSources()[$rowPerType->source] , 'type'=>LgTypes::getAll()[$rowPerType->lg_type] , 'limit'=>$currentLimit , 'cash_cover'=>LetterOfGuaranteeStatement::getTotalCashCoverForAllLgTypes($company->id,$financialInstitutionId,$currencyName,$lgTypeId,$currentSourceId)] ;
+				$tablesData['lg_outstanding_for_table'][$currencyName][] = ['financial_institution_name'=>$financialInstitutionName , 'outstanding'=>$currentOutstandingBalance , 'source'=>LetterOfGuaranteeIssuance::lgSources()[$rowPerType->source] , 'type'=>LgTypes::getAll()[$rowPerType->lg_type] , 'limit'=>$currentLimit , 'cash_cover'=>LetterOfGuaranteeStatement::getTotalCashCoverForAllTypes($company->id,$financialInstitutionId,$currencyName,$lgTypeId,$currentSourceId)] ;
 			
 		}
 		}
-	public static function getTotalCashCoverForAllLgTypes(int $companyId , int $financialInstitutionId,string $currency , ?string $type = null , ?string $source = null):float 
+	public static function getTotalCashCoverForAllTypes(int $companyId , int $financialInstitutionId,string $currency , ?string $type = null , ?string $source = null):float 
 	{
 		$totalLastCashCoverOfFourTypes = 0 ;
 		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){

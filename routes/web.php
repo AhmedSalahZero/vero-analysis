@@ -552,8 +552,8 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
 
-					Route::get('weekly-cashflow-report', 'WeeklyCashFlowReportController@index')->name('view.weekly.cashflow.report');
-					Route::post('weekly-cashflow-report', 'WeeklyCashFlowReportController@result')->name('result.weekly.cashflow.report');
+					Route::get('cashflow-report', 'CashFlowReportController@index')->name('view.cashflow.report');
+					Route::post('cashflow-report', 'CashFlowReportController@result')->name('result.cashflow.report');
 					
 					
 					// Route::get('contract-cashflow-report', 'ContractCashFlowReportController@index')->name('view.contract.cashflow.report');
@@ -617,7 +617,7 @@ Route::middleware([])->group(function () {
 
 					
 					
-					Route::post('adjust-customer-due-invoices','WeeklyCashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
+					Route::post('adjust-customer-due-invoices','CashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
                     Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
                     Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
                     Route::post('unapplied-amounts/create/{modelType}', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');

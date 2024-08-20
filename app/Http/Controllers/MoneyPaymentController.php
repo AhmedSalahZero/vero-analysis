@@ -552,17 +552,7 @@ class MoneyPaymentController
 		->pluck('name','id')->toArray();
 		
 		$contracts = Contract::where('company_id',$company->id)->get();
-		// if($moneyPayment->isChequeUnderCollection()){
-		// 	return view('reports.moneyPayments.edit-cheque-under-collection',[
-		// 		'banks'=>$banks,
-		// 		'supplierInvoices'=>$supplierInvoices ,
-		// 		'selectedBranches'=>$selectedBranches,
-		// 		'model'=>$moneyPayment,
-		// 		'singleModel'=>$singleModel,
-		// 		'accountTypes'=>$accountTypes,
-		// 		'financialInstitutionBanks'=>$financialInstitutionBanks
-		// 	]);
-		// }
+		
         return view($viewName,[
 			'banks'=>$banks,
 			'suppliers'=>$suppliers,

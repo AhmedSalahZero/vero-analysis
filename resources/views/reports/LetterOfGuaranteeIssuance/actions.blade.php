@@ -261,7 +261,7 @@
              <form action="{{ route('back.to.running.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource() ]) }}" method="post">
                  @csrf
                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Back This Letter To Running Status ?') }}</h5>
+                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Change LG Status Back To Running Status ?') }}</h5>
                      <button type="button" class="close" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>
@@ -281,7 +281,7 @@
                          <div class="col-md-3 mb-4">
                              <label>{{__('LG Amount')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getLgAmount()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
+                                 <input disabled value="{{  number_format($model->getLgAmount())  }}" type="text" class="form-control text-center">
                              </div>
                          </div>
                      </div>

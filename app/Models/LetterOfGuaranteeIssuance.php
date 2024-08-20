@@ -66,20 +66,8 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function getSourceFormatted()
 	{
+		return self::lgSources()[$this->getSource()];
 		
-		$source = $this->getSource();
-		if($source == self::LG_FACILITY){
-			return __('LG Facility');
-		}
-		if($source == self::AGAINST_CD){
-			return __('Against CD');
-			
-		}
-		if($source == self::AGAINST_TD){
-			return __('Against TD');
-			
-		}
-		return camelizeWithSpace($source);
 	}
 	
 	public function getTransactionName()

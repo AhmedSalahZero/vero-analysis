@@ -1,19 +1,10 @@
-<?php $__env->startSection('css'); ?>
-<?php
+@extends('layouts.dashboard')
+@section('css')
+@php
 	use Carbon\Carbon ;
-?>
- <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.styles.commons','data' => []]); ?>
-<?php $component->withName('styles.commons'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-
+@endphp
+<x-styles.commons></x-styles.commons>
+{{-- {{ dd($weeks) }} --}}
 <style>
     .bg-lighter ,
     .bg-lighter * 
@@ -118,24 +109,14 @@
     }
 
 </style>
-<?php $__env->stopSection(); ?>
-<?php $__env->startSection('sub-header'); ?>
- <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
-<?php $component->withName('main-form-title'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Weekly Cash Flow Report')); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-<?php $__env->stopSection(); ?>
-<?php $__env->startSection('content'); ?>
-<?php
+@endsection
+@section('sub-header')
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Cash Flow Report') }}</x-main-form-title>
+@endsection
+@section('content')
+@php
 $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
-?>
+@endphp
 <div class="row">
     <div class="col-md-12">
 
@@ -144,10 +125,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
             <div class="kt-portlet__body">
 
-                <?php
+                @php
 
                 $tableId = 'kt_table_1';
-                ?>
+                @endphp
 
 
                 <style>
@@ -284,79 +265,85 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                     }
 
                 </style>
-                <?php echo csrf_field(); ?>
+                @csrf
 
 
-                <?php
+                @php
                 $grandTotal = $customerAgings['grand_total'] ??0
-                ?>
+                @endphp
                 <div class="table-custom-container position-relative  ">
 
 
-
+{{-- {{ dd($datesWithWeeks) }} --}}
                     <div class="responsive">
                         <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                             <thead>
                                 <tr class="header-tr ">
-                                    <th rowspan="<?php echo e($noRowHeaders); ?>" class="view-table-th expand-all is-open-parent header-th editable-date max-w-classes-expand align-middle text-center trigger-child-row-1">
-                                        <?php echo e(__('Expand All' )); ?>
-
+                                    <th rowspan="{{ $noRowHeaders }}" class="view-table-th expand-all is-open-parent header-th editable-date max-w-classes-expand align-middle text-center trigger-child-row-1">
+                                        {{ __('Expand All' ) }}
                                         <span>+</span>
                                     </th>
-                                    <th rowspan="<?php echo e($noRowHeaders); ?>" class="view-table-th header-th max-w-classes-name align-middle text-center">
-                                        <?php echo e(__('Item')); ?>
-
+                                    <th rowspan="{{ $noRowHeaders }}" class="view-table-th header-th max-w-classes-name align-middle text-center">
+                                        {{ __('Item') }}
                                     </th>
-                                    <th class="view-table-th <?php if($reportInterval == 'weekly'): ?> bg-lighter <?php endif; ?> max-w-weeks header-th  align-middle text-center">
-                                        <?php if($reportInterval == 'weekly'): ?>
-										<?php echo e(__('Week Num')); ?>
-
-										<?php elseif($reportInterval == 'monthly'): ?>
-										<?php echo e(__('Months')); ?>
-
+                                    <th class="view-table-th @if($reportInterval == 'weekly') bg-lighter @endif max-w-weeks header-th  align-middle text-center">
+                                        @if($reportInterval == 'weekly')
+										{{ __('Week Num') }}
+										@elseif($reportInterval == 'monthly')
+										{{ __('Months') }}
+										@elseif($reportInterval == 'daily')
+										{{ __('Days') }}
 										
-										<?php endif; ?> 
+										@endif 
 										
                                     </th>
-									<?php if($reportInterval == 'weekly'): ?>
-                                    <?php $__currentLoopData = $weeks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $weekAndYear => $week): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-									<?php
+									@if($reportInterval == 'weekly')
+                                    @foreach($weeks as $weekAndYear => $week)
+									@php
 										$year = explode('-',$weekAndYear)[1];
-									?>
+									@endphp
                                     <th class="view-table-th bg-lighter header-th max-w-weeks align-middle text-center">
-										<span class="d-block"><?php echo e(__('Week ' .  $week )); ?></span>
-										<span class="d-block"><?php echo e('[ ' . $year . ' ]'); ?></span>
+										<span class="d-block">{{ __('Week ' .  $week ) }}</span>
+										<span class="d-block">{{ '[ ' . $year . ' ]' }}</span>
 									</th>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-									<?php elseif($reportInterval == 'monthly'): ?>
+                                    @endforeach
+									@elseif($reportInterval == 'monthly')
 									
-									<?php $__currentLoopData = $months; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									@foreach($months as $month)
 									 <th class="view-table-th  header-th max-w-weeks align-middle text-center">
-									 	<?php if($loop->first || $loop->last): ?>
-										<span class="d-block"><?php echo e(Carbon::make($month)->format('d-m-Y')); ?></span>
-										<?php else: ?> 
-										<span class="d-block"><?php echo e(Carbon::make($month)->format('m-Y')); ?></span>
-										<?php endif; ?> 
+									 	@if($loop->first || $loop->last)
+										<span class="d-block">{{ Carbon::make($month)->format('d-m-Y') }}</span>
+										@else 
+										<span class="d-block">{{ Carbon::make($month)->format('m-Y') }}</span>
+										@endif 
 									</th>
-									<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
-									<?php endif; ?> 
-                                    <th rowspan="<?php echo e($noRowHeaders); ?>" class="view-table-th editable-date align-middle text-center header-th max-w-grand-total">
-                                        <?php echo e(__('Total')); ?>
-
+									@endforeach 
+									
+									
+										@elseif($reportInterval == 'daily')
+									
+										@foreach($days as   $day)
+										<th class="view-table-th  header-th max-w-weeks align-middle text-center">
+											<span class="d-block">{{ Carbon::make($day)->format('d-m-Y') }}</span>
+										</th>
+										@endforeach 
+									
+									@endif 
+                                    <th rowspan="{{ $noRowHeaders }}" class="view-table-th editable-date align-middle text-center header-th max-w-grand-total">
+                                        {{ __('Total') }}
                                     </th>
 
                                 </tr>
-				<?php if($reportInterval == 'weekly'): ?>
+				@if($reportInterval == 'weekly')
                                 <tr class="header-tr ">
 
 
                                     <th class="view-table-th header-th max-w-weeks  align-middle text-center" class="header-th">
-                                        <?php echo e(__('Start Date')); ?>
-
+                                        {{ __('Start Date') }}
                                     </th>
-                                    <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$startAndEndDate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <th class="view-table-th header-th max-w-weeks text-nowrap  align-middle text-center"><?php echo e($startAndEndDate['start_date']); ?></th>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    @foreach($dates as $index=>$startAndEndDate)
+                                    <th class="view-table-th header-th max-w-weeks text-nowrap  align-middle text-center">{{ $startAndEndDate['start_date'] }}</th>
+                                    @endforeach
 
 
                                 </tr>
@@ -365,17 +352,16 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 <tr class="header-tr ">
 
                                     <th class="view-table-th header-th max-w-weeks  align-middle text-center" class="header-th">
-                                        <?php echo e(__('End Date')); ?>
-
+                                        {{ __('End Date') }}
                                     </th>
-                                      <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$startAndEndDate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <th class="view-table-th header-th text-nowrap max-w-weeks  align-middle text-center"><?php echo e($startAndEndDate['end_date']); ?></th>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                      @foreach($dates as $index=>$startAndEndDate)
+                                    <th class="view-table-th header-th text-nowrap max-w-weeks  align-middle text-center">{{ $startAndEndDate['end_date'] }}</th>
+                                    @endforeach
 
 
                                 </tr>
 
-					<?php endif; ?>
+					@endif
 
 
                             </thead>
@@ -384,59 +370,39 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     let currentTable = null;
 
                                 </script>
-                                <?php
+                                @php
                                 $rowIndex = 0 ;
-                                ?>
-                                <?php $__currentLoopData = ['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due'): ?>
-                                <?php continue; ?> ;
-                                <?php endif; ?>
-                                <?php
+                                @endphp
+                                @foreach(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices','Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'] as $customerName)
+                                @if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due')
+                                @continue ;
+                                @endif
+                                @php
                                 $hasSubRows = count($customerAging['invoices']??[]) ;
                                 $currentTotal = $customerAging['total'] ?? 0 ;
-                                ?>
-                                <tr class=" <?php if($customerName == 'Total Cash Inflow' || $customerName == 'Total Cash Outflow'): ?> bg-lighter <?php else: ?>  <?php endif; ?>  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="<?php echo e($rowIndex); ?>">
-                                    <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> <?php if($hasSubRows): ?> + <?php endif; ?>  </td>
-                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell "><?php echo e($customerName); ?></td>
+                                @endphp
+                                <tr class=" @if($customerName == 'Total Cash Inflow' || $customerName == 'Total Cash Outflow') bg-lighter @else  @endif  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
+                                    <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
+                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
                                     <td class="  sub-numeric-bg text-center editable-date"> 
-										<?php if($customerName == 'Customers Past Due Invoices'): ?>
-										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal"><?php echo e(__('View')); ?></button>
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['currentInvoiceType' => 'CustomerInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueCustomerInvoices,'id' => 'test-modal-id']]); ?>
-<?php $component->withName('modal.due-invoices'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('CustomerInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueCustomerInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+										@if($customerName == 'Customers Past Due Invoices')
+										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+                                                <x-modal.due-invoices :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
-										<?php endif; ?> 
+										@endif 
 										
-											<?php if($customerName == 'Suppliers Past Due Invoices'): ?>
-												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal"><?php echo e(__('View')); ?></button>
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['currentInvoiceType' => 'SupplierInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueSupplierInvoices,'id' => 'test-modal-id']]); ?>
-<?php $component->withName('modal.due-invoices'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('SupplierInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueSupplierInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+											@if($customerName == 'Suppliers Past Due Invoices')
+												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+                                                <x-modal.due-invoices :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
-										<?php endif; ?> 
+										@endif 
 										
 										
 									
 									 </td>
-                                    <?php $__currentLoopData = $weeks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $weekAndYear => $week): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    @foreach($weeks as $weekAndYear => $week)
 									
-                                    <?php
+                                    @php
 									$year = explode('-',$weekAndYear)[1];
                                     $currentValue = $result[$customerName][$weekAndYear] ?? 0 ;
 									if($customerName == 'Customers Past Due Invoices' )
@@ -453,20 +419,20 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 										$currentValue =$currentRow ?  $currentRow->amount : 0;
 									}
                                     $currentPercentage = $currentValue && $currentTotal ? $currentValue/ $currentTotal * 100 : 0 ;
-                                    ?>
-                                    <td class="  sub-numeric-bg text-center editable-date"><?php echo e(number_format($currentValue,0)); ?></td>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    <td class="  sub-numeric-bg text-center editable-date"><?php echo e(number_format($result[$customerName]['total'][$year] ?? 0 )); ?></td>
+                                    @endphp
+                                    <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
+                                    @endforeach
+                                    <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td>
 
                                 </tr>
 
 
 
-                                <?php
+                                @php
                                 $rowIndex = $rowIndex+ 1;
-                                ?>
+                                @endphp
 
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                @endforeach
 
 
                             </tbody>
@@ -475,7 +441,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
                 </div>
 
-                <?php $__env->startPush('js'); ?>
+                @push('js')
                 <script>
                     $(document).on('click', '.trigger-child-row-1', function(e) {
                         const parentId = $(e.target.closest('tr')).data('model-id');
@@ -587,25 +553,15 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                     )
 
                 </script>
-                <?php $__env->stopPush(); ?>
+                @endpush
 
             </div>
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?>
-<?php $__env->startSection('js'); ?>
- <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.js.commons','data' => []]); ?>
-<?php $component->withName('js.commons'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+@endsection
+@section('js')
+<x-js.commons></x-js.commons>
 
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -634,10 +590,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
             currentTable = $('.main-table-class').DataTable()
         }
         if (currentTable.column(2).visible()) {
-            $(this).html("<?php echo e(__('Show Details')); ?>")
+            $(this).html("{{ __('Show Details') }}")
             currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
         } else {
-            $(this).html("<?php echo e(__('Hide Details')); ?>")
+            $(this).html("{{ __('Hide Details') }}")
             currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
         }
     })
@@ -647,10 +603,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
             currentTable = $('.main-table-class').DataTable()
         }
         if (currentTable.column(13).visible()) {
-            $(this).html("<?php echo e(__('Show Details')); ?>")
+            $(this).html("{{ __('Show Details') }}")
             currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
         } else {
-            $(this).html("<?php echo e(__('Hide Details')); ?>")
+            $(this).html("{{ __('Hide Details') }}")
             currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
         }
     })
@@ -660,6 +616,4 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
     })
 </script>
 
-<?php $__env->stopSection(); ?>
-
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/reports/weekly-cash-flow-report.blade.php ENDPATH**/ ?>
+@endsection

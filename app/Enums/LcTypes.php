@@ -13,5 +13,15 @@ class LcTypes
 			self::CASH_AGAINST_DOCUMENT=>__('Cash Against Document'),
 		];
 	}
+	public static function only(array $keys):array 
+	{
+		$result = [];
+		foreach(self::getAll() as $currentLgType => $currentLgTitle){
+			if(in_array($currentLgType,$keys)){
+				$result[$currentLgType] = $currentLgTitle ;
+			}
+		}
+		return $result ;
+	}
 	 
 }

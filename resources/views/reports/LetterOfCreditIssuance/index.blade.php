@@ -25,7 +25,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     }
 
     .bank-max-width {
-        max-width: 200px !important;
+        max-width: 300px !important;
     }
 
     .kt-portlet {
@@ -108,7 +108,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
 									
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width" >{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Code') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
@@ -127,7 +127,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLcCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
@@ -203,7 +203,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
 							
@@ -222,7 +222,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td>{{ $model->getSourceFormatted() }}</td>
                                     <td>{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLcCode() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
@@ -294,7 +294,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Current Amount') }}</th>
@@ -313,7 +313,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getTransactionName() }}</td>
 									<td>{{ $model->getSourceFormatted() }}</td>
 									<td>{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLcCode() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getLcCurrentAmountFormatted() }}</td>

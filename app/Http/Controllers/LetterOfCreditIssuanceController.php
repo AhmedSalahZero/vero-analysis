@@ -216,15 +216,14 @@ class LetterOfCreditIssuanceController
 		 * * هنشيل قيم ال
 		 * * letter of credit statement
 		 */
-		// $financialInstitutionId = $letterOfCreditIssuance->financial_institution_id ;
 
 		 $letterOfCreditIssuance->update([
 			'status' => $letterOfCreditIssuanceStatus,
 			'payment_date'=>null
 		]);
 	
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('status',LetterOfCreditIssuance::FOR_PAID));
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('status',LetterOfCreditIssuance::FOR_PAID));
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source));
 		
 		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$request->get('lc_type')])->with('success',__('Data Store Successfully'));

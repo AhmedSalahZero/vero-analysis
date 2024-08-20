@@ -122,7 +122,6 @@
                         })
 				$('input:not([type="hidden"])').trigger('change');
 				$(this).find('.dropdown-toggle').remove();
-				console.log(this)
 				$(this).find('select.repeater-select').selectpicker("refresh");
 					
             },
