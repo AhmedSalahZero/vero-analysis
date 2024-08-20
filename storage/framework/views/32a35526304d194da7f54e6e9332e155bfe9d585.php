@@ -346,11 +346,11 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 									
 										<?php elseif($reportInterval == 'daily'): ?>
 									
-									<?php $__currentLoopData = $days; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-									 <th class="view-table-th  header-th max-w-weeks align-middle text-center">
-										<span class="d-block"><?php echo e(Carbon::make($day)->format('d-m-Y')); ?></span>
-									</th>
-									<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+										<?php $__currentLoopData = $days; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+										<th class="view-table-th  header-th max-w-weeks align-middle text-center">
+											<span class="d-block"><?php echo e(Carbon::make($day)->format('d-m-Y')); ?></span>
+										</th>
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
 									
 									<?php endif; ?> 
                                     <th rowspan="<?php echo e($noRowHeaders); ?>" class="view-table-th editable-date align-middle text-center header-th max-w-grand-total">
@@ -415,11 +415,11 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 										<?php if($customerName == 'Customers Past Due Invoices'): ?>
 										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal"><?php echo e(__('View')); ?></button>
                                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['currentInvoiceType' => 'CustomerInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueCustomerInvoices,'id' => 'test-modal-id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['reportInterval' => $reportInterval,'currentInvoiceType' => 'CustomerInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueCustomerInvoices,'id' => 'test-modal-id']]); ?>
 <?php $component->withName('modal.due-invoices'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('CustomerInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueCustomerInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['report-interval' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($reportInterval),'currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('CustomerInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueCustomerInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -431,11 +431,11 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 											<?php if($customerName == 'Suppliers Past Due Invoices'): ?>
 												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal"><?php echo e(__('View')); ?></button>
                                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['currentInvoiceType' => 'SupplierInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueSupplierInvoices,'id' => 'test-modal-id']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['reportInterval' => $reportInterval,'currentInvoiceType' => 'SupplierInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueSupplierInvoices,'id' => 'test-modal-id']]); ?>
 <?php $component->withName('modal.due-invoices'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('SupplierInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueSupplierInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['report-interval' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($reportInterval),'currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('SupplierInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueSupplierInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>

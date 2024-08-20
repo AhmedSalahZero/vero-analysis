@@ -387,13 +387,13 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     <td class="  sub-numeric-bg text-center editable-date"> 
 										@if($customerName == 'Customers Past Due Invoices')
 										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 										@endif 
 										
 											@if($customerName == 'Suppliers Past Due Invoices')
 												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 										@endif 
 										

@@ -3,14 +3,16 @@
 'pastDueCustomerInvoices',
 'weeks',
 'dates',
-'currentInvoiceType'
+'currentInvoiceType',
+'reportInterval'
 ]); ?>
 <?php foreach (array_filter(([
 'id',
 'pastDueCustomerInvoices',
 'weeks',
 'dates',
-'currentInvoiceType'
+'currentInvoiceType',
+'reportInterval'
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -42,7 +44,7 @@
                                 <th class="text-center"> <?php echo __('Net <br> Balance'); ?> </th>
                                 <th class="text-center"><?php echo e(__('Due Date')); ?></th>
                                 <th class="text-center"> <?php echo __('Collection <br> Percentage'); ?> </th>
-                                <th class="text-center"> <?php echo __('Collection <br> Weeks'); ?> </th>
+                                <th class="text-center"> <?php echo __('Collection <br> Date'); ?> </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,8 +120,16 @@
                                       <?php $__currentLoopData = $weeks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $weekDate => $weekNo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 									  <?php
 										$startDate = $dates[$weekDate]['start_date'] ;
+									 	$title = __('Week ') . ' ' . $weekNo  . ' ( ' . $dates[$weekDate]['start_date'] . ' - ' . $dates[$weekDate]['end_date'] . ' )';
+										if($reportInterval == 'daily'){
+											$title  = $dates[$weekDate]['start_date'] ;
+										}
+										elseif($reportInterval == 'monthly'){
+											$title = $dates[$weekDate]['end_date'] ;
+										}
 									  ?>
-									  <option <?php if($row && $row->week_start_date == $startDate ): ?> selected <?php endif; ?>  class="text-center" value="<?php echo e($startDate); ?>"> <?php echo e(__('Week ') . ' ' . $weekNo  . ' ( ' . $dates[$weekDate]['start_date'] . ' - ' . $dates[$weekDate]['end_date'] . ' )'); ?>   </option>
+									
+									  <option <?php if($row && $row->week_start_date == $startDate ): ?> selected <?php endif; ?>  class="text-center" value="<?php echo e($startDate); ?>"> <?php echo e($title); ?>   </option>
 									  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                     </select>
                                 </td>
