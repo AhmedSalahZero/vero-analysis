@@ -49,8 +49,8 @@
 
         <!--begin: Datatable -->
         <table  
-		
-		
+			<?php echo e($attributes); ?>
+
 		  class="table table-striped- <?php echo e($tableClass); ?> table-bordered table-hover table-checkable  " >
 
             <thead>
@@ -66,4 +66,4 @@
         <!--end: Datatable -->
     </div>
 </div>
-<?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/table.blade.php ENDPATH**/ ?>
+<?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/table-with-attributes.blade.php ENDPATH**/ ?>

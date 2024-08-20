@@ -128,35 +128,59 @@
     @foreach($selectedCurrencies as $name=>$currency)
 
     <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
-        <div class="kt-portlet">
+        @foreach([
+			'lg'=>[
+				'main_title'=>__('Letters Of Guarantee Position'),
+				'limits_title'=>__('LGs Limits'),
+				'outstanding_title'=>__('LGs Outstanding Balance'),
+				'room_title'=>__('LGs Room'),
+				'cash_cover_title'=>__('LGs Cash Cover'),
+				'outstanding_types_title'=>__('LG Outstanding Types'),
+				'per_bank_title'=>__('LG Per Bank'),
+				'details_title'=>__('LGs Details'),
+				'lgOrLcTypes'=>$lgTypes,
+				'lgOrLcSources'=>$lgSources
+				] ,
+				'lc'=>[
+				'main_title'=>__('Letters Of Credit Position'),
+				'limits_title'=>__('LCs Limits'),
+				'outstanding_title'=>__('LCs Outstanding Balance'),
+				'room_title'=>__('LCs Room'),
+				'cash_cover_title'=>__('LCs Cash Cover'),
+				'outstanding_types_title'=>__('LC Outstanding Types'),
+				'per_bank_title'=>__('LC Per Bank'),
+				'details_title'=>__('LCs Details'),
+				'lgOrLcTypes'=>$lcTypes,
+				'lgOrLcSources'=>$lcSources
+				] 
+				
+				] as $lgOrLcType => $lcOrLgOptionsArr)
+		
+		<div class="kt-portlet">
             <div class="kt-portlet__head sky-border">
                 <div class="kt-portlet__head-label">
-                    <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{__('Letters Of Guarantee Position')}}</h3>
-
-
+                    <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ $lcOrLgOptionsArr['main_title'] }} </h3>
                 </div>
             </div>
             <div class="kt-portlet__body  kt-portlet__body--fit">
                 <div class="row row-no-padding row-col-separator-xl">
-					@php
-						$lgOrLcType ='lg';
-					@endphp
+					
 					@foreach([
 						'limit'=>[
-						'title'=>__('LGs Limits'),
+						'title'=>$lcOrLgOptionsArr['limits_title'],
 						'bg-color'=>'kt-bg-brand'
 						],
 						'outstanding_balance'=>
 						[
-							'title'=>__('LGs Outstanding Balance'),
+							'title'=>$lcOrLgOptionsArr['outstanding_title'] ,
 							'bg-color'=>'kt-bg-warning'
 						],
 						'room'=>[
-							'title'=>__('LGs Room'),
+							'title'=>$lcOrLgOptionsArr['room_title'] ,
 							'bg-color'=>'kt-bg-success'
 							],
 							'cash_cover'=>[
-							'title'=>__('LGs Cash Cover'),
+							'title'=>$lcOrLgOptionsArr['cash_cover_title'],
 							'bg-color'=>'kt-bg-primary'
 							]
 						
@@ -172,7 +196,7 @@
 										@php
 											$currentModalId = $currentColType . $lgOrLcType;
 										@endphp
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white @if($currentColType != 'limit') visibility-hidden  @endif "   data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white @if($currentColType != 'limit') visibility-hidden  @endif "   data-toggle="modal" data-target="#{{ $currentModalId.$currency.$lgOrLcType }}">{{ __('Details') }}</button>
 										@if($currentColType == 'limit')
 										@include('admin.dashboard.lg-lc-details',['detailItems'=> $details[$name][$lgOrLcType]  , 'modalId'=>$currentModalId ,'title'=>__('Details')])
 										@endif 
@@ -206,93 +230,6 @@
 
      
 		
-        {{-- <div class="row">
-            <div class="col-md-4">
-                <div class="kt-portlet ">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label col-8">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{ __('Total Cash Facilities') }}
-                            </h3>
-                        </div>
-
-                    </div>
-                    <div class="kt-portlet__body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Limit') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($totalCard[$currency]['limit'] ?? 0,0) }}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Outstanding') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4> {{ number_format($totalCard[$currency]['outstanding']??0,0) }} </h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Available') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($totalCard[$currency]['room']??0,0) }}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Interest') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($totalCard[$currency]['interest_amount']??0,0) }}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         <div class="row">
 
          
@@ -300,7 +237,7 @@
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
-                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('LG Outstanding Types') }} </h3>
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ $lcOrLgOptionsArr['outstanding_types_title'] }} </h3>
 
                         </div>
 
@@ -309,8 +246,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                    {{-- <h4 class="visibility-hidden"> {{ __('Per Lg Type') }} </h4> --}}
-                                        <div id="outstanding_per_lg_typechartdiv_available_room_{{$currency}}" class="chartDiv"></div>
-                                    <input type="hidden" id="outstanding_per_lg_typetotal_available_room_{{$currency}}" data-total="{{ json_encode($charts['outstanding_per_lg_type'][$currency] ?? [] ) }}">
+                                        <div id="outstanding_per_{{ $lgOrLcType }}_typechartdiv_available_room_{{$currency}}" class="chartDiv"></div>
+                                    <input type="hidden" id="outstanding_per_{{ $lgOrLcType }}_typetotal_available_room_{{$currency}}" data-total="{{ json_encode($charts['outstanding_per_'.$lgOrLcType.'_type'][$currency] ?? [] ) }}">
                             </div>
                  
                         </div>
@@ -324,7 +261,7 @@
                 <div class="kt-portlet kt-portlet--tabs">
                      <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
-                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('LG Per Bank') }} </h3>
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ $lcOrLgOptionsArr['per_bank_title'] }} </h3>
 
                         </div>
 
@@ -343,8 +280,8 @@
                                     <div class="col-md-12">
 
                                         {{-- <h4 c> {{ __('Available Room') }} </h4> --}}
-                                               <div id="outstanding_per_financial_institutionchartdiv_available_room_{{$currency}}" class="chartDiv"></div>
-                                    <input type="hidden" id="outstanding_per_financial_institutiontotal_available_room_{{$currency}}" data-total="{{ json_encode($charts['outstanding_per_financial_institution'][$currency] ?? [] ) }}">
+                                               <div id="{{ $lgOrLcType }}_outstanding_per_financial_institutionchartdiv_available_room_{{$currency}}" class="chartDiv"></div>
+                                    <input type="hidden" id="{{ $lgOrLcType }}_outstanding_per_financial_institutiontotal_available_room_{{$currency}}" data-total="{{ json_encode($charts[$lgOrLcType.'_outstanding_per_financial_institution'][$currency] ?? [] ) }}">
                                     </div>
 
 
@@ -364,7 +301,7 @@
                 <div class="kt-portlet kt-portlet--tabs">
                      <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
-                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('LGs Details') }} </h3>
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ $lcOrLgOptionsArr['details_title'] }} </h3>
 
                         </div>
 
@@ -390,7 +327,7 @@
 										<input type="hidden" class="current_currency" value="{{ $currency }}">
                                           
                                             <div class="col-md-6">
-                                                <select update-lg-table-and-charts data-currency="{{ $currency }}"  id="financial_institution_id_{{ $currency }}" class="form-control ">
+                                                <select {{ 'update-'. $lgOrLcType .'-table-and-charts' }} data-currency="{{ $currency }}"  id="financial_institution_id_{{ $currency }}" class="form-control ">
 														<option value="0">{{ __('All') }}</option>
 												
                                                     @foreach($financialInstitutions as $bank)
@@ -399,25 +336,25 @@
                                                 </select>
                                             </div>
                                              <div class="col-md-3"  >
-                                                <select update-lg-table-and-charts id="lg_type_{{ $currency }}"  name="lg_type" class="form-control">
+                                                <select  {{ 'update-'.$lgOrLcType.'-table-and-charts' }}  id="{{ $lgOrLcType }}_type_{{ $currency }}"  name="{{ $lgOrLcType }}_type" class="form-control">
 														<option value="0">{{ __('All') }}</option>
-													@foreach($lgTypes as $lgTypeId => $lgTypeTitle)
-														<option value="{{ $lgTypeId }}">{{ $lgTypeTitle }}</option>
+													@foreach($lcOrLgOptionsArr['lgOrLcTypes'] as $typeId => $typeTitle)
+														<option value="{{ $typeId }}">{{ $typeTitle }}</option>
 													@endforeach 
                                                 </select>
                                             </div>
 
                                             <div class="col-md-3">
-                                                <select name="lg_source" class="form-control" id="lg_source_{{ $currency }}" update-lg-table-and-charts>
+                                                <select name="{{ $lgOrLcType }}_source" class="form-control" id="{{ $lgOrLcType }}_source_{{ $currency }}" {{ 'update-'.$lgOrLcType.'-table-and-charts' }} >
 														<option value="0">{{ __('All') }}</option>
-													@foreach($lgSources as $lgSourceId => $lgSourceTitle)
-														<option value="{{ $lgSourceId }}">{{ $lgSourceTitle }}</option>
+													@foreach($lcOrLgOptionsArr['lgOrLcSources'] as $sourceId => $sourceTitle)
+														<option value="{{ $sourceId }}">{{ $sourceTitle }}</option>
 													@endforeach 
                                                 </select>
                                             </div>
 											
 											<div class="col-md-12 mt-4">
-											  <x-table data-currency="{{ $currency }}" :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries remove-max-class lg-details-table'">
+											  <x-table-with-attributes data-currency="{{ $currency }}" :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries remove-max-class '.$lgOrLcType.'-details-table'">
                                                 @slot('table_header')
                                                 <tr class="table-active text-center">
                                                     <th class="text-center bank-max-width">{{ __('Bank Name') }}</th>
@@ -431,7 +368,7 @@
 												@php
 													$totals = [];
 												@endphp
-												@foreach($tablesData['outstanding_for_table'][$currency] ??[ ] as $outstandingArr )
+												@foreach($tablesData[$lgOrLcType.'_outstanding_for_table'][$currency] ??[ ] as $outstandingArr )
 												<tr>
                                                     <td class="text-left bank-max-width" > {{ $outstandingArr['financial_institution_name'] }} </td>
                                                     <td class="text-left">{{ $outstandingArr['type'] }}</td>
@@ -458,7 +395,7 @@
 
                                                 </tr>
                                                 @endslot
-                                            </x-table>
+                                            </x-table-with-attributes>
 											</div>
 
                                         </div>
@@ -500,6 +437,7 @@
 
 
         </div>
+		@endforeach 
         {{-- Title --}}
         <div class="row">
             <div class="col-md-12">
@@ -615,108 +553,8 @@
                 </div>
             </div>
         </div>
-        <!--end:: Widgets/Stats-->
-
-        <!--begin:: Widgets/Stats-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Leasing Facilitiess Position') }}
-                    </h3>
-                </div>
-            </div>
-            <div class="kt-portlet__body  kt-portlet__body--fit">
-                <div class="row row-no-padding row-col-separator-xl">
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::Total Profit-->
-                        <div class="kt-widget24 text-center">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Limit') }}
-                                    </h4>
-
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-brand">
-                                    50,000,000
-                                </span>
-                            </div>
-
-
-                        </div>
-
-                        <!--end::Total Profit-->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::New Feedbacks-->
-                        <div class="kt-widget24">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Outstanding') }}
-                                    </h4>
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-warning">
-                                    42,500,000
-                                </span>
-                            </div>
-
-                        </div>
-
-                        <!--end::New Feedbacks-->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::New Orders-->
-                        <div class="kt-widget24">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Next Due Amount') }}
-                                    </h4>
-
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-danger">
-                                    1,250,000
-                                </span>
-                            </div>
-                        </div>
-
-                        <!--end::New Orders-->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::New Users-->
-                        <div class="kt-widget24">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Date') }}
-                                    </h4>
-
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-success">
-                                    01-June-2024
-                                </span>
-                            </div>
-                        </div>
-
-                        <!--end::New Users-->
-                    </div>
-                </div>
-            </div>
-        </div> --}}
+  
+  
 
     </div>
 
@@ -751,7 +589,7 @@
 <script src="{{url('assets/vendors/general/jquery.repeater/src/jquery.input.js')}}" type="text/javascript"></script>
 <script src="{{url('assets/vendors/general/jquery.repeater/src/repeater.js')}}" type="text/javascript"></script>
 <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')}}" type="text/javascript"></script>
-@foreach(['outstanding_per_lg_type','outstanding_per_financial_institution'] as $currentChartType)
+@foreach(['outstanding_per_lg_type','lg_outstanding_per_financial_institution','outstanding_per_lc_type','lc_outstanding_per_financial_institution'] as $currentChartType)
 @foreach($selectedCurrencies as $currencyUpper=>$currency)
 <script>
     am4core.ready(function() {
@@ -791,105 +629,6 @@
 
 </script>
 
-
-<script>
-    am4core.ready(function() {
-
-        // Themes begin
-        am4core.useTheme(am4themes_animated);
-        // Themes end
-
-        // Create chart instance
-        var chart = am4core.create("{{ $currentChartType }}chartdiv_two_lines_{{$currency  }}", am4charts.XYChart);
-
-        //
-
-        // Increase contrast by taking evey second color
-        chart.colors.step = 2;
-
-        // Add data
-        chart.data = [];
-
-        // Create axes
-        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-        dateAxis.renderer.minGridDistance = 50;
-
-        // Create series
-        function createAxisAndSeries(field, name, opposite, bullet) {
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            if (chart.yAxes.indexOf(valueAxis) != 0) {
-                valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
-            }
-
-            var series = chart.series.push(new am4charts.LineSeries());
-            series.dataFields.valueY = field;
-            series.dataFields.dateX = "date";
-            series.strokeWidth = 2;
-            series.yAxis = valueAxis;
-            series.name = name;
-            series.tooltipText = "{name}: [bold]{valueY}[/]";
-            series.tensionX = 0.8;
-            series.showOnInit = true;
-
-            var interfaceColors = new am4core.InterfaceColorSet();
-
-            switch (bullet) {
-                case "triangle":
-                    var bullet = series.bullets.push(new am4charts.Bullet());
-                    bullet.width = 12;
-                    bullet.height = 12;
-                    bullet.horizontalCenter = "middle";
-                    bullet.verticalCenter = "middle";
-
-                    var triangle = bullet.createChild(am4core.Triangle);
-                    triangle.stroke = interfaceColors.getFor("background");
-                    triangle.strokeWidth = 2;
-                    triangle.direction = "top";
-                    triangle.width = 12;
-                    triangle.height = 12;
-                    break;
-                case "rectangle":
-                    var bullet = series.bullets.push(new am4charts.Bullet());
-                    bullet.width = 10;
-                    bullet.height = 10;
-                    bullet.horizontalCenter = "middle";
-                    bullet.verticalCenter = "middle";
-
-                    var rectangle = bullet.createChild(am4core.Rectangle);
-                    rectangle.stroke = interfaceColors.getFor("background");
-                    rectangle.strokeWidth = 2;
-                    rectangle.width = 10;
-                    rectangle.height = 10;
-                    break;
-                default:
-                    var bullet = series.bullets.push(new am4charts.CircleBullet());
-                    bullet.circle.stroke = interfaceColors.getFor("background");
-                    bullet.circle.strokeWidth = 2;
-                    break;
-            }
-
-            valueAxis.renderer.line.strokeOpacity = 1;
-            valueAxis.renderer.line.strokeWidth = 2;
-            valueAxis.renderer.line.stroke = series.stroke;
-            valueAxis.renderer.labels.template.fill = series.stroke;
-            valueAxis.renderer.opposite = opposite;
-        }
-
-        createAxisAndSeries("debit", "{{ __('Cash In') }}", false, "circle");
-        createAxisAndSeries("credit", "{{ __('Cash Out') }}", true, "triangle");
-        createAxisAndSeries("end_balance", "{{ __('End Balance') }}", true, "rectangle");
-
-        // Add legend
-        chart.legend = new am4charts.Legend();
-
-        // Add cursor
-        chart.cursor = new am4charts.XYCursor();
-
-
-
-    }); // end am4core.ready()
-
-</script>
 
 @endforeach
 @endforeach
@@ -937,7 +676,7 @@
 $(document).on('change','[update-lg-table-and-charts]',function(){
 	const currentCurrency = $(this).closest('.common-parent').find('.current_currency').val();
 	const lgOutstandingPerLgTypeChartId = 'outstanding_per_lg_typechartdiv_available_room_'+currentCurrency;
-	const lgOutstandingPerLgFinancialInstitutionChartId = 'outstanding_per_financial_institutionchartdiv_available_room_'+currentCurrency;
+	const lgOutstandingPerLgFinancialInstitutionChartId = 'lg_outstanding_per_financial_institutionchartdiv_available_room_'+currentCurrency;
 	const financialInstitutionId = $('select#financial_institution_id_'+currentCurrency).val();
 	const lgType = $('select#lg_type_'+currentCurrency).val();
 	const lgSource = $('select#lg_source_'+currentCurrency).val();
@@ -952,8 +691,8 @@ $(document).on('change','[update-lg-table-and-charts]',function(){
 		success:function(res){
 			// format table 
 			$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty();
-			if(res.tablesData.outstanding_for_table){
-				var tableData =  res.tablesData.outstanding_for_table[currentCurrency] ; 
+			if(res.tablesData.lg_outstanding_for_table){
+				var tableData =  res.tablesData.lg_outstanding_for_table[currentCurrency] ; 
 				var mainRows = ' ';
 				var totalOutstanding = 0 ;
 				var totalCashCover = 0 ;
@@ -969,13 +708,53 @@ $(document).on('change','[update-lg-table-and-charts]',function(){
 				$('table.lg-details-table[data-currency="'+ currentCurrency +'"] tbody').empty().append(mainRows)
 			}
 			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgTypeChartId).data = res.charts.outstanding_per_lg_type ? res.charts.outstanding_per_lg_type[currentCurrency] : []
-			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.outstanding_per_financial_institution ? res.charts.outstanding_per_financial_institution[currentCurrency] : []
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lgOutstandingPerLgFinancialInstitutionChartId).data = res.charts.lg_outstanding_per_financial_institution ? res.charts.lg_outstanding_per_financial_institution[currentCurrency] : []
 
 			
 		}
 	})
 })
+$(document).on('change','[update-lc-table-and-charts]',function(){
+	const currentCurrency = $(this).closest('.common-parent').find('.current_currency').val();
+	const lcOutstandingPerLcTypeChartId = 'outstanding_per_lc_typechartdiv_available_room_'+currentCurrency;
+	const lcOutstandingPerLcFinancialInstitutionChartId = 'lc_outstanding_per_financial_institutionchartdiv_available_room_'+currentCurrency;
+	const financialInstitutionId = $('select#financial_institution_id_'+currentCurrency).val();
+	const lcType = $('select#lc_type_'+currentCurrency).val();
+	const lcSource = $('select#lc_source_'+currentCurrency).val();
+	$.ajax({
+		url:"{{ route('view.lglc.dashboard',['company'=>$company->id]) }}",
+		data:{
+			financialInstitutionId,
+			lcType,
+			lcSource,
+			currencies:[currentCurrency]
+		},
+		success:function(res){
+			// format table 
+			$('table.lc-details-table[data-currency="'+ currentCurrency +'"] tbody').empty();
+			if(res.tablesData.lc_outstanding_for_table){
+				var tableData =  res.tablesData.lc_outstanding_for_table[currentCurrency] ; 
+				var mainRows = ' ';
+				var totalOutstanding = 0 ;
+				var totalCashCover = 0 ;
+				for(var row of tableData){
+					var currentOutstanding = row.outstanding ;
+					totalOutstanding +=currentOutstanding;
+					var currentCashCover = row.cash_cover ;
+					totalCashCover += currentCashCover ;
+					mainRows+= `<tr> <td class="text-left bank-max-width">${row.financial_institution_name}</td> <td class="text-left">${row.type}</td> <td>${row.source}</td> <td>${number_format(currentOutstanding)}</td> <td>${number_format(currentCashCover)}</td> </tr>`;
+				}
+				// total row 
+				 mainRows += `<tr class="table-active text-center"> <td>-</td> <td>-</td> <td> - </td> <td>${number_format(totalOutstanding)}</td>	<td>${number_format(totalCashCover)}</td> </tr>`
+				$('table.lc-details-table[data-currency="'+ currentCurrency +'"] tbody').empty().append(mainRows)
+			}
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lcOutstandingPerLcTypeChartId).data = res.charts.outstanding_per_lc_type ? res.charts.outstanding_per_lc_type[currentCurrency] : []
+			am4core.registry.baseSprites.find(c => c.htmlContainer.id === lcOutstandingPerLcFinancialInstitutionChartId).data = res.charts.lc_outstanding_per_financial_institution ? res.charts.lc_outstanding_per_financial_institution[currentCurrency] : []
 
+			
+		}
+	})
+})
 </script>
 {{-- <script src="{{url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')}}" type="text/javascript"></script> --}}
 

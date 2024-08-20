@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Enums\LcTypes;
 use App\Enums\LgTypes;
 use App\Helpers\HDate;
 use App\Models\AccountType;
@@ -11,6 +12,7 @@ use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FullySecuredOverdraft;
+use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\OverdraftAgainstCommercialPaper;
@@ -507,9 +509,17 @@ class CustomerInvoiceDashboardController extends Controller
 			$financialInstitutions = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 			$charts =  [];
 			$tablesData = [];
+			
 			$lgTypes = LgTypes::getAll() ;
 			$lgTypes = $request->ajax() && ! is_numeric($request->get('lgType')) ?  LgTypes::only((array) $request->get('lgType'))  : $lgTypes ; 
-		
+			
+			$lcTypes = LcTypes::getAll() ;
+			$lcTypes = $request->ajax() && ! is_numeric($request->get('lcType')) ?  LcTypes::only((array) $request->get('lcType'))  : $lcTypes ; 
+			
+			$typesForLgAndLc = [
+				'lg'=>$lgTypes,
+				'lc'=>$lcTypes
+			];
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
 		// $selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
@@ -518,7 +528,7 @@ class CustomerInvoiceDashboardController extends Controller
 		$currentDate = now()->format('Y-m-d') ;
         $date = $request->get('date');
 		$date = $date ? HDate::formatDateFromDatePicker($date) : $currentDate;
-		$year = explode('-',$date)[0];
+		// $year = explode('-',$date)[0];
 		$date = Carbon::make($date)->format('Y-m-d');
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
 	
@@ -529,47 +539,69 @@ class CustomerInvoiceDashboardController extends Controller
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
 		$source = $request->get('lgSource');
         $reports = [];
-        foreach ($selectedCurrencies as $currencyName) {
-			foreach($lgTypes as $currentLgType => $currentLgTitle){
-				LetterOfGuaranteeStatement::getDashboardOutstandingPerLgTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
-			}
-            foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
-				
-				$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
-				LetterOfGuaranteeStatement::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source,$lgTypes);
+		
+		foreach(['lg'=>
+		[
+			'letter_of_facility_table_name'=>'letter_of_guarantee_facilities',
+			'statement_table'=>'\App\Models\LetterOfGuaranteeStatement'
+			] ,
+			
+			'lc'=>
+		[
+			'letter_of_facility_table_name'=>'letter_of_credit_facilities',
+			'statement_table'=>'\App\Models\LetterOfCreditStatement'
+			] 
+			
+			] as $currentLgOrLcType => $lgOrLcOptionsArr){
+			$statementTableFullClassName = $lgOrLcOptionsArr['statement_table'];
+			$letterOfFacilityTableName = $lgOrLcOptionsArr['letter_of_facility_table_name'];
+			$lgOrLcTypes = $typesForLgAndLc[$currentLgOrLcType];
+			
+			foreach ($selectedCurrencies as $currencyName) {
+				foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
+					$statementTableFullClassName::getDashboardOutstandingPerTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
+				}
+				foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
 					
-				$lastLetterOfGuaranteeFacility = DB::table('letter_of_guarantee_facilities')
-                ->join('financial_institutions', 'letter_of_guarantee_facilities.financial_institution_id', '=', 'financial_institutions.id')
-                ->where('financial_institutions.company_id', $company->id)
-                ->where('currency', $currencyName)
-                ->where('contract_start_date', '<=', $date)
-                ->where('letter_of_guarantee_facilities.financial_institution_id', '=', $financialInstitutionBankId)
-                ->orderBy('contract_start_date', 'desc')
-                ->limit(1)
-				->first();
-					foreach($lgTypes as $currentLgType => $currentLgTitle){
-						LetterOfGuaranteeStatement::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$lastLetterOfGuaranteeFacility,$source);
-					}
+					$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
+					$statementTableFullClassName::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source,$lgOrLcTypes);
+						
+					$lastLetterOfGuaranteeOrCreditFacility = DB::table($letterOfFacilityTableName)
+					->join('financial_institutions', $letterOfFacilityTableName.'.financial_institution_id', '=', 'financial_institutions.id')
+					->where('financial_institutions.company_id', $company->id)
+					->where('currency', $currencyName)
+					->where('contract_start_date', '<=', $date)
+					->where($letterOfFacilityTableName.'.financial_institution_id', '=', $financialInstitutionBankId)
+					->orderBy('contract_start_date', 'desc')
+					->limit(1)
+					->first();
+						foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
+							$statementTableFullClassName::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$lastLetterOfGuaranteeOrCreditFacility,$source);
+						}
+			
+						$details[$currencyName][$currentLgOrLcType][] = [
+							'limit'=>$currentLimit = $lastLetterOfGuaranteeOrCreditFacility ? $lastLetterOfGuaranteeOrCreditFacility->limit : 0 ,
+							'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
+							'room'=> $currentRoom = $currentLimit - $currentOutstanding ,
+							'cash_cover'=> $currentCashCover = $statementTableFullClassName::getTotalCashCoverForAllTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
+							'financial_institution_name'=>$currentFinancialInstitution->getName()
+						] ;
+					$total[$currentLgOrLcType][$currencyName]['limit'] = isset($total[$currentLgOrLcType][$currencyName]['limit']) ? $total[$currentLgOrLcType][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
+					$total[$currentLgOrLcType][$currencyName]['outstanding_balance'] = isset($total[$currentLgOrLcType][$currencyName]['outstanding_balance']) ? $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
+					$total[$currentLgOrLcType][$currencyName]['room'] = isset($total[$currentLgOrLcType][$currencyName]['room']) ? $total[$currentLgOrLcType][$currencyName]['room'] + $currentRoom  : $currentRoom ;
+					$total[$currentLgOrLcType][$currencyName]['cash_cover'] = isset($total[$currentLgOrLcType][$currencyName]['cash_cover']) ? $total[$currentLgOrLcType][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
 		
-					$details[$currencyName]['lg'][] = [
-						'limit'=>$currentLimit = $lastLetterOfGuaranteeFacility ? $lastLetterOfGuaranteeFacility->limit : 0 ,
-						'outstanding_balance'=> $currentOutstanding = LetterOfGuaranteeStatement::getTotalOutstandingBalanceForAllLgTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
-						'room'=> $currentRoom = $currentLimit - $currentOutstanding ,
-						'cash_cover'=> $currentCashCover = LetterOfGuaranteeStatement::getTotalCashCoverForAllLgTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
-						'financial_institution_name'=>$currentFinancialInstitution->getName()
-					] ;
-                $total['lg'][$currencyName]['limit'] = isset($total['lg'][$currencyName]['limit']) ? $total['lg'][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
-                $total['lg'][$currencyName]['outstanding_balance'] = isset($total['lg'][$currencyName]['outstanding_balance']) ? $total['lg'][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
-                $total['lg'][$currencyName]['room'] = isset($total['lg'][$currencyName]['room']) ? $total['lg'][$currencyName]['room'] + $currentRoom  : $currentRoom ;
-                $total['lg'][$currencyName]['cash_cover'] = isset($total['lg'][$currencyName]['cash_cover']) ? $total['lg'][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
-
-            }
-            $reports['lg'][$currencyName]['limit'] = $total['lg'][$currencyName]['limit'] ?? 0 ;
-            $reports['lg'][$currencyName]['outstanding_balance'] = $total['lg'][$currencyName]['outstanding_balance'] ?? 0 ;
-            $reports['lg'][$currencyName]['room'] = $total['lg'][$currencyName]['room'] ?? 0 ;
-            $reports['lg'][$currencyName]['cash_cover'] = $total['lg'][$currencyName]['cash_cover'] ?? 0 ;
-		
+	
+				}
+				$reports[$currentLgOrLcType][$currencyName]['limit'] = $total[$currentLgOrLcType][$currencyName]['limit'] ?? 0 ;
+				$reports[$currentLgOrLcType][$currencyName]['outstanding_balance'] = $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] ?? 0 ;
+				$reports[$currentLgOrLcType][$currencyName]['room'] = $total[$currentLgOrLcType][$currencyName]['room'] ?? 0 ;
+				$reports[$currentLgOrLcType][$currencyName]['cash_cover'] = $total[$currentLgOrLcType][$currencyName]['cash_cover'] ?? 0 ;
+			}
+			
+			
 		}
+        
 		
 		if($request->ajax()){
 			
@@ -578,7 +610,6 @@ class CustomerInvoiceDashboardController extends Controller
 				'charts'=>$charts
 			]);
 		}
-		
         return view('admin.reports.lglc-report', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
@@ -589,7 +620,9 @@ class CustomerInvoiceDashboardController extends Controller
 			'details'=>$details,
 			'charts'=>$charts,
 			'lgTypes'=>LgTypes::getAll(),
+			'lcTypes'=>LcTypes::getAll(),
 			'lgSources'=>LetterOfGuaranteeIssuance::lgSources(),
+			'lcSources'=>LetterOfCreditIssuance::lcSources(),
 			'tablesData'=>$tablesData,
 			'financialInstitutions'=>$financialInstitutions
 				
@@ -615,7 +648,7 @@ class CustomerInvoiceDashboardController extends Controller
 		->pluck('name','id')->toArray();
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
-        $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
+        // $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
         // $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
         // $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();

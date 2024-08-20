@@ -10,7 +10,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Weekly Cash Flow Report') }}
+{{ __('Cash Flow Report') }}
 @endsection
 @section('content')
 <div class="row">

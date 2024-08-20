@@ -28,8 +28,7 @@
 
         <!--begin: Datatable -->
         <table  
-		{{-- {{ getArrIfValueNotArray($attributes) }} --}}
-		
+			{{ $attributes }}
 		  class="table table-striped- {{$tableClass}} table-bordered table-hover table-checkable  " >
 
             <thead>

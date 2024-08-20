@@ -125,7 +125,7 @@
 <?php $component->withName('main-form-title'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Weekly Cash Flow Report')); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Cash Flow Report')); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -314,6 +314,9 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 										<?php elseif($reportInterval == 'monthly'): ?>
 										<?php echo e(__('Months')); ?>
 
+										<?php elseif($reportInterval == 'daily'): ?>
+										<?php echo e(__('Days')); ?>
+
 										
 										<?php endif; ?> 
 										
@@ -339,6 +342,16 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 										<?php endif; ?> 
 									</th>
 									<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+									
+									
+										<?php elseif($reportInterval == 'daily'): ?>
+									
+									<?php $__currentLoopData = $days; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									 <th class="view-table-th  header-th max-w-weeks align-middle text-center">
+										<span class="d-block"><?php echo e(Carbon::make($day)->format('d-m-Y')); ?></span>
+									</th>
+									<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+									
 									<?php endif; ?> 
                                     <th rowspan="<?php echo e($noRowHeaders); ?>" class="view-table-th editable-date align-middle text-center header-th max-w-grand-total">
                                         <?php echo e(__('Total')); ?>
@@ -662,4 +675,4 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/reports/weekly-cash-flow-report.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/reports/cash-flow-report.blade.php ENDPATH**/ ?>

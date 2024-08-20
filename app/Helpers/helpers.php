@@ -3079,7 +3079,7 @@ function getPermissions():array
             'name'=>'view lg & lc dashboard'
         ],
         [
-            'name'=>'view weekly cash flow report'
+            'name'=>'view cash flow report'
         ],
 		[
             'name'=>'view contract cash flow report'
@@ -3905,6 +3905,39 @@ function getWeeksForCurrentDate()
     }
     return $weeks ;
 }
+function getDayNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
+{
+
+    $week = 1 ;
+    $dates = generateDatesBetweenTwoDates(Carbon::make('01-01-'.$firstDateYear), $secondDate, 'addDay');
+    $weeks = [];
+    $day  =1 ;
+
+    foreach($dates as $index =>$dateAsString) {
+        if(Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
+            $day = 1 ;
+            $week = 1;
+        }
+        // if(Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '31' || Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '30') {
+        //     $week = 52;
+        // }
+        $weeks[$dateAsString] = $week ;
+        // if($day % 7 == 0) {
+            $week ++ ;
+        // }
+        $day++;
+    }
+    return $weeks  ;
+}
+function getMonthNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
+{
+	$datesFormatted = [];
+	$dates = generateDatesBetweenTwoDates(Carbon::make('01-01-'.$firstDateYear), $secondDate, 'addDay');
+	foreach($dates as $date){
+		$datesFormatted[$date] = Carbon::make($date)->month ;
+	}
+	return $datesFormatted;
+}
 function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
 {
 
@@ -3917,7 +3950,6 @@ function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
         if(Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
             $day = 1 ;
             $week = 1;
-
         }
         if(Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '31' || Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '30') {
             $week = 52;
@@ -3925,7 +3957,6 @@ function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
         $weeks[$dateAsString] = $week ;
         if($day % 7 == 0) {
             $week ++ ;
-
         }
         $day++;
     }
@@ -4180,7 +4211,7 @@ function getHeaderMenu()
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
 	$canViewSafeStatement = $user->can('view safe statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
-	$canViewWeeklyCashFlow = $user->can('view weekly cash flow report');
+	$canViewCashFlow = $user->can('view cash flow report');
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
 	$notificationsSubItems = \App\Notification::formatForMenuItem();
@@ -4397,7 +4428,7 @@ function getHeaderMenu()
 				[
 					'title'=>__('Reports'),
 					'link'=>'#',
-					'show'=>$canViewWeeklyCashFlow ||  $canViewSafeStatement || $canViewBankStatement || $canViewWithdrawalsSettlementReport ,
+					'show'=>$canViewCashFlow ||  $canViewSafeStatement || $canViewBankStatement || $canViewWithdrawalsSettlementReport ,
 					'submenu'=>[
 						[
 							'title'=>__('Safe Statement'),
@@ -4412,9 +4443,9 @@ function getHeaderMenu()
 							'submenu'=>[]
 						],
 						[
-							'title'=>__('Weekly Cash Flow Report'),
-							'link'=>route('view.weekly.cashflow.report', ['company'=>$companyId]),
-							'show'=>$canViewWeeklyCashFlow ,
+							'title'=>__('Cash Flow Report'),
+							'link'=>route('view.cashflow.report', ['company'=>$companyId]),
+							'show'=>$canViewCashFlow ,
 							'submenu'=>[]
 						],
 						// [

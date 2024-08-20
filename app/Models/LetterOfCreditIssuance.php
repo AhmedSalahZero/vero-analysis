@@ -27,6 +27,15 @@ class LetterOfCreditIssuance extends Model
 	const FOR_PAID ='for-paid'; // هي الفلوس اللي انت حيطتها بسبب انه عمل تاكيد انه دفع
 	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
+	public static function lcSources()
+	{
+		return [
+			self::LC_FACILITY => __('LC Facility'),
+			self::AGAINST_TD => __('Against TD'),
+			self::AGAINST_CD => __('Against CD'),
+			self::HUNDRED_PERCENTAGE_CASH_COVER=>__('100% Cash Cover')
+		];
+	}
 	public function isRunning()
 	{
 		return $this->getStatus() === self::RUNNING;
@@ -58,20 +67,8 @@ class LetterOfCreditIssuance extends Model
 	}
 	public function getSourceFormatted()
 	{
+		return self::lcSources()[$this->getSource()];
 		
-		$source = $this->getSource();
-		if($source == self::LC_FACILITY){
-			return __('LC Facility');
-		}
-		if($source == self::AGAINST_CD){
-			return __('Against CD');
-			
-		}
-		if($source == self::AGAINST_TD){
-			return __('Against TD');
-			
-		}
-		return camelizeWithSpace($source);
 	}
 	
 	public function getTransactionName()
@@ -415,6 +412,7 @@ class LetterOfCreditIssuance extends Model
 	
 	public function deleteAllRelations():self
 	{
+		
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
@@ -422,7 +420,6 @@ class LetterOfCreditIssuance extends Model
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditCashCoverStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->lcOverdraftBankStatements);
-		
 		return $this;
 	}	
 	public function expenses()

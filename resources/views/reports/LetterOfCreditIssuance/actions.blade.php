@@ -156,14 +156,14 @@
 
 
 
- <a data-toggle="modal" data-target="#cancel-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply payment') }}" href="#"><i class="fa fa fa-ban"></i></a>
+ <a data-toggle="modal" data-target="#cancel-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply payment') }}" href="#"><i class="fa fa-coins"></i></a>
  <div class="modal fade" id="cancel-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
          <div class="modal-content">
              <form action="{{ route('make.letter.of.credit.issuance.as.paid',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource() ]) }}" method="post">
                  @csrf
                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This As Paid ?') }}</h5>
+                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Pay This LC ?') }}</h5>
                      <button type="button" class="close" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>
@@ -183,7 +183,7 @@
                          <div class="col-md-3 mb-4">
                              <label>{{__('LC Amount')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getLcAmount()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
+                                 <input disabled value="{{  number_format($model->getLcAmount() )  }}" type="text" class="form-control text-center">
                              </div>
                          </div>
 
@@ -191,7 +191,7 @@
                              <label>{{__('Date')}}</label>
                              <div class="kt-input-icon">
                                  <div class="input-group date">
-                                     <input required type="text" name="payment_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                     <input required type="text" name="payment_date" value="{{ formatDateForDatePicker($model->getDueDate()) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
                                      <div class="input-group-append">
                                          <span class="input-group-text">
                                              <i class="la la-calendar-check-o"></i>
@@ -223,7 +223,7 @@
              <form action="{{ route('back.to.running.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource() ]) }}" method="post">
                  @csrf
                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Back This Letter To Running Status ?') }}</h5>
+                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want Cancel LC Payment ?') }}</h5>
                      <button type="button" class="close" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>
@@ -243,7 +243,7 @@
                          <div class="col-md-3 mb-4">
                              <label>{{__('LC Amount')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getLcAmount()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
+                                 <input disabled value="{{  number_format($model->getLcAmount())  }}" type="text" class="form-control text-center">
                              </div>
                          </div>
                      </div>

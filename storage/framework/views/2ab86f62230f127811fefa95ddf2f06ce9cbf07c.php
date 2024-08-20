@@ -24,7 +24,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     }
 
     .bank-max-width {
-        max-width: 200px !important;
+        max-width: 300px !important;
     }
 
     .kt-portlet {
@@ -134,7 +134,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
 									
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width" ><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Code')); ?></th>
                                     <th class="text-center align-middle"> <?php echo __('Transaction <br> Reference'); ?> </th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Amount')); ?></th>
@@ -154,7 +154,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td><?php echo e($model->getTransactionName()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getSourceFormatted()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLcCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getTransactionReference()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLcAmountFormatted()); ?></td>
@@ -251,7 +251,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Transaction <br> Name'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Code')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Amount')); ?></th>
 							
@@ -271,7 +271,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td><?php echo e($model->getTransactionName()); ?></td>
                                     <td><?php echo e($model->getSourceFormatted()); ?></td>
                                     <td><?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLcCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLcAmountFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
@@ -364,7 +364,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Transaction <br> Name'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Code')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Amount')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LC Current Amount')); ?></th>
@@ -384,7 +384,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td><?php echo e($model->getTransactionName()); ?></td>
 									<td><?php echo e($model->getSourceFormatted()); ?></td>
 									<td><?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLcCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLcAmountFormatted()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLcCurrentAmountFormatted()); ?></td>

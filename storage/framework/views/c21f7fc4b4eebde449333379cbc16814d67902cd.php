@@ -8,7 +8,7 @@
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
-<?php echo e(__('Weekly Cash Flow Report')); ?>
+<?php echo e(__('Cash Flow Report')); ?>
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
@@ -28,6 +28,21 @@
 
                     <div class="form-group row">
 					
+					
+					 <div class="col-md-3">
+        <label><?php echo e(__('Report Interval')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+
+        <div class="kt-input-icon">
+            <div class="input-group date">
+                <select name="report_interval" class="form-control ">
+                    <option value="daily" ><?php echo e(__('Daily')); ?></option>
+                    <option value="monthly" ><?php echo e(__('Monthly')); ?></option>
+                    <option value="weekly" ><?php echo e(__('Weekly')); ?></option>
+                </select>
+            </div>
+        </div>
+    </div>
+	
 					 <div class="col-md-3">
                             <label><?php echo e(__('Start Date')); ?> </label>
                             <div class="kt-input-icon">
@@ -137,4 +152,4 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/weekly_cash_flow_form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/cash_flow_form.blade.php ENDPATH**/ ?>
