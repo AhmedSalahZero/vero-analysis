@@ -22,7 +22,8 @@ class CashExpenseCategoryName extends Model
 	{
 		return $this->hasMany(CashExpense::class,'cash_expense_category_name_id','id');
 	}
-		
-	
+	public static function getAllForCompany(Company $company){
+		return self::where('company_id',$company->id)->get();
+	} 		
 	
 }
