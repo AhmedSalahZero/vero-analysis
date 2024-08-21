@@ -119,6 +119,10 @@ $selectedBanks = [];
                         </div>
                     </div>
                 </div>
+				
+				@php
+					$currentPaymentCurrency = null ;
+				@endphp
 
                 <div class="col-md-2">
                     <label>{{__('Select Invoice Currency')}} @include('star')</label>
@@ -135,6 +139,9 @@ $selectedBanks = [];
                                 @php
                                 $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                 $selected = $selected ? 'selected':'';
+								if($selected || (isset($singleModel) && $singleModel) ){
+									$currentPaymentCurrency = $currencyId ;
+								}
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
@@ -161,7 +168,7 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-
+{{-- {{ dd($currentPaymentCurrency) }} --}}
                 <div class="col-md-2">
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
 
@@ -176,8 +183,11 @@ $selectedBanks = [];
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(getCurrencies() as $currencyId=>$currentName)
                                 @php
-                                $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
                                 $selected = $selected ? 'selected':'';
+								if(!$selected && $currentPaymentCurrency == $currencyId){
+									$selected = 'selected';
+								}
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach

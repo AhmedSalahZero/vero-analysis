@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashExpenseCategoryName;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
@@ -26,6 +27,8 @@ class CashFlowReportController
 		$formEndDate =$request->get('end_date');
 		$reportInterval =  $request->get('report_interval');
 		// $reportInterval = 'daily';
+		$result = [];
+		$cashExpenseCategoryNamesArr = [];
 		$noRowHeaders =  $reportInterval == 'weekly' ? 3 : 1 ;
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
@@ -44,7 +47,6 @@ class CashFlowReportController
 			$datesWithWeeks = 	getDayNumberBetweenDates($year , Carbon::make($endDate)) ;
 		}
 		$weeks  = $this->mergeYearWithWeek($datesWithWeeks ,Carbon::make($startDate) );
-		// dd($days);
 		$firstIndex = array_key_first($weeks);
 		$lastIndex = array_key_last($weeks);
 		$dates = [];
@@ -81,6 +83,13 @@ class CashFlowReportController
 			// $result['Cheques Under Collection'][$currentWeekYear] = $this->getCustomerChequesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
 			$result['Suppliers Invoices'][$currentWeekYear] = $this->getSupplierInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
 			$result['Suppliers Past Due Invoices'] = [];
+			$cashExpenseCategoryNames = CashExpenseCategoryName::getAllForCompany($company);
+			foreach($cashExpenseCategoryNames as $cashExpenseCategoryName){
+				$currentCashExpenseCategoryName = $cashExpenseCategoryName->getName();
+				$result[$currentCashExpenseCategoryName][$currentWeekYear] = $this->getCashExpensesAtDates($company->id,$startDate , $endDate,$currency,$cashExpenseCategoryName->id);
+				$cashExpenseCategoryNamesArr[$currentCashExpenseCategoryName] =  $currentCashExpenseCategoryName;
+			}
+			$result['Under Payment Payable Cheques'][$currentWeekYear] = $this->getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
 			// $result['S Invoices Under Collection'][$currentWeekYear] = $this->getCustomerInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
 			$currentVal = $result['Customers Invoices'][$currentWeekYear] ;
 			
@@ -108,7 +117,6 @@ class CashFlowReportController
 		->where('invoice_type','SupplierInvoice')
 		->whereNotIn('invoice_id',$excludeIds)
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get();
-		// dd(get_defined_vars());
 
 		return view('admin.reports.cash-flow-report',[
 			'weeks'=>$weeks,
@@ -121,7 +129,8 @@ class CashFlowReportController
 			'reportInterval'=>$reportInterval,
 			'pastDueSupplierInvoices'=>$pastDueSupplierInvoices,
 			'supplierDueInvoices'=>$supplierDueInvoices,
-			'noRowHeaders'=>$noRowHeaders
+			'noRowHeaders'=>$noRowHeaders,
+			'cashExpenseCategoryNamesArr'=>$cashExpenseCategoryNamesArr
 		]);
 	}
 	protected function mergeYearWithWeek(array $weeks , Carbon $startDate ):array{
@@ -235,6 +244,10 @@ class CashFlowReportController
 	{
 		$items = SupplierInvoice::where('company_id',$companyId)->where('currency',$currency)->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
 		return $items->sum('net_invoice_amount');
+	}
+	protected function getCashExpensesAtDates(int $companyId , string $startDate , string $endDate,string $currency,int $cashExpenseCategoryNameId) 
+	{
+		return DB::table('cash_expenses')->where('company_id',$companyId)->whereBetween('payment_date',[$startDate,$endDate])->where('currency',$currency)->where('cash_expense_category_name_id',$cashExpenseCategoryNameId)->sum('paid_amount');
 	}
 	public function adjustCustomerDueInvoices(Request $request,Company $company){
 		$invoiceType = $request->get('invoiceType');
