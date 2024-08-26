@@ -9,7 +9,9 @@ use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
@@ -454,10 +456,12 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
 	}
+	
 	public function fullySecuredOverdraftDebitBankStatement()
 	{
 		return $this->hasOne(FullySecuredOverdraftBankStatement::class,'money_received_id','id');
 	}
+	
 	public function overdraftAgainstCommercialPaperDebitBankStatement()
 	{
 		return $this->hasOne(OverdraftAgainstCommercialPaperBankStatement::class,'money_received_id','id');
@@ -512,18 +516,31 @@ class MoneyReceived extends Model
 		$oldType = $this->getType();
 
 		
-		$oldTypeRelationName = dashesToCamelCase($oldType);
-		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
+		// $oldTypeRelationName = dashesToCamelCase($oldType);
+		$this->incomingTransfer ? $this->incomingTransfer->delete() :null ;
+		$this->cashInBank ? $this->cashInBank->delete() :null ;
+		$this->cashInSafe ? $this->cashInSafe->delete() :null ;
+		$this->cheque ? $this->cheque->delete() :null ;
+		$this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() :null ;
+		$this->fullySecuredOverdraftDebitBankStatement ? $this->fullySecuredOverdraftDebitBankStatement->delete() :null ;
+		$this->overdraftAgainstCommercialPaperDebitBankStatement ? $this->overdraftAgainstCommercialPaperDebitBankStatement->delete() :null ;
+		$this->overdraftAgainstAssignmentOfContractDebitBankStatement ? $this->overdraftAgainstAssignmentOfContractDebitBankStatement->delete() :null ;
+		$this->cashInSafeDebitStatement ? $this->cashInSafeDebitStatement->delete() :null ;
+		$this->currentAccountDebitBankStatement ? $this->currentAccountDebitBankStatement->delete() :null ;
+		$this->currentAccountCreditBankStatement ? $this->currentAccountCreditBankStatement->delete() :null ;
+		$this->cashInSafeCreditStatement ? $this->cashInSafeCreditStatement->delete() :null ;
+		$this->overdraftAgainstAssignmentOfContractCreditBankStatement ? $this->overdraftAgainstAssignmentOfContractCreditBankStatement->delete() :null ;
+		$this->overdraftAgainstCommercialPaperCreditBankStatement ? $this->overdraftAgainstCommercialPaperCreditBankStatement->delete() :null ;
+		// $this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
-		$this->unappliedAmounts()->delete();
-		
-		$currentStatement = $this->getCurrentStatement() ;
-		if($currentStatement){
-			$currentStatement->delete();
-		}
-
+		$this->downPaymentSettlements->each(function($downPaymentSettlement){
+			$downPaymentSettlement->delete();
+		});
+		$this->unappliedAmounts->each(function($unappliedAmount){
+			$unappliedAmount->delete();
+		});
 	}
 	public function getCurrentStatement()
 	{
@@ -573,6 +590,7 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'money_received_id','id');
 	}
+	
 	public function cashInSafeCreditStatement()
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
@@ -580,5 +598,75 @@ class MoneyReceived extends Model
 	public function overdraftAgainstAssignmentOfContractCreditBankStatement()
 	{
 		return $this->hasOne(OverdraftAgainstAssignmentOfContractBankStatement::class,'money_received_id','id');
+	}
+	public static function getChequesCollectedUnderDates(int $companyId , string $startDate , string $endDate,string $currency,string $chequeStatus,string $dateColumnName ) 
+	{
+		return  DB::table('money_received')
+		->where('type',MoneyReceived::CHEQUE)
+		->where('money_received.currency',$currency)
+		->join('cheques','cheques.money_received_id','=','money_received.id')
+		->where('money_received.company_id',$companyId)
+		->whereBetween('cheques.'.$dateColumnName,[$startDate,$endDate])
+		->where('cheques.status',$chequeStatus)
+		// ->when($customerName && $contractCode , function(Builder $builder) use ($customerName,$contractCode){
+		// 	$builder->join('customer_invoices','customer_invoices.customer_name' ,'=','money_received.customer_name')
+		// 	->where('customer_invoices.customer_name',$customerName)
+		// 	->where('customer_invoices.contract_code',$contractCode)
+		// 	;
+		// })
+		
+		->sum('received_amount');
+	}
+	public static function getIncomingTransferUnderDates(int $companyId , string $startDate , string $endDate,string $currency,$customerName = null , $contractCode = null) 
+	{
+		$isContract = $customerName && $contractCode ;
+		$sumColumnName = $isContract ? 'settlement_amount' : 'received_amount' ;
+		
+			return  DB::table('money_received')
+		->where('type',MoneyReceived::INCOMING_TRANSFER)
+		->where('money_received.company_id',$companyId)
+		->where('money_received.currency',$currency)
+		->join('incoming_transfers','incoming_transfers.money_received_id','=','money_received.id')
+		->where('money_received.company_id',$companyId)
+		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
+		->when($isContract , function(Builder $builder) use ($customerName,$contractCode){
+			$builder->join('customer_invoices','customer_invoices.customer_name' ,'=','money_received.customer_name')
+			// ->where('customer_invoices.customer_name',$customerName)
+			->where('customer_invoices.contract_code',$contractCode)
+			->join('settlements',function(Builder $builder){
+				$builder->on('money_received.id','=','settlements.money_received_id')
+				->on('settlements.invoice_number','customer_invoices.invoice_number');
+			})
+			;
+		})
+		->sum($sumColumnName);
+	}
+	public static function getBankDepositsUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 
+	{
+		return  DB::table('money_received')
+		->where('type',MoneyReceived::CASH_IN_BANK)
+		->where('money_received.currency',$currency)
+		->join('cash_in_banks','cash_in_banks.money_received_id','=','money_received.id')
+		->where('money_received.company_id',$companyId)
+		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
+		// ->when($customerName && $contractCode , function(Builder $builder) use ($customerName,$contractCode){
+		// 	$builder->join('customer_invoices','customer_invoices.customer_name' ,'=','money_received.customer_name')
+		// 	->where('customer_invoices.customer_name',$customerName)
+		// 	->where('customer_invoices.contract_code',$contractCode)
+		// 	;
+			
+		// })
+		->sum('received_amount');
+	}
+	public static function getCashInSafeUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 
+	{
+		
+		return  DB::table('money_received')
+		->where('type',MoneyReceived::CASH_IN_SAFE)
+		->where('money_received.currency',$currency)
+		->join('cash_in_safes','cash_in_safes.money_received_id','=','money_received.id')
+		->where('money_received.company_id',$companyId)
+		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
+		->sum('received_amount');
 	}
 }

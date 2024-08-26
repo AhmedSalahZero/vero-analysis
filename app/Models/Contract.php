@@ -344,7 +344,56 @@ class Contract extends Model
 	{
 		return $this->belongsToMany(CashExpense::class ,'cash_expense_contract','contract_id','cash_expense_id')
 		->withTimestamps()
-		->withPivot(['amount'])
+		->withPivot(['amount','cash_expense_id'])
 		;
+	}
+	public function getCashExpensePerCategoryName(array &$result,array &$totalCashOutFlowArray,string $moneyType,string $dateFieldName,string $startDate , string $endDate ,string $currentWeekYear , ?string $chequeStatus = null ):void
+	{
+		// $totalCashOutFlowKey = __('Total Cash Outflow');
+		// $totalCashFlowKey = __('Net Cash (+/-)');
+		// dd($this->cashExpenses);
+		foreach($this->cashExpenses as $cashExpense){
+			/**
+			 * @var CashExpense $cashExpense
+			 */
+			$currentAllocationAmount = DB::table('cash_expense_contract')
+			->where('contract_id',$this->id)
+			->join('cash_expenses','cash_expenses.id','=','cash_expense_contract.cash_expense_id')
+			->where('cash_expenses.type',$moneyType)
+			// ->where('cash_expense_category_name_id',$cashExpense->getCashExpenseCategoryNameId())
+			->whereBetween($dateFieldName,[$startDate,$endDate])
+			->when($moneyType == CashExpense::PAYABLE_CHEQUE , function( $builder) use ($chequeStatus){
+				$builder->join('payable_cheques','payable_cheques.cash_expense_id','=','cash_expenses.id')
+				->where('payable_cheques.status',$chequeStatus)
+				;
+			})
+			->where('cash_expenses.id',$cashExpense->id)
+			->sum('cash_expense_contract.amount');
+		
+			
+				$categoryName = $cashExpense->cashExpenseCategoryName ;
+			// $category = $categoryName->cashExpenseCategory ;
+			 $categoryName = $cashExpense->getExpenseCategoryName() ;
+			 $categoryNameName = $cashExpense->getExpenseName() ;
+			$result['cash_expenses'][$categoryName][$categoryNameName]['weeks'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName][$categoryNameName]['weeks'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName][$categoryNameName]['weeks'][$currentWeekYear] + $currentAllocationAmount :  $currentAllocationAmount;
+			// if($categoryName == 'G&A'){
+			// 	dump($categoryName , $categoryNameName,$currentWeekYear ,$result['cash_expenses'][$categoryName][$categoryNameName]['weeks'][$currentWeekYear]);
+			// }
+			$result['cash_expenses'][$categoryName][$categoryNameName]['total'] = isset($result['cash_expenses'][$categoryName][$categoryNameName]['total']) ? $result['cash_expenses'][$categoryName][$categoryNameName]['total']  + $currentAllocationAmount : $currentAllocationAmount;
+			$currentTotal = $currentAllocationAmount;
+			$result['cash_expenses'][$categoryName]['total'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName]['total'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] +   $currentAllocationAmount : $currentAllocationAmount ; 	
+			// $result['cash_expenses'][$totalCashOutFlowKey]['total'][$currentWeekYear] = isset($result['cash_expenses'][$totalCashOutFlowKey]['total'][$currentWeekYear]) ? $result['cash_expenses'][$totalCashOutFlowKey]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			
+
+			// $result['cash_expenses'][$totalCashFlowKey]['total'][$currentWeekYear] = isset($result['cash_expenses'][$totalCashFlowKey]['total'][$currentWeekYear]) ? $result['cash_expenses'][$totalCashFlowKey]['total'][$currentWeekYear] -  $currentTotal : $currentTotal * -1 ;
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+		// $currentTotalInflow = $totalCashInFlowArray[$currentWeekYear] ?? 0 ;
+		// $totalCashFlowArray[$currentWeekYear] =  isset($totalCashFlowArray[$currentWeekYear]) ? $totalCashFlowArray[$currentWeekYear] + $currentTotalInflow - $totalCashOutFlowArray[$currentWeekYear] : $currentTotalInflow - $totalCashOutFlowArray[$currentWeekYear]; 
+
+	}
+	
+	
+		
 	}
 }

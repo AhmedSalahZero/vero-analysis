@@ -3,9 +3,10 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
-.kt-portlet{
-	overflow:visible !important ;
-}
+    .kt-portlet {
+        overflow: visible !important;
+    }
+
 </style>
 @endsection
 @section('sub-header')
@@ -23,27 +24,27 @@
             <div class="kt-portlet" style="overflow-x:hidden">
 
                 <div class="kt-portlet__body">
-                
+
 
 
                     <div class="form-group row">
-					
-					
-					 <div class="col-md-3">
-        <label>{{__('Report Interval')}} @include('star')</label>
 
-        <div class="kt-input-icon">
-            <div class="input-group date">
-                <select name="report_interval" class="form-control ">
-                    <option value="daily" >{{__('Daily')}}</option>
-                    <option value="monthly" >{{__('Monthly')}}</option>
-                    <option value="weekly" >{{__('Weekly')}}</option>
-                </select>
-            </div>
-        </div>
-    </div>
-	
-					 <div class="col-md-3">
+
+                        <div class="col-md-3">
+                            <label>{{__('Report Interval')}} @include('star')</label>
+
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select name="report_interval" class="form-control ">
+                                        <option value="daily">{{__('Daily')}}</option>
+                                        <option value="monthly">{{__('Monthly')}}</option>
+                                        <option value="weekly">{{__('Weekly')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
                             <label>{{ __('Start Date') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="start_date">
@@ -51,79 +52,79 @@
                                 </div>
                             </div>
                         </div>
-						
-						
-							 <div class="col-md-3">
+
+
+                        <div class="col-md-3">
                             <label>{{ __('End Date') }}</span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="end_date">
                                     <input type="date" class="form-control" name="end_date" value="{{ now() }}">
                                 </div>
                             </div>
-							
-                        </div>
-						
-						 <div class="col-md-3">
-        <label>{{__('Select Currency')}} @include('star')</label>
 
-        <div class="kt-input-icon">
-            <div class="input-group date">
-                <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
-                    <option value="" selected>{{__('Select')}}</option>
-                    @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-								@php
-									$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-								@endphp
-                                <option  {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
-                </select>
-            </div>
-        </div>
-    </div>
-	
-						
-						
-						
-						{{-- <div class="col-md-4">
-                            <label>{{ __('Cash Beginning Balance') }}  </label>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>{{__('Select Currency')}} @include('star')</label>
+
                             <div class="kt-input-icon">
-                                <div class="input-group date" id="sales_persons">
-                                   <input type="text" class="only-greater-than-zero-allowed form-control" name="cash_beginning_balance" value="0" >
+                                <div class="input-group date">
+                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                                        <option value="" selected>{{__('Select')}}</option>
+                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                        @php
+                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        @endphp
+                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-                        </div> --}}
-						
+                        </div>
 
-                 
-						
-						
-						
-						
-						
-						
-						
-				
-						
-                        
-						
-                    </div>
-                <x-submitting />
+
+
+
+                        {{-- <div class="col-md-4">
+                            <label>{{ __('Cash Beginning Balance') }} </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date" id="sales_persons">
+                                <input type="text" class="only-greater-than-zero-allowed form-control" name="cash_beginning_balance" value="0">
+                            </div>
+                        </div>
+                    </div> --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 </div>
-                {{-- @dd($name_of_selector_label) --}}
+                <x-submitting />
+
             </div>
-
-
-
-
-
-        </form>
-
-        <!--end::Form-->
-
-        <!--end::Portlet-->
+            {{-- @dd($name_of_selector_label) --}}
     </div>
+
+
+
+
+
+    </form>
+
+    <!--end::Form-->
+
+    <!--end::Portlet-->
+</div>
 </div>
 {{-- @dd(get_defined_vars()) --}}
 @endsection

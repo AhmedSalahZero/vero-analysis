@@ -555,9 +555,8 @@ Route::middleware([])->group(function () {
 					Route::get('cashflow-report', 'CashFlowReportController@index')->name('view.cashflow.report');
 					Route::post('cashflow-report', 'CashFlowReportController@result')->name('result.cashflow.report');
 					
-					
-					// Route::get('contract-cashflow-report', 'ContractCashFlowReportController@index')->name('view.contract.cashflow.report');
-					// Route::post('contract-cashflow-report', 'ContractCashFlowReportController@result')->name('result.contract.cashflow.report');
+					Route::get('contract-cashflow-report', 'ContractCashFlowReportController@index')->name('view.contract.cashflow.report');
+					Route::post('contract-cashflow-report', 'ContractCashFlowReportController@result')->name('result.contract.cashflow.report');
 					
 
 					Route::get('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@index')->name('view.withdrawals.settlement.report');

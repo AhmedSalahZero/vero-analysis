@@ -231,39 +231,12 @@ class CashExpenseController
 		$contractsRelationName = 'contracts' ;
 		
 		$currencies = getCurrencies();
-		// $currencies = DB::table('supplier_invoices')
-		// ->when($supplierInvoiceId,function($q) use($supplierInvoiceId) {
-		// 	$q->where('id',$supplierInvoiceId);
-		// })
-		// ->select('currency')
-		// ->where('currency','!=','')
-		// ->where('company_id',$company->id)
-		// ->orderByRaw('currency asc')
-		// ->get()
-		// ->unique('currency')->pluck('currency','currency');
-		// $isDownPayment = Request()->has('type');
 		$viewName =  'reports.cashExpenses.form';
-		// $viewName = $isDownPayment  ?  'reports.cashExpenses.down-payments-form' : 'reports.cashExpenses.form';
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		// $supplierInvoices =  $singleModel ?  SupplierInvoice::where('id',$singleModel)->pluck('supplier_name','id') :SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
-		// $invoiceNumber = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getInvoiceNumber():null;
-		/**
-		 * * for contracts
-		 */
-		// $suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
-		// ->when($isDownPayment,function(Builder $q){
-		// 	$q->has('contracts');
-		// })
-		// ->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)
-		// ->when($isDownPayment,function(Builder $q){
-		// 	$q->has('contracts');
-		// })
-		// ->pluck('name','id')->toArray();
 	
-		// $contracts = [];
 		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->get()->formattedForSelect(true,'getId','getName');
         return view($viewName,[
 			'clientsWithContracts'=>$clientsWithContracts,
@@ -272,11 +245,8 @@ class CashExpenseController
 			'cashExpenseCategories'=>$cashExpenseCategories,
 			'selectedBranches'=>$selectedBranches,
 			'singleModel'=>$supplierInvoiceId,
-			// 'invoiceNumber'=>$invoiceNumber,
 			'currencies'=>$currencies,
 			'accountTypes'=>$accountTypes,
-			// 'suppliers'=>$suppliers,
-			// 'contracts'=>$contracts
 		]);
     }
 
@@ -285,97 +255,15 @@ class CashExpenseController
 		return view('reports.cashExpenses.form',[
 		]);
 	}
-	// public function getContractsForSupplier(Company $company , Request $request ){
-	// 	$contracts = Contract::where('partner_id',$request->get('supplierId'))->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
-	// 	return response()->json([
-	// 		'status'=>true ,
-	// 		'contracts'=>$contracts
-	// 	]);
-	// }
-	// public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId  = 0,?string $selectedCurrency=null)
-	// {
-	// 	$downPaymentId = $request->get('down_payment_id');
-	// 	$cashExpense = CashExpense::find($downPaymentId);
-	// 	$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
-	// 	$formattedSalesOrders = [];
-	// 	foreach($salesOrders as $index=>$salesOrder){
-	// 		$paidAmount = $cashExpense ? $cashExpense->downPaymentSettlements->where('purchases_order_id',$salesOrder->id)->first() : null ;
-	// 		$formattedSalesOrders[$index]['paid_amount'] = $paidAmount && $paidAmount->down_payment_amount ? $paidAmount->down_payment_amount : 0;
-	// 		$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
-	// 		$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
-	// 		$formattedSalesOrders[$index]['id'] = $salesOrder->id;
-	// 	}
-	// 		return response()->json([
-	// 			'status'=>true ,
-	// 			'purchases_orders'=>$formattedSalesOrders,
-	// 			'selectedCurrency'=>$selectedCurrency
-	// 		]);
-
-	// }
-	// public function getInvoiceNumber(Company $company ,  Request $request , int $supplierInvoiceId,?string $selectedCurrency=null)
-	// {
-	// 	$inEditMode = $request->get('inEditMode');
-	// 	$cashExpenseId = $request->get('money_payment_id');
-	// 	$cashExpense = CashExpense::find($cashExpenseId);
-	// 	$partner = Partner::find($supplierInvoiceId);
-	// 	$supplierName = $partner->getName() ;
-	// 	$invoices = SupplierInvoice::where('supplier_name',$supplierName)->where('company_id',$company->id)
-	// 	->where('net_invoice_amount','>',0);
-
-	// 	if(!$inEditMode){
-	// 		$invoices->where('net_balance','>',0);
-	// 	}
-
-	// 	$allCurrencies =$invoices->where('company_id',$company->id)->pluck('currency','currency')->mapWithKeys(function($value,$key){
-	// 		return [
-	// 			$key=>$value
-	// 		];
-	// 	});
-	// 	if($selectedCurrency){
-	// 		$invoices = $invoices->where('currency','=',$selectedCurrency);
-	// 	}
-	// 	$invoices = $invoices->orderBy('invoice_date','asc')
-	// 	->get(['invoice_number','invoice_date','invoice_due_date','net_invoice_amount','paid_amount','net_balance','currency'])
-	// 	->toArray();
-
-
-	// 	foreach($invoices as $index=>$invoiceArr){
-	// 		$invoices[$index]['settlement_amount'] = $cashExpense ? $cashExpense->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
-	// 		$invoices[$index]['withhold_amount'] = $cashExpense ? $cashExpense->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName) : 0;
-	// 	}
-
-	// 	$invoices = $this->formatInvoices($invoices,$inEditMode);
-	// 		return response()->json([
-	// 			'status'=>true ,
-	// 			'invoices'=>$invoices,
-	// 			'currencies'=>$allCurrencies,
-	// 			'selectedCurrency'=>$selectedCurrency
-	// 		]);
-
-	// }
-	// protected function formatInvoices(array $invoices,int $inEditMode){
-	// 	return SupplierInvoice::formatInvoices($invoices,$inEditMode);
-	// }
 
 	public function store(Company $company , StoreCashExpenseRequest $request){
 		$moneyType = $request->get('type');
 		$bankId = null;
-		// $contractId = $request->get('contract_id');
-		// $supplierInvoiceId = $request->get('supplier_id');
-		// $supplier = Partner::find($supplierInvoiceId);
-		// $supplierName = $supplier->getName();
-		// $supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','payment_date','currency','cash_expense_category_name_id']);
 		$currencyName = $data['currency'];
-		// $paymentCurrency = $data['payment_currency'];
-		
-		// $data['supplier_name'] = $supplierName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		// $isDownPayment = $request->has('purchases_orders_amounts');
-		// $data['money_type'] =  !$isDownPayment ? 'money-payment' : 'down-payment';
-
 
 		$relationData = [];
 		$relationName = null ;
@@ -417,16 +305,13 @@ class CashExpenseController
 				'company_id'=>$company->id,
 			];
 		}
-		// $isDownPayment = $request->has('purchases_orders_amounts') ;
 		$data['paid_amount'] = $paidAmount ;
 		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
-		// $data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
-		// $data['contract_id'] = $contractId ;
 		/**
 		 * @var CashExpense $cashExpense ;
 		 */
-	// dd($request->all());
+
 
 	
 		$cashExpense = CashExpense::create($data);
