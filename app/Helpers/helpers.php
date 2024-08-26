@@ -4428,7 +4428,7 @@ function getHeaderMenu()
 				[
 					'title'=>__('Reports'),
 					'link'=>'#',
-					'show'=>$canViewCashFlow ||  $canViewSafeStatement || $canViewBankStatement || $canViewWithdrawalsSettlementReport ,
+					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewBankStatement || $canViewWithdrawalsSettlementReport ,
 					'submenu'=>[
 						[
 							'title'=>__('Safe Statement'),
@@ -4448,12 +4448,12 @@ function getHeaderMenu()
 							'show'=>$canViewCashFlow ,
 							'submenu'=>[]
 						],
-						// [
-						// 	'title'=>__('Contract Cash Flow Report'),
-						// 	'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
-						// 	'show'=>$canViewContractCashFlow ,
-						// 	'submenu'=>[]
-						// ],
+						[
+							'title'=>__('Contract Cash Flow Report'),
+							'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
+							'show'=>$canViewContractCashFlow ,
+							'submenu'=>[]
+						],
 						[
 							'title'=>__('Withdrawals Settlement Report'),
 							'link'=>route('view.withdrawals.settlement.report',['company'=>$companyId]),
@@ -5193,3 +5193,6 @@ if (!function_exists('getFixedLoanTypes')) {
 
    
 	
+// function dddd($items){
+// 	foreach($items )
+// }

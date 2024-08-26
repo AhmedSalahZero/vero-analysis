@@ -68,20 +68,21 @@ class CashFlowReportController
 				$endDate = $rangedWeeks['end_date'];
 			}
 			
-			$result['Cheques Under Collection'][$currentWeekYear] = $this->getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::UNDER_COLLECTION,'expected_collection_date');
-			$result['Checks Collected'][$currentWeekYear] = $this->getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::COLLECTED,'actual_collection_date');
-			$result['Customers Invoices'][$currentWeekYear] = $this->getCustomerInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Incoming Transfers'][$currentWeekYear] = $this->getIncomingTransferUnderDates($company->id,$startDate , $endDate,$currency);
-			$result['Bank Deposits'][$currentWeekYear] = $this->getBankDepositsUnderDates($company->id,$startDate , $endDate,$currency);
-			$result['Cash Collections'][$currentWeekYear] = $this->getCashInSafeUnderDates($company->id,$startDate , $endDate,$currency);
+			$result['Cheques Under Collection'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::UNDER_COLLECTION,'expected_collection_date');
+			$result['Checks Collected'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::COLLECTED,'actual_collection_date');
+			$result['Customers Invoices'][$currentWeekYear] = CustomerInvoice::getCustomerInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
+			$result['Incoming Transfers'][$currentWeekYear] = MoneyReceived::getIncomingTransferUnderDates($company->id,$startDate , $endDate,$currency);
+			$result['Bank Deposits'][$currentWeekYear] = MoneyReceived::getBankDepositsUnderDates($company->id,$startDate , $endDate,$currency);
+			$result['Cash Collections'][$currentWeekYear] = MoneyReceived::getCashInSafeUnderDates($company->id,$startDate , $endDate,$currency);
 			$result['Customers Past Due Invoices'] = [];
-			$result['Cheques In Safe'][$currentWeekYear] = $this->getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::IN_SAFE,'due_date');
-			$result['Outgoing Transfers'][$currentWeekYear] = $this->getOutgoingTransfersAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Cash Payments'][$currentWeekYear] = $this->getCashPaymentsAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Paid Payable Cheques'][$currentWeekYear] = $this->getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PAID,'actual_payment_date');
-			$result['Under Payment Payable Cheques'][$currentWeekYear] = $this->getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
+			$result['Cheques In Safe'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::IN_SAFE,'due_date');
+			//////////////////////
+			$result['Outgoing Transfers'][$currentWeekYear] = MoneyPayment::getOutgoingTransfersAtDates($company->id,$startDate , $endDate,$currency);
+			$result['Cash Payments'][$currentWeekYear] = MoneyPayment::getCashPaymentsAtDates($company->id,$startDate , $endDate,$currency);
+			$result['Paid Payable Cheques'][$currentWeekYear] = MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PAID,'actual_payment_date');
+			$result['Under Payment Payable Cheques'][$currentWeekYear] =MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
 			// $result['Cheques Under Collection'][$currentWeekYear] = $this->getCustomerChequesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Suppliers Invoices'][$currentWeekYear] = $this->getSupplierInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
+			$result['Suppliers Invoices'][$currentWeekYear] = MoneyPayment::getSupplierInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
 			$result['Suppliers Past Due Invoices'] = [];
 			$cashExpenseCategoryNames = CashExpenseCategoryName::getAllForCompany($company);
 			foreach($cashExpenseCategoryNames as $cashExpenseCategoryName){
@@ -89,8 +90,7 @@ class CashFlowReportController
 				$result[$currentCashExpenseCategoryName][$currentWeekYear] = $this->getCashExpensesAtDates($company->id,$startDate , $endDate,$currency,$cashExpenseCategoryName->id);
 				$cashExpenseCategoryNamesArr[$currentCashExpenseCategoryName] =  $currentCashExpenseCategoryName;
 			}
-			$result['Under Payment Payable Cheques'][$currentWeekYear] = $this->getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
-			// $result['S Invoices Under Collection'][$currentWeekYear] = $this->getCustomerInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
+			$result['Under Payment Payable Cheques'][$currentWeekYear] = MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
 			$currentVal = $result['Customers Invoices'][$currentWeekYear] ;
 			
 			$result['Customers Invoices']['total'][$currentYear] = isset($result['Customers Invoices']['total'][$currentYear]) ? $result['Customers Invoices']['total'][$currentYear] + $currentVal : $currentVal ;
@@ -149,102 +149,32 @@ class CashFlowReportController
 		return $newWeeks;
 		
 	}
-	protected function getCustomerInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		$items = CustomerInvoice::where('company_id',$companyId)->where('currency',$currency)
-		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		return $items->sum('net_invoice_amount');
-	}
-	protected function getChequesCollectedUnderDates(int $companyId , string $startDate , string $endDate,string $currency,string $chequeStatus,string $dateColumnName) 
-	{
-		return  DB::table('money_received')
-		->where('type',MoneyReceived::CHEQUE)
-		->where('currency',$currency)
-		->join('cheques','cheques.money_received_id','=','money_received.id')
-		->where('money_received.company_id',$companyId)
-		->whereBetween('cheques.'.$dateColumnName,[$startDate,$endDate])
-		->where('cheques.status',$chequeStatus)
-		->sum('received_amount');
-	}
 	
-	protected function getIncomingTransferUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		return  DB::table('money_received')
-		->where('type',MoneyReceived::INCOMING_TRANSFER)
-		->where('currency',$currency)
-		->join('incoming_transfers','incoming_transfers.money_received_id','=','money_received.id')
-		->where('money_received.company_id',$companyId)
-		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
-		->sum('received_amount');
-	}
 	
-	protected function getBankDepositsUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		return  DB::table('money_received')
-		->where('type',MoneyReceived::CASH_IN_BANK)
-		->where('currency',$currency)
-		->join('cash_in_banks','cash_in_banks.money_received_id','=','money_received.id')
-		->where('money_received.company_id',$companyId)
-		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
-		->sum('received_amount');
-	}
-	protected function getCashInSafeUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		return  DB::table('money_received')
-		->where('type',MoneyReceived::CASH_IN_SAFE)
-		->where('currency',$currency)
-		->join('cash_in_safes','cash_in_safes.money_received_id','=','money_received.id')
-		->where('money_received.company_id',$companyId)
-		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
-		->sum('received_amount');
-	}
+	
+	
+	
+
+
 	
 	
 	public function getPastDueCustomerInvoices(string $invoiceType,string $currency , int $companyId , string $startDate ){
 		$fullClassName = '\App\Models\\'.$invoiceType;
-		$items  = $fullClassName::where('company_id',$companyId)->where('currency',$currency)->where('invoice_due_date','<',$startDate)->get() ;
+		$items  = $fullClassName::where('company_id',$companyId)
+		->where('net_balance','>',0)
+		->whereIn('invoice_status',['past_due','partially_collected_and_past_due'])
+		->where('currency',$currency)->where('invoice_due_date','<',$startDate)->get() ;
 		foreach($items as $item){
 			$item->net_balance_until_date = $item->getNetBalanceUntil($startDate);
 		}
 		return $items;
 	}
-	protected function getSupplierPayableChequesAtDates(int $companyId , string $startDate , string $endDate,string $currency,$chequeStatus , $dateFieldName) 
-	{
-		return DB::table('payable_cheques')->where('status',$chequeStatus)
-		->where('currency',$currency)
-		->where('type',MoneyPayment::PAYABLE_CHEQUE)
-		->where('payable_cheques.company_id',$companyId)
-		->whereBetween($dateFieldName,[$startDate,$endDate])
-		->join('money_payments','money_payment_id','money_payments.id')
-		->sum('paid_amount');
-	}
 	
-	protected function getCashPaymentsAtDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		return DB::table('cash_payments')
-		->where('currency',$currency)
-		->where('type',MoneyPayment::CASH_PAYMENT)
-		->where('money_payments.company_id',$companyId)
-		->whereBetween('delivery_date',[$startDate,$endDate])
-		->join('money_payments','money_payment_id','money_payments.id')
-		->sum('paid_amount');
-	}
-	protected function getOutgoingTransfersAtDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		return DB::table('outgoing_transfers')
-		->where('currency',$currency)
-		->where('type',MoneyPayment::OUTGOING_TRANSFER)
-		->where('money_payments.company_id',$companyId)
-		->whereBetween('delivery_date',[$startDate,$endDate])
-		->join('money_payments','money_payment_id','money_payments.id')
-		->sum('paid_amount');
-	}
 	
-	protected function getSupplierInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
-		$items = SupplierInvoice::where('company_id',$companyId)->where('currency',$currency)->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		return $items->sum('net_invoice_amount');
-	}
+	
+	
+	
+	
 	protected function getCashExpensesAtDates(int $companyId , string $startDate , string $endDate,string $currency,int $cashExpenseCategoryNameId) 
 	{
 		return DB::table('cash_expenses')->where('company_id',$companyId)->whereBetween('payment_date',[$startDate,$endDate])->where('currency',$currency)->where('cash_expense_category_name_id',$cashExpenseCategoryNameId)->sum('paid_amount');

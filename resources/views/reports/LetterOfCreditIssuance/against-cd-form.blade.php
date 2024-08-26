@@ -255,9 +255,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <select js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="{{ isset($model) ?  $model->getContractId() : 0 }}" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            {{-- @foreach($contracts as $contract)
-                                            <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->getId() }}">{{ $contract->getName() }}</option>
-                                            @endforeach --}}
+                                      
                                         </select>
                                     </div>
 

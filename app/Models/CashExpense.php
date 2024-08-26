@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CashExpense extends Model
 {
@@ -20,9 +21,6 @@ class CashExpense extends Model
 	
 	public static function generateComment(self $cashExpense,string $lang)
 	{
-		// $supplierName = $cashExpense->getSupplierName();
-		// $paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
-		
 		if($cashExpense->isPayableCheque()){
 			return __('Payable Cheque To Pay [:expenseName - :expenseNameName] [ :chequeNumber ]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName(),'chequeNumber'=>Request('cheque_number')],$lang) ;
 		}
@@ -68,22 +66,7 @@ class CashExpense extends Model
     {
         return $this->getType() ==self::OUTGOING_TRANSFER;
     }
-    // public function getSupplierName()
-    // {
-    //     return $this->supplier_name;
-    // }
-	// public function supplier()
-	// {
-	// 	return $this->belongsTo(Partner::class,'supplier_name','name')->where('is_supplier',1)->where('company_id',getCurrentCompanyId());
-	// }
-	// public function getSupplierId()
-	// {
-	// 	return $this->supplier ? $this->supplier->id : 0 ;
-	// }
-	// public function getName()
-	// {
-	// 	return $this->getSupplierName();
-	// }
+
     public function getPaymentDate()
     {
         return $this->payment_date;
@@ -510,4 +493,5 @@ class CashExpense extends Model
 		->withPivot(['amount'])
 		;
 	}
+
 }
