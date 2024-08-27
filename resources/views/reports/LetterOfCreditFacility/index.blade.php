@@ -340,17 +340,7 @@
 </script>
 @endsection
 @push('js')
-<script>
-    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
-        const parent = $(this).closest('.modal-body');
-        const amount = parseFloat($(parent).find('.amount-js').val())
-        const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
-        const amountInMainCurrency = parseFloat(amount * exchangeRate);
-        $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency)
-        $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
-    })
 
-</script>
 {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
 {{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
 @endpush

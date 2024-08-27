@@ -5190,9 +5190,3 @@ if (!function_exists('getFixedLoanTypes')) {
             }
         });
 	}
-
-   
-	
-// function dddd($items){
-// 	foreach($items )
-// }

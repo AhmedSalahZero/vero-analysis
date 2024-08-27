@@ -6,7 +6,7 @@ BEGIN
 	declare _settlement_amount decimal(14,2) ;
 	declare _withhold_amount decimal(14,2) ;
 	select sum(settlement_amount) into _settlement_amount from payment_settlements where company_id = new.company_id and invoice_number = new.invoice_number ;
-	
+	-- insert into debugging 
 	select sum(withhold_amount) into _withhold_amount from payment_settlements where company_id = new.company_id and invoice_number = new.invoice_number ;
 	
 	update `supplier_invoices` set withhold_amount = _withhold_amount where new.invoice_number  = invoice_number and company_id = new.company_id ;

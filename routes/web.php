@@ -599,7 +599,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-payment/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyPaymentController@getAccountNumbersForAccountType'); // ajax request
 					Route::post('mark-payable-cheques-as-paid', 'MoneyPaymentController@markChequesAsPaid')->name('payable.cheque.mark.as.paid');
 					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
-
+					Route::get('get-supplier-invoices','SupplierInvoicesController@getSupplierInvoicesForSupplier')->name('get.supplier.invoices');
 					
 					// cash expense
 					

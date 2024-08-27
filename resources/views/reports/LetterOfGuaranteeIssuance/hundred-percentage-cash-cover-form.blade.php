@@ -608,6 +608,7 @@ use App\Models\LetterOfGuaranteeIssuance;
             <script>
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
                     e.preventDefault()
+			
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
 					const source = "{{ $source }}"

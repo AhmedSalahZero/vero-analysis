@@ -14,6 +14,7 @@ use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfCreditStatement;
 use App\Models\Partner;
 use App\Models\PurchaseOrder;
+use App\Models\SupplierInvoice;
 use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -60,6 +61,7 @@ class LetterOfCreditIssuanceController
 		$filterDates = [];
 		$searchFields = [];
 		$models = [];
+		// $suppliers = Partner::onlyCompany($company->id)->onlySuppliers()->get();
 		foreach(getLcTypes() as $type=>$typeNameFormatted){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
@@ -87,7 +89,7 @@ class LetterOfCreditIssuanceController
 			'searchFields'=>$searchFields,
 			'models'=>$models,
 			'filterDates'=>$filterDates,
-			'currentActiveTab'=>$activeLcType
+			'currentActiveTab'=>$activeLcType,
 		]);
     }
 	public function commonViewVars(Company $company,string $source):array
@@ -148,7 +150,6 @@ class LetterOfCreditIssuanceController
 		$currency = $request->get('lc_currency',0);
 		$cdOrTdAccountNumber = $request->get('cd_or_td_account_number');
 		$cdOrTdAccountTypeId = $request->get('cd_or_td_account_type_id');
-	
 		$accountType = AccountType::find($cdOrTdAccountTypeId);
 		$cdOrTdId = 0 ;
 		if($accountType && $accountType->isCertificateOfDeposit()){
@@ -159,12 +160,12 @@ class LetterOfCreditIssuanceController
 		}
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
 		$issuanceFees = $request->get('issuance_fees',0);
-	
+		$lcAmountInMainCurrency = $model->getLcAmountInMainCurrency();
 		$maxLcCommissionAmount = max($minLcCommissionAmount ,$lcCommissionAmount );
 		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId,0,1,__('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId,0,1,__('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
-		$model->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,0,$lcAmount,$currency,0,$cdOrTdId,'credit-lc-amount');
+		$model->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,0,$lcAmountInMainCurrency,$model->getLcCashCoverCurrency(),0,$cdOrTdId,'credit-lc-amount');
 		$model->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lc-amount');
 		
 		// $lcDurationMonths = $request->get('lc_duration_months',1);
@@ -222,6 +223,7 @@ class LetterOfCreditIssuanceController
 			'payment_date'=>null
 		]);
 	
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->settlements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source));
@@ -236,7 +238,9 @@ class LetterOfCreditIssuanceController
 	 */
 	public function markAsPaid(Company $company,Request $request,LetterOfCreditIssuance $letterOfCreditIssuance,string $source)
 	{
+		
 		$letterOfCreditIssuanceStatus = LetterOfCreditIssuance::PAID ;
+		$lcType = $request->get('lc_type') ;
 		/**
 		 * * هنشيل قيم ال
 		 * * letter of credit statement
@@ -251,10 +255,11 @@ class LetterOfCreditIssuanceController
 		$letterOfCreditFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfCreditFacility();
 		$lcType = $letterOfCreditIssuance->getLcType();
 		$lcAmount = $letterOfCreditIssuance->getLcAmount();
+		$lcAmountInMainCurrency = $letterOfCreditIssuance->getLcAmountInMainCurrency();
 		$cashCoverAmount = $letterOfCreditIssuance->getCashCoverAmount();
 		$diffBetweenLcAmountAndCashCover = $lcAmount - $cashCoverAmount ;
 		$letterOfCreditFacilityId = $letterOfCreditFacility ? $letterOfCreditFacility->id : 0 ;
-		$letterOfCreditIssuance->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,$lcAmount , 0,$letterOfCreditIssuance->getLcCurrency(),0,$letterOfCreditIssuance->getCdOrTdId(),LetterOfCreditIssuance::FOR_PAID);
+		$letterOfCreditIssuance->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,$lcAmountInMainCurrency , 0,$letterOfCreditIssuance->getLcCashCoverCurrency(),0,$letterOfCreditIssuance->getCdOrTdId(),LetterOfCreditIssuance::FOR_PAID);
 		$letterOfCreditIssuance->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,0 , $cashCoverAmount ,$letterOfCreditIssuance->getLcCurrency(),0,LetterOfCreditIssuance::FOR_PAID);
 		// $financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfCreditIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
 		$letterOfCreditIssuance->handleLcCreditBankStatement('credit',$paymentDate,$diffBetweenLcAmountAndCashCover,$source);
@@ -263,8 +268,25 @@ class LetterOfCreditIssuanceController
 		// وهنزود الحساب دا في ال
 		// internal money transfer 
 		
+		// Money Payment 
+		$supplierId = $request->get('supplier_id');
+		$supplierInvoiceId = $request->get('supplier_invoice_id');
+		$supplierInvoice = SupplierInvoice::find($supplierInvoiceId);
+		$letterOfCreditIssuance->settlements()->create([
+			'invoice_number'=>$supplierInvoice->getInvoiceNumber(),
+			'supplier_name'=>$supplierInvoice->getSupplierName(),
+			'withhold_amount'=>0,
+			'company_id'=>$company->id ,
+			'settlement_amount'=>$letterOfCreditIssuance->getLcAmount()
+		]);
+		
+		// $supplierInvoice->update([
+		// 	'updated_at'=>now()
+		// ]);
+		// dd
+		
 		// $letterOfCreditIssuance->storeCurrentAccountDebitBankStatement($paymentDate,$cashCoverAmount , $financialInstitutionAccountId,0,$letterOfCreditIssuance->id);
-		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$request->get('lc_type')])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$lcType])->with('success',__('Data Store Successfully'));
 	}
 	
 	

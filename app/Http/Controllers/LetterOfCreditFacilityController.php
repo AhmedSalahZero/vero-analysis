@@ -187,10 +187,14 @@ class LetterOfCreditFacilityController
 		$letterOfCreditFacility->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
-	public function updateOutstandingBalanceAndLimits(Request $request , Company $company ){
+	public function updateOutstandingBalanceAndLimits(Request $request , Company $company  ){
 	
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
+		if(!$financialInstitutionId){
+			return ;
+		}
 		$selectedLcType = $request->get('lcType');
+		
 		$currentLcOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
         $letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
@@ -199,7 +203,7 @@ class LetterOfCreditFacilityController
         $minLcCashCoverRateForCurrentLcType  = $letterOfCreditFacility && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)  ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->cash_cover_rate : 0;
         $minLcIssuanceFeesForCurrentLcType  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->issuance_fees : 0;
 
-
+		$source = $request->get('source');
 		/**
 		 * @var LetterOfCreditFacility $letterOfCreditFacility
 		 */
@@ -211,6 +215,9 @@ class LetterOfCreditFacilityController
 			->where('company_id',$company->id)
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('lc_type',$lcTypeId)
+			->when (! $request->has('accountTypeId'),function(Builder $builder) use($source) {
+				$builder->where('source',$source);
+			})
 			->when($request->has('accountTypeId'),function(Builder $builder) use ($request,$accountTypeId){
 				$accountType = AccountType::find($accountTypeId);
 				$currentSource = LetterOfCreditIssuance::AGAINST_TD;
@@ -222,6 +229,7 @@ class LetterOfCreditFacilityController
 			->orderByRaw('full_date desc')
 			->first();
 			$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
+			// dd($lcTypeId , $selectedLcType);
 			if($lcTypeId == $selectedLcType ){
 				$currentLcOutstanding = $letterOfCreditStatementEndBalance;
 			}

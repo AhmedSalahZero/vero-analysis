@@ -109,7 +109,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
 									
                                     <th class="text-center align-middle bank-max-width" >{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LC Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th>
@@ -128,7 +128,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLcCode() }}</td>
+                                    <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
@@ -204,7 +204,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LC Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
 							
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
@@ -223,7 +223,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getSourceFormatted() }}</td>
                                     <td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLcCode() }}</td>
+                                    <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
@@ -295,7 +295,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LC Code') }}</th>
+                                    <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Current Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
@@ -314,7 +314,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<td>{{ $model->getSourceFormatted() }}</td>
 									<td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLcCode() }}</td>
+                                    <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
                                     <td class="text-transform">{{ $model->getLcCurrentAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
@@ -463,7 +463,18 @@ $("button[data-dismiss=modal2]").click(function(){
         $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency)
         $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
     })
-
+	$(document).on('change','select.update-net-balance-inputs',function(){
+		const selectedOption = $(this).find('option:selected')
+		const currency = $(selectedOption).attr('data-currency')
+		const netBalance = $(selectedOption).attr('data-invoice-net-balance')
+		const exchangeRate = $(selectedOption).attr('data-exchange-rate')
+		const netBalanceInMainCurrency = $(selectedOption).attr('data-invoice-net-balance-in-main-currency');
+		const parent = $(this).closest('.modal-body')
+		$(parent).find('.net-balance').val(number_format(netBalance) + ' ' + currency)
+		$(parent).find('.exchange-rate').val(number_format(exchangeRate,2))
+		$(parent).find('.net-balance-in-main-currency').val(number_format(netBalanceInMainCurrency))
+	})
+	$('select.update-net-balance-inputs').trigger('change')
 </script>
 
 @endsection
