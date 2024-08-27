@@ -3118,6 +3118,9 @@ function getPermissions():array
 			'name'=>'view bank statement report'
 		],
 		[
+			'name'=>'view lc & lg statement report'
+		],
+		[
 			'name'=>'view income statement planning'
 		]
 		,[
@@ -4211,6 +4214,7 @@ function getHeaderMenu()
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
 	$canViewSafeStatement = $user->can('view safe statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
+	$canViewLgLcStatement = $user->can('view lc & lg statement report') ;
 	$canViewCashFlow = $user->can('view cash flow report');
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
@@ -4428,7 +4432,7 @@ function getHeaderMenu()
 				[
 					'title'=>__('Reports'),
 					'link'=>'#',
-					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewBankStatement || $canViewWithdrawalsSettlementReport ,
+					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewBankStatement|| $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
 					'submenu'=>[
 						[
 							'title'=>__('Safe Statement'),
@@ -4439,6 +4443,11 @@ function getHeaderMenu()
 						[
 							'title'=>__('Bank Statement'),
 							'link'=>route('view.bank.statement',['company'=>$company->id]),
+							'show'=>$canViewBankStatement,
+							'submenu'=>[]
+						],[
+							'title'=>__('LG & LC Statement'),
+							'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
 							'show'=>$canViewBankStatement,
 							'submenu'=>[]
 						],

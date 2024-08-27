@@ -256,13 +256,18 @@ class LetterOfCreditIssuanceController
 		$lcType = $letterOfCreditIssuance->getLcType();
 		$lcAmount = $letterOfCreditIssuance->getLcAmount();
 		$lcAmountInMainCurrency = $letterOfCreditIssuance->getLcAmountInMainCurrency();
+	
 		$cashCoverAmount = $letterOfCreditIssuance->getCashCoverAmount();
-		$diffBetweenLcAmountAndCashCover = $lcAmount - $cashCoverAmount ;
+		
+		$diffBetweenLcAmountAndCashCover = ($lcAmountInMainCurrency - $cashCoverAmount) *  $letterOfCreditFacility->getBorrowingRate() / 100 ;
+		
 		$letterOfCreditFacilityId = $letterOfCreditFacility ? $letterOfCreditFacility->id : 0 ;
 		$letterOfCreditIssuance->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,$lcAmountInMainCurrency , 0,$letterOfCreditIssuance->getLcCashCoverCurrency(),0,$letterOfCreditIssuance->getCdOrTdId(),LetterOfCreditIssuance::FOR_PAID);
 		$letterOfCreditIssuance->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,0 , $cashCoverAmount ,$letterOfCreditIssuance->getLcCurrency(),0,LetterOfCreditIssuance::FOR_PAID);
 		// $financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfCreditIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
-		$letterOfCreditIssuance->handleLcCreditBankStatement('credit',$paymentDate,$diffBetweenLcAmountAndCashCover,$source);
+		if($source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER){
+			$letterOfCreditIssuance->handleLcCreditBankStatement('credit',$paymentDate,$diffBetweenLcAmountAndCashCover,$source);
+		}
 		// lc_overdraft 
 		// credit 
 		// وهنزود الحساب دا في ال

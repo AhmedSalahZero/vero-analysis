@@ -541,7 +541,9 @@ Route::middleware([])->group(function () {
 					Route::get('bank-statement', 'BankStatementController@index')->name('view.bank.statement');
                     Route::post('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
 					
-					
+					Route::get('lg-lc-bank-statement', 'LGLCSBanktatementController@index')->name('view.lg.lc.bank.statement');
+                    Route::post('lg-lc-bank-statement', 'LGLCSBanktatementController@result')->name('result.lg.lc.bank.statement');
+					Route::get('get-lg-lc-types','LGLCSBanktatementController@getLgOrLcType')->name('get.lc.or.lg.types');
 
                     Route::get('customer-balances/{modelType}', 'BalancesController@index')->name('view.balances');
                     Route::get('/cashvero-dashboard/cash', 'CustomerInvoiceDashboardController@viewCashDashboard')->name('view.customer.invoice.dashboard.cash');

@@ -37,6 +37,10 @@ class LetterOfCreditFacility extends Model
 	{
 		return $this->outstanding_date;
 	}
+	public function getBorrowingRate()
+	{
+		return $this->borrowing_rate ;
+	}
 	public function getOutstandingDateFormatted()
 	{
 		$outstandingDate = $this->getOutstandingDate() ;
