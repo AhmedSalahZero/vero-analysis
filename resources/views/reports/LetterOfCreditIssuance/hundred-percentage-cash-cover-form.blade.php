@@ -290,7 +290,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency  recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">
@@ -298,20 +298,37 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="lc_currency" class="form-control" >
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
+									  <div class="col-md-3">
+                                        <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate %')" :type="'text'" :placeholder="__('Exchange Rate %')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency recalculate-cash-cover-amount-js exchange-rate-js only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                    </div>
 									<div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Interest Rate %')" :type="'text'" :placeholder="__('Interest Rate %')" :name="'interest_rate'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                        <x-form.input  :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount In Main Currency')" :type="'text'" :placeholder="__('Amount In Main Currency')" :name="'amount_in_main_currency'" :class="'amount-in-main-currency-js-hidden recalculate-cash-cover-amount-js '" :required="true"></x-form.input>
                                     </div>
 									
                                     <div class="col-md-3">
                                         <x-form.input :id="$source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
+                                    </div>
+									
+										  <div class="col-md-3">
+                                        <label>{{__('LC Cash Cover Currency')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="lc_cash_cover_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected>{{__('Select')}}</option>
+                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
 
@@ -455,49 +472,7 @@ use App\Models\LetterOfCreditIssuance;
                     dateFormat: 'mm-dd-yy'
                     , autoclose: true
                 })
-                $('#m_repeater_0').repeater({
-                    initEmpty: false
-                    , isFirstItemUndeletable: true
-                    , defaultValues: {
-                        'text-input': 'foo'
-                    },
-
-                    show: function() {
-                        $(this).slideDown();
-                        $('input.trigger-change-repeater').trigger('change')
-                        $(document).find('.datepicker-input').datepicker({
-                            dateFormat: 'mm-dd-yy'
-                            , autoclose: true
-                        })
-                        $(this).find('.only-month-year-picker').each(function(index, dateInput) {
-                            reinitalizeMonthYearInput(dateInput)
-                        });
-                        $('input:not([type="hidden"])').trigger('change');
-                        $(this).find('.dropdown-toggle').remove();
-                        $(this).find('select.repeater-select').selectpicker("refresh");
-
-                    },
-
-                    hide: function(deleteElement) {
-                        if ($('#first-loading').length) {
-                            $(this).slideUp(deleteElement, function() {
-
-                                deleteElement();
-                                //   $('select.main-service-item').trigger('change');
-                            });
-                        } else {
-                            if (confirm('Are you sure you want to delete this element?')) {
-                                $(this).slideUp(deleteElement, function() {
-
-                                    deleteElement();
-                                    $('input.trigger-change-repeater').trigger('change')
-
-                                });
-                            }
-                        }
-                    }
-                });
-
+                
 
 
 
@@ -555,6 +530,20 @@ use App\Models\LetterOfCreditIssuance;
             <script src="/custom/money-receive.js">
 
             </script>
+			
+			<script>
+    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+        const parent = $(this).closest('.kt-portlet__body');
+        const amount = parseFloat($(parent).find('.amount-js').val())
+        const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
+        const amountInMainCurrency = parseFloat(amount * exchangeRate);
+	
+        $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency).trigger('change')
+        $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
+    })
+
+</script>
+
 
             <script>
                 $(document).on('change', '.recalc-due-date', function(e) {
@@ -575,7 +564,7 @@ use App\Models\LetterOfCreditIssuance;
 
                 })
                 $(document).on('change', '.recalculate-cash-cover-amount-js', function() {
-                    const lcAmount = number_unformat($('.lc-amount-js').val())
+                    const lcAmount = number_unformat($('.amount-in-main-currency-js-hidden').val())
                     const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
                     const cashCoverAmount = lcAmount * cashCoverRateJs
                     $('.cash-cover-amount-js').val(cashCoverAmount)
@@ -585,7 +574,7 @@ use App\Models\LetterOfCreditIssuance;
                     const lcAmount = number_unformat($('.lc-amount-js').val())
                     const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
                     const lcCommissionAmount = lcAmount * rate
-                    $('.lc-commission-amount-js').val(lcCommissionAmount)
+                    $('.lc-commission-amount-js').val(Math.round(lcCommissionAmount,2))
                 })
 
                 $('.recalc-due-date').trigger('change')
@@ -610,13 +599,15 @@ use App\Models\LetterOfCreditIssuance;
             <script>
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
                     e.preventDefault()
+					const source =  "{{ $source }}"
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lcType = $('select#lc-type').val()
                     $.ajax({
                         url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
                             financialInstitutionId
-                            , lcType
+                            , lcType,
+							source 
                         }
                         , type: "GET"
                         , success: function(res) {

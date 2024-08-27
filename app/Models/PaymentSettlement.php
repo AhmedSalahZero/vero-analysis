@@ -64,5 +64,9 @@ class PaymentSettlement extends Model
             return Carbon::make($settlementDate)->format('d-m-Y');
         }
     }
+	public function letterOfCreditIssuance()
+	{
+		return $this->belongsTo(LetterOfCreditIssuance::class ,'letter_of_credit_issuance_id');
+	}
 	
 }

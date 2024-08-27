@@ -40,6 +40,11 @@ class Partner extends Model
 	public function scopeOnlyThatHaveContracts(Builder $query){
 		return $query->has('contracts');
 	}
+	public function scopeOnlyHasInvoicesWithCurrency(Builder $query,string $currencyName){
+		return $query->whereHas('SupplierInvoice',function(Builder $builder) use ($currencyName){
+			$builder->where('currency',$currencyName);
+		});
+	}
 	public function scopeOnlyForCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}
@@ -53,6 +58,7 @@ class Partner extends Model
 			$q->where('is_supplier',1);
 		});
 	}
+
 	public function unappliedAmounts()
 	{
 		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	

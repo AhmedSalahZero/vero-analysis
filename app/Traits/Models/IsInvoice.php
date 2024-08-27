@@ -19,6 +19,13 @@ trait IsInvoice
 	public function scopeOnlyCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}
+	public function scopeOnlyCurrency(Builder $query , string $currency){
+		return $query->where('currency',$currency);
+	}
+	public function scopeOnlyForPartner(Builder $query,$partnerId){
+		return $query->where(self::CLIENT_ID_COLUMN_NAME,$partnerId);
+	}
+	
     public function scopeCompany($query)
     {
         return $query->where('company_id', request()->company->id?? Request('company_id'));
@@ -31,6 +38,14 @@ trait IsInvoice
 	public function getNetBalanceFormatted()
 	{
 		return number_format($this->getNetBalance(),0);
+	}
+	public function getExchangeRate()
+	{
+		return $this->exchange_rate ?:1  ;
+	}
+	public function getNetBalanceInMainCurrency()
+	{
+		return $this->net_balance_in_main_currency ;
 	}
     
 	public function getName()

@@ -322,8 +322,8 @@ use App\Models\LetterOfCreditIssuance;
                                         <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
                                     </div>
 
-                                    <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
+                                     <div class="col-md-3">
+                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">
@@ -334,7 +334,7 @@ use App\Models\LetterOfCreditIssuance;
                                             <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -342,7 +342,10 @@ use App\Models\LetterOfCreditIssuance;
 
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('Interest Rate %')" :type="'text'" :placeholder="__('Interest Rate %')" :name="'interest_rate'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                        <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate %')" :type="'text'" :placeholder="__('Exchange Rate %')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                    </div>
+									<div class="col-md-3">
+                                        <x-form.input  :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount In Main Currency')" :type="'text'" :placeholder="__('Amount In Main Currency')" :name="'amount_in_main_currency'" :class="'amount-in-main-currency-js-hidden recalculate-cash-cover-amount-js'" :required="true"></x-form.input>
                                     </div>
 
 
@@ -565,7 +568,18 @@ use App\Models\LetterOfCreditIssuance;
 <script src="/custom/money-receive.js">
 
 </script>
+<script>
+    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+        const parent = $(this).closest('.kt-portlet__body');
+        const amount = parseFloat($(parent).find('.amount-js').val())
+        const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
+        const amountInMainCurrency = parseFloat(amount * exchangeRate);
+	
+        $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency).trigger('change')
+        $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
+    })
 
+</script>
 <script>
     $(document).on('change', '.recalc-due-date', function(e) {
         e.preventDefault()
@@ -585,7 +599,7 @@ use App\Models\LetterOfCreditIssuance;
 
     })
     $(document).on('change', '.recalculate-cash-cover-amount-js', function() {
-        const lcAmount = number_unformat($('.lc-amount-js').val())
+        const lcAmount = number_unformat($('.amount-in-main-currency-js-hidden').val())
         const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
         const cashCoverAmount = lcAmount * cashCoverRateJs
         $('.cash-cover-amount-js').val(cashCoverAmount)
@@ -595,7 +609,7 @@ use App\Models\LetterOfCreditIssuance;
         const lcAmount = number_unformat($('.lc-amount-js').val())
         const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
         const lcCommissionAmount = lcAmount * rate
-        $('.lc-commission-amount-js').val(lcCommissionAmount)
+        $('.lc-commission-amount-js').val(Math.round(lcCommissionAmount,2))
     })
 
     $('.recalc-due-date').trigger('change')

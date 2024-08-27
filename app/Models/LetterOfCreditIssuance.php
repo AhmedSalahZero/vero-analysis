@@ -121,6 +121,10 @@ class LetterOfCreditIssuance extends Model
 		$beneficiary = $this->beneficiary ;
 		return  $beneficiary ? $beneficiary->getName(): 0 ;
 	}
+	public function getSupplierName()
+	{
+		return $this->getBeneficiaryName();
+	}
 	public function getBeneficiaryId()
 	{
 		$beneficiary = $this->beneficiary ;
@@ -266,6 +270,10 @@ class LetterOfCreditIssuance extends Model
 	public function getLcCurrency()
 	{
 		return $this->lc_currency ;
+	}
+	public function getLcCashCoverCurrency()
+	{
+		return $this->lc_cash_cover_currency ;
 	}
 	public function getLcCurrentAmount()
 	{
@@ -413,6 +421,7 @@ class LetterOfCreditIssuance extends Model
 	public function deleteAllRelations():self
 	{
 		
+		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->settlements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
@@ -435,5 +444,22 @@ class LetterOfCreditIssuance extends Model
 		$lastBankStatement = $this->lcOverdraftBankStatements->first() ;
 		return  $lastBankStatement ? $lastBankStatement->end_balance : 0 ;
 	}	
+	public function getExchangeRate()
+	{
+		return $this->exchange_rate ?: 1 ;
+	}
+	public function getLcAmountInMainCurrency()
+	{
+		return $this->getExchangeRate() * $this->getLcAmount();
+	}
+	public function getAmountInMainCurrencyFormatted()
+	{
+		return number_format($this->getLcAmountInMainCurrency());
+	}
+	public function settlements():HasMany
+	{
+		return $this->hasMany(PaymentSettlement::class,'letter_of_Credit_issuance_id');
+	}
+	
 
 }
