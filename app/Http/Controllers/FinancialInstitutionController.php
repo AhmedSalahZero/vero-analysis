@@ -258,8 +258,7 @@ class FinancialInstitutionController
 		$financialInstitutionId = $request->get('financialInstitutionId');
 		$currency = $request->get('currency');
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId) ;
-		$letterOfCreditIssuances = $financialInstitution->letterOfCreditIssuances->where('lc_currency',$currency)->pluck('transaction_name','id')->toArray() ;
-		
+		$letterOfCreditIssuances = $financialInstitution->letterOfCreditIssuances->where('lc_cash_cover_currency',$currency)->pluck('transaction_name','id')->toArray() ;
 		return response()->json([
 			'letterOfCreditIssuances'=>$letterOfCreditIssuances
 			// 'interest_rate'=>$interestRate
