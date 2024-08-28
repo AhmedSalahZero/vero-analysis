@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
+use App\Models\LcOverdraftBankStatement;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\OverdraftAgainstAssignmentOfContract;
@@ -85,12 +86,14 @@ class LGLCSBanktatementController
 		
 		$source = [
 			'LetterOfCreditIssuance'=>LetterOfCreditIssuance::lcSources(),
-			'LetterOfGuaranteeIssuance'=>LetterOfGuaranteeIssuance::lgSources() 
+			'LetterOfGuaranteeIssuance'=>LetterOfGuaranteeIssuance::lgSources() ,
+			'LCOverdraft'=>LcOverdraftBankStatement::getSources()
 		][$reportType][$request->get('source')];
 		
 		$type = [
 			'LetterOfCreditIssuance'=>LcTypes::getAll(),
-			'LetterOfGuaranteeIssuance'=>LgTypes::getAll() 
+			'LetterOfGuaranteeIssuance'=>LgTypes::getAll(),
+			
 		][$reportType][$request->get('type')];
 		
         return view('lc_lg_bank_statement_result', [

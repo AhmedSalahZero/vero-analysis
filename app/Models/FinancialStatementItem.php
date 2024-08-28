@@ -92,7 +92,6 @@ class  FinancialStatementItem extends Model
 		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondFinancialStatementDurationType);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
-		// dd($firstIntervalDate);
 		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
 			return [
 				'second-interval#' . $secondIntervalDate => sum_each_key($secondItems),
@@ -108,7 +107,6 @@ class  FinancialStatementItem extends Model
 	public static function getItemsForInterval(Collection $items, array $dates, $intervalName): array
 	{
 		// $items must be a collection 
-		// dd($dates);
 
 		$firstDate = Carbon::make($dates[\array_key_first($dates)]);
 		$lastDate = Carbon::make($dates[\array_key_last($dates)]);

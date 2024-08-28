@@ -100,7 +100,6 @@ class OverdraftAgainstAssignmentOfContractController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		// $lendingInformation = $request->get('infos',[]) ; 
-		// dd($lendingInformation);
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		/**
@@ -145,9 +144,7 @@ class OverdraftAgainstAssignmentOfContractController
 		$odAgainstAssignmentOfContract->update($data);
 		$odAgainstAssignmentOfContract->triggerChangeOnContracts();
 		
-		// dd($odAgainstAssignmentOfContract,$data);
 		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
-		// dd($odAgainstAssignmentOfContract->lendingInformation);
 		// $odAgainstAssignmentOfContract->lendingInformation()->delete();
 		// foreach($infos as $lendingInformationArr){
 		// 	$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [

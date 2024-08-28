@@ -18,7 +18,6 @@ trait HasCreditStatements
 	 */
 	public function handleCreditStatement(int $companyId , $bankId = null ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $statementDate = null,?float $paidAmount = null,$deliveryBranchId=null,?string $currencyName = null , ?string $commentEn = null , ?string $commentAr = null)
 	{
-		// dd($statementDate);
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$companyId,$bankId);
 			$this->storeCleanOverdraftCreditBankStatement($moneyType,$cleanOverdraft,$statementDate,$paidAmount,$commentEn,$commentAr);

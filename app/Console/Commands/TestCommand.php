@@ -55,40 +55,5 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$moneyPayment = new MoneyPayment(['id'=>114]);
-		$moneyPayment = MoneyPayment::find(114);
-		dd($moneyPayment->settlementAllocations);
-		$company = Company::find(85);
-		$charts = [];
-		LetterOfGuaranteeStatement::getDashboardOutstandingTableFormattedData($charts,$company,'EGP','2024-06-03',24,'Fn Name');
-		dd($charts);
-		// dd(getTableNames('vero_analysis','q'));
-		// CleanOverdraftBankStatement::create([
-		// 	''
-		// ]);
-		// $financialInstitution = FinancialInstitution::find(24);
-		// dd($financialInstitution->getAllAccountNumbers());
-		// dd('good');
-	
-		// $companyId = 85 ; 
-		// $dateFormat = 'Y-m-d';
-		// $pendingPayableChequeNotificationDays =3; 
-		// $dayBeforeDayDate = Carbon::make(now()->format($dateFormat))->subDay()->format($dateFormat);
-		
-		// $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($pendingPayableChequeNotificationDays)->format($dateFormat);
-		// $pendingPayableCheques = PayableCheque::where('company_id', $companyId)
-		// ->where('status',PayableCheque::PENDING)
-		// ->whereBetween('due_date', [$beforeIntervalDate, $dayBeforeDayDate])->get();
-		// dd($pendingPayableCheques,$beforeIntervalDate,$dayBeforeDayDate);
-		// dd('e');
-		// dd(getAllDataKey(['data-x'=>'x','ahmed'=>'salah','ee'=>'e']));
-		CheckDueAndPastedInvoicesJob::dispatch();
-		
-		// echo 'salah helmy';
-		logger('lllllllllllllllllll');
-		echo getcwd();
-		// foreach(Company::all() as $company){
-		// 		CurrentAccountBankStatement::updateNonActiveDaily($company);
-		// }
 	}
 }

@@ -16,6 +16,13 @@ class LcOverdraftBankStatement extends Model
 		'id'
 	];
 	const LC_OVERDRAFT_MONEY_TRANSFER  = 'lc-overdraft-money-transfer';
+	public static function getSources()
+	{
+		return [
+			'lc-facility'=>__('LC Facility'),
+			''
+		];
+	}
 	public $oldFullDate = null;
 	public static function updateNextRows(self $model):string 
 	{
