@@ -154,6 +154,11 @@ class ContractsController
 	}
 	public function getContractsForCustomerOrSupplier(Company $company , Request $request){
 		$partner = Partner::find($request->get('partnerId'));
+		if(!$partner){
+			return [
+				'contracts'=>[]
+			];
+		}
 		/**
 		 * @var Partner $partner 
 		 */
