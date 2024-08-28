@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 use App\Enums\LcTypes;
 use App\Enums\LgTypes;
+use App\Helpers\HArr;
 use App\Helpers\HDate;
+use App\Http\Controllers\WithdrawalsSettlementReportController;
 use App\Models\AccountType;
 use App\Models\ActiveJob;
 use App\Models\CashInSafeStatement;
@@ -419,20 +421,63 @@ class CustomerInvoiceDashboardController extends Controller
 		// dd($oldArr);
 		return $oldArr;
 	}
-
+	public function formatAccumulatedNetCash(array $netCashItems , array $dates)
+	{
+		$netCashItems = HArr::removeKeysFromArray($netCashItems,['total_of_total']);
+		$accumulatedNetCash = 0 ;
+		foreach($dates as  $weekAndYear => $startAndEndDateArray){
+			$endDate = $startAndEndDateArray['end_date'];
+			$currentNetCash = $netCashItems[$weekAndYear] ?? 0 ;
+			$accumulatedNetCash += $currentNetCash ; 
+			$formattedResult[] = ['date'=>$endDate,'value'=>$accumulatedNetCash ];
+	}
+		return $formattedResult ; 
+	}
+	public function formatFlowCashInOutChartData(array $totalCashInItems ,array $totalCashOutItems,array $dates ){
+		$totalCashInItems = HArr::removeKeysFromArray($totalCashInItems,['total_of_total']);
+		$totalCashOutItems = HArr::removeKeysFromArray($totalCashOutItems,['total_of_total']);
+		// $dates2 = array_merge(array_keys($totalCashInItems),array_keys($totalCashOutItems));
+		
+		$formattedResult = [];
+		foreach($dates as  $weekAndYear => $startAndEndDateArray){
+				$endDate = $startAndEndDateArray['end_date'];
+				$currentCashIn = $totalCashInItems[$weekAndYear] ?? 0 ;
+				$currentCashOut = $totalCashOutItems[$weekAndYear] ?? 0 ;
+				$formattedResult[] = ['date'=>$endDate,'cash_in'=>$currentCashIn , 'cash_out'=>$currentCashOut];
+		}
+		return $formattedResult;
+	}
     public function viewForecastDashboard(Company $company, Request $request)
     {
+		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
-		$details = [];
 		$dashboardResult = [];
+		
+		$cashFlowReportResult = null ;
+		$cashFlowReport = [];
+		if($request->has('partner_id')){
+			$report =(new ContractCashFlowReportController())->result($company,$request,true);
+			$cashFlowReportResult = $report['result'];
+			$dates = $report['dates'];
+			$cashFlowReport['total_cash_in_out_flow']=$this->formatFlowCashInOutChartData($cashFlowReportResult['customers'][__('Total Cash Inflow')]['total'] ?? [],$cashFlowReportResult['cash_expenses'][__('Total Cash Outflow')]['total'] ?? [],$dates);
+			$cashFlowReport['accumulated_net_cash']= $this->formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
+		}
+		// dd($cashFlowReport);
+		
 		$overdraftAccountTypes = AccountType::onlyOverdraftsAccounts()->get();
 		$invoiceTypesModels = ['CustomerInvoice', 'SupplierInvoice'] ;
-        $startDate = $request->get('start_date', now()->format('Y-m-d'));
-        $endDate = $request->get('end_date', Carbon::make($startDate)->addYear()->format('Y-m-d'));
-		$aginDate = $startDate ;
+        $cashStartDate = $request->get('cash_start_date', now()->format('Y-m-d'));
+        $cashEndDate = $request->get('cash_end_date', Carbon::make($cashStartDate)->addYear()->format('Y-m-d'));
+		$withdrawalStartDate = now()->subMonths(WithdrawalsSettlementReportController::NUMBER_OF_INTERNAL_MONTHS)->format('Y-m-d');
+		$withdrawalEndDate = $request->get('withdrawal_end_date',now()->format('Y-m-d'));
+		
+		$loanStartDate = $request->get('withdrawal_start_date',now()->format('Y-m-d'));
+		$loanEndDate = now()->addMonths(WithdrawalsSettlementReportController::NUMBER_OF_INTERNAL_MONTHS)->format('Y-m-d');
+		
+		$agingDate = $request->get('aging_date',now()->format('Y-m-d'))  ;
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
-		$invoiceAgingService = new InvoiceAgingService($company->id, $aginDate);
-		$chequeAgingService = new ChequeAgingService($company->id, $aginDate);
+		$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate);
+		$chequeAgingService = new ChequeAgingService($company->id, $agingDate);
 		$allFinancialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray(); 
 		foreach($selectedCurrencies as $currencyName)
 		{
@@ -461,11 +506,17 @@ class CustomerInvoiceDashboardController extends Controller
             'company' => $company,
 			'dashboardResult'=>$dashboardResult,
 			'invoiceTypesModels'=>$invoiceTypesModels,
-			'startDate'=>$startDate,
-			'endDate'=>$endDate,
+			'cashStartDate'=>$cashStartDate,
+			'cashEndDate'=>$cashEndDate,
+			'withdrawalStartDate'=>$withdrawalStartDate,
+			'withdrawalEndDate'=>$withdrawalEndDate,	
+			'loanStartDate'=>$loanStartDate,
+			'loanEndDate'=>$loanEndDate,
 			'overdraftAccountTypes'=>$overdraftAccountTypes,
 			'selectedCurrencies'=>$selectedCurrencies,
-			'allFinancialInstitutionIds'=>$allFinancialInstitutionIds
+			'allFinancialInstitutionIds'=>$allFinancialInstitutionIds,
+			'clientsWithContracts'=>$clientsWithContracts,
+			'cashFlowReport'=>$cashFlowReport
         ]);
 
         return view('admin.dashboard.forecast', ['company' => $company]);

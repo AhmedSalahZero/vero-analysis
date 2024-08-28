@@ -145,14 +145,13 @@ class HArr
 		}
 		return $newItems ;
 	}
-	// public static function removeElementByValue(array $elements , $valueToRemove)
-	// {
-	// 	$newElements = [];
-	// 	foreach($elements as $key=>$value){
-	// 		if($value != $valueToRemove ){
-	// 				$newElements[$key] = $value ; 
-	// 		}
-	// 	}
-	// 	return $newElements; 
-	// }
+	public static function removeKeysFromArray(array $items , array $keysToBeRemoved){
+		$result = [];
+		foreach($items as $currentKey => $value){
+			if(!in_array($currentKey,$keysToBeRemoved)){
+				$result[$currentKey] = $value ;
+			}
+		}
+		return $result; 
+	}
 }

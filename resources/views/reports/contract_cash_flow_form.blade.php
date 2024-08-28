@@ -10,7 +10,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Cash Flow Report') }}
+{{ __('Contract Cash Flow Report') }}
 @endsection
 @section('content')
 
@@ -36,9 +36,10 @@
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select name="report_interval" class="form-control ">
+                                    <select name="report_interval" class="form-control " required>
+									     <option value="">{{ __('Select') }}</option>
                                         <option value="daily">{{__('Daily')}}</option>
-                                        <option value="weekly" selected>{{__('Weekly')}}</option>
+                                        <option value="weekly" >{{__('Weekly')}}</option>
                                         <option value="monthly">{{__('Monthly')}}</option>
                                     </select>
                                 </div>
@@ -68,15 +69,6 @@
                                 <input disabled type="text" class="form-control contract-amount" value="0">
                             </div>
                         </div>
-
-
-
-
-
-
-
-
-
 
 
                         <div class="col-md-3">

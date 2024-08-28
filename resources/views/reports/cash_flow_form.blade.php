@@ -35,10 +35,11 @@
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select name="report_interval" class="form-control ">
-                                        <option value="daily">{{__('Daily')}}</option>
+                                    <select name="report_interval" class="form-control " required>
+                                         <option value="">{{ __('Select') }}</option>
+                                         <option value="daily">{{__('Daily')}}</option>
+                                        <option value="weekly" >{{__('Weekly')}}</option>
                                         <option value="monthly">{{__('Monthly')}}</option>
-                                        <option value="weekly">{{__('Weekly')}}</option>
                                     </select>
                                 </div>
                             </div>

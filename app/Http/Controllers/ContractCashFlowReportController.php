@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\HArr;
-use App\Helpers\HHelpers;
-use App\Models\CashExpense;
-use App\Models\CashExpenseCategoryName;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\Contract;
@@ -30,13 +27,15 @@ class ContractCashFlowReportController
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
         return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts'));
     }
-	public function result(Company $company , Request $request){
+	public function result(Company $company , Request $request , bool $returnResultAsArray = false ){
 	
 		
 
 		
-		$formStartDate =$request->get('start_date'); 
-		$formEndDate =$request->get('end_date');
+		$formStartDate =$request->get('start_date',$request->get('cash_start_date'));
+		 
+		$formEndDate =$request->get('end_date',$request->get('cash_end_date'));
+		
 		$reportInterval =  $request->get('report_interval');
 		// $supplierIdAndNames = [];
 		//////////////////////////
@@ -67,10 +66,10 @@ class ContractCashFlowReportController
 		$noRowHeaders =  $reportInterval == 'weekly' ? 3 : 1 ;
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
-		$startDate = $request->get('start_date');
+		$startDate = $request->get('start_date',$request->get('cash_start_date'));
 		$currency = $contract->getCurrency();
 		$year = explode('-',$startDate)[0];
-		$endDate  = $request->get('end_date');
+		$endDate  = $request->get('end_date',$request->get('cash_end_date'));
 		$datesWithWeeks = [];
 		if($reportInterval == 'weekly'){
 			$datesWithWeeks = 	getWeekNumberBetweenDates($year , Carbon::make($endDate)) ;
@@ -82,6 +81,7 @@ class ContractCashFlowReportController
 			$datesWithWeeks = 	getDayNumberBetweenDates($year , Carbon::make($endDate)) ;
 		}
 		$weeks  = $this->mergeYearWithWeek($datesWithWeeks ,Carbon::make($startDate) );
+	
 		$firstIndex = array_key_first($weeks);
 		$lastIndex = array_key_last($weeks);
 		$dates = [];
@@ -98,7 +98,7 @@ class ContractCashFlowReportController
 			}
 			elseif($currentWeekYear == $lastIndex){
 				$startDate = getMinDateOfWeek($datesWithWeeks,$week,$currentYear)['start_date'];
-				$endDate = $request->get('end_date');  
+				$endDate = $request->get('end_date',$request->get('cash_end_date'));  
 			}
 			else
 			{
@@ -109,7 +109,7 @@ class ContractCashFlowReportController
 			
 				 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::UNDER_COLLECTION) ;
 			// for customers 
-				$pastDueCustomerInvoices = $this->getPastDueCustomerInvoices('CustomerInvoice',$currency,$company->id,$request->get('start_date'),$contractCode);
+				$pastDueCustomerInvoices = $this->getPastDueCustomerInvoices('CustomerInvoice',$currency,$company->id,$request->get('start_date',$request->get('cash_start_date')),$contractCode);
 				$excludeIds = $pastDueCustomerInvoices->where('net_balance_until_date','<=',0)->pluck('id')->toArray() ;
 				$customerDueInvoices=DB::table('weekly_cashflow_custom_due_invoices')->where('company_id',$company->id)
 				->where('invoice_type','CustomerInvoice')
@@ -122,7 +122,6 @@ class ContractCashFlowReportController
 				 CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$totalCashInFlowArray,$company->id,$startDate , $endDate,$currency,$contractCode,$currentWeekYear);
 				 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray, MoneyReceived::CASH_IN_SAFE,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear);
 				 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray, MoneyReceived::CASH_IN_BANK,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear);
-			// dd();
 			$result['customers'][__('Customers Past Due Invoices')] = [];
 			 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'due_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::IN_SAFE);;
 	
@@ -135,16 +134,6 @@ class ContractCashFlowReportController
 				$contract->getCashExpensePerCategoryName($result,$totalCashOutFlowArray,MoneyPayment::CASH_PAYMENT,'payment_date',$startDate,$endDate,$currentWeekYear);
 				$contract->getCashExpensePerCategoryName($result,$totalCashOutFlowArray,MoneyPayment::PAYABLE_CHEQUE,'actual_payment_date',$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
 				$contract->getCashExpensePerCategoryName($result,$totalCashOutFlowArray,MoneyPayment::PAYABLE_CHEQUE,'due_date',$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
-			// $cashExpenseCategoryNames = CashExpenseCategoryName::getAllForCompany($company);
-			// foreach($cashExpenseCategoryNames as $cashExpenseCategoryName){
-			// 	$currentCashExpenseCategoryName = $cashExpenseCategoryName->getName();
-			// 	$result[$currentCashExpenseCategoryName][$currentWeekYear] = $this->getCashExpensesAtDates($company->id,$startDate , $endDate,$currency,$cashExpenseCategoryName->id);
-			// 	$cashExpenseCategoryNamesArr[$currentCashExpenseCategoryName] =  $currentCashExpenseCategoryName;
-			// }
-			
-			// $currentVal = $result['customers'][__('Customers Invoices')]['weeks'][$currentWeekYear]??0 ;
-			
-			// $result['customers'][__('Customers Invoices')]['weeks']['total'][$currentYear] = isset($result['customers'][__('Customers Invoices')]['weeks']['total'][$currentYear]) ? $result['customers'][__('Customers Invoices')]['weeks']['total'][$currentYear] + $currentVal : $currentVal ;
 			$dates[$currentWeekYear] = [
 				'start_date' => $startDate,
 				'end_date'=>$endDate 
@@ -158,7 +147,19 @@ class ContractCashFlowReportController
 		$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
-
+		
+		if($returnResultAsArray){
+			return [
+				'result'=>$result , 
+				// 'weeks'=>$weeks,
+				'dates'=>$dates,
+				// 'dates'=>[
+				// 	'daily'=>$days ,
+				// 	'weekly'=> $weeks,
+				// 	'monthly'=>$months
+				// ][$reportInterval]
+			] ;
+		}
 		return view('admin.reports.contract-cash-flow-report',[
 			'weeks'=>$weeks,
 			'result'=>$result,
