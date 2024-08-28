@@ -82,7 +82,6 @@ class StartUpCostService
 			'annually'=>sumIntervals($collection,'annually' , $hospitalitySector->financialYearStartMonth(),$dateIndexWithDate),
 		];
 		
-		// dd($purchasesForIntervals,$collectionForInterval );
 		
 		
 		$result = [];

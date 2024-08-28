@@ -77,7 +77,7 @@ use App\Models\LetterOfCreditIssuance;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <?php echo e(__((isset($model) ? 'Edit' : 'Add') . ' Against Certificate Of Deposit Letter Of Credit Issuance')); ?>
+                                    <?php echo e(__((isset($model) ? 'Edit' : 'Add') . ' Against Time Of Deposit Letter Of Credit Issuance')); ?>
 
                                 </h3>
                             </div>
@@ -124,20 +124,22 @@ use App\Models\LetterOfCreditIssuance;
                                         </select>
                                     </div>
 									
-									 <div class="col-md-2">
-                                        <label><?php echo e(__('CD Currency')); ?>
+									
+                                    <div class="col-md-2">
+                                        <label><?php echo e(__('TD Currency')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="input-group">
-                                            <select name="cd_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="td_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
                                                 <option selected><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
+                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $tdOrCdCurrencyName == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                         </div>
                                     </div>
+
 
                                     <div class="col-md-4">
                                         <label><?php echo e(__('Account Type')); ?> <span class=""></span> </label>
@@ -151,6 +153,8 @@ use App\Models\LetterOfCreditIssuance;
                                             </div>
                                         </div>
                                     </div>
+									
+									
 
                                     <div class="col-md-4">
                                         <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
@@ -188,8 +192,9 @@ use App\Models\LetterOfCreditIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
+
                                         <select js-update-outstanding-balance-and-limits id="lc-type" name="lc_type" class="form-control js-toggle-bond">
-                                            <option selected><?php echo e(__('Select')); ?></option>
+                                            
                                             <?php $__currentLoopData = getLcTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name => $nameFormatted): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($name); ?>" <?php if(isset($model) && $model->getLcType() == $name ): ?> selected <?php endif; ?> > <?php echo e($nameFormatted); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -327,7 +332,7 @@ use App\Models\LetterOfCreditIssuance;
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <select js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="<?php echo e(isset($model) ?  $model->getContractId() : 0); ?>" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                      
+                                            
                                         </select>
                                     </div>
 
@@ -441,7 +446,7 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?> 
                                     </div>
 
-                                    <div class="col-md-3">
+                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 0,'model' => $model??null,'label' => __('LC Amount'),'type' => 'text','placeholder' => __('LC Amount'),'name' => 'lc_amount','class' => 'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -470,6 +475,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </div>
                                     </div>
 
+
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['readonly' => false,'defaultValue' => 1,'model' => $model??null,'label' => __('Exchange Rate %'),'type' => 'text','placeholder' => __('Exchange Rate %'),'name' => 'exchange_rate','class' => 'recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
@@ -496,7 +502,6 @@ use App\Models\LetterOfCreditIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-
 
 
                                     <div class="col-md-3">
@@ -591,7 +596,6 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
                                 </div>
 
-
                                 <div class="col-md-3 ">
                                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Financing Duration'),'type' => 'text','placeholder' => __('Financing Duration'),'name' => 'financing_duration','class' => 'only-greater-than-zero-allowed','required' => true]]); ?>
@@ -605,6 +609,7 @@ use App\Models\LetterOfCreditIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                 </div>
+
                                 
 
 
@@ -780,7 +785,6 @@ use App\Models\LetterOfCreditIssuance;
 
 </script>
 <script>
-
     $(document).on('change', '.recalc-due-date', function(e) {
         e.preventDefault()
         let date = $('.issuance-date-js').val();
@@ -798,7 +802,7 @@ use App\Models\LetterOfCreditIssuance;
         }
 
     })
-  
+    
 
     $(document).on('change', '.recalculate-lc-commission-amount-js', function() {
         const lcAmount = number_unformat($('.lc-amount-js').val())
@@ -826,8 +830,44 @@ use App\Models\LetterOfCreditIssuance;
     $('.js-toggle-bond').trigger('change')
 
 </script>
+<script>
+    $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
+        e.preventDefault()
+        const financialInstitutionId = $('select#financial-instutition-id').val()
+        const lcType = $('select#lc-type').val()
+        const accountTypeId = $('select#account_type_id').val()
+        const accountNumber = $('[js-cd-or-td-account-number]').val()
 
+        $.ajax({
+            url: "<?php echo e(route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
+            , data: {
+                financialInstitutionId
+                , lcType
+                , accountTypeId
+                , accountNumber
+            }
+            , type: "GET"
+            , success: function(res) {
+                $('#limit-id').val(res.limit).prop('disabled', true)
+                $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('disabled', true)
+                $('#total-room-id').val(res.total_room).prop('disabled', true)
+                $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('disabled', true)
+                $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
+                //        $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
+                $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
+                $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
+                $('[js-update-contracts-based-on-customers]').trigger('change')
+            }
+        })
+    })
 
+</script>
+<?php if(!isset($model)): ?>
+<script>
+    $('[js-update-outstanding-balance-and-limits]').trigger('change')
+
+</script>
+<?php endif; ?>
 <script>
     $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
         const customerId = $('select#customer_name').val()
@@ -897,55 +937,14 @@ use App\Models\LetterOfCreditIssuance;
         $.ajax({
             url
             , success: function(res) {
-               parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
+                parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
             }
         });
     })
-    $('[js-cd-or-td-account-number]').trigger('change')
+	
+
 
 </script>
-
-
-
-
-<script>
-    $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
-
-        const financialInstitutionId = $('select#financial-instutition-id').val()
-        const lcType = $('select#lc-type').val()
-        const accountTypeId = $('select#account_type_id').val()
-        const accountNumber = $('select[js-cd-or-td-account-number]').val()
-
-        $.ajax({
-            url: "<?php echo e(route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
-            , data: {
-                financialInstitutionId
-                , lcType
-                , accountTypeId
-                , accountNumber
-            }
-            , type: "GET"
-            , success: function(res) {
-                $('#limit-id').val(res.limit).prop('disabled', true)
-                $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('disabled', true)
-                $('#total-room-id').val(res.total_room).prop('disabled', true)
-                $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('disabled', true)
-                $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
-                //        $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
-                $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
-                $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
-                $('[js-update-contracts-based-on-customers]').trigger('change')
-            }
-        })
-    })
-
-</script>
-<?php if(!isset($model)): ?>
-<script>
-    $('[js-update-outstanding-balance-and-limits]').trigger('change')
-
-</script>
-<?php endif; ?>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfCreditIssuance/against-cd-form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfCreditIssuance/against-td-form.blade.php ENDPATH**/ ?>

@@ -34,7 +34,6 @@ class EmptyCashveroCommand extends Command
 
     public function handle()
     {
-		// dd( DB::connection()->getDoctrineSchemaManager()->listTableNames());
 		foreach([
 			'cash_expenses',
 			'overdraft_against_commercial_papers',

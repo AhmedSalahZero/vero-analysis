@@ -80,7 +80,12 @@
                                 <div class="input-group date">
                                     <select required name="report_type" class="form-control update-lc-or-lg-type">
                                         <option value="" selected>{{__('Select')}}</option>
-                                        @foreach(['LetterOfCreditIssuance'=>__('Letter Of Credit Bank Statement') , 'LetterOfGuaranteeIssuance'=>__('Letter Of Guarantee Bank Statement')] as $tableName => $title)
+                                        @foreach([
+											'LetterOfCreditIssuance'=>__('Letter Of Credit Bank Statement')
+											 , 'LetterOfGuaranteeIssuance'=>__('Letter Of Guarantee Bank Statement'),
+											 'LCOverdraft'=>__('Letter Of Credit Overdraft Bank Statement')
+											 
+											 ] as $tableName => $title)
 											<option value="{{ $tableName }}" > {{ $title }} </option>
 										@endforeach 
                                     </select>

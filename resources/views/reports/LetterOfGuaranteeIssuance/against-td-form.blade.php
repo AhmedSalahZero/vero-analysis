@@ -734,7 +734,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                     $.ajax({
                         url
                         , success: function(res) {
-                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount))
+                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
                         }
                     });
                 })

@@ -102,8 +102,6 @@ class AllocationsReport
 			// && ! $allocations_setting->number_of_items
 			// )
 		) ) {
-	// dd((array)$request->allocation_base_data);
-			// dd((array)$request->allocation_base_data);
 			foreach ((array)$request->allocation_base_data as $product => $data) {
 				$total = array_sum($this->finalTotal($data));
 

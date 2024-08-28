@@ -768,13 +768,14 @@ class MoneyReceivedController
 		
 		
 		$accountType = AccountType::find($accountTypeId);
-
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id);
+		$currencyName = $accountNumberModel ? $accountNumberModel->currency : '';
 	
 		return response()->json([
 			'status'=>true , 
 			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 ,
-			'interest_rate'=>$accountNumberModel ? $accountNumberModel->getInterestRate() : 0
+			'interest_rate'=>$accountNumberModel ? $accountNumberModel->getInterestRate() : 0,
+			'currencyName'=>$currencyName
 		]);
 	}
 	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company )

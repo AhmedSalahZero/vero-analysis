@@ -316,6 +316,7 @@ class LetterOfCreditIssuance extends Model
 	}
 	public function getLimit()
 	{
+
 		$financialInstitutionId = $this->financial_institution_id;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
         $letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
@@ -360,7 +361,6 @@ class LetterOfCreditIssuance extends Model
 	}
 	public function handleLcCreditBankStatement(string $moneyType  , string $date , $paidAmount,$source)
 	{
-	
 		return $this->lcOverdraftBankStatements()->create([
 			'source'=>$source,
 			'type'=>$moneyType ,
@@ -460,6 +460,18 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->hasMany(PaymentSettlement::class,'letter_of_Credit_issuance_id');
 	}
-	
+	public function getTdOrCdCurrency(string $source,int $companyId)
+	{
+		$tdOrCdCurrencyName = null ;
+		if($source == LetterOfCreditIssuance::AGAINST_CD){
+				$currentCertificateOfDeposit = CertificatesOfDeposit::findByAccountNumber($this->cd_or_td_account_number,$companyId);
+				$tdOrCdCurrencyName = $currentCertificateOfDeposit->getCurrency();
+		}
+		elseif($source == LetterOfCreditIssuance::AGAINST_TD){
+				$currentTimeOfDeposit = TimeOfDeposit::findByAccountNumber($this->cd_or_td_account_number,$companyId);
+				$tdOrCdCurrencyName = $currentTimeOfDeposit->getCurrency();
+		}
+		return $tdOrCdCurrencyName;
+	}	
 
 }

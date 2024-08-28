@@ -97,7 +97,7 @@ use App\Models\LetterOfCreditIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -111,6 +111,22 @@ use App\Models\LetterOfCreditIssuance;
                                             @endforeach
                                         </select>
                                     </div>
+									
+									
+                                    <div class="col-md-2">
+                                        <label>{{__('TD Currency')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="td_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected>{{__('Select')}}</option>
+                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $tdOrCdCurrencyName == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
 
                                     <div class="col-md-4">
                                         <label>{{ __('Account Type') }} <span class=""></span> </label>
@@ -124,6 +140,8 @@ use App\Models\LetterOfCreditIssuance;
                                             </div>
                                         </div>
                                     </div>
+									
+									
 
                                     <div class="col-md-4">
                                         <label>{{ __('Account Number') }} <span class=""></span> </label>
@@ -598,12 +616,7 @@ use App\Models\LetterOfCreditIssuance;
         }
 
     })
-    $(document).on('change', '.recalculate-cash-cover-amount-js', function() {
-        const lcAmount = number_unformat($('.amount-in-main-currency-js-hidden').val())
-        const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
-        const cashCoverAmount = lcAmount * cashCoverRateJs
-        $('.cash-cover-amount-js').val(cashCoverAmount)
-    })
+    
 
     $(document).on('change', '.recalculate-lc-commission-amount-js', function() {
         const lcAmount = number_unformat($('.lc-amount-js').val())
@@ -738,10 +751,12 @@ use App\Models\LetterOfCreditIssuance;
         $.ajax({
             url
             , success: function(res) {
-                parent.find('#cd-or-td-amount-id').val(number_format(res.amount))
+                parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
             }
         });
     })
+	
+
 
 </script>
 @endsection

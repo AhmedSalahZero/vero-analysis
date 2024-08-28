@@ -8,7 +8,6 @@ class FixedAssetsPayableEndBalance
 	
 	public function calculateEndBalance(array $purchase , array $collection , array $dateIndexWithDate,HospitalitySector $hospitalitySector )
 	{
-		// dd('land',$purchase);
 		$purchasesForIntervals = [
 			'monthly'=>$purchase,
 			'quarterly'=>sumIntervals($purchase,'quarterly' , $hospitalitySector->financialYearStartMonth(),$dateIndexWithDate),
