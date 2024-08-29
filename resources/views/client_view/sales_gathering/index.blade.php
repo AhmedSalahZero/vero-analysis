@@ -100,6 +100,7 @@
 @section('content')
 @php
 $user = auth()->user();
+$additionalTitle = $modelName == 'LoanSchedule' && isset($loan)  ? ' [ ' . $loan->getName(). ' ]' : ''; 
 @endphp
 
 @if($modelName == 'LabelingItem' )
@@ -111,8 +112,6 @@ $date = now()->format('d-m-Y')
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
             <x-sectionTitle :title="__('Labeling Setting')"></x-sectionTitle>
-
-
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -149,8 +148,6 @@ $date = now()->format('d-m-Y')
             </div>
 			@endif 
 			
-
-
 
 
 
@@ -253,7 +250,6 @@ $date = now()->format('d-m-Y')
                         <input type="hidden" name="filter_labeling" value="1">
 
                         @foreach($exportables as $exportableName => $exportableTitle)
-						
 						 <div class="col-md-3 mb-4">
                             <x-form.select :options="$labelingUniqueItemsPerColumn[$exportableName]??[]" :add-new="false" :label="$exportableTitle" class="select2-select   " data-filter-type="{{ 'create' }}" :all="false" name="pricing_plan_id" please-select="true" id="{{Request($exportableName).'_'.'pricing_plan_id' }}" :selected-value="Request($exportableName)"></x-form.select>
                         </div>
@@ -302,7 +298,7 @@ $date = now()->format('d-m-Y')
 @endif 
     @csrf
     @method('delete')
-    <x-table :instructions-icon="1" :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :tableTitle="camelToTitle($modelName).' '.__(' Table')" :tableClass="'kt_table_with_no_pagination '" href="#" :importHref="$user->can($uploadPermissionName) ? route('salesGatheringImport',['company'=>$company->id , 'model'=>$modelName]) : '#'" :exportHref="$user->can($exportPermissionName) ? route('salesGathering.export',['company'=>$company->id , 'model'=>$modelName]):'#' " :exportTableHref="$user->can($uploadPermissionName)?route('table.fields.selection.view',[$company,$modelName,'sales_gathering']) : '#'" :truncateHref="$user->can($deletePermissionName)?route('truncate',[$company,$modelName]):'#' ">
+    <x-table :instructions-icon="1" :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :tableTitle="camelToTitle($modelName).' '.__(' Table') . $additionalTitle " :tableClass="'kt_table_with_no_pagination '" href="#" :importHref="$user->can($uploadPermissionName) ? route('salesGatheringImport',['company'=>$company->id , 'model'=>$modelName]) : '#'" :exportHref="$user->can($exportPermissionName) ? route('salesGathering.export',['company'=>$company->id , 'model'=>$modelName]):'#' " :exportTableHref="$user->can($uploadPermissionName)?route('table.fields.selection.view',[$company,$modelName,'sales_gathering']) : '#'" :truncateHref="$user->can($deletePermissionName)?route('truncate',[$company,$modelName]):'#' ">
         @slot('table_header')
        
         <tr class="table-active text-center">

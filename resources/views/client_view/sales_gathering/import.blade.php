@@ -9,8 +9,11 @@ if($modelName == 'CustomerInvoice'){
 elseif($modelName == 'SupplierInvoice'){
 	$redirectUrl = route('view.balances',['company'=>$company->id,'modelType'=>'SupplierInvoice']);
 }
+elseif($modelName == 'LoanSchedule'){
+	$redirectUrl = route('view.uploading',['company'=>$company->id,'model'=>'LoanSchedule','loanId'=>Request('medium_term_loan_id')]);
+}
 
-
+$additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Request('medium_term_loan_id')] : [];
 
 
 @endphp 
@@ -142,7 +145,7 @@ elseif($modelName == 'SupplierInvoice'){
             @csrf
             @method('DELETE')
 
-            <x-table :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__(capitializeType($modelName). ' ' . 'Table')" :href="route('salesGatheringTest.insertToMainTable',['company'=>$company->id , 'modelName'=>$modelName])" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
+            <x-table :notPeriodClosedCustomerInvoices="$notPeriodClosedCustomerInvoices??[]" :lastUploadFailedHref="hasFailedRow($company->id,$modelName)?route('last.upload.failed',['company'=>$company->id , 'model'=>$modelName]):'#'" :tableTitle="__(capitializeType($modelName). ' ' . 'Table')" :href="route('salesGatheringTest.insertToMainTable',array_merge(['company'=>$company->id , 'modelName'=>$modelName],$additionalArray))" :icon="__('file-import')" :firstButtonName="__('Save Data')" :tableClass="'kt_table_with_no_pagination'" :truncateHref="route('deleteAllCaches',[$company,$modelName])">
 
                 @slot('table_header')
 

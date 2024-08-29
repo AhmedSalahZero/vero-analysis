@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\LabelingItem;
 use App\Models\Log;
+use App\Models\MediumTermLoan;
 use App\Models\SalesGathering;
 use App\Models\TablesField;
 use Illuminate\Http\Request;
@@ -40,9 +41,10 @@ class SalesGatheringController extends Controller
 		}
 		
 	}
-    public function index(Company $company, Request $request, string $uploadType='SalesGathering')
+    public function index(Company $company, Request $request, string $uploadType='SalesGathering',string $loanId = null )
     {
 		$hasLabelingItemCodeField = LabelingItem::hasCodeField();
+		$loan = MediumTermLoan::find($loanId);
         $modelName = $uploadType;
 		$labelingUniqueItemsPerColumn = [];
 		$hasCodeColumnForLabelingItem = false;  
@@ -91,7 +93,7 @@ class SalesGatheringController extends Controller
 		$firstIndexElementInLabeling = $salesGatherings->first() ? $salesGatherings->first()->id : 0;
 		$lastIndexElementInLabeling = $salesGatherings->last() ? $salesGatherings->last()->id : 0;
         $navigators =$this->getUploadingPageExportNavigation($modelName,$uploadPermissionName,$exportPermissionName,$deletePermissionName,$firstIndexElementInLabeling,$lastIndexElementInLabeling);
-        return view('client_view.sales_gathering.index', compact('navigators','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
+        return view('client_view.sales_gathering.index', compact('navigators','loan','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
     }
     
 
@@ -208,6 +210,9 @@ class SalesGatheringController extends Controller
     }
     public function getUploadingPageExportNavigation(string $modelName,string $uploadPermissionName,string $exportPermissionName,string $deletePermissionName,int $fromIndex=  0 , int $toIndex=0)
     {
+		// dd();
+		$additionalUploadDataArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>getLastSegmentInRequest()] : [];
+		$viewName = $modelName == 'LoanSchedule' ? 'upload' : 'sales_gathering'; // i do not know the purpose of this variable
 		$user = auth()->user();
 		$company = getCurrentCompany();
 		$deleteAllDataTitle = $modelName == 'LabelingItem' ? __('Delete All Data (With Columns)') : __('Delete All Data') ;
@@ -250,6 +255,8 @@ class SalesGatheringController extends Controller
 				]
 				]
 			;
+			
+			
 		
 		
         return [
@@ -262,12 +269,12 @@ class SalesGatheringController extends Controller
            'sub_items'=>[
                [
                    'name'=>__('Template Download'),
-                   'link'=>$user->can($uploadPermissionName)?route('table.fields.selection.view',[$company,$modelName,'sales_gathering']) : '#' ,
+                   'link'=>$user->can($uploadPermissionName)?route('table.fields.selection.view',[$company,$modelName,$viewName]) : '#' ,
                    'show'=>$modelName != 'LabelingItem'
                ],
                [
                    'name'=>__('Upload Data'),
-                   'link'=>$user->can($uploadPermissionName) ? route('salesGatheringImport',['company'=>$company->id , 'model'=>$modelName]) : '#',
+                   'link'=>$user->can($uploadPermissionName) ? route('salesGatheringImport',array_merge(['company'=>$company->id , 'model'=>$modelName],$additionalUploadDataArray)) : '#',
                    'show'=>true
                ]
            

@@ -262,7 +262,7 @@ Route::middleware([])->group(function () {
                 Route::resource('inventoryStatement', 'InventoryStatementController');
                 Route::resource('salesGathering', 'SalesGatheringController');
 
-                Route::get('uploading/{model}', 'SalesGatheringController@index')->name('view.uploading');
+                Route::get('uploading/{model}/{loanId?}', 'SalesGatheringController@index')->name('view.uploading');
 
                 //###########  (TRUNCATE) ############
                 Route::get('Truncate/{model}', 'DeletingClass@truncate')->name('truncate');
@@ -331,6 +331,13 @@ Route::middleware([])->group(function () {
 				 Route::get('lc-settlement-internal-money-transfers/{lc_settlement_internal_transfer}/edit','LcSettlementInternalMoneyTransferController@edit')->name('lc-settlement-internal-money-transfers.edit');
 				 Route::put('lc-settlement-internal-money-transfers/{lc_settlement_internal_transfer}/update','LcSettlementInternalMoneyTransferController@update')->name('lc-settlement-internal-money-transfers.update');
 				 Route::delete('lc-settlement-internal-money-transfers/{lc_settlement_internal_transfer}/delete','LcSettlementInternalMoneyTransferController@destroy')->name('lc-settlement-internal-money-transfers.destroy');
+				 
+				 
+				 
+				 
+				 
+				 
+				 
 				 
 				 Route::get('internal-money-transfers','InternalMoneyTransferController@index')->name('internal-money-transfers.index');
 				 Route::get('internal-money-transfers/{type}/create','InternalMoneyTransferController@create')->name('internal-money-transfers.create');
@@ -412,6 +419,15 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}', 'CleanOverdraftController@edit')->name('edit.clean.overdraft');
 				 Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}', 'CleanOverdraftController@update')->name('update.clean.overdraft');
 				 Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}', 'CleanOverdraftController@destroy')->name('delete.clean.overdraft');
+				 
+				 
+				 Route::get('financial-institutions/{financialInstitution}/medium-term-loan','MediumTermLoanController@index')->name('loans.index');
+				 Route::get('financial-institutions/{financialInstitution}/medium-term-loan/create','MediumTermLoanController@create')->name('loans.create');
+				 Route::post('financial-institutions/{financialInstitution}/medium-term-loan/store','MediumTermLoanController@store')->name('loans.store');
+				 Route::get('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/edit','MediumTermLoanController@edit')->name('loans.edit');
+				 Route::put('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/update','MediumTermLoanController@update')->name('loans.update');
+				 Route::delete('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/delete','MediumTermLoanController@destroy')->name('loans.destroy');
+				//  Route::get('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/upload-loan-schedule/{loan}','MediumTermLoanController@viewUploadLoanSchedule')->name('loans.upload.loan.schedule');
 				 
 
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper', 'OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');
