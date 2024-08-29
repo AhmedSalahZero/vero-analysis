@@ -84,6 +84,10 @@ const exportSupplierInvoiceData ='export supplier invoice analysis data';
 const deleteSupplierInvoiceData ='delete supplier invoice analysis data';
 const viewSupplierInvoiceData ='view supplier invoice analysis data';
 
+const uploadLoanScheduleData ='upload loan schedule analysis data';
+const exportLoanScheduleData ='export loan schedule analysis data';
+const deleteLoanScheduleData ='delete loan schedule analysis data';
+const viewLoanScheduleData ='view loan schedule analysis data';
 
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
@@ -2941,6 +2945,23 @@ function getPermissions():array
         [
             'name'=>deleteSupplierInvoiceData
         ],
+		
+		
+		
+		
+		[
+            'name'=>viewLoanScheduleData
+        ],
+        [
+            'name'=>uploadLoanScheduleData
+        ],
+        [
+            'name'=>exportLoanScheduleData
+        ],
+
+        [
+            'name'=>deleteLoanScheduleData
+        ],
 
 
 
@@ -3104,6 +3125,8 @@ function getPermissions():array
         ],
 		[
             'name'=>'view lc settlement internal transfer'
+        ],[
+            'name'=>'view loans'
         ],
 		[
 			'name'=>'view buy or sell currency'
@@ -3773,6 +3796,17 @@ function getUploadParamsFromType(string $type = null):array
             'exportPermissionName'=>exportSupplierInvoiceData,// important:add this also into permission function names[getPermissions()]
             'deletePermissionName'=>deleteSupplierInvoiceData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Supplier Invoice Import'),
+        ],
+		'LoanSchedule'=>[
+            'fullModel'=>'\App\Models\LoanSchedule',
+            'dbName'=>'loan_schedules',
+            'typePrefixName'=>__('Loan Schedule'),
+            'orderByDateField'=>'date',
+            'viewPermissionName'=>viewLoanScheduleData,
+            'uploadPermissionName'=>uploadLoanScheduleData, // important:add this also into permission function names [getPermissions()]
+            'exportPermissionName'=>exportLoanScheduleData,// important:add this also into permission function names[getPermissions()]
+            'deletePermissionName'=>deleteLoanScheduleData,// important:add this also into permission function names[getPermissions()]
+            'importHeaderText'=>__('Loan Schedule Import'),
         ]
 
     ] ;

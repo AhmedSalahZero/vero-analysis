@@ -29,11 +29,12 @@ class SalesGatheringTestJob implements ShouldQueue
      */
     public $company_id;
     public $modelName;
-
-    public function __construct($company_id,$modelName)
+	public $loanId ; 
+    public function __construct($company_id,$modelName,$loanId = null)
     {
         $this->company_id = $company_id;
         $this->modelName = $modelName;
+		$this->loanId = $loanId ;
     }
 
     /**
@@ -54,7 +55,7 @@ class SalesGatheringTestJob implements ShouldQueue
             foreach($chunks as $chunk)
             {
 				
-				$chunk = $this->ReplaceAllSpecialCharactersInArrayValuesAndAddExtraFieldsToBeStored($chunk,$this->modelName);
+				$chunk = $this->ReplaceAllSpecialCharactersInArrayValuesAndAddExtraFieldsToBeStored($chunk,$this->modelName,$this->loanId);
 				
                 DB::table($modelTableName)->insert($chunk);
                 $key = getTotalUploadCacheKey($this->company_id , $cachingCompany->job_id,$modelTableName) ;
@@ -63,11 +64,12 @@ class SalesGatheringTestJob implements ShouldQueue
             }
         });
     }
-	public function ReplaceAllSpecialCharactersInArrayValuesAndAddExtraFieldsToBeStored(array $items,$modelName )
+	public function ReplaceAllSpecialCharactersInArrayValuesAndAddExtraFieldsToBeStored(array $items,$modelName ,$loanId )
 	{
 		$newItems = [];
 		foreach($items as $key => $value) {
 			$newItems[$key]=$value ? str_replace(array('"', "'","\\"), ' ', $value) : $value;
+			
 			if($modelName == 'CustomerInvoice' && is_array($value)){
 				$customerId = null ;
 				if($this->modelName == 'CustomerInvoice'){
@@ -151,6 +153,11 @@ class SalesGatheringTestJob implements ShouldQueue
 			$newItems[$key] = array_merge($value , [
 				'supplier_id'=>$supplierId
 			]);
+			}
+			if($modelName == 'LoanSchedule'){
+				$newItems[$key] = array_merge($value , [
+					'medium_term_loan_id'=>$loanId
+				]);
 			}
 			
 		}

@@ -35,7 +35,7 @@
         
         <a class="dropdown-item" href="<?php echo e(route('view.letter.of.guarantee.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><?php echo e(__('Letter Of Guarantee')); ?></a>
         <a class="dropdown-item" href="<?php echo e(route('view.letter.of.credit.facility',['company'=>$company->id ,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><?php echo e(__('Letter Of Credit')); ?></a>
-        
+        <a class="dropdown-item" href="<?php echo e(route('loans.index',['company'=>$company->id , 'financialInstitution'=>$financialInstitutionBank->id ])); ?>"><?php echo e(__('Medium Term Loans')); ?></a>
         
 
     </div>

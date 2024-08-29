@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\HeadersExport;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
+use App\Models\LoanSchedule;
 use App\Models\TablesField;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\RedirectResponse;
@@ -18,8 +19,9 @@ class ExportTable extends Controller
 	 */
 	public  function customizedTableField(Company $company, $model, $view)
 	{
+		$loanScheduleExportables = LoanSchedule::getExportableFields();
+		
 		if($model == 'LabelingItem'){
-			// dd(TablesField::where('company_id',$company->id)->get());
 			return TablesField::where('company_id',$company->id)->pluck('view_name','field_name')->toArray();
 		}
 
@@ -30,11 +32,19 @@ class ExportTable extends Controller
 		$modelExportableFields = CustomizedFieldsExportation::where('model_name', $model)
 		->where('company_id', $company->id)->first();
 		$selected_fields = ($modelExportableFields !== null) ? $modelExportableFields->fields : [];
-
+		if($model=='LoanSchedule'){
+			$selected_fields  = $loanScheduleExportables;
+		}
 		if ($view == 'selected_fields') {
+			if($model == 'LoanSchedule'){
+				return $loanScheduleExportables;
+			}
 			return  $this->columnsFiltration($model, $company, $view, $selected_fields);
 		}
 		$columnsWithViewingNames =  $this->columnsFiltration($model, $company, $view, $selected_fields);
+		if($model == 'LoanSchedule'){
+			 $columnsWithViewingNames = $loanScheduleExportables;
+		}
 		$modelName = $model;
 		return view('client_view.Exportation.fieldsSelectionToBeExported', compact('columnsWithViewingNames', 'company', 'model', 'view', 'selected_fields','modelName'));
 	}
@@ -43,11 +53,13 @@ class ExportTable extends Controller
 	 */
 	public  function customizedTableFieldSave(Request $request, Company $company, $model, $modelName)
 	{
+		
 		$this->validation($request);
 
 		$request['company_id'] = $company->id;
 		$fields = [];
-		$fields = $request['fields'];
+		$fields = $request->get('model_name') == 'LoanSchedule' ? array_keys(LoanSchedule::getExportableFields()) : $request['fields'];
+
 		count(array_intersect($fields, ['quantity_discount', 'cash_discount', 'special_discount', 'other_discounts'])) == 0
 			?: $fields[count($fields)] = 'sales_value';
 		$fields[count($fields)] = 'net_sales_value';
@@ -86,7 +98,9 @@ class ExportTable extends Controller
 				unset($columnsWithViewingNames['net_balance']);
 			}
 			session()->put('redirectTo', route('salesGatheringImport', ['company' => $company->id,'model'=>$modelName]));
-
+		if($request->get('model_name') == 'LoanSchedule'){
+			$columnsWithViewingNames = LoanSchedule::getExportableFields();
+		}
 		return (new HeadersExport($company->id, $columnsWithViewingNames))->download($model . 'Fields.xlsx');
 	}
 
@@ -162,6 +176,10 @@ class ExportTable extends Controller
 	 */
 	public function validation($request)
 	{
+		if($request->get('model_name') == 'LoanSchedule'){
+			return ;
+		}
+		// dd($request->all());
 		$validation = [];
 		if (!isset($request->fields) || (count($request->fields) == 0)) {
 			$validation['fields'] = 'required';

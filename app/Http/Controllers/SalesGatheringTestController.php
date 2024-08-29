@@ -119,6 +119,10 @@ class SalesGatheringTestController extends Controller
 	}
 	public function insertToMainTable(Company $company , string $modelName)
 	{
+		$loanId = Request('medium_term_loan_id');
+		if($modelName == 'LoanSchedule' && !$loanId){
+			dd('no loan found');
+		}
 		$active_job = ActiveJob::where('company_id',  $company->id)->where('model',$modelName)->where('status', 'save_to_table')->where('model_name', 'SalesGatheringTest')->first();
 		if ($active_job === null) {
 			$active_job = ActiveJob::create([
@@ -149,7 +153,7 @@ class SalesGatheringTestController extends Controller
 				// new RemoveIntervalYearCashingJob($company),
 				new NotifyUserOfCompletedImport(request()->user(), $active_job->id, $company->id,$modelName),
 				new RemoveCachingCompaniesData($company->id,$modelName),
-			])->dispatch($company->id,$modelName);
+			])->dispatch($company->id,$modelName,$loanId);
 		}
 		// remove old cashing for these company 
 

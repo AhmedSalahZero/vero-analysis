@@ -4,7 +4,7 @@
 	'classes'=>'',
 	'name',
 	'id'=>'',
-	'placeholder',
+	'placeholder'=>'',
 	'required'=>$required??false ,
 	'readonly'=>false,
 	'type'=>'date',
@@ -16,7 +16,7 @@
 	'classes'=>'',
 	'name',
 	'id'=>'',
-	'placeholder',
+	'placeholder'=>'',
 	'required'=>$required??false ,
 	'readonly'=>false,
 	'type'=>'date',
@@ -45,7 +45,7 @@
 										<?php if($readonly): ?>
 										readonly
 										<?php endif; ?>
-										 <?php if($id): ?>  id="<?php echo e($id); ?>" <?php endif; ?> type="<?php echo e($type); ?>" name="<?php echo e($name); ?>" value="<?php echo e(isset($defaultValue) ? $defaultValue : ($model && $model->{$name} ? $model->{$name} : now()->format('Y-m-d') )); ?>" class="form-control <?php echo e($classes); ?>"  placeholder="<?php echo e($placeholder); ?>" />
+										 <?php if($id): ?>  id="<?php echo e($id); ?>" <?php endif; ?> type="<?php echo e($type); ?>" name="<?php echo e($name); ?>" value="<?php echo e(isset($defaultValue) ? $defaultValue : ($model && $model->{$name} ? $model->{$name} : now()->format('Y-m-d') )); ?>" class="form-control <?php echo e($classes); ?>"  <?php if($placeholder): ?> placeholder="<?php echo e($placeholder); ?>" <?php endif; ?> />
 										
                                         <div class="input-group-append">
                                             <span class="input-group-text">

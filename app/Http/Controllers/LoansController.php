@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\AccountType;
 use App\Models\Bank;
+use App\Models\MediumTermLoan;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LcSettlementInternalMoneyTransfer;
@@ -10,7 +11,7 @@ use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class LcSettlementInternalMoneyTransferController
+class LoansController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -19,7 +20,6 @@ class LcSettlementInternalMoneyTransferController
 		}
 		$searchFieldName = $request->get('field');
 		$dateFieldName =  'created_at' ; // change it 
-		// $dateFieldName = $searchFieldName === 'balance_date' ? 'balance_date' : 'created_at'; 
 		$from = $request->get('from');
 		$to = $request->get('to');
 		$value = $request->query('value');
@@ -93,79 +93,56 @@ class LcSettlementInternalMoneyTransferController
 			'models'=>$models
 		]);
     }
-	public function create(Company $company)
+	public function create(Company $company,FinancialInstitution $financialInstitution)
 	{
-        return view('lc-settlement-internal-money-transfer.bank-to-letter-of-credit-form',$this->getCommonViewVars($company));
+        return view('loans.form',$this->getCommonViewVars($company,$financialInstitution));
     }
-	public function getCommonViewVars(Company $company,$model = null)
+	public function getCommonViewVars(Company $company,$financialInstitution,$model = null)
 	{
 		$banks = Bank::pluck('view_name','id');
 		// $selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$accountTypes = AccountType::onlyCurrentAccount()->get();
+		// $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		// $accountTypes = AccountType::onlyCurrentAccount()->get();
 		return [
 			'banks'=>$banks,
+			'financialInstitution'=>$financialInstitution,
 			// 'selectedBranches'=>$selectedBranches,
-			'financialInstitutionBanks'=>$financialInstitutionBanks,
-			'accountTypes'=>$accountTypes,
+			// 'financialInstitutionBanks'=>$financialInstitutionBanks,
+			// 'accountTypes'=>$accountTypes,
 			'model'=>$model
 		];
 	}
 	
-	public function store(Company $company   , Request $request){
-		$type = LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT;
-		$internalMoneyTransfer = new LcSettlementInternalMoneyTransfer ;
-		$companyId = $company->id ;
-		$letterOfCreditIssuance = LetterOfCreditIssuance::find($request->get('to_letter_of_credit_issuance_id'));
-		$transferDate = $request->get('transfer_date') ;
-		// $receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
-		$transferAmount = $request->get('amount') ;
-		$internalMoneyTransfer->type = LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT;
+	public function store(Company $company   , Request $request , FinancialInstitution $financialInstitution){
+		$type = MediumTermLoan::RUNNING;
+		$internalMoneyTransfer = new MediumTermLoan ;
+		$internalMoneyTransfer->type = MediumTermLoan::RUNNING;
 		$internalMoneyTransfer->storeBasicForm($request);
-		$fromFinancialInstitutionId = $request->get('from_bank_id');
-		// $toFinancialInstitutionId = $request->get('to_bank_id');
-		$fromAccountTypeId = $request->get('from_account_type_id');
-		// $toAccountTypeId = $request->get('to_account_type_id');
-		$fromAccountNumber = $request->get('from_account_number');
-		// $toAccountNumber = $request->get('to_account_number');
-		// $toBranchId = $request->get('to_branch_id');
-		// $fromBranchId = $request->get('from_branch_id');
-		// $currencyName = $request->get('currency');	
-		$fromAccountType = AccountType::find($fromAccountTypeId);
-		// $toAccountType = AccountType::find($toAccountTypeId);
-	
-		if($type === LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT ){
-			$internalMoneyTransfer->handleBankToLetterOfCreditTransfer(  $companyId ,  $fromAccountType ,  $fromAccountNumber ,  $fromFinancialInstitutionId ,  $letterOfCreditIssuance ,  $transferDate , $transferAmount);
-		}
-	
-		
 		$activeTab = $type ; 
-		
-	
-		return redirect()->route('lc-settlement-internal-money-transfers.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return redirect()->route('loans.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
 
-	public function edit(Company $company,LcSettlementInternalMoneyTransfer $lcSettlementInternalTransfer)
+	public function edit(Company $company,MediumTermLoan $cashLoan,FinancialInstitution $financialInstitution)
 	{
 
-        return view('lc-settlement-internal-money-transfer.bank-to-letter-of-credit-form' ,$this->getCommonViewVars($company,$lcSettlementInternalTransfer));
+        return view('loans.form' ,$this->getCommonViewVars($company,$financialInstitution,$cashLoan));
     }
 	
-	public function update(Company $company, Request $request , LcSettlementInternalMoneyTransfer $lcSettlementInternalTransfer){
+	public function update(Company $company, Request $request , FinancialInstitution $financialInstitution , MediumTermLoan $cashLoan){
 		
-		$lcSettlementInternalTransfer->deleteRelations();
-		$lcSettlementInternalTransfer->delete();
-		$type = LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT;
-		$this->store($company,$request);
+		$cashLoan->deleteRelations();
+		$cashLoan->delete();
+		$type = MediumTermLoan::RUNNING;
+		$this->store($company,$request,$financialInstitution);
 		$activeTab = $type ;
-		return redirect()->route('lc-settlement-internal-money-transfers.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return redirect()->route('loans.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
-	public function destroy(Company $company , LcSettlementInternalMoneyTransfer $lcSettlementInternalTransfer)
+	public function destroy(Company $company ,FinancialInstitution $financialInstitution, MediumTermLoan $cashLoan)
 	{
-		$lcSettlementInternalTransfer->deleteRelations();
-		$lcSettlementInternalTransfer->delete();
+		$cashLoan->deleteRelations();
+		$cashLoan->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	

@@ -32,7 +32,7 @@ use App\Models\MediumTermLoan ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Lc Settlement Internal Money Transfer') }}
+{{ __('Medium Term Loan') }}
 @endsection
 @section('content')
 
@@ -41,8 +41,8 @@ use App\Models\MediumTermLoan ;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == MediumTermLoan::BANK_TO_LETTER_OF_CREDIT ?'active':'' }}" data-toggle="tab" href="#{{MediumTermLoan::BANK_TO_LETTER_OF_CREDIT  }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Bank To Letter Of Credit Transfer Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == MediumTermLoan::RUNNING ?'active':'' }}" data-toggle="tab" href="#{{MediumTermLoan::RUNNING  }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Medium Term Loan Table') }}
                     </a>
                 </li>
 
@@ -52,45 +52,24 @@ use App\Models\MediumTermLoan ;
             </ul>
 
             <div class="flex-tabs">
-                {{-- <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,MediumTermLoan::BANK_TO_BANK]) }}" class="btn active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Bank To Bank') }}
-                </a>
-
-
-                <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,MediumTermLoan::SAFE_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                <a href="{{ route('loans.create',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,MediumTermLoan::RUNNING]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
-                    {{ __('Safe To Bank') }}
-                </a> --}}
-
-                <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,MediumTermLoan::BANK_TO_LETTER_OF_CREDIT]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Bank To Letter Of Credit') }}
+                    {{ __('Create') }}
                 </a>
             </div>
-
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
         </div>
     </div>
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
-
-
-
-
-
             @php
-            $currentType = MediumTermLoan::BANK_TO_LETTER_OF_CREDIT ;
+            $currentType = MediumTermLoan::RUNNING ;
             @endphp
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentType" :title="__('Bank To Lc Issuance')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('lc-settlement-internal-money-transfers.create',['company'=>$company->id])}}" />
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Medium Term Loan')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-loans  :financialInstitution="$financialInstitution" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('loans.create',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -99,13 +78,15 @@ use App\Models\MediumTermLoan ;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
-                                    <th>{{ __('Date') }}</th>
-                                    <th>{{ __('Amount') }}</th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Start Date') }}</th>
+                                    <th>{{ __('End Date') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('From Bank') }}</th>
-                                    <th>{{ __('From Account Type') }}</th>
-                                    <th>{{ __('From Account Number') }}</th>
-                                    <th>{{ __('To Lc Issuance') }}</th>
+                                    <th>{{ __('Account Number') }}</th>
+                                    <th>{{ __('Borrowing Rate') }}</th>
+                                    <th>{{ __('Margin Rate') }}</th>
+                                    <th>{{ __('Duration') }}</th>
+                                    <th>{{ __('Installment Interval') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
@@ -116,21 +97,24 @@ use App\Models\MediumTermLoan ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $model->getTransferDateFormatted() }}</td>
-                                    <td>{{ $model->getAmountFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $model->getName() }}</td>
+                                    <td>{{ $model->getStartDateFormatted() }}</td>
+                                    <td>{{ $model->getEndDateFormatted() }}</td>
                                     <td>{{ $model->getCurrencyFormatted() }}</td>
-                                    <td>{{ $model->getFromBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
-                                    <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
-                                    <td>{{ $model->getLetterOfCreditIssuanceTransactionName() }}</td>
+                                    <td>{{ $model->getAccountNumber() }}</td>
+                                    <td>{{ $model->getBorrowingRateFormatted() }}</td>
+                                    <td>{{ $model->getMarginRateFormatted() }}</td>
+                                    <td class="text-uppercase">{{ $model->getDurationFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getPaymentInstallmentIntervalFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('lc-settlement-internal-money-transfers.edit',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Upload Loan Schedule') }}" href="{{ route('view.uploading',['company'=>$company->id,'loanId'=>$model->id,'model'=>'LoanSchedule']) }}"><i class="fa fa-dollar-sign"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('loans.edit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'mediumTermLoan'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('lc-settlement-internal-money-transfers.destroy',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('loans.destroy',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'mediumTermLoan'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -205,13 +189,13 @@ use App\Models\MediumTermLoan ;
             modal.find('.data-type-span').html('[ {{ __("Transfer Date") }} ]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else if (searchFieldName === 'contract_end_date') {
-            modal.find('.data-type-span').html('[ {{ __("Contract End Date") }} ]')
+            modal.find('.data-type-span').html('[ {{ __("End Date") }} ]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else if (searchFieldName === 'balance_date') {
             modal.find('.data-type-span').html('[ {{ __("Balance Date") }} ]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else {
-            modal.find('.data-type-span').html('[ {{ __("Contract Start Date") }} ]')
+            modal.find('.data-type-span').html('[ {{ __("Start Date") }} ]')
             $(modal).find('.search-field').prop('disabled', false);
         }
     })

@@ -293,7 +293,9 @@ class FinancialInstitution extends Model
 			$timeOfDepositsAccount
 		) ;
 	}
-
-
-
+	public function loans()
+	{
+		return $this->hasMany(MediumTermLoan::class,'financial_institution_id','id');
+	}
+	
 }

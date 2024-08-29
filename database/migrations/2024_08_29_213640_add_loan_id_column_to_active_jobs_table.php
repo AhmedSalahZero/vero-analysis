@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLetterOfCreditIssuanceIdToPaymentSettlements extends Migration
+class AddLoanIdColumnToActiveJobsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddLetterOfCreditIssuanceIdToPaymentSettlements extends Migration
      */
     public function up()
     {
-        Schema::table('payment_settlements', function (Blueprint $table) {
-			if(!Schema::hasColumn('payment_settlements','letter_of_credit_issuance_id')){
-				$table->unsignedBigInteger('letter_of_credit_issuance_id')->after('cash_expense_id');
-			}
+        Schema::table('active_jobs', function (Blueprint $table) {
+            $table->unsignedBigInteger('loan_id')->after('model_name')->nullable();
         });
     }
 
@@ -27,7 +25,7 @@ class AddLetterOfCreditIssuanceIdToPaymentSettlements extends Migration
      */
     public function down()
     {
-        Schema::table('payment_settlements', function (Blueprint $table) {
+        Schema::table('active_jobs', function (Blueprint $table) {
             //
         });
     }

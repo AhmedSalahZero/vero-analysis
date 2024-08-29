@@ -278,4 +278,9 @@ class Company extends Model implements HasMedia
 			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
 		})->values();
 	}
+	public function mediumTermLoans()
+	{
+		return $this->hasMany(MediumTermLoan::class,'company_id','id');
+	}
+	
 }
