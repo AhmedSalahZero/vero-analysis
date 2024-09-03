@@ -131,17 +131,15 @@ class MediumTermLoan extends Model
 		return  str_to_upper($this->getPaymentInstallmentInterval());
 		
 	}
+	public function loanSchedules()
+	{
+		return $this->hasMany(LoanSchedule::class,'medium_term_loan_id','id');
+	}
     public function deleteRelations()
     {
-       
-		// $this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
-		// 	$currentAccountBankStatement->delete();
-		// });		
-		// $this->LcOverdraftBankStatements->each(function (LcOverdraftBankStatement $lcOverdraftBankStatement) {
-		// 	$lcOverdraftBankStatement->delete();
-		// });
-	
-		
+		$this->loanSchedules->each(function(LoanSchedule $loanSchedule){
+			$loanSchedule->delete();
+		});
     }
 
 	

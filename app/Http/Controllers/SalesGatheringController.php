@@ -48,7 +48,7 @@ class SalesGatheringController extends Controller
         $modelName = $uploadType;
 		$labelingUniqueItemsPerColumn = [];
 		$hasCodeColumnForLabelingItem = false;  
-		$orderByDirection = $uploadType == 'LabelingItem' ? 'asc' :'desc';
+		$orderByDirection = $uploadType == 'LabelingItem' || $uploadType == 'LoanSchedule' ? 'asc' :'desc';
 		$fieldValue = $request->get('field') ;
 		$searchDateField = $this->getSearchDateFieldName($modelName,$fieldValue);
 		$hasField = $request->has('field') ;

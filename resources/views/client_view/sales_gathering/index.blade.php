@@ -342,6 +342,11 @@ $date = now()->format('d-m-Y')
             <th data-css-col-name="id">{{ __('ID') }}</th>
 
             @endif
+			
+			 @if($modelName == 'LoanSchedule' )
+			 	<th>{{ __('Status') }}</th>
+			 	<th>{{ __('Remaining') }}</th>
+			 @endif 
 
             <th>{{ __('Actions') }}</th>
         </tr>
@@ -416,7 +421,21 @@ $date = now()->format('d-m-Y')
 					<td data-css-col-name="{{ $name??'' }}">
 						{{ qrcodeSpacing($item->getCode($serial)) }}
 					</td>
+				
             @endif
+			
+				
+					 @if($modelName == 'LoanSchedule' )
+					 	<td class="text-capitalize">
+						{{ $item->getStatusFormatted() }}
+					</td>
+					 	<td >
+						{{ $item->getRemainingFormatted() }}
+					</td>
+					
+					
+					 @endif 
+					 
 
             <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 			

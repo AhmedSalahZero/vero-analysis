@@ -204,9 +204,7 @@ class AllocationsReport
 		// Fetching Data of base elements associated with their percentages from all products
 		$sales_targets_values = [];
 		// $percentages = [];
-		// dd($allocations_base_row);
 		$allocations = $allocations_base_row->allocation_base_data ?? [];
-		// dd('all',$allocations);
 		foreach ($allocations as $product_item_name => $item_data) {
 			$product = $product_seasonality->where('name', $product_item_name)->first();
 			$sales_target_value = ($product->sales_target_value ?? 0);
