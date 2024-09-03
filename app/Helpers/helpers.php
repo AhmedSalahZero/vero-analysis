@@ -4570,7 +4570,7 @@ function getHeaderMenu()
 
 		];
 		$isCustomerOrSupplierUploading = in_array('CustomerInvoice',Request()->segments()) || in_array('SupplierInvoice',Request()->segments());
-		if(hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading ){
+		if(hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading || in_array('LoanSchedule',Request()->segments()) ){
 			return $cashManagementSubItems ;
 		}
     return [

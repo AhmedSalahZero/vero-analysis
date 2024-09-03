@@ -134,4 +134,12 @@ class LoanSchedule extends Model
 	{
 		return number_format($this->getRemaining());
 	}
+	public function getInstallmentNumber()
+	{
+		return array_keys($this->mediumTermLoan->loanSchedules->sortBy('date')->filter(function(LoanSchedule $loanSchedule){
+			return $loanSchedule->schedule_payment > 0;
+		})->values()
+		->where('id',$this->id)
+		->toArray())[0]  + 1 	;
+	}
 }

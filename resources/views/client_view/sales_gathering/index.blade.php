@@ -2,6 +2,9 @@
 @push('css')
 <x-styles.commons></x-styles.commons>
 <style>
+.max-w-100{
+	max-width:100px;
+}
     .show-hide-repeater {
         cursor: pointer
     }
@@ -344,7 +347,7 @@ $date = now()->format('d-m-Y')
             @endif
 			
 			 @if($modelName == 'LoanSchedule' )
-			 	<th>{{ __('Status') }}</th>
+			 	<th class="max-w-100">{{ __('Status') }}</th>
 			 	<th>{{ __('Remaining') }}</th>
 			 @endif 
 
@@ -426,10 +429,10 @@ $date = now()->format('d-m-Y')
 			
 				
 					 @if($modelName == 'LoanSchedule' )
-					 	<td class="text-capitalize">
+					 	<td class="text-capitalize text-wrap max-w-100">
 						{{ $item->getStatusFormatted() }}
 					</td>
-					 	<td >
+					 	<td class="text-center">
 						{{ $item->getRemainingFormatted() }}
 					</td>
 					

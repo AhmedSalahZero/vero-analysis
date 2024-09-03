@@ -350,7 +350,7 @@ use Carbon\Carbon;
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getMediumTermLoanName()); ?>">
                                         </div>
                                         <div class="col-md-4 mb-4">
-                                            <label><?php echo e(__('Date')); ?> </label>
+                                            <label><?php echo e(__('Installment Due Date')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getDateFormatted()); ?>">
                                         </div>
                                         <div class="col-md-4 mb-4">
@@ -388,7 +388,7 @@ use Carbon\Carbon;
                                             <label><?php echo e(__('Settlement Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <input required type="text" name="date" value="<?php echo e(isset($model) ? $model->getDate() : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" id="kt_datepicker_2" class="form-control" readonly placeholder="<?php echo e(__('Select date')); ?>" />
+                                                    <input required type="text" name="date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDate()) : formatDateForDatePicker($loanSchedule->getDate())); ?>" id="kt_datepicker_2" class="form-control" readonly placeholder="<?php echo e(__('Select date')); ?>" />
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">
                                                             <i class="la la-calendar-check-o"></i>
@@ -400,7 +400,7 @@ use Carbon\Carbon;
 
                                         <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Settlement Amount')); ?> </label>
-                                            <input type="text" class="form-control" name="amount" value="<?php echo e(isset($model) ? $model->getAmount() : $loanSchedule->getSchedulePayment()); ?>">
+                                            <input type="text" class="form-control" name="amount" value="<?php echo e(isset($model) ? $model->getAmount() : $loanSchedule->getRemaining()); ?>">
                                         </div>
 
 
@@ -496,9 +496,15 @@ use Carbon\Carbon;
                                             $previousDate = null ;
                                             ?>
                                             <?php $__currentLoopData = $settlements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $settlement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+											<?php if(isset($model) && $model->id == $settlement->id): ?>
+												<?php continue; ?>
+											<?php endif; ?> 
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   "><?php echo e(++$index); ?></td>
-                                                <td class="sub-text-bg max-w-invoice-date  text-center   "><?php echo e($currentDueDate = $settlement->getDate()); ?> </td>
+												<?php
+													$currentDueDate = $settlement->getDate() ;
+												?>
+                                                <td class="sub-text-bg max-w-invoice-date  text-center   "><?php echo e($settlement->getDateFormatted()); ?></td>
                                                 
                                                 <?php
                                                 $previousDate = $settlement->getDate();

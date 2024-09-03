@@ -11,6 +11,9 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
+.max-w-100{
+	max-width:100px;
+}
     .show-hide-repeater {
         cursor: pointer
     }
@@ -399,7 +402,7 @@ $date = now()->format('d-m-Y')
             <?php endif; ?>
 			
 			 <?php if($modelName == 'LoanSchedule' ): ?>
-			 	<th><?php echo e(__('Status')); ?></th>
+			 	<th class="max-w-100"><?php echo e(__('Status')); ?></th>
 			 	<th><?php echo e(__('Remaining')); ?></th>
 			 <?php endif; ?> 
 
@@ -485,11 +488,11 @@ $date = now()->format('d-m-Y')
 			
 				
 					 <?php if($modelName == 'LoanSchedule' ): ?>
-					 	<td class="text-capitalize">
+					 	<td class="text-capitalize text-wrap max-w-100">
 						<?php echo e($item->getStatusFormatted()); ?>
 
 					</td>
-					 	<td >
+					 	<td class="text-center">
 						<?php echo e($item->getRemainingFormatted()); ?>
 
 					</td>

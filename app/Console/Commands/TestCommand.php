@@ -12,6 +12,8 @@ use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
+use App\Models\LoanSchedule;
+use App\Models\MediumTermLoan;
 use App\Models\MoneyPayment;
 use App\Models\Partner;
 use App\Models\PayableCheque;
@@ -56,7 +58,6 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		
-						
+				
 	}
 }
