@@ -419,6 +419,9 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}', 'CleanOverdraftController@edit')->name('edit.clean.overdraft');
 				 Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}', 'CleanOverdraftController@update')->name('update.clean.overdraft');
 				 Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}', 'CleanOverdraftController@destroy')->name('delete.clean.overdraft');
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/lending-information/{cleanOverdraft}', 'CleanOverdraftController@applyRate')->name('clean-overdraft-apply.rates');
+				 Route::post('financial-institutions/{financialInstitution}/clean-overdraft/edit-rates/{rate}', 'CleanOverdraftController@editRate')->name('clean-overdraft-edit-rates');
+				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/delete-rates/{rate}', 'CleanOverdraftController@deleteRate')->name('clean-overdraft-delete-rate');
 				 
 				 
 				 Route::get('financial-institutions/{financialInstitution}/medium-term-loan','MediumTermLoanController@index')->name('loans.index');
@@ -427,7 +430,11 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/edit','MediumTermLoanController@edit')->name('loans.edit');
 				 Route::put('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/update','MediumTermLoanController@update')->name('loans.update');
 				 Route::delete('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/delete','MediumTermLoanController@destroy')->name('loans.destroy');
-				//  Route::get('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/upload-loan-schedule/{loan}','MediumTermLoanController@viewUploadLoanSchedule')->name('loans.upload.loan.schedule');
+				 Route::get('loan-schedule-settlement/{loanSchedule}','MediumTermLoanController@viewLoanScheduleSettlement')->name('view.loan.schedule.settlements');
+				 Route::post('loan-schedule-settlements/{loanSchedule}','MediumTermLoanController@storeLoanScheduleSettlement')->name('store.loan.schedule.settlements');
+				 Route::get('edit-loan-schedule-settlement/{loanScheduleSettlement}','MediumTermLoanController@editLoanScheduleSettlement')->name('edit.loan.schedule.settlements');
+				 Route::patch('loan-schedule-settlements/{loanScheduleSettlement}','MediumTermLoanController@updateLoanScheduleSettlement')->name('update.loan.schedule.settlements');
+				 Route::delete('delete-loan-schedule-settlement/{loanScheduleSettlement}','MediumTermLoanController@deleteLoanScheduleSettlement')->name('delete.loan.schedule.settlements');
 				 
 
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper', 'OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');

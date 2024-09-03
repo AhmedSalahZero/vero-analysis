@@ -326,5 +326,24 @@ class SupplierInvoice extends Model implements IInvoice
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}
-	
+	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result , array &$totalCashOutFlowArray , int $companyId , string $startDate , string $endDate,string $currency  ,string $currentWeekYear):void
+	{
+		$key = __('Suppliers Invoices') ;
+
+		$items = self::where('company_id',$companyId)
+		->where('currency',$currency)
+		->where('net_balance','>',0)
+		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
+		$sum = $items->sum('net_invoice_amount') ;
+		$invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
+		if($sum ){
+			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
+			$result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
+			$result['suppliers'][$key][$invoiceNumber]['total'] = isset($result['suppliers'][$key][$invoiceNumber]['total']) ? $result['suppliers'][$key][$invoiceNumber]['total']  + $sum : $sum;
+			$currentTotal = $sum;
+			$result['suppliers'][$key]['total'][$currentWeekYear] = isset($result['suppliers'][$key]['total'][$currentWeekYear]) ? $result['suppliers'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
+			$result['suppliers'][$key]['total']['total_of_total']= isset($result['suppliers'][$key]['total']['total_of_total']) ? $result['suppliers'][$key]['total']['total_of_total'] +$sum :$sum ;
+		} 
+	}
 }

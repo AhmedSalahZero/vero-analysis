@@ -373,10 +373,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 @php
                                 $rowIndex = 0 ;
                                 @endphp
-                                @foreach(array_merge(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices'
+                                @foreach(array_merge(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections',__('Total Cash Inflow'),'Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices'
 								// ,'Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'
 								
-								],$cashExpenseCategoryNamesArr) as $customerName)
+								],$cashExpenseCategoryNamesArr,['Total Cash Outflow','Net Cash (+/-)']) as $customerName)
                                 @if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due')
                                 @continue ;
                                 @endif
@@ -398,7 +398,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
                                                 <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
-										@endif 
+											@endif 
 										
 										
 									

@@ -478,16 +478,23 @@ $date = now()->format('d-m-Y')
             <?php endif; ?>
 
             <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+			
                 <span class="d-flex justify-content-center" style="overflow: visible; position: relative; width: 110px;">
+					
                     
                     <form class="kt-portlet__body" method="post" action="<?php echo e(route('salesGathering.destroy',[$company,$item->id])); ?>" style="display: inline">
+					
+						<?php if($modelName == 'LoanSchedule'): ?>
+						<a href="<?php echo e(route('view.loan.schedule.settlements',['company'=>$company->id , 'loanSchedule'=>$item->id])); ?>" class="btn btn-secondary btn-outline-hover-primary btn-icon">
+							<i class="fa fa-dollar-sign"></i>
+						</a>
+						<?php endif; ?> 
                         <?php echo method_field('DELETE'); ?>
                         <?php echo csrf_field(); ?>
-                   
+					
                         <a class="btn btn-secondary btn-outline-hover-primary btn-icon" title="Edit" href="<?php echo e(route('edit.sales.form',['company'=>$company->id,'model'=>$modelName , 'modelId'=>$item->id])); ?>"><i class="fa fa-edit"></i></a>
                         <button type="submit" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href=""><i class="fa fa-trash-alt"></i></button>
                     </form>
-                    
                 </span>
             </td>
         </tr>

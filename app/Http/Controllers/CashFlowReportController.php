@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HArr;
+use App\Models\CashExpense;
 use App\Models\CashExpenseCategoryName;
 use App\Models\Cheque;
 use App\Models\Company;
@@ -9,6 +11,7 @@ use App\Models\CustomerInvoice;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\PayableCheque;
+use App\Models\SettlementAllocation;
 use App\Models\SupplierInvoice;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -22,20 +25,37 @@ class CashFlowReportController
 	{
         return view('reports.cash_flow_form', compact('company'));
     }
-	public function result(Company $company , Request $request){
-		$formStartDate =$request->get('start_date'); 
-		$formEndDate =$request->get('end_date');
+	public function result(Company $company , Request $request, bool $returnResultAsArray = false ){
+		$defaultStartDate = $request->get('cash_start_date');
+		$defaultEndDate = $request->get('cash_end_date');
+		$formStartDate =$request->get('start_date',$defaultStartDate); 
+		$formEndDate =$request->get('end_date',$defaultEndDate);
 		$reportInterval =  $request->get('report_interval');
 		// $reportInterval = 'daily';
 		$result = [];
-		$cashExpenseCategoryNamesArr = [];
+		// $cashExpenseCategoryNamesArr = [];
+		
+		$result['customers']=[
+			'Checks Collected'=>[],
+			'Incoming Transfers'=>[],
+			'Bank Deposits'=> [],
+			'Cash Collections'=> [],
+			'Cheques Under Collection'=>[],
+			'Cheques In Safe'=>[],
+			'Customers Invoices'=>[],
+			'Customers Past Due Invoices'=>[],
+			__('Total Cash Inflow')=>[]
+		];
+		
 		$noRowHeaders =  $reportInterval == 'weekly' ? 3 : 1 ;
+		
+		
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
-		$startDate = $request->get('start_date');
+		$startDate = $request->get('start_date',$defaultStartDate);
 		$currency = $request->get('currency');
 		$year = explode('-',$startDate)[0];
-		$endDate  = $request->get('end_date');
+		$endDate  = $request->get('end_date',$defaultEndDate);
 		$datesWithWeeks = [];
 		if($reportInterval == 'weekly'){
 			$datesWithWeeks = 	getWeekNumberBetweenDates($year , Carbon::make($endDate)) ;
@@ -51,6 +71,9 @@ class CashFlowReportController
 		$lastIndex = array_key_last($weeks);
 		$dates = [];
 		$rangedWeeks = [];
+		$totalCashInFlowArray = [];
+		$totalCashOutFlowArray = [];
+		
 		foreach($weeks as $currentWeekYear=>$week){
 			$currentYear = explode('-',$currentWeekYear)[1];
 			if($currentWeekYear == $firstIndex){
@@ -68,38 +91,61 @@ class CashFlowReportController
 				$endDate = $rangedWeeks['end_date'];
 			}
 			
-			$result['Cheques Under Collection'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::UNDER_COLLECTION,'expected_collection_date');
-			$result['Checks Collected'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::COLLECTED,'actual_collection_date');
-			$result['Customers Invoices'][$currentWeekYear] = CustomerInvoice::getCustomerInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Incoming Transfers'][$currentWeekYear] = MoneyReceived::getIncomingTransferUnderDates($company->id,$startDate , $endDate,$currency);
-			$result['Bank Deposits'][$currentWeekYear] = MoneyReceived::getBankDepositsUnderDates($company->id,$startDate , $endDate,$currency);
-			$result['Cash Collections'][$currentWeekYear] = MoneyReceived::getCashInSafeUnderDates($company->id,$startDate , $endDate,$currency);
-			$result['Customers Past Due Invoices'] = [];
-			$result['Cheques In Safe'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::IN_SAFE,'due_date');
-			//////////////////////
-			$result['Outgoing Transfers'][$currentWeekYear] = MoneyPayment::getOutgoingTransfersAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Cash Payments'][$currentWeekYear] = MoneyPayment::getCashPaymentsAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Paid Payable Cheques'][$currentWeekYear] = MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PAID,'actual_payment_date');
-			$result['Under Payment Payable Cheques'][$currentWeekYear] =MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
-			// $result['Cheques Under Collection'][$currentWeekYear] = $this->getCustomerChequesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Suppliers Invoices'][$currentWeekYear] = MoneyPayment::getSupplierInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
-			$result['Suppliers Past Due Invoices'] = [];
-			$cashExpenseCategoryNames = CashExpenseCategoryName::getAllForCompany($company);
-			foreach($cashExpenseCategoryNames as $cashExpenseCategoryName){
-				$currentCashExpenseCategoryName = $cashExpenseCategoryName->getName();
-				$result[$currentCashExpenseCategoryName][$currentWeekYear] = $this->getCashExpensesAtDates($company->id,$startDate , $endDate,$currency,$cashExpenseCategoryName->id);
-				$cashExpenseCategoryNamesArr[$currentCashExpenseCategoryName] =  $currentCashExpenseCategoryName;
-			}
-			$result['Under Payment Payable Cheques'][$currentWeekYear] = MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
-			$currentVal = $result['Customers Invoices'][$currentWeekYear] ;
+			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::UNDER_COLLECTION,$currency,$company->id) ;
+			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'actual_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::COLLECTED,$currency,$company->id);
+			CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$totalCashInFlowArray,$company->id,$startDate , $endDate,$currency,null,$currentWeekYear,$currency);
+			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray,MoneyReceived::INCOMING_TRANSFER,'receiving_date',$startDate , $endDate,null,$currentWeekYear,null,$currency,$company->id);
+			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray, MoneyReceived::CASH_IN_BANK,'receiving_date',$startDate , $endDate,null,$currentWeekYear,null,$currency,$company->id);
+			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray, MoneyReceived::CASH_IN_SAFE,'receiving_date',$startDate , $endDate,null,$currentWeekYear,null,$currency,$company->id);
 			
-			$result['Customers Invoices']['total'][$currentYear] = isset($result['Customers Invoices']['total'][$currentYear]) ? $result['Customers Invoices']['total'][$currentYear] + $currentVal : $currentVal ;
+			// $result['Cheques Under Collection'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::UNDER_COLLECTION,'expected_collection_date');
+			// $result['Checks Collected'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::COLLECTED,'actual_collection_date');
+			// $result['Customers Invoices'][$currentWeekYear] = CustomerInvoice::getCustomerInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
+			// $result['Incoming Transfers'][$currentWeekYear] = MoneyReceived::getIncomingTransferUnderDates($company->id,$startDate , $endDate,$currency);
+			// $result['Bank Deposits'][$currentWeekYear] = MoneyReceived::getBankDepositsUnderDates($company->id,$startDate , $endDate,$currency);
+			// $result['Cash Collections'][$currentWeekYear] = MoneyReceived::getCashInSafeUnderDates($company->id,$startDate , $endDate,$currency);
+			$result['customers']['Customers Past Due Invoices'] = [];
+			// $result['Cheques In Safe'][$currentWeekYear] = MoneyReceived::getChequesCollectedUnderDates($company->id,$startDate , $endDate,$currency,Cheque::IN_SAFE,'due_date');
+			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'due_date',$startDate , $endDate,null,$currentWeekYear,Cheque::IN_SAFE,$currency,$company->id);
+			
+			//////////////////////
+			 MoneyPayment::getCashOutForMoneyTypeAtDates($result,$totalCashOutFlowArray,MoneyPayment::OUTGOING_TRANSFER,'delivery_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear);
+			 MoneyPayment::getCashOutForMoneyTypeAtDates($result,$totalCashOutFlowArray,MoneyPayment::CASH_PAYMENT,'delivery_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear);
+			 MoneyPayment::getCashOutForMoneyTypeAtDates($result,$totalCashOutFlowArray,MoneyPayment::PAYABLE_CHEQUE,'actual_payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
+			 MoneyPayment::getCashOutForMoneyTypeAtDates($result,$totalCashOutFlowArray,MoneyPayment::PAYABLE_CHEQUE,'due_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
+			
+			// $result['Cash Payments'][$currentWeekYear] = MoneyPayment::getCashPaymentsAtDates($company->id,$startDate , $endDate,$currency);
+			// $result['Paid Payable Cheques'][$currentWeekYear] = MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PAID,'actual_payment_date');
+			// $result['Under Payment Payable Cheques'][$currentWeekYear] =MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
+			// $result['Cheques Under Collection'][$currentWeekYear] = $this->getCustomerChequesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
+			// $result['Suppliers Invoices'][$currentWeekYear] = MoneyPayment::getSupplierInvoicesUnderCollectionAtDates($company->id,$startDate , $endDate,$currency);
+			SupplierInvoice::getSupplierInvoicesUnderCollectionAtDates($result,$totalCashOutFlowArray,$company->id,$startDate,$endDate,$currency,$currentWeekYear);
+			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::OUTGOING_TRANSFER,'payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,null);
+			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::CASH_PAYMENT,'payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,null);
+			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::PAYABLE_CHEQUE,'actual_payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
+			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::PAYABLE_CHEQUE,'due_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
+			
+			$result['suppliers']['Suppliers Past Due Invoices'] = [];
+			// $cashExpenseCategoryNames = CashExpenseCategoryName::getAllForCompany($company);
+			// foreach($cashExpenseCategoryNames as $cashExpenseCategoryName){
+			// 	$currentCashExpenseCategoryName = $cashExpenseCategoryName->getName();
+			// 	$result[$currentCashExpenseCategoryName][$currentWeekYear] = $this->getCashExpensesAtDates($company->id,$startDate , $endDate,$currency,$cashExpenseCategoryName->id);
+			// 	$cashExpenseCategoryNamesArr[$currentCashExpenseCategoryName] =  $currentCashExpenseCategoryName;
+			// }
+			// $result['Under Payment Payable Cheques'][$currentWeekYear] = MoneyPayment::getSupplierPayableChequesAtDates($company->id,$startDate , $endDate,$currency,PayableCheque::PENDING,'due_date');
+			// $currentVal = $result['Customers Invoices'][$currentWeekYear] ;
+			
+			// $result['Customers Invoices']['total'][$currentYear] = isset($result['Customers Invoices']['total'][$currentYear]) ? $result['Customers Invoices']['total'][$currentYear] + $currentVal : $currentVal ;
 			 
 			$dates[$currentWeekYear] = [
 				'start_date' => $startDate,
 				'end_date'=>$endDate 
 			];
 		}
+		
+		
+		
+		
 		// for customers 
 		$pastDueCustomerInvoices = $this->getPastDueCustomerInvoices('CustomerInvoice',$currency,$company->id,$request->get('start_date'));
 		$excludeIds = $pastDueCustomerInvoices->where('net_balance_until_date','<=',0)->pluck('id')->toArray() ;
@@ -117,8 +163,26 @@ class CashFlowReportController
 		->where('invoice_type','SupplierInvoice')
 		->whereNotIn('invoice_id',$excludeIds)
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get();
-
-		return view('admin.reports.cash-flow-report',[
+	
+		
+		
+		$totalCashInFlowArray = $this->mergeTotal($totalCashInFlowArray,$customerDueInvoices);
+		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$supplierDueInvoices);
+		$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
+		$result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
+		$result['cash_expenses'][__('Total Cash Outflow')]['total'] = $totalCashOutFlowArray;
+		$result['cash_expenses'][__('Total Cash Outflow')]['total']['total_of_total'] = array_sum($totalCashOutFlowArray);
+		$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
+		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
+		$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
+		if($returnResultAsArray){
+			return [
+				'result'=>$result , 
+				'dates'=>$dates,
+			] ;
+		}
+		return view('admin.reports.contract-cash-flow-report',[
+		// return view('admin.reports.cash-flow-report',[
 			'weeks'=>$weeks,
 			'result'=>$result,
 			'dates'=>$dates,
@@ -130,8 +194,19 @@ class CashFlowReportController
 			'pastDueSupplierInvoices'=>$pastDueSupplierInvoices,
 			'supplierDueInvoices'=>$supplierDueInvoices,
 			'noRowHeaders'=>$noRowHeaders,
-			'cashExpenseCategoryNamesArr'=>$cashExpenseCategoryNamesArr
+			// 'cashExpenseCategoryNamesArr'=>$cashExpenseCategoryNamesArr
 		]);
+	}
+	public function mergeTotal(array $totals , $collectionOfItems):array 
+	{
+		foreach($collectionOfItems as $itemStdClass){
+			$week = $itemStdClass->week_start_date;
+			$currentAmount = $itemStdClass->amount;
+			$year = explode('-',$week)[0];
+			$month = explode('-',$week)[1];
+			$totals[$month.'-'.$year] = isset($totals[$month.'-'.$year]) ? $totals[$month.'-'.$year] + $currentAmount : $currentAmount;
+		}
+		return $totals;
 	}
 	protected function mergeYearWithWeek(array $weeks , Carbon $startDate ):array{
 		$newWeeks = [];
@@ -175,10 +250,10 @@ class CashFlowReportController
 	
 	
 	
-	protected function getCashExpensesAtDates(int $companyId , string $startDate , string $endDate,string $currency,int $cashExpenseCategoryNameId) 
-	{
-		return DB::table('cash_expenses')->where('company_id',$companyId)->whereBetween('payment_date',[$startDate,$endDate])->where('currency',$currency)->where('cash_expense_category_name_id',$cashExpenseCategoryNameId)->sum('paid_amount');
-	}
+	// protected function getCashExpensesAtDates(int $companyId , string $startDate , string $endDate,string $currency,int $cashExpenseCategoryNameId) 
+	// {
+	// 	return DB::table('cash_expenses')->where('company_id',$companyId)->whereBetween('payment_date',[$startDate,$endDate])->where('currency',$currency)->where('cash_expense_category_name_id',$cashExpenseCategoryNameId)->sum('paid_amount');
+	// }
 	public function adjustCustomerDueInvoices(Request $request,Company $company){
 		$invoiceType = $request->get('invoiceType');
 		foreach($request->get('customer_invoice_id',[]) as $customerInvoiceId){

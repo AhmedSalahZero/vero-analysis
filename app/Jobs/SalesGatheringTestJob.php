@@ -156,7 +156,8 @@ class SalesGatheringTestJob implements ShouldQueue
 			}
 			if($modelName == 'LoanSchedule'){
 				$newItems[$key] = array_merge($value , [
-					'medium_term_loan_id'=>$loanId
+					'medium_term_loan_id'=>$loanId,
+					'remaining'=>$value['schedule_payment'] ?? 0
 				]);
 			}
 			

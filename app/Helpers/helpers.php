@@ -2440,6 +2440,10 @@ function getLastSegmentInRequest()
 {
     return Request()->segments()[count(Request()->segments()) - 1];
 }
+// function getLastNonNumericSegmentInRequest()
+// {
+// 	return Request()->segments()[count(Request()->segments()) - 1];
+// }
 function getTotalPerYears(array $array)
 {
     $totalPerYears = [];

@@ -419,16 +419,23 @@ $date = now()->format('d-m-Y')
             @endif
 
             <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+			
                 <span class="d-flex justify-content-center" style="overflow: visible; position: relative; width: 110px;">
+					
                     {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('salesGathering.edit',[$company,$item])}}"><i class="fa fa-pen-alt"></i></a> --}}
                     <form class="kt-portlet__body" method="post" action="{{route('salesGathering.destroy',[$company,$item->id])}}" style="display: inline">
+					
+						@if($modelName == 'LoanSchedule')
+						<a href="{{ route('view.loan.schedule.settlements',['company'=>$company->id , 'loanSchedule'=>$item->id]) }}" class="btn btn-secondary btn-outline-hover-primary btn-icon">
+							<i class="fa fa-dollar-sign"></i>
+						</a>
+						@endif 
                         @method('DELETE')
                         @csrf
-                   
+					
                         <a class="btn btn-secondary btn-outline-hover-primary btn-icon" title="Edit" href="{{route('edit.sales.form',['company'=>$company->id,'model'=>$modelName , 'modelId'=>$item->id])}}"><i class="fa fa-edit"></i></a>
                         <button type="submit" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href=""><i class="fa fa-trash-alt"></i></button>
                     </form>
-                    {{-- <a type="button" class="btn btn-secondary btn-outline-hover-warning btn-icon" href="{{route('adjustedCollectionDate.create',[$company])}}" title="Adjusted Collection Date" href=""><i class="fa fa-sliders-h"></i></a> --}}
                 </span>
             </td>
         </tr>

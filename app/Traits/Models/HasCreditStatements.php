@@ -63,7 +63,7 @@ trait HasCreditStatements
 	{
 		return $this->currentAccountCreditBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId ,
-			'company_id'=>$this->company_id ,
+			'company_id'=>$this->company_id?:getCurrentCompanyId() ,
 			'credit'=>$paidAmount,
 			'date'=>$date,
 			'comment_en'=>$commentEn,

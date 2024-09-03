@@ -83,13 +83,13 @@
 
 
 
-            <a href="<?php echo e(route('create.sales.form',['company'=>$company->id , 'model'=>getLastSegmentInRequest()])); ?>" class="btn  active-style btn-icon-sm <?php echo e($class); ?>">
+            <a href="<?php echo e(route('create.sales.form',['company'=>$company->id , 'model'=>in_array('LoanSchedule',Request()->segments())?'LoanSchedule':getLastSegmentInRequest()])); ?>" class="btn  active-style btn-icon-sm <?php echo e($class); ?>">
                 <i class="fas fa-plus"></i>
                 <?php echo e(__('Create New Record')); ?>
 
             </a>
 
-            
+         
 
             <span class="kt-option__body p-2">
                 <button type="submit" class="btn active-style btn-icon-sm">
@@ -120,12 +120,10 @@
                                 <thead>
                                     <tr>
                                         <th><?php echo e(__('Date')); ?></th>
-                                        
                                         <th><?php echo e(__('Action')); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
                                     <?php $__currentLoopData = $notPeriodClosedCustomerInvoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$notPeriodClosedCustomerInvoiceArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
                                     $canNotClosePeriod = $index>0 ;

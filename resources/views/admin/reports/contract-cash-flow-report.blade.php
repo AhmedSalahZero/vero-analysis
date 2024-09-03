@@ -386,6 +386,7 @@ let globalTable = null ;
 									$customerName = $parentKeyName ;
 									$hasSubRows = true;
 									if($parentKeyName == __('Customers Past Due Invoices') || $parentKeyName =='Customers Past Due Invoices'
+									|| $parentKeyName == __('Suppliers Past Due Invoices') || $parentKeyName =='Suppliers Past Due Invoices'
 									|| $parentKeyName == __('Net Cash (+/-)') || $parentKeyName == __('Total Cash Inflow') || $parentKeyName == __('Total Cash Outflow')
 									){
 										$hasSubRows = false ;

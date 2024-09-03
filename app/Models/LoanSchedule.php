@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Traits\StaticBoot;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LoanSchedule extends Model
 {
@@ -36,76 +38,75 @@ class LoanSchedule extends Model
 	{
 		return [];
 	}
-	// public static function getTabs(int $companyId)
-	// {
-	// 	return [
-	// 		'LoanSchedule'=>[
-	// 			'view_name'=>__('Loan Schedule'),
-	// 			'icon'=>'fa fa-crosshairs',
-	// 			'subTabs'=>[
-	// 				[
-	// 					'first_col'=>$firstColumn ='customer_name',
-	// 					'second_col'=>$secondColumn = 'product_item',
-	// 					'view_name'=>__('Customer Name Against Product Item'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn])
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn ='product_item',
-	// 					'second_col'=>$secondColumn = 'customer_name',
-	// 					'view_name'=>__('Product Item Against Customer Name'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn])
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn='shipping_line',
-	// 					'second_col'=>$secondColumn = 'destination_country',
-	// 					'view_name'=>__('Shipping Line Against Destination Country'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn='destination_country',
-	// 					'second_col'=>$secondColumn = 'shipping_line',
-	// 					'view_name'=>__('Destination Country Against Shipping Line'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn='customer_name',
-	// 					'second_col'=>$secondColumn = 'estimated_time_of_arrival',
-	// 					'view_name'=>__('Customers’ Orders Against Estimated Arrival Date'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn='customer_name',
-	// 					'second_col'=>$secondColumn = 'purchase_order_status',
-	// 					'view_name'=>__('Customers’ Orders Against Purchase Order Status'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn='purchase_order_status',
-	// 					'second_col'=>$secondColumn = 'customer_name',
-	// 					'view_name'=>__('Purchase Order Status Against Customers’ Orders'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],
-	// 				[
-	// 					'first_col'=>$firstColumn='payment_terms',
-	// 					'second_col'=>$secondColumn = 'customer_name',
-	// 					'view_name'=>__('Collection Terms Against Customers'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],[
-	// 					'first_col'=>$firstColumn='business_unit',
-	// 					'second_col'=>$secondColumn = 'revenue_stream',
-	// 					'view_name'=>__('Business Unit Against Revenue Stream'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],[
-	// 					'first_col'=>$firstColumn='export_bank',
-	// 					'second_col'=>$secondColumn = 'customer_name',
-	// 					'view_name'=>__('Export Bank Against Customer Name'),
-	// 					'route'=>route('view.export.against.report',[$companyId,$firstColumn,$secondColumn]),
-	// 				],
-	// 			]
-	// 			],
-				
-	// 	];
-	// }
+	public function getMediumTermLoanName()
+	{
+		return $this->mediumTermLoan->getName();
+	}
+	public function getDate()
+	{
+		return $this->date ;
+	}
+	public function getDateFormatted()
+	{
+		$date = $this->getDate();
+		return $date ? Carbon::make($date)->format('d-m-Y') : __('N/A'); 
+	}
+	public function getCurrency()
+	{
+		return $this->mediumTermLoan->currency ;
+	}
+	public function getBeginningBalance()
+	{
+		return $this->beginning_balance ?: 0 ;
+	}
+	public function getBeginningBalanceFormatted()
+	{
+		return number_format($this->getBeginningBalance())  ;
+	}
+	public function getSchedulePayment()
+	{
+		return $this->schedule_payment ?: 0 ;
+	}
+	public function getSchedulePaymentFormatted()
+	{
+		return number_format($this->getSchedulePayment())  ;
+	}
+	public function getInterestAmount()
+	{
+		return $this->interest_amount ?: 0 ;
+	}
+	public function getInterestAmountFormatted()
+	{
+		return number_format($this->getInterestAmount())  ;
+	}
+	public function getPrincipleAmount()
+	{
+		return $this->principle_amount ?: 0 ;
+	}
+	public function getPrincipleAmountFormatted()
+	{
+		return number_format($this->getPrincipleAmount())  ;
+	}
+	public function getEndBalance()
+	{
+		return $this->end_balance ?: 0 ;
+	}
+	public function getFinancialInstitutionId()
+	{
+		return $this->mediumTermLoan->financial_institution_id;
+	}
+	public function settlements():HasMany
+	{
+		return $this->hasMany(LoanScheduleSettlement::class,'loan_schedule_id');
+	}
+	public function getEndBalanceFormatted()
+	{
+		return number_format($this->getEndBalance())  ;
+	}
+	public function mediumTermLoan()
+	{
+		return $this->belongsTo(MediumTermLoan::class , 'medium_term_loan_id','id');
+	}
 	public static function getExportableFields():array 
 	{
 		return [

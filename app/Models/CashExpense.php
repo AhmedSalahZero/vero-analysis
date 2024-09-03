@@ -9,6 +9,7 @@ use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -494,4 +495,46 @@ class CashExpense extends Model
 		;
 	}
 
+	public static function getCashOutForExpenseCategoriesAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	{
+		$subTableName = (new self)->getTable();
+		// $keyNameForCurrentType = [
+		// 	MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
+		// 	MoneyPayment::CASH_PAYMENT =>__('Cash Payments'),
+		// 	MoneyPayment::PAYABLE_CHEQUE => $chequeStatus == PayableCheque::PAID ? __('Paid Payable Cheques') : __('Under Payment Payable Cheques')
+		// ][$moneyType];
+		
+		$mainTableName = [
+			MoneyPayment::OUTGOING_TRANSFER => (new OutgoingTransfer())->getTable(),
+			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
+			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
+		][$moneyType];
+		
+
+		$expensesWithPaidAmount = DB::table($mainTableName)
+						->where($subTableName.'.currency',$currency)
+						->where('type',$moneyType)
+						->where($subTableName.'.company_id',$companyId)
+						->whereBetween($dateFieldName,[$startDate,$endDate])
+						->join($subTableName,$subTableName.'.id','=','cash_expense_id')
+						->join('cash_expense_category_names',$subTableName.'.cash_expense_category_name_id','=','cash_expense_category_names.id')
+						->join('cash_expense_categories','cash_expense_category_id','=','cash_expense_categories.id')
+						->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
+							$builder->where('payable_cheques.status',$chequeStatus);
+						})
+						->groupBy('cash_expense_category_name_id')
+						->selectRaw('cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(paid_amount) as paid_amount')->get();
+		foreach($expensesWithPaidAmount as $expenseWithPaidAmount){
+			$categoryName = $expenseWithPaidAmount->category_name;
+			$expenseName = $expenseWithPaidAmount->expense_name;
+			$currentPaidAmount = $expenseWithPaidAmount->paid_amount ;
+			$result['cash_expenses'][$categoryName][$expenseName]['weeks'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName][$expenseName]['weeks'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName][$expenseName]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+			$result['cash_expenses'][$categoryName][$expenseName]['total'] = isset($result['cash_expenses'][$categoryName][$expenseName]['total']) ? $result['cash_expenses'][$categoryName][$expenseName]['total']  + $currentPaidAmount : $currentPaidAmount;
+			$currentTotal = $currentPaidAmount;
+			$result['cash_expenses'][$categoryName]['total'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName]['total'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] + $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] : $result['cash_expenses'][$categoryName]['total'][$currentWeekYear];
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+		}
+	
+	}
 }

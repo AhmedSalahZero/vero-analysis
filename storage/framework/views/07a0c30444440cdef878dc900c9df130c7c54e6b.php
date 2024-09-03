@@ -405,13 +405,7 @@ let globalTable = null ;
                                 <?php
                                 $rowIndex = 0 ;
                                 ?>
-								
-                                
-								
-								
-								
-								
-					
+							
 								 <?php $__currentLoopData = ['customers','suppliers','cash_expenses']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mainReportKey): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 								 
 								 <?php $__currentLoopData = $result[$mainReportKey] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $parentKeyName => $subRows): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -419,6 +413,7 @@ let globalTable = null ;
 									$customerName = $parentKeyName ;
 									$hasSubRows = true;
 									if($parentKeyName == __('Customers Past Due Invoices') || $parentKeyName =='Customers Past Due Invoices'
+									|| $parentKeyName == __('Suppliers Past Due Invoices') || $parentKeyName =='Suppliers Past Due Invoices'
 									|| $parentKeyName == __('Net Cash (+/-)') || $parentKeyName == __('Total Cash Inflow') || $parentKeyName == __('Total Cash Outflow')
 									){
 										$hasSubRows = false ;

@@ -1,8 +1,12 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
+use App\Models\LoanSchedule;
+use App\Models\LoanScheduleSettlement;
 use App\Models\MediumTermLoan;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -149,5 +153,56 @@ class MediumTermLoanController
 	{
 		return view('loans.upload');
 	}
+	public function viewLoanScheduleSettlement(Company $company , LoanSchedule $loanSchedule)
+	{
+
+		 return view('admin.loan-schedule-settlements.index',$this->getCommonSettlementVars($company,$loanSchedule));
+	}
+	public function storeLoanScheduleSettlement(Company $company,Request $request , LoanSchedule $loanSchedule)
+	{
+		$currentAccountNumber = $request->get('current_account_number');
+		$amount = $request->get('amount');
+		$date = $request->get('date');
+		$loanScheduleSettlement=$loanSchedule->settlements()->create([
+			'current_account_number'=>$currentAccountNumber,
+			'amount'=>$amount,
+			'date'=>$date 
+		]);
+		$financialInstitutionId = $loanSchedule->getFinancialInstitutionId();
+		$accountType = AccountType::onlyCurrentAccount()->first();
+		$commentEn = __('Settlement For Loan ' .$loanSchedule->getMediumTermLoanName(),[],'en') ;
+		$commentAr = __('Settlement For Loan ' .$loanSchedule->getMediumTermLoanName(),[],'ar') ;
+		$loanScheduleSettlement->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$currentAccountNumber,null,$date,$amount,null,null,$commentEn,$commentAr);
+		$loanScheduleSettlement->handleLoanStatement($company->id ,$financialInstitutionId,$currentAccountNumber,$date,$amount,$commentEn,$commentAr);
+		return back();
+	}
 	
+	public function updateLoanScheduleSettlement(Company $company,Request $request , LoanScheduleSettlement $loanScheduleSettlement)
+	{
+		$loanSchedule = $loanScheduleSettlement->loanSchedule;
+		$this->deleteLoanScheduleSettlement($company,$request,$loanScheduleSettlement);
+		$this->storeLoanScheduleSettlement($company,$request,$loanSchedule);
+		return redirect()->route('view.loan.schedule.settlements',['loanSchedule'=>$loanSchedule->id,'company'=>$company->id]);
+	}
+	public function editLoanScheduleSettlement(Company $company,Request $request , LoanScheduleSettlement $loanScheduleSettlement)
+	{
+		return view('admin.loan-schedule-settlements.index',$this->getCommonSettlementVars($company,$loanScheduleSettlement->loanSchedule,$loanScheduleSettlement));
+	}
+	public function deleteLoanScheduleSettlement(Company $company,Request $request , LoanScheduleSettlement $loanScheduleSettlement)
+	{
+		$loanScheduleSettlement->deleteAllRelations();
+		$loanScheduleSettlement->delete();
+		return back();
+	}
+	protected function getCommonSettlementVars(Company $company,LoanSchedule $loanSchedule , LoanScheduleSettlement $loanScheduleSettlement = null):array 
+	{
+		$currentAccounts = FinancialInstitutionAccount::getAllAccountNumberForCurrency($company->id , $loanSchedule->getCurrency(),$loanSchedule->getFinancialInstitutionId());
+		return [
+			'loanSchedule'=>$loanSchedule,
+			'company'=>$company,
+			'settlements'=>$loanSchedule->settlements,
+			'currentAccounts'=>$currentAccounts,
+			'model'=>$loanScheduleSettlement
+		];
+	}
 }

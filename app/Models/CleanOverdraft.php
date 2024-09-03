@@ -149,5 +149,25 @@ class CleanOverdraft extends Model implements IHaveStatement
 	{
 		return Str::upper($this->getCurrency());
 	}
+	public function rates()
+	{
+		return $this->hasMany(CleanOverdraftRate::class,'clean_overdraft_id','id');
+	}
+	
+	public function updateBankStatementsFromDate(string $date)
+	{
+		$firstBankStatementToBeUpdated = CleanOverdraftBankStatement::where('clean_overdraft_id',$this->id)
+		->where('date','>=',$date)
+		->orderBy('full_date')
+		->first();	
+		if($firstBankStatementToBeUpdated){
+			$firstBankStatementToBeUpdated->update([
+				'updated_at'=>now()
+			]);
+		}
+		
+	}
+	
+	
 	
 }
