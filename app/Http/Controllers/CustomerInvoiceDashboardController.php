@@ -462,7 +462,7 @@ class CustomerInvoiceDashboardController extends Controller
 			$dates = $report['dates'];
 			$cashFlowReport['total_cash_in_out_flow']=$this->formatFlowCashInOutChartData($cashFlowReportResult['customers'][__('Total Cash Inflow')]['total'] ?? [],$cashFlowReportResult['cash_expenses'][__('Total Cash Outflow')]['total'] ?? [],$dates);
 			$cashFlowReport['accumulated_net_cash']= $this->formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
-		}elseif($request->has('cash_start_date')&&$request->has('cash_end_date')){
+		}else{
 			$report =(new CashFlowReportController())->result($company,$request,true);
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
@@ -524,7 +524,7 @@ class CustomerInvoiceDashboardController extends Controller
 			'clientsWithContracts'=>$clientsWithContracts,
 			'cashFlowReport'=>$cashFlowReport,
 			
-			'selectedReportInterval'=>$request->get('report_interval'),
+			'selectedReportInterval'=>$request->get('report_interval','weekly'),
 			'selectedPartnerId'=>$request->get('partner_id'),
 			'selectedContractId'=>$request->get('contract_id'),
 			
