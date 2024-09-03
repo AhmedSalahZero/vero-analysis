@@ -76,7 +76,7 @@ class LoanScheduleSettlement extends Model
 	public function getDateFormatted()
 	{
 		$date = $this->getDate();
-		return  $date ? Carbon::make($date)->format('Y-m-d') : __('N/A') ;
+		return  $date ? Carbon::make($date)->format('d-m-Y') : __('N/A') ;
 	}
 	public function setDateAttribute($value)
 	{

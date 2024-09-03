@@ -169,8 +169,8 @@ class MediumTermLoanController
 		]);
 		$financialInstitutionId = $loanSchedule->getFinancialInstitutionId();
 		$accountType = AccountType::onlyCurrentAccount()->first();
-		$commentEn = __('Settlement For Loan ' .$loanSchedule->getMediumTermLoanName(),[],'en') ;
-		$commentAr = __('Settlement For Loan ' .$loanSchedule->getMediumTermLoanName(),[],'ar') ;
+		$commentEn = __('Settlement For Loan ' .$loanSchedule->getMediumTermLoanName() . ' Installment No. ' . $loanSchedule->getInstallmentNumber()  ,[],'en') ;
+		$commentAr = __('Settlement For Loan ' .$loanSchedule->getMediumTermLoanName() . ' Installment No. ' . $loanSchedule->getInstallmentNumber()  ,[],'ar') ;
 		$loanScheduleSettlement->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$currentAccountNumber,null,$date,$amount,null,null,$commentEn,$commentAr);
 		$loanScheduleSettlement->handleLoanStatement($company->id ,$financialInstitutionId,$currentAccountNumber,$date,$amount,$commentEn,$commentAr);
 		return back();

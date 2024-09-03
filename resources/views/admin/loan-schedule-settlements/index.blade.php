@@ -330,7 +330,7 @@ use Carbon\Carbon;
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getMediumTermLoanName() }}">
                                         </div>
                                         <div class="col-md-4 mb-4">
-                                            <label>{{__('Date')}} </label>
+                                            <label>{{__('Installment Due Date')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getDateFormatted() }}">
                                         </div>
                                         <div class="col-md-4 mb-4">
@@ -368,7 +368,7 @@ use Carbon\Carbon;
                                             <label>{{__('Settlement Date')}} @include('star') </label>
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <input required type="text" name="date" value="{{ isset($model) ? $model->getDate() : formatDateForDatePicker(now()->format('Y-m-d')) }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}" />
+                                                    <input required type="text" name="date" value="{{ isset($model) ? formatDateForDatePicker($model->getDate()) : formatDateForDatePicker($loanSchedule->getDate()) }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}" />
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">
                                                             <i class="la la-calendar-check-o"></i>
@@ -380,7 +380,7 @@ use Carbon\Carbon;
 
                                         <div class="col-md-4 mb-4">
                                             <label>{{__('Settlement Amount')}} </label>
-                                            <input type="text" class="form-control" name="amount" value="{{ isset($model) ? $model->getAmount() : $loanSchedule->getSchedulePayment() }}">
+                                            <input type="text" class="form-control" name="amount" value="{{ isset($model) ? $model->getAmount() : $loanSchedule->getRemaining() }}">
                                         </div>
 
 
@@ -471,9 +471,15 @@ use Carbon\Carbon;
                                             $previousDate = null ;
                                             @endphp
                                             @foreach($settlements as $index => $settlement)
+											@if(isset($model) && $model->id == $settlement->id)
+												@continue
+											@endif 
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
-                                                <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $settlement->getDate() }} </td>
+												@php
+													$currentDueDate = $settlement->getDate() ;
+												@endphp
+                                                <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $settlement->getDateFormatted() }}</td>
                                                 {{-- <td class="sub-text-bg  text-center  max-w-counts ">{{ $previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) : '-' }}</td> --}}
                                                 @php
                                                 $previousDate = $settlement->getDate();
