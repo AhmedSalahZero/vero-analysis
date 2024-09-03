@@ -59,9 +59,9 @@
                                 <div class="input-group date">
                                     <select name="report_interval" class="form-control " required>
 									     <option value="">{{ __('Select') }}</option>
-                                        <option value="daily">{{__('Daily')}}</option>
-                                        <option value="weekly" >{{__('Weekly')}}</option>
-                                        <option value="monthly">{{__('Monthly')}}</option>
+                                        <option value="daily" @if($selectedReportInterval == 'daily' )  selected @endif>{{__('Daily')}}</option>
+                                        <option value="weekly"  @if($selectedReportInterval == 'weekly' )  selected @endif>{{__('Weekly')}}</option>
+                                        <option value="monthly" @if($selectedReportInterval == 'monthly' )  selected @endif>{{__('Monthly')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -70,10 +70,10 @@
 
 
                         <div class="col-md-3">
-                            <x-form.select :label="__('Select')" :pleaseSelect="false" :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="array_merge([['title'=>__('Company Cash Flow'),'value'=>'0']],formatOptionsForSelect($clientsWithContracts))" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
+                            <x-form.select :label="__('Select')" :pleaseSelect="false" :selectedValue="$selectedPartnerId" :options="array_merge([['title'=>__('Company Cash Flow'),'value'=>'0']],formatOptionsForSelect($clientsWithContracts))" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
                         </div>
                         <div class="col-md-3">
-                            <x-form.select :label="__('Contract')" :pleaseSelect="false" data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="contract_id"></x-form.select>
+                            <x-form.select :label="__('Contract')" :pleaseSelect="false" data-current-selected="{{ $selectedContractId }}" :selectedValue="$selectedContractId" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="contract_id"></x-form.select>
                         </div>
 
 

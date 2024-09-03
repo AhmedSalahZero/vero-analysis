@@ -206,6 +206,10 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	{
 		return $this->belongsTo(LcIssuanceExpense::class,'lc_issuance_expense_id','id');
 	}	
+	public function loanScheduleSettlement():BelongsTo
+	{
+		return $this->belongsTo(LoanScheduleSettlement::class,'loan_schedule_settlement_id','id');
+	}	
 	public static function updateNonActiveDaily(Company $company)
 	{
 		// logger('first row here loooo');

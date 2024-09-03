@@ -84,27 +84,13 @@
             @endif
 
 
-
-            <a href="{{ route('create.sales.form',['company'=>$company->id , 'model'=>getLastSegmentInRequest()]) }}" class="btn  active-style btn-icon-sm {{$class}}">
+{{-- {{ dd(get_defined_Vars()) }} --}}
+            <a href="{{ route('create.sales.form',['company'=>$company->id , 'model'=>in_array('LoanSchedule',Request()->segments())?'LoanSchedule':getLastSegmentInRequest()]) }}" class="btn  active-style btn-icon-sm {{$class}}">
                 <i class="fas fa-plus"></i>
                 {{ __('Create New Record') }}
             </a>
 
-            {{-- @if(Request()->segment(4) == 'LabelingItem')
-			    <a href="{{ route('create.sales.form',['company'=>$company->id , 'model'=>getLastSegmentInRequest()]) }}" class="btn active-style btn-icon-sm {{$class}}">
-            <i class="fas fa-plus"></i>
-            {{ __('Create New Record') }}
-            </a>
-            <a href="{{ route('create.sales.form',['company'=>$company->id , 'model'=>getLastSegmentInRequest()]) }}" class="btn  active-style btn-icon-sm {{$class}}">
-                <i class="fas fa-plus"></i>
-                {{ __('Create New Record') }}
-            </a>
-            <a href="{{ route('create.sales.form',['company'=>$company->id , 'model'=>getLastSegmentInRequest()]) }}" class="btn  active-style btn-icon-sm {{$class}}">
-                <i class="fas fa-plus"></i>
-                {{ __('Create New Record') }}
-            </a>
-
-            @endif --}}
+         
 
             <span class="kt-option__body p-2">
                 <button type="submit" class="btn active-style btn-icon-sm">
@@ -133,12 +119,10 @@
                                 <thead>
                                     <tr>
                                         <th>{{ __('Date') }}</th>
-                                        {{-- <th>{{ __('Status') }}</th> --}}
                                         <th>{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- {{ dd($notPeriodClosedCustomerInvoices) }} --}}
                                     @foreach($notPeriodClosedCustomerInvoices as $index=>$notPeriodClosedCustomerInvoiceArr)
                                     @php
                                     $canNotClosePeriod = $index>0 ;

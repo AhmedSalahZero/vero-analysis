@@ -20,14 +20,23 @@
 										
 										<?php endif; ?> 
 										
-											
+											<?php if($customerName == 'Suppliers Past Due Invoices'): ?>
+												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal"><?php echo e(__('View')); ?></button>
+                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.due-invoices','data' => ['reportInterval' => $reportInterval,'currentInvoiceType' => 'SupplierInvoice','dates' => $dates,'weeks' => $weeks,'pastDueCustomerInvoices' => $pastDueSupplierInvoices,'id' => 'test-modal-id']]); ?>
+<?php $component->withName('modal.due-invoices'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['report-interval' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($reportInterval),'currentInvoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('SupplierInvoice'),'dates' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dates),'weeks' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($weeks),'pastDueCustomerInvoices' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($pastDueSupplierInvoices),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 										
-										
+											<?php endif; ?> 
 									
 									 </td>
-									 <?php
-											$customerPastDueInvoicesTotal=0; 
-									 ?>
                                     <?php $__currentLoopData = $weeks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $weekAndYear => $week): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
 								
@@ -47,8 +56,14 @@
 										$startDate = $dates[$weekAndYear]['start_date'] ;
 										$currentRow = $customerDueInvoices->where('week_start_date',$startDate)->first() ;
 										$currentValue =$currentRow ?  $currentRow->amount : 0;
-										$customerPastDueInvoicesTotal +=$currentValue; 
+										
 									
+									}
+									if($customerName == __('Suppliers Past Due Invoices') )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$currentRow = $supplierDueInvoices->where('week_start_date',$startDate)->first() ;
+										$currentValue =$currentRow ?  $currentRow->amount : 0;
 									}
                                     ?>
 									

@@ -62,14 +62,7 @@ trait IsOverdraft
 		return $this->outstanding_balance ?: 0 ;
 	}
 	
-	public function getInterestRate()
-	{
-		return $this->interest_rate?:0;
-	}
-	public function getInterestRateFormatted()
-	{
-		return number_format($this->getInterestRate(),2);
-	}
+	
 	public function getMaxLendingLimitPerCustomer()
 	{
 		return $this->max_lending_limit_per_customer?:0;
@@ -86,28 +79,7 @@ trait IsOverdraft
 	{
 		return $this->to_be_setteled_max_within_days?:0;
 	}
-	/**
-	 * * هي فايدة بيحددها البنك بالبنك المركزي
-	 */
-	public function getBorrowingRate()
-	{
-		return $this->borrowing_rate ?: 0;
-	}
-	public function getBorrowingRateFormatted()
-	{
-		return number_format($this->getBorrowingRate(),2);
-	}
-		/**
-	 * * هي فايدة خاصة بالبنك بناء علي العميل (طبقا للقدرة المالية زي امتلاكك للمصانع)
-	 */
-	public function getMarginRate()
-	{
-		return $this->bank_margin_rate ?: 0 ;
-	}
-	public function getMarginRateFormatted()
-	{
-		return number_format($this->getMarginRate(),2);
-	}
+	
 	public function getCurrency()
 	{
 		return $this->currency ;
@@ -134,4 +106,57 @@ trait IsOverdraft
 		->where('financial_institution_id',$financialInstitutionId)
 		->first();
 	}
+
+	
+	/**
+	 * * هي فايدة بيحددها البنك بالبنك المركزي
+	 */
+	public function getLatestRate()
+	{
+		return $this->rates->where('date','<=',now()->format('Y-m-d'))->sortByDesc('date')->first();
+	}
+	public function getBorrowingRate()
+	{
+		$latestRate = $this->getLatestRate();
+		return $latestRate ? $latestRate->getBorrowingRate() : 0 ; 
+		// return $this->borrowing_rate ?: 0;
+	}
+	public function getBorrowingRateFormatted()
+	{
+		return number_format($this->getBorrowingRate(),2);
+	}
+		/**
+	 * * هي فايدة خاصة بالبنك بناء علي العميل (طبقا للقدرة المالية زي امتلاكك للمصانع)
+	 */
+	public function getMarginRate()
+	{
+		$latestRate = $this->getLatestRate();
+		return $latestRate ? $latestRate->getMarginRate() : 0 ; 
+		// return $this->bank_margin_rate ?: 0 ;
+	}
+	public function getMarginRateFormatted()
+	{
+		return number_format($this->getMarginRate(),2);
+	}
+	public function getInterestRate()
+	{
+		$latestRate = $this->getLatestRate();
+		return $latestRate ? $latestRate->getInterestRate() : 0 ; 
+		// return $this->interest_rate?:0;
+	}
+	public function getInterestRateFormatted()
+	{
+		return number_format($this->getInterestRate(),2);
+	}
+	public function storeRate($date , $minInterestRate , $marginRate , $borrowingRate , $interestRate)
+	{
+		return $this->rates()->create([
+			'date'=>$date,
+			'min_interest_rate'=>$minInterestRate,
+			'margin_rate'=>$marginRate, // or bank_margin_rate 
+			'borrowing_rate'=>$borrowingRate,
+			'interest_rate'=>$interestRate
+		]);
+	}	
+	
 }

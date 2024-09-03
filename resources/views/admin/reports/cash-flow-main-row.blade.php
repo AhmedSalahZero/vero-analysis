@@ -10,18 +10,13 @@
 										
 										@endif 
 										
-											{{-- @if($customerName == 'Suppliers Past Due Invoices')
+											@if($customerName == 'Suppliers Past Due Invoices')
 												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
                                                 <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
-											@endif  --}}
-										
-										
+											@endif 
 									
 									 </td>
-									 @php
-											$customerPastDueInvoicesTotal=0; 
-									 @endphp
                                     @foreach($weeks as $weekAndYear => $week)
                                     @php
 								
@@ -41,8 +36,14 @@
 										$startDate = $dates[$weekAndYear]['start_date'] ;
 										$currentRow = $customerDueInvoices->where('week_start_date',$startDate)->first() ;
 										$currentValue =$currentRow ?  $currentRow->amount : 0;
-										$customerPastDueInvoicesTotal +=$currentValue; 
+										
 									
+									}
+									if($customerName == __('Suppliers Past Due Invoices') )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$currentRow = $supplierDueInvoices->where('week_start_date',$startDate)->first() ;
+										$currentValue =$currentRow ?  $currentRow->amount : 0;
 									}
                                     @endphp
 									

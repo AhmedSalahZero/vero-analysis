@@ -488,98 +488,119 @@ class MoneyPayment extends Model
 	{
 		return $this->hasMany(SettlementAllocation::class,'money_payment_id','id');
 	}
-	public static function getSupplierPayableChequesAtDates(int $companyId , string $startDate , string $endDate,string $currency,$chequeStatus , $dateFieldName,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
-	{
-		$mainTableName = 'payable_cheques';
-		$isContract = $contractId && $customerId ;
-		$sumColumnName = $isContract ? 'allocation_amount' : 'paid_amount'; 
-		$query =  DB::table($mainTableName)->where('status',$chequeStatus)
-		->where('currency',$currency)
-		->where('type',MoneyPayment::PAYABLE_CHEQUE)
-		->where($mainTableName.'.company_id',$companyId)
-		->whereBetween($dateFieldName,[$startDate,$endDate])
-		->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
-		->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId,$mainTableName ){
-			$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
-			->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
-			->where('supplier_name',$supplierName);
-		});
+	// public static function getSupplierPayableChequesAtDates(int $companyId , string $startDate , string $endDate,string $currency,$chequeStatus , $dateFieldName,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
+	// {
+	// 	$mainTableName = 'payable_cheques';
+	// 	$isContract = $contractId && $customerId ;
+	// 	$sumColumnName = $isContract ? 'allocation_amount' : 'paid_amount'; 
+	// 	$query =  DB::table($mainTableName)->where('status',$chequeStatus)
+	// 	->where('currency',$currency)
+	// 	->where('type',MoneyPayment::PAYABLE_CHEQUE)
+	// 	->where($mainTableName.'.company_id',$companyId)
+	// 	->whereBetween($dateFieldName,[$startDate,$endDate])
+	// 	->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
+	// 	->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId,$mainTableName ){
+	// 		$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
+	// 		->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
+	// 		->where('supplier_name',$supplierName);
+	// 	});
 		
-		$sum = $query->sum($sumColumnName) ;
-		if($isContract){
-			return [
-				'sum'=>$sum ,
-				'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
-			];
+	// 	$sum = $query->sum($sumColumnName) ;
+	// 	if($isContract){
+	// 		return [
+	// 			'sum'=>$sum ,
+	// 			'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
+	// 		];
+	// 	}
+	// 	return $sum  ;
+		
+	// }
+	
+	// public static function getCashPaymentsAtDates(int $companyId , string $startDate , string $endDate,string $currency,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
+	// {
+	// 	$mainTableName = 'cash_payments';
+	// 	$isContract = $contractId && $customerId ;
+	// 	$sumColumnName =  $isContract ? 'allocation_amount' : 'paid_amount'; 
+	// 	$query =  DB::table($mainTableName)
+	// 	->where('currency',$currency)
+	// 	->where('type',MoneyPayment::CASH_PAYMENT)
+	// 	->where('money_payments.company_id',$companyId)
+	// 	->whereBetween('delivery_date',[$startDate,$endDate])
+	// 	->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
+	// 	->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId,$mainTableName ){
+	// 		$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
+	// 		->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
+	// 		->where('supplier_name',$supplierName);
+	// 	});
+	// 	$sum = $query->sum($sumColumnName) ;
+	// 	if($isContract){
+	// 		return [
+	// 			'sum'=>$sum ,
+	// 			'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
+	// 		];
+	// 	}
+	// 	return $sum  ;
+	// }
+		
+	public static function getCashOutForMoneyTypeAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	{
+		$subTableName = (new self)->getTable(); // money_payments
+		$keyNameForCurrentType = [
+			MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
+			MoneyPayment::CASH_PAYMENT =>__('Cash Payments'),
+			MoneyPayment::PAYABLE_CHEQUE => $chequeStatus == PayableCheque::PAID ? __('Paid Payable Cheques') : __('Under Payment Payable Cheques')
+		][$moneyType];
+		
+		$mainTableName = [
+			MoneyPayment::OUTGOING_TRANSFER => (new OutgoingTransfer())->getTable(),
+			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
+			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
+		][$moneyType];
+		
+
+		$supplierNamesWithPaidAmount = DB::table($mainTableName)
+						->where($subTableName.'.currency',$currency)
+						->where('type',$moneyType)
+						->where($subTableName.'.company_id',$companyId)
+						->whereBetween($dateFieldName,[$startDate,$endDate])
+						->join($subTableName,$subTableName.'.id','=','money_payment_id')
+						->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
+							$builder->where('payable_cheques.status',$chequeStatus);
+						})
+						->groupBy('supplier_name')
+						->selectRaw('supplier_name,sum(paid_amount) as paid_amount')->get();
+		foreach($supplierNamesWithPaidAmount as $supplierNameAndPaidAmount){
+			$supplierName = $supplierNameAndPaidAmount->supplier_name;
+			$currentPaidAmount = $supplierNameAndPaidAmount->paid_amount ;
+			$result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear]) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+			$result['suppliers'][$supplierName][$keyNameForCurrentType]['total'] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['total']) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['total']  + $currentPaidAmount : $currentPaidAmount;
+			$currentTotal = $currentPaidAmount;
+			$result['suppliers'][$supplierName]['total'][$currentWeekYear] = isset($result['suppliers'][$supplierName]['total'][$currentWeekYear]) ? $result['suppliers'][$supplierName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['suppliers'][$supplierName]['total']['total_of_total'] = isset($result['suppliers'][$supplierName]['total']['total_of_total']) ? $result['suppliers'][$supplierName]['total']['total_of_total'] + $result['suppliers'][$supplierName]['total'][$currentWeekYear] : $result['suppliers'][$supplierName]['total'][$currentWeekYear];
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+			
 		}
-		return $sum  ;
+		// dd($supplierNames);
+		// $query  =  DB::table($mainTableName)
+		// ->where('currency',$currency)
+		// ->where('type',MoneyPayment::OUTGOING_TRANSFER)
+		// ->where('money_payments.company_id',$companyId)
+		// ->whereBetween('delivery_date',[$startDate,$endDate])
+		// ->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id');
+		// $sum = $query->sum('paid_amount') ;
 		
-	}
 	
-	public static function getCashPaymentsAtDates(int $companyId , string $startDate , string $endDate,string $currency,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
-	{
-		$mainTableName = 'cash_payments';
-		$isContract = $contractId && $customerId ;
-		$sumColumnName =  $isContract ? 'allocation_amount' : 'paid_amount'; 
-		$query =  DB::table($mainTableName)
-		->where('currency',$currency)
-		->where('type',MoneyPayment::CASH_PAYMENT)
-		->where('money_payments.company_id',$companyId)
-		->whereBetween('delivery_date',[$startDate,$endDate])
-		->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
-		->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId,$mainTableName ){
-			$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
-			->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
-			->where('supplier_name',$supplierName);
-		});
-		$sum = $query->sum($sumColumnName) ;
-		if($isContract){
-			return [
-				'sum'=>$sum ,
-				'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
-			];
-		}
-		return $sum  ;
-	}
-		
-	public static function getOutgoingTransfersAtDates(int $companyId , string $startDate , string $endDate,string $currency,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
-	{
-	
-		$mainTableName = 'outgoing_transfers';
-		$isContract  = $contractId && $customerId ;
-		$sumColumnName = $contractId && $customerId ? 'allocation_amount' : 'paid_amount'; 
-		$query  =  DB::table($mainTableName)
-		->where('currency',$currency)
-		->where('type',MoneyPayment::OUTGOING_TRANSFER)
-		->where('money_payments.company_id',$companyId)
-		->whereBetween('delivery_date',[$startDate,$endDate])
-		->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
-		->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId ,$mainTableName){
-			$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
-			->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
-			->where('supplier_name',$supplierName);
-		});
-		$sum = $query->sum($sumColumnName) ;
-		if($isContract){
-			return [
-				'sum'=>$sum ,
-				'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
-			];
-		}
-		
-		return $sum  ;
-		
 	
 	}
 	
-	public static function getSupplierInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate,string $currency,? string  $contractCode = null , $supplierId = null) 
-	{
-		$items = SupplierInvoice::where('company_id',$companyId)->where('currency',$currency)->whereBetween('invoice_due_date',[$startDate,$endDate])
-		->when($supplierId && $contractCode ,function($builder) use ($supplierId,$contractCode){
-			$builder->where('supplier_id',$supplierId)->where('contract_code',$contractCode);
-		})
-		->get();
-		return $items->sum('net_invoice_amount');
-	}
+	// public static function getSupplierInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate,string $currency,? string  $contractCode = null , $supplierId = null) 
+	// {
+	// 	$items = SupplierInvoice::where('company_id',$companyId)->where('currency',$currency)->whereBetween('invoice_due_date',[$startDate,$endDate])
+	// 	->when($supplierId && $contractCode ,function($builder) use ($supplierId,$contractCode){
+	// 		$builder->where('supplier_id',$supplierId)->where('contract_code',$contractCode);
+	// 	})
+	// 	->get();
+	// 	return $items->sum('net_invoice_amount');
+	// }
 	
 }

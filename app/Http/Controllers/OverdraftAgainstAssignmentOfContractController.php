@@ -201,12 +201,7 @@ class OverdraftAgainstAssignmentOfContractController
 		$contract->update([
 			'overdraft_against_assignment_of_contract_id'=>$lendingInformation->overdraftAgainstAssignmentOfContract->id,
 			'updated_at'=>now(),
-			// 'account_type'=>AccountType::onlyAgainstAssignmentOfContract()->first()->id ,
-			// 'account_number'=>$lendingInformation->overdraftAgainstAssignmentOfContract->getAccountNumber(),
 		]);
-		// static updated
-		// $lendingInformation->overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
-	
 	
 		return response()->json([
 			'status'=>true ,

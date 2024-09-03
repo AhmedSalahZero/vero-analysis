@@ -400,10 +400,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                 <?php
                                 $rowIndex = 0 ;
                                 ?>
-                                <?php $__currentLoopData = array_merge(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections','Total Cash Inflow','Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices'
+                                <?php $__currentLoopData = array_merge(['Cash & Banks Begining Balance','Checks Collected','Incoming Transfers','Bank Deposits','Cash Collections','Customers Invoices','Customers Past Due Invoices','Cheques In Safe','Cheques Under Collection','Sales Forecast Collections',__('Total Cash Inflow'),'Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices','Suppliers Past Due Invoices'
 								// ,'Operational Expenses Payments','Wages & Salaries Payments','Taxes & Social Insurance Payments','Forecasted Suppliers Payments','Total Cash Outflow','Cash Flow From Operations'
 								
-								],$cashExpenseCategoryNamesArr); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+								],$cashExpenseCategoryNamesArr,['Total Cash Outflow','Net Cash (+/-)']); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php if($customerName == 'total' || $customerName =='grand_total' || $customerName =='total_of_due' || $customerName =='total_customers_due'): ?>
                                 <?php continue; ?> ;
                                 <?php endif; ?>

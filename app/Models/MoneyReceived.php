@@ -608,13 +608,6 @@ class MoneyReceived extends Model
 		->where('money_received.company_id',$companyId)
 		->whereBetween('cheques.'.$dateColumnName,[$startDate,$endDate])
 		->where('cheques.status',$chequeStatus)
-		// ->when($customerName && $contractCode , function(Builder $builder) use ($customerName,$contractCode){
-		// 	$builder->join('customer_invoices','customer_invoices.customer_name' ,'=','money_received.customer_name')
-		// 	->where('customer_invoices.customer_name',$customerName)
-		// 	->where('customer_invoices.contract_code',$contractCode)
-		// 	;
-		// })
-		
 		->sum('received_amount');
 	}
 	public static function getIncomingTransferUnderDates(int $companyId , string $startDate , string $endDate,string $currency,$customerName = null , $contractCode = null) 

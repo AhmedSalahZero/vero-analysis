@@ -5,6 +5,7 @@ use App\Http\Requests\UpdateCleanOverdraftRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CleanOverdraft;
+use App\Models\CleanOverdraftRate;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Traits\GeneralFunctions;
@@ -80,7 +81,8 @@ class CleanOverdraftController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
+		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date'
+		,'highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCleanOverdraftRequest $request){
 		
@@ -94,6 +96,17 @@ class CleanOverdraftController
 		 * @var CleanOverdraft $cleanOverdraft 
 		 */
 		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
+		$cleanOverdraft->storeRate(
+			$request->get('balance_date'),
+			$request->get('min_interest_rate'),
+			$request->get('margin_rate'),
+			$request->get('borrowing_rate'),
+			$request->get('interest_rate')
+		);
+		// $cleanOverdraft->rates()->create([
+			
+		// ]);
+		// ,'borrowing_rate','margin_rate','interest_rate','min_interest_rate',
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ; 
 		
@@ -121,7 +134,6 @@ class CleanOverdraftController
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
-		
 		$cleanOverdraft->update($data);
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		$type = $request->get('type','clean-over-draft');
@@ -133,11 +145,56 @@ class CleanOverdraftController
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft)
 	{
-	
+		$cleanOverdraft->rates()->delete();
 		$cleanOverdraft->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 
+	public function applyRate(Request $request , Company $company , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft )
+	{
+		$date = $request->get('date_create') ;
+		$marginRate = $request->get('margin_rate_create') ;
+		$borrowingRate = $request->get('borrowing_rate_create') ;
+		$interestRate = $marginRate  + $borrowingRate  ;
+		$cleanOverdraft->rates()->create([
+			'date'=>$date,
+			'margin_rate'=>$marginRate,
+			'borrowing_rate'=>$borrowingRate,
+			'interest_rate'=>$interestRate,
+			'updated_at'=>now()
+		]);
+		$cleanOverdraft->updateBankStatementsFromDate($date);
+		return redirect()->back()->with('success',__('Done'));
 	
+	}
+	public function editRate(Request $request , Company $company , FinancialInstitution $financialInstitution , CleanOverdraftRate $rate)
+	{
 	
+		$date = $request->get('date_edit') ;
+		$marginRate = $request->get('margin_rate_edit') ;
+		$borrowingRate = $request->get('borrowing_rate_edit') ;
+		$interestRate = $marginRate  + $borrowingRate  ;
+		$rate->update([
+			'date'=>$date,
+			'margin_rate'=>$marginRate,
+			'borrowing_rate'=>$borrowingRate,
+			'interest_rate'=>$interestRate,
+			'updated_at'=>now()
+		]);
+		$rate->cleanOverdraft->updateBankStatementsFromDate($date);
+	
+		return response()->json([
+			'status'=>true ,
+			'reloadCurrentPage'=>true 
+		]);
+	}
+	
+	public function deleteRate(Request $request , Company $company , FinancialInstitution $financialInstitution , CleanOverdraftRate $rate)
+	{
+		$cleanOverdraft = $rate->cleanOverdraft;
+		$date = $rate->getDate();
+		$rate->delete();
+		$cleanOverdraft->updateBankStatementsFromDate($date);
+		return redirect()->back()->with('success',__('Done'));
+	}
 }
