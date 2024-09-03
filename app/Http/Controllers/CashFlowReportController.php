@@ -26,11 +26,11 @@ class CashFlowReportController
         return view('reports.cash_flow_form', compact('company'));
     }
 	public function result(Company $company , Request $request, bool $returnResultAsArray = false ){
-		$defaultStartDate = $request->get('cash_start_date');
-		$defaultEndDate = $request->get('cash_end_date');
+		$defaultStartDate = $request->get('cash_start_date',now()->format('Y-m-d'));
+		$defaultEndDate = $request->get('cash_end_date',now()->addMonth()->format('Y-m-d'));
 		$formStartDate =$request->get('start_date',$defaultStartDate); 
 		$formEndDate =$request->get('end_date',$defaultEndDate);
-		$reportInterval =  $request->get('report_interval');
+		$reportInterval =  $request->get('report_interval','weekly');
 		// $reportInterval = 'daily';
 		$result = [];
 		// $cashExpenseCategoryNamesArr = [];
@@ -53,7 +53,7 @@ class CashFlowReportController
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
 		$startDate = $request->get('start_date',$defaultStartDate);
-		$currency = $request->get('currency');
+		$currency = $request->get('currency',$company->getMainFunctionalCurrency());
 		$year = explode('-',$startDate)[0];
 		$endDate  = $request->get('end_date',$defaultEndDate);
 		$datesWithWeeks = [];
@@ -73,8 +73,8 @@ class CashFlowReportController
 		$rangedWeeks = [];
 		$totalCashInFlowArray = [];
 		$totalCashOutFlowArray = [];
-		
 		foreach($weeks as $currentWeekYear=>$week){
+			
 			$currentYear = explode('-',$currentWeekYear)[1];
 			if($currentWeekYear == $firstIndex){
 				$startDate = $startDate ;
@@ -82,7 +82,7 @@ class CashFlowReportController
 			}
 			elseif($currentWeekYear == $lastIndex){
 				$startDate = getMinDateOfWeek($datesWithWeeks,$week,$currentYear)['start_date'];
-				$endDate = $request->get('end_date');  
+				$endDate = $request->get('end_date',$defaultEndDate);  
 			}
 			else
 			{
@@ -90,7 +90,6 @@ class CashFlowReportController
 				$startDate = $rangedWeeks['start_date'];
 				$endDate = $rangedWeeks['end_date'];
 			}
-			
 			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::UNDER_COLLECTION,$currency,$company->id) ;
 			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'actual_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::COLLECTED,$currency,$company->id);
 			CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$totalCashInFlowArray,$company->id,$startDate , $endDate,$currency,null,$currentWeekYear,$currency);
@@ -147,7 +146,7 @@ class CashFlowReportController
 		
 		
 		// for customers 
-		$pastDueCustomerInvoices = $this->getPastDueCustomerInvoices('CustomerInvoice',$currency,$company->id,$request->get('start_date'));
+		$pastDueCustomerInvoices = $this->getPastDueCustomerInvoices('CustomerInvoice',$currency,$company->id,$request->get('start_date',$defaultStartDate));
 		$excludeIds = $pastDueCustomerInvoices->where('net_balance_until_date','<=',0)->pluck('id')->toArray() ;
 		$customerDueInvoices=DB::table('weekly_cashflow_custom_due_invoices')->where('company_id',$company->id)
 		->where('invoice_type','CustomerInvoice')
@@ -157,7 +156,7 @@ class CashFlowReportController
 		
 		
 		// for suppliers 
-		$pastDueSupplierInvoices = $this->getPastDueCustomerInvoices('SupplierInvoice',$currency,$company->id,$request->get('start_date'));
+		$pastDueSupplierInvoices = $this->getPastDueCustomerInvoices('SupplierInvoice',$currency,$company->id,$request->get('start_date',$defaultStartDate));
 		$excludeIds = $pastDueSupplierInvoices->where('net_balance_until_date','<=',0)->pluck('id')->toArray() ;
 		$supplierDueInvoices=DB::table('weekly_cashflow_custom_due_invoices')->where('company_id',$company->id)
 		->where('invoice_type','SupplierInvoice')

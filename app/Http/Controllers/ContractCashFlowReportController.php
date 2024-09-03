@@ -36,7 +36,7 @@ class ContractCashFlowReportController
 		 
 		$formEndDate =$request->get('end_date',$request->get('cash_end_date'));
 		
-		$reportInterval =  $request->get('report_interval');
+		$reportInterval =  $request->get('report_interval','weekly');
 		// $supplierIdAndNames = [];
 		//////////////////////////
 		$contractId = $request->get('contract_id')	 ;
