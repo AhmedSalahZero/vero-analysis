@@ -375,10 +375,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->when($chequeStatus , function( $builder) use ($chequeStatus){
 			$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
 		})
-		->when($companyId,function($builder) use ($companyId){
-			$builder->where('customer_invoices.company_id',$companyId);
-		})
-		// ->sum('settlement_amount')
+		->where('customer_invoices.company_id',$companyId)
 		->selectRaw('sum(settlement_amount) as current_sum,customer_invoices.invoice_number')->first();
 	
 		if($queryResultRaw->current_sum){

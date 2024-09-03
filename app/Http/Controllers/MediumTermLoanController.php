@@ -155,7 +155,6 @@ class MediumTermLoanController
 	}
 	public function viewLoanScheduleSettlement(Company $company , LoanSchedule $loanSchedule)
 	{
-
 		 return view('admin.loan-schedule-settlements.index',$this->getCommonSettlementVars($company,$loanSchedule));
 	}
 	public function storeLoanScheduleSettlement(Company $company,Request $request , LoanSchedule $loanSchedule)

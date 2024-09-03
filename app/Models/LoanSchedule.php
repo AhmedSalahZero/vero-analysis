@@ -42,6 +42,10 @@ class LoanSchedule extends Model
 	{
 		return $this->mediumTermLoan->getName();
 	}
+	public function getMediumTermLoanId()
+	{
+		return $this->mediumTermLoan->id;
+	}
 	public function getDate()
 	{
 		return $this->date ;
@@ -117,5 +121,17 @@ class LoanSchedule extends Model
 			'principle_amount'=>__('Principle Amount'),
 			'end_balance'=>__('End Balance')
 		];
+	}
+	public function getStatusFormatted()
+	{
+		return $this->status ? snakeToCamel($this->status) : __('N/A');
+	}
+	public function getRemaining()
+	{
+		return $this->remaining ?: 0 ;
+	}
+	public function getRemainingFormatted():string 
+	{
+		return number_format($this->getRemaining());
 	}
 }

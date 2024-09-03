@@ -15,6 +15,9 @@ use Carbon\Carbon;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
+.max-w-6-percentage{
+	max-width:6% !important;
+}
     .max-w-invoice-date {
         width: 25% !important;
         min-width: 25% !important;
@@ -340,13 +343,13 @@ use Carbon\Carbon;
                                         </h3>
                                     </div>
                                 </div>
-                                <div class="kt-portlet__body">
-                                    <div class="form-group row">
+                                <div class="kt-portlet__body pb-0">
+                                    <div class="form-group row mb-0">
                                         <div class="col-md-4 mb-4">
                                             <label> <?php echo e(__('Loan Name')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getMediumTermLoanName()); ?>">
                                         </div>
-										 <div class="col-md-4 mb-4">
+                                        <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Date')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getDateFormatted()); ?>">
                                         </div>
@@ -354,33 +357,33 @@ use Carbon\Carbon;
                                             <label><?php echo e(__('Currency')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getCurrency()); ?>">
                                         </div>
-                                       
+
 
                                         <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Beginning Balance')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getBeginningBalanceFormatted()); ?>">
-                                        </div>  
-										
-										 <div class="col-md-4 mb-4">
+                                        </div>
+
+                                        <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Schedule Payment')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getSchedulePaymentFormatted()); ?>">
                                         </div>
-                                     
-									 <div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Interest Amount')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getInterestAmountFormatted()); ?>">
                                         </div>
-										
-										<div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Pricincple Amount')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getPrincipleAmountFormatted()); ?>">
                                         </div>
-										
-											<div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('End Balance')); ?> </label>
                                             <input type="text" class="form-control" disabled value="<?php echo e($loanSchedule->getEndBalanceFormatted()); ?>">
                                         </div>
-										
+
                                         <div class="col-md-4">
                                             <label><?php echo e(__('Settlement Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                             <div class="kt-input-icon">
@@ -394,43 +397,42 @@ use Carbon\Carbon;
                                                 </div>
                                             </div>
                                         </div>
-										
-										<div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label><?php echo e(__('Settlement Amount')); ?> </label>
                                             <input type="text" class="form-control" name="amount" value="<?php echo e(isset($model) ? $model->getAmount() : $loanSchedule->getSchedulePayment()); ?>">
                                         </div>
-										
-										
-                        <div class="col-md-3 mb-4">
-                            <label class="form-label font-weight-bold"><?php echo e(__('Current Account')); ?> </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group ">
-                                    <select data-live-search="true" name="current_account_number" required class="form-control  form-select form-select-2 form-select-solid fw-bolder">
-                                        
-                                        <?php $__currentLoopData = $currentAccounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $accountNumber): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($accountNumber); ?>" <?php if(isset($model) && $model->getCurrentAccountNumber() == $accountNumber ): ?> selected <?php endif; ?>> <?php echo e($accountNumber); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+
+
+                                        <div class="col-md-3 mb-4">
+                                            <label class="form-label font-weight-bold"><?php echo e(__('Current Account')); ?> </label>
+                                            <div class="kt-input-icon">
+                                                <div class="input-group ">
+                                                    <select data-live-search="true" name="current_account_number" required class="form-control  form-select form-select-2 form-select-solid fw-bolder">
+                                                        
+                                                        <?php $__currentLoopData = $currentAccounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $accountNumber): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($accountNumber); ?>" <?php if(isset($model) && $model->getCurrentAccountNumber() == $accountNumber ): ?> selected <?php endif; ?>> <?php echo e($accountNumber); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1 max-w-6-percentage">
+                                            <label class="d-block visibility-hidden">d</label>
+                                            <button type="submit" class="btn active-style save-form"><?php echo e(__('Save')); ?></button>
+                                        </div>
+
+ 											<div class="col-md-2">
+                                            <label class="d-block visibility-hidden">d</label>
+                                            <a class="btn active-style save-form" href="<?php echo e(route('view.uploading',['company'=>$company->id,'loanId'=>$loanSchedule->getMediumTermLoanId(),'model'=>'LoanSchedule'])); ?>" ><?php echo e(__('Back To Loan Schedule')); ?></a>
+                                        </div>
 										
                                     </div>
                                 </div>
                             </div>
 
-                             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
-<?php $component->withName('submitting'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?>
-<?php if (isset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34)): ?>
-<?php $component = $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34; ?>
-<?php unset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+                            
 
                         </form>
                     </div>
@@ -496,7 +498,7 @@ use Carbon\Carbon;
                                             <?php $__currentLoopData = $settlements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $settlement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   "><?php echo e(++$index); ?></td>
-                                                <td class="sub-text-bg max-w-invoice-date  text-center   "><?php echo e($currentDueDate = $settlement->getDate()); ?>  </td>
+                                                <td class="sub-text-bg max-w-invoice-date  text-center   "><?php echo e($currentDueDate = $settlement->getDate()); ?> </td>
                                                 
                                                 <?php
                                                 $previousDate = $settlement->getDate();

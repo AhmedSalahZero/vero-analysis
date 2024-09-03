@@ -6,6 +6,9 @@ use Carbon\Carbon;
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
+.max-w-6-percentage{
+	max-width:6% !important;
+}
     .max-w-invoice-date {
         width: 25% !important;
         min-width: 25% !important;
@@ -320,13 +323,13 @@ use Carbon\Carbon;
                                         </h3>
                                     </div>
                                 </div>
-                                <div class="kt-portlet__body">
-                                    <div class="form-group row">
+                                <div class="kt-portlet__body pb-0">
+                                    <div class="form-group row mb-0">
                                         <div class="col-md-4 mb-4">
                                             <label> {{ __('Loan Name') }} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getMediumTermLoanName() }}">
                                         </div>
-										 <div class="col-md-4 mb-4">
+                                        <div class="col-md-4 mb-4">
                                             <label>{{__('Date')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getDateFormatted() }}">
                                         </div>
@@ -334,33 +337,33 @@ use Carbon\Carbon;
                                             <label>{{__('Currency')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getCurrency() }}">
                                         </div>
-                                       
+
 
                                         <div class="col-md-4 mb-4">
                                             <label>{{__('Beginning Balance')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getBeginningBalanceFormatted() }}">
-                                        </div>  
-										
-										 <div class="col-md-4 mb-4">
+                                        </div>
+
+                                        <div class="col-md-4 mb-4">
                                             <label>{{__('Schedule Payment')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getSchedulePaymentFormatted() }}">
                                         </div>
-                                     
-									 <div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label>{{__('Interest Amount')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getInterestAmountFormatted() }}">
                                         </div>
-										
-										<div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label>{{__('Pricincple Amount')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getPrincipleAmountFormatted() }}">
                                         </div>
-										
-											<div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label>{{__('End Balance')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getEndBalanceFormatted() }}">
                                         </div>
-										
+
                                         <div class="col-md-4">
                                             <label>{{__('Settlement Date')}} @include('star') </label>
                                             <div class="kt-input-icon">
@@ -374,32 +377,42 @@ use Carbon\Carbon;
                                                 </div>
                                             </div>
                                         </div>
-										
-										<div class="col-md-4 mb-4">
+
+                                        <div class="col-md-4 mb-4">
                                             <label>{{__('Settlement Amount')}} </label>
                                             <input type="text" class="form-control" name="amount" value="{{ isset($model) ? $model->getAmount() : $loanSchedule->getSchedulePayment() }}">
                                         </div>
-										
-										
-                        <div class="col-md-3 mb-4">
-                            <label class="form-label font-weight-bold">{{ __('Current Account') }} </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group ">
-                                    <select data-live-search="true" name="current_account_number" required class="form-control  form-select form-select-2 form-select-solid fw-bolder">
-                                        {{-- <option value="" selected>{{ __('Select') }}</option> --}}
-                                        @foreach($currentAccounts as $accountNumber)
-                                        <option value="{{ $accountNumber}}" @if(isset($model) && $model->getCurrentAccountNumber() == $accountNumber ) selected @endif> {{ $accountNumber }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+
+
+                                        <div class="col-md-3 mb-4">
+                                            <label class="form-label font-weight-bold">{{ __('Current Account') }} </label>
+                                            <div class="kt-input-icon">
+                                                <div class="input-group ">
+                                                    <select data-live-search="true" name="current_account_number" required class="form-control  form-select form-select-2 form-select-solid fw-bolder">
+                                                        {{-- <option value="" selected>{{ __('Select') }}</option> --}}
+                                                        @foreach($currentAccounts as $accountNumber)
+                                                        <option value="{{ $accountNumber}}" @if(isset($model) && $model->getCurrentAccountNumber() == $accountNumber ) selected @endif> {{ $accountNumber }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1 max-w-6-percentage">
+                                            <label class="d-block visibility-hidden">d</label>
+                                            <button type="submit" class="btn active-style save-form">{{__('Save')}}</button>
+                                        </div>
+
+ 											<div class="col-md-2">
+                                            <label class="d-block visibility-hidden">d</label>
+                                            <a class="btn active-style save-form" href="{{ route('view.uploading',['company'=>$company->id,'loanId'=>$loanSchedule->getMediumTermLoanId(),'model'=>'LoanSchedule']) }}" >{{__('Back To Loan Schedule')}}</a>
+                                        </div>
 										
                                     </div>
                                 </div>
                             </div>
 
-                            <x-submitting />
+                            {{-- <x-submitting /> --}}
 
                         </form>
                     </div>
@@ -460,7 +473,7 @@ use Carbon\Carbon;
                                             @foreach($settlements as $index => $settlement)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
-                                                <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $settlement->getDate() }}  </td>
+                                                <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $settlement->getDate() }} </td>
                                                 {{-- <td class="sub-text-bg  text-center  max-w-counts ">{{ $previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) : '-' }}</td> --}}
                                                 @php
                                                 $previousDate = $settlement->getDate();

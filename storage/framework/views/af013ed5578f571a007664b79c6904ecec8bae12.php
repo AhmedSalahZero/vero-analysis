@@ -397,6 +397,11 @@ $date = now()->format('d-m-Y')
             <th data-css-col-name="id"><?php echo e(__('ID')); ?></th>
 
             <?php endif; ?>
+			
+			 <?php if($modelName == 'LoanSchedule' ): ?>
+			 	<th><?php echo e(__('Status')); ?></th>
+			 	<th><?php echo e(__('Remaining')); ?></th>
+			 <?php endif; ?> 
 
             <th><?php echo e(__('Actions')); ?></th>
         </tr>
@@ -475,7 +480,23 @@ $date = now()->format('d-m-Y')
 						<?php echo e(qrcodeSpacing($item->getCode($serial))); ?>
 
 					</td>
+				
             <?php endif; ?>
+			
+				
+					 <?php if($modelName == 'LoanSchedule' ): ?>
+					 	<td class="text-capitalize">
+						<?php echo e($item->getStatusFormatted()); ?>
+
+					</td>
+					 	<td >
+						<?php echo e($item->getRemainingFormatted()); ?>
+
+					</td>
+					
+					
+					 <?php endif; ?> 
+					 
 
             <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 			
