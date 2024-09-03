@@ -2,6 +2,7 @@
 
 use App\Enums\LcTypes;
 use App\Enums\LgTypes;
+use App\Helpers\HArr;
 use App\Helpers\HHelpers;
 use App\Helpers\HStr;
 use App\Http\Controllers\Analysis\SalesGathering\BranchesAgainstAnalysisReport;
@@ -5236,4 +5237,16 @@ if (!function_exists('getFixedLoanTypes')) {
                 return $tbl;
             }
         });
+	}
+	 function formatAccumulatedNetCash(array $netCashItems , array $dates)
+	{
+		$netCashItems = HArr::removeKeysFromArray($netCashItems,['total_of_total']);
+		$accumulatedNetCash = 0 ;
+		foreach($dates as  $weekAndYear => $startAndEndDateArray){
+			$endDate = $startAndEndDateArray['end_date'];
+			$currentNetCash = $netCashItems[$weekAndYear] ?? 0 ;
+			$accumulatedNetCash += $currentNetCash ; 
+			$formattedResult[] = ['date'=>$endDate,'value'=>$accumulatedNetCash ];
+	}
+		return $formattedResult ; 
 	}

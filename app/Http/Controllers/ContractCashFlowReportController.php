@@ -148,7 +148,7 @@ class ContractCashFlowReportController
 		$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
-		
+		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
 		if($returnResultAsArray){
 			return [
 				'result'=>$result , 
@@ -166,6 +166,17 @@ class ContractCashFlowReportController
 			'reportInterval'=>$reportInterval,
 			'noRowHeaders'=>$noRowHeaders,
 		]);
+	}
+	public function formatAccumulatedNetCash(array $netCashes,array $weeks)
+	{
+		$currentAccumulated = 0 ;
+		$result = [];
+
+		foreach($weeks as $week => $weekNumber){
+			$currentAccumulated +=  $netCashes[$week] ?? 0;
+			$result[$week] = $currentAccumulated ;
+		}
+		return $result ;
 	}
 	public function mergeTotal(array $totals , $collectionOfItems):array 
 	{

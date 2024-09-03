@@ -105,6 +105,7 @@ use App\Models\MediumTermLoan ;
                                     <th><?php echo e(__('Start Date')); ?></th>
                                     <th><?php echo e(__('End Date')); ?></th>
                                     <th><?php echo e(__('Currency')); ?></th>
+                                    <th><?php echo e(__('Limit')); ?></th>
                                     <th><?php echo e(__('Account Number')); ?></th>
                                     <th><?php echo e(__('Borrowing Rate')); ?></th>
                                     <th><?php echo e(__('Margin Rate')); ?></th>
@@ -125,6 +126,7 @@ use App\Models\MediumTermLoan ;
                                     <td><?php echo e($model->getStartDateFormatted()); ?></td>
                                     <td><?php echo e($model->getEndDateFormatted()); ?></td>
                                     <td><?php echo e($model->getCurrencyFormatted()); ?></td>
+                                    <td><?php echo e($model->getLimitFormatted()); ?></td>
                                     <td><?php echo e($model->getAccountNumber()); ?></td>
                                     <td><?php echo e($model->getBorrowingRateFormatted()); ?></td>
                                     <td><?php echo e($model->getMarginRateFormatted()); ?></td>

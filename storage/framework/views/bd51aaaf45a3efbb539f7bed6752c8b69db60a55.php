@@ -176,7 +176,15 @@
                                                 </div>
                                             </div>
 											
-											
+											  <div class="col-md-2">
+                                                <label><?php echo e(__('Limit')); ?>
+
+                                                    <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                                </label>
+                                                <div class="kt-input-icon">
+                                                    <input  type="text" value="<?php echo e(isset($model) ? $model->getLimit():  0); ?>" name="limit" class="form-control only-greater-than-zero-allowed " >
+                                                </div>
+                                            </div> 
 											
 											  <div class="col-md-2 ">
                                                 <label><?php echo e(__('Account Number')); ?>

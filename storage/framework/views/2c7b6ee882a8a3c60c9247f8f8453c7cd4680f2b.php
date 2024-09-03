@@ -1188,7 +1188,7 @@
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap">
                                 <?php echo e(__('Long Term Cash Facilities Position')); ?>
 
                             </h3>
@@ -1197,22 +1197,27 @@
                 </div>
             </div>
         </div>
-
         <!--begin:: Widgets/Stats-->
+		<?php $__currentLoopData = $mediumTermLoansArr[$currency] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mediumTermLoan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        <?php echo e(__('Medium Term Loans Position')); ?>
+                        <?php echo e(__('Loans Position')); ?>
 
+					[ 	<?php echo e($mediumTermLoan->getFinancialInstitutionName()); ?> ] 
+					[ <?php echo e($mediumTermLoan->getName()); ?> ]
                     </h3>
                 </div>
             </div>
+			
             <div class="kt-portlet__body  kt-portlet__body--fit">
                 <div class="row row-no-padding row-col-separator-xl">
                     <div class="col-md-6 col-lg-3 col-xl-3">
 
                         <!--begin::Limit-->
+						
+				
                         <div class="kt-widget24 text-center">
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
@@ -1225,7 +1230,8 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-brand">
-                                  -
+								<?php echo e($mediumTermLoan->getLimitFormatted()); ?>
+
                                 </span>
                             </div>
 
@@ -1248,7 +1254,8 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning">
-                                    -
+                                    <?php echo e($mediumTermLoan->getEndBalanceForDate($date)); ?>
+
                                 </span>
                             </div>
 
@@ -1303,6 +1310,7 @@
                 </div>
             </div>
         </div>
+			<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         <!--end:: Widgets/Stats-->
 
         <!--begin:: Widgets/Stats-->

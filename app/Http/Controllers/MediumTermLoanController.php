@@ -104,15 +104,9 @@ class MediumTermLoanController
 	public function getCommonViewVars(Company $company,$financialInstitution,$model = null)
 	{
 		$banks = Bank::pluck('view_name','id');
-		// $selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		// $accountTypes = AccountType::onlyCurrentAccount()->get();
 		return [
 			'banks'=>$banks,
 			'financialInstitution'=>$financialInstitution,
-			// 'selectedBranches'=>$selectedBranches,
-			// 'financialInstitutionBanks'=>$financialInstitutionBanks,
-			// 'accountTypes'=>$accountTypes,
 			'model'=>$model
 		];
 	}
