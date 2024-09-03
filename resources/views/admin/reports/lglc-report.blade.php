@@ -439,7 +439,7 @@
         </div>
 		@endforeach 
         {{-- Title --}}
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
@@ -552,7 +552,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
   
   
 

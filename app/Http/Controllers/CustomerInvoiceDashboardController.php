@@ -18,6 +18,7 @@ use App\Models\FullySecuredOverdraft;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
+use App\Models\MediumTermLoan;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Models\Partner;
 use App\Models\TimeOfDeposit;
@@ -34,6 +35,7 @@ class CustomerInvoiceDashboardController extends Controller
     public function viewCashDashboard(Company $company, Request $request)
     {
 			// start fully SecuredOverdraft
+			$mediumTermLoansArr = [];
 			$allFullySecuredOverdraftBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasFullySecuredOverdrafts()->get();
 			$fullySecuredOverdraftAccountTypes = AccountType::onlyFullySecuredOverdraft()->get();
 			$fullySecuredOverdraftCardData = [];
@@ -81,6 +83,9 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		$totalCard = [];
         foreach ($selectedCurrencies as $currencyName) {
+			$loansForCurrentCurrency = MediumTermLoan::where('currency',$currencyName)->with(['loanSchedules'])->where('company_id',$company->id)->get() ;
+			// dd($loansForCurrentCurrency);
+			$mediumTermLoansArr[$currencyName] = $loansForCurrentCurrency;
 			$currentAccountInBanks = 0 ;
 			$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount = 0 ;
             $totalTimeDepositsForCurrentFinancialInstitutionAmount = 0 ;
@@ -312,8 +317,10 @@ class CustomerInvoiceDashboardController extends Controller
 			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
 		
 		}
-	
+		
+		// dd($mediumTermLoansArr);
         return view('admin.dashboard.cash', [
+			'mediumTermLoansArr'=>$mediumTermLoansArr,
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
             'reports' => $reports,
@@ -322,7 +329,7 @@ class CustomerInvoiceDashboardController extends Controller
             'selectedFinancialInstitutionsIds' => $selectedFinancialInstitutionBankIds,
 			'totalCard'=>$totalCard,
 			'details'=>$details,
-			
+			'date'=>$date,
 			// cleanOverdraft
 			
 			'cleanOverdraftCardData' => $cleanOverdraftCardData,
@@ -422,18 +429,7 @@ class CustomerInvoiceDashboardController extends Controller
 		// dd($oldArr);
 		return $oldArr;
 	}
-	public function formatAccumulatedNetCash(array $netCashItems , array $dates)
-	{
-		$netCashItems = HArr::removeKeysFromArray($netCashItems,['total_of_total']);
-		$accumulatedNetCash = 0 ;
-		foreach($dates as  $weekAndYear => $startAndEndDateArray){
-			$endDate = $startAndEndDateArray['end_date'];
-			$currentNetCash = $netCashItems[$weekAndYear] ?? 0 ;
-			$accumulatedNetCash += $currentNetCash ; 
-			$formattedResult[] = ['date'=>$endDate,'value'=>$accumulatedNetCash ];
-	}
-		return $formattedResult ; 
-	}
+	
 	public function formatFlowCashInOutChartData(array $totalCashInItems ,array $totalCashOutItems,array $dates ){
 		$totalCashInItems = HArr::removeKeysFromArray($totalCashInItems,['total_of_total']);
 		$totalCashOutItems = HArr::removeKeysFromArray($totalCashOutItems,['total_of_total']);
@@ -461,13 +457,13 @@ class CustomerInvoiceDashboardController extends Controller
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
 			$cashFlowReport['total_cash_in_out_flow']=$this->formatFlowCashInOutChartData($cashFlowReportResult['customers'][__('Total Cash Inflow')]['total'] ?? [],$cashFlowReportResult['cash_expenses'][__('Total Cash Outflow')]['total'] ?? [],$dates);
-			$cashFlowReport['accumulated_net_cash']= $this->formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
+			$cashFlowReport['accumulated_net_cash']= formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
 		}else{
 			$report =(new CashFlowReportController())->result($company,$request,true);
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
 			$cashFlowReport['total_cash_in_out_flow']=$this->formatFlowCashInOutChartData($cashFlowReportResult['customers'][__('Total Cash Inflow')]['total'] ?? [],$cashFlowReportResult['cash_expenses'][__('Total Cash Outflow')]['total'] ?? [],$dates);
-			$cashFlowReport['accumulated_net_cash']= $this->formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
+			$cashFlowReport['accumulated_net_cash']= formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
 		}
 		
 		$overdraftAccountTypes = AccountType::onlyOverdraftsAccounts()->get();
@@ -489,7 +485,6 @@ class CustomerInvoiceDashboardController extends Controller
 		{
 			foreach ($invoiceTypesModels as $modelType) {
 				$clientNames = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id,$currencyName);
-	
 				/**
 				 * * Customers Invoices Aging & Supplier Invoices Aging
 				 */

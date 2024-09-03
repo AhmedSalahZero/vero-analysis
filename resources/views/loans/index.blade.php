@@ -82,6 +82,7 @@ use App\Models\MediumTermLoan ;
                                     <th>{{ __('Start Date') }}</th>
                                     <th>{{ __('End Date') }}</th>
                                     <th>{{ __('Currency') }}</th>
+                                    <th>{{ __('Limit') }}</th>
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Borrowing Rate') }}</th>
                                     <th>{{ __('Margin Rate') }}</th>
@@ -101,6 +102,7 @@ use App\Models\MediumTermLoan ;
                                     <td>{{ $model->getStartDateFormatted() }}</td>
                                     <td>{{ $model->getEndDateFormatted() }}</td>
                                     <td>{{ $model->getCurrencyFormatted() }}</td>
+                                    <td>{{ $model->getLimitFormatted() }}</td>
                                     <td>{{ $model->getAccountNumber() }}</td>
                                     <td>{{ $model->getBorrowingRateFormatted() }}</td>
                                     <td>{{ $model->getMarginRateFormatted() }}</td>

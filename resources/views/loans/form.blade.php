@@ -146,7 +146,14 @@
                                                 </div>
                                             </div>
 											
-											
+											  <div class="col-md-2">
+                                                <label>{{__('Limit')}}
+                                                    @include('star')
+                                                </label>
+                                                <div class="kt-input-icon">
+                                                    <input  type="text" value="{{ isset($model) ? $model->getLimit():  0 }}" name="limit" class="form-control only-greater-than-zero-allowed " >
+                                                </div>
+                                            </div> 
 											
 											  <div class="col-md-2 ">
                                                 <label>{{__('Account Number')}}

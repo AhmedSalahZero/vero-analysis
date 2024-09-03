@@ -50,8 +50,6 @@ class MediumTermLoan extends Model
         $this->attributes['start_date'] = $year . '-' . $month . '-' . $day;
     }
 	
-	
-	
 	public function getEndDate()
     {
         return $this->end_date ?: 0 ;
@@ -93,6 +91,11 @@ class MediumTermLoan extends Model
 	public function financialInstitution()
 	{
 		return $this->belongsTo(FinancialInstitution::class ,'financial_institution_id','id');
+	}
+	public function getFinancialInstitutionName()
+	{
+		$financialInstitution = $this->financialInstitution ;
+		return  $financialInstitution ? $financialInstitution->getName()  : __('N/A');
 	}
 	public function getBorrowingRate()
 	{
@@ -141,6 +144,20 @@ class MediumTermLoan extends Model
 			$loanSchedule->delete();
 		});
     }
-
-	
+	public function getLimit()
+	{
+		return $this->limit?:0 ;
+	}
+	public function getLimitFormatted()
+	{
+		return number_format($this->getLimit());
+	}
+	public function getEndBalanceForDate(string $date)
+	{
+		// $total = 0 ;
+		// $loanSchedule = $this->loanSchedules()->where('remaining','>',0)->where('date','<=',$date)->sortBy('date')->get()->each(function(LoanSchedule $loanSchedule){
+			
+		// }) ;
+		// return $loanSchedule ? $loanSchedule->end_balance : 0 ;
+	}
 }

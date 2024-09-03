@@ -155,9 +155,9 @@ public static function getAllAccountNumberForCurrency($companyId , $currencyName
 		}
 		foreach($overdraftAgainstCommercialPapers as $overdraftAgainstCommercialPaper){
 			$limitStatement = $overdraftAgainstCommercialPaper->overdraftAgainstCommercialPaperBankLimits->sortByDesc('full_date')->first() ;
-			if(($limitStatement && $limitStatement->accumulated_limit >0 ) || in_array('bank-statement',Request()->segments()) ){
+			// if(($limitStatement && $limitStatement->accumulated_limit >0 ) || in_array('bank-statement',Request()->segments()) ){
 				$accounts[$overdraftAgainstCommercialPaper->account_number] = $overdraftAgainstCommercialPaper->account_number;
-			}
+			// }
 		}
 		
 		return  $accounts ;
