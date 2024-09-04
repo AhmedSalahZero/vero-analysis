@@ -1339,10 +1339,8 @@
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-danger">
                                   {{ $mediumTermLoan->getTotalPastDueRemainingFormatted() }}
-								  
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" data-toggle="modal" data-target="#{{ $currency }}-past-due-modal">{{ __('Details') }}</button>
 										@include('admin.dashboard.details-loan-past-dues-modal',['detailItems'=> $mediumTermLoan->getLoanPastDuesDetailsArray()   ,'title'=>__('Loan Past Dues')])
-										
                                 </span>
                             </div>
                         </div>

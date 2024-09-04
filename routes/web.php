@@ -439,6 +439,8 @@ Route::middleware([])->group(function () {
 				 Route::get('edit-loan-schedule-settlement/{loanScheduleSettlement}','MediumTermLoanController@editLoanScheduleSettlement')->name('edit.loan.schedule.settlements');
 				 Route::patch('loan-schedule-settlements/{loanScheduleSettlement}','MediumTermLoanController@updateLoanScheduleSettlement')->name('update.loan.schedule.settlements');
 				 Route::delete('delete-loan-schedule-settlement/{loanScheduleSettlement}','MediumTermLoanController@deleteLoanScheduleSettlement')->name('delete.loan.schedule.settlements');
+				 Route::get('medium-term-loan-report','MediumTermLoanController@refreshReport')->name('refresh.medium.term.loan.report'); // ajax
+				 Route::get('get-medium-term-loan-for-financial-institution','MediumTermLoanController@getMediumTermLoanForFinancialInstitution')->name('get.medium.term.loan.for.financial.institution');
 				 
 
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper', 'OverdraftAgainstCommercialPaperController@index')->name('view.overdraft.against.commercial.paper');

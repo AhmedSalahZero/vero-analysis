@@ -11,6 +11,7 @@ use App\Models\MediumTermLoan;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MediumTermLoanController
 {
@@ -198,4 +199,44 @@ class MediumTermLoanController
 			'model'=>$loanScheduleSettlement
 		];
 	}
+	public function refreshReport(Company $company,Request $request) // ajax 
+	{
+		$financialInstitutionId = $request->get('financialInstitutionId');
+		$loanId = $request->get('mediumTermLoanId');
+		$currencyName = $request->get('currencyName');
+		$startDate = $request->get('loanStartDate');
+		$endDate = $request->get('loanEndDate');
+		$result = DB::table('medium_term_loans')->where('medium_term_loans.company_id',$company->id)->where('currency',$currencyName)->join('loan_schedules','loan_schedules.medium_term_loan_id','=','medium_term_loans.id')
+		->when($loanId != 0 , function($builder) use ($loanId){
+			$builder->where('loan_id','=',$loanId);
+		})
+		->when($financialInstitutionId != 0 , function($builder) use ($financialInstitutionId){
+			$builder->where('financial_institution_id','=',$financialInstitutionId);
+		})
+		->whereBetween('date',[$startDate,$endDate])
+		->orderBy('date')->take(6)->get();
+		return response()->json([
+			'status'=>true ,
+			'data'=>$result
+		]);
+	}
+	public function getMediumTermLoanForFinancialInstitution(Company $company , Request $request){
+		$financialInstitution = FinancialInstitution::find($request->get('financialInstitutionId'));
+		
+		if(!$financialInstitution){
+			return [
+				'loans'=>$company->mediumTermLoans->where('currency',$request->get('currency'))->values()
+			];
+		}
+	
+		$loans = $financialInstitution->loans ;
+
+	
+		return response()->json([
+			'status'=>true ,
+			'loans'=>$loans 
+		]);
+		
+	}
+
 }
