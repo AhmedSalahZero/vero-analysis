@@ -33,6 +33,10 @@ class CleanOverdraftRate extends Model
 	{
 		return $this->belongsTo(CleanOverdraft::class,'clean_overdraft_id','id');
 	}
+	public function overdraftModal()
+	{
+		return $this->cleanOverdraft(); 
+	}
 	public function getDate()
 	{
 		return $this->date ;
@@ -50,8 +54,6 @@ class CleanOverdraftRate extends Model
 	{
 		return number_format($this->getBorrowingRate(),1) . ' %';
 	}
-	
-	
 	public function getMarginRate()
 	{
 		return $this->margin_rate?:0;

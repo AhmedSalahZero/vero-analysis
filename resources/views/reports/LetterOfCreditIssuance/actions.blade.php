@@ -81,8 +81,16 @@
 
              </form>
 
-             @foreach($model->expenses->sortBy('date') as $index=>$expense)
-             <div class="modal fade" id="edit-expense-{{ $expense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+           
+
+           
+         </div>
+     </div>
+ </div>
+
+
+  @foreach($model->expenses->sortBy('date') as $index=>$expense)
+             <div class="modal fade inner-modal-class" id="edit-expense-{{ $expense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 
 
                  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
@@ -91,7 +99,7 @@
                              @csrf
                              <div class="modal-header">
                                  <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Edit Expenses To' )  }}</h5>
-                                 <button data-dismiss="modal2" type="button" class="close" aria-label="Close">
+                                 <button data-dismiss="modal" type="button" class="close" aria-label="Close">
                                      <span aria-hidden="true">&times;</span>
                                  </button>
                              </div>
@@ -109,7 +117,7 @@
 
 
                              <div class="modal-footer">
-                                 <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
+                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
                                  <button type="submit" class="btn btn-primary submit-form-btn">{{ __('Confirm') }}</button>
                              </div>
 
@@ -119,10 +127,7 @@
              </div>
 
 
-
-
-
-             <div class="modal fade" id="delete-lc-issuance-expense{{ $expense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+             <div class="modal fade inner-modal-class" id="delete-lc-issuance-expense{{ $expense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                  <div class="modal-dialog modal-dialog-centered" role="document">
                      <div class="modal-content">
                          <form action="" method="post">
@@ -130,12 +135,12 @@
                              @method('delete')
                              <div class="modal-header">
                                  <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                 <button type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                      <span aria-hidden="true">&times;</span>
                                  </button>
                              </div>
                              <div class="modal-footer">
-                                 <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
+                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
 
                                  <a href="{{ route('delete.lc.issuance.expense',['company'=>$company->id,'expense'=>$expense->id]) }}" class="btn btn-danger">{{ __('Confirm Delete') }}</a>
                              </div>
@@ -146,14 +151,6 @@
              </div>
 
              @endforeach
-
-           
-         </div>
-     </div>
- </div>
-
-
-
 
 
  @include('reports.LetterOfCreditIssuance.cancel-issuance-modal')

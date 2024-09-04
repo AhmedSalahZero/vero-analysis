@@ -147,19 +147,11 @@
                                     <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
                                         <?php echo e(__('Cash & Banks' )  . ' [ ' . $currency . ' ]'); ?>
 
-										
-									
-									
-									
-									
-									
 										<?php
 											$currentModalId = 'safe';
 										?>
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModalId.$currency); ?>"><?php echo e(__('Details')); ?></button>
 										<?php echo $__env->make('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['cash_in_safe'] ?? [],$details[$name]['current_account'])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-									
-									
                                     </h4>
 
                                 </div>
@@ -1254,7 +1246,7 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning">
-                                    <?php echo e($mediumTermLoan->getEndBalanceForDate($date)); ?>
+                                    <?php echo e($mediumTermLoan->getLoanOutstandingFormatted()); ?>
 
                                 </span>
                             </div>
@@ -1270,15 +1262,24 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        <?php echo e(__('Next Due Amount')); ?>
+                                        <?php echo e(__('Next Installment')); ?>
 
                                     </h4>
 
                                 </div>
                             </div>
+							<?php
+								$nextInstallment = $mediumTermLoan->getNextInstallmentDateAndAmount($date) ;
+								$nextInstallmentAmountFormatted = $nextInstallment['amount_formatted'];
+								$nextInstallmentDateFormatted = $nextInstallment['date_formatted'];
+							?>
                             <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-danger">
-                                  -
+                                <span class="kt-widget24__stats kt-font-success">
+									<?php if($nextInstallmentDateFormatted): ?>
+                                  <?php echo e($nextInstallmentAmountFormatted); ?> [<?php echo e($nextInstallmentDateFormatted); ?>]
+									<?php else: ?> 
+									-
+									<?php endif; ?> 
                                 </span>
                             </div>
                         </div>
@@ -1292,15 +1293,20 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        <?php echo e(__('Date')); ?>
+                                        <?php echo e(__('Past Dues')); ?>
 
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-success">
-                                  -
+                                <span class="kt-widget24__stats kt-font-danger">
+                                  <?php echo e($mediumTermLoan->getTotalPastDueRemainingFormatted()); ?>
+
+								  
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" data-toggle="modal" data-target="#<?php echo e($currency); ?>-past-due-modal"><?php echo e(__('Details')); ?></button>
+										<?php echo $__env->make('admin.dashboard.details-loan-past-dues-modal',['detailItems'=> $mediumTermLoan->getLoanPastDuesDetailsArray()   ,'title'=>__('Loan Past Dues')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										
                                 </span>
                             </div>
                         </div>

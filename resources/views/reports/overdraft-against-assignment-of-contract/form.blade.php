@@ -162,12 +162,13 @@
                             <div class="col-md-4">
                                 <x-form.date :label="__('Balance Date')" :required="true" :model="$model??null" :name="'balance_date'" :placeholder="__('Select Balance Date')"></x-form.date>
                             </div>
+								@if(!isset($model))
                             <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Borrowing Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'borrowing_rate'" :required="true"></x-form.input>
                             </div>
 
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'bank_margin_rate'" :required="true" :type="'text'"></x-form.input>
+                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'margin_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
 
                             <div class="col-md-4 ">
@@ -177,6 +178,7 @@
                             <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Min Intrest Rate (%)')" :placeholder="__('Min Intrest Rate (%)')" :name="'min_interest_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
+							@endif
                             <div class="col-md-4 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
@@ -425,10 +427,10 @@
 
 </script>
 <script>
-    $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {
+    $('input[name="borrowing_rate"],input[name="margin_rate"]').on('change', function() {
         let borrowingRate = $('input[name="borrowing_rate"]').val();
         borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0;
-        let bankMaringRate = $('input[name="bank_margin_rate"]').val();
+        let bankMaringRate = $('input[name="margin_rate"]').val();
         bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
         const interestRate = borrowingRate + bankMaringRate;
         $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);

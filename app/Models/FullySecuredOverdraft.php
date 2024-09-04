@@ -168,6 +168,33 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 	{
 		return Str::upper($this->getCurrency());
 	}
-		
 	
+	public function rates()
+	{
+		return $this->hasMany(FullySecuredOverdraftRate::class,'fully_secured_overdraft_id','id');
+	}
+	public static function getBankStatementTableClassName():string 
+	{
+		return FullySecuredOverdraftBankStatement::class ;
+	}		
+	public static function rateFullClassName():string 
+	{
+		return FullySecuredOverdraftRate::class ;
+	}
+	public static function boot()
+	{
+		parent::boot();
+		static::created(function(self $model){
+			$model->storeRate(
+				Request()->get('balance_date'),
+				Request()->get('min_interest_rate',0),
+				Request()->get('margin_rate'),
+				Request()->get('borrowing_rate'),
+				Request()->get('interest_rate')
+			);
+		});
+		static::deleting(function(self $model){
+			$model->rates()->delete();
+		});
+	}
 }

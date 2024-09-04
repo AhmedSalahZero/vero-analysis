@@ -113,6 +113,10 @@ trait IsOverdraft
 	 */
 	public function getLatestRate()
 	{
+		if(is_null($this->rates)){
+			return 0;
+		}
+		
 		return $this->rates->where('date','<=',now()->format('Y-m-d'))->sortByDesc('date')->first();
 	}
 	public function getBorrowingRate()
@@ -158,5 +162,18 @@ trait IsOverdraft
 			'interest_rate'=>$interestRate
 		]);
 	}	
+	
+	public function updateBankStatementsFromDate(string $date)
+	{
+		$firstBankStatementToBeUpdated = (self::getBankStatementTableClassName())::where(self::generateForeignKeyFormModelName(),$this->id)
+		->where('date','>=',$date)
+		->orderBy('full_date')
+		->first();	
+		if($firstBankStatementToBeUpdated){
+			$firstBankStatementToBeUpdated->update([
+				'updated_at'=>now()
+			]);
+		}
+	}
 	
 }

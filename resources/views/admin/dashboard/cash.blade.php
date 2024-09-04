@@ -144,24 +144,11 @@
                                 <div class="kt-widget24__info w-100">
                                     <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
                                         {{ __('Cash & Banks' )  . ' [ ' . $currency . ' ]' }}
-										{{-- @php
-											$currentModalId = 'current_account';
-										@endphp
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ __('Current Account') }}</button>
-										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['current_account'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Current Account Details')])
-									 --}}
-									
-									
-									
-									
-									
 										@php
 											$currentModalId = 'safe';
 										@endphp
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
 										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['cash_in_safe'] ?? [],$details[$name]['current_account'])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
-									
-									
                                     </h4>
 
                                 </div>
@@ -1299,7 +1286,7 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning">
-                                    {{ $mediumTermLoan->getEndBalanceForDate($date) }}
+                                    {{ $mediumTermLoan->getLoanOutstandingFormatted() }}
                                 </span>
                             </div>
 
@@ -1314,14 +1301,23 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Next Due Amount') }}
+                                        {{ __('Next Installment') }}
                                     </h4>
 
                                 </div>
                             </div>
+							@php
+								$nextInstallment = $mediumTermLoan->getNextInstallmentDateAndAmount($date) ;
+								$nextInstallmentAmountFormatted = $nextInstallment['amount_formatted'];
+								$nextInstallmentDateFormatted = $nextInstallment['date_formatted'];
+							@endphp
                             <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-danger">
-                                  -
+                                <span class="kt-widget24__stats kt-font-success">
+									@if($nextInstallmentDateFormatted)
+                                  {{ $nextInstallmentAmountFormatted }} [{{ $nextInstallmentDateFormatted }}]
+									@else 
+									-
+									@endif 
                                 </span>
                             </div>
                         </div>
@@ -1335,14 +1331,16 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Date') }}
+                                        {{ __('Past Dues') }}
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-success">
-                                  -
+                                <span class="kt-widget24__stats kt-font-danger">
+                                  {{ $mediumTermLoan->getTotalPastDueRemainingFormatted() }}
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" data-toggle="modal" data-target="#{{ $currency }}-past-due-modal">{{ __('Details') }}</button>
+										@include('admin.dashboard.details-loan-past-dues-modal',['detailItems'=> $mediumTermLoan->getLoanPastDuesDetailsArray()   ,'title'=>__('Loan Past Dues')])
                                 </span>
                             </div>
                         </div>

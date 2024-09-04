@@ -152,12 +152,35 @@ class MediumTermLoan extends Model
 	{
 		return number_format($this->getLimit());
 	}
-	public function getEndBalanceForDate(string $date)
+	public function getLoanOutstanding()
 	{
-		// $total = 0 ;
-		// $loanSchedule = $this->loanSchedules()->where('remaining','>',0)->where('date','<=',$date)->sortBy('date')->get()->each(function(LoanSchedule $loanSchedule){
-			
-		// }) ;
-		// return $loanSchedule ? $loanSchedule->end_balance : 0 ;
+		return $this->outstanding_amount ?: 0 ;
+	}
+	public function getLoanOutstandingFormatted()
+	{
+		return number_format($this->getLoanOutstanding());
+	}
+	public function getNextInstallmentDateAndAmount(string $date):array 
+	{
+		$nextInstallment = $this->loanSchedules()->where('date','>=',$date)->orderBy('date')->first() ;
+		$amountFormatted  = $nextInstallment ? $nextInstallment->getSchedulePaymentFormatted() : 0 ;
+		$dateFormatted =  $nextInstallment ? $nextInstallment->getDateFormatted() : null ;
+		return [
+			'amount_formatted'=>$amountFormatted ,
+			'date_formatted'=>$dateFormatted
+		];
+	}	
+	public function getTotalPastDueRemaining()
+	{
+		$pastDueItems = $this->getLoanPastDuesDetailsArray();
+		return array_sum(array_column($pastDueItems,'remaining'));
+	}
+	public function getTotalPastDueRemainingFormatted()
+	{
+		return number_format($this->getTotalPastDueRemaining());
+	}
+	public function getLoanPastDuesDetailsArray():array 
+	{
+		return  $this->loanSchedules()->whereIn('status',['past_due','partially_paid_and_past_due'])->get(['date','schedule_payment','remaining'])->toArray();
 	}
 }

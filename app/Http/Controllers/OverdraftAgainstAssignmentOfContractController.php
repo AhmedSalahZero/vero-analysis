@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOverdraftAgainstAssignmentOfContractRequest;
 use App\Http\Requests\UpdateOverdraftAgainstAssignmentOfContractRequest;
-use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
@@ -12,6 +11,7 @@ use App\Models\FinancialInstitution;
 use App\Models\LendingInformationAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\Partner;
+use App\Models\Traits\Controllers\HasOverdraftRate;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,7 +19,11 @@ use Illuminate\Support\Collection;
 
 class OverdraftAgainstAssignmentOfContractController
 {
-    use GeneralFunctions;
+    use GeneralFunctions,HasOverdraftRate;
+	public static function getModelName()
+	{
+		return OverdraftAgainstAssignmentOfContract::class ;
+	}
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;

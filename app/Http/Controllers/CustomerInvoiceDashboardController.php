@@ -448,6 +448,7 @@ class CustomerInvoiceDashboardController extends Controller
     {
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
+		// $financialInstitutionsThatHaveMediumTermLoans = FinancialInstitution::onlyCompany($company->id)->onlyHasMediumTermLoans()->get();
 		$dashboardResult = [];
 		
 		$cashFlowReportResult = null ;
@@ -522,6 +523,7 @@ class CustomerInvoiceDashboardController extends Controller
 			'selectedReportInterval'=>$request->get('report_interval','weekly'),
 			'selectedPartnerId'=>$request->get('partner_id'),
 			'selectedContractId'=>$request->get('contract_id'),
+			// 'financialInstitutionsThatHaveMediumTermLoans'=>$financialInstitutionsThatHaveMediumTermLoans
 			
         ]);
 

@@ -112,9 +112,9 @@
                                     {{-- <td>{{ $odAgainstAssignmentOfContract->getMaxLendingLimitPerCustomer() }}</td> --}}
                                     {{-- <td>{{ $odAgainstAssignmentOfContract->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+										@include('reports.overdraft-against-assignment-of-contract.apply-rate')
 
-
-                                        <a data-toggle="modal" data-target="#apply-expense-{{ $odAgainstAssignmentOfContract->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Assign Contract') }}" href="#"><i class=" fa fa-balance-scale"></i></a>
+                                        <a data-toggle="modal" data-target="#apply-expense-{{ $odAgainstAssignmentOfContract->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Assign Contract') }}" href="#"><i class=" fa fa-file"></i></a>
                                         <div class="modal fade" id="apply-expense-{{ $odAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
@@ -227,14 +227,14 @@
 
 
                                         @foreach($odAgainstAssignmentOfContract->lendingInformation as $index=>$lendingInformationAgainstAssignmentOfContract)
-                                        <div class="modal fade" id="edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal fade inner-modal-class"  id="edit-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <form action="{{ route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" method="post">
                                                         @csrf
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Edit' )  }}</h5>
-                                                            <button data-dismiss="modal2" type="button" class="close" aria-label="Close">
+                                                            <button data-dismiss="modal" type="button" class="close" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
@@ -250,7 +250,7 @@
 
 
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
                                                             <button data-url="{{  route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" type="submit" class="btn btn-primary submit-form-btn">{{ __('Confirm') }}</button>
                                                         </div>
 
@@ -258,7 +258,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal fade" id="delete-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal fade inner-modal-class" id="delete-lending-information-{{ $lendingInformationAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <form action="" method="post">
@@ -266,12 +266,12 @@
                                                         @method('delete')
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2">{{ __('Close') }}</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
 
                                                             <a href="{{ route('lending.information.delete.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ]) }}" class="btn btn-danger">{{ __('Confirm Delete') }}</a>
                                                         </div>
@@ -280,9 +280,12 @@
                                                 </div>
                                             </div>
                                         </div>
-
                                         @endforeach
 
+
+@foreach($odAgainstAssignmentOfContract->rates as $index=>$rate)
+											@include('reports.overdraft-against-assignment-of-contract.rate-modal')
+										@endforeach
                                     </td>
                                 </tr>
 

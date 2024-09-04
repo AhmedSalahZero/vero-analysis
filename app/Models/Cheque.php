@@ -439,7 +439,7 @@ class Cheque extends Model
 
         if ($accountType && $accountType->isOverdraftAgainstCommercialPaperAccount() && $overdraftAgainstCommercialPaper) {
             $this->overdraftAgainstCommercialPaperLimits()->create([
-                'company_id' => $this->company_id,
+                'company_id' => $this->company_id ?: getCurrentCompanyId(),
                 'overdraft_against_commercial_paper_id' => $overdraftAgainstCommercialPaper->id
             ]);
         }

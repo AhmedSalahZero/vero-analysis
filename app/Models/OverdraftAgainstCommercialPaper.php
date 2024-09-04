@@ -155,9 +155,9 @@ public static function getAllAccountNumberForCurrency($companyId , $currencyName
 		}
 		foreach($overdraftAgainstCommercialPapers as $overdraftAgainstCommercialPaper){
 			$limitStatement = $overdraftAgainstCommercialPaper->overdraftAgainstCommercialPaperBankLimits->sortByDesc('full_date')->first() ;
-			// if(($limitStatement && $limitStatement->accumulated_limit >0 ) || in_array('bank-statement',Request()->segments()) ){
+			if(($limitStatement && $limitStatement->accumulated_limit >0 ) || in_array('bank-statement',Request()->segments()) ){
 				$accounts[$overdraftAgainstCommercialPaper->account_number] = $overdraftAgainstCommercialPaper->account_number;
-			// }
+			}
 		}
 		
 		return  $accounts ;
@@ -170,5 +170,38 @@ public static function getAllAccountNumberForCurrency($companyId , $currencyName
 	{
 		return Str::upper($this->getCurrency());
 	}
+	
+	
+	
+	
+	public function rates()
+	{
+		return $this->hasMany(OverdraftAgainstCommercialPaperRate::class,'overdraft_against_commercial_paper_id','id');
+	}
+	public static function getBankStatementTableClassName():string 
+	{
+		return OverdraftAgainstCommercialPaperBankStatement::class ;
+	}
+	public static function rateFullClassName():string 
+	{
+		return OverdraftAgainstCommercialPaperRate::class ;
+	}	
+	public static function boot()
+	{
+		parent::boot();
+		static::created(function(self $model){
+			$model->storeRate(
+				Request()->get('balance_date'),
+				Request()->get('min_interest_rate'),
+				Request()->get('margin_rate'),
+				Request()->get('borrowing_rate'),
+				Request()->get('interest_rate')
+			);
+		});
+		static::deleting(function(self $model){
+			$model->rates()->delete();
+		});
+	}
+	
 	
 }

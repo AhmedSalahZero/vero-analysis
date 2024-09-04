@@ -59,6 +59,7 @@ trait HasOutstandingBreakdown
 			]);
 			
 			$this->outstandingBreakdowns()->create($outstandingBreakdownArr);
+			
 			}
 				
 		}

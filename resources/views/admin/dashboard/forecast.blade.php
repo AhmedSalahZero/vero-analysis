@@ -454,7 +454,6 @@
 
                     </div>
                 </div>
-
                 {{-- Long Term Facilities Comming Dues --}}
                 <div class="col-md-6">
                     <div class="kt-portlet ">
@@ -467,13 +466,14 @@
 							<div class="kt-portlet__head-label" style="gap:25px;margin-top:10px;">
 									<div class="form-group">
 										<label for="" class="label">{{ __('Start') }}</label>
-										<input type="date" class="form-control" name="loan_start_date" value="{{ $loanStartDate }}">
+										<input data-currency="{{ $currency }}" js-refresh-medium-term-loan-chart type="date" class="form-control loan-start-date" name="loan_start_date" value="{{ $loanStartDate }}">
 									</div>
 									<div class="form-group">
 										<label for="" class="label">{{ __('End') }}</label>
-                                    <input type="date" class="form-control" name="loan_end_date" value="{{ $loanEndDate }}">
+                                    <input data-currency="{{ $currency }}" type="date" js-refresh-medium-term-loan-chart class="form-control loan-end-date" name="loan_end_date" value="{{ $loanEndDate }}">
 									</div>
 								</div>
+								
                             <div class="kt-portlet__head-label ">
                                 <div class="kt-align-right">
                                     <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
@@ -483,7 +483,21 @@
                         <div class="kt-portlet__body">
                             {{-- Chart --}}
                             <div class="row">
-
+ 								<div class="col-md-8 mb-3">
+                                    <select name="financial_institution_id" data-currency="{{ $currency }}" js-refresh-medium-term-loan-chart class="form-control financial-instutiton-js">
+									<option value="0"> {{ __('All') }} </option>
+                                        @foreach(\App\Models\FinancialInstitution::onlyCompany($company->id)->onlyHasMediumTermLoans($currency)->get() as $financialInstitutionsThatHaveMediumTermLoan)
+                                        <option value="{{ $financialInstitutionsThatHaveMediumTermLoan->id }}">{{ $financialInstitutionsThatHaveMediumTermLoan->getName() }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+								
+								 <div class="col-md-4 mb-3">
+                                    <select name="medium_term_loan_id" data-currency="{{ $currency }}" js-refresh-medium-term-loan-chart class="form-control medium-term-loan-js">
+									<option value="0"> {{ __('All') }} </option>
+                                    </select>
+                                </div>
+								
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -495,12 +509,12 @@
 
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
+                                                <tbody id="append-loan-{{ $currency }}">
+                                                    {{-- <tr>
                                                         <td>Date 1</td>
                                                         <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
+                                                    </tr> --}}
+                                                    {{-- <tr>
                                                         <td>Date 2</td>
                                                         <td class="text-center">600,000</td>
                                                     </tr>
@@ -511,14 +525,15 @@
                                                     <tr>
                                                         <td>Date 4</td>
                                                         <td class="text-center">600,000</td>
-                                                    </tr>
+                                                    </tr> --}}
 
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="chartdivchart" id="chartdivline5{{ $currency }}"></div>
+									{{-- <div class="chartdivchart" id="withdrawal-dues-chart-{{ $currency }}"></div> --}}
+                                        <div class="chartdivchart" id="loan-chart-{{ $currency }}"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1036,6 +1051,8 @@
     }); 
 
 </script>
+
+
 <script>
     am4core.ready(function() {
 
@@ -1044,10 +1061,10 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivline5{{ $currency }}", am4charts.XYChart);
+        var chart = am4core.create("loan-chart-{{ $currency }}", am4charts.XYChart);
 
         // Add data
-        chart.data = ammount_array;
+        chart.data = [];
 
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
@@ -1101,9 +1118,10 @@
         dateAxis.start = 0.79;
         dateAxis.keepSelection = true;
 
-    });
+    }); 
 
 </script>
+
 <script>
     am4core.ready(function() {
 
@@ -1284,8 +1302,6 @@
         const accountTypeId = $('select.withdrawal-account-type-js[data-currency="'+currencyName+'"]').val()
 		const withdrawalStartDate = $('.withdrawal-start-date[data-currency="'+currencyName+'"]').val()
 		const withdrawalEndDate = $('.withdrawal-end-date[data-currency="'+currencyName+'"]').val()
-
-
         $.ajax({
             url: "{{ route('refresh.withdrawal.report',['company'=>$company->id]) }}"
             , data: {
@@ -1314,6 +1330,47 @@
             }
         })
     })
+	
+	
+	
+	
+	 $(document).on('change', '[js-refresh-medium-term-loan-chart][data-currency="{{ $currency }}"]', function() {
+        const currencyName = $(this).attr('data-currency')
+        const currentChartId = 'loan-chart-' + currencyName;
+        const financialInstitutionId = $('select.financial-instutiton-js[data-currency="'+currencyName+'"]').val()
+        const mediumTermLoanId = $('select.medium-term-loan-js[data-currency="'+currencyName+'"]').val()
+		const loanStartDate = $('.loan-start-date[data-currency="'+currencyName+'"]').val()
+		const loanEndDate = $('.loan-end-date[data-currency="'+currencyName+'"]').val()
+        $.ajax({
+            url: "{{ route('refresh.medium.term.loan.report',['company'=>$company->id]) }}"
+            , data: {
+                financialInstitutionId,
+                mediumTermLoanId
+                , currencyName,
+				loanStartDate,
+				loanEndDate
+            }
+            , type: "get"
+            , success: function(res) {
+                let data = []
+                let chartData = []
+                let trs = '';
+                for (var item of res.data) {
+                    trs += `<tr> 
+					<td>${item.date}</td>
+					<td class="text-center">${number_format(item.schedule_payment)}</td>
+				 </tr>`
+                    chartData.push({
+                        date: item.date
+                        , value: item.schedule_payment
+                    })
+                }
+                $('#append-loan-' + currencyName).empty().append(trs)
+                am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartData
+            }
+        })
+    })
+	
 
 </script>
 @endforeach
@@ -1322,6 +1379,7 @@
    
 
     $('select[js-refresh-withdrawal-due-data-and-chart]').trigger('change')
+    $('select[js-refresh-medium-term-loan-chart]').trigger('change')
 
 </script>
 <script>
@@ -1351,7 +1409,31 @@
 
 
     })
+ $(document).on('change', 'select.financial-instutiton-js', function() {
+        const parent = $(this).closest('.kt-portlet__body')
+        const financialInstitutionId = parseInt($(this).val())
+		const currency = $(this).attr('data-currency');
 
+        $.ajax({
+            url: "{{ route('get.medium.term.loan.for.financial.institution',['company'=>$company->id]) }}"
+            , data: {
+                financialInstitutionId
+                , currency
+                
+            }
+            , type: "get"
+            , success: function(res) {
+                let loans = '<option value="0">{{ __("All") }}</option>';
+                const currentSelected = 0
+                // const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
+                for (var loan of res.loans) {
+                    loans += `<option ${currentSelected ==loan.id ? 'selected' :'' } value="${loan.id}"  >${loan.name}</option>`;
+                }
+                parent.find('select.medium-term-loan-js').empty().append(loans).trigger('change')
+            }
+        })
+    })
+	
     $(document).on('change', 'select.suppliers-or-customers-js', function() {
         const parent = $(this).closest('.kt-portlet__body')
         const partnerId = parseInt($(this).val())
@@ -1379,6 +1461,7 @@
     })
     $(function() {
         $('select.suppliers-or-customers-js').trigger('change')
+        $('select.financial-instutiton-js').trigger('change')
     })
 </script>
 @endsection

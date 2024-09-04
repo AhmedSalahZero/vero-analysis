@@ -63,6 +63,7 @@ class CleanOverdraft extends Model implements IHaveStatement
 		 return 'clean_overdraft_id';
 	}
 	
+	
 	public static function getCommonQueryForCashDashboard(Company $company , string $currencyName , string $date )
 	{
 		return DB::table('clean_overdrafts')
@@ -149,23 +150,38 @@ class CleanOverdraft extends Model implements IHaveStatement
 	{
 		return Str::upper($this->getCurrency());
 	}
+	
+	/**
+	 * * for rates
+	 */
+	
 	public function rates()
 	{
 		return $this->hasMany(CleanOverdraftRate::class,'clean_overdraft_id','id');
 	}
-	
-	public function updateBankStatementsFromDate(string $date)
+	public static function getBankStatementTableClassName():string 
 	{
-		$firstBankStatementToBeUpdated = CleanOverdraftBankStatement::where('clean_overdraft_id',$this->id)
-		->where('date','>=',$date)
-		->orderBy('full_date')
-		->first();	
-		if($firstBankStatementToBeUpdated){
-			$firstBankStatementToBeUpdated->update([
-				'updated_at'=>now()
-			]);
-		}
-		
+		return CleanOverdraftBankStatement::class ;
+	}
+	public static function rateFullClassName():string 
+	{
+		return CleanOverdraftRate::class ;
+	}	
+	public static function boot()
+	{
+		parent::boot();
+		static::created(function(self $model){
+			$model->storeRate(
+				Request()->get('balance_date'),
+				Request()->get('min_interest_rate'),
+				Request()->get('margin_rate'),
+				Request()->get('borrowing_rate'),
+				Request()->get('interest_rate')
+			);
+		});
+		static::deleting(function(self $model){
+			$model->rates()->delete();
+		});
 	}
 	
 	

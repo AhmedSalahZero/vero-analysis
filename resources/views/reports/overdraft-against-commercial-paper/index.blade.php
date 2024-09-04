@@ -112,8 +112,8 @@
                                     {{-- <td>{{ $overdraftAgainstCommercialPaper->getMaxLendingLimitPerCustomer() }}</td> --}}
                                     {{-- <td>{{ $overdraftAgainstCommercialPaper->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                     
-
+									
+										@include('reports.overdraft-against-commercial-paper.apply-rate')
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'overdraftAgainstCommercialPaper'=>$overdraftAgainstCommercialPaper->id]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $overdraftAgainstCommercialPaper->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -139,6 +139,11 @@
                                                 </div>
                                             </div>
                                         </span>
+										
+										 @foreach($overdraftAgainstCommercialPaper->rates as $index=>$rate)
+											@include('reports.overdraft-against-commercial-paper.rate-modal')
+										@endforeach
+										
                                     </td>
                                 </tr>
                                 @endforeach

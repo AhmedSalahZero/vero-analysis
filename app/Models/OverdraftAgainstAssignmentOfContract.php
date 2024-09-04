@@ -16,11 +16,33 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
     protected $guarded = ['id'];
 	
 	use HasOutstandingBreakdown , IsOverdraft , HasAccumulatedLimit,HasLastStatementAmount;
+	public function rates()
+	{
+		return $this->hasMany(OverdraftAgainstAssignmentOfContractRate::class,'overdraft_against_assignment_of_contract_id','id');
+	}
+	
+	public static function rateFullClassName():string 
+	{
+		return OverdraftAgainstAssignmentOfContractRate::class ;
+	}	
+
 	public static function boot()
 	{
 		parent::boot();
+		static::created(function(self $model){
+			$model->storeRate(
+				Request()->get('balance_date'),
+				Request()->get('min_interest_rate'),
+				Request()->get('margin_rate'),
+				Request()->get('borrowing_rate'),
+				Request()->get('interest_rate')
+			);
+		});
 		static::updated(function(OverdraftAgainstAssignmentOfContract $overdraftAgainstAssignmentOfContract){
 			$overdraftAgainstAssignmentOfContract->triggerChangeOnContracts();
+		});
+		static::deleting(function(self $model){
+			$model->rates()->delete();
 		});
 		static::deleted(function(OverdraftAgainstAssignmentOfContract $overdraftAgainstAssignmentOfContract){
 			$overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements->each(function($overdraftAgainstAssignmentOfContractBankStatement){
@@ -112,6 +134,10 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 	public function getCurrencyFormatted()
 	{
 		return Str::upper($this->getCurrency());
+	}
+	public static function getBankStatementTableClassName():string 
+	{
+		return OverdraftAgainstAssignmentOfContractBankStatement::class ;
 	}
 
 }

@@ -1842,7 +1842,9 @@ $(function(){
 })
 </script>
 <script>
-
+	$('.inner-modal-class').on('show.bs.modal',function(){
+		$('.modal:not(.inner-modal-class)').modal('hide')
+	})
 </script>
 </body>
 

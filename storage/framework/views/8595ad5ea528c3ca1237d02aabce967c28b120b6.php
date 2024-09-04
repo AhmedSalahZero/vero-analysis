@@ -125,9 +125,9 @@
                                     
                                     
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+										<?php echo $__env->make('reports.overdraft-against-assignment-of-contract.apply-rate', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-
-                                        <a data-toggle="modal" data-target="#apply-expense-<?php echo e($odAgainstAssignmentOfContract->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Assign Contract')); ?>" href="#"><i class=" fa fa-balance-scale"></i></a>
+                                        <a data-toggle="modal" data-target="#apply-expense-<?php echo e($odAgainstAssignmentOfContract->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Assign Contract')); ?>" href="#"><i class=" fa fa-file"></i></a>
                                         <div class="modal fade" id="apply-expense-<?php echo e($odAgainstAssignmentOfContract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
@@ -240,14 +240,14 @@
 
 
                                         <?php $__currentLoopData = $odAgainstAssignmentOfContract->lendingInformation; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$lendingInformationAgainstAssignmentOfContract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <div class="modal fade" id="edit-lending-information-<?php echo e($lendingInformationAgainstAssignmentOfContract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal fade inner-modal-class"  id="edit-lending-information-<?php echo e($lendingInformationAgainstAssignmentOfContract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <form action="<?php echo e(route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ])); ?>" method="post">
                                                         <?php echo csrf_field(); ?>
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Edit' )); ?></h5>
-                                                            <button data-dismiss="modal2" type="button" class="close" aria-label="Close">
+                                                            <button data-dismiss="modal" type="button" class="close" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
@@ -263,7 +263,7 @@
 
 
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2"><?php echo e(__('Close')); ?></button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
                                                             <button data-url="<?php echo e(route('lending.information.edit.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ])); ?>" type="submit" class="btn btn-primary submit-form-btn"><?php echo e(__('Confirm')); ?></button>
                                                         </div>
 
@@ -271,7 +271,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal fade" id="delete-lending-information-<?php echo e($lendingInformationAgainstAssignmentOfContract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal fade inner-modal-class" id="delete-lending-information-<?php echo e($lendingInformationAgainstAssignmentOfContract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <form action="" method="post">
@@ -279,12 +279,12 @@
                                                         <?php echo method_field('delete'); ?>
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Do You Want To Delete This Item ?')); ?></h5>
-                                                            <button type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2"><?php echo e(__('Close')); ?></button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
 
                                                             <a href="<?php echo e(route('lending.information.delete.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'lendingInformation'=>$lendingInformationAgainstAssignmentOfContract->id ])); ?>" class="btn btn-danger"><?php echo e(__('Confirm Delete')); ?></a>
                                                         </div>
@@ -293,9 +293,12 @@
                                                 </div>
                                             </div>
                                         </div>
-
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
+
+<?php $__currentLoopData = $odAgainstAssignmentOfContract->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+											<?php echo $__env->make('reports.overdraft-against-assignment-of-contract.rate-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
                                 </tr>
 
