@@ -5,9 +5,9 @@ use App\Http\Requests\UpdateCleanOverdraftRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CleanOverdraft;
-use App\Models\CleanOverdraftRate;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\Traits\Controllers\HasOverdraftRate;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,7 +15,11 @@ use Illuminate\Support\Collection;
 
 class CleanOverdraftController
 {
-    use GeneralFunctions;
+    use GeneralFunctions , HasOverdraftRate;
+	public static function getModelName()
+	{
+		return CleanOverdraft::class ;
+	}
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;
@@ -96,17 +100,11 @@ class CleanOverdraftController
 		 * @var CleanOverdraft $cleanOverdraft 
 		 */
 		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
-		$cleanOverdraft->storeRate(
-			$request->get('balance_date'),
-			$request->get('min_interest_rate'),
-			$request->get('margin_rate'),
-			$request->get('borrowing_rate'),
-			$request->get('interest_rate')
-		);
-		// $cleanOverdraft->rates()->create([
-			
-		// ]);
-		// ,'borrowing_rate','margin_rate','interest_rate','min_interest_rate',
+		
+		/**
+		 * * Rates Will Be Stored In  Created Observer 
+		 */
+	
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ; 
 		
@@ -139,62 +137,13 @@ class CleanOverdraftController
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ;
 		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
-		
 	}
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft)
 	{
-		$cleanOverdraft->rates()->delete();
 		$cleanOverdraft->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 
-	public function applyRate(Request $request , Company $company , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft )
-	{
-		$date = $request->get('date_create') ;
-		$marginRate = $request->get('margin_rate_create') ;
-		$borrowingRate = $request->get('borrowing_rate_create') ;
-		$interestRate = $marginRate  + $borrowingRate  ;
-		$cleanOverdraft->rates()->create([
-			'date'=>$date,
-			'margin_rate'=>$marginRate,
-			'borrowing_rate'=>$borrowingRate,
-			'interest_rate'=>$interestRate,
-			'updated_at'=>now()
-		]);
-		$cleanOverdraft->updateBankStatementsFromDate($date);
-		return redirect()->back()->with('success',__('Done'));
 	
-	}
-	public function editRate(Request $request , Company $company , FinancialInstitution $financialInstitution , CleanOverdraftRate $rate)
-	{
-	
-		$date = $request->get('date_edit') ;
-		$marginRate = $request->get('margin_rate_edit') ;
-		$borrowingRate = $request->get('borrowing_rate_edit') ;
-		$interestRate = $marginRate  + $borrowingRate  ;
-		$rate->update([
-			'date'=>$date,
-			'margin_rate'=>$marginRate,
-			'borrowing_rate'=>$borrowingRate,
-			'interest_rate'=>$interestRate,
-			'updated_at'=>now()
-		]);
-		$rate->cleanOverdraft->updateBankStatementsFromDate($date);
-	
-		return response()->json([
-			'status'=>true ,
-			'reloadCurrentPage'=>true 
-		]);
-	}
-	
-	public function deleteRate(Request $request , Company $company , FinancialInstitution $financialInstitution , CleanOverdraftRate $rate)
-	{
-		$cleanOverdraft = $rate->cleanOverdraft;
-		$date = $rate->getDate();
-		$rate->delete();
-		$cleanOverdraft->updateBankStatementsFromDate($date);
-		return redirect()->back()->with('success',__('Done'));
-	}
 }

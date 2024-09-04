@@ -19,6 +19,16 @@
 
 </label>
 @endif
+
+@php
+	if($name == 'contract_start_date' && !$model){
+		$defaultValue = date("Y").'-01-01';
+	}
+	if($name == 'contract_end_date' && !$model){
+		$defaultValue =date("Y").'-12-31' ;
+	}
+	
+@endphp
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <input

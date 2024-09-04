@@ -29,7 +29,8 @@
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
-					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from fully_secured_overdrafts where id = new.fully_secured_overdraft_id ;
+					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from fully_secured_overdraft_rates where fully_secured_overdraft_id = new.fully_secured_overdraft_id and date <= new.date order by date desc , id desc limit 1 ;
+					
 					set _min_interest_rate = ifnull(_min_interest_rate,0);
 					set _interest_rate = ifnull(_interest_rate,0);
 					
@@ -169,7 +170,7 @@
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
-					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from fully_secured_overdrafts where id = new.fully_secured_overdraft_id ;
+					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from fully_secured_overdraft_rates where fully_secured_overdraft_id = new.fully_secured_overdraft_id and date <= new.date order by date desc , id desc limit 1 ;
 					set _min_interest_rate = ifnull(_min_interest_rate,0);
 					set _interest_rate = ifnull(_interest_rate,0);
 					

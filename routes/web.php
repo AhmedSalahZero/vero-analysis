@@ -409,6 +409,10 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/full-secured-overdraft/edit/{fullySecuredOverdraft}', 'FullySecuredOverdraftController@edit')->name('edit.fully.secured.overdraft');
 				 Route::put('financial-institutions/{financialInstitution}/full-secured-overdraft/update/{fullySecuredOverdraft}', 'FullySecuredOverdraftController@update')->name('update.fully.secured.overdraft');
 				 Route::delete('financial-institutions/{financialInstitution}/full-secured-overdraft/delete/{fullySecuredOverdraft}', 'FullySecuredOverdraftController@destroy')->name('delete.fully.secured.overdraft');
+				
+				 Route::post('financial-institutions/{financialInstitution}/fully-secured-overdraft/apply-rate/{fullySecuredOverdraft}', 'FullySecuredOverdraftController@applyRate')->name('fully-secured-overdraft-apply.rates');
+				 Route::post('financial-institutions/{financialInstitution}/fully-secured-overdraft/edit-rates/{rate}', 'FullySecuredOverdraftController@editRate')->name('fully-secured-overdraft-edit-rates');
+				 Route::get('financial-institutions/{financialInstitution}/fully-secured-overdraft/delete-rates/{rate}', 'FullySecuredOverdraftController@deleteRate')->name('fully-secured-overdraft-delete-rate');
 				 
 				 
 				 
@@ -419,7 +423,7 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/edit/{cleanOverdraft}', 'CleanOverdraftController@edit')->name('edit.clean.overdraft');
 				 Route::put('financial-institutions/{financialInstitution}/clean-overdraft/update/{cleanOverdraft}', 'CleanOverdraftController@update')->name('update.clean.overdraft');
 				 Route::delete('financial-institutions/{financialInstitution}/clean-overdraft/delete/{cleanOverdraft}', 'CleanOverdraftController@destroy')->name('delete.clean.overdraft');
-				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/lending-information/{cleanOverdraft}', 'CleanOverdraftController@applyRate')->name('clean-overdraft-apply.rates');
+				 Route::post('financial-institutions/{financialInstitution}/clean-overdraft/apply-rate/{cleanOverdraft}', 'CleanOverdraftController@applyRate')->name('clean-overdraft-apply.rates');
 				 Route::post('financial-institutions/{financialInstitution}/clean-overdraft/edit-rates/{rate}', 'CleanOverdraftController@editRate')->name('clean-overdraft-edit-rates');
 				 Route::get('financial-institutions/{financialInstitution}/clean-overdraft/delete-rates/{rate}', 'CleanOverdraftController@deleteRate')->name('clean-overdraft-delete-rate');
 				 
@@ -443,7 +447,11 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/edit/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@edit')->name('edit.overdraft.against.commercial.paper');
 				 Route::put('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/update/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@update')->name('update.overdraft.against.commercial.paper');
 				 Route::delete('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@destroy')->name('delete.overdraft.against.commercial.paper');
-
+				 
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/apply-rate/{overdraftAgainstCommercialPaper}', 'OverdraftAgainstCommercialPaperController@applyRate')->name('overdraft-against-commercial-paper-apply.rates');
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/edit-rates/{rate}', 'OverdraftAgainstCommercialPaperController@editRate')->name('overdraft-against-commercial-paper-edit-rates');
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-commercial-paper/delete-rates/{rate}', 'OverdraftAgainstCommercialPaperController@deleteRate')->name('overdraft-against-commercial-paper-delete-rate');
+				 
 				 
 				 
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract', 'OverdraftAgainstAssignmentOfContractController@index')->name('view.overdraft.against.assignment.of.contract');
@@ -459,6 +467,11 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/apply-against-lending/{lendingInformation}', 'OverdraftAgainstAssignmentOfContractController@applyAgainstLending')->name('apply.against.lending');
 				 Route::put('contract/{contract}/{type}/mark-as-finished', 'ContractsController@markAsFinished')->name('contract.mark.as.finished');
 				 Route::put('contract/{contract}/{type}/mark-as-running-and-against', 'ContractsController@markAsRunningAndAgainst')->name('contract.mark.as.running.and.against');
+				 
+				 
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/apply-rate/{odAgainstAssignmentOfContract}', 'OverdraftAgainstAssignmentOfContractController@applyRate')->name('overdraft-against-assignment-of-contract-apply.rates');
+				 Route::post('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/edit-rates/{rate}', 'OverdraftAgainstAssignmentOfContractController@editRate')->name('overdraft-against-assignment-of-contract-edit-rates');
+				 Route::get('financial-institutions/{financialInstitution}/overdraft-against-assignment-of-contract/delete-rates/{rate}', 'OverdraftAgainstAssignmentOfContractController@deleteRate')->name('overdraft-against-assignment-of-contract-delete-rate');
 				 
 					/**
 					 * * start certificates of deposit

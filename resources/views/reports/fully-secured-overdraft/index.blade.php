@@ -109,8 +109,8 @@
                                     {{-- <td>{{ $fullySecuredOverdraft->getMaxLendingLimitPerCustomer() }}</td> --}}
                                     {{-- <td>{{ $fullySecuredOverdraft->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                     
-
+										
+                               	     @include('reports.fully-secured-overdraft.apply-rate')
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'fullySecuredOverdraft'=>$fullySecuredOverdraft->id]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $fullySecuredOverdraft->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -135,9 +135,26 @@
                                                     </div>
                                                 </div>
                                             </div>
+											
+										
+								   
                                         </span>
+										<div>
+										 
+										</div>
+										
+											
+								   	@foreach($fullySecuredOverdraft->rates as $index=>$rate)
+											@include('reports.fully-secured-overdraft.rate-modal')
+										@endforeach
+										
                                     </td>
+								
+								
+										
                                 </tr>
+								 
+								
                                 @endforeach
                             </tbody>
                         </table>

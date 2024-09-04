@@ -33,7 +33,8 @@
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
-					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id ;
+					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from overdraft_against_commercial_paper_rates where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date <= new.date order by date desc , id desc limit 1 ;
+					
 					set _min_interest_rate = ifnull(_min_interest_rate,0);
 					set _interest_rate = ifnull(_interest_rate,0);
 					
@@ -177,7 +178,7 @@
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
-					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id ;
+					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from overdraft_against_commercial_paper_rates where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date <= new.date order by date desc , id desc limit 1 ;
 					set _min_interest_rate = ifnull(_min_interest_rate,0);
 					set _interest_rate = ifnull(_interest_rate,0);
 					

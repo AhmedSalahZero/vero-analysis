@@ -125,8 +125,8 @@
                                     
                                     
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                     
-
+										
+                               	     <?php echo $__env->make('reports.fully-secured-overdraft.apply-rate', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'fullySecuredOverdraft'=>$fullySecuredOverdraft->id])); ?>"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($fullySecuredOverdraft->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -151,9 +151,26 @@
                                                     </div>
                                                 </div>
                                             </div>
+											
+										
+								   
                                         </span>
+										<div>
+										 
+										</div>
+										
+											
+								   	<?php $__currentLoopData = $fullySecuredOverdraft->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+											<?php echo $__env->make('reports.fully-secured-overdraft.rate-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+										
                                     </td>
+								
+								
+										
                                 </tr>
+								 
+								
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>

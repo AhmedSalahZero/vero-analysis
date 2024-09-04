@@ -8,6 +8,7 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FullySecuredOverdraft;
+use App\Models\Traits\Controllers\HasOverdraftRate;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,7 +16,11 @@ use Illuminate\Support\Collection;
 
 class FullySecuredOverdraftController
 {
-    use GeneralFunctions;
+    use GeneralFunctions , HasOverdraftRate;
+	public static function getModelName()
+	{
+		return FullySecuredOverdraft::class ;
+	}
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;

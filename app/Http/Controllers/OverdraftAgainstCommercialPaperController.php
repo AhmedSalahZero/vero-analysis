@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\OverdraftAgainstCommercialPaper;
+use App\Models\Traits\Controllers\HasOverdraftRate;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,7 +15,13 @@ use Illuminate\Support\Collection;
 
 class OverdraftAgainstCommercialPaperController
 {
-    use GeneralFunctions;
+    use GeneralFunctions , HasOverdraftRate;
+	
+	public static function getModelName()
+	{
+		return OverdraftAgainstCommercialPaper::class ;
+	}
+	
     protected function applyFilter(Request $request,Collection $collection):Collection{
 		if(!count($collection)){
 			return $collection;

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\CheckDueAndPastedInvoicesJob;
 use App\Models\CashExpense;
 use App\Models\Cheque;
+use App\Models\CleanOverdraft;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
@@ -58,6 +59,10 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-				
+		// $cleanOverdraft = new CleanOverdraft();
+		// $cleanOverdraft->updateBankStatementsFromDate('2026-01-01');
+		
+		// $test = CleanOverdraft::getBankStatementTableClassName();
+		// dd($test);
 	}
 }

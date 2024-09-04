@@ -217,6 +217,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                             </div>
+								<?php if(!isset($model)): ?>
                             <div class="col-md-4 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Borrowing Rate (%)'),'type' => 'text','placeholder' => __('Borrowing Rate (%)'),'name' => 'borrowing_rate','required' => true]]); ?>
@@ -233,11 +234,11 @@
 
                             <div class="col-md-4 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Bank Margin Rate (%)'),'placeholder' => __('Bank Margin Rate (%)'),'name' => 'bank_margin_rate','required' => true,'type' => 'text']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Bank Margin Rate (%)'),'placeholder' => __('Bank Margin Rate (%)'),'name' => 'margin_rate','required' => true,'type' => 'text']]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-percentage-allowed'),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Bank Margin Rate (%)')),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Bank Margin Rate (%)')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('bank_margin_rate'),'required' => true,'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-percentage-allowed'),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Bank Margin Rate (%)')),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Bank Margin Rate (%)')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('margin_rate'),'required' => true,'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -272,6 +273,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                             </div>
+							<?php endif; ?>
                             <div class="col-md-4 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Highest Debt Balance Rate (%)'),'placeholder' => __('Highest Debt Balance Rate (%)'),'name' => 'highest_debt_balance_rate','required' => true,'type' => 'text']]); ?>
@@ -573,10 +575,10 @@
 
 </script>
 <script>
-    $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {
+    $('input[name="borrowing_rate"],input[name="margin_rate"]').on('change', function() {
         let borrowingRate = $('input[name="borrowing_rate"]').val();
         borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0;
-        let bankMaringRate = $('input[name="bank_margin_rate"]').val();
+        let bankMaringRate = $('input[name="margin_rate"]').val();
         bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
         const interestRate = borrowingRate + bankMaringRate;
         $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);

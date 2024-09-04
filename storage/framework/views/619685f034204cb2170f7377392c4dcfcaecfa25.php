@@ -127,193 +127,9 @@
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
-                                        <a data-toggle="modal" data-target="#apply-rate-for-<?php echo e($cleanOverdraft->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Update Interest Rate	')); ?>" href="#"><i class=" fa fa-balance-scale"></i></a>
-                                        <div class="modal fade" id="apply-rate-for-<?php echo e($cleanOverdraft->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <form action="<?php echo e(route('clean-overdraft-apply.rates',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft->id ])); ?>" method="post">
-                                                        <?php echo csrf_field(); ?>
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Rates Information' )); ?></h5>
-                                                            <button type="button" class="close" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-
-
-                                                        <div class="modal-body">
-
-                                                            <div class="row mb-3 closest-parent">
-
-                                                                <?php echo $__env->make('reports.clean-overdraft.rates-form' , [
-
-                                                                ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-
-
-
-
-
-                                                                <div class="col-md-12">
-                                                                    <div class="table-responsive">
-                                                                        <table class="table table-bordered">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th><?php echo e(__('#')); ?></th>
-                                                                                    <th><?php echo e(__('Date')); ?></th>
-                                                                                    <th><?php echo e(__('Borrowing Rate')); ?></th>
-                                                                                    <th><?php echo e(__('Margin Rate')); ?></th>
-                                                                                    <th><?php echo e(__('Interest Rate')); ?></th>
-                                                                                    <th><?php echo e(__('Actions')); ?></th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <?php $__currentLoopData = $cleanOverdraft->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                                <tr>
-                                                                                    <td> <?php echo e(++$index); ?> </td>
-
-                                                                                    <td> <?php echo e($rate->getDateFormatted()); ?> </td>
-                                                                                    <td> <?php echo e($rate->getBorrowingRateFormatted()); ?> </td>
-                                                                                    <td> <?php echo e($rate->getMarginRateFormatted()); ?> </td>
-                                                                                    <td> <?php echo e($rate->getInterestRateFormatted()); ?> </td>
-                                                                                    <td>
-
-                                                                                        <a data-toggle="modal" data-target="#edit-rates-<?php echo e($rate->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
-
-                                                                                        <a data-toggle="modal" data-target="#delete-rates-<?php echo e($rate->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-
-
-
-                                                                           
-
-
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-
-
-                                                        </div>
-
-
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-                                                            <button type="submit" class="btn btn-primary"><?php echo e(__('Confirm')); ?></button>
-                                                        </div>
-
-                                                    </form>
-													
-													
-													             <?php $__currentLoopData = $cleanOverdraft->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                                        <div class="modal fade" id="edit-rates-<?php echo e($rate->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                                                            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                                                                                                <div class="modal-content">
-                                                                                                    <form action="<?php echo e(route('clean-overdraft-edit-rates',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'rate'=>$rate->id ])); ?>" method="post">
-                                                                                                        <?php echo csrf_field(); ?>
-                                                                                                        <div class="modal-header">
-                                                                                                            <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Edit' )); ?></h5>
-                                                                                                            <button data-dismiss="modal2" type="button" class="close" aria-label="Close">
-                                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                                            </button>
-                                                                                                        </div>
-
-
-                                                                                                        <div class="modal-body">
-                                                                                                            <div class="row mb-3 closest-parent">
-                                                                                                                <?php echo $__env->make('reports.clean-overdraft.rates-form',[
-                                                                                                                'rate'=>$rate
-                                                                                                                ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        <div class="modal-footer">
-                                                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2"><?php echo e(__('Close')); ?></button>
-                                                                                                            <button data-url="<?php echo e(route('clean-overdraft-edit-rates',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'rate'=>$rate->id ])); ?>" type="submit" class="btn btn-primary submit-form-btn"><?php echo e(__('Confirm')); ?></button>
-                                                                                                        </div>
-
-                                                                                                    </form>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="modal fade" id="delete-rates-<?php echo e($rate->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                                                <div class="modal-content">
-                                                                                                    <form action="" method="post">
-                                                                                                        <?php echo csrf_field(); ?>
-                                                                                                        <?php echo method_field('delete'); ?>
-                                                                                                        <div class="modal-header">
-                                                                                                            <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Do You Want To Delete This Item ?')); ?></h5>
-                                                                                                            <button type="button" class="close" data-dismiss="modal2" aria-label="Close">
-                                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                                            </button>
-                                                                                                        </div>
-                                                                                                        <div class="modal-footer">
-                                                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal2"><?php echo e(__('Close')); ?></button>
-
-                                                                                                            <a href="<?php echo e(route('clean-overdraft-delete-rate',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'rate'=>$rate->id ])); ?>" class="btn btn-danger"><?php echo e(__('Confirm Delete')); ?></a>
-                                                                                                        </div>
-
-                                                                                                    </form>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-																						
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                        <?php echo $__env->make('reports.clean-overdraft.apply-rate', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft->id])); ?>"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($cleanOverdraft->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($cleanOverdraft->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -340,6 +156,12 @@
                                         </span>
                                     </td>
                                 </tr>
+
+
+                                <?php $__currentLoopData = $cleanOverdraft->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									<?php echo $__env->make('reports.clean-overdraft.rate-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
