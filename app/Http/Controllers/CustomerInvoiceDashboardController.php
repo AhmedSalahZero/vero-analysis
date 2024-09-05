@@ -448,7 +448,7 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		$cashFlowReportResult = null ;
 		$cashFlowReport = [];
-		if($request->has('partner_id') && $request->has('contract_id')){
+		if($request->has('contract_id')){
 			$report =(new ContractCashFlowReportController())->result($company,$request,true);
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
@@ -475,7 +475,7 @@ class CustomerInvoiceDashboardController extends Controller
 		$agingDate = $request->get('aging_date',now()->format('Y-m-d'))  ;
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
 		$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate);
-		$chequeAgingService = new ChequeAgingService($company->id, $agingDate);
+		$chequeAgingService = new ChequeAgingService($company->id, '2010-01-01');
 		$allFinancialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray(); 
 		foreach($selectedCurrencies as $currencyName)
 		{
@@ -498,6 +498,7 @@ class CustomerInvoiceDashboardController extends Controller
 				
 			}
 		}
+		// dd($dashboardResult['cheques_aging']);
         return view('admin.dashboard.forecast', [
             'company' => $company,
 			'dashboardResult'=>$dashboardResult,
