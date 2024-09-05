@@ -42,9 +42,12 @@ class ChequeAgingService
 		 * * هنا شرط الديو ديت اكبر من او يساوي
 		 */
 
-        $invoices = ('\App\Models\\'.$chequeModelName)::whereIn('status',$chequeTypesForSafe)
+        $invoices = ('\App\Models\\'.$chequeModelName)
+		::whereIn('status',$chequeTypesForSafe)
 		->where('due_date', '>=', $this->aging_date)
-		->where('company_id', $this->company_id);
+		->has($modelModelName)
+		->where('company_id', $this->company_id)
+		;
         if (count($clientNames)) {
             $invoices->whereHas($modelModelName,function($q) use($clientNames,$clientNameColumnName){
                 $q->whereIn($clientNameColumnName,$clientNames);
@@ -57,12 +60,13 @@ class ChequeAgingService
          */
 
         foreach ($invoices as $index => $invoice) {
+			// if(!$invoice->{$modelModelName}){
+			// 	dd($invoice	);
+			// }
             $clientName = $invoice->{$modelModelName}->getName() ;
-
             $invoiceNumber = $invoice->getNumber();
             $invoiceDueDate = $invoice->getDueDate();
             $netBalance = $invoice->{$modelModelName}->getAmount() ;
-			dump($netBalance);
             if (!$netBalance) {
                 continue;
             }

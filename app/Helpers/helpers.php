@@ -5240,6 +5240,7 @@ if (!function_exists('getFixedLoanTypes')) {
 	}
 	 function formatAccumulatedNetCash(array $netCashItems , array $dates)
 	{
+		$formattedResult = [];
 		$netCashItems = HArr::removeKeysFromArray($netCashItems,['total_of_total']);
 		$accumulatedNetCash = 0 ;
 		foreach($dates as  $weekAndYear => $startAndEndDateArray){
