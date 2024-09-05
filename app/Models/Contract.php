@@ -38,7 +38,6 @@ class Contract extends Model
          */
         // $accountType = AccountType::find($this->getAccountType());
         $overdraftAgainstAssignmentOfContract = $this->overdraftAgainstAssignmentOfContract;
-		// dd($overdraftAgainstAssignmentOfContract);
 		//  OverdraftAgainstAssignmentOfContract::where('account_number', $this->getAccountNumber())->first();
 
         if (
@@ -73,16 +72,8 @@ class Contract extends Model
 		
 		static::updated(
             function (self $model) {
-				logger('start updated ....');
                 $oldStatus = $model->getRawOriginal('status');
-                // $oldAccountTypeId = $model->getRawOriginal('account_type');
-                // $currentAccountTypeId = $model->getAccountType();
-                // $currentAccountType = AccountType::find($currentAccountTypeId);
-                // $oldAccountType = AccountType::find($oldAccountTypeId);
-                // $oldAccountNumber = $model->getRawOriginal('account_number');
-                // $currentAccountNumber = $model->getAccountNumber();
-				// dd($model->isRunningAndAgainst() , $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() , $currentAccountType , $model->overdraftAgainstAssignmentOfContractLimits->count());
-
+       
                 /**
                  * * في حالة لو رجعته من
                  * * finished to be running and against

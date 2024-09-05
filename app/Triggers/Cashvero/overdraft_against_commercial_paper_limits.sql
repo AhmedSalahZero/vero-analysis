@@ -35,6 +35,7 @@ begin
 		select count(*) , max(full_date) into _number_of_cheques_existence , _max_full_date from overdraft_against_commercial_paper_limits where cheque_id = new.cheque_id and is_active = 1  ; 
 	
 		select lending_rate into _lending_rate from lending_information where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and for_commercial_papers_due_within_days >= _days_count order by for_commercial_papers_due_within_days asc limit 1;
+		
 		set new.limit =  LEAST(_lending_rate /100 * _cheque_amount , _max_lending_limit_per_customer)  ;
 		if(_cheque_status = 'collected'
 			and   _number_of_cheques_existence > 1 
@@ -100,10 +101,15 @@ begin
 		and is_active = 1 
 		limit 1 ;
 		
+		
+		
+		
 		select count(*) , max(full_date) into _number_of_cheques_existence , _max_full_date from overdraft_against_commercial_paper_limits where cheque_id = new.cheque_id and is_active = 1  ; 
 	
 		select lending_rate into _lending_rate from lending_information where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and for_commercial_papers_due_within_days >= _days_count order by for_commercial_papers_due_within_days asc limit 1;
+		
 		set new.limit =  LEAST(_lending_rate /100 * _cheque_amount , _max_lending_limit_per_customer)  ;
+		
 		if(_cheque_status = 'collected'
 			and   _number_of_cheques_existence > 1 
 			and new.full_date = _max_full_date 

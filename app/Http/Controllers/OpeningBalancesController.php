@@ -119,6 +119,7 @@ class OpeningBalancesController
 				$currentUnderCollectionCheque->update([
 					'updated_at'=>now()
 				]);
+				
             }
         }
 
@@ -147,7 +148,7 @@ class OpeningBalancesController
             $openingBalance->cashInSafes()->where('cash_in_safe_statements.id', $id)->first()->update($dataToUpdate);
         }
         foreach ($request->get(MoneyReceived::CASH_IN_SAFE, []) as $data) {
-            if (!isset($data['id'])) {
+            if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' )  ) {
                 unset($data['id']);
                 $openingBalance->cashInSafes()->create(array_merge($data, [
                     'company_id' => $company->id,
@@ -185,7 +186,7 @@ class OpeningBalancesController
             $openingBalance->chequeInSafe()->where('money_received.id', $id)->first()->cheque->update($pivotData);
         }
         foreach ($request->get(MoneyReceived::CHEQUE, []) as $data) {
-            if (!isset($data['id'])) {
+            if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' ) ) {
                 unset($data['id']);
                 $pivotData = [
                     'due_date' => $data['due_date'],
@@ -215,8 +216,9 @@ class OpeningBalancesController
 
         $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase);
-
         $openingBalance->chequeUnderCollections()->whereIn('money_received.id', $elementsToDelete)->delete();
+
+		
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CHEQUE_UNDER_COLLECTION), 'id', $id);
             unset($dataToUpdate['id']);
@@ -236,11 +238,13 @@ class OpeningBalancesController
 
             $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
 
-            $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->update($dataToUpdate);
-            $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->cheque->update($pivotData);
+            $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
+            $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->cheque->update(array_merge($pivotData,['updated_at'=>now()]));
+		
         }
+
         foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION, []) as $data) {
-            if (!isset($data['id'])) {
+            if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0')  ) {
                 unset($data['id']);
                 $pivotData = [
                     'due_date' => $data['due_date'],
@@ -257,16 +261,14 @@ class OpeningBalancesController
                     unset($data[$key]);
                 }
                 $data['customer_name'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : $data['customer_id'] ;
-
                 $moneyReceived = $openingBalance->chequeUnderCollections()->create(array_merge($data, [
-                    'type' => MoneyReceived::CHEQUE,
+					'type' => MoneyReceived::CHEQUE,
                     'user_id' => auth()->id()
                 ]));
-
-                $moneyReceived->cheque()->create($pivotData);
+                $cheque = $moneyReceived->cheque()->create($pivotData);
+				$cheque->update(['updated_at'=>now()]);
             }
         }
-
         return redirect()->route('opening-balance.index', ['company' => $company->id]);
     }
 }
