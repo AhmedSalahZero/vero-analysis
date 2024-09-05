@@ -475,7 +475,7 @@ class CustomerInvoiceDashboardController extends Controller
 		$agingDate = $request->get('aging_date',now()->format('Y-m-d'))  ;
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
 		$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate);
-		$chequeAgingService = new ChequeAgingService($company->id, '2010-01-01');
+		$chequeAgingService = new ChequeAgingService($company->id, $agingDate);
 		$allFinancialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray(); 
 		foreach($selectedCurrencies as $currencyName)
 		{
@@ -498,7 +498,6 @@ class CustomerInvoiceDashboardController extends Controller
 				
 			}
 		}
-		// dd($dashboardResult['cheques_aging']);
         return view('admin.dashboard.forecast', [
             'company' => $company,
 			'dashboardResult'=>$dashboardResult,
