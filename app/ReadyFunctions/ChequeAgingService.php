@@ -62,6 +62,7 @@ class ChequeAgingService
             $invoiceNumber = $invoice->getNumber();
             $invoiceDueDate = $invoice->getDueDate();
             $netBalance = $invoice->{$modelModelName}->getAmount() ;
+			dump($netBalance);
             if (!$netBalance) {
                 continue;
             }

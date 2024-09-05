@@ -206,7 +206,8 @@ class MediumTermLoanController
 		$currencyName = $request->get('currencyName');
 		$startDate = $request->get('loanStartDate');
 		$endDate = $request->get('loanEndDate');
-		$result = DB::table('medium_term_loans')->where('medium_term_loans.company_id',$company->id)->where('currency',$currencyName)->join('loan_schedules','loan_schedules.medium_term_loan_id','=','medium_term_loans.id')
+		$result = DB::table('medium_term_loans')->where('medium_term_loans.company_id',$company->id)
+		->where('currency',$currencyName)->join('loan_schedules','loan_schedules.medium_term_loan_id','=','medium_term_loans.id')
 		->when($loanId != 0 , function($builder) use ($loanId){
 			$builder->where('loan_id','=',$loanId);
 		})
@@ -214,7 +215,9 @@ class MediumTermLoanController
 			$builder->where('financial_institution_id','=',$financialInstitutionId);
 		})
 		->whereBetween('date',[$startDate,$endDate])
-		->orderBy('date')->take(6)->get();
+		->orderBy('date')
+		->take(6)->get()->unique('name');
+		
 		return response()->json([
 			'status'=>true ,
 			'data'=>$result

@@ -319,6 +319,7 @@ class Cheque extends Model
     {
         static::updated(
             function (self $model) {
+				logger('inside updated');
                 $oldStatus = $model->getRawOriginal('status');
                 $oldAccountTypeId = $model->getRawOriginal('account_type');
                 $currentAccountTypeId = $model->getAccountType();
@@ -332,6 +333,8 @@ class Cheque extends Model
                  * * collected to be under collection
                  */
                 if ($model->isUnderCollection() && $oldStatus == self::COLLECTED) {
+				logger('inside 1');
+					
                     $negativeOverdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->where('limit', '<', 0)->first();
                     $negativeOverdraftAgainstCommercialPaperLimit ? $negativeOverdraftAgainstCommercialPaperLimit->update(['is_active' => 0]) : null ;
                     $negativeOverdraftAgainstCommercialPaperLimit ? DB::table('overdraft_against_commercial_paper_limits')->where('id', $negativeOverdraftAgainstCommercialPaperLimit->id)->delete() : null ;
@@ -343,6 +346,8 @@ class Cheque extends Model
                  * * collected or rejected
                  */
                 if ($model->isCollected()) {
+				logger('inside 2');
+					
                     /**
                      * * هنضيف رو جديد بنفس القيمة ولكن بالسالب
                      */
@@ -353,6 +358,8 @@ class Cheque extends Model
                 }
 
                 if ($model->isInSafe() || $model->isRejected()) {
+				logger('inside 3');
+					
                     $model->deleteOverdraftAgainstCommercialPapersLimits();
                     return ;
                 }
@@ -361,6 +368,8 @@ class Cheque extends Model
                  * * overdraft against commercial paper
                  */
                 if ($model->isUnderCollection() && $currentAccountType && !$currentAccountType->isOverdraftAgainstCommercialPaperAccount()) {
+				logger('inside 4');
+					
                     $model->deleteOverdraftAgainstCommercialPapersLimits();
 
                     return ;
@@ -376,6 +385,8 @@ class Cheque extends Model
                  * *
                  */
                 if ($model->isUnderCollection() && $currentAccountType && $currentAccountType->isOverdraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count() && $oldAccountType && !$oldAccountType->isOverdraftAgainstCommercialPaperAccount()) {
+				logger('inside 5');
+					
                     $model->handleOverdraftAgainstCommercialPaperLimit();
 
                     return ;
@@ -387,6 +398,8 @@ class Cheque extends Model
                  */
 
                 if ($model->isUnderCollection() && $oldAccountType && $oldAccountType->isOverdraftAgainstCommercialPaperAccount() && $currentAccountType && $currentAccountType->isOverdraftAgainstCommercialPaperAccount() && $currentAccountNumber != $oldAccountNumber) {
+				logger('inside 6');
+					
                     $model->overdraftAgainstCommercialPaperLimits->each(function ($overdraftAgainstCommercialPaper) use ($model, $currentAccountNumber) {
                         $overdraftAgainstCommercialPaper->update([
                             'overdraft_against_commercial_paper_id' => DB::table('overdraft_against_commercial_papers')->where('company_id', $model->company_id)->where('account_number', $currentAccountNumber)->first()->id,
@@ -400,10 +413,14 @@ class Cheque extends Model
                  * * limits
                  */
                 if ($model->isUnderCollection() && $currentAccountType->isOverdraftAgainstCommercialPaperAccount() && !$model->overdraftAgainstCommercialPaperLimits->count()) {
+				logger('inside 7');
+					
                     $model->handleOverdraftAgainstCommercialPaperLimit();
 
                     return ;
                 }
+				logger('inside else');
+				
                 $overdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->sortBy('full_date')->first() ;
                 $overdraftAgainstCommercialPaperLimit ? $overdraftAgainstCommercialPaperLimit->update(['updated_at' => now(), 'full_date' => $overdraftAgainstCommercialPaperLimit->updateFullDate()]) : null;
             }

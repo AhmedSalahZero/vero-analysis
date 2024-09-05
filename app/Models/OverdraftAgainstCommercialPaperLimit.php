@@ -80,6 +80,8 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 		 * * خاصة فقط بالجداول اللي ليها جدول لحساب الليمت بشكل منفصل
 		 */
 		protected static function updateBankStatement(self $overdraftAgainstCommercialPaperLimit){
+			// dd($overdraftAgainstCommercialPaperLimit
+			// ->overdraftAgainstCommercialPaper,$overdraftAgainstCommercialPaperLimit);
 			$firstBankStatementRow = $overdraftAgainstCommercialPaperLimit
 			->overdraftAgainstCommercialPaper
 			->overdraftAgainstCommercialPaperBankStatements

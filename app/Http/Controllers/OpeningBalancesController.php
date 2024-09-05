@@ -55,7 +55,6 @@ class OpeningBalancesController
             $amount = $cashInSaveArr['received_amount'] ?: 0 ;
             $receivingBranchId = $cashInSaveArr['received_branch_id'] ?: null ;
             $exchangeRate = isset($cashInSaveArr['exchange_rate']) ? $cashInSaveArr['exchange_rate'] : 1  ;
-            // $customerId = isset($cashInSaveArr['customer_id']) ? $cashInSaveArr['customer_id'] : null  ;
             $openingBalance->cashInSafes()->create([
 				'type'=>OpeningBalance::OPEN_BALANCE,
                 'branch_id' => $receivingBranchId,
@@ -66,6 +65,7 @@ class OpeningBalancesController
                 'credit' => 0,
                 'date' => $openingBalanceDate,
             ]);
+			
         }
         foreach ($request->get(MoneyReceived::CHEQUE) as $index => $cheque) {
             $customer = Partner::find($cheque['customer_id'] ?: null);
@@ -87,6 +87,7 @@ class OpeningBalancesController
                     'drawee_bank_id' => isset($cheque['drawee_bank_id']) ? $cheque['drawee_bank_id'] : null,
                     'due_date' => $cheque['due_date'] ?: null,
                 ]);
+				// $moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
             }
         }
 
@@ -104,7 +105,7 @@ class OpeningBalancesController
                     'user_id' => auth()->id(),
                     'exchange_rate' => isset($chequeUnderCollection['exchange_rate']) ? $chequeUnderCollection['exchange_rate'] : 1
                 ]);
-                $moneyReceived->cheque()->create([
+                $currentUnderCollectionCheque = $moneyReceived->cheque()->create([
                     'status' => Cheque::UNDER_COLLECTION,
                     'cheque_number' => $chequeUnderCollection['cheque_number'] ?: null,
                     'drawee_bank_id' => isset($chequeUnderCollection['drawee_bank_id']) ? $chequeUnderCollection['drawee_bank_id'] : null,
@@ -115,6 +116,9 @@ class OpeningBalancesController
                     'account_number' => $chequeUnderCollection['account_number'] ?: null,
                     'clearance_days' => $chequeUnderCollection['clearance_days'] ?: 0,
                 ]);
+				$currentUnderCollectionCheque->update([
+					'updated_at'=>now()
+				]);
             }
         }
 

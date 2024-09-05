@@ -40,8 +40,13 @@ class ContractCashFlowReportController
 		// $supplierIdAndNames = [];
 		//////////////////////////
 		$contractId = $request->get('contract_id')	 ;
+		
 		/////////////////////
 		$contract = Contract::find($contractId);
+		
+		// if(!$contract){
+		// 	return back()->with('fail',__('Please Select '))
+		// }
 		/**
 		 * @var Contract $contract 
 		 */

@@ -84,7 +84,6 @@ class CustomerInvoiceDashboardController extends Controller
 		$totalCard = [];
         foreach ($selectedCurrencies as $currencyName) {
 			$loansForCurrentCurrency = MediumTermLoan::where('currency',$currencyName)->with(['loanSchedules'])->where('company_id',$company->id)->get() ;
-			// dd($loansForCurrentCurrency);
 			$mediumTermLoansArr[$currencyName] = $loansForCurrentCurrency;
 			$currentAccountInBanks = 0 ;
 			$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount = 0 ;
@@ -318,7 +317,6 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		}
 		
-		// dd($mediumTermLoansArr);
         return view('admin.dashboard.cash', [
 			'mediumTermLoansArr'=>$mediumTermLoansArr,
             'company' => $company,
@@ -419,14 +417,11 @@ class CustomerInvoiceDashboardController extends Controller
 		
 	}
 	public function sumForTotalCard(array $oldArr  , array $newItems ):array{
-		// dd($newItems,'old',$oldArr);
 		foreach($newItems as $index => $oldItems){
 			foreach($oldItems as $key => $value){
-				// dd($value);
 				$oldArr[$key]   =  isset($oldArr[$key]) ? $oldArr[$key] + $value : $value ;
 			}
 		}
-		// dd($oldArr);
 		return $oldArr;
 	}
 	
@@ -453,7 +448,7 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		$cashFlowReportResult = null ;
 		$cashFlowReport = [];
-		if($request->has('partner_id')){
+		if($request->has('partner_id') && $request->has('contract_id')){
 			$report =(new ContractCashFlowReportController())->result($company,$request,true);
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
@@ -495,7 +490,6 @@ class CustomerInvoiceDashboardController extends Controller
 				 * * Customers Cheques Aging & Supplier Cheques Aging
 				 */
 				$agingsForCheques = $chequeAgingService->__execute($clientNames, $modelType) ;
-			
 				$agingsForCheques = $chequeAgingService->formatForDashboard($agingsForCheques,$modelType);
 	
 				$dashboardResult['invoices_aging'][$modelType][$currencyName] = $agingsForInvoices ;
