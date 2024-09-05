@@ -793,7 +793,6 @@ use App\Models\MoneyPayment ;
                                                 </div>
 
                                             </td>
-
                                             <td>
                                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['onlyMonth' => false,'showLabel' => false,'value' => isset($chequeUnderCollection) ?  formatDateForDatePicker($chequeUnderCollection->getChequeDueDate()) : formatDateForDatePicker(now()),'label' => __('Due Date'),'id' => 'due_date','name' => 'due_date']]); ?>
@@ -808,7 +807,6 @@ use App\Models\MoneyPayment ;
 <?php endif; ?> 
 
                                             </td>
-
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">

@@ -163,6 +163,18 @@ trait IsOverdraft
 		]);
 	}	
 	
+	public function updateFirstLimitsTableFromDate()
+	{
+		$firstBankStatementToBeUpdated = (self::getLimitTableClassName())::where(self::generateForeignKeyFormModelName(),$this->id)
+		->where('full_date','>=',$this->getSmallestLimitTableFullDate())
+		->orderBy('full_date')
+		->first();	
+		if($firstBankStatementToBeUpdated){
+			$firstBankStatementToBeUpdated->update([
+				'updated_at'=>now()
+			]);
+		}
+	}
 	public function updateBankStatementsFromDate(string $date)
 	{
 		$firstBankStatementToBeUpdated = (self::getBankStatementTableClassName())::where(self::generateForeignKeyFormModelName(),$this->id)
