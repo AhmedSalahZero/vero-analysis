@@ -1303,10 +1303,8 @@
                                 <span class="kt-widget24__stats kt-font-danger">
                                   <?php echo e($mediumTermLoan->getTotalPastDueRemainingFormatted()); ?>
 
-								  
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" data-toggle="modal" data-target="#<?php echo e($currency); ?>-past-due-modal"><?php echo e(__('Details')); ?></button>
 										<?php echo $__env->make('admin.dashboard.details-loan-past-dues-modal',['detailItems'=> $mediumTermLoan->getLoanPastDuesDetailsArray()   ,'title'=>__('Loan Past Dues')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-										
                                 </span>
                             </div>
                         </div>
