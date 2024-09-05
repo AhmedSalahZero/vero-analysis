@@ -145,9 +145,9 @@ class OverdraftAgainstCommercialPaperController
 		$overdraftAgainstCommercialPaper->storeOutstandingBreakdown($request,$company);
 		$overdraftAgainstCommercialPaper->lendingInformation()->delete();
 		foreach($infos as $lendingInformationArr){
-			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
-			]));
+			 $overdraftAgainstCommercialPaper->lendingInformation()->create($lendingInformationArr);
 		}
+		$overdraftAgainstCommercialPaper->updateFirstLimitsTableFromDate();
 		$type = $request->get('type','overdraft-against-commercial-paper');
 		$activeTab = $type ;
 		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));

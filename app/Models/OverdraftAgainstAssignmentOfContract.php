@@ -139,5 +139,8 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 	{
 		return OverdraftAgainstAssignmentOfContractBankStatement::class ;
 	}
-
+	public function getSmallestLimitTableFullDate()
+	{
+		return $this->overdraftAgainstAssignmentOfContractBankLimits->min('full_date');
+	}	
 }

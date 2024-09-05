@@ -114,10 +114,7 @@ class OverdraftAgainstAssignmentOfContractController
 		$activeTab = $type ; 
 		
 		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
-		// foreach($lendingInformation as $lendingInformationArr){
-		// 	$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
-		// 	]));
-		// }
+	
 		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
@@ -149,11 +146,7 @@ class OverdraftAgainstAssignmentOfContractController
 		$odAgainstAssignmentOfContract->triggerChangeOnContracts();
 		
 		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
-		// $odAgainstAssignmentOfContract->lendingInformation()->delete();
-		// foreach($infos as $lendingInformationArr){
-		// 	$odAgainstAssignmentOfContract->lendingInformation()->create(array_merge($lendingInformationArr , [
-		// 	]));
-		// }
+
 		$type = $request->get('type','overdraft-against-assignment-of-contract');
 		$activeTab = $type ;
 		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));

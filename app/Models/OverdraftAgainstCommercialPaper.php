@@ -198,10 +198,17 @@ public static function getAllAccountNumberForCurrency($companyId , $currencyName
 				Request()->get('interest_rate')
 			);
 		});
+		
 		static::deleting(function(self $model){
 			$model->rates()->delete();
 		});
 	}
-	
-	
+	public static function getLimitTableClassName():string
+	{
+		return OverdraftAgainstCommercialPaperLimit::class ;
+	}
+	public function getSmallestLimitTableFullDate()
+	{
+		return $this->overdraftAgainstCommercialPaperBankLimits->min('full_date');
+	}	
 }

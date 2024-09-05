@@ -683,12 +683,10 @@ use App\Models\MoneyPayment ;
                                                 </div>
 
                                             </td>
-
                                             <td>
                                                 <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($chequeUnderCollection) ?  formatDateForDatePicker($chequeUnderCollection->getChequeDueDate()) : formatDateForDatePicker(now())" :label="__('Due Date')" :id="'due_date'" name="due_date"></x-calendar>
 
                                             </td>
-
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
