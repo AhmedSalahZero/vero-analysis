@@ -786,7 +786,6 @@ use App\Models\MoneyPayment ;
 
                                                 <div class="input-group">
                                                     <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        
                                                         <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option value="<?php echo e($currencyName); ?>" <?php if(isset($chequeUnderCollection) && $chequeUnderCollection->getCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -838,7 +837,7 @@ use App\Models\MoneyPayment ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="<?php echo e(number_format(isset($chequeUnderCollection) ? $chequeUnderCollection->getChequeNumber() : old('cheuqe_number',0))); ?>">
+                                                        <input name="cheque_number" type="text" class="form-control " value="<?php echo e((isset($chequeUnderCollection) ? $chequeUnderCollection->getChequeNumber() : old('cheuqe_number',0))); ?>">
                                                     </div>
                                                 </div>
                                             </td>

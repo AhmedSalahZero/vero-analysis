@@ -676,7 +676,6 @@ use App\Models\MoneyPayment ;
 
                                                 <div class="input-group">
                                                     <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($chequeUnderCollection) && $chequeUnderCollection->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -718,7 +717,7 @@ use App\Models\MoneyPayment ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="{{ number_format(isset($chequeUnderCollection) ? $chequeUnderCollection->getChequeNumber() : old('cheuqe_number',0)) }}">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ (isset($chequeUnderCollection) ? $chequeUnderCollection->getChequeNumber() : old('cheuqe_number',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>

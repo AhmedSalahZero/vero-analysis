@@ -62,7 +62,6 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 		{
 				$this->created_at = now();
 				$date = $this->getChequeActualCollectionOrDepositDate()  ;
-				// dd($date);
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 				/**
@@ -80,8 +79,7 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 		 * * خاصة فقط بالجداول اللي ليها جدول لحساب الليمت بشكل منفصل
 		 */
 		protected static function updateBankStatement(self $overdraftAgainstCommercialPaperLimit){
-			// dd($overdraftAgainstCommercialPaperLimit
-			// ->overdraftAgainstCommercialPaper,$overdraftAgainstCommercialPaperLimit);
+			
 			$firstBankStatementRow = $overdraftAgainstCommercialPaperLimit
 			->overdraftAgainstCommercialPaper
 			->overdraftAgainstCommercialPaperBankStatements
@@ -151,7 +149,6 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 				){
 						$oldDate =$overdraftAgainstCommercialPaperLimit->getChequeActualCollectionOrDepositDate();
 			
-						// dd($oldDate);
 						$time  = now()->format('H:i:s');
 						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
 						$currentDate = $overdraftAgainstCommercialPaperLimit->full_date ;
