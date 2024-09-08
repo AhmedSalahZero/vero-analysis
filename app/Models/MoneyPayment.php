@@ -488,59 +488,24 @@ class MoneyPayment extends Model
 	{
 		return $this->hasMany(SettlementAllocation::class,'money_payment_id','id');
 	}
-	// public static function getSupplierPayableChequesAtDates(int $companyId , string $startDate , string $endDate,string $currency,$chequeStatus , $dateFieldName,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
-	// {
-	// 	$mainTableName = 'payable_cheques';
-	// 	$isContract = $contractId && $customerId ;
-	// 	$sumColumnName = $isContract ? 'allocation_amount' : 'paid_amount'; 
-	// 	$query =  DB::table($mainTableName)->where('status',$chequeStatus)
-	// 	->where('currency',$currency)
-	// 	->where('type',MoneyPayment::PAYABLE_CHEQUE)
-	// 	->where($mainTableName.'.company_id',$companyId)
-	// 	->whereBetween($dateFieldName,[$startDate,$endDate])
-	// 	->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
-	// 	->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId,$mainTableName ){
-	// 		$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
-	// 		->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
-	// 		->where('supplier_name',$supplierName);
-	// 	});
-		
-	// 	$sum = $query->sum($sumColumnName) ;
-	// 	if($isContract){
-	// 		return [
-	// 			'sum'=>$sum ,
-	// 			'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
-	// 		];
-	// 	}
-	// 	return $sum  ;
-		
-	// }
-	
-	// public static function getCashPaymentsAtDates(int $companyId , string $startDate , string $endDate,string $currency,?int $customerId = null , ? int $contractId = null , $supplierName = null) 
-	// {
-	// 	$mainTableName = 'cash_payments';
-	// 	$isContract = $contractId && $customerId ;
-	// 	$sumColumnName =  $isContract ? 'allocation_amount' : 'paid_amount'; 
-	// 	$query =  DB::table($mainTableName)
-	// 	->where('currency',$currency)
-	// 	->where('type',MoneyPayment::CASH_PAYMENT)
-	// 	->where('money_payments.company_id',$companyId)
-	// 	->whereBetween('delivery_date',[$startDate,$endDate])
-	// 	->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id')
-	// 	->when($isContract , function(Builder $builder) use ($supplierName ,$contractId,$customerId,$mainTableName ){
-	// 		$builder->join('settlement_allocations','settlement_allocations.money_payment_id','=','money_payments.id')
-	// 		->where('settlement_allocations.contract_id',$contractId)->where('settlement_allocations.partner_id',$customerId)
-	// 		->where('supplier_name',$supplierName);
-	// 	});
-	// 	$sum = $query->sum($sumColumnName) ;
-	// 	if($isContract){
-	// 		return [
-	// 			'sum'=>$sum ,
-	// 			'invoice_number'=>$query->first() ? $query->first()->invoice_number  : null 
-	// 		];
-	// 	}
-	// 	return $sum  ;
-	// }
+	public function storeNewAllocation(array $allocations)
+	{
+		foreach($allocations as $invoiceNumber => $allocationsArr){
+			foreach($allocationsArr as $index => $allocationArr){
+				$partnerId = $allocationArr['partner_id'] ?? 0 ;
+				$contractId = $allocationArr['contract_id'] ?? 0 ;
+				$allocationAmount = $allocationArr['allocation_amount'] ?? 0 ;
+				if($allocationAmount>0){
+					$this->settlementAllocations()->create([
+						'allocation_amount'=>$allocationAmount,
+						'contract_id'=>$contractId,
+						'partner_id'=>$partnerId ,
+						'invoice_number'=>$invoiceNumber
+					]);
+				}
+			}
+		}
+	}
 		
 	public static function getCashOutForMoneyTypeAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
 	{

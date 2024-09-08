@@ -15,6 +15,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
+.custom-w-25{
+	width:20% !important;
+}
     input[type="checkbox"] {
         cursor: pointer;
     }
@@ -401,7 +404,6 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
 </script>
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
 <script>
 
 </script>
@@ -475,6 +477,100 @@ $("button[data-dismiss=modal2]").click(function(){
 		$(parent).find('.net-balance-in-main-currency').val(number_format(netBalanceInMainCurrency))
 	})
 	$('select.update-net-balance-inputs').trigger('change')
+</script>
+
+<script>
+    $(document).find('.datepicker-input').datepicker({
+        dateFormat: 'mm-dd-yy'
+        , autoclose: true
+    })
+    $('.m_repeater_9').repeater({
+        initEmpty: false
+        , isFirstItemUndeletable: true
+        , defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function() {
+            $(this).slideDown();
+
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input:not(.only-month-year-picker)').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
+
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+
+        },
+
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
+
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
+                });
+            } else {
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
+
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
+
+                    });
+                }
+            }
+        }
+    });
+
+
+
+
+
+</script>
+
+<script>
+    $(document).on('change', 'select.suppliers-or-customers-js', function() {
+        const parent = $(this).closest('tr')
+        const partnerId = parseInt($(this).val())
+        const model = $('#model_type').val()
+        let inEditMode = "{{ $inEditMode ?? 0 }}";
+
+        $.ajax({
+            url: "{{ route('get.contracts.for.customer.or.supplier',['company'=>$company->id]) }}"
+            , data: {
+                partnerId
+                , model
+                , inEditMode
+            }
+            , type: "get"
+            , success: function(res) {
+                let contracts = '';
+                const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
+                for (var contract of res.contracts) {
+                    contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
+                }
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+                parent.find('select.contracts-js').selectpicker("refresh")
+            }
+        })
+    })
+    $(document).on('change', 'select.contracts-js', function() {
+        const parent = $(this).closest('tr')
+        const code = $(this).find('option:selected').data('code')
+        const amount = $(this).find('option:selected').data('amount')
+        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        $(parent).find('.contract-code').val(code)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
+
+    })
+    $(function() {
+        $('select.suppliers-or-customers-js').trigger('change')
+    })
+
 </script>
 
 @endsection

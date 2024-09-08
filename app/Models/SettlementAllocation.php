@@ -16,7 +16,10 @@ class SettlementAllocation extends Model
 	{
 		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
 	}
-	
+	public function letterOfCreditIssuance()
+	{
+		return $this->belongsTo(LetterOfCreditIssuance::class,'letter_of_credit_issuance_id','id');
+	}
 	public function contract()
 	{
 		return $this->belongsTo(Contract::class,'contract_id','id');
@@ -50,7 +53,7 @@ class SettlementAllocation extends Model
 				->where('payable_cheques.status',$chequeStatus);
 			})
 			->get(['settlement_allocations.contract_id','invoice_number','settlement_allocations.money_payment_id','allocation_amount']);
-		
+			
 			foreach($settlementAllocations as $settlementAllocation){
 				$supplier = $settlementAllocation->moneyPayment->supplier ;
 				$invoiceNumber = $settlementAllocation->invoice_number ; 
@@ -65,5 +68,33 @@ class SettlementAllocation extends Model
 				$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 			}
 	}
+	
+	
+	public static function getSettlementAllocationPerContractAndLetterOfCreditIssuance(array &$result , array &$totalCashOutFlowArray ,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear  ):void
+	{
+		
+		$keyNameForCurrentType = __('Letter Of Credit');
+		
+		$settlementAllocations  =  self::where('settlement_allocations.contract_id',$contractId)->with(['letterOfCreditIssuance','letterOfCreditIssuance.supplier'])
+			->join('letter_of_credit_issuances','settlement_allocations.letter_of_credit_issuance_id','=','letter_of_credit_issuances.id')
+			->where('settlement_allocations.partner_id',$customerId)
+			->whereBetween($dateFieldName,[$startDate,$endDate])
+			->get(['settlement_allocations.contract_id','invoice_number','settlement_allocations.letter_of_credit_issuance_id','allocation_amount']);
+			foreach($settlementAllocations as $settlementAllocation){
+				$supplier = $settlementAllocation->letterOfCreditIssuance->supplier ;
+				$invoiceNumber = $settlementAllocation->invoice_number ; 
+				$keyNameForCurrentType = $keyNameForCurrentType.' - '. __('Invoice No') .' ' .$invoiceNumber ;
+				$currentAmountAllocationAmount = $settlementAllocation->allocation_amount ;
+				$supplierName = $supplier->getName();
+				$result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear]) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] + $currentAmountAllocationAmount :  $currentAmountAllocationAmount;
+				$result['suppliers'][$supplierName][$keyNameForCurrentType]['total'] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['total']) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['total']  + $currentAmountAllocationAmount : $currentAmountAllocationAmount;
+				$currentTotal = $currentAmountAllocationAmount;
+				$result['suppliers'][$supplierName]['total'][$currentWeekYear] = isset($result['suppliers'][$supplierName]['total'][$currentWeekYear]) ? $result['suppliers'][$supplierName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+				$result['suppliers'][$supplierName]['total']['total_of_total'] = isset($result['suppliers'][$supplierName]['total']['total_of_total']) ? $result['suppliers'][$supplierName]['total']['total_of_total'] + $result['suppliers'][$supplierName]['total'][$currentWeekYear] : $result['suppliers'][$supplierName]['total'][$currentWeekYear];
+				$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+			}
+	
+	}
+	
 	
 }	

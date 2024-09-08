@@ -125,6 +125,10 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->getBeneficiaryName();
 	}
+	public function supplier()
+	{
+		return $this->beneficiary();
+	}
 	public function getBeneficiaryId()
 	{
 		$beneficiary = $this->beneficiary ;
@@ -473,5 +477,42 @@ class LetterOfCreditIssuance extends Model
 		}
 		return $tdOrCdCurrencyName;
 	}	
-
+	
+	public function settlementAllocations()
+	{
+		return $this->hasMany(SettlementAllocation::class,'letter_of_credit_issuance_id','id');
+	}
+	public function storeNewSettlementAfterDeleteOldOne(SupplierInvoice $supplierInvoice , Company $company)
+	{
+		$this->settlements->each(function(PaymentSettlement $settlement){
+			$settlement->delete();
+		});
+		$this->settlements()->create([
+			'invoice_number'=>$supplierInvoice->getInvoiceNumber(),
+			'supplier_name'=>$supplierInvoice->getSupplierName(),
+			'withhold_amount'=>0,
+			'company_id'=>$company->id ,
+			'settlement_amount'=>$this->getLcAmount()
+		]);
+	}
+	public function storeNewAllocationAfterDeleteOldOne(array $allocations)
+	{
+		$this->settlementAllocations()->delete();
+		$supplierInvoice = SupplierInvoice::find(Request('supplier_invoice_id'));
+		$invoiceNumber =$supplierInvoice->getInvoiceNumber();
+		foreach($allocations as $index => $allocationArr){
+			$partnerId = $allocationArr['partner_id'] ?? 0 ;
+			$contractId = $allocationArr['contract_id'] ?? 0 ;
+			$allocationAmount = $allocationArr['allocation_amount'] ?? 0 ;
+			if($allocationAmount>0){
+				$this->settlementAllocations()->create([
+					'allocation_amount'=>$allocationAmount,
+					'contract_id'=>$contractId,
+					'partner_id'=>$partnerId ,
+					'invoice_number'=>$invoiceNumber
+				]);
+			}
+		}
+	}
+	
 }
