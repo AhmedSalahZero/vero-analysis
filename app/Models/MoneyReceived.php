@@ -176,7 +176,7 @@ class MoneyReceived extends Model
 	public function getNumber()
 	{
 		if($this->isCheque()){
-			return $this->cheque->getChequeNumber();
+			return $this->cheque ? $this->cheque->getChequeNumber() : __('N/A');
 		}
 		if($this->isCashInSafe()){
 			return $this->getCashInSafeReceiptNumber();
@@ -197,7 +197,7 @@ class MoneyReceived extends Model
 			return $this->getCashInSafeBranchName();
 		}
 		if($this->isCheque()){
-			return $this->cheque->getDraweeBankName();
+			return $this->cheque ? $this->cheque->getDraweeBankName() : __('N/A') ;
 		}
 		if($this->isIncomingTransfer()){
 			return $this->getIncomingTransferReceivingBankName(app()->getLocale());
@@ -510,6 +510,10 @@ class MoneyReceived extends Model
 	public function getContractId()
 	{
 		return $this->contract_id;
+	}
+	public function contract()
+	{
+		return $this->belongsTo(Contract::class,'contract_id','id');
 	}
 	public function deleteRelations()
 	{

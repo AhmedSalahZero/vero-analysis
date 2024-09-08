@@ -1,11 +1,27 @@
-@extends('layouts.dashboard')
-@section('css')
-<x-styles.commons></x-styles.commons>
+<?php $__env->startSection('css'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.styles.commons','data' => []]); ?>
+<?php $component->withName('styles.commons'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 <style>
+
+
     .max-w-name {
         width: 45% !important;
         min-width: 45% !important;
         max-width: 45% !important;
+    }
+	.max-w-comment {
+        width: 40% !important;
+        min-width: 40% !important;
+        max-width: 40% !important;
     }
 
     .max-w-currency {
@@ -122,24 +138,48 @@
     }
 
 </style>
-@endsection
-@section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Invoices Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('sub-header'); ?>
+<?php if($partnerName): ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e($customerStatementText . ' '.__('Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+<?php else: ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e($customerStatementText . ' '.__('Table') . ' [ '. $currency .' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+<?php endif; ?> 
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 
 <div class="row">
     <div class="col-md-12">
 
-        <div class="kt-portlet">
+        <div class="kt-portlet mb-0">
 
 
             <div class="kt-portlet__body">
 
-                @php
+                <?php
 
                 $tableId = 'kt_table_1';
-                @endphp
+                ?>
 
 
                 <style>
@@ -276,29 +316,75 @@
                     }
 
                 </style>
-                @csrf
-                <div class="text-right">
+                <?php echo csrf_field(); ?>
+				
+				
+					 <div class="kt-portlet mb-0">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title head-title text-primary">
+                    <?php echo e($customerStatementText); ?>
 
-                    <a 
-					href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}"
+                </h3>
+            </div>
+        </div>
+        <div class="kt-portlet__body  kt-portlet__body--fit">
+            <div class="row row-no-padding row-col-separator-xl">
+				<form class="w-full mt-3 ml-3">
+				<input type="hidden" name="all_partners" value="<?php echo e($showAllPartner??0); ?>">
+					<div class="row align-items-center">
 					
-					 class="btn  active-style btn-icon-sm align-self-center">
-                        <i class="fas fa-money-bill"></i>
-                        {{ __('Unapplied Amount Settlement') }}
-                    </a>
+					      <div class="col-md-4">
 
-                    <a href="#"  class="btn   active-style btn-icon-sm align-self-center">
-                        <i class="fas fa-money-bill"></i>
-                        {{ __('Downpayment Amount Settlement') }}
-                    </a>
+                    <label><?php echo e(__('Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <div class="kt-input-icon">
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select data-live-search="true" data-actions-box="true" id="partner_id" name="partner_id" class="form-control select2-select 
+								
+								">
+                                    
+                                    <?php $__currentLoopData = $partners; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currentPartnerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option <?php if($partnerId == $currentPartnerId): ?>  selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($currentPartnerId); ?>"><?php echo e($customerName); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
+				
+						<div class="col-md-3">
+							<label for="start_date"><?php echo e(__('Start Date')); ?></label>
+							<input id="start_date" type="date" value="<?php echo e($startDate); ?>" class="form-control" name="start_date" >
+						</div>
+						
+						<div class="col-md-3">
+							<label for="end_date"><?php echo e(__('End Date')); ?></label>
+							<input id="end_date" type="date" value="<?php echo e($endDate); ?>" class="form-control" name="end_date" >
+						</div>
+						<div class="col-md-1">
+							<label for="button"></label>
+							<button type="submit" class="btn block form-control btn-primary btn-sm "> <?php echo e(__('Submit')); ?></button>
+						
+						</div>	
+						
+						
+					</div>
+				</form>
+              
+                
+            </div>
+        </div>
+    </div>
+				
+
 
                 <div class="table-custom-container position-relative  ">
 
 
                     <div>
-
+                        
 
 
 
@@ -308,50 +394,48 @@
 
                                     <tr class="header-tr ">
 
-                                        <th class="view-table-th max-w-serial bg-lighter header-th  align-middle text-center">
-                                            {{ __('#') }}
+                                        <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                            <?php echo e(__('#')); ?>
+
                                         </th>
 
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Date') }}
+                                        <th class="view-table-th    header-th  align-middle text-center">
+                                            <?php echo e(__('Date')); ?>
+
+                                        </th>
+										
+										  <th class="view-table-th    header-th  align-middle text-center">
+                                            <?php echo e(__('Document Type')); ?>
+
+                                        </th>
+										
+										  <th class="view-table-th    header-th  align-middle text-center">
+                                            <?php echo e(__('Document No')); ?>
+
                                         </th>
 
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Number') }}
+                                       
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Debit')); ?>
+
                                         </th>
 
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Net Invoice Amount') }}
-                                        </th>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Credit')); ?>
 
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Due Date') }}
                                         </th>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('End Balance')); ?>
 
-
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Net Balance') }}
                                         </th>
+										
+										 <th class="view-table-th   max-w-comment   header-th  align-middle text-center">
+                                            <?php echo e(__('Comment')); ?>
 
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Status') }}
-                                        </th>
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Aging') }}
-                                        </th>
-
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Adjust Due Date') }}
                                         </th>
 
 
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Actions') }}
-                                        </th>
 
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {!! __('Unapplied Amount <br> Settlement') !!}
-                                        </th>
                                     </tr>
 
                                 </thead>
@@ -360,50 +444,33 @@
                                         let currentTable = null;
 
                                     </script>
-                                    @php
-                                    @endphp
-									
-                                    @foreach($invoices as $index=>$invoice)
+                                    <?php
+                                    ?>
+									<?php
+										$balances = [];
+									?>
+								
+                                    <?php $__currentLoopData = $invoicesWithItsReceivedMoney; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                        <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceDateFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceNumber() }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getNetInvoiceAmountFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getDueDateFormatted() }}</td>
-                                        <td class="sub-text-bg text-center ">{{ $invoice->getNetBalanceFormatted() }}</td>
-										{{-- {{ dd($invoice->getStatusFormatted()) }} --}}
-                                        <td class="sub-text-bg text-center">{{ $invoice->getStatusFormatted() }}</td>
-                                        <td class="sub-text-bg  text-center">
-                                            {{ $invoice->getAging() }}
-                                        </td>
-                                        <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route('adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>getModelNameWithoutNamespace($invoice) ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" @if($invoice->dueDateHistories->count())
-                                                style="background-color:orange !important;color:black !important;border-color:white !important;"
-                                                @else
-                                                style="background-color:green !important; border-color:white !important;"
-                                                @endif
-                                                >{{ $invoice->dueDateHistories->count() ? __('Adjusted') : __('Adjust Due Date') }}</a>
-                                            @endif
-                                        </td>
-                                        <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
-                                            @endif
-                                        </td>
+                                        
+                                        <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
+                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e($item['date']); ?></td>
+                                        <td class="sub-text-bg   is-name-cell "><?php echo e($item['document_type']); ?></td>
+										   <td class="sub-text-bg  text-center"><?php echo e($item['document_no']); ?></td>
+                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e(number_format($item['debit'])); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($item['credit'])); ?></td>
+										<?php
+											if($index == 0 ){
+												$balances[$index] = $item['end_balance']  ;
+											}else{
+												$balances[$index] = $balances[$index-1] + $invoicesWithItsReceivedMoney[$index]['debit'] - $invoicesWithItsReceivedMoney[$index]['credit'];
+											}
+										?>
+                                        <td class="sub-text-bg text-center"><?php echo e(number_format($balances[$index]  )); ?></td>
+                                        <td class="sub-text-bg  max-w-comment text-wrap"><?php echo e($item['comment']); ?></td>
 										
-										
-                                        <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn  btn-sm btn-primary">{{ __('Settlement') }}</a>
-                                            @endif
-                                        </td>
-										
-                                        {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
-
-
-                                        {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
-
+                                     
+                 
                                     </tr>
 
 
@@ -414,7 +481,7 @@
 
 
 
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                 </tbody>
                             </table>
@@ -422,9 +489,14 @@
 
                     </div>
 
-                    @push('js')
+                    <?php $__env->startPush('js'); ?>
                     <script>
                         var table = $(".kt_table_with_no_pagination_no_collapse");
+
+
+
+
+
 
                         table.DataTable({
 
@@ -453,6 +525,7 @@
                                     }
                                     $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
                                     $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+
                                 },
 
 
@@ -464,15 +537,25 @@
                         )
 
                     </script>
-                    @endpush
+                    <?php $__env->stopPush(); ?>
 
                 </div>
             </div>
         </div>
     </div>
-    @endsection
-    @section('js')
-    <x-js.commons></x-js.commons>
+    <?php $__env->stopSection(); ?>
+    <?php $__env->startSection('js'); ?>
+     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.js.commons','data' => []]); ?>
+<?php $component->withName('js.commons'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -500,10 +583,10 @@
                 currentTable = $('.main-table-class').DataTable()
             }
             if (currentTable.column(2).visible()) {
-                $(this).html("{{ __('Show Details') }}")
+                $(this).html("<?php echo e(__('Show Details')); ?>")
                 currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
             } else {
-                $(this).html("{{ __('Hide Details') }}")
+                $(this).html("<?php echo e(__('Hide Details')); ?>")
                 currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
             }
         })
@@ -513,14 +596,16 @@
                 currentTable = $('.main-table-class').DataTable()
             }
             if (currentTable.column(13).visible()) {
-                $(this).html("{{ __('Show Details') }}")
+                $(this).html("<?php echo e(__('Show Details')); ?>")
                 currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
             } else {
-                $(this).html("{{ __('Hide Details') }}")
+                $(this).html("<?php echo e(__('Hide Details')); ?>")
                 currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
             }
         })
 
     </script>
 
-    @endsection
+    <?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/reports/customer-statement-report.blade.php ENDPATH**/ ?>

@@ -16,7 +16,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 <style>
 .custom-w-25{
-	width:20% !important;
+	width:23% !important;
 }
     input[type="checkbox"] {
         cursor: pointer;
