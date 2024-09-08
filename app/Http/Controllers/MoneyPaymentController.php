@@ -490,21 +490,7 @@ class MoneyPaymentController
 			}
 		}
 		
-		foreach($request->get('allocations',[]) as $invoiceNumber => $allocationsArr){
-			foreach($allocationsArr as $index => $allocationArr){
-				$partnerId = $allocationArr['partner_id'] ?? 0 ;
-				$contractId = $allocationArr['contract_id'] ?? 0 ;
-				$allocationAmount = $allocationArr['allocation_amount'] ?? 0 ;
-				if($allocationAmount>0){
-					$moneyPayment->settlementAllocations()->create([
-						'allocation_amount'=>$allocationAmount,
-						'contract_id'=>$contractId,
-						'partner_id'=>$partnerId ,
-						'invoice_number'=>$invoiceNumber
-					]);
-				}
-			}
-		}
+		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 
 
 		$moneyPayment->update([

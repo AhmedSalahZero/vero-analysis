@@ -130,11 +130,12 @@ class ContractCashFlowReportController
 			$result['customers'][__('Customers Past Due Invoices')] = [];
 			 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'due_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::IN_SAFE,null,$company->id);
 	
-			 SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::OUTGOING_TRANSFER,'delivery_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear);
-			 SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::CASH_PAYMENT,'delivery_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear);
-			 SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::PAYABLE_CHEQUE,'actual_payment_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
-			 SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray , MoneyPayment::PAYABLE_CHEQUE,'due_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
-			 
+				SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::OUTGOING_TRANSFER,'delivery_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear);
+				SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::CASH_PAYMENT,'delivery_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear);
+				SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::PAYABLE_CHEQUE,'actual_payment_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
+				SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray , MoneyPayment::PAYABLE_CHEQUE,'due_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
+				SettlementAllocation::getSettlementAllocationPerContractAndLetterOfCreditIssuance($result , $totalCashOutFlowArray ,'due_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
+				
 				$contract->getCashExpensePerCategoryName($result,$totalCashOutFlowArray,MoneyPayment::OUTGOING_TRANSFER,'payment_date',$startDate,$endDate,$currentWeekYear);
 				$contract->getCashExpensePerCategoryName($result,$totalCashOutFlowArray,MoneyPayment::CASH_PAYMENT,'payment_date',$startDate,$endDate,$currentWeekYear);
 				$contract->getCashExpensePerCategoryName($result,$totalCashOutFlowArray,MoneyPayment::PAYABLE_CHEQUE,'actual_payment_date',$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);

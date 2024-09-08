@@ -9,17 +9,23 @@ $selectedBanks = [];
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
-	input, select, .dropdown-toggle.bs-placeholder {
-		border:1px solid #CCE2FD !important	
-	}
-	.form-control:disabled, .form-control[readonly]{
-		background-color: #f7f8fa;
-  		  opacity: 1;
-	}
-	.action-class{
-		color:white  !important;
-		background-color:#0742A6 !important;
-	}
+    input,
+    select,
+    .dropdown-toggle.bs-placeholder {
+        border: 1px solid #CCE2FD !important
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #f7f8fa;
+        opacity: 1;
+    }
+
+    .action-class {
+        color: white !important;
+        background-color: #0742A6 !important;
+    }
+
     label {
         text-align: left !important;
     }
@@ -119,10 +125,10 @@ $selectedBanks = [];
                         </div>
                     </div>
                 </div>
-				
-				@php
-					$currentPaymentCurrency = null ;
-				@endphp
+
+                @php
+                $currentPaymentCurrency = null ;
+                @endphp
 
                 <div class="col-md-2">
                     <label>{{__('Select Invoice Currency')}} @include('star')</label>
@@ -139,9 +145,9 @@ $selectedBanks = [];
                                 @php
                                 $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                 $selected = $selected ? 'selected':'';
-								if($selected || (isset($singleModel) && $singleModel) ){
-									$currentPaymentCurrency = $currencyId ;
-								}
+                                if($selected || (isset($singleModel) && $singleModel) ){
+                                $currentPaymentCurrency = $currencyId ;
+                                }
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
@@ -168,7 +174,7 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-{{-- {{ dd($currentPaymentCurrency) }} --}}
+                {{-- {{ dd($currentPaymentCurrency) }} --}}
                 <div class="col-md-2">
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
 
@@ -185,9 +191,9 @@ $selectedBanks = [];
                                 @php
                                 $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
                                 $selected = $selected ? 'selected':'';
-								if(!$selected && $currentPaymentCurrency == $currencyId){
-									$selected = 'selected';
-								}
+                                if(!$selected && $currentPaymentCurrency == $currencyId){
+                                $selected = 'selected';
+                                }
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
@@ -465,8 +471,8 @@ $selectedBanks = [];
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Outgoing Transfer Information')}}
                 </h3>
-			
-				 <div class=" flex-1 d-flex justify-content-end pt-3">
+
+                <div class=" flex-1 d-flex justify-content-end pt-3">
                     <div class="col-md-3 mb-3">
                         <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
@@ -481,7 +487,7 @@ $selectedBanks = [];
                         </div>
                     </div>
                 </div>
-				
+
             </div>
         </div>
 
@@ -583,207 +589,195 @@ $selectedBanks = [];
 
             <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
-              
-			  <div class=" kt-margin-b-10 border-class">
-		<div class="form-group row align-items-end settlement-row-parent">
 
-			<div class="col-md-1 width-10">
-				<label> {{ __('Invoice Number') }} </label>
-				<div class="kt-input-icon">
-					<div class="kt-input-icon">
-						<div class="input-group date">
-							<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
+                    <div class=" kt-margin-b-10 border-class">
+                        <div class="form-group row align-items-end settlement-row-parent">
 
-
-			<div class="col-md-1 width-8">
-				<label> {{ __('Invoice Date') }}  </label>
-				<div class="kt-input-icon">
-					<div class="input-group date">
-						<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-						
-					</div>
-				</div>
-			</div>
-			
-			<div class="col-md-1 width-8">
-				<label> {{ __('Due Date') }} </label>
-				<div class="kt-input-icon">
-					<div class="input-group date">
-						<input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
-						
-					</div>
-				</div>
-			</div>
-			
-
-			<div class="col-md-1 width-8">
-				<label> {{ __('Currency') }} </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
-				</div>
-			</div>
-
-			<div class="col-md-1 width-12">
-				<label>  {{ __('Net Invoice Amount') }} </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
-				</div>
-			</div>
-
-
-			<div class="col-md-2 width-12">
-				<label> {{ __('Paid Amount') }} </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
-				</div>
-			</div>
-
-			<div class="col-md-2 width-12">
-				<label>  {{ __('Net Balance') }}  </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
-				</div>
-			</div>
-
-
-
-			<div class="col-md-1">
-				<label> {{ __('Settlement Amount') }} <span class="text-danger ">*</span></label>
-				<div class="kt-input-icon">
-					<input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-				</div>
-			</div>
-			<div class="col-md-1">
-				<label> {{ __('Withhold Amount') }}  <span class="text-danger ">*</span> </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
-				</div>
-			</div>
-			<div class="col-md-1">
-			   <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
-                                            {{ __('Allocate') }}
-                                        </button>
-										
-										  <div class="modal fade modal-class-js"  id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-xl" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Allocate') }}</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                   
-                    <div class="form-group row justify-content-center">
-                        @php
-                        $index = 0 ;
-                        @endphp
-
-                        {{-- start of fixed monthly repeating amount --}}
-                        @php
-                        $tableId = 'allocations';
-
-                        $repeaterId = 'm_repeater--0';
-
-                        @endphp
-                        {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
-                        <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
-                            <x-slot name="ths">
-                                @foreach([
-                                __('Customer')=>'th-main-color',
-                                __('Contract Name')=>'th-main-color',
-                                __('Contract Code')=>'th-main-color',
-                                __('Contract Amount')=>'th-main-color',
-                                __('Allocate Amount')=>'th-main-color',
-                                ] as $title=>$classes)
-                                <x-tables.repeater-table-th class="{{ $classes }}"  :title="$title"></x-tables.repeater-table-th>
-                                @endforeach
-                            </x-slot>
-                            <x-slot name="trs">
-                                @php
-                                $rows = [-1] ;
-                           ///     $rows = isset($model) ? $model->settlementAllocations :[-1] ;
-						
-                                @endphp
-                                @foreach( count($rows) ? $rows : [-1] as $settlementAllocation)
-                                @php
-								$fullPath  = new \App\Models\SettlementAllocation;
-                                if( !($settlementAllocation instanceof $fullPath) ){
-                                unset($settlementAllocation);
-                                }
-                                @endphp
-                                <tr @if($isRepeater) data-repeater-item @endif>
-
-                                    <td class="text-center">
-                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
-                                        <div class="">
-                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                            </i>
+                            <div class="col-md-1 width-10">
+                                <label> {{ __('Invoice Number') }} </label>
+                                <div class="kt-input-icon">
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
                                         </div>
-                                    </td>
-                                    <td>
-                                        <x-form.select :insideModalWithJs="true" :selectedValue="isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js custom-w-25" data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
-                                    </td>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <td>
-                                        <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($settlementAllocation) ? $settlementAllocation->id : '' }}" :selectedValue="isset($settlementAllocation) ? $settlementAllocation->id : ''" :options="[]" :add-new="false" class=" contracts-js   custom-w-25" data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
-                                    </td>
 
-                                    <td>
-                                        <div class="kt-input-icon custom-w-20">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code " value="">
+                            <div class="col-md-1 width-8">
+                                <label> {{ __('Invoice Date') }} </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 width-8">
+                                <label> {{ __('Due Date') }} </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-1 width-8">
+                                <label> {{ __('Currency') }} </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 width-12">
+                                <label> {{ __('Net Invoice Amount') }} </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-2 width-12">
+                                <label> {{ __('Paid Amount') }} </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 width-12">
+                                <label> {{ __('Net Balance') }} </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-1">
+                                <label> {{ __('Settlement Amount') }} <span class="text-danger ">*</span></label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
+                                    {{ __('Allocate') }}
+                                </button>
+
+                                <div class="modal fade modal-class-js" id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">{{ __('Allocate') }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="kt-input-icon custom-w-15">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-amount" value="0">
-                                            </div>
-                                        </div>
-                                    </td>
-                                  
+                                            <div class="modal-body">
 
-  										<td>
-                                        <div class="kt-input-icon custom-w-15">
-                                            <div class="input-group">
-                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
-                                            </div>
-                                        </div>
-                                    </td>
+                                                <div class="form-group row justify-content-center">
+                                                    @php
+                                                    $index = 0 ;
+                                                    @endphp
 
+                                                    {{-- start of fixed monthly repeating amount --}}
+                                                    @php
+                                                    $tableId = 'allocations';
 
-                                </tr>
-								
-							
-								
-                                @endforeach
+                                                    $repeaterId = 'm_repeater--0';
 
-                            </x-slot>
+                                                    @endphp
+                                                    {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
+                                                    <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                                        <x-slot name="ths">
+                                                            @foreach([
+                                                            __('Customer')=>'th-main-color',
+                                                            __('Contract Name')=>'th-main-color',
+                                                            __('Contract Code')=>'th-main-color',
+                                                            __('Contract Amount')=>'th-main-color',
+                                                            __('Allocate Amount')=>'th-main-color',
+                                                            ] as $title=>$classes)
+                                                            <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                                            @endforeach
+                                                        </x-slot>
+                                                        <x-slot name="trs">
+                                                            @php
+                                                            $rows = [-1] ;
+                                                            /// $rows = isset($model) ? $model->settlementAllocations :[-1] ;
 
+                                                            @endphp
+                                                            @foreach( count($rows) ? $rows : [-1] as $settlementAllocation)
+                                                            @php
+                                                            $fullPath = new \App\Models\SettlementAllocation;
+                                                            if( !($settlementAllocation instanceof $fullPath) ){
+                                                            unset($settlementAllocation);
+                                                            }
+                                                            @endphp
+                                                            <tr @if($isRepeater) data-repeater-item @endif>
 
+                                                                <td class="text-center">
+                                                                    <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                                                    <div class="">
+                                                                        <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                                        </i>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <x-form.select :insideModalWithJs="true" :selectedValue="isset($settlementAllocation) && $settlementAllocation->partner_id ? $settlementAllocation->partner_id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js custom-w-25" data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
+                                                                </td>
 
+                                                                <td>
+                                                                    <x-form.select :insideModalWithJs="true" data-current-selected="{{ isset($settlementAllocation) ? $settlementAllocation->id : '' }}" :selectedValue="isset($settlementAllocation) ? $settlementAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   custom-w-25" data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                                                </td>
 
-                        </x-tables.repeater-table>
-                        {{-- end of fixed monthly repeating amount --}}
+                                                                <td>
+                                                                    <div class="kt-input-icon custom-w-20">
+                                                                        <div class="input-group">
+                                                                            <input disabled type="text" class="form-control contract-code " value="">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="kt-input-icon custom-w-15">
+                                                                        <div class="input-group">
+                                                                            <input disabled type="text" class="form-control contract-amount" value="0">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
 
 
+                                                                <td>
+                                                                    <div class="kt-input-icon custom-w-15">
+                                                                        <div class="input-group">
+                                                                            <input type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
 
 
+                                                            </tr>
 
 
 
+                                                            @endforeach
 
+                                                        </x-slot>
 
 
 
 
+                                                    </x-tables.repeater-table>
+                                                    {{-- end of fixed monthly repeating amount --}}
 
 
 
@@ -851,22 +845,34 @@ $selectedBanks = [];
 
 
 
-                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                    {{-- <button type="button" class="btn btn-primary ">{{ __('Save') }}</button> --}}
-                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                {{-- <button type="button" class="btn btn-primary ">{{ __('Save') }}</button> --}}
                                             </div>
                                         </div>
                                     </div>
-			</div>
+                                </div>
+                            </div>
 
-		</div>
+                        </div>
 
-	</div>
-			  
-			  
+                    </div>
+
+
                 </div>
             </div>
 
@@ -947,13 +953,13 @@ $selectedBanks = [];
         const activeClass = 'js-' + moneyType + '-received-amount';
         const invoiceCurrency = $('select.invoice-currency-class').val();
         const receivingCurrency = $('select.receiving-currency-class').val();
-      //  if (invoiceCurrency != receivingCurrency) {
-      //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-      //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-      //  } else {
-      //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-      //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-      //  }
+        //  if (invoiceCurrency != receivingCurrency) {
+        //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        //  } else {
+        //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        //  }
     })
     $(document).on('change', 'select.currency-class', function() {
         const invoiceCurrency = $('select.invoice-currency-class').val();
@@ -1009,17 +1015,16 @@ $selectedBanks = [];
             }
         })
     })
-$(function(){
-		$('select.currency-class').trigger('change')
-			$('.recalculate-amount-class').trigger('change')
-	})
-	
-		
+    $(function() {
+        $('select.currency-class').trigger('change')
+        $('.recalculate-amount-class').trigger('change')
+    })
+
 </script>
 
 
 <script>
- $(document).on('change', 'select.suppliers-or-customers-js', function() {
+    $(document).on('change', 'select.suppliers-or-customers-js', function() {
         const parent = $(this).closest('tr')
         const partnerId = parseInt($(this).val())
         const model = $('#model_type').val()
@@ -1039,24 +1044,23 @@ $(function(){
                 for (var contract of res.contracts) {
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
-				parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-				parent.find('select.contracts-js').selectpicker("refresh")
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+                parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
-	$(document).on('change', 'select.contracts-js', function() {
+    $(document).on('change', 'select.contracts-js', function() {
         const parent = $(this).closest('tr')
         const code = $(this).find('option:selected').data('code')
         const amount = $(this).find('option:selected').data('amount')
         const currency = $(this).find('option:selected').data('currency').toUpperCase()
         $(parent).find('.contract-code').val(code)
-        $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
-        // $(parent).find('.contract-currency').val(currency)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
 
     })
     $(function() {
         $('select.suppliers-or-customers-js').trigger('change')
-    })	
+    })
 
-	</script>
+</script>
 @endsection

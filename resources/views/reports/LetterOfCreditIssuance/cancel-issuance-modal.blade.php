@@ -58,7 +58,8 @@
                          </div>
 						 
 									@php
-										$invoices = \App\Models\SupplierInvoice::onlyCompany($company->id)->onlyForPartner($model->getBeneficiaryId())->where('net_balance','>',0)->onlyCurrency($model->getLcCurrency())->get();
+										$lcAmount = $model->getLcAmount();
+										$invoices = \App\Models\SupplierInvoice::onlyCompany($company->id)->onlyForPartner($model->getBeneficiaryId())->where('net_balance','>=',$lcAmount)->onlyCurrency($model->getLcCurrency())->get();
 									@endphp
 									
 									  <div class="col-md-3">
@@ -94,6 +95,191 @@
 												<input disabled value="0" type="text" class="form-control net-balance-in-main-currency text-center">
 											</div>
 										</div>
+										
+										
+										
+										
+										
+										
+										
+										
+										
+										
+										  <div class="form-group row justify-content-center">
+											@php
+											$index = 0 ;
+											@endphp
+
+                        {{-- start of fixed monthly repeating amount --}}
+                        @php
+                        $tableId = 'allocations';
+
+                        $repeaterId = 'm_repeater_9';
+
+                        @endphp
+                        {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
+                        <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                            <x-slot name="ths">
+                                @foreach([
+                                __('Customer')=>'th-main-color custom-w-25',
+                                __('Contract Name')=>'th-main-color custom-w-25 ',
+                                __('Contract Code')=>'th-main-color ',
+                                __('Contract Amount')=>'th-main-color',
+                                __('Allocate Amount')=>'th-main-color',
+                                ] as $title=>$classes)
+                                <x-tables.repeater-table-th class="{{ $classes }}"  :title="$title"></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
+                                @php
+                             
+                               $rows = isset($model) ? $model->settlementAllocations :[-1] ;
+						
+                                @endphp
+                                @foreach( count($rows) ? $rows : [-1] as $settlementAllocation)
+                                @php
+								$fullPath  = new \App\Models\SettlementAllocation;
+                                if( !($settlementAllocation instanceof $fullPath) ){
+                                unset($settlementAllocation);
+                                }
+                                @endphp
+                                <tr @if($isRepeater) data-repeater-item @endif>
+
+                                    <td class="text-center">
+                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
+                                    <td>
+								
+                                        <x-form.select :insideModalWithJs="false" :selectedValue="isset($settlementAllocation) && $settlementAllocation->partner_id ? $settlementAllocation->partner_id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
+                                    </td>
+
+                                    <td>
+                                        <x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($settlementAllocation) ? $settlementAllocation->contract_id : '' }}" :selectedValue="isset($settlementAllocation) ? $settlementAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                    </td>
+
+                                    <td>
+                                        <div class="kt-input-icon custom-w-20">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-code " value="">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="kt-input-icon custom-w-15">
+                                            <div class="input-group">
+                                                <input disabled type="text" class="form-control contract-amount" value="0">
+                                            </div>
+                                        </div>
+                                    </td>
+                                  
+
+  										<td>
+                                        <div class="kt-input-icon custom-w-15">
+                                            <div class="input-group">
+                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+								
+							
+								
+                                @endforeach
+
+                            </x-slot>
+
+
+
+
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+					
 									
 									
 									
