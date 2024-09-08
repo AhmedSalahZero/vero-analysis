@@ -105,7 +105,7 @@
 										
 										
 										
-										  <div class="form-group row justify-content-center">
+										  <div class="form-group row justify-content-center w-100">
 											<?php
 											$index = 0 ;
 											?>

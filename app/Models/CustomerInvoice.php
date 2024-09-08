@@ -166,13 +166,15 @@ class CustomerInvoice extends Model implements IInvoice
 			$docNumber = $moneyReceived->getNumber();
 				$moneyReceivedAmount = $moneyReceived->getReceivedAmount() ;
 				if($moneyReceivedAmount){
+					$isDownPayment = $moneyReceived->isDownPayment() ;
+					$currentComment = $isDownPayment ?  __('Down Payment For Contract :contractName',['contractName'=>$moneyReceived->contract->getName()]) :__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
 					$currentData = []; 
 					$currentData['date'] = $dateReceiving;
 					$currentData['document_type'] = $moneyReceivedType;
 					$currentData['document_no'] = $docNumber  ;
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$moneyReceivedAmount;
-					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray()); ;
+					$currentData['comment'] = $currentComment ;
 					$index++;
 					$formattedData[] = $currentData ;
 					$totalWithholdAmount = $moneyReceived->getTotalWithholdAmount();

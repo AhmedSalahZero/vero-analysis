@@ -143,7 +143,8 @@ trait QuickPricingCalculatorAccessor
     }
     public function getTotalNetProfitAfterTaxes():?string
     {
-        return $this->total_net_profit_after_taxes ;
+		$totalNetProfitAfterTaxes = $this->total_net_profit_after_taxes ?: 0 ;
+        return number_unformat($totalNetProfitAfterTaxes)  ;
     }
       public function getTotalNetProfitAfterTaxesFormatted():?string
     {
