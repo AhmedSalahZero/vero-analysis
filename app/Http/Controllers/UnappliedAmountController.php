@@ -12,10 +12,8 @@ use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\UnappliedAmount;
 use App\Traits\GeneralFunctions;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class UnappliedAmountController
 {

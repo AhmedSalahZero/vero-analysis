@@ -4,7 +4,7 @@
 use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived ;
 use App\Models\SupplierInvoice;
-$fullClassName = '\App\Models\\'.$modelType ;
+
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -14,7 +14,8 @@ $fullClassName = '\App\Models\\'.$modelType ;
         text-align: left !important;
     }
 
-     .width-8 {
+ 
+    .width-8 {
         max-width: initial !important;
         width: 8% !important;
         flex: initial !important;
@@ -31,11 +32,13 @@ $fullClassName = '\App\Models\\'.$modelType ;
         width: 12.5% !important;
         flex: initial !important;
     }
+
     .width-45 {
         max-width: initial !important;
         width: 45% !important;
         flex: initial !important;
     }
+
     .kt-portlet {
         overflow: visible !important;
     }
@@ -49,28 +52,30 @@ $fullClassName = '\App\Models\\'.$modelType ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Settlement Using Unapplied Amount Form') }}
+ {{__('Settlement Using Contract Down Payment')}}
+							[{{ $contract->getName() }}]
 @endsection
 @section('content')
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
-							<input type="hidden" name="invoiceId" value="{{ $invoiceId }}">
-		
-            <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-            <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
-            <input type="hidden" id="ajax-invoice-item" data-single-model="{{ 1 }}" value="{{ $invoiceNumber }}">
+        <form method="post" action="{{route('store.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$downPayment->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
+							{{-- <input type="hidden" name="invoiceId" value="{{ $invoiceId }}"> --}}
+			<input type="hidden" name="model_type" value="{{ $modelType }}" > 
+            <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($downPayment) ? 1 : 0 }}">
+            <input id="js-money-received-id" type="hidden" name="down_payment_id" value="{{ isset($downPayment) ? $downPayment->id : 0 }}">
+			                           
+
+            {{-- <input type="hidden" id="ajax-invoice-item" data-single-model="{{ 1 }}" value="{{ $invoiceNumber }}"> --}}
             @csrf
-            @if(isset($model))
-            @method('put')
-            @endif
+            
             {{-- Money Received --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{__('Settlement Using Unapplied Amount')}}
+                            {{__('Settlement Using Contract Down Payment')}}
+							[{{ $contract->getName() }}]
                         </h3>
                     </div>
                 </div>
@@ -83,27 +88,36 @@ $fullClassName = '\App\Models\\'.$modelType ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="{{ $customerNameColumnName }}" name="{{ $customerIdColumnName }}" class="form-control ajax-get-invoice-numbers">
-                                            @foreach($customerInvoices as $partnerId => $customerName)
-                                            <option selected value="{{ $partnerId }}">{{$customerName}}</option>
-                                            @endforeach
+                                        <select disabled id="{{ $customerNameColumnName }}" name="{{ $customerIdColumnName }}" class="form-control ajax-get-invoice-numbers">
+                                            {{-- @foreach($invoices as $partnerId => $customerName) --}}
+                                            <option selected value="{{ $partnerId }}">{{$partnerName}}</option>
+                                            {{-- @endforeach --}}
                                         </select>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
+						
+						 <div class="col-md-2">
+                            <label>  {{ __('Down Payment Amount') }} </label>
+							<div class="form-group">
+							 <input data-max-cheque-value="0" disabled type="text" value="{{ $downPayment->getReceivedAmount()}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
+							 
+							</div>
+
+                        </div>
 
                         <div class="col-md-2">
-                            <label>{{__('Select Currency')}} @include('star')</label>
+                            <label>{{__('Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select readonly name="currency" class="form-control current-currency ajax-get-invoice-numbers">
-                                        <option value="" selected>{{__('Select')}}</option>
+                                    <select disabled name="currency" class="form-control current-currency ajax-get-invoice-numbers">
+                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
 										
 										@php
-								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
+								$selected = isset($downPayment) ?  $downPayment->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
 									$selected = $selected ? 'selected':'';
 							   @endphp
 							   
@@ -118,7 +132,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
                             <label>{{__('Settlement Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="text" name="settlement_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                    <input  type="text" name="settlement_date"  value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -148,9 +162,102 @@ $fullClassName = '\App\Models\\'.$modelType ;
                         </div>
                     </div>
 
-                    <div class="js-template hidden">
+                    <div class="js-template ">
 					     <div class="col-md-12 js-duplicate-node">
-                          {!! $fullClassName::getSettlementsTemplate() !!}
+                          {{-- {!! $fullClassName::getSettlementsTemplate() !!} --}}
+						  
+						  @foreach($invoices as $index=>$invoice)
+						  
+						  <div class=" kt-margin-b-10 border-class">
+			<div class="form-group row align-items-end">
+				<div class="col-md-1 width-10">
+					<label> {{ __('Invoice Number') }} </label>
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+								<input readonly class="form-control" name="settlements[{{$index}}][invoice_number]" value="{{ $invoice->getInvoiceNumber() }}">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1 width-8">
+					<label>{{ __('Invoice Date') }}</label>
+					<div class="kt-input-icon">
+						<div class="input-group date">
+							<input name="settlements[{{$index}}][invoice_date]" type="text" class="form-control " value="{{ $invoice->getInvoiceDateFormatted() }}" disabled />
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1 width-8">
+					<label>{{ __('Due Date') }}</label>
+					<div class="kt-input-icon">
+						<div class="input-group date">
+							<input name="settlements[{{$index}}][invoice_due_date]" type="text" class="form-control" value="{{  $invoice->getInvoiceDueDate() }}" disabled />
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-1 width-8">
+					<label> {{ __('Currency') }} </label>
+					<div class="kt-input-icon">
+						<input name="settlements[{{$index}}][currency]" type="text" disabled class="form-control" value="{{ $invoice->getCurrency() }}">
+					</div>
+				</div>
+				
+				<div class="col-md-2 width-12">
+					<label> {{ __('Net Invoice Amount') }} </label>
+					<div class="kt-input-icon">
+						<input name="settlements[{{$index}}][net_invoice_amount]" type="text" disabled class="form-control" value="{{ $invoice->getNetInvoiceAmount() }}">
+					</div>
+				</div>
+				
+				<div class="col-md-2 width-12">
+					<label> {{ __('Collected Amount') }} </label>
+					<div class="kt-input-icon">
+						<input name="settlements[{{$index}}][collected_amount]" type="text" disabled class="form-control" value="{{ $invoice->collected_amount }}">
+					</div>
+				</div>
+		
+				<div class="col-md-2 width-12">
+					<label> {{ __('Net Balance') }} </label>
+					<div class="kt-input-icon">
+						<input name="settlements[{{$index}}][net_balance]" type="text" readonly class="form-control " value="{{ $invoice->getNetBalance() }}">
+					</div>
+				</div>
+				<div class="col-md-2 width-12">
+					<label> {{ __('Settlement Amount') }}  <span class="text-danger ">*</span> </label>
+					<div class="kt-input-icon">
+						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+					</div>
+				</div>
+				<div class="col-md-2 width-12">
+					<label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
+					<div class="kt-input-icon">
+						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+					</div>
+				</div>
+		
+			</div>
+		
+		</div>
+		@endforeach 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 						  </div>
                     </div>
 
@@ -208,9 +315,9 @@ $fullClassName = '\App\Models\\'.$modelType ;
     $('#type').trigger('change')
 
 </script>
-<script src="/custom/{{ $jsFile }}">
+{{-- <script src="/custom/{{ $jsFile }}">
 
-</script>
+</script> --}}
 
 <script>
     $(document).on('change', '.settlement-amount-class', function() {

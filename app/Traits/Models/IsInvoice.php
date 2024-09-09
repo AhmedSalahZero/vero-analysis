@@ -198,5 +198,4 @@ trait IsInvoice
 		->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
 	}
 	
-	
 }

@@ -287,9 +287,9 @@
                         {{ __('Unapplied Amount Settlement') }}
                     </a>
 
-                    <a href="#"  class="btn   active-style btn-icon-sm align-self-center">
+                    <a href="{{ route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}"  class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
-                        {{ __('Downpayment Amount Settlement') }}
+                        {{ __('Down Payment Amount Settlement') }}
                     </a>
 
                 </div>

@@ -609,8 +609,6 @@ use App\Models\MoneyReceived ;
                 , minViewMode: "year"
                 , todayHighlight: false
                 , clearBtn: true,
-
-
                 autoclose: true
                 , format: "mm/01/yyyy"
             , })

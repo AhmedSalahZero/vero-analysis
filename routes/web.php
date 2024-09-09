@@ -569,6 +569,10 @@ Route::middleware([])->group(function () {
                     Route::put('financial-institutions/{financialInstitution}/letter-of-credit-facility/update/{letterOfCreditFacility}', 'LetterOfCreditFacilityController@update')->name('update.letter.of.credit.facility');
                     Route::delete('financial-institutions/{financialInstitution}/letter-of-credit-facility/delete/{letterOfCreditFacility}', 'LetterOfCreditFacilityController@destroy')->name('delete.letter.of.credit.facility');
 
+					
+					
+					
+					
                     Route::get('aging-analysis/{modelType}', 'AgingController@index')->name('view.aging.analysis');
                     Route::post('aging-analysis/{modelType}', 'AgingController@result')->name('result.aging.analysis');
 
@@ -604,6 +608,11 @@ Route::middleware([])->group(function () {
 
 					Route::get('refresh-withdrawal-dues-report','WithdrawalsSettlementReportController@refreshReport')->name('refresh.withdrawal.report'); // ajax
 
+					
+					Route::get('down-payment-contracts/{partnerId}/{modelType}','MoneyReceivedController@viewContractsWithDownPayments')->name('view.contracts.down.payments');
+					Route::get('down-payment-contracts-settlements/{downPaymentId}/{modelType}','MoneyReceivedController@downPaymentSettlements')->name('view.down.payment.settlement');
+					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','MoneyReceivedController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
+					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
@@ -616,7 +625,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
 					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 
-
+						
 
 					Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');

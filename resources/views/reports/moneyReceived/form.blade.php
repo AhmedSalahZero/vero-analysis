@@ -55,15 +55,7 @@ use App\Models\MoneyReceived ;
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Money Received')}}
-        </h3>
-    </div>
-</div>
-</div> --}}
+       
 <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
@@ -108,7 +100,6 @@ use App\Models\MoneyReceived ;
 							{{-- current-currency --}}
 							current-invoice-currency
 							 ajax-get-invoice-numbers">
-                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                 @php
                                 $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
@@ -720,10 +711,7 @@ use App\Models\MoneyReceived ;
         const moneyType = $('select#type').val();
         if (invoiceCurrency != receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
-
         } else {
-            // hide 
-
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
         }
 
