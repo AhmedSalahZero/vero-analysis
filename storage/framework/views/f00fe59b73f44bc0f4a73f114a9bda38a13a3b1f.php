@@ -1457,6 +1457,34 @@ td{
 
     <?php if(isset($company) && $company->id): ?>
     <script>
+	
+		
+$(document).on('change','.update-exchange-rate',function(){
+	const fromCurrency = $('select.current-invoice-currency').val()
+	const toCurrency = $('select.receiving-currency-class').val()
+	const date = $('.exchange-rate-date').val()
+	
+	const companyId = $('body').data('current-company-id')
+	const lang = $('body').data('lang')
+	const url = '/' + lang + '/' + companyId + '/get-exchange-rate-for-date-and-currencies/'
+	if(fromCurrency == toCurrency  ){
+		return 
+	}
+	$.ajax({
+		url,
+		data:{
+			fromCurrency,
+			toCurrency,
+			date
+		},
+		success:function(res){
+			exchangeRate = res.exchange_rate ;
+			$('.exchange-rate-class').val(exchangeRate).trigger('change')
+		}
+	})
+})
+
+
         $(document).on('click', '.js-mark-notifications-as-read', function() {
             $.ajax({
                 url: "<?php echo e(route('mark.notifications.as.read',['company'=>$company->id])); ?>"

@@ -624,6 +624,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-net-balance-based-on-account-number', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumber')->name('update.balance.and.net.balance.based.on.account.number');
 					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
 					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
+					Route::get('get-customers-based-on-currency/{currencyName}','MoneyReceivedController@getCustomersBasedOnCurrency');
 
 						
 
@@ -649,9 +650,9 @@ Route::middleware([])->group(function () {
 					Route::post('mark-payable-cheques-as-paid', 'MoneyPaymentController@markChequesAsPaid')->name('payable.cheque.mark.as.paid');
 					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
 					Route::get('get-supplier-invoices','SupplierInvoicesController@getSupplierInvoicesForSupplier')->name('get.supplier.invoices');
-					
+					Route::get('get-suppliers-based-on-currency/{currencyName}','MoneyPaymentController@getSuppliersBasedOnCurrency');
 					// cash expense
-					
+					Route::get('get-exchange-rate-for-date-and-currencies','ForeignExchangeRateController@getExchangeRate');
 					
 					Route::get('cash-expense', 'CashExpenseController@index')->name('view.cash.expense');
                     Route::get('cash-expense/create/{model?}', 'CashExpenseController@create')->name('create.cash.expense');

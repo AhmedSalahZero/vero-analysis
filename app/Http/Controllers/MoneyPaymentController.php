@@ -654,4 +654,11 @@ class MoneyPaymentController
 			'data'=>$accountNumberModel
 		]);
 	}
+	
+	public function getSuppliersBasedOnCurrency(Request $request , Company $company , string $currencyName){
+		return response()->json([
+			'supplierInvoices'=>SupplierInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_name','supplier_id')
+		]);
+	}
+	
 }

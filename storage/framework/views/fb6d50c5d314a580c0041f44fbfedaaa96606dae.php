@@ -55,7 +55,7 @@ use App\Models\MoneyReceived ;
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        
+       
 <form method="post" action="<?php echo e(isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
     <input id="js-money-received-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
@@ -81,7 +81,7 @@ use App\Models\MoneyReceived ;
                     <label><?php echo e(__('Receiving Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="receiving_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="receiving_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -97,11 +97,10 @@ use App\Models\MoneyReceived ;
                         <div class="input-group date">
                             <select name="currency" class="form-control 
 							currency-class
-							invoice-currency-class
+							invoice-currency-class update-exchange-rate
 							
 							current-invoice-currency
 							 ajax-get-invoice-numbers">
-                                
                                 <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
                                 $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
@@ -141,7 +140,7 @@ use App\Models\MoneyReceived ;
                             <select when-change-trigger-account-type-change name="receiving_currency" class="form-control 
 							current-currency
 							currency-class
-							receiving-currency-class
+							receiving-currency-class update-exchange-rate
 							
 							">
                                 
@@ -748,10 +747,7 @@ use App\Models\MoneyReceived ;
         const moneyType = $('select#type').val();
         if (invoiceCurrency != receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
-
         } else {
-            // hide 
-
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
         }
 
