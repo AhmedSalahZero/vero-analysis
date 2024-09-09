@@ -24,6 +24,8 @@ class MoneyReceived extends Model
 	const CHEQUE_REJECTED  = 'cheque-rejected';
 	const CHEQUE_COLLECTED = 'cheque-collected';
 	const CHEQUE_COLLECTION_FEES = 'cheque-collection-fees';
+	const CONTRACTS_WITH_DOWN_PAYMENTS = 'contracts-with-down-payments';
+	const DOWN_PAYMENT = 'down-payment';
 	public static function generateComment(self $moneyReceived,string $lang)
 	{
 		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
@@ -666,4 +668,6 @@ class MoneyReceived extends Model
 		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
 		->sum('received_amount');
 	}
+	
+	
 }

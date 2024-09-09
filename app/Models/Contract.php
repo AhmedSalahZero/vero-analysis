@@ -190,6 +190,10 @@ class Contract extends Model
 	{
 		return $this->client ? $this->client->getName() :__('N/A');
 	}
+	public function getClientId()
+	{
+		return $this->client ? $this->client->id :0;
+	}
 	public function getName()
 	{
 		return $this->name ;
@@ -373,5 +377,13 @@ class Contract extends Model
 	
 	
 		
+	}
+	public function moneyReceived() // downpayments
+	{
+		return $this->hasMany(MoneyReceived::class,'contract_id','id')->where('money_type',MoneyReceived::DOWN_PAYMENT);
+	}
+	public function MoneyPayment() // downpayments
+	{
+		return $this->hasMany(MoneyPayment::class,'contract_id','id')->where('money_type',MoneyReceived::DOWN_PAYMENT);
 	}
 }

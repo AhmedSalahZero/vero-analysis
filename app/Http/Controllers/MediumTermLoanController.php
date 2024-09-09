@@ -114,9 +114,9 @@ class MediumTermLoanController
 	
 	public function store(Company $company   , Request $request , FinancialInstitution $financialInstitution){
 		$type = MediumTermLoan::RUNNING;
-		$internalMoneyTransfer = new MediumTermLoan ;
-		$internalMoneyTransfer->status = MediumTermLoan::RUNNING;
-		$internalMoneyTransfer->storeBasicForm($request);
+		$mediumTermLoan = new MediumTermLoan ;
+		$mediumTermLoan->status = MediumTermLoan::RUNNING;
+		$mediumTermLoan->storeBasicForm($request);
 		$activeTab = $type ; 
 		return redirect()->route('loans.index',['company'=>$company->id,'active'=>$activeTab,'financialInstitution'=>$financialInstitution->id])->with('success',__('Data Store Successfully'));
 		
