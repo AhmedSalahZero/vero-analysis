@@ -969,5 +969,9 @@ class MoneyReceivedController
 		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]);
 		
 	}
-	
+	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
+		return response()->json([
+			'customerInvoices'=>CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id')
+		]);
+	}
 }

@@ -80,7 +80,7 @@ use App\Models\MoneyReceived ;
                     <label>{{__('Receiving Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -96,7 +96,7 @@ use App\Models\MoneyReceived ;
                         <div class="input-group date">
                             <select name="currency" class="form-control 
 							currency-class
-							invoice-currency-class
+							invoice-currency-class update-exchange-rate
 							{{-- current-currency --}}
 							current-invoice-currency
 							 ajax-get-invoice-numbers">
@@ -139,7 +139,7 @@ use App\Models\MoneyReceived ;
                             <select when-change-trigger-account-type-change name="receiving_currency" class="form-control 
 							current-currency
 							currency-class
-							receiving-currency-class
+							receiving-currency-class update-exchange-rate
 							{{-- 
 							 ajax-get-invoice-numbers --}}
 							">

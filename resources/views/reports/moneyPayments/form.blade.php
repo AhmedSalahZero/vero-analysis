@@ -116,7 +116,7 @@ $selectedBanks = [];
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -138,7 +138,7 @@ $selectedBanks = [];
                             <select name="currency" class="form-control
 							
 							invoice-currency-class
-							currency-class
+							currency-class update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
@@ -184,7 +184,7 @@ $selectedBanks = [];
 							
 							currency-class
 							receiving-currency-class
-							
+							update-exchange-rate
 							 current-currency">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(getCurrencies() as $currencyId=>$currentName)

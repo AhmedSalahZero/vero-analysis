@@ -472,3 +472,23 @@ $(function () {
 		$('.js-send-to-collection').trigger('change')
 	}, 1000)
 })
+
+
+$(document).on('change','select.invoice-currency-class',function(){
+	const currencyName = $(this).val();
+	const companyId = $('body').data('current-company-id')
+	const lang = $('body').data('lang')
+	const url = '/' + lang + '/' + companyId + '/get-suppliers-based-on-currency/'+currencyName
+	$.ajax({
+		url,
+		success:function(res){
+			let options = '';
+			for(supplierId in res.supplierInvoices ){
+				var supplierName = res.supplierInvoices[supplierId]
+				options +=` <option value="${supplierId}">${supplierName}</option>`
+			}
+			$('#supplier_name').empty().append(options).trigger('change')
+		}
+	})
+});
+$('select.invoice-currency-class').trigger('change')

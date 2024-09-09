@@ -8,17 +8,23 @@ $selectedBanks = [];
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
-	input, select, .dropdown-toggle.bs-placeholder {
-		border:1px solid #CCE2FD !important	
-	}
-	.form-control:disabled, .form-control[readonly]{
-		background-color: #f7f8fa;
-  		  opacity: 1;
-	}
-	.action-class{
-		color:white  !important;
-		background-color:#0742A6 !important;
-	}
+    input,
+    select,
+    .dropdown-toggle.bs-placeholder {
+        border: 1px solid #CCE2FD !important
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #f7f8fa;
+        opacity: 1;
+    }
+
+    .action-class {
+        color: white !important;
+        background-color: #0742A6 !important;
+    }
+
     label {
         text-align: left !important;
     }
@@ -103,7 +109,7 @@ $selectedBanks = [];
                     <label><?php echo e(__('Payment Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -112,10 +118,10 @@ $selectedBanks = [];
                         </div>
                     </div>
                 </div>
-				
-				<?php
-					$currentPaymentCurrency = null ;
-				?>
+
+                <?php
+                $currentPaymentCurrency = null ;
+                ?>
 
                 <div class="col-md-2">
                     <label><?php echo e(__('Select Invoice Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
@@ -125,16 +131,16 @@ $selectedBanks = [];
                             <select name="currency" class="form-control
 							
 							invoice-currency-class
-							currency-class
+							currency-class update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers">
                                 
                                 <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
                                 $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                 $selected = $selected ? 'selected':'';
-								if($selected || (isset($singleModel) && $singleModel) ){
-									$currentPaymentCurrency = $currencyId ;
-								}
+                                if($selected || (isset($singleModel) && $singleModel) ){
+                                $currentPaymentCurrency = $currencyId ;
+                                }
                                 ?>
                                 <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -161,7 +167,7 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-
+                
                 <div class="col-md-2">
                     <label><?php echo e(__('Select Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
 
@@ -171,16 +177,16 @@ $selectedBanks = [];
 							
 							currency-class
 							receiving-currency-class
-							
+							update-exchange-rate
 							 current-currency">
                                 
                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
                                 $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
                                 $selected = $selected ? 'selected':'';
-								if(!$selected && $currentPaymentCurrency == $currencyId){
-									$selected = 'selected';
-								}
+                                if(!$selected && $currentPaymentCurrency == $currencyId){
+                                $selected = 'selected';
+                                }
                                 ?>
                                 <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -470,8 +476,8 @@ $selectedBanks = [];
                     <?php echo e(__('Outgoing Transfer Information')); ?>
 
                 </h3>
-			
-				 <div class=" flex-1 d-flex justify-content-end pt-3">
+
+                <div class=" flex-1 d-flex justify-content-end pt-3">
                     <div class="col-md-3 mb-3">
                         <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
@@ -486,7 +492,7 @@ $selectedBanks = [];
                         </div>
                     </div>
                 </div>
-				
+
             </div>
         </div>
 
@@ -589,131 +595,131 @@ $selectedBanks = [];
 
             <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
-              
-			  <div class=" kt-margin-b-10 border-class">
-		<div class="form-group row align-items-end settlement-row-parent">
 
-			<div class="col-md-1 width-10">
-				<label> <?php echo e(__('Invoice Number')); ?> </label>
-				<div class="kt-input-icon">
-					<div class="kt-input-icon">
-						<div class="input-group date">
-							<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
+                    <div class=" kt-margin-b-10 border-class">
+                        <div class="form-group row align-items-end settlement-row-parent">
 
-
-			<div class="col-md-1 width-8">
-				<label> <?php echo e(__('Invoice Date')); ?>  </label>
-				<div class="kt-input-icon">
-					<div class="input-group date">
-						<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
-						
-					</div>
-				</div>
-			</div>
-			
-			<div class="col-md-1 width-8">
-				<label> <?php echo e(__('Due Date')); ?> </label>
-				<div class="kt-input-icon">
-					<div class="input-group date">
-						<input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
-						
-					</div>
-				</div>
-			</div>
-			
-
-			<div class="col-md-1 width-8">
-				<label> <?php echo e(__('Currency')); ?> </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
-				</div>
-			</div>
-
-			<div class="col-md-1 width-12">
-				<label>  <?php echo e(__('Net Invoice Amount')); ?> </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
-				</div>
-			</div>
+                            <div class="col-md-1 width-10">
+                                <label> <?php echo e(__('Invoice Number')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
-			<div class="col-md-2 width-12">
-				<label> <?php echo e(__('Paid Amount')); ?> </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
-				</div>
-			</div>
+                            <div class="col-md-1 width-8">
+                                <label> <?php echo e(__('Invoice Date')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
 
-			<div class="col-md-2 width-12">
-				<label>  <?php echo e(__('Net Balance')); ?>  </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
-				</div>
-			</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 width-8">
+                                <label> <?php echo e(__('Due Date')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-1 width-8">
+                                <label> <?php echo e(__('Currency')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 width-12">
+                                <label> <?php echo e(__('Net Invoice Amount')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-2 width-12">
+                                <label> <?php echo e(__('Paid Amount')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][paid_amount]" type="text" disabled class="form-control js-paid-amount">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 width-12">
+                                <label> <?php echo e(__('Net Balance')); ?> </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
+                                </div>
+                            </div>
 
 
 
-			<div class="col-md-1">
-				<label> <?php echo e(__('Settlement Amount')); ?> <span class="text-danger ">*</span></label>
-				<div class="kt-input-icon">
-					<input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-				</div>
-			</div>
-			<div class="col-md-1">
-				<label> <?php echo e(__('Withhold Amount')); ?>  <span class="text-danger ">*</span> </label>
-				<div class="kt-input-icon">
-					<input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
-				</div>
-			</div>
-			<div class="col-md-1">
-			   <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
-                                            <?php echo e(__('Allocate')); ?>
+                            <div class="col-md-1">
+                                <label> <?php echo e(__('Settlement Amount')); ?> <span class="text-danger ">*</span></label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <label> <?php echo e(__('Withhold Amount')); ?> <span class="text-danger ">*</span> </label>
+                                <div class="kt-input-icon">
+                                    <input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
+                                    <?php echo e(__('Allocate')); ?>
 
-                                        </button>
-										
-										  <div class="modal fade modal-class-js"  id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-xl" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel"><?php echo e(__('Allocate')); ?></h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                   
-                    <div class="form-group row justify-content-center">
-                        <?php
-                        $index = 0 ;
-                        ?>
+                                </button>
 
-                        
-                        <?php
-                        $tableId = 'allocations';
+                                <div class="modal fade modal-class-js" id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel"><?php echo e(__('Allocate')); ?></h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
 
-                        $repeaterId = 'm_repeater--0';
+                                                <div class="form-group row justify-content-center">
+                                                    <?php
+                                                    $index = 0 ;
+                                                    ?>
 
-                        ?>
-                        
-                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                                    
+                                                    <?php
+                                                    $tableId = 'allocations';
+
+                                                    $repeaterId = 'm_repeater--0';
+
+                                                    ?>
+                                                    
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initialJs' => false,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
-                             <?php $__env->slot('ths'); ?> 
-                                <?php $__currentLoopData = [
-                                __('Customer')=>'th-main-color',
-                                __('Contract Name')=>'th-main-color',
-                                __('Contract Code')=>'th-main-color',
-                                __('Contract Amount')=>'th-main-color',
-                                __('Allocate Amount')=>'th-main-color',
-                                ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                                         <?php $__env->slot('ths'); ?> 
+                                                            <?php $__currentLoopData = [
+                                                            __('Customer')=>'th-main-color',
+                                                            __('Contract Name')=>'th-main-color',
+                                                            __('Contract Code')=>'th-main-color',
+                                                            __('Contract Amount')=>'th-main-color',
+                                                            __('Allocate Amount')=>'th-main-color',
+                                                            ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ''.e($classes).'','title' => $title]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -724,196 +730,196 @@ $selectedBanks = [];
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                             <?php $__env->endSlot(); ?>
-                             <?php $__env->slot('trs'); ?> 
-                                <?php
-                                $rows = [-1] ;
-                           ///     $rows = isset($model) ? $model->settlementAllocations :[-1] ;
-						
-                                ?>
-                                <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $settlementAllocation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-								$fullPath  = new \App\Models\SettlementAllocation;
-                                if( !($settlementAllocation instanceof $fullPath) ){
-                                unset($settlementAllocation);
-                                }
-                                ?>
-                                <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                         <?php $__env->endSlot(); ?>
+                                                         <?php $__env->slot('trs'); ?> 
+                                                            <?php
+                                                            $rows = [-1] ;
+                                                            /// $rows = isset($model) ? $model->settlementAllocations :[-1] ;
 
-                                    <td class="text-center">
-                                        <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
-                                        <div class="">
-                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                            </i>
-                                        </div>
-                                    </td>
-                                    <td>
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'selectedValue' => isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => ' suppliers-or-customers-js custom-w-25','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
+                                                            ?>
+                                                            <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $settlementAllocation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php
+                                                            $fullPath = new \App\Models\SettlementAllocation;
+                                                            if( !($settlementAllocation instanceof $fullPath) ){
+                                                            unset($settlementAllocation);
+                                                            }
+                                                            ?>
+                                                            <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+
+                                                                <td class="text-center">
+                                                                    <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+                                                                    <div class="">
+                                                                        <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                                        </i>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'selectedValue' => isset($settlementAllocation) && $settlementAllocation->partner_id ? $settlementAllocation->partner_id : '','options' => formatOptionsForSelect($clientsWithContracts),'addNew' => false,'class' => ' suppliers-or-customers-js custom-w-25','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'partner_id','name' => 'partner_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['insideModalWithJs' => true,'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) && $settlementAllocation->client ? $settlementAllocation->client->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' suppliers-or-customers-js custom-w-25','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['insideModalWithJs' => true,'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) && $settlementAllocation->partner_id ? $settlementAllocation->partner_id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($clientsWithContracts)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' suppliers-or-customers-js custom-w-25','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'partner_id','name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </td>
+                                                                </td>
 
-                                    <td>
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'dataCurrentSelected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => isset($settlementAllocation) ? $settlementAllocation->id : '','options' => [],'addNew' => false,'class' => ' contracts-js   custom-w-25','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
+                                                                <td>
+                                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => true,'dataCurrentSelected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => isset($settlementAllocation) ? $settlementAllocation->contract_id : '','options' => [],'addNew' => false,'class' => ' contracts-js   custom-w-25','dataFilterType' => ''.e('create').'','all' => false,'dataName' => 'contract_id','name' => 'contract_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['insideModalWithJs' => true,'data-current-selected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) ? $settlementAllocation->id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' contracts-js   custom-w-25','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['insideModalWithJs' => true,'data-current-selected' => ''.e(isset($settlementAllocation) ? $settlementAllocation->id : '').'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($settlementAllocation) ? $settlementAllocation->contract_id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => ' contracts-js   custom-w-25','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-name' => 'contract_id','name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </td>
+                                                                </td>
 
-                                    <td>
-                                        <div class="kt-input-icon custom-w-20">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code " value="">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="kt-input-icon custom-w-15">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-amount" value="0">
-                                            </div>
-                                        </div>
-                                    </td>
-                                  
-
-  										<td>
-                                        <div class="kt-input-icon custom-w-15">
-                                            <div class="input-group">
-                                                <input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="<?php echo e(isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0); ?>">
-                                            </div>
-                                        </div>
-                                    </td>
+                                                                <td>
+                                                                    <div class="kt-input-icon custom-w-20">
+                                                                        <div class="input-group">
+                                                                            <input disabled type="text" class="form-control contract-code " value="">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="kt-input-icon custom-w-15">
+                                                                        <div class="input-group">
+                                                                            <input disabled type="text" class="form-control contract-amount" value="0">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
 
 
-                                </tr>
-								
-							
-								
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                <td>
+                                                                    <div class="kt-input-icon custom-w-15">
+                                                                        <div class="input-group">
+                                                                            <input type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="<?php echo e(isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0); ?>">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
 
-                             <?php $__env->endSlot(); ?>
+
+                                                            </tr>
 
 
 
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                         <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+                                                         <?php $__env->endSlot(); ?>
+
+
+
+
+                                                     <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
                                                     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                                 </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                
                                             </div>
                                         </div>
                                     </div>
-			</div>
+                                </div>
+                            </div>
 
-		</div>
+                        </div>
 
-	</div>
-			  
-			  
+                    </div>
+
+
                 </div>
             </div>
 
@@ -1005,13 +1011,13 @@ $selectedBanks = [];
         const activeClass = 'js-' + moneyType + '-received-amount';
         const invoiceCurrency = $('select.invoice-currency-class').val();
         const receivingCurrency = $('select.receiving-currency-class').val();
-      //  if (invoiceCurrency != receivingCurrency) {
-      //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-      //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-      //  } else {
-      //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-      //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-      //  }
+        //  if (invoiceCurrency != receivingCurrency) {
+        //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        //  } else {
+        //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        //  }
     })
     $(document).on('change', 'select.currency-class', function() {
         const invoiceCurrency = $('select.invoice-currency-class').val();
@@ -1067,17 +1073,16 @@ $selectedBanks = [];
             }
         })
     })
-$(function(){
-		$('select.currency-class').trigger('change')
-			$('.recalculate-amount-class').trigger('change')
-	})
-	
-		
+    $(function() {
+        $('select.currency-class').trigger('change')
+        $('.recalculate-amount-class').trigger('change')
+    })
+
 </script>
 
 
 <script>
- $(document).on('change', 'select.suppliers-or-customers-js', function() {
+    $(document).on('change', 'select.suppliers-or-customers-js', function() {
         const parent = $(this).closest('tr')
         const partnerId = parseInt($(this).val())
         const model = $('#model_type').val()
@@ -1097,26 +1102,25 @@ $(function(){
                 for (var contract of res.contracts) {
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
-				parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-				parent.find('select.contracts-js').selectpicker("refresh")
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+                parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
-	$(document).on('change', 'select.contracts-js', function() {
+    $(document).on('change', 'select.contracts-js', function() {
         const parent = $(this).closest('tr')
         const code = $(this).find('option:selected').data('code')
         const amount = $(this).find('option:selected').data('amount')
         const currency = $(this).find('option:selected').data('currency').toUpperCase()
         $(parent).find('.contract-code').val(code)
-        $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
-        // $(parent).find('.contract-currency').val(currency)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
 
     })
     $(function() {
         $('select.suppliers-or-customers-js').trigger('change')
-    })	
+    })
 
-	</script>
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/moneyPayments/form.blade.php ENDPATH**/ ?>

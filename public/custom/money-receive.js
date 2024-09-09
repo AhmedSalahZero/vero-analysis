@@ -325,3 +325,27 @@ $(function () {
 		$('.js-send-to-collection').trigger('change')
 	}, 1000)
 })
+
+	$(document).on('change','select.invoice-currency-class',function(){
+		const currencyName = $(this).val();
+		const companyId = $('body').data('current-company-id')
+		const lang = $('body').data('lang')
+		const url = '/' + lang + '/' + companyId + '/get-customers-based-on-currency/'+currencyName
+		$.ajax({
+			url,
+			success:function(res){
+				let options = '';
+				for(customerId in res.customerInvoices ){
+					var customerName = res.customerInvoices[customerId]
+					options +=` <option value="${customerId}">${customerName}</option>`
+				}
+				$('#customer_name').empty().append(options).trigger('change')
+			}
+		})
+	});
+	$('select.invoice-currency-class').trigger('change')
+
+	
+	
+	
+	

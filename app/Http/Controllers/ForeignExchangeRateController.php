@@ -4,6 +4,7 @@ use App\Interfaces\Models\IInvoice;
 use App\Models\Company;
 use App\Models\ForeignExchangeRate;
 use App\Traits\GeneralFunctions;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ForeignExchangeRateController
@@ -73,5 +74,16 @@ class ForeignExchangeRateController
 			// }
 			return redirect()->route('view.foreign.exchange.rate',['company'=>$company->id]);
 	}
-	
+	public function getExchangeRate(Request $request  , Company $company)
+	{
+		$date = Carbon::make($request->get('date'))->format('Y-m-d') ;
+		$exchangeRateRow = ForeignExchangeRate::where('company_id',$company->id)
+		->where('from_currency',$request->get('fromCurrency'))
+		->where('to_currency',$request->get('toCurrency'))
+		->where('date','<=',$date)
+		->first() ;
+		return response()->json([
+			'exchange_rate'=>$exchangeRateRow ? $exchangeRateRow->exchange_rate : 1 
+		]);
+	}
 }
