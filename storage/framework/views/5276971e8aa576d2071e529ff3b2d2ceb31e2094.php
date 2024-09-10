@@ -46,7 +46,11 @@ $selectedBanks = [];
         width: 8% !important;
         flex: initial !important;
     }
-
+.width-9-5 {
+        max-width: initial !important;
+        width: 9% !important;
+        flex: initial !important;
+    }
     .width-10 {
         max-width: initial !important;
         width: 10% !important;
@@ -109,7 +113,7 @@ $selectedBanks = [];
                     <label><?php echo e(__('Payment Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -611,7 +615,7 @@ $selectedBanks = [];
                             </div>
 
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> <?php echo e(__('Invoice Date')); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -621,7 +625,7 @@ $selectedBanks = [];
                                 </div>
                             </div>
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> <?php echo e(__('Due Date')); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -663,13 +667,13 @@ $selectedBanks = [];
 
 
 
-                            <div class="col-md-1">
+                            <div class="col-md-1 width-9-5">
                                 <label> <?php echo e(__('Settlement Amount')); ?> <span class="text-danger ">*</span></label>
                                 <div class="kt-input-icon">
                                     <input name="settlements[][settlement_amount]" placeholder="" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
                                 </div>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-1 width-9-5">
                                 <label> <?php echo e(__('Withhold Amount')); ?> <span class="text-danger ">*</span> </label>
                                 <div class="kt-input-icon">
                                     <input name="settlements[][withhold_amount]" placeholder="" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
