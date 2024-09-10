@@ -204,8 +204,20 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
+				var domInvoiceDate = $(lastNode).find('.js-invoice-date')
+				var domInvoiceDueDate = $(lastNode).find('.js-invoice-due-date')
+				var domCurrency = $(lastNode).find('.js-currency')
+				var domNetInvoiceAmount = $(lastNode).find('.js-net-invoice-amount')
+				var domCollectedAmount = $(lastNode).find('.js-collected-amount')
+				var domNetBalance = $(lastNode).find('.js-net-balance')
 				domInvoiceNumber.val(invoiceNumber)
 				domInvoiceNumber.attr('name', 'settlements[' + invoiceNumber + '][invoice_number]')
+				domInvoiceDate.attr('name', 'settlements[' + invoiceNumber + '][invoice_date]')
+				domInvoiceDueDate.attr('name', 'settlements[' + invoiceNumber + '][invoice_due_date]')
+				domCurrency.attr('name', 'settlements[' + invoiceNumber + '][currency]')
+				domNetInvoiceAmount.attr('name', 'settlements[' + invoiceNumber + '][net_invoice_amount]')
+				domCollectedAmount.attr('name', 'settlements[' + invoiceNumber + '][collected_amount]')
+				domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
 				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceNumber == specificInvoiceNumber)) {
 					$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-invoice-due-date').val(invoiceDueDate)

@@ -126,7 +126,7 @@ class UnappliedAmountController
 		$currency = $customerInvoice->getCurrency();
 		
 		
-		
+	
 		$totalWithholdAmount= 0 ;
 		$unappliedAmount = UnappliedAmount::create([
 			'company_id'=>$company->id ,
@@ -143,7 +143,9 @@ class UnappliedAmountController
 				$settlementArr['company_id'] = $company->id ;
 				$settlementArr[$clientNameColumnName] = $customerName ;
 				$totalWithholdAmount += ($settlementArr['withhold_amount'] ?? 0)  ;
-				$unappliedAmount->$unappliedSettlementTable()->create($settlementArr);
+				if(isset($settlementArr['settlement_amount']) && $settlementArr['settlement_amount'] > 0 ){
+					$unappliedAmount->$unappliedSettlementTable()->create($settlementArr);
+				}
 		}
 		return redirect()->route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]);
 		
@@ -186,13 +188,13 @@ class UnappliedAmountController
 		
 	}
 	
-	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived){
+	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived,string $modelType){
 		$oldType = $moneyReceived->getType();
 		$newType = $request->get('type');
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		$moneyReceived->$oldTypeRelationName ? $moneyReceived->$oldTypeRelationName->delete() : null;
 		$moneyReceived->delete();
-		$this->store($company,$request);
+		$this->store($company,$request,$modelType);
 		 $activeTab = $newType;
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}

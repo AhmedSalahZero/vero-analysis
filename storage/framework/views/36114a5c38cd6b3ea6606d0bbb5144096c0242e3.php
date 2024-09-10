@@ -13,7 +13,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
         text-align: left !important;
     }
 
-    .width-8 {
+     .width-8 {
         max-width: initial !important;
         width: 8% !important;
         flex: initial !important;
@@ -27,16 +27,14 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
     .width-12 {
         max-width: initial !important;
-        width: 13.5% !important;
+        width: 12.5% !important;
         flex: initial !important;
     }
-
     .width-45 {
         max-width: initial !important;
         width: 45% !important;
         flex: initial !important;
     }
-
     .kt-portlet {
         overflow: visible !important;
     }
