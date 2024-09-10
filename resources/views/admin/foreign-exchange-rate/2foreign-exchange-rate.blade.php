@@ -54,7 +54,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 @endphp
                 @foreach($existingCurrencies as $currentCurrencyName)
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
+                    <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) && !$currentActiveTab ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{$currentCurrencyName .' '. __('Table') }}
                     </a>
                 </li>
@@ -80,7 +80,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
             $currentTab = $existingCurrency ;
             @endphp
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ (!Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency || !in_array($mainFunctionalCurrency,$existingCurrencies) && $currentTab == array_key_first($existingCurrencies)   )  || Request('active',$currentActiveTab) == $existingCurrency ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
+            <div class="tab-pane {{ (!Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency || !in_array($mainFunctionalCurrency,$existingCurrencies) && $currentTab == array_key_first($existingCurrencies) && !$currentActiveTab   )  || Request('active',$currentActiveTab) == $existingCurrency ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentTab" :title="$existingCurrency . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
                         {{-- <x-export-letter-of-credit-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="#" /> --}}

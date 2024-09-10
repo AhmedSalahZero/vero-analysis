@@ -54,7 +54,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 ?>
                 <?php $__currentLoopData = $existingCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currentCurrencyName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo e(!Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':''); ?>" data-toggle="tab" href="#<?php echo e($currentCurrencyName); ?>" role="tab">
+                    <a class="nav-link <?php echo e(!Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) && !$currentActiveTab ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':''); ?>" data-toggle="tab" href="#<?php echo e($currentCurrencyName); ?>" role="tab">
                         <i class="fa fa-money-check-alt"></i> <?php echo e($currentCurrencyName .' '. __('Table')); ?>
 
                     </a>
@@ -81,7 +81,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
             $currentTab = $existingCurrency ;
             ?>
             <!--Begin:: Tab Content-->
-            <div class="tab-pane <?php echo e((!Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency || !in_array($mainFunctionalCurrency,$existingCurrencies) && $currentTab == array_key_first($existingCurrencies)   )  || Request('active',$currentActiveTab) == $existingCurrency ?'active':''); ?>" id="<?php echo e($currentTab); ?>" role="tabpanel">
+            <div class="tab-pane <?php echo e((!Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency || !in_array($mainFunctionalCurrency,$existingCurrencies) && $currentTab == array_key_first($existingCurrencies) && !$currentActiveTab   )  || Request('active',$currentActiveTab) == $existingCurrency ?'active':''); ?>" id="<?php echo e($currentTab); ?>" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.table-title.with-two-dates','data' => ['type' => $currentTab,'title' => $existingCurrency . ' ' .__('Table') ,'startDate' => $filterDates[$currentTab]['startDate'],'endDate' => $filterDates[$currentTab]['endDate']]]); ?>

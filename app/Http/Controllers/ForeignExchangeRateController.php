@@ -41,7 +41,7 @@ class ForeignExchangeRateController
 		return $collection;
 	}
 	
-	public function index(Company $company,Request $request)
+	public function index(Company $company,Request $request , $returnIndexArray = false )
 	{
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$mainFunctionalCurrency = $company->getMainFunctionalCurrency() ;
@@ -71,9 +71,7 @@ class ForeignExchangeRateController
 
 		}
 
-
-		
-        return view('admin.foreign-exchange-rate.2foreign-exchange-rate', [
+		$viewDataArray = [
 			'company'=>$company,
 			'mainFunctionalCurrency'=>$mainFunctionalCurrency,
 			'existingCurrencies'=>$existingCurrencies,
@@ -81,7 +79,11 @@ class ForeignExchangeRateController
 			'models'=>$models,
 			'filterDates'=>$filterDates,
 			'currentActiveTab'=>$activeType,
-		]);
+		] ;
+		if($returnIndexArray){
+			return $viewDataArray;
+		}
+        return view('admin.foreign-exchange-rate.2foreign-exchange-rate',$viewDataArray );
     }
 	public function store(Request $request, Company $company){
 		$data = [
@@ -97,15 +99,17 @@ class ForeignExchangeRateController
 		
 		
 		
-		return redirect()->route('view.foreign.exchange.rate',['company'=>$company->id]);
+		return redirect()->route('view.foreign.exchange.rate',['company'=>$company->id,'active'=>$request->get('from_currency')]);
 	}
 	public function edit(Request $request , Company $company ,  $foreignExchangeRateId ){
+		$indexViewData = $this->index($company,$request,true);
 		$foreignExchangeRate = ForeignExchangeRate::find($foreignExchangeRateId);
-        return view('admin.foreign-exchange-rate.2foreign-exchange-rate', [
+        return view('admin.foreign-exchange-rate.2foreign-exchange-rate', array_merge($indexViewData,[
 			'company'=>$company,
 			'foreignExchangeRates'=>ForeignExchangeRate::where('company_id',$company->id)->get(),
 			'model'=>$foreignExchangeRate,
-		]);
+			'currentActiveTab'=>$foreignExchangeRate->getFromCurrency()
+		]));
 	}
 	public function update(Request $request , Company $company ,  $foreignExchangeRateId ){
 		$date = $request->get('date') ;
@@ -118,7 +122,7 @@ class ForeignExchangeRateController
 		] ;
 		$foreignExchangeRate->update($data);
 		
-		return redirect()->route('view.foreign.exchange.rate',['company'=>$company->id]);
+		return redirect()->route('view.foreign.exchange.rate',['company'=>$company->id,'active'=>$request->get('from_currency')]);
 		
 	}
 	public function destroy(Request $request , Company $company ,  $foreignExchangeRateId )
