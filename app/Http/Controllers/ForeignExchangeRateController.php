@@ -10,16 +10,77 @@ use Illuminate\Http\Request;
 class ForeignExchangeRateController
 {
     use GeneralFunctions;
+	
+	protected function applyFilter(Request $request,Collection $collection,string $filterStartDate = null, string $filterEndDate = null ):Collection{
+		if(!count($collection)){
+			return $collection;
+		}
+		$searchFieldName = $request->get('field');
+		$dateFieldName =  'issuance_date' ; // change it
+		$from = $request->get('from');
+		$to = $request->get('to');
+		$value = $request->query('value');
+		$collection = $collection
+		->when($request->has('value'),function($collection) use ($request,$value,$searchFieldName){
+			return $collection->filter(function($letterOfCreditIssuance) use ($value,$searchFieldName){
+				$currentValue = $letterOfCreditIssuance->{$searchFieldName} ;
+				return false !== stristr($currentValue , $value);
+			});
+		})
+		->when($request->get('from') , function($collection) use($dateFieldName,$from){
+			return $collection->where($dateFieldName,'>=',$from);
+		})
+		->when($request->get('to') , function($collection) use($dateFieldName,$to){
+			return $collection->where($dateFieldName,'<=',$to);
+		})
+		->when($filterStartDate , function($collection) use ($filterStartDate,$filterEndDate){
+			return $collection->filterByIssuanceDate($filterStartDate,$filterEndDate);
+		})
+		->sortByDesc('id');
+
+		return $collection;
+	}
+	
 	public function index(Company $company,Request $request)
 	{
-		/**
-		 * @var IInvoice $invoice ;
-		 */
+		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency() ;
+		$activeType = $request->get('active',$mainFunctionalCurrency) ;
+		$filterDates = [];
+		$searchFields = [];
+		$models = [];
+		$existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency');
 		
-		$foreignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->orderByRaw('date desc')->get();
-        return view('admin.foreign-exchange-rate', [
+		foreach($existingCurrencies as $currentCurrency){
+			$startDate = $request->has('startDate') ? $request->input('startDate.'.$currentCurrency) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
+			$endDate = $request->has('endDate') ? $request->input('endDate.'.$currentCurrency) : now()->format('Y-m-d');
+			$filterDates[$currentCurrency] = [
+				'startDate'=>$startDate,
+				'endDate'=>$endDate
+			];
+			$models[$currentCurrency]   = ForeignExchangeRate::where('company_id',$company->id)->where('from_currency',$currentCurrency)->orderByRaw('date desc')->get(); ;
+
+			if($currentCurrency == $activeType ){
+				$models[$currentCurrency]   = $this->applyFilter($request,$models[$currentCurrency],$filterDates[$currentCurrency]['startDate'] , $filterDates[$currentCurrency]['endDate']) ;
+			}
+			$searchFields[$currentCurrency] =  [
+				'from_currency'=>__('From Currency'),
+				'to_currency'=>__('To Currency'),
+				'date'=>__('Date')
+			];
+
+		}
+
+
+		
+        return view('admin.foreign-exchange-rate.foreign-exchange-rate', [
 			'company'=>$company,
-			'foreignExchangeRates'=>$foreignExchangeRates,
+			'mainFunctionalCurrency'=>$mainFunctionalCurrency,
+			'existingCurrencies'=>$existingCurrencies,
+			'searchFields'=>$searchFields,
+			'models'=>$models,
+			'filterDates'=>$filterDates,
+			'currentActiveTab'=>$activeType,
 		]);
     }
 	public function store(Request $request, Company $company){
@@ -40,7 +101,7 @@ class ForeignExchangeRateController
 	}
 	public function edit(Request $request , Company $company ,  $foreignExchangeRateId ){
 		$foreignExchangeRate = ForeignExchangeRate::find($foreignExchangeRateId);
-        return view('admin.foreign-exchange-rate', [
+        return view('admin.foreign-exchange-rate.foreign-exchange-rate', [
 			'company'=>$company,
 			'foreignExchangeRates'=>ForeignExchangeRate::where('company_id',$company->id)->get(),
 			'model'=>$foreignExchangeRate,
@@ -81,6 +142,7 @@ class ForeignExchangeRateController
 		->where('from_currency',$request->get('fromCurrency'))
 		->where('to_currency',$request->get('toCurrency'))
 		->where('date','<=',$date)
+		->orderByDesc('date')
 		->first() ;
 		return response()->json([
 			'exchange_rate'=>$exchangeRateRow ? $exchangeRateRow->exchange_rate : 1 

@@ -476,6 +476,7 @@ $(function () {
 
 $(document).on('change','select.invoice-currency-class',function(){
 	const currencyName = $(this).val();
+	$('select.receiving-currency-class').val(currencyName).trigger('change');
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-suppliers-based-on-currency/'+currencyName

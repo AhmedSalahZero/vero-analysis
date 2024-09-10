@@ -58,7 +58,6 @@ class UnappliedAmountController
 		$startDate = $request->has('startDate') ? $request->input('startDate') : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 		$endDate = $request->has('endDate') ? $request->input('endDate') : now()->format('Y-m-d');
 		$customer = Partner::find($partnerId);
-
 		$unappliedAmountSettlements = $customer->getSettlementForUnappliedAmounts($startDate ,$endDate) ;
 		$unappliedAmountSettlements =$this->applyFilter($request,$unappliedAmountSettlements);
 		$searchFields = [
