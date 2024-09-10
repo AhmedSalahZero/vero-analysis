@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\MoneyReceived;
 use App\Rules\SettlementPlusWithoutCanNotBeGreaterNetBalance;
-use Illuminate\Contracts\Validation\ImplicitRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMoneyReceivedRequest extends FormRequest 
@@ -27,7 +26,7 @@ class StoreMoneyReceivedRequest extends FormRequest
     public function rules()
     {
 		$type = $this->type ; 
-	
+		
         return [
 			'account_type.'.$type => $type == MoneyReceived::INCOMING_TRANSFER || $type == MoneyReceived::CASH_IN_BANK ? 'required' : 'sometimes',
 			'unapplied_amount'=>'sometimes|gte:0',
