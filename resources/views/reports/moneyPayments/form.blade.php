@@ -605,7 +605,7 @@ $selectedBanks = [];
                             </div>
 
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> {{ __('Invoice Date') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -615,7 +615,7 @@ $selectedBanks = [];
                                 </div>
                             </div>
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> {{ __('Due Date') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -626,7 +626,7 @@ $selectedBanks = [];
                             </div>
 
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> {{ __('Currency') }} </label>
                                 <div class="kt-input-icon">
                                     <input name="settlements[][currency]" type="text" disabled class="form-control js-currency">

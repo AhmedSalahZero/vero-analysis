@@ -109,7 +109,7 @@ $selectedBanks = [];
                     <label><?php echo e(__('Payment Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -611,7 +611,7 @@ $selectedBanks = [];
                             </div>
 
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> <?php echo e(__('Invoice Date')); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -621,7 +621,7 @@ $selectedBanks = [];
                                 </div>
                             </div>
 
-                            <div class="col-md-1 width-8">
+                            <div class="col-md-1 width-9">
                                 <label> <?php echo e(__('Due Date')); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
