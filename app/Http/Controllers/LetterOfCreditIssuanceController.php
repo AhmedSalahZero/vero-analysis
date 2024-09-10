@@ -62,7 +62,6 @@ class LetterOfCreditIssuanceController
 		$filterDates = [];
 		$searchFields = [];
 		$models = [];
-		// $suppliers = Partner::onlyCompany($company->id)->onlySuppliers()->get();
 		foreach(getLcTypes() as $type=>$typeNameFormatted){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
