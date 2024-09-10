@@ -49,7 +49,7 @@ class ForeignExchangeRateController
 		$filterDates = [];
 		$searchFields = [];
 		$models = [];
-		$existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency');
+		$existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency')->toArray();
 		
 		foreach($existingCurrencies as $currentCurrency){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$currentCurrency) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
@@ -73,7 +73,7 @@ class ForeignExchangeRateController
 
 
 		
-        return view('admin.foreign-exchange-rate.foreign-exchange-rate', [
+        return view('admin.foreign-exchange-rate.2foreign-exchange-rate', [
 			'company'=>$company,
 			'mainFunctionalCurrency'=>$mainFunctionalCurrency,
 			'existingCurrencies'=>$existingCurrencies,
@@ -101,7 +101,7 @@ class ForeignExchangeRateController
 	}
 	public function edit(Request $request , Company $company ,  $foreignExchangeRateId ){
 		$foreignExchangeRate = ForeignExchangeRate::find($foreignExchangeRateId);
-        return view('admin.foreign-exchange-rate.foreign-exchange-rate', [
+        return view('admin.foreign-exchange-rate.2foreign-exchange-rate', [
 			'company'=>$company,
 			'foreignExchangeRates'=>ForeignExchangeRate::where('company_id',$company->id)->get(),
 			'model'=>$foreignExchangeRate,

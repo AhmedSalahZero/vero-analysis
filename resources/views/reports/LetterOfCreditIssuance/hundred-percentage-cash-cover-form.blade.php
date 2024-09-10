@@ -273,26 +273,19 @@ use App\Models\LetterOfCreditIssuance;
 
 
                                 <div class="form-group row">
-
                                     <div class="col-md-3">
 
                                         <x-form.date :classes="'update-exchange-rate exchange-rate-date recalc-due-date issuance-date-js'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
-
                                     <div class="col-md-3">
                                         <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration Months')" :type="'numeric'" :placeholder="__('LC Duration Months')" :name="'lc_duration_months'" :class="'recalc-due-date lc-duration-months-js'" :required="true"></x-form.input>
                                     </div>
-
-
                                     <div class="col-md-3">
-
                                         <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
                                     </div>
-
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency  recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
-
                                     <div class="col-md-3">
                                         <label>{{__('LC Currency')}}
                                             @include('star')
