@@ -238,7 +238,7 @@ class CustomerInvoice extends Model implements IInvoice
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-8">
+				<div class="col-md-1 width-9">
 					<label>'.__('Invoice Date').'</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
@@ -246,7 +246,7 @@ class CustomerInvoice extends Model implements IInvoice
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-8">
+				<div class="col-md-1 width-9">
 					<label>'.__('Due Date').'</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">

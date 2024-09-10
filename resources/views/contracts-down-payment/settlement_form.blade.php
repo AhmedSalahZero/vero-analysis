@@ -20,7 +20,11 @@ use App\Models\SupplierInvoice;
         width: 8% !important;
         flex: initial !important;
     }
-
+.width-9 {
+        max-width: initial !important;
+        width: 9% !important;
+        flex: initial !important;
+    }
     .width-10 {
         max-width: initial !important;
         width: 10% !important;
@@ -102,7 +106,7 @@ use App\Models\SupplierInvoice;
 						 <div class="col-md-2">
                             <label>  {{ __('Down Payment Amount') }} </label>
 							<div class="form-group">
-							 <input data-max-cheque-value="0" disabled type="text" value="{{ $downPayment->getReceivedAmount()}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
+							 <input data-max-cheque-value="0" disabled type="text" value="{{ $downPayment->getReceivedAmountFormatted()}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
 							 
 							</div>
 
@@ -180,7 +184,7 @@ use App\Models\SupplierInvoice;
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-8">
+				<div class="col-md-1 width-9">
 					<label>{{ __('Invoice Date') }}</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
@@ -188,11 +192,11 @@ use App\Models\SupplierInvoice;
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-8">
+				<div class="col-md-1 width-9">
 					<label>{{ __('Due Date') }}</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
-							<input name="settlements[{{$index}}][invoice_due_date]" type="text" class="form-control" value="{{  $invoice->getInvoiceDueDate() }}" disabled />
+							<input name="settlements[{{$index}}][invoice_due_date]" type="text" class="form-control" value="{{  $invoice->getInvoiceDueDateFormatted() }}" disabled />
 						</div>
 					</div>
 				</div>
@@ -207,21 +211,21 @@ use App\Models\SupplierInvoice;
 				<div class="col-md-2 width-12">
 					<label> {{ __('Net Invoice Amount') }} </label>
 					<div class="kt-input-icon">
-						<input name="settlements[{{$index}}][net_invoice_amount]" type="text" disabled class="form-control" value="{{ $invoice->getNetInvoiceAmount() }}">
+						<input name="settlements[{{$index}}][net_invoice_amount]" type="text" disabled class="form-control" value="{{ $invoice->getNetInvoiceAmountFormatted() }}">
 					</div>
 				</div>
 				
 				<div class="col-md-2 width-12">
 					<label> {{ __('Collected Amount') }} </label>
 					<div class="kt-input-icon">
-						<input name="settlements[{{$index}}][collected_amount]" type="text" disabled class="form-control" value="{{ $invoice->collected_amount }}">
+						<input name="settlements[{{$index}}][collected_amount]" type="text" disabled class="form-control" value="{{ number_format($invoice->collected_amount,0) }}">
 					</div>
 				</div>
 		
 				<div class="col-md-2 width-12">
 					<label> {{ __('Net Balance') }} </label>
 					<div class="kt-input-icon">
-						<input name="settlements[{{$index}}][net_balance]" type="text" readonly class="form-control " value="{{ $invoice->getNetBalance() }}">
+						<input name="settlements[{{$index}}][net_balance]" type="text" disabled class="form-control " value="{{ $invoice->getNetBalanceFormatted() }}">
 					</div>
 				</div>
 				<div class="col-md-2 width-12">

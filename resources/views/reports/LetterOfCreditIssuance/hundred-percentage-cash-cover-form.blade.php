@@ -276,7 +276,7 @@ use App\Models\LetterOfCreditIssuance;
 
                                     <div class="col-md-3">
 
-                                        <x-form.date :classes="'recalc-due-date issuance-date-js'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
+                                        <x-form.date :classes="'update-exchange-rate exchange-rate-date recalc-due-date issuance-date-js'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
 
                                     <div class="col-md-3">
@@ -298,7 +298,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_currency" class="form-control" >
+                                            <select name="lc_currency" class="form-control current-invoice-currency update-exchange-rate" >
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
@@ -307,7 +307,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </div>
                                     </div>
 									  <div class="col-md-3">
-                                        <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate %')" :type="'text'" :placeholder="__('Exchange Rate %')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency recalculate-cash-cover-amount-js exchange-rate-js only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency recalculate-cash-cover-amount-js exchange-rate-js only-greater-than-or-equal-zero-allowed exchange-rate-class'" :required="true"></x-form.input>
                                     </div>
 									<div class="col-md-3">
                                         <x-form.input  :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount In Main Currency')" :type="'text'" :placeholder="__('Amount In Main Currency')" :name="'amount_in_main_currency'" :class="'amount-in-main-currency-js-hidden recalculate-cash-cover-amount-js '" :required="true"></x-form.input>
@@ -322,7 +322,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_cash_cover_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="lc_cash_cover_currency" class="form-control current-currency receiving-currency-class update-exchange-rate" js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>

@@ -233,7 +233,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					var editAllocationRow = generateAllocationRow(currentSettlementAllocation,res.clientsWithContracts)
 					if(currentSettlementAllocation.length){
 						$(lastNode).find('table.m_repeater--0 tbody[data-repeater-list]').empty().append(editAllocationRow)
-					//	console.log($(lastNode).find('table.m_repeater--0 tbody[data-repeater-list] .contracts-js').length)
 						// $(lastNode).find('table.m_repeater--0 tbody[data-repeater-list] .contracts-js').find('.dropdown-toggle').remove();
 						// $(lastNode).find('table.m_repeater--0 tbody[data-repeater-list] .contracts-js').selectpicker()
 						
@@ -258,7 +257,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 							$(this).closest('tbody').find('tr').each(function(trIndex,tr){
 								$(tr).find('[name]').each(function(i,element){
 									var currentInvoiceNumber=$(this).closest('.settlement-row-parent').find('.js-invoice-number').val()
-									console.log('current invoice number',currentInvoiceNumber)
 									var currentName = $(this).attr('data-name');
 									$(element).attr('name','allocations['+currentInvoiceNumber+']['+trIndex+']['+currentName+']')
 								 })
@@ -340,12 +338,10 @@ function generateAllocationRow(settlementAllocations , clientsWithContracts)
 		for(var clientId in clientsWithContracts ){
 			var currentClientName = clientsWithContracts[clientId]
 			var currentSelectClient = clientId == currentSettlementAllocation.partner_id ? 'selected':''  ; 
-			console.log(currentClientName,currentSelectClient,'--')
 			partnersSelect+=` <option  value="${clientId}" ${currentSelectClient}> ${currentClientName} </option> `;
 			
 		}
 		partnersSelect+= ' </select> ' 
-		console.log(partnersSelect)
 		var currentRow = 	`<tr data-repeater-item >
 		<td class="text-center">
 		

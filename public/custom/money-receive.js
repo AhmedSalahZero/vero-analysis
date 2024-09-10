@@ -248,7 +248,6 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	})
 	const currentType = $('#type').val()
 	const receivedAmount = $('.js-' + currentType + '-received-amount').val()
-	console.log(currentType,receivedAmount,'----')
 	
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
@@ -283,7 +282,6 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	// console.log(val , currency , financialInstitutionBankId)
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
 	}

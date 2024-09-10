@@ -107,7 +107,7 @@ $selectedBanks = [];
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="payment_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="payment_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_2" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -117,44 +117,7 @@ $selectedBanks = [];
                     </div>
                 </div>
 
-                {{-- <div class="col-md-2">
-                    <label>{{__('Select Invoice Currency')}} @include('star')</label>
-
-                <div class="kt-input-icon">
-                    <div class="input-group date">
-                        <select name="currency" class="form-control
-							
-							invoice-currency-class
-							currency-class
-							 current-invoice-currency  ajax-get-invoice-numbers">
-                            @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-                            @php
-                            $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
-                            $selected = $selected ? 'selected':'';
-                            @endphp
-                            <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div> --}}
-            {{--
-                <div class="col-md-3">
-
-                    <label>{{__('Supplier Name')}} @include('star')</label>
-            <div class="kt-input-icon">
-                <div class="kt-input-icon">
-                    <div class="input-group date">
-                        <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers">
-                            @foreach($suppliers as $supplierId => $supplierName)
-                            <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-        </div> --}}
+                
 
 
         <div class="col-md-2 mb-4">
@@ -167,6 +130,7 @@ $selectedBanks = [];
         </div>
 
         <div class="col-md-2">
+			<input type="hidden" class="to-currency" value="{{ $company->getMainFunctionalCurrency() }}">
             <label>{{__('Select Currency')}} @include('star')</label>
 
             <div class="kt-input-icon">
@@ -175,7 +139,7 @@ $selectedBanks = [];
 							
 							currency-class
 							receiving-currency-class
-							
+							current-invoice-currency update-exchange-rate
 							 current-currency">
                         {{-- <option value="" selected>{{__('Select')}}</option> --}}
                         @foreach(getCurrencies() as $currencyId=>$currentName)

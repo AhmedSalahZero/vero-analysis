@@ -17,6 +17,11 @@
 
 
     <style>
+	.width-9 {
+        max-width: initial !important;
+        width: 9% !important;
+        flex: initial !important;
+    }
 	.flex-1{
 		flex:1;
 	}
@@ -1461,13 +1466,15 @@ td{
 		
 $(document).on('change','.update-exchange-rate',function(){
 	const fromCurrency = $('select.current-invoice-currency').val()
-	const toCurrency = $('select.receiving-currency-class').val()
+	let toCurrency = $('input[type="hidden"].to-currency').val() 
+	toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
 	const date = $('.exchange-rate-date').val()
-	
+	console.log(fromCurrency,toCurrency,date);
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-exchange-rate-for-date-and-currencies/'
 	if(fromCurrency == toCurrency  ){
+		$('.exchange-rate-class').val(1).trigger('change')
 		return 
 	}
 	$.ajax({
@@ -1483,6 +1490,7 @@ $(document).on('change','.update-exchange-rate',function(){
 		}
 	})
 })
+$('select.current-invoice-currency.update-exchange-rate').trigger('change')
 
 
         $(document).on('click', '.js-mark-notifications-as-read', function() {
