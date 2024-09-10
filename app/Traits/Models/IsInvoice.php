@@ -142,6 +142,11 @@ trait IsInvoice
     {
         return $this->invoice_due_date ;
     }
+	public function getInvoiceDueDateFormatted()
+    {
+		$invoiceDueDate = $this->getInvoiceDueDate();
+        return  $invoiceDueDate ? Carbon::make($invoiceDueDate)->format('d-m-Y') : __('N/A') ;
+    }
 	public function getDueDateFormatted()
     {
 		$invoiceDueDate = $this->getInvoiceDueDate() ;

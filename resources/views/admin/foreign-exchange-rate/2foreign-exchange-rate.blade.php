@@ -3,10 +3,7 @@
 @php
 use App\Enums\LcTypes;
 use App\Models\LetterOfCreditIssuance;
-$slightLcType = LcTypes::SIGHT_LC ;
-$deferredType = LcTypes::DEFERRED ;
-$cashAgainstDocumentType = LcTypes::CASH_AGAINST_DOCUMENT ;
-$allLcs = LcTypes::getAll() ;
+
 $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 
@@ -57,7 +54,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 @endphp
                 @foreach($existingCurrencies as $currentCurrencyName)
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
+                    <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) && !$currentActiveTab ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{$currentCurrencyName .' '. __('Table') }}
                     </a>
                 </li>
@@ -76,16 +73,16 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 	  	@php
 			$index = 0 ;
 		@endphp
-				
         <div class="tab-content  kt-margin-t-20">
 			@foreach($existingCurrencies as $existingCurrency)
+			
             @php
             $currentTab = $existingCurrency ;
             @endphp
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency  || Request('active',$currentActiveTab) == $existingCurrency ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
+            <div class="tab-pane {{ (!Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency || !in_array($mainFunctionalCurrency,$existingCurrencies) && $currentTab == array_key_first($existingCurrencies) && !$currentActiveTab   )  || Request('active',$currentActiveTab) == $existingCurrency ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentTab" :title="$allLcs[$currentTab] . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
+                    <x-table-title.with-two-dates :type="$currentTab" :title="$existingCurrency . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
                         {{-- <x-export-letter-of-credit-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="#" /> --}}
                     </x-table-title.with-two-dates>
 
@@ -98,74 +95,99 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 </div>
 
                         <!--begin: Datatable -->
-                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                            <thead>
-                                <tr class="table-standard-color">
-                                    <th class="text-center align-middle">{{ __('#') }}</th>
-                                    <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
-                                    <th class="text-center align-middle"> {!! __('Source') !!} </th>
-                                    <th class="text-center align-middle"> {!! __('Status') !!} </th>
+                          <table class="table kt_table_with_no_pagination_no_collapse table-for-currency  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency dataTable no-footer">
+                                        <thead>
 
-                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
-                                    <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
-                                    <th class="text-center align-middle">{{ __('LC Amount') }}</th>
-                                    <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Due Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Control') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($models[$currentTab] as $index=>$model)
-                                <tr>
-                                    <td>
-                                        {{ $index+1 }}
-                                    </td>
-                                    <td>{{ $model->getTransactionName() }}</td>
-                                    <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getStatusFormatted() }}</td>
-                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
-                                    <td class="text-transform">{{ $model->getTransactionReference() }}</td>
-                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-                                            @include('reports.LetterOfCreditIssuance.actions')
-                                            @if(!$model->isPaid())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('delete.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
+                                            <tr class="header-tr ">
 
-                                                        </form>
+                                                <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                                    {{ __('#') }}
+                                                </th>
+
+                                                <th class="view-table-th   max-w-16  align-middle text-center">
+                                                    {{ __('Date') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-16    header-th  align-middle text-center">
+                                                    {{ __('From Currency') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-16    header-th  align-middle text-center">
+                                                    {{ __('To Currency') }}
+                                                </th>
+
+                                                <th class="view-table-th  max-w-16  header-th  align-middle text-center">
+                                                    {{ __('Exchange Rate') }}
+                                                </th>
+                                                <th class="view-table-th  max-w-16  header-th  align-middle text-center">
+                                                    {{ __('Reciprocal Exchange Rate') }}
+                                                </th>
+
+                                                <th class="view-table-th  max-w-action  header-th  align-middle text-center">
+                                                    {{ __('Actions') }}
+                                                </th>
+
+
+
+
+
+
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                            $previousDate = null ;
+                                            @endphp
+                                            @foreach($models[$existingCurrency] as $index => $foreignExchangeRate)
+                                            <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
+                                                <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
+                                                <td class="sub-text-bg max-w-16  text-center   ">{{ $currentDueDate = $foreignExchangeRate->getDateFormatted() }} </td>
+                                                <td class="sub-text-bg  max-w-16 text-center   ">{{ $foreignExchangeRate->getFromCurrency() }}</td>
+                                                @php
+                                                $previousDate = $foreignExchangeRate->getDate();
+                                                @endphp
+                                                <td class="sub-text-bg max-w-16  text-center  ">{{ $foreignExchangeRate->getToCurrency() }}</td>
+                                                <td class="sub-text-bg max-w-16  text-center  ">{{ number_format($foreignExchangeRate->getExchangeRate(),4) }}</td>
+                                                <td class="sub-text-bg max-w-16  text-center  ">{{ number_format(1/$foreignExchangeRate->getExchangeRate(),4) }}</td>
+                                                <td class="sub-text-bg   text-center max-w-action   ">
+                                                    @if($loop->first)
+                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.foreign.exchange.rate',[$company,$foreignExchangeRate->id])}}"><i class="fa fa-pen-alt"></i></a>
+                                                    <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $foreignExchangeRate['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                                    </a>
+                                                    @endif
+
+                                                    <div id="modal-delete-{{ $foreignExchangeRate['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">{{ __('Delete Due Date History ' .$foreignExchangeRate->getDateFormatted()) }}</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                                </div>
+                                                                <form action="{{ route('delete.foreign.exchange.rate',[$company,$foreignExchangeRate->id]) }}" method="post" id="delete_form">
+                                                                    {{ csrf_field() }}
+                                                                    {{ method_field('DELETE') }}
+                                                                    <div class="modal-footer">
+                                                                        <button class="btn btn-danger">
+                                                                            {{ __('Delete') }}
+                                                                        </button>
+                                                                        <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+                                                                            {{ __('Close') }}
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
 
                         <!--end: Datatable -->
                     </div>
