@@ -299,7 +299,7 @@
                 <div class="text-right">
 
                     <a 
-					href="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId])); ?>"
+					href="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType])); ?>"
 					
 					 class="btn  active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>

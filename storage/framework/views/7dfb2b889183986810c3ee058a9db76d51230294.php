@@ -1,12 +1,12 @@
 <?php $attributes = $attributes->exceptProps([
 'hasSearch','moneyReceivedType','searchFields',
 'isFirstExportMoney'=>false,
-'partnerId'
+'partnerId','modelType'
 ]); ?>
 <?php foreach (array_filter(([
 'hasSearch','moneyReceivedType','searchFields',
 'isFirstExportMoney'=>false,
-'partnerId'
+'partnerId','modelType'
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="modal-body">
                             <?php echo csrf_field(); ?>
-                            <form action="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId])); ?>" class="row ">
+                            <form action="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType])); ?>" class="row ">
                                 <div class="form-group col-4">
                                     <label for="Select Field " class="label"><?php echo e(__('Field Name')); ?></label>
                                     <select id="js-search-modal-name-<?php echo e($moneyReceivedType); ?>" data-type="<?php echo e($moneyReceivedType); ?>" class="form-control js-search-modal" type="date" name="field" placeholder="<?php echo e(__('Delete From')); ?>">
@@ -67,7 +67,7 @@
 
 
                                 <div class="modal-footer">
-                                    <button type="submit" href="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId])); ?>" id="js-search-id" type="submit" id="" class="btn btn-primary"><?php echo e(__('Search')); ?></button>
+                                    <button type="submit" href="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType])); ?>" id="js-search-id" type="submit" id="" class="btn btn-primary"><?php echo e(__('Search')); ?></button>
                                 </div>
 
                             </form>

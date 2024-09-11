@@ -1,7 +1,7 @@
 @props([
 'hasSearch','moneyReceivedType','searchFields',
 'isFirstExportMoney'=>false,
-'partnerId'
+'partnerId','modelType'
 ])
 
 <div class="kt-portlet__head-toolbar" style="flex:1 !important;">
@@ -26,7 +26,7 @@
                         </div>
                         <div class="modal-body">
                             @csrf
-                            <form action="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}" class="row ">
+                            <form action="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}" class="row ">
                                 <div class="form-group col-4">
                                     <label for="Select Field " class="label">{{ __('Field Name') }}</label>
                                     <select id="js-search-modal-name-{{ $moneyReceivedType }}" data-type="{{ $moneyReceivedType }}" class="form-control js-search-modal" type="date" name="field" placeholder="{{ __('Delete From') }}">
@@ -54,7 +54,7 @@
 
 
                                 <div class="modal-footer">
-                                    <button type="submit" href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}" id="js-search-id" type="submit" id="" class="btn btn-primary">{{ __('Search') }}</button>
+                                    <button type="submit" href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}" id="js-search-id" type="submit" id="" class="btn btn-primary">{{ __('Search') }}</button>
                                 </div>
 
                             </form>

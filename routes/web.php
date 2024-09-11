@@ -667,9 +667,11 @@ Route::middleware([])->group(function () {
 					
 					
 					Route::post('adjust-customer-due-invoices','CashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
-                    Route::get('unapplied-amounts/{partnerId}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
+                    Route::get('unapplied-amounts/{partnerId}/{modelType}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
                     Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
                     Route::post('unapplied-amounts/create/{modelType}', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
+                    Route::put('unapplied-amounts/update/{modelType}/{unappliedAmountId}/{settlementId}', 'UnappliedAmountController@update')->name('update.settlement.by.unapplied.amounts');
+                    Route::get('unapplied-amounts/edit/{invoice_number}/{settlementId}/{modelType}', 'UnappliedAmountController@edit')->name('edit.settlement.by.unapplied.amounts');
                 });
 
                 /**

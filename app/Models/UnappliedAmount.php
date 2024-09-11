@@ -56,6 +56,10 @@ class UnappliedAmount extends Model
 		$this->attributes['settlement_date'] = $year.'-'.$month.'-'.$day;
 		
 	}
+	public function getSettlementDate()
+	{
+		return $this->settlement_date;
+	}
 	public function settlements()
 	{
 		return $this->hasMany(Settlement::class,'unapplied_amount_id','id');
@@ -64,6 +68,30 @@ class UnappliedAmount extends Model
     {
         return $this->hasMany(PaymentSettlement::class, 'unapplied_amount_id', 'id');
     }
-	
-	
+	public function getCurrency()
+	{
+		return $this->currency;
+	}
+	public function storeNewSettlement(array $settlements,int $companyId,string $clientNameColumnName,$customerName,$unappliedSettlementTable)
+	{
+		foreach($settlements as $settlementArr)
+		{
+				$settlementArr['company_id'] = $companyId ;
+				$settlementArr[$clientNameColumnName] = $customerName ;
+				// $totalWithholdAmount += ($settlementArr['withhold_amount'] ?? 0)  ;
+				if(isset($settlementArr['settlement_amount']) && $settlementArr['settlement_amount'] > 0 ){
+					$this->$unappliedSettlementTable()->create($settlementArr);
+				}
+		}
+	}
+	/**
+	 * * هنجيب اول 
+	 * * unapplied amount
+	 * * فيه فلوس متوفرة 
+	 */
+	public static function getFirstAvailableModel():?self
+	{
+				self::where('partner_id',$partnerId)->where('currency',$currency)->where('company_id',$companyId)->first();
+				
+	}
 }

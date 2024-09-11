@@ -198,6 +198,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',invoiceNumber));
 			
 				var currentSettlementAllocation = res.invoices[i].settlement_allocations;
+
 				var currency = res.invoices[i].currency
 				var netInvoiceAmount = res.invoices[i].net_invoice_amount
 				var netBalance = res.invoices[i].net_balance
@@ -223,25 +224,19 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					var domSettlementAmount = $(lastNode).find('.js-settlement-amount')
 					var domWithholdAmount = $(lastNode).find('.js-withhold-amount')
 					var domNetBalance = $(lastNode).find('.js-net-balance')
+				//	var domAllocationAmount = $(lastNode).find('.allocation-amount-class')
 					domSettlementAmount.val(settlementAmount)
 					domWithholdAmount.val(withholdAmount)
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
-					// $(lastNode).find('.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][')
-					
-					var editAllocationRow = generateAllocationRow(currentSettlementAllocation,res.clientsWithContracts)
-					if(currentSettlementAllocation.length){
+
+					var editAllocationRow = generateAllocationRow(currentSettlementAllocation,res.clientsWithContracts,invoiceNumber,i)
+					if(currentSettlementAllocation && Object.keys(currentSettlementAllocation).length ){
 						$(lastNode).find('table.m_repeater--0 tbody[data-repeater-list]').empty().append(editAllocationRow)
-						// $(lastNode).find('table.m_repeater--0 tbody[data-repeater-list] .contracts-js').find('.dropdown-toggle').remove();
-						// $(lastNode).find('table.m_repeater--0 tbody[data-repeater-list] .contracts-js').selectpicker()
-						
 					}
-			
 					$('.js-append-to').append(lastNode)
 					$(lastNode).find('select.suppliers-or-customers-js').trigger('change')
-					
-					
 					$(lastNode).find('.repeater-class').repeater({            
 						initEmpty: false,
 						  isFirstItemUndeletable: true,
@@ -251,16 +246,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 						 
 						show: function() {
 							$(this).slideDown();   
-							
-							$(this).find('[name]').attr('name',$(this).find('[name]').attr('name').replace('allocations[','allocations['+invoiceNumber+']['));
-					
-							$(this).closest('tbody').find('tr').each(function(trIndex,tr){
-								$(tr).find('[name]').each(function(i,element){
-									var currentInvoiceNumber=$(this).closest('.settlement-row-parent').find('.js-invoice-number').val()
-									var currentName = $(this).attr('data-name');
-									$(element).attr('name','allocations['+currentInvoiceNumber+']['+trIndex+']['+currentName+']')
-								 })
-							 })
+							updateInputsNames(this)
 							$('input.trigger-change-repeater').trigger('change')   
 							 $(this).find('.only-month-year-picker').each(function(index,dateInput){
 								reinitalizeMonthYearInput(dateInput)
@@ -272,7 +258,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 							$('input:not([type="hidden"])').trigger('change');
 							$(this).find('.dropdown-toggle').remove();
 							$(this).find('.select3-select').selectpicker();
-	                 //   $(this).find('select.repeater-select').selectpicker("refresh");
+	      	           //   $(this).find('select.repeater-select').selectpicker("refresh");
 								
 						},
 						
@@ -305,6 +291,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					
 					$(lastNode).find('.select3-select.suppliers-or-customers-js').selectpicker();
 					$(lastNode).find('select.suppliers-or-customers-js').attr('name',$(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
+					$(lastNode).find('input.allocation-amount-class').attr('name',$(lastNode).find('input.allocation-amount-class').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
 					var currentName = $(lastNode).find('select.contracts-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
 					$(lastNode).find('select.contracts-js').attr('name',currentName).attr('data-invoice-number',invoiceNumber)
 					//$(lastNode).find('.repeater-amount-class').attr('name',$(lastNode).find('.repeater-amount-class').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
@@ -328,13 +315,14 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 })
 $('select.ajax-get-invoice-numbers').trigger('change')
 $('select.ajax-get-purchases-orders-for-contract').trigger('change')
-function generateAllocationRow(settlementAllocations , clientsWithContracts)
+function generateAllocationRow(settlementAllocations , clientsWithContracts,invoiceNumber,rowIndex)
 {
 	var rows = '';
 	
 	for(var settlementIndex in settlementAllocations){
-		var partnersSelect = '<select name="partner_id" data-name="partner_id" class="suppliers-or-customers-js select3-select"> ';
+		var partnersSelect = '<select name="settlements['+ invoiceNumber +']['+rowIndex+'][partner_id]" data-name="partner_id" class="suppliers-or-customers-js select3-select"> ';
 		var currentSettlementAllocation = settlementAllocations[settlementIndex];
+
 		for(var clientId in clientsWithContracts ){
 			var currentClientName = clientsWithContracts[clientId]
 			var currentSelectClient = clientId == currentSettlementAllocation.partner_id ? 'selected':''  ; 
@@ -379,15 +367,16 @@ function generateAllocationRow(settlementAllocations , clientsWithContracts)
 			  <td>
 			<div class="kt-input-icon ">
 				<div class="input-group">
-					<input  type="text" data-name="allocation_amount" name="allocation_amount" class="form-control repeater-amount-class" value="${currentSettlementAllocation.allocation_amount}">
+					<input  type="text" data-name="allocation_amount" name="settlements[${invoiceNumber}][${rowIndex}][allocation_amount]" class="form-control allocation-amount-class repeater-amount-class" value="${currentSettlementAllocation.allocation_amount}">
 				</div>
 			</div>
 		</td>
 
 	</tr>`;
 	rows += currentRow;
-
+		
 }
+
 return rows ;	
 	
 	
@@ -489,3 +478,25 @@ $(document).on('change','select.invoice-currency-class',function(){
 	})
 });
 $('select.invoice-currency-class').trigger('change')
+function updateInputsNames(element,invoiceNumber)
+{
+	$(element).find('[name]').attr('name',$(element).find('[name]').attr('name').replace('allocations[','allocations['+invoiceNumber+']['));
+					
+	$(element).closest('tbody').find('tr').each(function(trIndex,tr){
+		$(tr).find('[name]').each(function(i,element){
+			var currentInvoiceNumber=$(element).closest('.settlement-row-parent').find('.js-invoice-number').val()
+			var currentName = $(element).attr('data-name');
+			$(element).attr('name','allocations['+currentInvoiceNumber+']['+trIndex+']['+currentName+']')
+		 })
+	 })
+}
+// $(".allocate-modal-class").on('shown.bs.modal', function () {
+// 	var invoiceNumber = $(this).find('[data-invoice-number]').attr('data-invoice-number')
+// 	if(!$(this).find('[data-invoice-number]').attr('initialized')){
+// 		$(this).find('[data-invoice-number]').attr('initialized',1);
+// 		console.log('startt')
+// 		updateInputsNames(this,invoiceNumber)
+		
+// 	}
+	
+// });
