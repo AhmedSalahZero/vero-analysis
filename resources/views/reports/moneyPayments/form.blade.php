@@ -678,7 +678,7 @@ $selectedBanks = [];
                                     {{ __('Allocate') }}
                                 </button>
 
-                                <div class="modal fade modal-class-js" id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -763,7 +763,7 @@ $selectedBanks = [];
                                                                 <td>
                                                                     <div class="kt-input-icon custom-w-15">
                                                                         <div class="input-group">
-                                                                            <input type="text" data-name="allocation_amount" name="allocation_amount" class="form-control " value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
+                                                                            <input type="text" data-name="allocation_amount" name="allocation_amount" class="form-control allocation-amount-class" value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
                                                                         </div>
                                                                     </div>
                                                                 </td>
@@ -1049,7 +1049,7 @@ $selectedBanks = [];
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
                 parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-                parent.find('select.contracts-js').selectpicker("refresh")
+            	  parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
@@ -1061,9 +1061,6 @@ $selectedBanks = [];
         $(parent).find('.contract-code').val(code)
         $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
 
-    })
-    $(function() {
-        $('select.suppliers-or-customers-js').trigger('change')
     })
 
 </script>

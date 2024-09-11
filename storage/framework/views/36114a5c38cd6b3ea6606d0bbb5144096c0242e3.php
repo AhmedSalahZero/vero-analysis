@@ -13,7 +13,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
         text-align: left !important;
     }
 
-     .width-8 {
+    .width-8 {
         max-width: initial !important;
         width: 8% !important;
         flex: initial !important;
@@ -30,11 +30,13 @@ $fullClassName = '\App\Models\\'.$modelType ;
         width: 12.5% !important;
         flex: initial !important;
     }
+
     .width-45 {
         max-width: initial !important;
         width: 45% !important;
         flex: initial !important;
     }
+
     .kt-portlet {
         overflow: visible !important;
     }
@@ -55,11 +57,11 @@ $fullClassName = '\App\Models\\'.$modelType ;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="<?php echo e(isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType])); ?>" class="kt-form kt-form--label-right">
-							<input type="hidden" name="invoiceId" value="<?php echo e($invoiceId); ?>">
-		
+        <form method="post" action="<?php echo e(isset($model) ?  route('update.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType,'unappliedAmountId'=>$model->id,'settlementId'=>$settlement->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType])); ?>" class="kt-form kt-form--label-right">
+	
+            <input type="hidden" name="invoiceId" value="<?php echo e($invoiceId); ?>">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
-            <input id="js-money-received-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e(1); ?>" value="<?php echo e($invoiceNumber); ?>">
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
@@ -102,12 +104,12 @@ $fullClassName = '\App\Models\\'.$modelType ;
                                     <select readonly name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                         <option value="" selected><?php echo e(__('Select')); ?></option>
                                         <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-										
-										<?php
-								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-							   ?>
-							   
+
+                                        <?php
+                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        ?>
+
                                         <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
@@ -119,7 +121,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
                             <label><?php echo e(__('Settlement Date')); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="text" name="settlement_date" value="<?php echo e(formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                    <input  type="text" name="settlement_date" value="<?php echo e($settlementDate); ?>" class="form-control is-date-css"  placeholder="Select date" id="kt_datepicker_2" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -149,12 +151,16 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
                         </div>
                     </div>
+                    <div class="js-template 
+					
+					
+					
+					 ">
+                        <div class="col-md-12 js-duplicate-node">
+							<?php echo $fullClassName::getSettlementsTemplate($invoiceNumber , $dueDateFormatted  , $invoiceDueDateFormatted,$invoiceCurrency,$netInvoiceAmountFormatted,$collectedAmountFormatted,$netBalanceFormatted,$settlementAmount,$withholdAmount); ?>
 
-                    <div class="js-template hidden">
-					     <div class="col-md-12 js-duplicate-node">
-                          <?php echo $fullClassName::getSettlementsTemplate(); ?>
-
-						  </div>
+							
+                        </div>
                     </div>
 
                     <hr>
@@ -164,12 +170,12 @@ $fullClassName = '\App\Models\\'.$modelType ;
                         <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
-                        
+
+                    </div>
                 </div>
             </div>
-    </div>
 
-     <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
+             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
 <?php $component->withName('submitting'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -182,11 +188,11 @@ $fullClassName = '\App\Models\\'.$modelType ;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-    </form>
-    <!--end::Form-->
+        </form>
+        <!--end::Form-->
 
-    <!--end::Portlet-->
-</div>
+        <!--end::Portlet-->
+    </div>
 </div>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('js'); ?>
@@ -205,31 +211,22 @@ $fullClassName = '\App\Models\\'.$modelType ;
 </script>
 <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
 <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
-<script>
 
-</script>
 <script>
     $('#type').change(function() {
         selected = $(this).val();
         $('.js-section-parent').addClass('hidden');
         if (selected) {
             $('#' + selected).removeClass('hidden');
-
         }
-
-
     });
     $('#type').trigger('change')
 
 </script>
-<script src="/custom/<?php echo e($jsFile); ?>">
 
-</script>
 
 <script>
-    $(document).on('change', '.settlement-amount-class', function() {
-
-    })
+    
     $(function() {
         $('#type').trigger('change');
     })
@@ -239,10 +236,11 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
 
 <script>
-$(function(){
+    $(function() {
 
-	$('select.ajax-get-invoice-numbers').trigger('change')
-})
+        $('select.ajax-get-invoice-numbers').trigger('change')
+    })
+
 </script>
 <?php $__env->stopSection(); ?>
 

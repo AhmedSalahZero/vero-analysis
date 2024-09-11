@@ -280,7 +280,7 @@
                 <div class="text-right">
 
                     <a 
-					href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId]) }}"
+					href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}"
 					
 					 class="btn  active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>

@@ -223,7 +223,7 @@ class CustomerInvoice extends Model implements IInvoice
 		}
 		return $result;
 	}
-	public static function getSettlementsTemplate()
+	public static function getSettlementsTemplate(string $invoiceNumber = null , string $dueDateFormatted = null , string $invoiceDueDateFormatted = null , string $invoiceCurrency = null , $netInvoiceAmountFormatted = 0 , $collectedAmountFormatted = 0,$netBalanceFormatted = 0 , $settlementAmount = 0 ,$withholdAmount = 0 )
 	{
 		return  '
 		<div class=" kt-margin-b-10 border-class">
@@ -233,7 +233,7 @@ class CustomerInvoice extends Model implements IInvoice
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
 							<div class="input-group date">
-								<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+								<input readonly class="form-control js-invoice-number" name="settlements['.$invoiceNumber.'][invoice_number]" value="'. $invoiceNumber .'">
 							</div>
 						</div>
 					</div>
@@ -242,7 +242,7 @@ class CustomerInvoice extends Model implements IInvoice
 					<label>'.__('Invoice Date').'</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
-							<input name="settlements[][invoice_date]" type="text" class="form-control js-invoice-date" disabled />
+							<input name="settlements['.$invoiceNumber.'][invoice_date]" value="'.$dueDateFormatted.'" type="text" class="form-control js-invoice-date" disabled />
 						</div>
 					</div>
 				</div>
@@ -250,46 +250,46 @@ class CustomerInvoice extends Model implements IInvoice
 					<label>'.__('Due Date').'</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
-							<input name="settlements[][invoice_due_date]" type="text" class="form-control js-invoice-due-date" disabled />
+							<input name="settlements['.$invoiceNumber.'][invoice_due_date]" type="text" value="'.$invoiceDueDateFormatted.'" class="form-control js-invoice-due-date" disabled />
 						</div>
 					</div>
 				</div>
 				<div class="col-md-1 width-8">
 					<label> '. __('Currency') .' </label>
 					<div class="kt-input-icon">
-						<input name="settlements[][currency]" type="text" disabled class="form-control js-currency">
+						<input name="settlements['.$invoiceNumber.'][currency]" type="text" value="'. $invoiceCurrency .'" disabled class="form-control js-currency">
 					</div>
 				</div>
 				<div class="col-md-1 width-12">
 					<label> '. __('Net Invoice Amount') .' </label>
 					<div class="kt-input-icon">
-						<input name="settlements[][net_invoice_amount]" type="text" disabled class="form-control js-net-invoice-amount">
+						<input name="settlements['.$invoiceNumber.'][net_invoice_amount]" value="'.$netInvoiceAmountFormatted.'" type="text" disabled class="form-control js-net-invoice-amount">
 					</div>
 				</div>
 				<div class="col-md-2 width-12">
 					<label> '. __('Collected Amount') .'</label>
 					<div class="kt-input-icon">
-						<input name="settlements[][collected_amount]" type="text" disabled class="form-control js-collected-amount">
+						<input name="settlements['.$invoiceNumber.'][collected_amount]" value="'. $collectedAmountFormatted .'" type="text" disabled class="form-control js-collected-amount">
 					</div>
 				</div>
 		
 				<div class="col-md-2 width-12">
 					<label> '. __('Net Balance') .' </label>
 					<div class="kt-input-icon">
-						<input name="settlements[][net_balance]" type="text" readonly class="form-control js-net-balance">
+						<input name="settlements['.$invoiceNumber.'][net_balance]" value="'.$netBalanceFormatted.'" type="text" readonly class="form-control js-net-balance">
 					</div>
 				</div>
 		
 				<div class="col-md-2 width-12">
 					<label> '. __('Settlement Amount') .' <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input name="settlements[][settlement_amount]" placeholder="'.__("Settlement Amount").'" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input name="settlements['.$invoiceNumber.'][settlement_amount]" value="'.$settlementAmount.'" placeholder="'.__("Settlement Amount").'" type="text" class="form-control js-settlement-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-2 width-12">
 					<label> '. __('Withhold Amount') .' <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input name="settlements[][withhold_amount]" placeholder="'. __('Withhold Amount') .'" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
+						<input name="settlements['.$invoiceNumber.'][withhold_amount]" value="'.$withholdAmount.'" placeholder="'. __('Withhold Amount') .'" type="text" class="form-control js-withhold-amount only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		

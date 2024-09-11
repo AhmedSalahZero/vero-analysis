@@ -82,11 +82,11 @@
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Unapplied Amount')),'startDate' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($filterStartDate),'endDate' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($filterEndDate)]); ?>
                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.search-unapplied-amounts','data' => ['partnerId' => $partnerId,'searchFields' => $searchFields,'moneyReceivedType' => 'unapplied','hasSearch' => 1,'hasBatchCollection' => 0]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.search-unapplied-amounts','data' => ['modelType' => $modelType,'partnerId' => $partnerId,'searchFields' => $searchFields,'moneyReceivedType' => 'unapplied','hasSearch' => 1,'hasBatchCollection' => 0]]); ?>
 <?php $component->withName('search-unapplied-amounts'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['partnerId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($partnerId),'search-fields' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($searchFields),'money-received-type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('unapplied'),'has-search' => 1,'has-batch-collection' => 0]); ?>
+<?php $component->withAttributes(['modelType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($modelType),'partnerId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($partnerId),'search-fields' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($searchFields),'money-received-type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('unapplied'),'has-search' => 1,'has-batch-collection' => 0]); ?>
 <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
@@ -120,9 +120,10 @@
                                     <td class="text-nowrap"><?php echo e($model->getSettlementDateFormatted()); ?></td>
                                     <td><?php echo e($model->getSettlementAmountFormatted()); ?></td>
                                     <td><?php echo e($model->getWithholdAmountFormatted()); ?></td>
+								
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.settlement.by.unapplied.amounts',['company'=>$company->id,'invoice_number'=>$model->invoice_number,'settlementId'=>$model->id,'modelType'=>$modelType])); ?>"><i class="fa fa-pen-alt"></i></a>
 
                                             <a data-toggle="modal" data-target="#delete-transfer-id-<?php echo e($model->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-<?php echo e($model->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

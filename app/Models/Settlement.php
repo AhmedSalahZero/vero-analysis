@@ -21,6 +21,10 @@ class Settlement extends Model
 	{
 		return $this->belongsTo(MoneyReceived::class , 'money_received_id','id');
 	}
+	public function getInvoiceNumber():string 
+	{
+		return $this->invoice_number;
+	}
 	public function getAmount()
 	{
 		return $this->settlement_amount ;
@@ -33,10 +37,7 @@ class Settlement extends Model
 	{
 		return $this->belongsTo(UnappliedAmount::class,'unapplied_amount_id','id');
 	}
-	public function getInvoiceNumber()
-	{
-		return $this->invoice_number ; 
-	}
+	
 	public function getWithholdAmount()
 	{
 		return $this->withhold_amount?:0 ; 

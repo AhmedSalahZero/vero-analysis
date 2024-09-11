@@ -14,7 +14,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
         text-align: left !important;
     }
 
-     .width-8 {
+    .width-8 {
         max-width: initial !important;
         width: 8% !important;
         flex: initial !important;
@@ -31,11 +31,13 @@ $fullClassName = '\App\Models\\'.$modelType ;
         width: 12.5% !important;
         flex: initial !important;
     }
+
     .width-45 {
         max-width: initial !important;
         width: 45% !important;
         flex: initial !important;
     }
+
     .kt-portlet {
         overflow: visible !important;
     }
@@ -55,11 +57,11 @@ $fullClassName = '\App\Models\\'.$modelType ;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
-							<input type="hidden" name="invoiceId" value="{{ $invoiceId }}">
-		
+        <form method="post" action="{{ isset($model) ?  route('update.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType,'unappliedAmountId'=>$model->id,'settlementId'=>$settlement->id]) :route('store.settlement.by.unapplied.amounts',['company'=>$company->id,'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
+	
+            <input type="hidden" name="invoiceId" value="{{ $invoiceId }}">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-            <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
+            {{-- <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}"> --}}
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ 1 }}" value="{{ $invoiceNumber }}">
             @csrf
             @if(isset($model))
@@ -101,12 +103,12 @@ $fullClassName = '\App\Models\\'.$modelType ;
                                     <select readonly name="currency" class="form-control current-currency ajax-get-invoice-numbers">
                                         <option value="" selected>{{__('Select')}}</option>
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-										
-										@php
-								$selected = isset($model) ?  $model->getCurrency()  == $currencyId  :  $currentName == $company->getMainFunctionalCurrency() ;
-									$selected = $selected ? 'selected':'';
-							   @endphp
-							   
+
+                                        @php
+                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        @endphp
+
                                         <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                         @endforeach
                                     </select>
@@ -118,7 +120,7 @@ $fullClassName = '\App\Models\\'.$modelType ;
                             <label>{{__('Settlement Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="text" name="settlement_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                    <input  type="text" name="settlement_date" value="{{ $settlementDate }}" class="form-control is-date-css"  placeholder="Select date" id="kt_datepicker_2" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -147,11 +149,15 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
                         </div>
                     </div>
-
-                    <div class="js-template hidden">
-					     <div class="col-md-12 js-duplicate-node">
-                          {!! $fullClassName::getSettlementsTemplate() !!}
-						  </div>
+                    <div class="js-template 
+					
+					{{-- @if(isset($model)) hidden @endif --}}
+					
+					 ">
+                        <div class="col-md-12 js-duplicate-node">
+							{!! $fullClassName::getSettlementsTemplate($invoiceNumber , $dueDateFormatted  , $invoiceDueDateFormatted,$invoiceCurrency,$netInvoiceAmountFormatted,$collectedAmountFormatted,$netBalanceFormatted,$settlementAmount,$withholdAmount) !!}
+							
+                        </div>
                     </div>
 
                     <hr>
@@ -161,18 +167,18 @@ $fullClassName = '\App\Models\\'.$modelType ;
                         <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
-                        
+
+                    </div>
                 </div>
             </div>
+
+            <x-submitting />
+
+        </form>
+        <!--end::Form-->
+
+        <!--end::Portlet-->
     </div>
-
-    <x-submitting />
-
-    </form>
-    <!--end::Form-->
-
-    <!--end::Portlet-->
-</div>
 </div>
 @endsection
 @section('js')
@@ -191,31 +197,25 @@ $fullClassName = '\App\Models\\'.$modelType ;
 </script>
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
-<script>
 
-</script>
 <script>
     $('#type').change(function() {
         selected = $(this).val();
         $('.js-section-parent').addClass('hidden');
         if (selected) {
             $('#' + selected).removeClass('hidden');
-
         }
-
-
     });
     $('#type').trigger('change')
 
 </script>
+{{-- @if(!isset($model))
 <script src="/custom/{{ $jsFile }}">
-
 </script>
+@endif  --}}
 
 <script>
-    $(document).on('change', '.settlement-amount-class', function() {
-
-    })
+    
     $(function() {
         $('#type').trigger('change');
     })
@@ -231,9 +231,10 @@ $fullClassName = '\App\Models\\'.$modelType ;
 
 </script> --}}
 <script>
-$(function(){
+    $(function() {
 
-	$('select.ajax-get-invoice-numbers').trigger('change')
-})
+        $('select.ajax-get-invoice-numbers').trigger('change')
+    })
+
 </script>
 @endsection

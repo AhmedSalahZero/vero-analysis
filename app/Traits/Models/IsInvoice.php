@@ -202,5 +202,8 @@ trait IsInvoice
 		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
 		->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
 	}
-	
+	public static function findByInvoiceNumber(int $companyId,string $invoiceNumber):?self
+	{
+		return self::where('company_id',$companyId)->where('invoice_number',$invoiceNumber)->first();
+	}
 }

@@ -530,7 +530,8 @@ class MoneyReceivedController
 		return $moneyType ;
 
 	}
-	public function edit(Company $company , Request $request , moneyReceived $moneyReceived ,$customerInvoiceId = null){
+	public function edit(Company $company , Request $request ,  $moneyReceived ,$customerInvoiceId = null){
+		
 		$isDownPayment = $moneyReceived->isDownPayment();
 		$currencies = DB::table('customer_invoices')
 		->select('currency')
