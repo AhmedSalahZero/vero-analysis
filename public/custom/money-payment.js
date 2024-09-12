@@ -143,7 +143,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 })
 
 $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
-	console.log('trigger change')
+	// console.log('trigger change')
 	let inEditMode = +$('#js-in-edit-mode').val()
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
@@ -182,7 +182,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			
 			$('.js-append-to').empty()
 			for (var i in res.invoices) {
-				console.log('--------------------')
+			//	console.log('--------------------')
 				var invoiceNumber = res.invoices[i].invoice_number
 				if($(lastNode).find('[data-target]').attr('data-target')){
 					lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',invoiceNumber));
