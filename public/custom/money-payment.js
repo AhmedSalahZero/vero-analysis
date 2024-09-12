@@ -85,13 +85,17 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneSalesOrder = +$('#ajax-purchases-order-item').attr('data-single-model')
 	let specificSalesOrder = $('#ajax-purchases-order-item').val()
-	const downPaymentId = +$('#js-down-payment-id').val()
+	let downPaymentId = +$('#js-down-payment-id').val()
+	downPaymentId = isNaN(downPaymentId) ? 0 : downPaymentId ;
 	let contractId = $('#contract-id').val()
 	contractId = contractId ? contractId : $(this).closest('[data-repeater-item]').find('select.supplier-name-js').val()
 	let currency = $('.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
+	if(isNaN(contractId)){
+		return ;
+	}
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-purchases-orders-for-contract/' + contractId + '/' + currency
 
 
@@ -102,22 +106,12 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				, down_payment_id: downPaymentId
 			}
 		}).then(function (res) {
-			// first append currencies 
-		//	let currenciesOptions = ''
-		//	var selectedCurrency = res.selectedCurrency
-		//	for (var currencyName in res.currencies) {
-		//		var currencyFormattedName = res.currencies[currencyName].toUpperCase()
-		//		currenciesOptions += `<option ${currencyName == selectedCurrency ? 'selected' : ''} value="${currencyName}">${currencyFormattedName}</option>`
-		//	}
-//
-		//	$('.current-currency').empty().append(currenciesOptions)
-			// second add settlements repeater 
-			var lastNode = $('.js-template .js-duplicate-node').clone(true)
-			$('.js-append-to').empty()
+			var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
+			$('.js-append-down-payment-to').empty()
 		
 			for (var i = 0; i < res.purchases_orders.length; i++) {
 				 var salesOrderId = res.purchases_orders[i].id
-				 var salesOrderNumber = res.purchases_orders[i].so_number
+				 var salesOrderNumber = res.purchases_orders[i].po_number
 				var amount = res.purchases_orders[i].amount
 				var paidAmount = res.purchases_orders[i].paid_amount
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-number')
@@ -125,27 +119,22 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_id]').val(salesOrderId)
 				
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-name')
-				domSalesOrder.val(salesOrderId)
+				//domSalesOrder.val(salesOrderId)'
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_name]').val(salesOrderNumber)
 				
 				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
-				//	$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))
-					
-
 					var domPaidAmount = $(lastNode).find('.js-paid-amount')
 					domPaidAmount.val(paidAmount)
-					// domWithholdAmount.val(withholdAmount)
 					domPaidAmount.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][paid_amount]')
-					//domWithholdAmount.attr('name', 'purchases_orders_amounts[' + invoiceNumber + '][withhold_amount]')
-					$('.js-append-to').append(lastNode)
-					var lastNode = $('.js-template .js-duplicate-node').clone(true)
-					
+					$('.js-append-down-payment-to').append(lastNode)
+					var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 				}
 
 			}
+	
 			if(res.purchases_orders.length == 0){
-				$('.js-append-to').append(lastNode)
+				$('.js-append-down-payment-to').append(lastNode)
 			}
 
 
@@ -154,6 +143,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 })
 
 $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
+	console.log('trigger change')
 	let inEditMode = +$('#js-in-edit-mode').val()
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
@@ -192,10 +182,12 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			
 			$('.js-append-to').empty()
 			for (var i in res.invoices) {
+				console.log('--------------------')
 				var invoiceNumber = res.invoices[i].invoice_number
-				
-				lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',invoiceNumber));
-				lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',invoiceNumber));
+				if($(lastNode).find('[data-target]').attr('data-target')){
+					lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',invoiceNumber));
+					lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',invoiceNumber));
+				}
 			
 				var currentSettlementAllocation = res.invoices[i].settlement_allocations;
 
@@ -230,7 +222,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
 					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
 					domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
-
+					
 					var editAllocationRow = generateAllocationRow(currentSettlementAllocation,res.clientsWithContracts,invoiceNumber,i)
 					if(currentSettlementAllocation && Object.keys(currentSettlementAllocation).length ){
 						$(lastNode).find('table.m_repeater--0 tbody[data-repeater-list]').empty().append(editAllocationRow)
@@ -279,10 +271,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 							else{
 								 if(confirm('Are you sure you want to delete this element?')) {
 								$(this).slideUp(deleteElement,function(){
-							   
 										   deleteElement();
-					          
-										  
 								});
 							}         
 							}
@@ -290,12 +279,14 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					});
 					
 					$(lastNode).find('.select3-select.suppliers-or-customers-js').selectpicker();
-					$(lastNode).find('select.suppliers-or-customers-js').attr('name',$(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
-					$(lastNode).find('input.allocation-amount-class').attr('name',$(lastNode).find('input.allocation-amount-class').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
-					var currentName = $(lastNode).find('select.contracts-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
-					$(lastNode).find('select.contracts-js').attr('name',currentName).attr('data-invoice-number',invoiceNumber)
-					//$(lastNode).find('.repeater-amount-class').attr('name',$(lastNode).find('.repeater-amount-class').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
-			
+					var currentName = null;
+					if($(lastNode).find('select.suppliers-or-customers-js').attr('name')){
+						$(lastNode).find('select.suppliers-or-customers-js').attr('name',$(lastNode).find('select.suppliers-or-customers-js').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
+						$(lastNode).find('input.allocation-amount-class').attr('name',$(lastNode).find('input.allocation-amount-class').attr('name').replace('allocations[','allocations['+invoiceNumber+']['))
+						 currentName = $(lastNode).find('select.contracts-js').attr('name').replace('allocations[','allocations['+invoiceNumber+'][') ;
+						 $(lastNode).find('select.contracts-js').attr('name',currentName).attr('data-invoice-number',invoiceNumber)
+						
+					}
 					$(lastNode).find('select.suppliers-or-customers-js').closest('tr').attr('data-invoice-number',invoiceNumber)
 					
 					
@@ -313,8 +304,9 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 		})
 	}
 })
-$('select.ajax-get-invoice-numbers').trigger('change')
-$('select.ajax-get-purchases-orders-for-contract').trigger('change')
+
+ $('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
+//$('select.ajax-get-purchases-orders-for-contract').trigger('change')
 function generateAllocationRow(settlementAllocations , clientsWithContracts,invoiceNumber,rowIndex)
 {
 	var rows = '';
@@ -392,6 +384,13 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	const paidAmount = $('.js-' + currentType + '-paid-amount').val()
 	let totalRemaining = paidAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
+	
+	if(totalRemaining > 0){
+		$('#contract-row-id').show()
+	}else{
+		$('#contract-row-id').hide()
+	}
+	
 	$('#remaining-settlement-js').val(totalRemaining)
 
 })
@@ -461,7 +460,9 @@ $(function () {
 
 $(document).on('change','select.invoice-currency-class',function(){
 	const currencyName = $(this).val();
-	$('select.receiving-currency-class').val(currencyName).trigger('change');
+	$('select.receiving-currency-class').val(currencyName)
+	//.trigger('change')
+	;
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-suppliers-based-on-currency/'+currencyName
@@ -473,11 +474,12 @@ $(document).on('change','select.invoice-currency-class',function(){
 				var supplierName = res.supplierInvoices[supplierId]
 				options +=` <option value="${supplierId}">${supplierName}</option>`
 			}
-			$('#supplier_name').empty().append(options).trigger('change')
+			$('#supplier_name').empty().append(options)
+			//.trigger('change')
 		}
 	})
 });
-$('select.invoice-currency-class').trigger('change')
+//$('select.invoice-currency-class').trigger('change')
 function updateInputsNames(element,invoiceNumber)
 {
 	$(element).find('[name]').attr('name',$(element).find('[name]').attr('name').replace('allocations[','allocations['+invoiceNumber+']['));
@@ -490,13 +492,3 @@ function updateInputsNames(element,invoiceNumber)
 		 })
 	 })
 }
-// $(".allocate-modal-class").on('shown.bs.modal', function () {
-// 	var invoiceNumber = $(this).find('[data-invoice-number]').attr('data-invoice-number')
-// 	if(!$(this).find('[data-invoice-number]').attr('initialized')){
-// 		$(this).find('[data-invoice-number]').attr('initialized',1);
-// 		console.log('startt')
-// 		updateInputsNames(this,invoiceNumber)
-		
-// 	}
-	
-// });

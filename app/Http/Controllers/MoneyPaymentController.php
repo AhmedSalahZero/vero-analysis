@@ -14,6 +14,7 @@ use App\Models\MoneyPayment;
 use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
+use App\Models\PurchaseOrder;
 use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Models\User;
@@ -295,15 +296,16 @@ class MoneyPaymentController
 	{
 		$downPaymentId = $request->get('down_payment_id');
 		$moneyPayment = MoneyPayment::find($downPaymentId);
-		$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
+		$purchaseOrders = PurchaseOrder::where('contract_id',$contractId)->get();
 		$formattedSalesOrders = [];
-		foreach($salesOrders as $index=>$salesOrder){
-			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('purchases_order_id',$salesOrder->id)->first() : null ;
+		foreach($purchaseOrders as $index=>$purchaseOrder){
+			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('purchases_order_id',$purchaseOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['paid_amount'] = $paidAmount && $paidAmount->down_payment_amount ? $paidAmount->down_payment_amount : 0;
-			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
-			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
-			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
+			$formattedSalesOrders[$index]['po_number'] = $purchaseOrder->po_number;
+			$formattedSalesOrders[$index]['amount'] = $purchaseOrder->getAmount();
+			$formattedSalesOrders[$index]['id'] = $purchaseOrder->id;
 		}
+	
 			return response()->json([
 				'status'=>true ,
 				'purchases_orders'=>$formattedSalesOrders,
@@ -359,7 +361,7 @@ class MoneyPaymentController
 		return SupplierInvoice::formatInvoices($invoices,$inEditMode,$moneyPayment);
 	}
 
-	public function store(Company $company , StoreMoneyPaymentRequest $request){
+	public function store(Company $company , StoreMoneyPaymentRequest $request , $moneyPaymentId = null){
 		$moneyType = $request->get('type');
 		$bankId = null;
 		$contractId = $request->get('contract_id');
@@ -375,7 +377,7 @@ class MoneyPaymentController
 		$data['supplier_name'] = $supplierName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		$isDownPayment = $request->has('purchases_orders_amounts');
+		$isDownPayment =  $request->get('is_down_payment') && $request->has('purchases_orders_amounts');
 		$data['money_type'] =  !$isDownPayment ? 'money-payment' : 'down-payment';
 
 
@@ -419,16 +421,19 @@ class MoneyPaymentController
 				'company_id'=>$company->id,
 			];
 		}
-		$isDownPayment = $request->has('purchases_orders_amounts') ;
+	
 		$data['paid_amount'] = $paidAmount ;
 		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
+		$data['money_payment_id'] = $moneyPaymentId;
 		/**
 		 * @var MoneyPayment $moneyPayment ;
 		 */
-
+		if(!$isDownPayment){
+			unset($data['contract_id']);
+		}
 		 $moneyPayment = MoneyPayment::create($data);
 
 		 $relationData['company_id'] = $company->id ;
@@ -440,21 +445,7 @@ class MoneyPaymentController
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$paymentCurrency);
-		/**
-		 * * For Money Received Only
-		 */
-		if($request->get('unapplied_amount',0) > 0 ){
-			$moneyPayment->unappliedAmounts()->create([
-				'amount'=>$request->get('unapplied_amount'),
-				'partner_id'=>$supplier->id,
-				'settlement_date'=>$request->get('delivery_date'),
-				'company_id'=>$company->id,
-				'net_balance_until_date'=>0,
-				'model_id'=>$moneyPayment->id,
-				'model_type'=>HHelpers::getClassNameWithoutNameSpace($moneyPayment),
-				'currency'=>$currencyName
-			]);
-		}
+		
 		/**
 		 * * For Money Received Only
 		 */
@@ -472,9 +463,20 @@ class MoneyPaymentController
 				$moneyPayment->settlements()->create($settlementArr);
 			}
 		}
+		$moneyPayment->update([
+			'total_withhold_amount'=>$totalWithholdAmount
+		]);
 		/**
 		 * * For Contract Only
 		 */
+		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
+		
+		
+		if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 ){
+			// start store unapplied amount as new down payment
+			$this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]],['allocations'=>[]])),$moneyPayment->id);
+			return ;
+		}
 		foreach($request->get('purchases_orders_amounts',[]) as $salesOrderReceivedAmountArr)
 		{
 			if(isset($salesOrderReceivedAmountArr['paid_amount'])&&$salesOrderReceivedAmountArr['paid_amount'] > 0){
@@ -490,12 +492,9 @@ class MoneyPaymentController
 			}
 		}
 		
-		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 
 
-		$moneyPayment->update([
-			'total_withhold_amount'=>$totalWithholdAmount
-		]);
+		
 		/**
 		 * @var SupplierInvoice $supplierInvoice
 		 */

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HHelpers;
+use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
@@ -25,6 +26,7 @@ class MoneyReceived extends Model
 	const CHEQUE_COLLECTED = 'cheque-collected';
 	const CHEQUE_COLLECTION_FEES = 'cheque-collection-fees';
 	const CONTRACTS_WITH_DOWN_PAYMENTS = 'contracts-with-down-payments';
+	const UNAPPLIED_AMOUNTS = 'unapplied-amounts';
 	const DOWN_PAYMENT = 'down-payment';
 	public static function generateComment(self $moneyReceived,string $lang)
 	{
@@ -450,10 +452,10 @@ class MoneyReceived extends Model
 		$cashInBank = $this->cashInBank;
 		return $cashInBank ? $cashInBank->getAccountNumber() : 0 ;
 	}
-	public function unappliedAmounts()
-	{
-		return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
-	}
+	// public function unappliedAmounts()
+	// {
+	// 	return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
+	// }
 	public function cleanOverdraftDebitBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
@@ -521,7 +523,7 @@ class MoneyReceived extends Model
 	{
 		$oldType = $this->getType();
 
-		
+		$this->downPayment ? (new MoneyReceivedController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
 		// $oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->incomingTransfer ? $this->incomingTransfer->delete() :null ;
 		$this->cashInBank ? $this->cashInBank->delete() :null ;
@@ -544,9 +546,9 @@ class MoneyReceived extends Model
 		$this->downPaymentSettlements->each(function($downPaymentSettlement){
 			$downPaymentSettlement->delete();
 		});
-		$this->unappliedAmounts->each(function($unappliedAmount){
-			$unappliedAmount->delete();
-		});
+		// $this->unappliedAmounts->each(function($unappliedAmount){
+		// 	$unappliedAmount->delete();
+		// });
 	}
 	public function getCurrentStatement()
 	{
@@ -667,6 +669,27 @@ class MoneyReceived extends Model
 		->where('money_received.company_id',$companyId)
 		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
 		->sum('received_amount');
+	}
+	/**
+	 * * هنا لو معاك 
+	 * * down payment
+	 * * وعايز تعرف ال
+	 * * ماني ريسيفد 
+	 * * اللي تم انشائها معاها
+	 */
+	public function moneyReceived()
+	{
+		return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
+	}
+	/**
+	 * * هنا لو معاك 
+	 * * ماني ريسيفد وعايز تعرف ال
+	 * * down payment
+	 * * اللي تم انشائها معاها
+	 */
+	public function downPayment()
+	{
+		return $this->hasOne(MoneyReceived::class,'money_received_id','id');
 	}
 	
 	

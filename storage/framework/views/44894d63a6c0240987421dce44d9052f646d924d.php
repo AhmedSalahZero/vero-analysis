@@ -48,7 +48,7 @@ $selectedBanks = [];
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
-<?php echo e(__('Money Received Form')); ?>
+<?php echo e(__('Money Payment Form')); ?>
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
@@ -128,7 +128,9 @@ $selectedBanks = [];
 							
 							ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract
 							current-invoice-currency
-							 ajax-get-invoice-numbers">
+							 
+							 
+							 ">
                                      
                                         <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
@@ -148,7 +150,10 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  ajax-get-invoice-numbers ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
+                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
+					
+					
+					 ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
                         <option value="" selected><?php echo e(__('Select')); ?></option>
                         
                         <?php $__currentLoopData = $suppliers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $supplierId => $supplierName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -306,29 +311,6 @@ $selectedBanks = [];
             </div>
         </div>
     </div>
-
-
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     
@@ -554,7 +536,7 @@ $selectedBanks = [];
                         <div class="form-group row align-items-end">
 
                             <div class="col-md-4">
-                                <label><?php echo e(__('SO Number')); ?> </label>
+                                <label><?php echo e(__('PO Number')); ?> </label>
                                 <div class="kt-input-icon">
                                     <input name="purchases_orders_amounts[][purchases_order_name]" type="text" readonly class="form-control js-purchases-order-name">
                                     <input name="purchases_orders_amounts[][purchases_order_id]" type="hidden" readonly class="form-control js-purchases-order-number">
@@ -583,7 +565,7 @@ $selectedBanks = [];
                 </div>
             </div>
 
-            
+         
     </div>
     </div>
 

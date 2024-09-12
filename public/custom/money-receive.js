@@ -85,13 +85,17 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneSalesOrder = +$('#ajax-sales-order-item').attr('data-single-model')
 	let specificSalesOrder = $('#ajax-sales-order-item').val()
-	const downPaymentId = +$('#js-down-payment-id').val()
+	let downPaymentId = +$('#js-down-payment-id').val()
+	downPaymentId = isNaN(downPaymentId) ? 0 : downPaymentId ;
 	let contractId = $('select#contract-id').val()
 	contractId = contractId ? contractId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
 	let currency = $('select.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
+	if(!contractId){
+		return ;
+	}
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-sales-orders-for-contract/' + contractId + '/' + currency
 
 
@@ -104,9 +108,9 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 		}).then(function (res) {
 	
 			// second add settlements repeater 
-			var lastNode = $('.js-template .js-duplicate-node').clone(true)
+			var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 			
-			$('.js-append-to').empty()
+			$('.js-append-down-payment-to').empty()
 		
 			for (var i = 0; i < res.sales_orders.length; i++) {
 				 var salesOrderId = res.sales_orders[i].id
@@ -133,16 +137,16 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 					var domReceivedAmount = $(lastNode).find('.js-received-amount')
 					domReceivedAmount.val(receivedAmount)
 					domReceivedAmount.attr('name', 'sales_orders_amounts[' + salesOrderId + '][received_amount]')
-				
-					$('.js-append-to').append(lastNode)
-					var lastNode = $('.js-template .js-duplicate-node').clone(true)
+					$('.js-append-down-payment-to').append(lastNode)
+					
+					var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 					
 				}
 
 			}
 			
 			if(res.sales_orders.length == 0){
-				$('.js-append-to').append(lastNode)
+				$('.js-append-down-payment-to').append(lastNode)
 			}
 
 		})
@@ -250,6 +254,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 		})
 	}
 })
+
 $('select.ajax-get-invoice-numbers').trigger('change')
 $('select.ajax-get-sales-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
@@ -263,7 +268,11 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
-
+	if(totalRemaining > 0){
+		$('#contract-row-id').show()
+	}else{
+		$('#contract-row-id').hide()
+	}
 	$('#remaining-settlement-js').val(totalRemaining)
 
 })

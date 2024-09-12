@@ -609,9 +609,15 @@ Route::middleware([])->group(function () {
 					Route::get('refresh-withdrawal-dues-report','WithdrawalsSettlementReportController@refreshReport')->name('refresh.withdrawal.report'); // ajax
 
 					
-					Route::get('down-payment-contracts/{partnerId}/{modelType}','MoneyReceivedController@viewContractsWithDownPayments')->name('view.contracts.down.payments');
-					Route::get('down-payment-contracts-settlements/{downPaymentId}/{modelType}','MoneyReceivedController@downPaymentSettlements')->name('view.down.payment.settlement');
-					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','MoneyReceivedController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
+					Route::get('down-payment-contracts/{partnerId}/{modelType}','DownPaymentContractsController@viewContractsWithDownPayments')->name('view.contracts.down.payments');
+					Route::get('down-payment-contracts-settlements/{downPaymentId}/{modelType}','DownPaymentContractsController@downPaymentSettlements')->name('view.down.payment.settlement');
+					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','DownPaymentContractsController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
+					
+					// Route::get('unapplied-amounts/{partnerId}/{modelType}','UnappliedAmountsController@index')->name('view.unapplied.amounts');
+					// Route::get('unapplied-amount-settlements/{unappliedAmountId}/{modelType}','MoneyReceivedController@downPaymentSettlements')->name('view.down.payment.settlement');
+					// Route::post('store-unapplied-amount-settlement/{unappliedAmountId}/{partnerId}/{modelType}','MoneyReceivedController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
+					
+					
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
@@ -667,11 +673,12 @@ Route::middleware([])->group(function () {
 					
 					
 					Route::post('adjust-customer-due-invoices','CashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
-                    Route::get('unapplied-amounts/{partnerId}/{modelType}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
-                    Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
-                    Route::post('unapplied-amounts/create/{modelType}', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
-                    Route::put('unapplied-amounts/update/{modelType}/{unappliedAmountId}/{settlementId}', 'UnappliedAmountController@update')->name('update.settlement.by.unapplied.amounts');
-                    Route::get('unapplied-amounts/edit/{invoice_number}/{settlementId}/{modelType}', 'UnappliedAmountController@edit')->name('edit.settlement.by.unapplied.amounts');
+					
+                    // Route::get('unapplied-amounts/{partnerId}/{modelType}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
+                    // Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');
+                    // Route::post('unapplied-amounts/create/{modelType}', 'UnappliedAmountController@store')->name('store.settlement.by.unapplied.amounts');
+                    // Route::put('unapplied-amounts/update/{modelType}/{unappliedAmountId}/{settlementId}', 'UnappliedAmountController@update')->name('update.settlement.by.unapplied.amounts');
+                    // Route::get('unapplied-amounts/edit/{invoice_number}/{settlementId}/{modelType}', 'UnappliedAmountController@edit')->name('edit.settlement.by.unapplied.amounts');
                 });
 
                 /**
@@ -745,8 +752,9 @@ Route::middleware([])->group(function () {
                 Route::get('send-cheques-to-under-collection-safe/{moneyReceived}', 'MoneyReceivedController@sendToUnderCollection')->name('cheque.send.to.under.collection');
                 Route::get('down-payments/get-contracts-for-customer-with-start-and-end-date', 'MoneyReceivedController@getContractsForCustomerWithStartAndEndDate')->name('get.contracts.for.customer.with.start.and.end.date'); // ajax request
                 Route::get('down-payments/get-contracts-for-customer', 'MoneyReceivedController@getContractsForCustomer')->name('get.contracts.for.customer'); // ajax request
-                Route::get('down-payments/get-contracts-for-supplier', 'MoneyPaymentController@getContractsForCustomer')->name('get.contracts.for.supplier'); // ajax request
+                Route::get('down-payments/get-contracts-for-supplier', 'MoneyPaymentController@getContractsForSupplier')->name('get.contracts.for.supplier'); // ajax request
                 Route::get('down-payments/get-sales-orders-for-contract/{contract_id}/{currency?}', 'MoneyReceivedController@getSalesOrdersForContract'); // ajax request
+                Route::get('down-payments/get-purchases-orders-for-contract/{contract_id}/{currency?}', 'MoneyPaymentController@getSalesOrdersForContract'); // ajax request
 
                 Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');
                 Route::get('/create-labeling-items', 'DynamicItemsController@createLabelingItems')->name('create.labeling.items');

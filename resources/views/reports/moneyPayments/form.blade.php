@@ -101,6 +101,7 @@ $selectedBanks = [];
 <form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+	<input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
     @csrf
     @if(isset($model))
@@ -140,7 +141,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select name="currency" class="form-control
-							
+							contract-currency ajax-update-contracts
 							invoice-currency-class
 							currency-class update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers">
@@ -166,7 +167,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers">
+                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select">
                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                     {{-- {{  }} --}}
                                     @foreach($suppliers as $supplierId => $supplierName)
@@ -178,7 +179,7 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-                {{-- {{ dd($currentPaymentCurrency) }} --}}
+               
                 <div class="col-md-2">
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
 
@@ -881,6 +882,8 @@ $selectedBanks = [];
             </div>
 
             <hr>
+			@include('reports.moneyPayments.unapplied-contract')
+			
             <div class="row">
                 <div class="col-md-1 width-10"></div>
                 <div class="col-md-1 width-8"></div>
@@ -1062,6 +1065,35 @@ $selectedBanks = [];
         $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
 
     })
+	
+	
+	
+	
+ $(document).on('change', '.ajax-update-contracts', function(e) {
+        e.preventDefault()
+        const supplierId = $('select.supplier-select').val()
+        const currency = $('select.contract-currency').val()
+
+        if (supplierId && currency) {
+            $.ajax({
+                url: "{{ route('get.contracts.for.supplier',['company'=>$company->id]) }}"
+                , data: {
+                    supplierId
+                    , currency
+                }
+                , success: function(res) {
+                    let options = '';
+					let selectedContractId=$('#contracts').attr('data-current-selected')
+                    for (id in res.contracts) {
+                        options += `<option ${selectedContractId == id ? 'selected' :''} value="${id}">${res.contracts[id]}</option>`
+                    }
+                    $('select#contract-id').empty().append(options);
+                    $('select#contract-id').trigger('change')
+                }
+            })
+        }
+    })
+	
 
 </script>
 @endsection

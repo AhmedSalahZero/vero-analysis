@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HHelpers;
+use App\Http\Controllers\MoneyPaymentController;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
 use App\Traits\Models\HasCreditStatements;
@@ -375,10 +376,10 @@ class MoneyPayment extends Model
 	
 	
 	
-	public function unappliedAmounts()
-	{
-		return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
-	}
+	// public function unappliedAmounts()
+	// {
+	// 	return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
+	// }
 	public function cleanOverdraftCreditBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_payment_id','id');
@@ -457,13 +458,15 @@ class MoneyPayment extends Model
 	public function deleteRelations()
 	{
 		$oldType = $this->getType();
+		$this->downPayment ? (new MoneyPaymentController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
 		$oldTypeRelationName = dashesToCamelCase($oldType);
+		$this->downPayment? $this->downPayment->delete():null;
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
 		});
 		$this->settlementAllocations()->delete();
-		$this->unappliedAmounts()->delete();
+		//$this->unappliedAmounts()->delete();
 		$currentStatement = $this->getCurrentStatement() ;
 		if($currentStatement){
 			$currentStatement->delete();
@@ -545,27 +548,33 @@ class MoneyPayment extends Model
 			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 			
 		}
-		// dd($supplierNames);
-		// $query  =  DB::table($mainTableName)
-		// ->where('currency',$currency)
-		// ->where('type',MoneyPayment::OUTGOING_TRANSFER)
-		// ->where('money_payments.company_id',$companyId)
-		// ->whereBetween('delivery_date',[$startDate,$endDate])
-		// ->join('money_payments',$mainTableName.'.money_payment_id','money_payments.id');
-		// $sum = $query->sum('paid_amount') ;
 		
-	
 	
 	}
 	
-	// public static function getSupplierInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate,string $currency,? string  $contractCode = null , $supplierId = null) 
-	// {
-	// 	$items = SupplierInvoice::where('company_id',$companyId)->where('currency',$currency)->whereBetween('invoice_due_date',[$startDate,$endDate])
-	// 	->when($supplierId && $contractCode ,function($builder) use ($supplierId,$contractCode){
-	// 		$builder->where('supplier_id',$supplierId)->where('contract_code',$contractCode);
-	// 	})
-	// 	->get();
-	// 	return $items->sum('net_invoice_amount');
-	// }
+	
+	/**
+	 * * هنا لو معاك 
+	 * * down payment
+	 * * وعايز تعرف ال
+	 * * money payment
+	 * * اللي تم انشائها معاها
+	 */
+	public function moneyPayment()
+	{
+		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
+	}
+	/**
+	 * * هنا لو معاك 
+	 * * money payment
+	 * * وعايز تعرف ال
+	 * * down payment
+	 * * اللي تم انشائها معاها
+	 */
+	public function downPayment()
+	{
+		return $this->hasOne(MoneyPayment::class,'money_payment_id','id');
+	}
+	
 	
 }

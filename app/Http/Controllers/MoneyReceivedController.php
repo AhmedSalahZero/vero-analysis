@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Helpers\HHelpers;
 use App\Http\Requests\ApplyCollectionToChequeRequest;
 use App\Http\Requests\SendToUnderCollectionChequeRequest;
-use App\Http\Requests\StoreDownPaymentSettlementRequest;
 use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -15,68 +14,22 @@ use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
+use App\Models\MoneyTwo;
 use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
+use App\Traits\Models\HasBasicFilter;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class MoneyReceivedController
 {
-    use GeneralFunctions,HasDebitStatements;
-    protected function applyFilter(Request $request,Collection $collection):Collection{
-		if(!count($collection)){
-			return $collection;
-		}
-		$searchFieldName = $request->get('field');
-		$dateFieldName = $searchFieldName === 'due_date' ? 'due_date' : 'receiving_date'; 
-		if($searchFieldName =='deposit_date'){
-			$dateFieldName = 'deposit_date';
-		}
-		$from = $request->get('from');
-		$to = $request->get('to');
-		$value = $request->query('value');
-		$collection = $collection
-		->when($request->has('value'),function($collection) use ($request,$value,$searchFieldName){
-			return $collection->filter(function($moneyReceived) use ($value,$searchFieldName){
-				$currentValue = $moneyReceived->{$searchFieldName} ;
-				// $moneyReceivedRelationName cash-in-safe -> cashInSafe relation ship name
-				$moneyReceivedRelationName = dashesToCamelCase(Request('active')) ;
-				$relationRecord = $moneyReceived->$moneyReceivedRelationName ;
-				/**
-				 * * بمعني لو مالقناش القيمة في جدول ال
-				 * * moneyReceived
-				 * * هندور عليها في العلاقه 
-				 */
-				$currentValue = is_null($currentValue) && $relationRecord ? $relationRecord->{$searchFieldName}  :$currentValue ;
-				if($searchFieldName == 'receiving_branch_id'){
-					$currentValue = $moneyReceived->getCashInSafeBranchName() ;  
-				}
-				if($searchFieldName == 'receiving_bank_id'){
-					$currentValue = $moneyReceived->getReceivingBankName() ;  
-				}
-				if($searchFieldName == 'drawee_bank_id'){
-					$currentValue = $moneyReceived->getDraweeBankName() ;  
-				}
-				
-				return false !== stristr($currentValue , $value);
-			});
-		})
-		->when($request->get('from') , function($collection) use($dateFieldName,$from){
-			return $collection->where($dateFieldName,'>=',$from);
-		})
-		->when($request->get('to') , function($collection) use($dateFieldName,$to){
-			return $collection->where($dateFieldName,'<=',$to);
-		})
-		->sortByDesc('receiving_date');
-		
-		return $collection;
-	}
+    use GeneralFunctions,HasDebitStatements,HasBasicFilter;
+   
 	public function index(Company $company,Request $request)
 	{
 		
@@ -302,7 +255,6 @@ class MoneyReceivedController
 		]);
 	}
 	public function getContractsForCustomer(Company $company , Request $request ){
-
 		$contracts = Contract::where('partner_id',$request->get('customerId'))->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
 		return response()->json([
 			'status'=>true ,
@@ -327,6 +279,7 @@ class MoneyReceivedController
 		$formattedSalesOrders = [];
 		foreach($salesOrders as $index=>$salesOrder){
 			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
+		//	dd($moneyReceived , $moneyReceived->downPaymentSettlements ,$salesOrder);
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
@@ -387,8 +340,7 @@ class MoneyReceivedController
 		return CustomerInvoice::formatInvoices($invoices , $inEditMode);
 	}
 	
-	public function store(Company $company , StoreMoneyReceivedRequest $request){
-	
+	public function store(Company $company , StoreMoneyReceivedRequest $request , $moneyReceivedId = null){
 		
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
@@ -401,7 +353,8 @@ class MoneyReceivedController
 		$data = $request->only(['type','receiving_date','currency','receiving_currency']);
 		$currency = $data['currency'] ;
 		$receivingCurrency = $data['receiving_currency'] ; 
-		$isDownPayment = $request->has('sales_orders_amounts');
+		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
+
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['customer_name'] = $customerName;
 		$data['customer_name'] = $customerName;
@@ -448,12 +401,13 @@ class MoneyReceivedController
 				'drawee_bank_id'=>$request->input('drawee_bank_id')
 			];
 		}
-		$isDownPayment = $request->has('sales_orders_amounts') ;
+		
 		$data['received_amount'] = $receivedAmount ;
 		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-received' ;
 		$data['contract_id'] = $contractId ;
+		$data['money_received_id'] = $moneyReceivedId;
 		/**
 		 * @var MoneyReceived $moneyReceived ;
 		 */
@@ -462,6 +416,13 @@ class MoneyReceivedController
 		/**
 		 * @var MoneyReceived $moneyReceived
 		 */
+		if(!$isDownPayment){
+			unset($data['contract_id']);
+		}
+		// if($isDown){
+		// 	dd($isDownPayment,$request->all());
+		// }
+		
 		$moneyReceived = MoneyReceived::create($data);
 		
 		// $receivingDate = $data['receiving_date'] ?? null ; 
@@ -475,29 +436,28 @@ class MoneyReceivedController
 		$moneyReceived = $moneyReceived->refresh();
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		
-		/**
-		 * * For Money Received Only
-		 */
-		if($request->get('unapplied_amount',0) > 0 ){
-			$moneyReceived->unappliedAmounts()->create([
-				'amount'=>$request->get('unapplied_amount'),
-				'partner_id'=>$customer->id,
-				'settlement_date'=>$request->get('receiving_date'),
-				'company_id'=>$company->id,
-				'net_balance_until_date'=>0,
-				'model_id'=>$moneyReceived->id,
-				'model_type'=>HHelpers::getClassNameWithoutNameSpace($moneyReceived),
-				'currency'=>$currency
-			]);
-		}
+		
+		
 
 		/**
 		 * * For Money Received Only
 		 */
 		$totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$customerName,$company->id);
+		
+		$moneyReceived->update([
+			'total_withhold_amount'=>$totalWithholdAmount
+		]);
+		
 		/**
 		 * * For Contract Only
 		 */
+		
+		 if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 ){
+			// start store unapplied amount as new down payment
+			$this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
+			return ;
+		}
+		
 		foreach($request->get('sales_orders_amounts',[]) as $salesOrderReceivedAmountArr)
 		{
 			if(isset($salesOrderReceivedAmountArr['received_amount'])&&$salesOrderReceivedAmountArr['received_amount'] > 0){
@@ -514,9 +474,7 @@ class MoneyReceivedController
 		}
 		
 		
-		$moneyReceived->update([
-			'total_withhold_amount'=>$totalWithholdAmount
-		]);
+		
 		/**
 		 * @var CustomerInvoice $customerInvoice
 		 */
@@ -530,7 +488,7 @@ class MoneyReceivedController
 		return $moneyType ;
 
 	}
-	public function edit(Company $company , Request $request ,  $moneyReceived ,$customerInvoiceId = null){
+	public function edit(Company $company , Request $request ,  MoneyReceived $moneyReceived ,$customerInvoiceId = null){
 		
 		$isDownPayment = $moneyReceived->isDownPayment();
 		$currencies = DB::table('customer_invoices')
@@ -840,136 +798,7 @@ class MoneyReceivedController
 	
 	
 	
-	public function viewContractsWithDownPayments(Company $company,Request $request,int $partnerId,string $modelType)
-	{
-		
-		$fullModelType = 'App\Models\\'.$modelType;
-		$moneyModelName = $fullModelType::MONEY_MODEL_NAME ;
-		$partner = Partner::find($partnerId);
-		$partnerName = $partner->getName();
-		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
-		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		// $currentType = $request->get('active',MediumTermLoan::RUNNING);
-		$currentType = $request->get('active',$contractsWithDownPayments);
-		
-		$filterDates = [];
-		foreach([$contractsWithDownPayments] as $type){
-			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
-			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
-			
-			$filterDates[$type] = [
-				'startDate'=>$startDate,
-				'endDate'=>$endDate
-			];
-		}
-		
-		
-		 
-		  /**
-		 * * start of bank to safe internal money transfer 
-		 */
-		
-		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
-		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
-		$contractsWithDownPayment = $company->contracts()->has($moneyModelName)->with($moneyModelName)->get() ; // moneyReceived Here Is The Down payment
-		$contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
-		$contractsWithDownPayment =  $currentType == $contractsWithDownPayments ? $this->applyFilter($request,$contractsWithDownPayment):$contractsWithDownPayment ;
-
-		/**
-		 * * end of bank to safe internal money transfer 
-		 */
-		 
-		
-		 $searchFields = [
-			$contractsWithDownPayments=>[
-				'name'=>__('Name'),
-				'start_date'=>__('Start Date'),
-				'end_Date'=>__('End Date'),
-			],
-		];
 	
-		$models = [
-			$contractsWithDownPayments =>$contractsWithDownPayment ,
-		];
-
-        return view('contracts-down-payment.index', [
-			'company'=>$company,
-			'modelType'=>$modelType,
-			'moneyModelName'=>$moneyModelName,
-			'searchFields'=>$searchFields,
-			'models'=>$models,
-			'title'=>$partnerName . ' ' .__('Contracts Down Payment'),
-			'tableTitle'=>__('Contracts Down Payment Table') ,
-			// 'financialInstitution'=>$financialInstitution,
-			'filterDates'=>$filterDates
-		]);
-    }
-	public function downPaymentSettlements(Company $company,Request $request, int $downPaymentId ,string $modelType)
-	{
-		$fullClassName = 'App\Models\\'.$modelType;
-		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
-		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
-		$downPayment =$downPaymentModelFullName::find($downPaymentId);
-		$contract = $downPayment->contract;
-		$partnerId = $contract->getClientId();
-		$partnerName = $contract->getClientName();
-		$inEditMode = false ;
-		$fullClassName = ('\App\Models\\' . $modelType) ;
-        $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
-        $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
-		$customerNameText = (new $fullClassName)->getClientNameText();
-        $jsFile = $fullClassName::JS_FILE ;
-		$contractCurrency = $contract->getCurrency();
-		$currencies = $fullClassName::getCurrencies();
-		$currencies = array_filter($currencies,function($item) use ($contractCurrency){
-			return $item == $contractCurrency;
-		});
-		$invoices =  $fullClassName::where('contract_code',$contract->getCode())
-		->where('customer_name',$partnerName)
-		->where('currency','=',$contractCurrency)
-		->where('company_id',$company->id)
-		->where('net_invoice_amount','>',0);
-		if(!$inEditMode){
-			$invoices->where('net_balance','>',0);
-		}
-		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
-
-		// dd($invoices);
-		return view('contracts-down-payment.settlement_form',[
-			'modelType'=>'MoneyReceived',
-			'customerNameText'=>__('Customer Name'),
-			'invoices'=>$invoices ,
-			'downPayment'=>$downPayment,
-			'currencies'=>$currencies,
-			'contract'=>$contract,
-			'model'=>$contract->moneyReceived,
-			'company'=>$company,
-			'jsFile'=>$jsFile,
-			'modelType'=>$modelType,
-			'customerNameText'=>$customerNameText,
-			'customerNameColumnName'=>$clientNameColumnName,
-			'customerIdColumnName'=>$clientIdColumnName,
-			'partnerId'=>$partnerId ,
-			'partnerName'=>$partnerName
-
-		]);
-	}
-	public function storeDownPaymentSettlement(StoreDownPaymentSettlementRequest $request,Company $company,int $downPaymentId,int $partnerId,string $modelType)
-	{
-		$fullClassName = 'App\Models\\'.$modelType;
-		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
-		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
-		$downPayment =$downPaymentModelFullName::find($downPaymentId);
-		$downPayment->update([
-			'down_payment_settlement_date'=>$request->get('settlement_date')
-		]);
-		$downPayment->settlements->each(function($settlement){
-			$settlement->delete();
-		});
-		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getName(),$company->id);
-		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]);
-		
-	}
 	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 		return response()->json([
 			'customerInvoices'=>CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id')

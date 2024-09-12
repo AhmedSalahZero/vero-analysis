@@ -49,7 +49,7 @@ $selectedBanks = [];
 </style>
 @endsection
 @section('sub-header')
-{{ __('Money Received Form') }}
+{{ __('Money Payment Form') }}
 @endsection
 @section('content')
 <div class="row">
@@ -66,6 +66,7 @@ $selectedBanks = [];
 </div> --}}
 <form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
+	<input type="hidden" name="is_down_payment" value="1">
     <input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
     @csrf
@@ -135,7 +136,9 @@ $selectedBanks = [];
 							
 							ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract
 							current-invoice-currency
-							 ajax-get-invoice-numbers">
+							 {{-- ajax-get-invoice-numbers --}}
+							 
+							 ">
                                      
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                         @php
@@ -155,7 +158,10 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  ajax-get-invoice-numbers ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
+                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
+					{{-- ajax-get-invoice-numbers --}}
+					
+					 ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
                         <option value="" selected>{{__('Select')}}</option>
                         {{-- {{  }} --}}
                         @foreach($suppliers as $supplierId => $supplierName)
@@ -289,102 +295,6 @@ $selectedBanks = [];
             </div>
         </div>
     </div>
-
-
-    {{-- Bank Deposit Information--}}
-    {{-- Outgoing Transfer Information--}}
-    {{-- <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::CASH_IN_BANK }}">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-label">
-            <h3 class="kt-portlet__head-title head-title text-primary">
-                {{__('Bank Deposit Information')}}
-            </h3>
-        </div>
-    </div>
-
-    <div class="kt-portlet__body">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-5 width-45">
-                    <label>{{__('Select Delivery Bank')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-
-                            <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::CASH_IN_BANK  }}]" class="form-control ">
-                                @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankDeliveryBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2 ">
-                    <label>{{__('Deposit Amount')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::CASH_IN_BANK .'-received-amount' }}" placeholder="{{__('Insert Amount')}}">
-                    </div>
-                </div>
-
-
-
-                <div class="col-md-2 width-12">
-                    <label>{{__('Account Type')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select name="account_type[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control js-update-account-number-based-on-account-type">
-                                <option value="" selected>{{__('Select')}}</option>
-                                @foreach($accountTypes as $index => $accountType)
-                                <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2 width-12">
-                    <label>{{__('Account Number')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select data-current-selected="{{ isset($model) ? $model->getCashInBankAccountNumber(): 0 }}" name="account_number[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control js-account-number">
-                                <option value="" selected>{{__('Select')}}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-1">
-                    <label>{{__('Exchange Rate')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed ">
-                    </div>
-                </div>
-
-
-            </div>
-        </div>
-
-    </div>
-    </div> --}}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     {{-- Cheques Information--}}
@@ -604,50 +514,12 @@ $selectedBanks = [];
             <div class="js-template hidden">
                 <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
-                        <div class="form-group row align-items-end">
-
-                            <div class="col-md-4">
-                                <label>{{__('SO Number')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="purchases_orders_amounts[][purchases_order_name]" type="text" readonly class="form-control js-purchases-order-name">
-                                    <input name="purchases_orders_amounts[][purchases_order_id]" type="hidden" readonly class="form-control js-purchases-order-number">
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label>{{__('Amount')}} </label>
-                                <div class="kt-input-icon">
-                                    <input name="purchases_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-2">
-                                <label>{{__('Paid Amount')}} @include('star')</label>
-                                <div class="kt-input-icon">
-                                    <input name="purchases_orders_amounts[][paid_amounts]" placeholder="{{ __('Paid Amount') }}" type="text" class="form-control js-paid-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                                </div>
-                            </div>
-
-
-                        </div>
-
+                      @include('reports.moneyPayments._down-payments-purchase-orders')
                     </div>
                 </div>
             </div>
 
-            {{-- <hr>
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2 width-12 ml-auto mr-4">
-                    <label class="label">{{ __('Unapplied Amount') }}</label>
-            <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
-        </div>
-    </div> --}}
+         
     </div>
     </div>
 

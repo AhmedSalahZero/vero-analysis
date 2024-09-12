@@ -428,7 +428,6 @@
 
     })
     $('select.ajax-get-contracts-for-customer-create').trigger('change')
-
 </script>
 @endsection
 @push('js')

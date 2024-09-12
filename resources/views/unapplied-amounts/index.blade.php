@@ -1,24 +1,12 @@
 @extends('layouts.dashboard')
+@php
+use App\Models\MoneyReceived ;
+@endphp
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
-    button[type="submit"],
-    button[type="button"] {
-        font-size: 1rem !important;
-
-    }
-
-    button[type="submit"] {
-        background-color: green !important;
-        border: 1px solid green !important;
-    }
-
-    .kt-portlet__body {
-        padding-top: 0 !important;
-    }
-
     input[type="checkbox"] {
         cursor: pointer;
     }
@@ -44,7 +32,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Unapplied Amount Settlements') }}
+{{ $title }}
 @endsection
 @section('content')
 
@@ -52,65 +40,80 @@
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#eeee" role="tab">
-                        <i class="fa fa-money-check-alt"></i>{{ __('Unapplied Amounts Settlements') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == MoneyReceived::UNAPPLIED_AMOUNTS ?'active':'' }}" data-toggle="tab" href="#{{MoneyReceived::UNAPPLIED_AMOUNTS  }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ $tableTitle }}
                     </a>
                 </li>
 
 
 
+
             </ul>
 
-          <div class="flex-tabs">
-		    {{-- <a href="#" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
-            </a> --}}
-		  </div>
-
+            {{-- <div class="flex-tabs">
+                <a href="{{ route('loans.create',['company'=>$company->id,MoneyReceived::UNAPPLIED_AMOUNTS]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    {{ __('Create') }}
+                </a>
+            </div> --}}
         </div>
     </div>
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
-            <!--Begin:: Tab Content-->
-            <div class="tab-pane active" id="eeee" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :title="__('Unapplied Amount')" :startDate="$filterStartDate" :endDate="$filterEndDate">
-                        <x-search-unapplied-amounts :modelType="$modelType" :partnerId="$partnerId" :search-fields="$searchFields" :money-received-type="'unapplied'" :has-search="1" :has-batch-collection="0" />
-                    </x-table-title.with-two-dates>
 
+            @php
+            $currentType = MoneyReceived::UNAPPLIED_AMOUNTS ;
+            @endphp
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <x-table-title.with-two-dates :type="$currentType" :title="$title" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        {{-- <x-export-contracts-with-down-payment   :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('view.down.payment.settlement',['company'=>$company->id,'moneyReceived'=>$model->moneyReceived->id])}}" /> --}}
+                    </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
-                        <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
+                        <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th>{{ __('Invoice Number') }}</th>
-                                    <th>{{ __('Settlement Date') }}</th>
-                                    <th>{{ __('Amount') }}</th>
-                                    <th>{{ __('Withhold Amount') }}</th>
+                                    <th>{{ __('#') }}</th>
+                                    <th>{{ __('Date') }}</th>
+                                    <th>{{ __('Down Payment Amount') }}</th>
+                                    <th>{{ __('Settlement Amount') }}</th>
+                                    <th>{{ __('Net Amount') }}</th>
+                                    <th>{{ __('Currency') }}</th>
+                                    <th>{{ __('Contract Code') }}</th>
+                                    <th>{{ __('Contract Amount') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($models as $model)
+							@php
+								$index = 0 ;
+							@endphp
+                                @foreach($models[$currentType] as $model)
+								@foreach($model->{$moneyModelName} as $moneyReceived)
                                 <tr>
-                                    <td>{{ $model->getInvoiceNumber() }}</td>
-                                    <td class="text-nowrap">{{ $model->getSettlementDateFormatted() }}</td>
-                                    <td>{{ $model->getSettlementAmountFormatted() }}</td>
-                                    <td>{{ $model->getWithholdAmountFormatted() }}</td>
-								
+                                    <td>
+                                        {{ $index+1 }}
+                                    </td>
+
+                                    <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
+                                    <td>{{ $currentReceivedAmount=$moneyReceived->getReceivedAmountFormatted() }}</td>
+                                    <td>{{ $currentTotalSettlementAmount=$moneyReceived->getTotalSettlementAmountFormatted() }}</td>
+                                    <td>{{ number_format($moneyReceived->getTotalSettlementsNetBalance()) }}</td>
+                                    <td>{{ $moneyReceived->getCurrency() }}</td>
+                                    <td>{{ $model->getCode() }}</td>
+                                    <td>{{ $model->getAmountFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.settlement.by.unapplied.amounts',['company'=>$company->id,'invoice_number'=>$model->invoice_number,'settlementId'=>$model->id,'modelType'=>$modelType]) }}"><i class="fa fa-pen-alt"></i></a>
-
-                                            <a data-toggle="modal" data-target="#delete-transfer-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-transfer-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Start Settlement') }}" href="{{ route('view.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$moneyReceived->id,'modelType'=>$modelType]) }}"><i class="fa fa-dollar-sign"></i></a>
+                                            {{-- <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) }}" method="post">
+                                                        <form action="destroy" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -119,25 +122,23 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
                                                                 <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
                                                             </div>
 
                                                         </form>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </span>
                                     </td>
                                 </tr>
+								@php
+									$index++;
+								@endphp
                                 @endforeach
-
-
-
-
-
+                                @endforeach
                             </tbody>
                         </table>
 
@@ -145,6 +146,14 @@
                     </div>
                 </div>
             </div>
+
+
+
+
+            <!--End:: Tab Content-->
+
+
+
             <!--End:: Tab Content-->
         </div>
     </div>
@@ -168,9 +177,6 @@
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
 
-
-
-
 <script>
     $(document).on('click', '.js-close-modal', function() {
         $(this).closest('.modal').modal('hide');
@@ -182,25 +188,29 @@
         const searchFieldName = $(this).val();
         const popupType = $(this).attr('data-type');
         const modal = $(this).closest('.modal');
-        if (searchFieldName === 'due_date') {
-            $('.data-type-span').html('[ {{ __("Due Date") }} ]')
-            modal.find(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-        } else if (searchFieldName == 'settlement_date') {
+        if (searchFieldName === 'transfer_date') {
+            modal.find('.data-type-span').html('[ {{ __("Transfer Date") }} ]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-            modal.find('.data-type-span').html('[ {{ __("Settlement Date") }} ]')
-        } else if (searchFieldName == 'deposit_date') {
+        } else if (searchFieldName === 'contract_end_date') {
+            modal.find('.data-type-span').html('[ {{ __("End Date") }} ]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-            modal.find('.data-type-span').html('[ {{ __("Deposit Date") }} ]')
+        } else if (searchFieldName === 'balance_date') {
+            modal.find('.data-type-span').html('[ {{ __("Balance Date") }} ]')
+            $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else {
+            modal.find('.data-type-span').html('[ {{ __("Start Date") }} ]')
             $(modal).find('.search-field').prop('disabled', false);
         }
     })
     $(function() {
 
-            $('.js-search-modal').trigger('change')
+        $('.js-search-modal').trigger('change')
 
-        })
-        </script>
-    @endsection
-    @push('js') 
+    })
+
+</script>
+@endsection
+@push('js')
+{{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
+{{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
 @endpush
