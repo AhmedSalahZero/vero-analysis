@@ -298,14 +298,7 @@
                 <?php echo csrf_field(); ?>
                 <div class="text-right">
 
-                    <a 
-					href="<?php echo e(route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType])); ?>"
-					
-					 class="btn  active-style btn-icon-sm align-self-center">
-                        <i class="fas fa-money-bill"></i>
-                        <?php echo e(__('Unapplied Amount Settlement')); ?>
-
-                    </a>
+                    
 
                     <a href="<?php echo e(route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType])); ?>"  class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
@@ -380,10 +373,7 @@
 
                                         </th>
 
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            <?php echo __('Unapplied Amount <br> Settlement'); ?>
-
-                                        </th>
+                                        
                                     </tr>
 
                                 </thead>
@@ -426,11 +416,7 @@
                                         </td>
 										
 										
-                                        <td class="sub-text-bg  text-center">
-                                            <?php if(!$invoice->$isCollectedOrPaid()): ?>
-                                            <a href="<?php echo e(route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ])); ?>" title="<?php echo e(__('Settlement')); ?>" class="btn  btn-sm btn-primary"><?php echo e(__('Settlement')); ?></a>
-                                            <?php endif; ?>
-                                        </td>
+                                        
 										
                                         
 

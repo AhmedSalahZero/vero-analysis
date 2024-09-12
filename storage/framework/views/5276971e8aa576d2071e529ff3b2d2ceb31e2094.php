@@ -93,6 +93,7 @@ $selectedBanks = [];
 <form method="post" action="<?php echo e(isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
     <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+	<input type="hidden" id="js-down-payment-id" value="<?php echo e(isset($model) && $model->downPayment ? $model->downPayment->id : 0); ?>">
     <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
     <?php echo csrf_field(); ?>
     <?php if(isset($model)): ?>
@@ -133,7 +134,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select name="currency" class="form-control
-							
+							contract-currency ajax-update-contracts
 							invoice-currency-class
 							currency-class update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers">
@@ -159,7 +160,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers">
+                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select">
                                     
                                     
                                     <?php $__currentLoopData = $suppliers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $supplierId => $supplierName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -171,7 +172,7 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-                
+               
                 <div class="col-md-2">
                     <label><?php echo e(__('Select Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
 
@@ -928,6 +929,8 @@ $selectedBanks = [];
             </div>
 
             <hr>
+			<?php echo $__env->make('reports.moneyPayments.unapplied-contract', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+			
             <div class="row">
                 <div class="col-md-1 width-10"></div>
                 <div class="col-md-1 width-8"></div>
@@ -1120,6 +1123,35 @@ $selectedBanks = [];
         $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
 
     })
+	
+	
+	
+	
+ $(document).on('change', '.ajax-update-contracts', function(e) {
+        e.preventDefault()
+        const supplierId = $('select.supplier-select').val()
+        const currency = $('select.contract-currency').val()
+
+        if (supplierId && currency) {
+            $.ajax({
+                url: "<?php echo e(route('get.contracts.for.supplier',['company'=>$company->id])); ?>"
+                , data: {
+                    supplierId
+                    , currency
+                }
+                , success: function(res) {
+                    let options = '';
+					let selectedContractId=$('#contracts').attr('data-current-selected')
+                    for (id in res.contracts) {
+                        options += `<option ${selectedContractId == id ? 'selected' :''} value="${id}">${res.contracts[id]}</option>`
+                    }
+                    $('select#contract-id').empty().append(options);
+                    $('select#contract-id').trigger('change')
+                }
+            })
+        }
+    })
+	
 
 </script>
 <?php $__env->stopSection(); ?>

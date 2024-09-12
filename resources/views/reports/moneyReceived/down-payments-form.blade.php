@@ -57,6 +57,7 @@ use App\Models\MoneyReceived ;
 
         <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
+			<input type="hidden" name="is_down_payment" value="1">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-sales-order-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $salesOrderId : 0 }}">
             @csrf
@@ -186,8 +187,10 @@ use App\Models\MoneyReceived ;
 							
 							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
 							current-invoice-currency
-							 ajax-get-invoice-numbers">
-                                     
+							 {{-- ajax-get-invoice-numbers --}}
+							 
+							 ">
+
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                         @php
                                         $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
@@ -416,8 +419,8 @@ use App\Models\MoneyReceived ;
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_receiving_currency[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}">
                                 </div>
                             </div>
-							
-							
+
+
 
 
                         </div>
@@ -479,7 +482,7 @@ use App\Models\MoneyReceived ;
                             <div class="col-md-2 width-12">
                                 <label>{{__('Cheque Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
-                                    <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}" >
+                                    <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">
                                 </div>
                             </div>
 
@@ -508,7 +511,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                           <div class="col-md-2 width-12">
+                            <div class="col-md-2 width-12">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">
@@ -521,8 +524,8 @@ use App\Models\MoneyReceived ;
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_receiving_currency[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CHEQUE }}">
                                 </div>
                             </div>
-							
-							
+
+
 
 
 
@@ -631,73 +634,31 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
 
-                    <div class="js-append-to">
+                    <div class="js-append-down-payment-to">
                         <div class="col-md-12 js-duplicate-node">
 
                         </div>
                     </div>
 
-                    <div class="js-template hidden">
+                    <div class="js-down-payment-template hidden">
                         <div class="col-md-12 js-duplicate-node">
                             <div class=" kt-margin-b-10 border-class">
-                                <div class="form-group row align-items-end">
-
-                                    <div class="col-md-4">
-                                        <label>{{__('SO Number')}} </label>
-                                        <div class="kt-input-icon">
-                                            <input name="sales_orders_amounts[][sales_order_name]" type="text" readonly class="form-control js-sales-order-name">
-                                            <input name="sales_orders_amounts[][sales_order_id]" type="hidden" readonly class="form-control js-sales-order-number">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2">
-                                        <label>{{__('Amount')}} </label>
-                                        <div class="kt-input-icon">
-                                            <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
-                                        </div>
-                                    </div>
-
-
-
-
-
-
-                                    <div class="col-md-2">
-                                        <label>{{__('Received Amount')}} @include('star')</label>
-                                        <div class="kt-input-icon">
-                                            <input name="sales_orders_amounts[][received_amounts]" placeholder="{{ __('Received Amount') }}" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
+                                @include('reports.moneyReceived._down-payments-sales-orders')
                             </div>
                         </div>
                     </div>
 
-                    {{-- <hr> --}}
-                    {{-- <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2 width-12 ml-auto mr-4">
-                    <label class="label">{{ __('Unapplied Amount') }}</label>
-                    <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
+
                 </div>
-            </div> --}}
+            </div>
+
+            <x-submitting />
+
+        </form>
+        <!--end::Form-->
+
+        <!--end::Portlet-->
     </div>
-</div>
-
-<x-submitting />
-
-</form>
-<!--end::Form-->
-
-<!--end::Portlet-->
-</div>
 </div>
 @endsection
 @section('js')
@@ -751,13 +712,13 @@ use App\Models\MoneyReceived ;
         const activeClass = 'js-' + moneyType + '-received-amount';
         const invoiceCurrency = $('select.invoice-currency-class').val();
         const receivingCurrency = $('select.receiving-currency-class').val();
-       // if (invoiceCurrency != receivingCurrency) {
-       //     $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-       //     $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-       // } else {
-       //     $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-       //     $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-       // }
+        // if (invoiceCurrency != receivingCurrency) {
+        //     $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        //     $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        // } else {
+        //     $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
+        //     $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
+        // }
     })
     $(document).on('change', 'select.currency-class', function() {
         const invoiceCurrency = $('select.invoice-currency-class').val();
@@ -815,10 +776,11 @@ use App\Models\MoneyReceived ;
 
 <script>
     $('select#customer_name').trigger('change')
-$(function(){
-		$('select.currency-class').trigger('change')
-			$('.recalculate-amount-class').trigger('change')
-	})
+    $(function() {
+        $('select.currency-class').trigger('change')
+        $('.recalculate-amount-class').trigger('change')
+    })
+
 </script>
 
 @endsection

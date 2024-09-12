@@ -279,13 +279,13 @@
                 @csrf
                 <div class="text-right">
 
-                    <a 
-					href="{{ route('view.settlement.by.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}"
+                    {{-- <a 
+					href="{{ route('view.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}"
 					
 					 class="btn  active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
                         {{ __('Unapplied Amount Settlement') }}
-                    </a>
+                    </a> --}}
 
                     <a href="{{ route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}"  class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
@@ -349,9 +349,11 @@
                                             {{ __('Actions') }}
                                         </th>
 
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+                                        {{--
+										 <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {!! __('Unapplied Amount <br> Settlement') !!}
                                         </th>
+										 --}}
                                     </tr>
 
                                 </thead>
@@ -393,11 +395,11 @@
                                         </td>
 										
 										
-                                        <td class="sub-text-bg  text-center">
+                                        {{-- <td class="sub-text-bg  text-center">
                                             @if(!$invoice->$isCollectedOrPaid())
                                             <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn  btn-sm btn-primary">{{ __('Settlement') }}</a>
                                             @endif
-                                        </td>
+                                        </td> --}}
 										
                                         {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
 

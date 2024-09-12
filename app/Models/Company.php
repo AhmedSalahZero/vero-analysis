@@ -282,5 +282,8 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(MediumTermLoan::class,'company_id','id');
 	}
-	
+	// public function unappliedAmounts()
+	// {
+	// 	return $this->hasMany(UnappliedAmount::class,'company_id','id');
+	// }
 }
