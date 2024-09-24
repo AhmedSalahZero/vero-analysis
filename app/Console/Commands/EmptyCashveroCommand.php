@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class EmptyCashveroCommand extends Command
 {
@@ -74,10 +75,11 @@ class EmptyCashveroCommand extends Command
 'payment_settlements','settlements','money_received','money_payments','contracts'
 
 		] as $tableName){
-			
-			DB::table($tableName)->delete();
+			if(Schema::hasColumn($tableName,'company_id')){
+				DB::table($tableName)->where('company_id','!=',41)->delete();
+			}
 		}
 		
        
-    }
+    }	
 }
