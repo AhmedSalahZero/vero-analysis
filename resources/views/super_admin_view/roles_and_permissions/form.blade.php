@@ -149,7 +149,7 @@
 				let userOptions = '';
 				for(var i = 0 ; i <users.length ; i++){
 					var selected = currentUserSelect == users[i].id ? 'selected':''
-					userOptions =' <option '+ selected +' value="'+users[i].id+'" >'+ users[i].name +'</option>';
+					userOptions +=' <option '+ selected +' value="'+users[i].id+'" >'+ users[i].name +'</option>';
 				}
 				$('select#user-id').empty().append(userOptions).trigger('change')
 			}
