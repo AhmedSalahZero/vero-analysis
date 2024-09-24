@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\HHelpers;
 use App\Http\Controllers\MoneyPaymentController;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
@@ -525,13 +524,12 @@ class MoneyPayment extends Model
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
 		
-
 		$supplierNamesWithPaidAmount = DB::table($mainTableName)
 						->where($subTableName.'.currency',$currency)
 						->where('type',$moneyType)
 						->where($subTableName.'.company_id',$companyId)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
-						->join($subTableName,$subTableName.'.id','=','money_payment_id')
+						->join($subTableName,$subTableName.'.id','=',$mainTableName.'.money_payment_id')
 						->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
 							$builder->where('payable_cheques.status',$chequeStatus);
 						})

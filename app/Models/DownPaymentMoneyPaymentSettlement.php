@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 class DownPaymentMoneyPaymentSettlement extends Model
 {
 	protected $guarded = ['id'];
-	protected $table ='down_payment_payment_settlements';
+	protected $table ='down_payment_money_payment_settlements';
+	// protected $table ='down_payment_payment_settlements';
 	public function moneyPayment()
 	{
 		return $this->belongsTo(MoneyPayment::class , 'money_payment_id','id');

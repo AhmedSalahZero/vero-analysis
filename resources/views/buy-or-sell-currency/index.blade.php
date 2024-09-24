@@ -67,34 +67,14 @@ use App\Models\BuyOrSellCurrency ;
                 </li>
 
             </ul>
-
+			@if(hasAuthFor('create buy or sell currency'))
             <div class="flex-tabs">
-                {{-- <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::BANK_TO_BANK]) }}" class="btn active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Bank To Bank') }}
-                </a>
-
-
-                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::SAFE_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Safe To Bank') }}
-                </a>
-
-                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,BuyOrSellCurrency::BANK_TO_SAFE]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Bank To Safe') }}
-                </a>
-                --}}
                 <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Buy Or Sell Currencies') }}
                 </a>
             </div>
-
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+			@endif 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -126,7 +106,9 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('To Bank') }}</th>
                                     <th>{{ __('To Account Type') }}</th>
                                     <th>{{ __('To Account Number') }}</th>
+									@if(hasAuthFor('update buy or sell currency') || hasAuthFor('delete buy or sell currency') )
                                     <th>{{ __('Control') }}</th>
+									@endif 
                                 </tr>
                             </thead>
                             <tbody>
@@ -149,12 +131,15 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
 
-
+									@if(hasAuthFor('update buy or sell currency') || hasAuthFor('delete buy or sell currency') )
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@if(hasAuthFor('update buy or sell currency'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('buy-or-sell-currencies.edit',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete buy or sell currency'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -177,8 +162,10 @@ use App\Models\BuyOrSellCurrency ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
+									@endif 
                                 </tr>
                                 @endforeach
                             </tbody>

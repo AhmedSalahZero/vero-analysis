@@ -11,7 +11,6 @@ use App\Models\CustomerInvoice;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\PayableCheque;
-use App\Models\SettlementAllocation;
 use App\Models\SupplierInvoice;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;

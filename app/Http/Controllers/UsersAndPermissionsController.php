@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -40,12 +41,9 @@ class UsersAndPermissionsController extends Controller
         return redirect()->back();
 
     }
-    public function edit(User $user)
+    public function edit(User $user , Company $company = null)
     {
-	
-		$permissions = Permission::all();
-		
-        return view('super_admin_view.users_permissions.form',compact('permissions','user'));
+        return view('super_admin_view.users_permissions.form',compact('user','company'));
     }
     public function update(Request $request,user $user )
     {

@@ -148,7 +148,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
+                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -194,7 +194,7 @@
                             <label>{{ __('To Branch') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                    <select required data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                         @foreach($selectedBranches as $id => $name)
                                         <option value="{{ $id }}">{{ $name }}</option>
                                         @endforeach

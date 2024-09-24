@@ -668,7 +668,7 @@
             height: 100%;
         }
 
-        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style):not(.exclude-td) {
+        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style):not(.exclude-td):not(.disabled.day) {
             color: black !important;
             font-weight: bold !important;
         }
@@ -1025,7 +1025,6 @@ td{
         <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
             
             <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
-
                 <!-- begin:: Header -->
                 <?php echo $__env->make('layouts.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 				<?php if(isset($company)): ?>
@@ -1043,7 +1042,6 @@ td{
                                 <div class="kt-subheader__main">
                                     <h3 class="kt-subheader__title" style="font-variant: small-caps;">
                                         <?php echo $__env->yieldContent('sub-header'); ?>
-
                                     </h3>
                                     <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn"><i class="la la-close"></i></button>
                                     <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
@@ -1459,7 +1457,6 @@ td{
 
 
 
-
     <?php if(isset($company) && $company->id): ?>
     <script>
 	
@@ -1659,7 +1656,7 @@ $('select.current-invoice-currency.update-exchange-rate').trigger('change')
 
                 var formData = new FormData(form);
 
-                this.disabled = true;
+              //  this.disabled = true;
                 $.ajax({
                     type: "POST"
                     , url: $(form).attr('action')
@@ -1668,11 +1665,15 @@ $('select.current-invoice-currency.update-exchange-rate').trigger('change')
                     , contentType: false
                     , processData: false
                     , success: function(res) {
+						console.log('ress')
+						console.log(res)
+				
                         if (res.reloadCurrentPage) {
                             return window.location.reload()
 
                         }
                         if (res.redirectTo) {
+							console.log('redirect',res.redirectTo)
                             window.location.href = res.redirectTo;
                             return
                         }
@@ -1869,6 +1870,35 @@ $(function(){
 		$('.modal:not(.inner-modal-class)').modal('hide')
 	})
 </script>
+
+<script>
+$(document).on('change','.checkbox-for-row',function(e){
+	let isChecked = $(this).is(':checked')
+	if(isChecked){
+		
+		$(this).closest('tr').find('.checkbox-for-permission').prop("checked", true).prop('disabled',false)
+	}else{
+		$(this).closest('tr').find('.checkbox-for-permission').prop("checked", false).prop('disabled',true)
+	}
+})
+</script>
+
+
+
+<script>
+$('#kt_datepicker_max_date_is_today').datepicker({
+ autoclose: true,
+ todayHighlight: true,
+   orientation: "bottom left",
+// format: 'mm/dd/yyyy',
+ endDate: new Date(),
+ rtl:false
+});
+
+</script>
+
+
+
 </body>
 
 <!-- end::Body -->

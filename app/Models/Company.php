@@ -282,8 +282,36 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(MediumTermLoan::class,'company_id','id');
 	}
-	// public function unappliedAmounts()
+	public function systems()
+	{
+		return $this->hasMany(CompanySystem::class,'company_id','id');
+	}
+	public function hasSystem(string $systemName)
+	{
+		return in_array($systemName,$this->getSystemsNames());
+	}
+	public function getSystemsNames():array
+	{
+		return $this->systems->pluck('system_name')->toArray();
+	}
+	public function hasCashVero():bool
+	{
+		return in_array(CASH_VERO,$this->getSystemsNames())
+		|| (auth()->check() && auth()->user()->isSuperAdmin());
+		// return $this->system == 'cash-vero' || $this->system == 'both' || (auth()->check() && auth()->user()->isSuperAdmin());
+	}
+	// public function getSystem()
 	// {
-	// 	return $this->hasMany(UnappliedAmount::class,'company_id','id');
+	// 	return $this->system ;
 	// }
+	public function syncPermissionForAllUser(array $systemsToPreserve , array $newSystemsToBeAdded):void
+	{
+		$permissionsNamesToBePreserve = array_column(getPermissions($systemsToPreserve),'name'); 
+		$permissionsNamesToBeAdded = array_column(getPermissions($newSystemsToBeAdded),'name');
+		foreach($this->users as $user){
+			$currentUserPermissions = array_values(array_intersect($user->permissions->pluck('name')->toArray(),$permissionsNamesToBePreserve));
+			$permissions = array_merge($currentUserPermissions,$permissionsNamesToBeAdded);
+			$user->syncPermissions($permissions);
+		}	
+	}
 }

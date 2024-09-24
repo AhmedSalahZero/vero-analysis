@@ -1,4 +1,7 @@
 <?php $__env->startSection('css'); ?>
+<?php
+	use App\Models\FinancialInstitutionAccount;
+?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
@@ -149,7 +152,7 @@
                                     <div class="col-lg-4">
                                         <label><?php echo e(__('Branch Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                         <div class="kt-input-icon">
-                                            <input value="<?php echo e(isset($model) ? $model->getBranchName() : null); ?>" type="text" name="branch_name" class="form-control" placeholder="<?php echo e(__('Branch Name')); ?>">
+                                            <input required	 value="<?php echo e(old('branch_name',isset($model) ? $model->getBranchName() : null)); ?>" type="text" name="branch_name" class="form-control" placeholder="<?php echo e(__('Branch Name')); ?>">
                                         </div>
                                     </div>
 
@@ -181,7 +184,7 @@
                                     <div class="col-lg-4">
                                         <label><?php echo e(__('Company Account Number')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                         <div class="kt-input-icon">
-                                            <input type="text" value="<?php echo e(isset($model) ? $model->getCompanyAccountNumber() : old('company_account_number')); ?>" name="company_account_number" class="form-control" placeholder="<?php echo e(__('Company Account Number')); ?>">
+                                            <input required type="text" value="<?php echo e(old('company_account_number',isset($model) ? $model->getCompanyAccountNumber() : null)); ?>" name="company_account_number" class="form-control" placeholder="<?php echo e(__('Company Account Number')); ?>">
                                         </div>
                                     </div>
 
@@ -193,7 +196,7 @@
                                     <label><?php echo e(__('Balance Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
-                                            <input type="text" name="balance_date" value="<?php echo e(isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : null); ?>" class="form-control" readonly placeholder="<?php echo e(__('Select Balance Date')); ?>" id="kt_datepicker_2" />
+                                            <input type="text" name="balance_date" value="<?php echo e(old('balance_date', isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : formatDateForDatePicker(now()) )); ?>" class="form-control" readonly placeholder="<?php echo e(__('Select Balance Date')); ?>" id="kt_datepicker_2" />
                                             <div class="input-group-append">
                                                 <span class="input-group-text">
                                                     <i class="la la-calendar-check-o"></i>
@@ -211,26 +214,22 @@
                                 <div class="col-md-12 mt-3">
 
 
-
                                     <div class="" style="width:100%">
 
                                         <div id="m_repeater_0" class="cash-and-banks-repeater">
                                             <div class="form-group  m-form__group row  ">
                                                 <div data-repeater-list="accounts" class="col-lg-12">
-                                                    <?php if(isset($model) ): ?>
-                                                    <?php $__currentLoopData = $model->accounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $account): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+												<?php
+													$accounts =  old('accounts',$model->accounts ?? [null]) ; 
+													$accounts = is_array($accounts) ? fillObjectFromArray($accounts,FinancialInstitutionAccount::class) : $accounts;
+												?>
+                                                    <?php $__currentLoopData = $accounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $account): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <?php echo $__env->make('reports.financial-institution.repeater' , [
-                                                    'account'=>$account,
-
+                                             	       'account'=>$account,
                                                     ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                    <?php else: ?>
-                                                    <?php echo $__env->make('reports.financial-institution.repeater' , [
-
-                                                    ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-
-                                                    <?php endif; ?>
+                                                   
 
 
 

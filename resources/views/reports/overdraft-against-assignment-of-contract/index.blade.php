@@ -44,17 +44,14 @@
                 </li>
 
             </ul>
-
+		@if(hasAuthFor('create overdraft against assignment of contract'))
             <div class="flex-tabs">
                 <a href="{{ route('create.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('New Record') }}
                 </a>
-                {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-                </a> --}}
             </div>
+			@endif 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -113,8 +110,10 @@
                                     {{-- <td>{{ $odAgainstAssignmentOfContract->getMaxSettlementDays() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 										@include('reports.overdraft-against-assignment-of-contract.apply-rate')
-
+@if(hasAuthFor('update overdraft against assignment of contract'))
                                         <a data-toggle="modal" data-target="#apply-expense-{{ $odAgainstAssignmentOfContract->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Assign Contract') }}" href="#"><i class=" fa fa-file"></i></a>
+										@endif 
+										@if(hasAuthFor('create overdraft against assignment of contract'))
                                         <div class="modal fade" id="apply-expense-{{ $odAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
@@ -197,9 +196,13 @@
                                                 </div>
                                             </div>
                                         </div>
+										@endif 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@if(hasAuthFor('update overdraft against assignment of contract'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'odAgainstAssignmentOfContract'=>$odAgainstAssignmentOfContract->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete overdraft against assignment of contract'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $odAgainstAssignmentOfContract->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $odAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -222,6 +225,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
 
 

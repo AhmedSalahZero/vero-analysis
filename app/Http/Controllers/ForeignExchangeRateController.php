@@ -83,7 +83,7 @@ class ForeignExchangeRateController
 		if($returnIndexArray){
 			return $viewDataArray;
 		}
-        return view('admin.foreign-exchange-rate.2foreign-exchange-rate',$viewDataArray );
+        return view('admin.foreign-exchange-rate.foreign-exchange-rate',$viewDataArray );
     }
 	public function store(Request $request, Company $company){
 		$data = [
@@ -104,7 +104,7 @@ class ForeignExchangeRateController
 	public function edit(Request $request , Company $company ,  $foreignExchangeRateId ){
 		$indexViewData = $this->index($company,$request,true);
 		$foreignExchangeRate = ForeignExchangeRate::find($foreignExchangeRateId);
-        return view('admin.foreign-exchange-rate.2foreign-exchange-rate', array_merge($indexViewData,[
+        return view('admin.foreign-exchange-rate.foreign-exchange-rate', array_merge($indexViewData,[
 			'company'=>$company,
 			'foreignExchangeRates'=>ForeignExchangeRate::where('company_id',$company->id)->get(),
 			'model'=>$foreignExchangeRate,

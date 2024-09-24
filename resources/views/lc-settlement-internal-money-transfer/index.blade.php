@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @php
-use App\Models\MediumTermLoan ;
+use App\Models\LcSettlementInternalMoneyTransfer ;
 @endphp
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
@@ -41,7 +41,7 @@ use App\Models\MediumTermLoan ;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == MediumTermLoan::BANK_TO_LETTER_OF_CREDIT ?'active':'' }}" data-toggle="tab" href="#{{MediumTermLoan::BANK_TO_LETTER_OF_CREDIT  }}" role="tab">
+                    <a class="nav-link {{ !Request('active') || Request('active') == LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT ?'active':'' }}" data-toggle="tab" href="#{{LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT  }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Bank To Letter Of Credit Transfer Table') }}
                     </a>
                 </li>
@@ -50,29 +50,16 @@ use App\Models\MediumTermLoan ;
 
 
             </ul>
-
+			@if(auth()->user()->can('create lc settlement internal transfer'))
             <div class="flex-tabs">
-                {{-- <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,MediumTermLoan::BANK_TO_BANK]) }}" class="btn active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Bank To Bank') }}
-                </a>
-
-
-                <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,MediumTermLoan::SAFE_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Safe To Bank') }}
-                </a> --}}
-
-                <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,MediumTermLoan::BANK_TO_LETTER_OF_CREDIT]) }}" class="btn  active-style btn-icon-sm align-self-center">
+               
+                <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Bank To Letter Of Credit') }}
                 </a>
             </div>
-
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+		@endif 
+            
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -84,7 +71,7 @@ use App\Models\MediumTermLoan ;
 
 
             @php
-            $currentType = MediumTermLoan::BANK_TO_LETTER_OF_CREDIT ;
+            $currentType = LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT ;
             @endphp
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
@@ -106,7 +93,9 @@ use App\Models\MediumTermLoan ;
                                     <th>{{ __('From Account Type') }}</th>
                                     <th>{{ __('From Account Number') }}</th>
                                     <th>{{ __('To Lc Issuance') }}</th>
+									@if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') )
                                     <th>{{ __('Control') }}</th>
+									@endif 
                                 </tr>
                             </thead>
                             <tbody>
@@ -123,9 +112,13 @@ use App\Models\MediumTermLoan ;
                                     <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
                                     <td>{{ $model->getLetterOfCreditIssuanceTransactionName() }}</td>
+									@if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') )
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(hasAuthFor('update lc settlement internal transfer'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('lc-settlement-internal-money-transfers.edit',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete lc settlement internal transfer'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -148,8 +141,10 @@ use App\Models\MediumTermLoan ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
+									@endif
                                 </tr>
                                 @endforeach
                             </tbody>

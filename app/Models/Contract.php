@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HHelpers;
 use App\Models\Partner;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
@@ -385,5 +386,23 @@ class Contract extends Model
 	public function MoneyPayment() // downpayments
 	{
 		return $this->hasMany(MoneyPayment::class,'contract_id','id')->where('money_type',MoneyReceived::DOWN_PAYMENT);
+	}
+	public static function generateRandomContract(int $companyId , string $partnerName,string $startDate , string $modelType):string 
+	{
+		$prefix = $modelType == 'Customer' ? 'c-' : 's-';
+		$startDate = Carbon::make($startDate)->format('Y-m-d');
+		$startDateMonth = explode('-',$startDate)[1];
+		$startDateYear = explode('-',$startDate)[0];
+		$partnerNameItems = explode(' ',$partnerName);
+		$randomNumbers = HHelpers::generateCodeOfLength(4,true);
+		$partnerNameChar = '';
+		foreach($partnerNameItems as $partnerNameItem){
+			$partnerNameChar.=substr($partnerNameItem, 0, 1);
+		}
+		$code = $prefix . $startDateMonth.'-'.$startDateYear.'-'.$partnerNameChar.'-'.$randomNumbers ;
+		if(Contract::where('code',$code)->where('company_id',$companyId)->exists()){
+			return self::generateRandomContract($companyId,$partnerName,$startDate,$modelType);
+		}
+		return $code ;
 	}
 }

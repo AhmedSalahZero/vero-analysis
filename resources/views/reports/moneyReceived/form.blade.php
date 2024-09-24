@@ -6,7 +6,6 @@ use App\Models\MoneyReceived ;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
-{{-- {{ dd($company->getMainFunctionalCurrency()) }} --}}
 <style>
     label {
         text-align: left !important;
@@ -58,6 +57,8 @@ use App\Models\MoneyReceived ;
 
         <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
+            <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
+            <input type="hidden" name="current_branch" value="{{ isset($model) && $model->cashInSafe ? $model->cashInSafe->receiving_branch_id : 0 }}">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
 			<input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}">
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
@@ -76,12 +77,11 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-
                         <div class="col-md-3">
                             <label>{{__('Receiving Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                    <input type="text" name="receiving_date" max-date="{{ formatDateForDatePicker(now()) }}" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -646,7 +646,8 @@ use App\Models\MoneyReceived ;
                 </div>
             </div>
 
-            <x-submitting />
+            <x-submitting-by-ajax />
+            {{-- <x-submitting /> --}}
 
         </form>
         <!--end::Form-->

@@ -1,8 +1,9 @@
  @if($model->isRunning())
 
 
-
+@if(hasAuthFor('create letter of credit issuance'))
  <a data-toggle="modal" data-target="#apply-expense-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Expenses') }}" href="#"><i class=" fa fa-balance-scale"></i></a>
+ @endif
  <div class="modal fade" id="apply-expense-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
          <div class="modal-content">
@@ -19,9 +20,9 @@
                  <div class="modal-body">
                      <div class="row mb-3">
 
-
+@if(hasAuthFor('create letter of credit issuance'))
                          @include('reports.LetterOfCreditIssuance.popup-form')
-
+@endif 
 
 
 
@@ -48,7 +49,9 @@
                                              <td class="text-nowrap">{{$expense->getDateFormatted() }}</td>
                                              <td> {{ $expense->getAmountFormatted() }} </td>
                                              <td>
+											 @if(hasAuthFor('update letter of credit issuance'))
                                                  <a data-toggle="modal" data-target="#edit-expense-{{ $expense->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
+												@endif 
 
 
 
@@ -57,11 +60,10 @@
 
 
 
-
-
+@if(hasAuthFor('delete letter of credit issuance'))
                                                  <a data-toggle="modal" data-target="#delete-lc-issuance-expense{{ $expense->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
 
-
+@endif 
                                              </td>
                                          </tr>
                                          @endforeach
@@ -89,7 +91,7 @@
  </div>
 
 
-  @foreach($model->expenses->sortBy('date') as $index=>$expense)
+  		@foreach($model->expenses->sortBy('date') as $index=>$expense)
              <div class="modal fade inner-modal-class" id="edit-expense-{{ $expense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 
 

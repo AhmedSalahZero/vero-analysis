@@ -3,6 +3,7 @@
     <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
+
 @section('content')
 @php
 $currentPermissionUser = \App\Models\User::find(Request()->segment(3));
@@ -21,7 +22,7 @@ $currentPermissionUser = \App\Models\User::find(Request()->segment(3));
         </div>
             <!--begin::Form-->
      
-            <form class="kt-form kt-form--label-right" method="POST" action="{{ route('user.permissions.update',['user'=>$currentPermissionUser->id]) }}" enctype="multipart/form-data">
+            <form class="kt-form kt-form--label-right" method="POST" action="{{  route('user.permissions.update',$company ? ['user'=>$currentPermissionUser->id,'company'=>$company->id]:['user'=>$currentPermissionUser->id]) }}" enctype="multipart/form-data">
 			<input type="hidden" name="user_id" value="{{ $currentPermissionUser->id }}">
 			
                 @csrf
@@ -36,50 +37,7 @@ $currentPermissionUser = \App\Models\User::find(Request()->segment(3));
                         </div>
                     </div>
                     <div class="kt-portlet__body">
-                        <div class="form-group-marginless">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-lg-12 " >
-                                        <label class="kt-option bg-secondary">
-                                            <span class="kt-option__control">
-                                                <span
-                                                    class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold"
-                                                    checked>
-                                                    <input type="checkbox" id="select_all"  >
-                                                    <span></span>
-                                                </span>
-                                            </span>
-                                            <span class="kt-option__label">
-                                                <span class="kt-option__head">
-                                                    <span class="kt-option__title"><b> {{ __('Select All') }} </b> </span>
-                                                </span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            @foreach (getPermissions() as $permissionArray)
-                                    <div class="form-group kt-checkbox-list">
-                                        <div class="row col-md-12">
-                                            <label class="col-3 col-form-label text-left text-capitalize"><b> {{$permissionArray['name']}} </b></label>
-                                            <div class="col-9">
-                                                <div class="kt-checkbox-inline d-flex justify-content-between">
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success " cheched="">
-                                                        <input type="checkbox" class="view" value="1" name="permissions[{{$permissionArray['name']}}]"
-                                                        {{ $currentPermissionUser->can($permissionArray['name']) ? 'checked' : ''}}
-                                                        > {{ $permissionArray['name'] }}
-                                                        <span></span>
-                                                    </label>
-                                                    
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                        
-                            @endforeach
-                        </div>
+                        @include('super_admin_view.roles_and_permissions.permissions-radio',['user'=>$currentPermissionUser])
                     </div>
                 </div>
 

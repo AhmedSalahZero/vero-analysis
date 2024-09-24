@@ -1190,5 +1190,4 @@
 "Outgoing Transfer To Pay [:expenseName - :expenseNameName]":"تحويل بنكي للمصروف [:expenseName - :expenseNameName]",
 "Payable Cheque To Pay [:expenseName - :expenseNameName] [ :chequeNumber ]":"صرف شيك للمصروف [:expenseName - :expenseNameName] [ :chequeNumber ]",
 "Down Payment For Contract :contractName":"دفعة مقدمة للتعاقد :contractName"
-
 }

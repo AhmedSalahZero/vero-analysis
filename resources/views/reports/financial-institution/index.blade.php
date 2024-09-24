@@ -48,7 +48,7 @@
                         <i class="kt-menu__link-icon fa fa-university"></i> {{ __('Banks Table') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link {{ Request('active') == 'leasing_companies' ? 'active':''  }}" data-toggle="tab" href="#leasing_companies" role="tab">
                         <i class="kt-menu__link-icon fa fa-university"></i> {{ __('Leasing Companies Table') }}
                     </a>
@@ -62,18 +62,17 @@
                     <a class="nav-link {{ Request('active') == 'mortgage_companies' ? 'active':''  }}" data-toggle="tab" href="#mortgage_companies" role="tab">
                         <i class="kt-menu__link-icon fa fa-university"></i>{{ __('Mortgage Companies Table') }}
                     </a>
-                </li>
+                </li> --}}
             </ul>
 
            <div class="flex-tabs">
+		   @if(hasAuthFor('create financial institutions'))
 		    <a href="{{route('create.financial.institutions',['company'=>$company->id])}}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+			@endif
+         
 		   </div>
         </div>
     </div>
@@ -142,7 +141,10 @@
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-success btn-outline-hover-success btn-icon hover-color-black"  title="{{ __('Show All Account') }}" href="{{ route('view.all.bank.accounts',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}"><i class="fa fa-eye"></i></a>
+											@if(hasAuthFor('update financial institutions'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete financial institutions'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $financialInstitutionBank->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $financialInstitutionBank->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -165,6 +167,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
 									
@@ -216,11 +219,14 @@
                                     <td>{{ $index+1 }}</td>
                                     <td>{{ $financialInstitutionCompany->getName() }}</td>
                                     <td>{{ $financialInstitutionCompany->getBranchName() }}</td>
-
+								
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-									@include('reports.financial-institution.dropdown-actions')
+											@include('reports.financial-institution.dropdown-actions')
+											@if(hasAuthFor('update financial institutions'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionCompany->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete financial institutions'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $financialInstitutionCompany->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $financialInstitutionCompany->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -246,6 +252,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>

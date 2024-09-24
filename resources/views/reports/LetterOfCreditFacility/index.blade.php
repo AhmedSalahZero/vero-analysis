@@ -43,14 +43,14 @@
                 </li>
 
             </ul>
-
+@if(hasAuthFor('create letter of credit facility'))
             <div class="flex-tabs">
                 <a href="{{ route('create.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('New Record') }}
                 </a>
-
             </div>
+			@endif 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -216,7 +216,10 @@
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@if(hasAuthFor('update letter of credit facility'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'letterOfCreditFacility'=>$letterOfCreditFacility->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete letter of credit facility'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $letterOfCreditFacility->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $letterOfCreditFacility->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -239,6 +242,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>

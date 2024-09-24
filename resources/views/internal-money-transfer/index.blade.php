@@ -62,7 +62,7 @@ use App\Models\InternalMoneyTransfer ;
 				
 
             </ul>
-
+		@if(auth()->user()->can('create internal money transfer'))
             <div class="flex-tabs">
 			<a href="{{ route('internal-money-transfers.create',['company'=>$company->id,InternalMoneyTransfer::BANK_TO_BANK]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
@@ -80,6 +80,7 @@ use App\Models\InternalMoneyTransfer ;
                 {{ __('Bank To Safe') }}
             </a>
 			</div>
+			@endif 
 
             {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
 				<i class="fas fa-plus"></i>
@@ -116,7 +117,9 @@ use App\Models\InternalMoneyTransfer ;
                                     <th>{{ __('To Bank') }}</th>
                                     <th>{{ __('To Account Type') }}</th>
                                     <th>{{ __('To Account Number') }}</th>
+									@if(auth()->user()->can('update internal money transfer') || auth()->user()->can('delete internal money transfer'))
                                     <th>{{ __('Control') }}</th>
+									@endif 
                                 </tr>
                             </thead>
                             <tbody>
@@ -138,12 +141,15 @@ use App\Models\InternalMoneyTransfer ;
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
 
-
+									@if(auth()->user()->can('update internal money transfer') || auth()->user()->can('delete internal money transfer'))
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(auth()->user()->can('update internal money transfer'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(auth()->user()->can('delete internal money transfer'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -166,8 +172,10 @@ use App\Models\InternalMoneyTransfer ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
+									@endif 
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -222,7 +230,10 @@ use App\Models\InternalMoneyTransfer ;
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@if(auth()->user()->can('update internal money transfer'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(auth()->user()->can('delete internal money transfer'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -245,6 +256,7 @@ use App\Models\InternalMoneyTransfer ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>
@@ -309,7 +321,10 @@ use App\Models\InternalMoneyTransfer ;
                                     <td>{{ $model->getToBranchName() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(auth()->user()->can('update internal money transfer'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(auth()->user()->can('delete internal money transfer'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -332,6 +347,7 @@ use App\Models\InternalMoneyTransfer ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>

@@ -50,33 +50,18 @@
 
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php echo e(Request('active') == 'leasing_companies' ? 'active':''); ?>" data-toggle="tab" href="#leasing_companies" role="tab">
-                        <i class="kt-menu__link-icon fa fa-university"></i> <?php echo e(__('Leasing Companies Table')); ?>
-
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php echo e(Request('active') == 'factoring_companies' ? 'active':''); ?>" data-toggle="tab" href="#factoring_companies" role="tab">
-                        <i class="kt-menu__link-icon fa fa-university"></i><?php echo e(__('Factoring Companies Table')); ?>
-
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php echo e(Request('active') == 'mortgage_companies' ? 'active':''); ?>" data-toggle="tab" href="#mortgage_companies" role="tab">
-                        <i class="kt-menu__link-icon fa fa-university"></i><?php echo e(__('Mortgage Companies Table')); ?>
-
-                    </a>
-                </li>
+                
             </ul>
 
            <div class="flex-tabs">
+		   <?php if(hasAuthFor('create financial institutions')): ?>
 		    <a href="<?php echo e(route('create.financial.institutions',['company'=>$company->id])); ?>" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 <?php echo e(__('New Record')); ?>
 
             </a>
-            
+			<?php endif; ?>
+         
 		   </div>
         </div>
     </div>
@@ -159,7 +144,10 @@
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-success btn-outline-hover-success btn-icon hover-color-black"  title="<?php echo e(__('Show All Account')); ?>" href="<?php echo e(route('view.all.bank.accounts',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><i class="fa fa-eye"></i></a>
+											<?php if(hasAuthFor('update financial institutions')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
+											<?php if(hasAuthFor('delete financial institutions')): ?>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($financialInstitutionBank->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($financialInstitutionBank->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -182,6 +170,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
                                         </span>
                                     </td>
 									
@@ -245,11 +234,14 @@
                                     <td><?php echo e($index+1); ?></td>
                                     <td><?php echo e($financialInstitutionCompany->getName()); ?></td>
                                     <td><?php echo e($financialInstitutionCompany->getBranchName()); ?></td>
-
+								
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-									<?php echo $__env->make('reports.financial-institution.dropdown-actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+											<?php echo $__env->make('reports.financial-institution.dropdown-actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+											<?php if(hasAuthFor('update financial institutions')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionCompany->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
+											<?php if(hasAuthFor('delete financial institutions')): ?>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($financialInstitutionCompany->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($financialInstitutionCompany->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -273,6 +265,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
                                         </span>
                                     </td>
                                 </tr>

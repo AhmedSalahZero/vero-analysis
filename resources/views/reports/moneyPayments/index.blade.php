@@ -109,7 +109,7 @@ td{
                 </li> --}}
 
             </ul>
-
+		@if(auth()->user()->can('create supplier payment'))
             <div class="flex-tabs">
 			<a href="{{route('create.money.payment',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
@@ -121,6 +121,7 @@ td{
                 {{ __('Down Payment') }}
             </a>
 			</div>
+			@endif 
 
         </div>
     </div>
@@ -186,11 +187,13 @@ td{
 									</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(auth()->user()->can('update supplier payment'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-									
                                             <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Mark As Paid') }}" href=""><i class="fa fa-money-bill"></i></a>
+											@endif 
 								
 											@if(!$moneyPayment->isOpenBalance())
+											@if(auth()->user()->can('delete supplier payment'))
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyPayment->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -213,6 +216,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif 
                                         </span>
                                     </td>
@@ -283,9 +287,12 @@ td{
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
+										@if(auth()->user()->can('update supplier payment'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
 @endif 
+@endif 
 @if(!$money->isOpenBalance())
+@if(auth()->user()->can('delete supplier payment'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -309,6 +316,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif 
                                         </span>
                                     </td>
@@ -366,7 +374,10 @@ td{
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$moneyPayment->isOpenBalance())
+										@if(auth()->user()->can('update supplier payment'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
+										@endif 
+										@if(auth()->user()->can('delete supplier payment'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $moneyPayment->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -390,6 +401,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 @endif 
                                         </span>
                                     </td>

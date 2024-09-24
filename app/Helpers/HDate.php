@@ -37,4 +37,17 @@ class HDate
 		}
 		return $dateTime;
 	}
+	public static function allDatesGreaterThanOrEqual(array $dates , ?string $checkDate = null)
+	{
+		if(is_null($checkDate)){
+			return false ;
+		}
+		foreach($dates as $date){
+			$lessThan = Carbon::make($date)->lessThan(Carbon::make($checkDate));
+			if($lessThan){
+				return false ;
+			}
+		}
+		return true ;
+	}
 }

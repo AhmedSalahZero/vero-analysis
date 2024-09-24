@@ -1,4 +1,4 @@
-<a data-toggle="modal" data-target="#apply-rate-for-<?php echo e($fullySecuredOverdraft->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Update Interest Rate	')); ?>" href="#"><i class=" fa fa-balance-scale"></i></a>
+<a data-toggle="modal" data-target="#apply-rate-for-<?php echo e($fullySecuredOverdraft->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Update Interest Rate	')); ?>" href="#"><i class=" fa fa-percentage"></i></a>
 <div class="modal fade" id="apply-rate-for-<?php echo e($fullySecuredOverdraft->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -15,9 +15,9 @@
                 <div class="modal-body">
 
                     <div class="row mb-3 closest-parent">
-
+<?php if(hasAuthFor('create fully secured overdraft')): ?>
                         <?php echo $__env->make('reports.fully-secured-overdraft.rates-form' , [], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-
+<?php endif; ?> 
 
 
 
@@ -46,8 +46,12 @@
                                             <td> <?php echo e($rate->getInterestRateFormatted()); ?> </td>
                                             <td>
                                                 <?php if($loop->last): ?>
+												<?php if(hasAuthFor('update fully secured overdraft')): ?>
                                                 <a data-toggle="modal" data-target="#edit-rates-<?php echo e($rate->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
+												<?php endif; ?> 
+												<?php if(hasAuthFor('delete fully secured overdraft')): ?>
                                                 <a data-toggle="modal" data-target="#delete-rates-<?php echo e($rate->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+												<?php endif; ?> 
                                                 <?php endif; ?>
 
                                             </td>

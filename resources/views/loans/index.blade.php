@@ -50,13 +50,14 @@ use App\Models\MediumTermLoan ;
 
 
             </ul>
-
+			@if(hasAuthFor('create medium term loan'))
             <div class="flex-tabs">
                 <a href="{{ route('loans.create',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,MediumTermLoan::RUNNING]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Create') }}
                 </a>
             </div>
+			@endif 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -110,8 +111,13 @@ use App\Models\MediumTermLoan ;
                                     <td class="text-transform">{{ $model->getPaymentInstallmentIntervalFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@if(hasAuthFor('create medium term loan'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Upload Loan Schedule') }}" href="{{ route('view.uploading',['company'=>$company->id,'loanId'=>$model->id,'model'=>'LoanSchedule']) }}"><i class="fa fa-dollar-sign"></i></a>
+											@endif 
+											@if(hasAuthFor('update medium term loan'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('loans.edit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'mediumTermLoan'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(hasAuthFor('delete medium term loan'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -134,6 +140,7 @@ use App\Models\MediumTermLoan ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
                                     </td>
                                 </tr>

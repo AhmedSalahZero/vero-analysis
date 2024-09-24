@@ -15,10 +15,11 @@
 
                     <div class="col-2">
                         <label class="form-label font-weight-bold ">{{ __('Account Number') }}
+						@include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input placeholder="{{ __('Account Number') }}" type="text" class="form-control  exclude-text" @if($isRepeater) name="account_number" @else name="accounts[0][account_number]" @endif value="{{ isset($account) ? $account->getAccountNumber() : old('account_number') }}">
+                                <input required placeholder="{{ __('Account Number') }}" type="text" class="form-control  exclude-text" @if($isRepeater) name="account_number" @else name="accounts[0][account_number]" @endif value="{{ isset($account) ? $account->getAccountNumber() : old('account_number') }}">
                             </div>
                         </div>
                     </div>
@@ -43,6 +44,7 @@
 
                     <div class="col-2">
                         <label class="form-label font-weight-bold">{{ __('Balance Amount') }}
+						@include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -65,7 +67,7 @@
 					 >
                         <label>{{__('Currency')}} @include('star') </label>
                         <div class="input-group">
-                            <select @if($isRepeater) name="currency" @else name="accounts[0][currency]" @endif class="form-control repeater-select">
+                            <select required @if($isRepeater) name="currency" @else name="accounts[0][currency]" @endif class="form-control repeater-select">
                                 <option selected>{{__('Select')}}</option>
                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                 <option value="{{ $currencyName }}" @if(isset($account) && $account->getCurrency() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
@@ -77,6 +79,7 @@
 
                     <div class="col-1">
                         <label class="form-label font-weight-bold">{{ __('Exchange Rate') }}
+						@include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -90,6 +93,7 @@
 
                     <div class="col-1">
                         <label class="form-label font-weight-bold">{{ __('Interest Rate') }}
+						@include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -101,6 +105,8 @@
 
                     <div class="col-1">
                         <label class="form-label font-weight-bold">{{ __('Min Balance') }}
+						
+						@include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">

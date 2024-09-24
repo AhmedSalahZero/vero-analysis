@@ -1,327 +1,102 @@
 @extends('layouts.dashboard')
-@php
-use Carbon\Carbon;
-@endphp
-
 @section('css')
-<x-styles.commons></x-styles.commons>
+@php
+use App\Enums\LcTypes;
+use App\Models\LetterOfCreditIssuance;
+
+$currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
+
+
+@endphp
+<link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+
 <style>
-    .max-w-invoice-date {
-        width: 25% !important;
-        min-width: 25% !important;
-        max-width: 25% !important;
+    .custom-w-25 {
+        width: 23% !important;
     }
 
-    .max-w-16 {
-        width: 16.5% !important;
-        min-width: 16.5% !important;
-        max-width: 16.5% !important;
-    }
-
-
-    .max-w-action {
-        width: 25% !important;
-        min-width: 25% !important;
-        max-width: 25% !important;
-    }
-
-    .max-w-serial {
-        width: 5% !important;
-        min-width: 5% !important;
-        max-width: 5% !important;
-    }
-
-    .dt-buttons.btn-group.flex-wrap {
-        margin-bottom: 5rem !important;
-    }
-
-    #DataTables_Table_0_filter {
-        display: none !important;
-    }
-
-    .dataTables_scrollHeadInner {
-        width: 100% !important;
-    }
-
-
-
-
-
-
-    .is-sub-row.is-total-row td.sub-numeric-bg,
-    .is-sub-row.is-total-row td.sub-text-bg {
-        background-color: #087383 !important;
-        color: white !important;
-    }
-
-    .is-name-cell {
-        white-space: normal !important;
-    }
-
-    .top-0 {
-        top: 0 !important;
-    }
-
-    .parent-tr td {
-        border: 1px solid #E2EFFE !important;
-    }
-
-    .dataTables_filter {
-        width: 30% !important;
-        text-align: left !important;
-
-    }
-
-    .border-parent {
-        border: 2px solid #E2EFFE;
-    }
-
-    .dt-buttons.btn-group,
-    .buttons-print {
-        max-width: 30%;
-        margin-left: auto;
-        position: relative;
-        top: 45px;
-    }
-
-    .details-btn {
-        display: block;
-        margin-top: 10px;
-        margin-left: auto;
-        margin-right: auto;
-        font-weight: 600;
-
-    }
-
-    .expand-all {
+    input[type="checkbox"] {
         cursor: pointer;
     }
 
-    td.editable-date.max-w-fixed,
-    th.editable-date.max-w-fixed,
-    input.editable-date.max-w-fixed {
-        width: 1050px !important;
-        max-width: 1050px !important;
-        min-width: 1050px !important;
-
+    th {
+        background-color: #0742A6;
+        color: white;
     }
 
-    td.editable-date.max-w-classes-expand,
-    th.editable-date.max-w-classes-expand,
-    input.editable-date.max-w-classes-expand {
-        width: 70px !important;
-        max-width: 70px !important;
-        min-width: 70px !important;
-
+    .bank-max-width {
+        max-width: 300px !important;
     }
 
-    td.max-w-classes-name,
-    th.max-w-classes-name,
-    input.max-w-classes-name {
-        width: 350px !important;
-        max-width: 350px !important;
-        min-width: 350px !important;
-
+    .kt-portlet {
+        overflow: visible !important;
     }
 
-    td.max-w-grand-total,
-    th.max-w-grand-total,
-    input.max-w-grand-total {
-        width: 100px !important;
-        max-width: 100px !important;
-        min-width: 100px !important;
-
-    }
-
-    * {
-        box-sizing: border-box !important;
+    input.form-control[disabled]:not(.ignore-global-style) {
+        background-color: #CCE2FD !important;
+        font-weight: bold !important;
     }
 
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Foreign Exchange Rates') }}</x-main-form-title>
+{{ __('Foreign Exchange Rate')  }}
 @endsection
 @section('content')
 
-<div class="row">
-    <div class="col-md-12">
-
-        <div class="kt-portlet">
-
-
-            <div class="kt-portlet__body">
-
+<div class="kt-portlet kt-portlet--tabs">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
+            <ul class="nav nav-tabs nav-tabs-space-lc nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 @php
-
-                $tableId = 'kt_table_1';
+                $index = 0 ;
                 @endphp
+                @foreach($existingCurrencies as $currentCurrencyName)
+                <li class="nav-item">
+                    <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) && !$currentActiveTab ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{$currentCurrencyName .' '. __('Table') }}
+                    </a>
+                </li>
+                @php
+                $index = $index+1;
+                @endphp
+                @endforeach
+
+            </ul>
 
 
-                <style>
-                    td.editable-date,
-                    th.editable-date,
-                    input.editable-date {
-                        width: 100px !important;
-                        min-width: 100px !important;
-                        max-width: 100px !important;
-                        overflow: hidden;
-                    }
+        </div>
+    </div>
+    <div class="kt-portlet__body">
+	
+	  	@php
+			$index = 0 ;
+		@endphp
+        <div class="tab-content  kt-margin-t-20">
+			@foreach($existingCurrencies as $existingCurrency)
+			
+            @php
+            $currentTab = $existingCurrency ;
+            @endphp
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{ (!Request('active',$currentActiveTab) && $currentTab == $mainFunctionalCurrency || !in_array($mainFunctionalCurrency,$existingCurrencies) && $currentTab == array_key_first($existingCurrencies) && !$currentActiveTab   )  || Request('active',$currentActiveTab) == $existingCurrency ?'active':'' }}" id="{{ $currentTab }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    <x-table-title.with-two-dates :type="$currentTab" :title="$existingCurrency . ' ' .__('Table') " :startDate="$filterDates[$currentTab]['startDate']" :endDate="$filterDates[$currentTab]['endDate']">
+                        {{-- <x-export-letter-of-credit-issuance :search-fields="$searchFields[$currentTab]" :type="$currentTab" href="#" /> --}}
+                    </x-table-title.with-two-dates>
 
-                    .width-66 {
-
-
-                        width: 66% !important;
-                    }
-
-                    .border-bottom-popup {
-                        border-bottom: 1px solid #d6d6d6;
-                        padding-bottom: 20px;
-                    }
-
-                    .flex-self-start {
-                        align-self: flex-start;
-                    }
-
-                    .flex-checkboxes {
-                        margin-top: 1rem;
-                        flex: 1;
-                        width: 100% !important;
-                    }
-
-
-                    .flex-checkboxes>div {
-                        width: 100%;
-                        width: 100% !important;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        flex-wrap: wrap;
-                    }
-
-                    .custom-divs-class {
-                        display: flex;
-                        flex-wrap: wrap;
-                        align-items: center;
-                        justify-content: center;
-                    }
-
-
-                    .modal-backdrop {
-                        display: none !important;
-                    }
-
-                    .modal-content {
-                        min-width: 600px !important;
-                    }
-
-                    .form-check {
-                        padding-left: 0 !important;
-
-                    }
-
-                    .main-with-no-child,
-                    .main-with-no-child td,
-                    .main-with-no-child th {
-                        background-color: #046187 !important;
-                        color: white !important;
-                        font-weight: bold;
-                    }
-
-                    .is-sub-row td.sub-numeric-bg,
-                    .is-sub-row td.sub-text-bg {
-                        border: 1.5px solid white !important;
-                        background-color: #0e96cd !important;
-                        color: white !important;
-
-
-                        background-color: #E2EFFE !important;
-                        color: black !important
-                    }
-
-
-
-                    .sub-numeric-bg {
-                        text-align: center;
-
-                    }
-
-
-
-                    th.dtfc-fixed-left {
-                        background-color: #074FA4 !important;
-                        color: white !important;
-                    }
-
-                    .header-tr,
-                        {
-                        background-color: #046187 !important;
-                    }
-
-                    .dt-buttons.btn-group {
-                        display: flex;
-                        align-items: flex-start;
-                        justify-content: flex-end;
-                        margin-bottom: 1rem;
-                    }
-
-                    .is-sales-rate,
-                    .is-sales-rate td,
-                    .is-sales-growth-rate,
-                    .is-sales-growth-rate td {
-                        background-color: #046187 !important;
-                        color: white !important;
-                    }
-
-                    .dataTables_wrapper .dataTable th,
-                    .dataTables_wrapper .dataTable td {
-                        font-weight: bold;
-                        color: black;
-                    }
-
-                    a[data-toggle="modal"] {
-                        color: #046187 !important;
-                    }
-
-                    a[data-toggle="modal"].text-white {
-                        color: white !important;
-                    }
-
-                    .btn-border-radius {
-                        border-radius: 10px !important;
-                    }
-
-                </style>
-                @csrf
-
-
-
-
-
-
-
-
-
-                <div class="row">
+                    <div class="kt-portlet__body">
+					@if(hasAuthFor('create foreign exchange rate'))
+					<div class="row">
                     <div class="col-md-12">
                        @include('admin.foreign-exchange-rate._form')
                     </div>
                 </div>
+				@endif 
 
-                <div class="kt-portlet">
-
-                    <div class="kt-portlet__body with-scroll pt-0">
-
-                        <div class="table-custom-container position-relative  ">
-
-
-                            <div>
-
-
-
-
-                                <div class="responsive">
-                                    <table class="table kt_table_with_no_pagination_no_collapse table-for-currency  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency dataTable no-footer">
+                        <!--begin: Datatable -->
+                          <table class="table kt_table_with_no_pagination_no_collapse table-for-currency  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency dataTable no-footer">
                                         <thead>
 
                                             <tr class="header-tr ">
@@ -348,10 +123,11 @@ use Carbon\Carbon;
                                                 <th class="view-table-th  max-w-16  header-th  align-middle text-center">
                                                     {{ __('Reciprocal Exchange Rate') }}
                                                 </th>
-
+@if(hasAuthFor('update foreign exchange rate') || hasAuthFor('delete foreign exchange rate'))
                                                 <th class="view-table-th  max-w-action  header-th  align-middle text-center">
                                                     {{ __('Actions') }}
                                                 </th>
+												@endif 
 
 
 
@@ -366,7 +142,7 @@ use Carbon\Carbon;
                                             @php
                                             $previousDate = null ;
                                             @endphp
-                                            @foreach($foreignExchangeRates as $index => $foreignExchangeRate)
+                                            @foreach($models[$existingCurrency] as $index => $foreignExchangeRate)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
                                                 <td class="sub-text-bg max-w-16  text-center   ">{{ $currentDueDate = $foreignExchangeRate->getDateFormatted() }} </td>
@@ -377,14 +153,16 @@ use Carbon\Carbon;
                                                 <td class="sub-text-bg max-w-16  text-center  ">{{ $foreignExchangeRate->getToCurrency() }}</td>
                                                 <td class="sub-text-bg max-w-16  text-center  ">{{ number_format($foreignExchangeRate->getExchangeRate(),4) }}</td>
                                                 <td class="sub-text-bg max-w-16  text-center  ">{{ number_format(1/$foreignExchangeRate->getExchangeRate(),4) }}</td>
+												@if(hasAuthFor('update foreign exchange rate') || hasAuthFor('delete foreign exchange rate'))
                                                 <td class="sub-text-bg   text-center max-w-action   ">
                                                     @if($loop->first)
+													@if(hasAuthFor('update foreign exchange rate'))
                                                     <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.foreign.exchange.rate',[$company,$foreignExchangeRate->id])}}"><i class="fa fa-pen-alt"></i></a>
+													@endif 
+													@if(hasAuthFor('delete foreign exchange rate'))
                                                     <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $foreignExchangeRate['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
                                                     </a>
-                                                    @endif
-
-                                                    <div id="modal-delete-{{ $foreignExchangeRate['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+													<div id="modal-delete-{{ $foreignExchangeRate['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
@@ -408,96 +186,164 @@ use Carbon\Carbon;
                                                             </div>
                                                         </div>
                                                     </div>
+													@endif 
+                                                    @endif
+
+                                                    
 
                                                 </td>
+												@endif 
                                             </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
-                                </div>
 
-                            </div>
-
-                            @push('js')
-                            <script>
-                                $('.table-for-currency').DataTable({
-                                        dom: 'Bfrtip'
-
-                                        , "processing": false
-                                        , "scrollX": true
-                                        , "scrollY": true
-                                        , "ordering": false
-                                        , 'paging': false
-                                        , "fixedColumns": {
-                                            left: 2
-                                        }
-                                        , "fixedHeader": {
-                                            headerOffset: 60
-                                        }
-                                        , "serverSide": false
-                                        , "responsive": false
-                                        , "pageLength": 25
-                                        , drawCallback: function(setting) {
-                                            $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                            $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                        },
-
-                                    }
-
-                                )
-
-                            </script>
-                            @endpush
-
-                        </div>
-
+                        <!--end: Datatable -->
                     </div>
                 </div>
-
-
-
-
-
-
-
-
-
             </div>
+			@endforeach
         </div>
     </div>
-    @endsection
-    @section('js')
-    <x-js.commons></x-js.commons>
 
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
-    <script>
-        function getDateFormatted(yourDate) {
-            const offset = yourDate.getTimezoneOffset()
-            yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
-            return yourDate.toISOString().split('T')[0]
+    <!--End:: Tab Content-->
+
+
+
+    <!--End:: Tab Content-->
+</div>
+</div>
+</div>
+
+@endsection
+@section('js')
+<!--begin::Page Scripts(used by this page) -->
+<script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
+<script>
+
+</script>
+
+
+
+<script>
+    $(document).on('click', '.js-close-modal', function() {
+        $(this).closest('.modal').modal('hide');
+    })
+
+</script>
+<script>
+    $(document).on('change', '.js-search-modal', function() {
+        const searchFieldName = $(this).val();
+        const popupType = $(this).attr('data-type');
+        const modal = $(this).closest('.modal');
+        if (searchFieldName === 'purchase_order_date') {
+            modal.find('.data-type-span').html('[{{ __("Purchase Order Date") }}]')
+            $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
+        } else if (searchFieldName === 'issuance_date') {
+            modal.find('.data-type-span').html('[ {{ __("Issuance Date") }} ]')
+            $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
+        } else {
+            modal.find('.data-type-span').html('[ {{ __("Issuance Date") }} ]')
+            $(modal).find('.search-field').prop('disabled', false);
         }
+    })
+    $(function() {
+        $('.js-search-modal').trigger('change')
+    })
 
-        am4core.ready(function() {
 
-            // Themes begin
+    $("button[data-dismiss=modal2]").click(function() {
+        $(this).closest('.modal').modal('hide');
+    });
 
+</script>
+<script>
+    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+        const parent = $(this).closest('.modal-body');
+        const amount = parseFloat($(parent).find('.amount-js').val())
+        const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
+        const amountInMainCurrency = parseFloat(amount * exchangeRate);
+        $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency)
+        $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
+    })
+    $(document).on('change', 'select.update-net-balance-inputs', function() {
+        const selectedOption = $(this).find('option:selected')
+        const currency = $(selectedOption).attr('data-currency')
+        const netBalance = $(selectedOption).attr('data-invoice-net-balance')
+        const exchangeRate = $(selectedOption).attr('data-exchange-rate')
+        const netBalanceInMainCurrency = $(selectedOption).attr('data-invoice-net-balance-in-main-currency');
+        const parent = $(this).closest('.modal-body')
+        $(parent).find('.net-balance').val(number_format(netBalance) + ' ' + currency)
+        $(parent).find('.exchange-rate').val(number_format(exchangeRate, 2))
+        $(parent).find('.net-balance-in-main-currency').val(number_format(netBalanceInMainCurrency))
+    })
+    $('select.update-net-balance-inputs').trigger('change')
 
+</script>
 
-        }); // end am4core.ready()
+<script>
+    $(document).find('.datepicker-input').datepicker({
+        dateFormat: 'mm-dd-yy'
+        , autoclose: true
+    })
+    $('.m_repeater_9').repeater({
+        initEmpty: false
+        , isFirstItemUndeletable: true
+        , defaultValues: {
+            'text-input': 'foo'
+        },
 
-    </script>
-    <script>
-        $(document).on('change', 'select.js-change-currency', function() {
-            const fromCurrency = $('select#from-currency').val();
-            const toCurrency = $('select#to-currency').val();
-            $('input#from-currency-input').val('1 ' + fromCurrency + ' = ')
-            $('input#to-currency-input').val(toCurrency)
-        })
-        $('select.js-change-currency').trigger('change')
+        show: function() {
+            $(this).slideDown();
 
-    </script>
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input:not(.only-month-year-picker)').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
 
-    @endsection
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+
+        },
+
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
+
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
+                });
+            } else {
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
+
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
+
+                    });
+                }
+            }
+        }
+    });
+
+</script>
+
+@endsection
+@push('js')
+
+@endpush

@@ -59,10 +59,17 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		// $cleanOverdraft = new CleanOverdraft();
-		// $cleanOverdraft->updateBankStatementsFromDate('2026-01-01');
+		// $arr = collect([
+		// 	true ? 'ahmed' : false ,
+		// 	true ? 'salah' : false,
+		// 	false ? 'khaled' : false  ,
+		// ])->filter(function($value){return $value;})->toArray() ;
+		// dd($arr);
+		DB::table('permissions')->delete();
+		DB::table('model_has_permissions')->delete();
+		DB::table('role_has_permissions')->delete();
+		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 		
-		// $test = CleanOverdraft::getBankStatementTableClassName();
-		// dd($test);
 	}
 }

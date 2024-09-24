@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Helpers\HHelpers;
 use App\Http\Requests\ApplyCollectionToChequeRequest;
 use App\Http\Requests\SendToUnderCollectionChequeRequest;
 use App\Http\Requests\StoreMoneyReceivedRequest;
@@ -14,7 +13,6 @@ use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\MoneyReceived;
-use App\Models\MoneyTwo;
 use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\User;
@@ -454,8 +452,7 @@ class MoneyReceivedController
 		
 		 if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 ){
 			// start store unapplied amount as new down payment
-			$this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
-			return ;
+			return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
 		}
 		
 		foreach($request->get('sales_orders_amounts',[]) as $salesOrderReceivedAmountArr)
@@ -480,7 +477,16 @@ class MoneyReceivedController
 		 */
 
 		$activeTab = $moneyType;
-		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		// if($request->ajax()){
+			
+		// }
+		// logger('from here2');
+
+			return response()->json([
+				'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])
+			]);
+
+		// return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
 	protected function getActiveTab(string $moneyType)
@@ -554,8 +560,10 @@ class MoneyReceivedController
 		$this->store($company,$request);
 		 $activeTab = $newType;
 
-		  
-		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
+		 return response()->json([
+			'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])
+		]);
+		// return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
 	
 	public function destroy(Company $company , MoneyReceived $moneyReceived)

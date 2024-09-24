@@ -64,9 +64,23 @@
 					
 
                         <div class="form-group row col-12">
-						
-						
-						   <div class="col-6">
+						{{-- {{ dd($companySection->users) }} --}}
+						   <div class="col-md-4">
+                                        <label>{{ __('Systems') }} <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select required id="role-id" name="systems[]" multiple data-live-search="true" data-actions-box="true" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" >
+													@foreach(\App\Models\CompanySystem::getAllSystemNames() as $currentSystemName)
+                                                   <option value="{{ $currentSystemName }}" @if(in_array($currentSystemName,old('systems',[]))) selected @elseif(isset($companySection) && $companySection->hasSystem($currentSystemName)  ) selected @endif >{{ str_to_upper($currentSystemName) }}</option>
+												   @endforeach 
+                                                   {{-- <option value="cash-vero" @if(isset($companySection) && $companySection->system =='cash-vero' || old('system') == 'cash-vero') selected @endif>{{ __('Cash Vero') }}</option> --}}
+                                                   {{-- <option value="both" @if(isset($companySection) && $companySection->system =='both' || old('system') == 'both') selected @endif>{{ __('Both') }}</option> --}}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+						   <div class="col-4">
                                     <label>{{__('Main Functional Currency') . $lang_row->name}} @include('star')</label>
                                     <div class="kt-input-icon">
 										<select name="main_functional_currency" class="form-control">
@@ -79,8 +93,8 @@
                                     </div>
                                 </div>
 
-                            <div class="col-6">
-                                <label>{{__('Company Image')}} @include('star')</label>
+                            <div class="col-4">
+                                <label>{{__('Company Image')}}</label>
                                 <div class="kt-input-icon">
                                     <input type="file" class="form-control" name="image" >
                                     <x-tool-tip title="{{__('Kash Vero')}}"/>

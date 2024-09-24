@@ -57,6 +57,7 @@ use App\Models\MoneyReceived ;
 
         <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
+			<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
 			<input type="hidden" name="is_down_payment" value="1">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-sales-order-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $salesOrderId : 0 }}">
@@ -652,7 +653,7 @@ use App\Models\MoneyReceived ;
                 </div>
             </div>
 
-            <x-submitting />
+           <x-submitting-by-ajax />
 
         </form>
         <!--end::Form-->

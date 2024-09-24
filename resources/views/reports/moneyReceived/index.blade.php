@@ -101,8 +101,9 @@ use App\Models\MoneyReceived;
                 </li>
 
             </ul>
-
+			@if(auth()->user()->can('create money received'))
             <div class="flex-tabs">
+			
 			<a href="{{route('create.money.receive',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('Money Received') }}
@@ -113,7 +114,7 @@ use App\Models\MoneyReceived;
                 {{ __('Down Payment') }}
             </a>
 			</div>
-
+			@endif 
         </div>
     </div>
     {{-- {{ dd($start_date) }} --}}
@@ -168,11 +169,14 @@ use App\Models\MoneyReceived;
                                     <td class="font-weight-bold" style="color:{{ $dueStatus['color'] }}!important">{{ $dueStatus['status'] }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(auth()->user()->can('update money received'))
 										@if(!$moneyReceived->isOpenBalance())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
                                             <a data-id="{{ $moneyReceived->id }}" data-type="single" data-currency="{{ $moneyReceived->getCurrency() }}" data-money-type="{{ MoneyReceived::CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyReceived::CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
+											@endif 
 											{{-- @if(!$moneyReceived->isOpenBalance()) --}}
+											@if(auth()->user()->can('delete money received'))
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -195,6 +199,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											{{-- @endif  --}}
                                         </span>
                                     </td>
@@ -256,10 +261,13 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(!$moneyReceived->isOpenBalance())
+											@if(auth()->user()->can('update money received'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
 											@endif 
                                             <a data-id="{{ $moneyReceived->id }}" data-type="single" data-currency="{{ $moneyReceived->getCurrency() }}" data-id="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyReceived::CHEQUE_REJECTED }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
 											@if(!$moneyReceived->isOpenBalance())
+											@if(auth()->user()->can('delete money received'))
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -282,6 +290,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif
                                         </span>
                                     </td>
@@ -354,7 +363,9 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$moneyReceived->isOpenBalance())
+										@if(auth()->user()->can('update money received'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
 											@endif 
 											@if($moneyReceived->cheque->getDueStatus())
 											{{-- @if(!$moneyReceived->isOpenBalance()) --}}
@@ -439,6 +450,7 @@ use App\Models\MoneyReceived;
 											@endif 
                                             <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="{{ __('Send In Safe') }}" href="{{ route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-sync-alt"></i></a>
 											@if($moneyReceived->cheque->getDueStatus())
+											@if(auth()->user()->can('delete money received'))
                                             <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Rejected') }}" href="{{ route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -464,6 +476,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif
 										
                                         </span>
@@ -582,9 +595,12 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
+										@if(auth()->user()->can('update money received'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
 @endif 
 @if(!$money->isOpenBalance())
+@if(auth()->user()->can('delete money received'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -608,6 +624,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif 
                                         </span>
                                     </td>
@@ -665,7 +682,10 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$moneyReceived->isOpenBalance())
+											@if(auth()->user()->can('update money received'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(auth()->user()->can('delete money received'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -689,6 +709,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 @endif 
                                         </span>
                                     </td>
@@ -757,8 +778,11 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
+										@if(auth()->user()->can('update money received'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
-
+											@endif 
+											@if(auth()->user()->can('delete money received'))
+											
                                             <a data-toggle="modal" data-target="#delete-cash-in-bank-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cash-in-bank-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -782,6 +806,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif 
                                         </span>
                                     </td>

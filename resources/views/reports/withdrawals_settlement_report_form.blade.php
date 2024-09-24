@@ -30,20 +30,20 @@
                     <div class="form-group row">
 
                         <div class="col-md-2">
-                            <label>{{ __('Start Date') }} </label>
+                            <label>{{ __('Start Date') }} @include('star') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="start_date">
-                                    <input type="date" class="form-control" name="start_date" value="{{ now() }}">
+                                    <input required type="date" class="form-control" name="start_date" value="{{ now() }}">
                                 </div>
                             </div>
                         </div>
 
 
                         <div class="col-md-2">
-                            <label>{{ __('End Date') }}</span> </label>
+                            <label>{{ __('End Date') }} @include('star') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="end_date">
-                                    <input type="date" class="form-control" name="end_date" value="{{ now() }}">
+                                    <input required type="date" class="form-control" name="end_date" value="{{ now() }}">
                                 </div>
                             </div>
 
@@ -53,7 +53,7 @@
                             <label>{{__('Select Banks')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select name="financial_institution_ids[]" class="form-control current-currency select2-select"  data-live-search="true" data-actions-box="true" multiple>
+                                    <select required name="financial_institution_ids[]" class="form-control current-currency select2-select"  data-live-search="true" data-actions-box="true" multiple>
                                         {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                         @foreach( $financialInstitutionBanks as $index=>$financialInstitutionBank)
                                         <option value="{{ $financialInstitutionBank->id }}">{{ $financialInstitutionBank->getName() }}</option>

@@ -103,7 +103,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="name" type="text" class="form-control" value="{{ isset($model) ? $model->getName() : old('name',null) }}">
+                                            <input required name="name" type="text" class="form-control" value="{{   old('name',isset($model) ? $model->getName() : null ) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="code" type="text" class="form-control " value="{{ isset($model) ? $model->getCode() : old('code',null) }}">
+                                            <input required name="code" id="contract-code" type="text" class="form-control " value="{{ old('code',isset($model) ? $model : null)   }}">
                                         </div>
                                     </div>
                                 </div>
@@ -128,9 +128,9 @@ use App\Models\MoneyReceived ;
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select regenerate-code-ajax">
                                                     @foreach($clients as $index => $customer )
-                                                    <option @if(isset($model) && $model->getClientName() == $customer->getName() ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
+                                                    <option @if( old('partner_id',isset($model) && $model->getClientId()) == $customer->id ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -170,7 +170,7 @@ use App\Models\MoneyReceived ;
                                 </div>
 
                                 <div class="col-md-2 ">
-                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date'" :default-value="formatDateForDatePicker(isset($model)  ? $model->getStartDate() : now())" :model="$model??null" :label="__('Start Date')" :type="'text'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
+                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date regenerate-code-ajax'" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
                                 </div>
                                 <div class="col-md-2 ">
                                     <label> {{ __('Duration (Days)') }}
@@ -178,7 +178,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ isset($model) ? $model->getDuration() : old('duration',null) }}">
+                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() : null)  }}">
                                         </div>
                                     </div>
                                 </div>
@@ -188,7 +188,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input" value="{{ isset($model) ? $model->getEndDate() : old('end_date',null) }}">
+                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input" value="{{ old('end_date',isset($model) ? $model->getEndDate() : null )   }}">
                                         </div>
                                     </div>
                                 </div>
@@ -201,7 +201,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="amount" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ isset($model) ? $model->getAmount() : old('amount',0) }}">
+                                            <input required name="amount" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ old('amount',isset($model) ? $model->getAmount() : 0 )   }}">
                                         </div>
                                     </div>
                                 </div>
@@ -213,7 +213,7 @@ use App\Models\MoneyReceived ;
                                         <select required name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
                                             <option selected>{{__('Select')}}</option>
                                             @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                            <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                            <option value="{{ $currencyName }}" @if( old('currency',isset($model) ? $model->getCurrency():null) == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -226,7 +226,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="exchange_rate" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ isset($model) ? $model->getExchangeRate() : old('exchange_rate',1) }}">
+                                            <input required name="exchange_rate" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ generateModelData('exchange_rate',isset($model) ? $model : null ,'getExchangeRate', 1 ) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -274,7 +274,8 @@ use App\Models\MoneyReceived ;
                                     </x-slot>
                                     <x-slot name="trs">
                                         @php
-                                        $rows = isset($model) ? $model->{$salesOrderOrPurchaseOrderRelationName} :[-1] ;
+                                        $rows = old($salesOrderOrPurchaseOrderRelationName) ?  fillObjectFromArray(old(($salesOrderOrPurchaseOrderRelationName)),$salesOrderOrPurchaseOrderObject) : (isset($model) ? $model->{$salesOrderOrPurchaseOrderRelationName} : [-1]) ;
+
                                         @endphp
                                         @foreach( count($rows) ? $rows : [-1] as $salesOrder)
                                         @php
@@ -848,4 +849,35 @@ use App\Models\MoneyReceived ;
     })
 
 </script>
+@if(count(old()))
+{{-- {{ dd('old',old()) }} --}}
+@endif
+<script>
+	$(document).on('change','.regenerate-code-ajax',function(e){
+		e.preventDefault();
+		const partnerId = $('select#customer_name').val();
+		const startDate = $('#start-date-id').val()
+		const modelType = $('#model_type').val()
+		if(partnerId && startDate ){
+			$.ajax({
+				url:"{{ route('generate.unique.rondom.contract.code',['company'=>$company->id,'type'=>$type]) }}",
+				data:{
+					partnerId,
+					startDate
+				},
+				success:function(res){
+					$('#contract-code').val(res.code)					
+				}
+			})
+		} 
+	})
+	
+</script>
+
+
+@if(!isset($model))
+<script>
+	$('.regenerate-code-ajax:eq(0)').trigger('change')
+</script>
+@endif 
 @endsection

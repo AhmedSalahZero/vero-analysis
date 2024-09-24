@@ -15,12 +15,12 @@
                                                         <div class="modal-body">
 
                                                             <div class="row mb-3 closest-parent">
-
+@if(hasAuthFor('create overdraft against commercial paper'))
                                                                 @include('reports.overdraft-against-commercial-paper.rates-form' , [
 
                                                                 ])
 
-
+@endif 
 
 
 
@@ -48,8 +48,12 @@
                                                                                     <td> {{ $rate->getInterestRateFormatted() }} </td>
                                                                                     <td>
                                                                                         @if($loop->last)
+																						@if(hasAuthFor('update overdraft against commercial paper'))
                                                                                         <a data-toggle="modal" data-target="#edit-rates-{{ $rate->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
+																						@endif 
+																						@if(hasAuthFor('delete overdraft against commercial paper'))
                                                                                         <a data-toggle="modal" data-target="#delete-rates-{{ $rate->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+																						@endif
                                                                                         @endif
 
                                                                                     </td>

@@ -76,18 +76,12 @@ $selectedBanks = [];
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Cash Expense')}}
-        </h3>
-    </div>
-</div>
-</div> --}}
+       
 <form method="post" action="{{ isset($model) ?  route('update.cash.expense',['company'=>$company->id,'cashExpense'=>$model->id]) :route('store.cash.expense',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-payment-id" type="hidden" name="cash_expense_id" value="{{ isset($model) ? $model->id : 0 }}">
+	<input type="hidden" name="current_branch" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->delivery_branch_id : 0 }}">
+	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
     @csrf
     @if(isset($model))
@@ -107,7 +101,7 @@ $selectedBanks = [];
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="payment_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="payment_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -727,7 +721,7 @@ $selectedBanks = [];
 
             </div>
 
-    <x-submitting />
+    <x-submitting-by-ajax />
 
 </form>
 <!--end::Form-->
