@@ -44,17 +44,14 @@
                 </li>
 
             </ul>
-
+			@if(hasAuthFor('create clean overdraft'))
             <div class="flex-tabs">
                 <a href="{{ route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('New Record') }}
                 </a>
-                {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-                </a> --}}
             </div>
+			@endif 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -117,7 +114,10 @@
                                         @include('reports.clean-overdraft.apply-rate')
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(auth()->user()->can('update clean overdraft'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(auth()->user()->can('delete clean overdraft'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $cleanOverdraft->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $cleanOverdraft->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -140,6 +140,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
                                         </span>
 										
 										  @foreach($cleanOverdraft->rates as $index=>$rate)
@@ -196,25 +197,8 @@
 </script>
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
-<script>
-
-</script>
-<script>
 
 
-</script>
-
-
-
-{{-- <script src="{{ url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js') }}" type="text/javascript">
-</script> --}}
-
-{{-- <script>
-    $(function() {
-        $('#firstColumnId').trigger('change');
-    })
-
-</script> --}}
 
 <script>
     $(document).on('click', '.js-close-modal', function() {
@@ -250,6 +234,5 @@
 </script>
 @endsection
 @push('js')
-{{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
-{{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
+
 @endpush

@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreContractRequest;
 use App\Models\Company;
 use App\Models\Contract;
 use App\Models\Partner;
@@ -17,6 +18,7 @@ class ContractsController
     use GeneralFunctions;
 	public function index(Company  $company ,$type)
     {
+		
 		$contractStatues = [
 			Contract::RUNNING ,
 			Contract::RUNNING_AND_AGAINST ,
@@ -64,7 +66,7 @@ class ContractsController
 	public function getCommonVars(Company $company,string $type,$model = null):array 
 	{
 		$salesOrderOrPurchaseOrderInformationText = __('Sales Order Information');
-		$salesOrderOrPurchaseNumberText =  $type == 'Supplier' ? __('PO Number') : __('SO Number'); 
+		$salesOrderOrPurchaseNumberText =  $type == 'Supplier' ? __('Purchase Order Number') : __('Sales Order Number'); 
 		$salesOrderOrPurchaseNoText =  $type == 'Supplier' ? 'po_number' : 'so_number'; 
 		$salesOrderOrPurchaseOrderRelationName = $type == 'Supplier' ? 'purchasesOrders' : 'salesOrders'; ;
 		$contractsRelationName = 'contracts' ;
@@ -102,10 +104,9 @@ class ContractsController
 			'salesOrderOrPurchaseOrderRelationName'=>$salesOrderOrPurchaseOrderRelationName,
 			'model'=>$model,
 			'inEditMode'=>isset($model)
-		]
-		;
+		];
 	}
-	public function store(Request $request, Company $company,string $type){
+	public function store(StoreContractRequest $request, Company $company,string $type){
 			$contract = new Contract ;
 			$contract->storeBasicForm($request);
 			// $contract->relateWithContracts($request->get('contracts',[]));
@@ -115,10 +116,9 @@ class ContractsController
 	{
 		return view('contracts.form',$this->getCommonVars($company,$type,$contract));
 	}
-	public function update(Company $company , Request $request , Contract $contract,string $type){
+	public function update(Company $company , StoreContractRequest $request , Contract $contract,string $type){
 		
 			$contract->storeBasicForm($request);
-			// $contract->syncWithContracts($request->get('contracts',[]));
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function destroy(Company $company , Request $request , Contract $contract,string $type){
@@ -172,5 +172,15 @@ class ContractsController
 		]);
 		
 	}
-	
+	public function generateRandomCode(Request $request,Company $company, string $modelType)
+	{
+		$partnerId = $request->get('partnerId');
+		$partner = Partner::find($partnerId);
+		$startDate = $request->get('startDate');
+		$code = Contract::generateRandomContract($company->id,$partner->getName(),$startDate,$modelType);
+		return response()->json([
+			'code'=>$code
+		]);
+		
+	}	
 }

@@ -1,7 +1,5 @@
-<!-- begin:: Header -->
-{{-- @php
-$notificationTypes=\App\Notification::getAllTypesFormatted();
-@endphp --}}
+						{{-- {{ dd($super_admin_sections) }} --}}
+
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
     {{-- {{ dd() }} --}}
 
@@ -14,8 +12,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                 <img alt="Logo" src="{{ url('assets/media/logos/logo_va.png') }}" class="kt-header__brand-logo-default" />
                 <img alt="Logo" src="{{ url('assets/media/logos/vero analysis blue logo.png') }}" width="25%" class="kt-header__brand-logo-sticky" />
             </a>
-        </div>
-
+        </div> 
         @include('layouts.new-topbar')
 
         <!-- end: Header Menu -->
@@ -160,7 +157,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                             @if ($counter == 1)
                             <div class="kt-grid-nav__row">
                                 @endif
-                                <a href="{{ $section->route == 'roles.permissions.index' ? route($section->route, 'admin') : route($section->route) }}" class="kt-grid-nav__item">
+                                <a href="{{ $section->route == 'roles.permissions.index' ? route('roles.permissions.edit') : route($section->route) }}" class="kt-grid-nav__item">
                                     <span class="kt-grid-nav__icon">
                                         @if ($section->name[$lang] == 'Admin Users')
                                         <svg aria-hidden="true" style="height: 32;" focusable="false" data-prefix="fas" data-icon="users-crown" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="svg-inline--fa fa-users-crown fa-w-20 fa-9x">
@@ -173,6 +170,9 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                                     <span class="kt-grid-nav__title">{{ __($section->name[$lang]) }}</span>
                                     <span class="kt-grid-nav__desc">{{ __('Admin Side') }}</span>
                                 </a>
+								
+								
+								
                                 @if ($counter == 2)
                             </div> <?php $counter = 0; ?>
                             @endif
@@ -186,6 +186,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                 <!--end: Grid Nav -->
                 </form>
             </div>
+
             @elserole('company-admin')
 
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px" aria-expanded="true">
@@ -218,7 +219,7 @@ $notificationTypes=\App\Notification::getAllTypesFormatted();
                         @if ($counter == 1)
                         <div class="kt-grid-nav__row">
                             @endif
-                            <a href="{{ $section->route == 'roles.permissions.index' ? route($section->route, 'admin') : route($section->route) }}" class="kt-grid-nav__item">
+                            <a href="{{ $section->route == 'roles.permissions.index' ? route('roles.permissions.edit') : route($section->route) }}" class="kt-grid-nav__item">
                                 <span class="kt-grid-nav__icon">
                                     @if ($section->name[$lang] == 'Admin Users')
                                     <svg aria-hidden="true" style="height: 32;" focusable="false" data-prefix="fas" data-icon="users-crown" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="svg-inline--fa fa-users-crown fa-w-20 fa-9x">

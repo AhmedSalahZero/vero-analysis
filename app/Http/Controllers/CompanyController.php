@@ -41,11 +41,16 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         toastr()->success('Created Successfully');
-        $companySection = Company::create($request->except('image'));
+        $companySection = Company::create($request->except(['image','systems']));
 		Branch::create([
 			'company_id'=>$companySection->id,
 			'name'=>'Head Office'
 		]);
+		foreach($request->get('systems') as $systemName){
+			$companySection->systems()->create([
+				'system_name'=>$systemName
+			]);
+		}
         ImageSave::saveIfExist('image',$companySection);
         return redirect()->back();
     }
@@ -102,8 +107,20 @@ class CompanyController extends Controller
     public function update(Request $request, Company $companySection)
     {
         toastr()->success('Updated Successfully');
-        $companySection->update($request->except('image'));
+		
+		$oldSystems =$companySection->getSystemsNames(); 
+		$newSystems = $request->get('systems');
+		$systemsToPreserve  = array_intersect($oldSystems,$newSystems);
+		$newSystemsToBeAdded  = array_diff($newSystems,$oldSystems);
+		
+        $companySection->update($request->except(['image','systems']));
+		
+		$companySection->systems()->delete();
+		foreach($newSystems as $systemName){
+			$companySection->systems()->create(['system_name'=>$systemName]);
+		}
         ImageSave::saveIfExist('image',$companySection);
+		$companySection->syncPermissionForAllUser($systemsToPreserve,$newSystemsToBeAdded);
         toastr()->success('Updated Successfully');
         return redirect()->back();
     }

@@ -2,6 +2,7 @@
 	'model',
 	'label'=>'',
 	'classes'=>'',
+	'useOldValue'=>false,
 	'name',
 	'id'=>'',
 	'placeholder'=>'',
@@ -27,6 +28,8 @@
 	if($name == 'contract_end_date' && !$model){
 		$defaultValue =date("Y").'-12-31' ;
 	}
+	
+	$defaultValue = old($name) ? old($name):$defaultValue;
 	
 @endphp
                                 <div class="kt-input-icon">

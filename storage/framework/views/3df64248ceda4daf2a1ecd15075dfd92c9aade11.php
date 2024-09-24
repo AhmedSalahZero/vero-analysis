@@ -16,10 +16,11 @@
                     <div class="col-2">
                         <label class="form-label font-weight-bold "><?php echo e(__('Account Number')); ?>
 
+						<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input placeholder="<?php echo e(__('Account Number')); ?>" type="text" class="form-control  exclude-text" <?php if($isRepeater): ?> name="account_number" <?php else: ?> name="accounts[0][account_number]" <?php endif; ?> value="<?php echo e(isset($account) ? $account->getAccountNumber() : old('account_number')); ?>">
+                                <input required placeholder="<?php echo e(__('Account Number')); ?>" type="text" class="form-control  exclude-text" <?php if($isRepeater): ?> name="account_number" <?php else: ?> name="accounts[0][account_number]" <?php endif; ?> value="<?php echo e(isset($account) ? $account->getAccountNumber() : old('account_number')); ?>">
                             </div>
                         </div>
                     </div>
@@ -46,6 +47,7 @@
                     <div class="col-2">
                         <label class="form-label font-weight-bold"><?php echo e(__('Balance Amount')); ?>
 
+						<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -68,7 +70,7 @@
 					 >
                         <label><?php echo e(__('Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                         <div class="input-group">
-                            <select <?php if($isRepeater): ?> name="currency" <?php else: ?> name="accounts[0][currency]" <?php endif; ?> class="form-control repeater-select">
+                            <select required <?php if($isRepeater): ?> name="currency" <?php else: ?> name="accounts[0][currency]" <?php endif; ?> class="form-control repeater-select">
                                 <option selected><?php echo e(__('Select')); ?></option>
                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <option value="<?php echo e($currencyName); ?>" <?php if(isset($account) && $account->getCurrency() == $currencyName ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
@@ -81,6 +83,7 @@
                     <div class="col-1">
                         <label class="form-label font-weight-bold"><?php echo e(__('Exchange Rate')); ?>
 
+						<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -95,6 +98,7 @@
                     <div class="col-1">
                         <label class="form-label font-weight-bold"><?php echo e(__('Interest Rate')); ?>
 
+						<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -107,6 +111,8 @@
                     <div class="col-1">
                         <label class="form-label font-weight-bold"><?php echo e(__('Min Balance')); ?>
 
+						
+						<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">

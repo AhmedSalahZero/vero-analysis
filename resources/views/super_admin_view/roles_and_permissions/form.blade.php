@@ -4,7 +4,9 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('content')
-
+@php
+	use App\Models\User;
+@endphp
 
 
 <div class="row">
@@ -14,27 +16,73 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__(isset($roles) ?'Edit Section' : 'Create Section')}}
+                        {{-- {{__(isset($roles) ?'Edit Section' : 'Create Section')}} --}}
+						{{ __('Permissions') }}
                     </h3>
                 </div>
             </div>
         </div>
+
             <!--begin::Form-->
-            <?php $roles_row = isset($roles) ? $roles : old(); ?>
-            <form class="kt-form kt-form--label-right" method="POST" action= {{isset($role) ? route('roles.permissions.update',[$scope,$role]): route('roles.permissions.store',$scope)}} enctype="multipart/form-data">
+          
+            <form class="kt-form kt-form--label-right" method="POST" 
+			{{-- action= {{isset($role) ? route('roles.permissions.update',[$scope,$role]): route('roles.permissions.store',$scope)}} --}}
+			action="{{ route('roles.permissions.update',$company ? [$company->id] : []) }}"
+			 enctype="multipart/form-data">
                 @csrf
                 {{isset($role) ?  method_field('POST'): ""}}
                 <div class="kt-portlet">
                     <div class="kt-portlet__body">
                         <div class="form-group row section">
+						   <div class="col-md-4">
+                                <label>{{__('Company')}} </label>
+                                <select id="company-select-id" update-users-based-on-company-and-role required name="company_id" class="form-control kt-selectpicker" >
+                                    <?php $selectedcompanies = isset($user) ?  $user->companies->pluck('id')->toArray() : []; ?>
+                                    @foreach ($companies as $item)
+                                        <option {{ old('company_id') == $item->id || in_array($item->id, $selectedcompanies) ? 'selected' : ''}}  value="{{$item->id}}">{{$item->name[$lang]}}</option>
+                                    @endforeach
+                                </select>
 
+                            </div> 
+							
+  							<div class="col-md-4">
+                                <label>{{__('Role')}} </label>
+                                <select  required id="role-select-id" name="role_id" class="form-control kt-selectpicker" update-users-based-on-company-and-role >
+	                                    @if(auth()->user()->isSuperAdmin() || (isset($user) && $user->hasRole(User::SUPER_ADMIN) ))
+										<option   value="{{ User::SUPER_ADMIN }}" @if(isset($user) && $user->hasRole(User::SUPER_ADMIN) || old('role_id') ==User::SUPER_ADMIN  ) selected @endif > {{__("Super Admin")}}</option>
+										@endif 
+										@if(auth()->user()->can('create company admin') || (isset($user) && $user->hasRole(User::COMPANY_ADMIN) ))
+										<option   value="{{ User::COMPANY_ADMIN }}" @if(isset($user) && $user->hasRole(User::COMPANY_ADMIN) || old('role_id') ==User::COMPANY_ADMIN) selected @endif > {{__("Company Admin")}}</option>
+										@endif
+										@if(auth()->user()->can('create manager') || (isset($user) && $user->hasRole(User::MANAGER) ))
+										<option   value="{{ User::MANAGER }}" @if(isset($user) && $user->hasRole(User::MANAGER) || old('role_id') ==User::MANAGER ) selected @endif > {{__("Manager")}}</option>
+										@endif
+										@if(auth()->user()->can('create user') || (isset($user) && $user->hasRole(User::USER) ))
+										<option   value="{{ User::USER }}" @if(isset($user) && $user->hasRole(User::USER) || old('role_id') ==User::USER) selected @endif > {{__("User")}}</option>
+										@endif
+                                </select>
+
+                            </div>
+                                    <div class="col-md-4">
+                                        <label>{{ __('User') }} <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select
+												 id="user-id"  data-current-selected="{{ isset($model) ? $model->getUserId(): old('user_id') }}" name="user_id" class="form-control role-users">
+                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+{{-- 
                                 <div class="col-md-12">
                                     <label>{{__('Role Name')}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="role" value="{{isset($role) ? $role->name : old('name')}}" class="form-control" placeholder="{{__('Role Name')}}" required>
                                         <x-tool-tip title="{{__('Kash Vero')}}"/>
                                     </div>
-                                </div>
+                                </div> --}}
 
                         </div>
                     </div>
@@ -44,94 +92,12 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{__('Section Information')}}
+                                {{__('Permissions')}}
                             </h3>
                         </div>
                     </div>
-                    <div class="kt-portlet__body">
-                        <div class="form-group-marginless">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-lg-12 " >
-                                        <label class="kt-option bg-secondary">
-                                            <span class="kt-option__control">
-                                                <span
-                                                    class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold"
-                                                    checked>
-                                                    <input type="checkbox" id="select_all"  >
-                                                    <span></span>
-                                                </span>
-                                            </span>
-                                            <span class="kt-option__label">
-                                                <span class="kt-option__head">
-                                                    <span class="kt-option__title"><b> {{ __('Select All') }} </b> </span>
-                                                </span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-							 @foreach (getPermissions() as $permissionArray)
-                                    <div class="form-group kt-checkbox-list">
-                                        <div class="row col-md-12">
-                                            <label class="col-3 col-form-label text-left text-capitalize"><b> {{$permissionArray['name']}} </b></label>
-                                            <div class="col-9">
-                                                <div class="kt-checkbox-inline d-flex justify-content-between">
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success " cheched="">
-                                                        <input type="checkbox" class="view" value="1" name="permissions[{{$permissionArray['name']}}]"
-                                                        {{ isset($role)&&$role->hasPermissionTo($permissionArray['name']) ? 'checked' : ''}}
-                                                        > {{ $permissionArray['name'] }}
-                                                        <span></span>
-                                                    </label>
-                                                    
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                        
-                            @endforeach
-							
-                            {{-- @foreach ($sections as $item)
-                                <?php $route_name = $item->route_name ; ?>
-                                @if ($item->route !== null)
-                                    <div class="form-group kt-checkbox-list">
-                                        <div class="row col-md-12">
-                                            <label class="col-3 col-form-label text-left"><b> {{$item->name['en']}} </b></label>
-                                            <div class="col-9">
-                                                <div class="kt-checkbox-inline d-flex justify-content-between">
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success" cheched="">
-                                                        <input type="checkbox" class="view" value="1" name="permissions[{{$route_name.'.view'}}]"
-                                                        {{isset($role) && $role->hasPermissionTo($route_name.'.view') ? 'checked' : ''}}
-                                                        > {{__('View')}}
-                                                        <span></span>
-                                                    </label>
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                                                        <input type="checkbox" class="create" value="1" name="permissions[{{$route_name.'.create'}}]"
-                                                        {{isset($role) && $role->hasPermissionTo($route_name.'.create') ? 'checked' : ''}}
-                                                        > {{__('Create')}}
-                                                        <span></span>
-                                                    </label>
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                                                        <input type="checkbox" class="edit"  value="1"name="permissions[{{$route_name.'.edit'}}]"
-                                                        {{isset($role) && $role->hasPermissionTo($route_name.'.edit') ? 'checked' : ''}}
-                                                        > {{__('Edit')}}
-                                                        <span></span>
-                                                    </label>
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                                                        <input type="checkbox" class="delete" value="1" name="permissions[{{$route_name.'.delete'}}]"
-                                                        {{isset($role) && $role->hasPermissionTo($route_name.'.delete') ? 'checked' : ''}}
-                                                        > {{__('Delete')}}
-                                                        <span></span>
-                                                    </label>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach --}}
-                        </div>
+                    <div class="kt-portlet__body" id="append-permission-views">
+                        {{-- @include('super_admin_view.roles_and_permissions.permissions-radio') --}}
                     </div>
                 </div>
 
@@ -150,7 +116,7 @@
     <script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
     <!--end::Page Scripts -->
     <script>
-        $('#select_all').change(function(e) {
+        $(document).on('change','#select_all',function(e) {
             if ($(this).prop("checked")) {
                 $('.view').prop("checked", true);
                 $('.create').prop("checked", true);
@@ -164,4 +130,51 @@
             }
         });
     </script>
+	<script>
+	$(document).on('change','[update-users-based-on-company-and-role]',function(e){
+		const companyId = $('select#company-select-id').val();
+		const roleName = $('select#role-select-id').val();
+		const currentUserSelect = $('select#user-id').attr('data-current-selected')
+	
+		if(roleName && companyId){
+			$.ajax({
+			url:"{{ route('update.users.based.on.company.and.role') }}",
+			data:{
+				companyId,
+				roleName
+			},
+			type:"get",
+			success:function(res){
+				const users = res.users
+				let userOptions = '';
+				for(var i = 0 ; i <users.length ; i++){
+					var selected = currentUserSelect == users[i].id ? 'selected':''
+					userOptions =' <option '+ selected +' value="'+users[i].id+'" >'+ users[i].name +'</option>';
+				}
+				$('select#user-id').empty().append(userOptions).trigger('change')
+			}
+		})
+		}
+		
+	})
+	$(document).on('change','select#user-id',function(){
+		const userId = $('select#user-id').val();
+		const companyId = $('select#company-select-id').val()
+		if(userId){
+			$.ajax({
+				url:"{{ route('render.permissions.html.for.user') }}",
+				data:{
+					userId,
+					companyId
+				},
+				success:function(res){
+					$('#append-permission-views').empty().append(res.view)
+				}
+			})
+		}else{
+			$('#append-permission-views').empty()
+		}
+	})
+	$('[update-users-based-on-company-and-role]:eq(0)').trigger('change');
+	</script>
 @endsection

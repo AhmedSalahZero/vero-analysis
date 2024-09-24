@@ -89,18 +89,12 @@ $selectedBanks = [];
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Supplier Payment')}}
-        </h3>
-    </div>
-</div>
-</div> --}}
+       
 <form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
+	<input type="hidden" name="current_branch" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->delivery_branch_id : 0 }}">
 	<input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
     @csrf
@@ -121,7 +115,7 @@ $selectedBanks = [];
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -168,8 +162,7 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select">
-                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                    {{-- {{  }} --}}
+                                  
                                     @foreach($suppliers as $supplierId => $supplierName)
                                     <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
                                     @endforeach
@@ -305,7 +298,7 @@ $selectedBanks = [];
                     <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                         </div>
                     </div>
                 </div>
@@ -443,7 +436,7 @@ $selectedBanks = [];
                     <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                         </div>
                     </div>
 
@@ -558,7 +551,7 @@ $selectedBanks = [];
                     <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
+                            <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                         </div>
                     </div>
 
@@ -901,7 +894,8 @@ $selectedBanks = [];
         </div>
     </div>
 
-    <x-submitting />
+    {{-- <x-submitting /> --}}
+    <x-submitting-by-ajax />
 
 </form>
 <!--end::Form-->

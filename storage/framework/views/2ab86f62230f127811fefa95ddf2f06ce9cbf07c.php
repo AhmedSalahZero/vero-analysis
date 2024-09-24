@@ -67,7 +67,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
             </ul>
-
+		<?php if(hasAuthFor('create letter of credit issuance')): ?>
             <div class="flex-tabs">
 				<a href="<?php echo e(route('create.letter.of.credit.issuance',['company'=>$company->id,'source'=>LetterOfCreditIssuance::LC_FACILITY  ])); ?>" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
@@ -90,6 +90,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 				</a>
 			</div >
+			<?php endif; ?> 
 
         </div>
     </div>
@@ -168,7 +169,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           <?php echo $__env->make('reports.LetterOfCreditIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$model->isPaid()): ?>
+											<?php if(hasAuthFor('update letter of credit issuance')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
+											<?php if(hasAuthFor('delete letter of credit issuance')): ?>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($model->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($model->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -191,6 +195,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?> 
                                         </span>
                                     </td>

@@ -43,9 +43,8 @@
                         
                         <div class="kt-portlet__body">
                             <div class="kt-list-timeline">
-							
 							<?php $__currentLoopData = getUploadParamsFromType(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $elementModelName => $params): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-							<?php if(in_array($elementModelName,['ExportAnalysis','LabelingItem','CustomerInvoice','SupplierInvoice'])): ?>
+							<?php if(in_array($elementModelName,['ExportAnalysis','LabelingItem','CustomerInvoice','SupplierInvoice','LoanSchedule'])): ?>
 							<?php continue; ?>
 							<?php endif; ?> 
 							
@@ -67,7 +66,7 @@
 								
 										
 
-                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view financial statement')): ?>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view income statement planning')): ?>
 
 
 
@@ -84,8 +83,8 @@
 									<br>
 									
                                 <?php endif; ?> 
-								
-								<?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view cash management')): ?>
+							
+								<?php if($company->hasCashVero()): ?>
 
 
                                 <div class="kt-list-timeline__items">
@@ -98,11 +97,10 @@
                                         <span class="kt-list-timeline__time disable"> <a href="<?php echo e(route('view.financial.institutions',['company'=>$company->id])); ?>" class="btn btn-outline-info"><b><?php echo e(__('GO')); ?></b></a></span>
                                     </div>
                                 </div>
-                                <?php endif; ?>
+                                <?php endif; ?> 
 								
 								
 								   <br>
-
 
 								
                             </div>
@@ -111,13 +109,16 @@
                     </div>
                 </div>
             </div>
+			<?php if(auth()->user() && auth()->user()->hasAccessToSystems([VERO])): ?>
             <div class="kt-widget6__action kt-align-left">
                 <a href="#" onclick="return false;" id="skip" class="btn btn-outline-info"><b><?php echo e(__('Go To Sales Analysis')); ?></b></a>
             </div>
+			<?php endif; ?>
         </div>
     </div>
     
 </div>
+
 <div class="row" style="display: none" id="second_card">
     
     <div class="kt-portlet kt-iconbox kt-iconbox--animate">
@@ -135,16 +136,15 @@
 
                     </h3>
                     <br><br>
+							
                     <div class="kt-iconbox__content d-flex align-items-start flex-column">
-                        
-
 
 
                         <div class="kt-portlet__body">
                             <div class="kt-list-timeline">
+				
 						<?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view sales dashboard')): ?>
                                 <div class="kt-list-timeline__items">
-
                                     <div class="kt-list-timeline__item">
                                         <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
                                         <span class="kt-list-timeline__text">

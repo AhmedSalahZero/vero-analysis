@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+use App\Helpers\HArr;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
+	const SUPER_ADMIN = 'super-admin';
+	const COMPANY_ADMIN = 'company-admin';
+	const MANAGER = 'manager';
+	const USER = 'user';
 	
     use Notifiable,HasRoles,InteractsWithMedia;
 	protected $connection = 'mysql';
@@ -28,6 +34,24 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->belongsToMany(Company::class, 'companies_users');
     }
+	public function hasAccessToSystems(array  $systemNames):bool{
+			if($this->isSuperAdmin()){
+				return true ;
+			}
+			$userSystemName = $this->getSystemsNames() ;
+			return HArr::atLeastOneValueExistInArray($userSystemName,$systemNames);
+			
+	}
+	public function getSystemsNames():array{
+		if($this->isSuperAdmin()){
+			return CompanySystem::getAllSystemNames();
+		}
+		$firstCompany = $this->companies->first() ;
+		/**
+		 * @var Company $firstCompany
+		 */
+		return $firstCompany ? $firstCompany->getSystemsNames() : [] ;
+	}
     public function canViewIncomeStatement()
     {
 		return true ;
@@ -44,15 +68,20 @@ class User extends Authenticatable implements HasMedia
 	
 	public function isSuperAdmin()
 	{
-		return auth()->check() && $this->roles->first()->name == 'super-admin';;
+		return  $this->roles->first()->name == 'super-admin';
 	}
 	public function isCompanyAdmin():bool 
 	{
-		return auth()->check() && $this->roles->first()->name == 'company-admin';
+	
+		return  $this->roles->first()->name == 'company-admin';
+	}
+	public function isManager():bool 
+	{
+		return  $this->roles->first()->name == 'manager';
 	}
 	public function isUser():bool 
 	{
-		return auth()->check() && $this->roles->first()->name == 'user';
+		return  $this->roles->first()->name == 'user';
 	}
 	public function usersCreatedBy()
 	{
@@ -226,5 +255,53 @@ class User extends Authenticatable implements HasMedia
 			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
 		})->values();
 	}
-	
+	public function assignNewPermission(array $permissionArr , Permission $permission)
+	{
+
+		if(in_array($this->getRoleName(),$permissionArr['default-roles']) && $this->hasAccessToSystems($permissionArr['systems'])   
+						){
+							$this->givePermissionTo($permission->name);
+						}
+	}	
+	public static function getUsersWithRoles(?Company $company,string $roleName = null)
+	{
+		$authUser = auth()->user();
+		return User::with('roles')->when($company,function($q) use ($company,$authUser,$roleName){
+			$q
+			->whereHas('companies',function($q) use($company){
+				$q->where('companies.id',$company->id);
+			})
+			->whereHas('roles',function($q) use ($authUser){
+				if(!$authUser->can('view managers')){
+					$q->where(function($q) use ($authUser){
+						$q->where('roles.id','!=',4)->orWhere('users.id','=',$authUser->id);
+					});
+				}
+				if(!$authUser->can('view company admin')){
+					$q->where(function($q) use ($authUser){
+						$q->where('roles.id','!=',2)->orWhere('users.id','=',$authUser->id);
+					});
+				}
+				if(!$authUser->can('view super admin')){
+					$q->where(function($q) use ($authUser){
+						$q->where('roles.id','!=',1)->orWhere('users.id','=',$authUser->id);
+					});
+				}
+				if(!$authUser->can('view users')){
+					$q->where(function($q) use ($authUser){
+						$q->where('roles.id','!=',3)->orWhere('users.id','=',$authUser->id);
+					});
+				}
+			})->when($roleName,function($q) use ($roleName){
+				$q->whereHas('roles',function($q) use ($roleName){
+					$q->where('roles.name',$roleName);
+				});
+			})->whereHas('companies',function($q) use ($company){
+				$q->where('companies.id',$company->id);
+			});
+		})
+		
+		
+		->get();
+	}
 }

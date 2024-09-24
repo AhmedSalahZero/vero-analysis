@@ -62,25 +62,34 @@ Route::middleware([])->group(function () {
 
             Route::resource('section', 'SectionController');
             Route::resource('companySection', 'CompanyController');
-            Route::resource('user', 'UserController');
+            // Route::resource('user', 'UserController');
+			Route::get('user/create/{company?}','UserController@create')->middleware('isCashManagement')->name('user.create');
+			Route::get('user/all/{company?}','UserController@index')->middleware('isCashManagement')->name('user.index');
+			Route::post('user/{company?}','UserController@store')->middleware('isCashManagement')->name('user.store');
+			Route::get('user/{user}/edit/{company?}','UserController@edit')->middleware('isCashManagement')->name('user.edit');
+			Route::put('user/{user}/{company?}','UserController@update')->middleware('isCashManagement')->name('user.update');
+			Route::delete('user/{user}/{company?}','UserController@destroy')->middleware('isCashManagement')->name('user.destroy');
             // Route::resource('deduction', 'DeductionController');
             Route::resource('toolTipData', 'ToolTipDataController');
 
-            Route::group(['prefix' => 'RolesPermissions/{scope}/', 'as' => 'roles.permissions.'], function () {
-                Route::get('/index', 'RolesAndPermissionsController@index')->name('index');
-                Route::get('/create', 'RolesAndPermissionsController@create')->name('create');
-                Route::post('/store', 'RolesAndPermissionsController@store')->name('store');
-                Route::get('/edit/{role}', 'RolesAndPermissionsController@edit')->name('edit');
-                Route::post('/update/{role}', 'RolesAndPermissionsController@update')->name('update');
+			
+			
+			
+            Route::group(['prefix' => 'roles-permissions/', 'as' => 'roles.permissions.'], function () {
+                // Route::get('/index/{company?}', 'RolesAndPermissionsController@index')->name('index');
+                // Route::get('/create/{company?}', 'RolesAndPermissionsController@create')->name('create');
+                // Route::post('/store/{company?}', 'RolesAndPermissionsController@store')->name('store');
+                Route::get('/edit/{company?}', 'RolesAndPermissionsController@edit')->middleware(['isCashManagement'])->name('edit');
+                Route::post('/update/{company?}', 'RolesAndPermissionsController@update')->name('update');
             });
 
-
-            
-            Route::group(['prefix' => 'userPermissions/{user}/', 'as' => 'user.permissions.'], function () {
+			Route::get('update-users-based-on-company-and-role','UserController@getUsersBasedOnCompanyAndRole')->name('update.users.based.on.company.and.role');
+            Route::get('render-permission-html-for-user','UserController@renderPermissionForUser')->name('render.permissions.html.for.user');
+            Route::group(['prefix' => 'user-permissions/{user}/', 'as' => 'user.permissions.'], function () {
                 Route::get('/index', 'UsersAndPermissionsController@index')->name('index');
                 Route::get('/create', 'UsersAndPermissionsController@create')->name('create');
                 Route::post('/store', 'UsersAndPermissionsController@store')->name('store');
-                Route::get('/edit', 'UsersAndPermissionsController@edit')->name('edit');
+                Route::get('/edit/{company?}', 'UsersAndPermissionsController@edit')->middleware('isCashManagement')->name('edit');
                 Route::post('/update', 'UsersAndPermissionsController@update')->name('update');
             });
             Route::get('toolTipSectionsFields/{id}', 'ToolTipDataController@sectionFields')->name('section.fields');
@@ -90,6 +99,14 @@ Route::middleware([])->group(function () {
             Route::get('/', 'HomeController@index')->name('home');
 
             Route::prefix('{company}')->group(function () {
+				
+				//cash vero roles and permissions 
+			// Route::group(['prefix'=>'cash-vero-permissions'],function(){
+			// 	Route::get('create','CashVeroPermissionsController@create')->name('cashvero.permissions.create');
+			// 	Route::post('store','CashVeroPermissionsController@store')->name('cashvero.permissions.store');
+			// });
+			
+			
 				Route::get('update-currency-account-based-on-currency/{financialInstitution}','UpdateCurrentAccountBasedOnCurrencyController@index')->name('update.current.account.based.on.currency');
                 Route::post('save-labeling-data', 'CompanyController@saveLabelingData')->name('save.labeling.item');
 
@@ -368,6 +385,7 @@ Route::middleware([])->group(function () {
 				 Route::put('contracts/{contract}/{type}','ContractsController@update')->name('contracts.update');
 				 Route::delete('contracts/{contract}/{type}','ContractsController@destroy')->name('contracts.destroy');
 				 Route::get('get-contracts-for-customer-or-supplier','ContractsController@getContractsForCustomerOrSupplier')->name('get.contracts.for.customer.or.supplier');
+				 Route::get('generate-contract-code/{type}','ContractsController@generateRandomCode')->name('generate.unique.rondom.contract.code');
 				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
 				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
 				 Route::get('financial-institutions/get-lc-issuance-based-of-financial-institution', 'FinancialInstitutionController@getLcIssuanceBasedOnFinancialInstitution')->name('update.lc.issuance.based.on.financial.institution');

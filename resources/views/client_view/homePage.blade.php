@@ -71,9 +71,8 @@
                         </ul> --}}
                         <div class="kt-portlet__body">
                             <div class="kt-list-timeline">
-							
 							@foreach(getUploadParamsFromType() as $elementModelName => $params )
-							@if(in_array($elementModelName,['ExportAnalysis','LabelingItem','CustomerInvoice','SupplierInvoice']))
+							@if(in_array($elementModelName,['ExportAnalysis','LabelingItem','CustomerInvoice','SupplierInvoice','LoanSchedule']))
 							@continue
 							@endif 
 							
@@ -95,7 +94,7 @@
 								
 										
 
-                                @can('view financial statement')
+                                @can('view income statement planning')
 
 
 
@@ -112,8 +111,8 @@
 									<br>
 									
                                 @endcan 
-								
-								@can('view cash management')
+							
+								@if($company->hasCashVero())
 
 
                                 <div class="kt-list-timeline__items">
@@ -126,23 +125,11 @@
                                         <span class="kt-list-timeline__time disable"> <a href="{{ route('view.financial.institutions',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
                                     </div>
                                 </div>
-                                @endcan
+                                @endif 
 								
 								
 								   <br>
 
-{{-- @if(auth()->user()->isSuperAdmin())
-                                <div class="kt-list-timeline__items">
-                                    <div class="kt-list-timeline__item">
-                                        <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
-                                        <span class="kt-list-timeline__text">
-                                            <h4> {{ __("Expenses") }} </h4>
-                                        </span>
-
-                                        <span class="kt-list-timeline__time disable"> <a href="{{ route('admin.create.expense',['company'=>$company->id]) }}" class="btn btn-outline-info"><b>{{ __('GO') }}</b></a></span>
-                                    </div>
-                                </div>
-								@endif --}}
 								
                             </div>
                         </div>
@@ -150,13 +137,16 @@
                     </div>
                 </div>
             </div>
+			@if(auth()->user() && auth()->user()->hasAccessToSystems([VERO]))
             <div class="kt-widget6__action kt-align-left">
                 <a href="#" onclick="return false;" id="skip" class="btn btn-outline-info"><b>{{ __('Go To Sales Analysis') }}</b></a>
             </div>
+			@endif
         </div>
     </div>
     {{-- </div> --}}
 </div>
+
 <div class="row" style="display: none" id="second_card">
     {{-- <div class="col-2"></div>
     <div class="col-8" > --}}
@@ -174,28 +164,15 @@
                         {{__('Please choose where do you want to go?')}}
                     </h3>
                     <br><br>
+							
                     <div class="kt-iconbox__content d-flex align-items-start flex-column">
-                        {{-- <ul class="mb-auto p-2">
-                                <li> <h4> {{ __("Sales Dashboard") }} <a href="{{ route('dashboard', $company) }}" class="btn btn-label-info btn-pill"> <b>Go</b></a> </h4>
-                        </li>
-                        <li>
-                            <h4> {{ __("Sales Breakdown Analysis") }} <a href="{{route('sales.breakdown.analysis',$company)}}" class="btn btn-label-info btn-pill"><b>Go</b></a> </h4>
-                        </li>
-                        <li>
-                            <h4> {{ __("Sales Trend Analysis") }} <a href="{{route('sales.trend.analysis',$company)}}" class="btn btn-label-info btn-pill"><b>Go</b></a> </h4>
-                        </li>
-                        <li>
-                            <h4> {{ __("Sales Report") }} <a href="{{route('salesReport.view',$company)}}" class="btn btn-label-info btn-pill"><b>Go</b></a> </h4>
-                        </li>
-                        </ul> --}}
-
 
 
                         <div class="kt-portlet__body">
                             <div class="kt-list-timeline">
+				
 						@can('view sales dashboard')
                                 <div class="kt-list-timeline__items">
-
                                     <div class="kt-list-timeline__item">
                                         <span class="kt-list-timeline__badge kt-list-timeline__badge--brand"></span>
                                         <span class="kt-list-timeline__text">

@@ -96,7 +96,7 @@ td{
                 
 
             </ul>
-
+		<?php if(auth()->user()->can('create supplier payment')): ?>
             <div class="flex-tabs">
 			<a href="<?php echo e(route('create.money.payment',['company'=>$company->id])); ?>" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
@@ -110,6 +110,7 @@ td{
 
             </a>
 			</div>
+			<?php endif; ?> 
 
         </div>
     </div>
@@ -197,11 +198,13 @@ td{
 									</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											<?php if(auth()->user()->can('update supplier payment')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id])); ?>"><i class="fa fa-pen-alt"></i></a>
-									
                                             <a data-id="<?php echo e($moneyPayment->id); ?>" data-type="single" data-currency="<?php echo e($moneyPayment->getCurrency()); ?>" data-money-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Mark As Paid')); ?>" href=""><i class="fa fa-money-bill"></i></a>
+											<?php endif; ?> 
 								
 											<?php if(!$moneyPayment->isOpenBalance()): ?>
+											<?php if(auth()->user()->can('delete supplier payment')): ?>
                                             <a data-toggle="modal" data-target="#delete-cheque-id-<?php echo e($moneyPayment->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-<?php echo e($moneyPayment->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -224,6 +227,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?> 
                                         </span>
                                     </td>
@@ -315,9 +319,12 @@ td{
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$money->isOpenBalance()): ?>
+										<?php if(auth()->user()->can('update supplier payment')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$money->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 <?php endif; ?> 
+<?php endif; ?> 
 <?php if(!$money->isOpenBalance()): ?>
+<?php if(auth()->user()->can('delete supplier payment')): ?>
                                             <a data-toggle="modal" data-target="#delete-transfer-id-<?php echo e($money->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-<?php echo e($money->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -341,6 +348,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?> 
                                         </span>
                                     </td>
@@ -419,7 +427,10 @@ td{
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$moneyPayment->isOpenBalance()): ?>
+										<?php if(auth()->user()->can('update supplier payment')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+										<?php endif; ?> 
+										<?php if(auth()->user()->can('delete supplier payment')): ?>
                                             <a data-toggle="modal" data-target="#delete-transfer-id-<?php echo e($moneyPayment->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-<?php echo e($moneyPayment->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -443,6 +454,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 <?php endif; ?> 
                                         </span>
                                     </td>

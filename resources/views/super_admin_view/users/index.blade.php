@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 {{-- Table Component ['href of Add Button'] & ['The Title Of The Table'] --}}
-<x-table :href="route('user.create')" :tableTitle="__('Users Table')">
+<x-table :href="$company ? route('user.create', [$company->id]) : route('user.create') " :tableTitle="__('Users Table')">
     {{-- Head Of The Table --}}
     @slot('table_header')
     <tr class="table-standard-color">
@@ -30,11 +30,12 @@
         </td>
         <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
             <span style="overflow: visible; position: relative; width: 110px;">
-                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('user.edit', [$item]) }}"><i class="fa fa-pen-alt"></i></a>
+	
+                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('user.edit', [$item,$company->id]) }}"><i class="fa fa-pen-alt"></i></a>
                 <a class="btn btn-secondary btn-outline-hover-danger btn-icon remove-item-class remove-user-class" data-id="{{ $item->id }}" title="Delete"><i class="fa fa-trash-alt"></i>
                 </a>
 
-                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('user.permissions.edit', $item->id) }}"><i class="fa fa-eye"></i></a>
+                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('user.permissions.edit',[$item->id , $company->id]) }}"><i class="fa fa-eye"></i></a>
          
                 {{-- <a href="#" type="button" class="btn btn-secondary btn-outline-hover-warning btn-icon"></a> --}}
 

@@ -8,24 +8,18 @@ use App\Http\Controllers\Analysis\SalesGathering\IncomeStatementBreakdownAgainst
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingForIncomeStatementReport;
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
-use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use App\Models\Log;
-use App\Models\SalesGathering;
-use App\Models\Section;
 use App\Services\Caching\CashingService;
 use App\Traits\GeneralFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
-use Spatie\Permission\Models\Role;
+
 
 class HomeController extends Controller
 {
@@ -38,6 +32,7 @@ class HomeController extends Controller
 	 */
 	public function index(Request $request)
 	{
+	
 		$user =  Auth::user();
 		$companies = $user->companies;
 		if (count($user->companies) > 1) {

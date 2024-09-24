@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Helpers\HArr;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
@@ -41,42 +43,76 @@ class Notification extends Model
 	}
 	public static function getAllTypesFormatted():array 
 	{
-		return [
-			self::CUSTOMER=>[
-				'title'=>__('Customer Invoices') ,
-				'subitems'=>[
-					self::CUSTOMER_INVOICE_PAST_DUE ,
-					self::CUSTOMER_INVOICE_COMING_DUE,
-					self::CUSTOMER_INVOICE_CURRENT_DUE ,
-					
-				]
-			],
-			self::SUPPLIER=>[
-				'title'=>__('Supplier Invoices'),
-				'subitems'=>[
-					self::SUPPLIER_INVOICE_PAST_DUE,
-					self::SUPPLIER_INVOICE_CURRENT_DUE,
-					self::SUPPLIER_INVOICE_COMING_DUE,
-				]
-			],
-			self::RECEIVABLE_CHEQUE=> [
-				'title'=>__('Receivable Cheques') ,
-				'subitems'=>[
-					self::CHEQUE_PAST_DUE,
-					self::CHEQUE_CURRENT_DUE,
-					self::CHEQUE_UNDER_COLLECTION_TODAY,
-					self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS
-				]
-			],
-			self::PENDING_PAYABLE_CHEQUE=>[
-				'title'=>__('Payable Cheques') ,
-				'subitems'=>[
-					self::PENDING_PAYABLE_CHEQUES
-				]
-			] ,
+		$user = auth()->user();
+		/**
+		 * @var User $user ;
+		 */
+		if(!$user){
+			return [];
+		}
 	
-			 ];
 		
+		$canViewCustomerInvoicePastDueNotification = $user->can('view customer invoice past due notification');
+		$canViewCustomerInvoiceComingDueNotification = $user->can('view customer invoice coming due notification');
+		$canViewCustomerInvoiceCurrentDueNotification = $user->can('view customer invoice current due notification');
+		$canViewCustomerInvoicesNotifications = $canViewCustomerInvoicePastDueNotification || $canViewCustomerInvoiceComingDueNotification||$canViewCustomerInvoiceCurrentDueNotification ;
+		
+		
+		
+		$canViewSupplierInvoicesPastDueNotifications = $user->can('view supplier invoices past due notifications');
+		$canViewSupplierInvoicesCurrentDueNotification = $user->can('view supplier invoices current due notifications');
+		$canViewSupplierInvoicesComingDueNotification = $user->can('view supplier invoices coming due notifications');
+		$canViewSupplierInvoicesNotifications = $canViewSupplierInvoicesPastDueNotifications || $canViewSupplierInvoicesCurrentDueNotification || $canViewSupplierInvoicesComingDueNotification;
+		
+		
+		$canViewChequePastDueNotifications = $user->can('view cheque past due notifications');
+		$canViewChequeComingDueNotifications = $user->can('view cheque current due notifications');
+		$canViewChequeUnderCollectionTodayNotifications = $user->can('view cheque under collection today notifications');
+		$canViewChequeUnderCollectionSinceDaysNotifications = $user->can('view cheque under collection since days notifications');
+		$canViewReceivableChequesNotifications = $canViewChequePastDueNotifications || $canViewChequeComingDueNotifications ||$canViewChequeUnderCollectionTodayNotifications || $canViewChequeUnderCollectionSinceDaysNotifications;
+		 
+		$items = [];
+		
+		if($canViewCustomerInvoicePastDueNotification){
+			$items[self::CUSTOMER]=[
+				'title'=>__('Customer Invoices') ,
+				'subitems'=>HArr::filterTrulyValue([
+					$canViewCustomerInvoicePastDueNotification ? self::CUSTOMER_INVOICE_PAST_DUE : false ,
+					$canViewCustomerInvoicesNotifications ? self:: CUSTOMER_INVOICE_COMING_DUE : false,
+					$canViewCustomerInvoiceCurrentDueNotification ? self::CUSTOMER_INVOICE_CURRENT_DUE : false ,
+				])
+				];
+		}
+		if($canViewSupplierInvoicesNotifications){
+			$items[self::SUPPLIER] = [
+				'title'=>__('Supplier Invoices'),
+				'subitems'=>HArr::filterTrulyValue([
+					$canViewSupplierInvoicesPastDueNotifications ? self::SUPPLIER_INVOICE_PAST_DUE : false,
+					$canViewSupplierInvoicesCurrentDueNotification ?  self::SUPPLIER_INVOICE_CURRENT_DUE : false ,
+					$canViewSupplierInvoicesComingDueNotification ? self::SUPPLIER_INVOICE_COMING_DUE : false ,
+				])
+				];
+		}
+		if($canViewReceivableChequesNotifications){
+			$items[self::RECEIVABLE_CHEQUE] = [
+				'title'=>__('Receivable Cheques') ,
+				'subitems'=>HArr::filterTrulyValue([
+					$canViewChequePastDueNotifications ?self::CHEQUE_PAST_DUE:false,
+					$canViewChequeComingDueNotifications ? self::CHEQUE_CURRENT_DUE : false ,
+					$canViewChequeUnderCollectionTodayNotifications ? self::CHEQUE_UNDER_COLLECTION_TODAY : false ,
+					$canViewChequeUnderCollectionSinceDaysNotifications ? self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS : false
+				])
+				];
+		}
+		if($user->can('view pending payable cheques notifications')){
+			$items[self::PENDING_PAYABLE_CHEQUE] = [
+				'title'=>__('Payable Cheques') ,
+				'subitems'=>HArr::filterTrulyValue([
+					$user->can('view pending payable cheques notifications') ? self::PENDING_PAYABLE_CHEQUES:false
+				])
+			];
+		}
+		return $items ; 
 	}
 	public static function formatForMenuItem():array 
 	{

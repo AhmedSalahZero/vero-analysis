@@ -22,7 +22,6 @@ use App\Models\CashFlowStatement;
 use App\Models\CollectionSetting;
 use App\Models\Company;
 use App\Models\Country;
-use App\Models\CustomerInvoice;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\ExistingProductAllocationBase;
 use App\Models\FinancialInstitutionAccount;
@@ -31,7 +30,6 @@ use App\Models\IncomeStatementItem;
 use App\Models\IncomeStatementSubItem;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
-use App\Models\MoneyReceived;
 use App\Models\NewProductAllocationBase;
 use App\Models\ProductSeasonality;
 use App\Models\QuantityExistingProductAllocationBase;
@@ -44,7 +42,6 @@ use App\Models\SalesGathering;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
-use App\Models\SupplierInvoice;
 use App\Models\User;
 use App\Services\Caching\CashingService;
 use App\Services\IntervalSummationOperations;
@@ -89,6 +86,19 @@ const uploadLoanScheduleData ='upload loan schedule analysis data';
 const exportLoanScheduleData ='export loan schedule analysis data';
 const deleteLoanScheduleData ='delete loan schedule analysis data';
 const viewLoanScheduleData ='view loan schedule analysis data';
+
+
+
+const CASH_VERO = 'cash-vero';
+const VERO = 'vero';
+const EXPORT_ANALYSIS = 'export-analysis';
+const PRICING_CALCULATOR = 'pricing-calculator';
+const SALES_FORECAST = 'sales-forecast';
+const INCOME_STATEMENT_PLANNING = 'income-statement-planning';
+const LABELING = 'labeling';
+
+
+
 
 const quantityIdentifier = ' ( Quantity )';
 function spaceAfterCapitalLetters($string)
@@ -2730,7 +2740,7 @@ function formatDataForDonutChart(array $array)
         ];
     }
 
-    return $formattedData;
+    return $formattedData;	
 }
 function isQuantitySubItem($subItemName): bool
 {
@@ -2881,337 +2891,1353 @@ function preventUserFromForeCast()
         'mabdallah@jobmastergroup.com'
     ];
 }
-function getPermissions():array
+function getPermissions(array $systemsNames  = []):array
 {
     $permissions =  [
         [
-            'name'=>'view home'
+            'name'=>'view home',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'home',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'update permissions',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+			'group'=>'permissions',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'view sales dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales dashboard',
+			'view-name'=>'view'
         ],
         [
-            'name'=>'view dashboard',
+            'name'=>'view breakdown dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'breakdown dashboard',
+			'view-name'=>'view'
         ],
         [
-            'name'=>'view data gathering'
+            'name'=>'view customer dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer dashboard',
+			'view-name'=>'view'
         ],
-
         [
-            'name'=>'view sales data',
+            'name'=>'view sales person dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales person dashboard',
+			'view-name'=>'view'
         ],
+        [
+            'name'=>'view discount dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'discount dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view interval comparing dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'interval comparing dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view income statement dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'income statement dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view forecast income statement dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'forecast income statement dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view actual income statement dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'actual income statement dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view adjusted income statement dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'adjusted income statement dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view modified income statement dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'modified income statement dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view income statement comparing dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'income statement comparing dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view income statement variance dashboard',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'income statement variance dashboard',
+			'view-name'=>'view'
+        ],
+        [
+            'name'=>'view sales gathering data',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales gathering',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'upload sales gathering data',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales gathering',
+			'view-name'=>'upload'
+        ],
+		[
+            'name'=>'export sales gathering data',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales gathering',
+			'view-name'=>'export'
+        ],
+		[
+            'name'=>'delete sales gathering data',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales gathering',
+			'view-name'=>'delete'
+        ],
+		
         [
             'name'=>viewExportAnalysisData,
+			'systems'=>[EXPORT_ANALYSIS],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'export analysis',
+			'view-name'=>'view'
         ],
-        [
-            'name'=>'upload sales gathering data',
-        ],
+       
         [
             //
             'name'=>uploadExportAnalysisData,
+			'systems'=>[EXPORT_ANALYSIS],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'export analysis',
+			'view-name'=>'upload'
         ],
-        [
-            'name'=>'export sales gathering data',
-        ],
+       
 
         [
             //
             'name'=>exportExportAnalysisData,
+			'systems'=>[EXPORT_ANALYSIS],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'export analysis',
+			'view-name'=>'export'
+        ],
+
+        
+        [
+            'name'=>deleteExportAnalysisData,
+			'systems'=>[EXPORT_ANALYSIS],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'export analysis',
+			'view-name'=>'delete'
         ],
 
         [
-            'name'=>'delete sales gathering data'
+            'name'=>viewCustomerInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer invoices',
+			'view-name'=>'view'
         ],
         [
-            'name'=>deleteExportAnalysisData
+            'name'=>uploadCustomerInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer invoices',
+			'view-name'=>'upload'
+        ],
+        [
+            'name'=>exportCustomerInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer invoices',
+			'view-name'=>'export'
         ],
 
         [
-            'name'=>viewCustomerInvoiceData
-        ],
-        [
-            'name'=>uploadCustomerInvoiceData
-        ],
-        [
-            'name'=>exportCustomerInvoiceData
-        ],
-
-        [
-            'name'=>deleteCustomerInvoiceData
+            'name'=>deleteCustomerInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer invoices',
+			'view-name'=>'delete'
         ],
 
 		[
-            'name'=>viewSupplierInvoiceData
+            'name'=>viewSupplierInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier invoices',
+			'view-name'=>'view'
         ],
         [
-            'name'=>uploadSupplierInvoiceData
+            'name'=>uploadSupplierInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier invoices',
+			'view-name'=>'upload'
         ],
         [
-            'name'=>exportSupplierInvoiceData
+            'name'=>exportSupplierInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier invoices',
+			'view-name'=>'export'
         ],
 
         [
-            'name'=>deleteSupplierInvoiceData
+            'name'=>deleteSupplierInvoiceData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier invoices',
+			'view-name'=>'delete'
         ],
-		
-		
-		
-		
+	
 		[
-            'name'=>viewLoanScheduleData
+            'name'=>viewLoanScheduleData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'loan schedule',
+			'view-name'=>'view'
         ],
         [
-            'name'=>uploadLoanScheduleData
+            'name'=>uploadLoanScheduleData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'loan schedule',
+			'view-name'=>'upload'
         ],
         [
-            'name'=>exportLoanScheduleData
+            'name'=>exportLoanScheduleData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'loan schedule',
+			'view-name'=>'export'
         ],
 
         [
-            'name'=>deleteLoanScheduleData
+            'name'=>deleteLoanScheduleData,
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'loan schedule',
+			'view-name'=>'delete'
         ],
-
-
-
-
- [
-            'name'=>'view cash management',
-        ],
-
-
+        // [
+        //     'name'=>'view sales forecast quantity base',
+		// 	'systems'=>[VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'sales forecast ',
+		// 	'view-name'=>'view quantity base'
+        // ],
         [
-            'name'=>'view financial statement',
+            'name'=>'view sales forecast value',
+			'systems'=>[SALES_FORECAST],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales forecast',
+			'view-name'=>'view value base'
         ],
-        [
-            'name'=>'view sales dashboard',
-        ],
-        [
-            'name'=>'view breakdown dashboard'
-        ],
-        [
-            'name'=>'view customer dashboard'
-        ],
-        [
-            'name'=>'view sales person dashboard'
-        ],
-        [
-            'name'=>'view discount dashboard'
+		[
+            'name'=>'view sales forecast quantity',
+			'systems'=>[SALES_FORECAST],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales forecast',
+			'view-name'=>'view quantity base'
         ],
         [
-            'name'=>'view interval comparing dashboard'
+            'name'=>'view sales breakdown analysis report',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales analysis',
+			'view-name'=>'view breakdown analysis report'
         ],
         [
-            'name'=>'view income statement dashboard'
+            'name'=>'view sales trend analysis',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales analysis',
+			'view-name'=>'view trend analysis report'
         ],
-        [
-            'name'=>'view forecast income statement dashboard'
-        ],
-        [
-            'name'=>'view actual income statement dashboard'
-        ],
-        [
-            'name'=>'view adjusted income statement dashboard'
-        ],
-        [
-            'name'=>'view modified income statement dashboard'
-        ],
-        [
-            'name'=>'view income statement comparing dashboard'
-        ],
-        [
-            'name'=>'view income statement variance dashboard'
-        ],
-        [
-            'name'=>'view analysis report'
-        ],
-  [
-            'name'=>'view sales analysis report'
-        ],
-        [
-            'name'=>'view sales forecast'
-        ],
-
-        [
-            'name'=>'view sales forecast value base'
-        ],
-
-        [
-            'name'=>'view sales forecast quantity base'
-        ],
-        [
-            'name'=>'view sales forecast fact sheet',
-        ],
-        [
-            'name'=>'view sales breakdown analysis report'
-        ],
-        [
-            'name'=>'view sales trend analysis'
-        ],
-        [
-            'name'=>'view export analysis report'
-        ],
-        [
+		[
             'name'=>'view sales report',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales analysis',
+			'view-name'=>'view sales report'
         ],
         [
-            'name'=>'create financial statement',
-        ],
-        [
-            'name'=>'edit financial statement',
-        ],
-        [
-            'name'=>'delete financial statement',
-        ],
-        [
-            'name'=>'view customer aging'
+            'name'=>'view customer aging',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'aging report',
+			'view-name'=>'view customer aging report'
         ],
 		[
-            'name'=>'view supplier aging'
+            'name'=>'view supplier aging',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'aging report',
+			'view-name'=>'view supplier aging report'
         ],
         [
-            'name'=>'view customer balances'
+            'name'=>'view customer balances',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'balance report',
+			'view-name'=>'view customers'
         ],  [
-            'name'=>'view supplier balances'
+            'name'=>'view supplier balances',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'balance report',
+			'view-name'=>'view suppliers'
         ],
 		[
-            'name'=>'view letter of guarantee issuance'
+            'name'=>'view letter of guarantee issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee issuance',
+			'view-name'=>'view'
+        ],
+		
+		
+		[
+            'name'=>'create letter of guarantee issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee issuance',
+			'view-name'=>'create'
+        ],
+		
+		
+		[
+            'name'=>'update letter of guarantee issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee issuance',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete letter of guarantee issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee issuance',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view letter of credit issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit issuance',
+			'view-name'=>'view'
+        ],
+		
+		[
+            'name'=>'create letter of credit issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit issuance',
+			'view-name'=>'create'
+        ],
+		
+		
+		[
+            'name'=>'update letter of credit issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit issuance',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete letter of credit issuance',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit issuance',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view letter of credit facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit facility',
+			'view-name'=>'view'
+        ],
+		
+		[
+            'name'=>'create letter of credit facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit facility',
+			'view-name'=>'create'
         ],
 		[
-            'name'=>'view letter of credit issuance'
+            'name'=>'update letter of credit facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit facility',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete letter of credit facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of credit facility',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view medium term loan',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'medium term loan',
+			'view-name'=>'view'
         ],
 		[
-            'name'=>'view cash dashboard'
+            'name'=>'create medium term loan',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'medium term loan',
+			'view-name'=>'create'
         ],
+		
+		[
+            'name'=>'update medium term loan',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'medium term loan',
+			'view-name'=>'update'
+        ],
+		
+		
+		[
+            'name'=>'delete medium term loan',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'medium term loan',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view certificate of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'certificate of deposit',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create certificate of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'certificate of deposit',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update certificate of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'certificate of deposit',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete certificate of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'certificate of deposit',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view time of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'time of deposit',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create time of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'time of deposit',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update time of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'time of deposit',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete time of deposit',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'time of deposit',
+			'view-name'=>'delete'
+        ],
+		
+		
+		
+		
+		[
+            'name'=>'view cash status dashboard',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'cash vero dashboard',
+			'view-name'=>'view cash status dashboard'
+        ],
+		
+		[
+            'name'=>'view cash Forecast dashboard',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'cash vero dashboard',
+			'view-name'=>'view cash forecast dashboard'
+        ],
+		
+		[
+            'name'=>'view lg & lc dashboard',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'cash vero dashboard',
+			'view-name'=>'view lg & lc forecast dashboard'
+        ],
+		
+		
 
 		[
-            'name'=>'view notification settings'
+            'name'=>'view notification settings',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view notification settings'
+        ],
+		
+		[
+            'name'=>'view customers settings',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view customers'
         ],
 		[
-            'name'=>'view opening balances'
+            'name'=>'view suppliers settings',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view suppliers'
+        ],
+		
+		[
+            'name'=>'view business sectors settings',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view business sectors'
+        ],
+		[
+            'name'=>'view sales channels settings',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view sales channels'
+        ],
+		[
+            'name'=>'view branches settings',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view branch'
+        ],
+		[
+            'name'=>'view cash expense categories',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view cash expense categories'
+        ],
+		[
+			'name'=>'view customer invoice past due notification',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'notification & settings',
+			'view-name'=>'view cash expense categories'
+		],
+		[
+			'name'=>'view customer invoice coming due notification',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer invoices notifications',
+			'view-name'=>'view customer invoices'
+		],
+		[
+			'name'=>'view customer invoice current due notification',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+					'group'=>'customer invoices notifications',
+			'view-name'=>'view customer invoices current due'
+		],
+		
+		[
+			'name'=>'view supplier invoices past due notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'supplier invoices notifications',
+			'view-name'=>'view supplier invoices past due'
+		],[
+			'name'=>'view supplier invoices current due notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'supplier invoices notifications',
+			'view-name'=>'view supplier invoices current due'
+		],[
+			'name'=>'view supplier invoices coming due notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+							'group'=>'supplier invoices notifications',
+			'view-name'=>'view supplier invoices coming due'
+		],[
+			'name'=>'view cheque past due notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'receivable cheques notifications',
+			'view-name'=>'view cheque past due'
+		],
+		[
+			'name'=>'view cheque current due notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			   'group'=>'receivable cheques notifications',
+			'view-name'=>'view cheque current due'
+		],
+		[
+			'name'=>'view cheque under collection today notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			 'group'=>'receivable cheques notifications',
+			'view-name'=>'view cheque under collection today'
+		],[
+			'name'=>'view cheque under collection since days notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'receivable cheques notifications',
+			'view-name'=>'view cheque under collection since days'
+		],
+		[
+			'name'=>'view pending payable cheques notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'pending payable cheques notifications',
+			'view-name'=>'view pending payable cheques'
+		],
+		[
+            'name'=>'update cash & cheques opening balances',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'opening-balances',
+			'view-name'=>'update cash & cheques'
+        ],[
+            'name'=>'update lg opening balances',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'opening-balances',
+			'view-name'=>'update lg opening balances'
+		],
+		[
+            'name'=>'update lc opening balances',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'opening-balances',
+			'view-name'=>'update lc opening balances'
         ]
 		,
 		[
-            'name'=>'view customers contracts'
+            'name'=>'view customers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer contracts',
+			'view-name'=>'view'
         ],
 		[
-			'name'=>'view suppliers contracts'
+            'name'=>'create customers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer contracts',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update customers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer contracts',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete customers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customer contracts',
+			'view-name'=>'delete'
+        ],
+		[
+			'name'=>'view suppliers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier contracts',
+			'view-name'=>'view'
 		],
 		[
-            'name'=>'view cashvero settings'
-        ],
-
-
+			'name'=>'create suppliers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier contracts',
+			'view-name'=>'create'
+		],
 		[
-            'name'=>'view cash Forecast dashboard'
-        ],
+			'name'=>'update suppliers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier contracts',
+			'view-name'=>'update'
+		],
 		[
-            'name'=>'view lg & lc dashboard'
-        ],
+			'name'=>'delete suppliers contracts',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier contracts',
+			'view-name'=>'delete'
+		],
+		[
+			'name'=>'view safe statement report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'reports',
+			'view-name'=>'safe statement'
+		],
+		[
+			'name'=>'view bank statement report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'reports',
+			'view-name'=>'bank statement'
+		],
+		[
+			'name'=>'view lc & lg statement report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'reports',
+			'view-name'=>'lc & lg statement'
+		],
         [
-            'name'=>'view cash flow report'
+            'name'=>'view cash flow report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'reports',
+			'view-name'=>'cash flow'
         ],
 		[
-            'name'=>'view contract cash flow report'
+            'name'=>'view contract cash flow report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'reports',
+			'view-name'=>'contract cash flow'
         ],
 		[
-			'name'=>'view withdrawals settlement report'
+			'name'=>'view withdrawals settlement report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'reports',
+			'view-name'=>'withdrawals settlement'
 		],
         [
-            'name'=>'view money received'
+            'name'=>'view money received',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'money received',
+			'view-name'=>'view'
         ],
 		[
-            'name'=>'view supplier payment'
+            'name'=>'create money received',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'money received',
+			'view-name'=>'create'
         ],
 		[
-            'name'=>'view cash expenses'
+            'name'=>'update money received',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'money received',
+			'view-name'=>'update'
         ],
 		[
-            'name'=>'view cash expense categories'
+            'name'=>'delete money received',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'money received',
+			'view-name'=>'delete'
         ],
 		[
-            'name'=>'view internal money transfer'
+            'name'=>'view supplier payment',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier payment',
+			'view-name'=>'view'
         ],
 		[
-            'name'=>'view lc settlement internal transfer'
-        ],[
-            'name'=>'view loans'
+            'name'=>'create supplier payment',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier payment',
+			'view-name'=>'create'
         ],
 		[
-			'name'=>'view buy or sell currency'
+            'name'=>'update supplier payment',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier payment',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete supplier payment',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'supplier payment',
+			'view-name'=>'delete'
+        ],
+		[
+            'name'=>'view cash expenses',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'cash expenses',
+			'view-name'=>'view'
+        ],
+		
+		[
+            'name'=>'create cash expenses',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'cash expenses',
+			'view-name'=>'create'
+        ],
+		
+		[
+            'name'=>'update cash expenses',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'cash expenses',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete cash expenses',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'cash expenses',
+			'view-name'=>'delete'
+        ],
+		
+		[
+            'name'=>'view internal money transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'internal money transfer',
+			'view-name'=>'view'
+        ],
+		
+		[
+            'name'=>'create internal money transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'internal money transfer',
+			'view-name'=>'create'
+        ],
+		
+		
+		[
+            'name'=>'update internal money transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'internal money transfer',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete internal money transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'internal money transfer',
+			'view-name'=>'delete'
+        ],
+		
+		[
+            'name'=>'view lc settlement internal transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'lc settlement internal money transfer',
+			'view-name'=>'view'
+        ],
+		
+		[
+            'name'=>'create lc settlement internal transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'lc settlement internal money transfer',
+			'view-name'=>'create'
+        ],
+		
+		
+		[
+            'name'=>'update lc settlement internal transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'lc settlement internal money transfer',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete lc settlement internal transfer',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'lc settlement internal money transfer',
+			'view-name'=>'delete'
+        ],
+		
+		[
+			'name'=>'view buy or sell currency',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'buy or sell currency',
+			'view-name'=>'view'
+		],
+		
+		[
+			'name'=>'create buy or sell currency',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'buy or sell currency',
+			'view-name'=>'create'
+		],
+		
+		[
+			'name'=>'update buy or sell currency',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'buy or sell currency',
+			'view-name'=>'update'
 		],
 		[
-			'name'=>'view foreign exchange rate'
+			'name'=>'delete buy or sell currency',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'buy or sell currency',
+			'view-name'=>'delete'
 		],
 		[
-			'name'=>'view safe statement report'
+			'name'=>'view foreign exchange rate',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'foreign exchange rate',
+			'view-name'=>'view'
+		],
+		
+		[
+			'name'=>'create foreign exchange rate',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'foreign exchange rate',
+			'view-name'=>'create'
+		],
+		
+		
+		[
+			'name'=>'update foreign exchange rate',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'foreign exchange rate',
+			'view-name'=>'update'
 		],
 		[
-			'name'=>'view bank statement report'
+			'name'=>'delete foreign exchange rate',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'foreign exchange rate',
+			'view-name'=>'delete'
+		],
+		
+		[
+			'name'=>'view income statement planning',
+			'systems'=>[INCOME_STATEMENT_PLANNING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'income statement planning',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>'view lc & lg statement report'
+			'name'=>'view financial institutions',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'financial institutions',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>'view income statement planning'
-		]
-		,[
-			'name'=>'view cash management'
+			'name'=>'create financial institutions',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'financial institutions',
+			'view-name'=>'create'
 		],
 		[
-			'name'=>'view financial institutions'
+			'name'=>'update financial institutions',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'financial institutions',
+			'view-name'=>'update'
+		],
+		
+		[
+			'name'=>'delete financial institutions',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'financial institutions',
+			'view-name'=>'delete'
+		],
+		/////////
+		
+		
+		[
+			'name'=>'view fully secured overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'fully secured overdraft',
+			'view-name'=>'view'
+		],
+		
+		[
+			'name'=>'create fully secured overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'fully secured overdraft',
+			'view-name'=>'create'
+		],
+		
+		[
+			'name'=>'update fully secured overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'fully secured overdraft',
+			'view-name'=>'update'
+		],
+		
+		[
+			'name'=>'delete fully secured overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'fully secured overdraft',
+			'view-name'=>'delete'
 		],
 		[
-			'name'=>'view quick price'
+			'name'=>'view clean overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'clean overdraft',
+			'view-name'=>'view'
+		],
+		
+		[
+			'name'=>'create clean overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'clean overdraft',
+			'view-name'=>'create'
 		],
 		[
-			'name'=>'view pricing plans'
+			'name'=>'update clean overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'clean overdraft',
+			'view-name'=>'update'
 		],
 		[
-			'name'=>'view quick price calculator'
+			'name'=>'delete clean overdraft',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'clean overdraft',
+			'view-name'=>'delete'
+		],
+		
+		
+		
+		[
+			'name'=>'view overdraft against commercial paper',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against commercial paper',
+			'view-name'=>'view'
+		],
+		
+		[
+			'name'=>'update overdraft against commercial paper',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against commercial paper',
+			'view-name'=>'update'
 		],
 		[
-			'name'=>'view quick price setting'
+			'name'=>'delete overdraft against commercial paper',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against commercial paper',
+			'view-name'=>'delete'
+		],
+		
+		
+		[
+			'name'=>'view overdraft against assignment of contract',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against assignment of contract',
+			'view-name'=>'view'
+		],
+		
+		[
+			'name'=>'create overdraft against assignment of contract',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against assignment of contract',
+			'view-name'=>'create'
+		],
+		
+		[
+			'name'=>'update overdraft against assignment of contract',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against assignment of contract',
+			'view-name'=>'update'
 		],
 		[
-			'name'=>'view revenue business line'
+			'name'=>'delete overdraft against assignment of contract',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'overdraft against assignment of contract',
+			'view-name'=>'delete'
+		],
+		////
+		[
+			'name'=>'view quick price',
+			'systems'=>[PRICING_CALCULATOR],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'quick price',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>'view positions'
+			'name'=>'view pricing plans',
+			'systems'=>[PRICING_CALCULATOR],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'pricing price',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>'view expenses'
+			'name'=>'view quick price calculator',
+			'systems'=>[PRICING_CALCULATOR],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'quick price calculator',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>'view labeling items'
+			'name'=>'view quick price setting',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'quick price calculator',
+			'view-name'=>'setting'
 		],
 		[
-			'name'=>'view create labeling items'
+			'name'=>'view revenue business line',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'revenue business line',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>viewLabelingItemData
+			'name'=>'view positions',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'positions',
+			'view-name'=>'view'
 		],
 		[
-			'name'=>uploadLabelingItemData
+			'name'=>'view expenses',
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'expenses',
+			'view-name'=>'view'
+		],
+		[
+			'name'=>'view labeling items',
+			'systems'=>[LABELING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'labeling',
+			'view-name'=>'view'
+		],
+		[
+			'name'=>'view create labeling items',
+			'systems'=>[LABELING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'labeling',
+			'view-name'=>'create'
+		],
+		[
+			'name'=>viewLabelingItemData,
+			'systems'=>[LABELING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'labeling',
+			'view-name'=>'view export'
+		],
+		[
+			'name'=>uploadLabelingItemData,
+			'systems'=>[LABELING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'labeling',
+			'view-name'=>'upload'
 		],[
-			'name'=>exportLabelingItemData
+			'name'=>exportLabelingItemData,
+			'systems'=>[LABELING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'labeling',
+			'view-name'=>'export'
 		],
 		[
-			'name'=>deleteLabelingItemData
+			'name'=>deleteLabelingItemData,
+			'systems'=>[LABELING],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'labeling',
+			'view-name'=>'delete'
+		],
+		[
+			'name'=>'view super admin',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN],
+			'group'=>'super admin permissions',
+			'view-name'=>'view'
+		],
+		[
+			'name'=>'view company admin',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN],
+			'group'=>'company admin permissions',
+			'view-name'=>'view'
+		],
+		[
+			'name'=>'create company admin',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN],
+            'group'=>'company admin permissions',
+			'view-name'=>'create'
+		],
+		[
+			'name'=>'view managers',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+			 'group'=>'managers permissions',
+			'view-name'=>'view'
+		],
+		[
+			'name'=>'create manager',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+					 'group'=>'managers permissions',
+			'view-name'=>'create'
+		],
+		[
+			'name'=>'view users',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+					 'group'=>'users permissions',
+			'view-name'=>'view'
+		],
+		[
+			'name'=>'create user',
+			'systems'=>[VERO,CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+			 'group'=>'users permissions',
+			'view-name'=>'create'
 		]
     ];
 
     foreach (Arr::except(reportNames(), ['product items', 'products / service'])  as $reportName) {
         $permissions[] = [
-            'name'=>generateReportName($reportName)
+            'name'=>generateReportName($reportName),
+			'systems'=>[VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+			'group'=>$reportName,
+			'view-name'=>'view ' .$reportName 
         ];
     }
 
     foreach (['forecast', 'actual', 'adjusted', 'modified'] as $reportType) {
         foreach (['income statement', 'balance sheet', 'cash flow statement'] as $statementName) {
             $permissions[] = [
-                'name'=>'edit ' . $reportType . ' ' . $statementName
+                'name'=>'edit ' . $reportType . ' ' . $statementName,
+				'systems'=>[VERO],
+				'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+				 'group'=>$statementName,
+				'view-name'=>'view ' .$reportType . ' ' . $statementName
             ];
         }
     }
-
+	if(count($systemsNames)){
+		return filterPermissionForSystemName($permissions,$systemsNames);
+	}
     return $permissions;
+}
+function filterPermissionForSystemName($permissions,array $systemsNames):array{
+	$result =[];
+	foreach($permissions as $permissionArr){
+		if(HArr::atLeastOneValueExistInArray($systemsNames , $permissionArr['systems'])){
+			$result[] = $permissionArr;
+		}
+		
+	}
+	return $result ;
 }
 function generateReportName($reportName)
 {
@@ -3247,6 +4273,10 @@ function reportNames()
         'service provider'=>'service provider', // here
 
     ];
+}
+function str_plural($str)
+{
+	return Str::plural($str);
 }
 function searchWordInstr(array $words, string $sentence)
 {
@@ -3751,7 +4781,7 @@ function getUploadParamsFromType(string $type = null):array
             'dbName'=>'sales_gathering',
             'orderByDateField'=>'date',
             'typePrefixName'=>__('Sales'),
-            'viewPermissionName'=>'view sales data',
+            'viewPermissionName'=>'view sales gathering data',
             'uploadPermissionName'=>'upload sales gathering data',
             'exportPermissionName'=>'export sales gathering data',
             'deletePermissionName'=>'delete sales gathering data',
@@ -4138,21 +5168,28 @@ function getIncomeStatementSubmenu($user, $company)
 }
 function getSalesAnalysisReportSubmenu($user, int $companyId):array
 {
+	$canViewSalesBreakdownAnalysis  = $user->can('view sales breakdown analysis report') ;
+	$canViewSalesTrendAnalysis = $user->can('view sales trend analysis') ;
+	$canViewSalesReport = $user->can('view sales report') ;
+	$canViewAny =  $canViewSalesBreakdownAnalysis|| $canViewSalesTrendAnalysis || $canViewSalesReport;
+	if(!$canViewAny){
+		return [];
+	}
     return [
         'sales-breakdown-analysis-report'=>[
         'title'=>__('Sales Breakdown Analysis Report'),
         'link'=>route('sales.breakdown.analysis', ['company'=>$companyId]),
-        'show'=>$user->can('view sales breakdown analysis report')
+        'show'=>$canViewSalesBreakdownAnalysis
     ],
     'sales-trend-analysis'=>[
         'title'=>__('Sales Trend Analysis'),
         'link'=>route('sales.trend.analysis', ['company'=>$companyId]),
-        'show'=>$user->can('view sales trend analysis')
+        'show'=>$canViewSalesTrendAnalysis 
     ],
     'sales-report'=>[
         'title'=>__('Sales Report'),
         'link'=>route('salesReport.view', ['company'=>$companyId]),
-        'show'=>$user->can('view sales report')
+        'show'=>$canViewSalesReport 
     ]
 ];
 
@@ -4160,83 +5197,102 @@ function getSalesAnalysisReportSubmenu($user, int $companyId):array
 
 function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
 {
-
-	// return SalesForecast::company()->first();
+	$canViewSalesForecastFactSheet = $user->can('view sales forecast value') ;
 	$salesForecast = SalesForecast::where('company_id',$companyId)->first() ;
+	$modified_seasonality = ModifiedSeasonality::where('company_id', $companyId)->first() && $salesForecast;
+	$canViewProductSalesTargetReport = $modified_seasonality ;
+	$canViewFirstAllocation = isset($modified_seasonality) && ExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast ;
+	$canViewSecondAllocation = isset($modified_seasonality) && SecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast;
+	$canViewCollectionReport = isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $salesForecast;
+	$viewSummaryReport = isset($modified_seasonality) && $salesForecast;
+	$canViewSalesForecastValueBase = $canViewSalesForecastFactSheet || $canViewProductSalesTargetReport || $canViewFirstAllocation || $canViewSecondAllocation || $canViewCollectionReport || $viewSummaryReport;
+	if(!$canViewSalesForecastValueBase){
+		return [];
+	}
 	return [
 		'sales-forecast-fact-sheet'=>[
 			'title'=>__('Sales forecast Fact Sheet'),
-			'show'=>$user->can('view sales forecast fact sheet'),
+			'show'=>$canViewSalesForecastFactSheet,
 			'link'=>route('sales.forecast',['company'=>$companyId]),
 		],
 		'product-sales-target-report'=>[
 			'title'=>__('Product Sales Target Report'),
-			'show'=>$modified_seasonality = ModifiedSeasonality::where('company_id', $companyId)->first() && $salesForecast,
+			'show'=>$canViewProductSalesTargetReport,
 			'link'=>route('products.allocations',['company'=>$companyId]),
 		],
 		'first-allocation'=>[
 			'title'=>__('First Allocation'),
-			'show'=> isset($modified_seasonality) && ExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast,
+			'show'=> $canViewFirstAllocation ,
 			'link'=>route('new.product.seasonality',['company'=>$companyId]),
 		],
 		'second-allocation'=>[
 			'title'=>__('Second Allocation'),
-			'show'=> isset($modified_seasonality) && SecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast,
+			'show'=> $canViewSecondAllocation,
 			'link'=>route('second.new.product.seasonality',['company'=>$companyId]),
 		],
 		'collection-report'=>[
 			'title'=>__('Collection Report'),
-			'show'=> isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $salesForecast,
+			'show'=> $canViewCollectionReport,
 			'link'=>route('collection.report',['company'=>$companyId]),
 		],
 		'summary-report'=>[
 			'title'=>__('Summary Report'),
-			'show'=> isset($modified_seasonality) && $salesForecast  ,
+			'show'=> $viewSummaryReport  ,
 			'link'=>route('forecast.report',['company'=>$companyId]),
 		],
 
 	];
 }
-function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId)
+function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId):array 
 {
-
+		$canViewFactSheet = $user->can('view sales forecast quantity') ;
 		$sales_forecast = QuantitySalesForecast::where('company_id',$companyId)->first();
+		$canViewProductSalesTargetReport = $modified_seasonality = QuantityModifiedSeasonality::where('company_id', $companyId)->first() && $sales_forecast ;
+		$canViewFirstAllocation = isset($modified_seasonality) && QuantityExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast;
+		$canViewSecondAllocation = isset($modified_seasonality) && QuantitySecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast;
+		$canViewCollectionReport = isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $sales_forecast;
+		$canViewSummaryReport   = isset($modified_seasonality) && $sales_forecast;
+		$canViewSalesForecastQuantityBase =  $canViewFactSheet || $canViewProductSalesTargetReport || $canViewFirstAllocation || $canViewSecondAllocation || $canViewCollectionReport || $canViewSummaryReport;
+		if(!$canViewSalesForecastQuantityBase){
+			return [];
+		}
 	return [
 		'sales-forecast-fact-sheet'=>[
 			'title'=>__('Sales Forecast Fact Sheet'),
 			'link'=>route('sales.forecast.quantity',['company'=>$companyId]),
-			'show'=>$user->can('view sales forecast fact sheet'),
+			'show'=> $canViewFactSheet,
 		],
 		'product-sales-target-report'=>[
 			'title'=>__('Product Sales Target Report'),
-			'show'=>$modified_seasonality = QuantityModifiedSeasonality::where('company_id', $companyId)->first() && $sales_forecast,
+			'show'=>$canViewProductSalesTargetReport,
 			'link'=>route('products.allocations.quantity',['company'=>$companyId]),
 		],
 		'first-allocation'=>[
 			'title'=>__('First Allocation'),
-			'show'=> isset($modified_seasonality) && QuantityExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast,
+			'show'=> $canViewFirstAllocation,
 			'link'=>route('new.product.seasonality.quantity',['company'=>$companyId]),
 		],
 		'second-allocation'=>[
 			'title'=>__('Second Allocation'),
-			'show'=> isset($modified_seasonality) && QuantitySecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast,
+			'show'=> $canViewSecondAllocation,
 			'link'=>route('second.new.product.seasonality.quantity',['company'=>$companyId]),
 		],
 		'collection-report'=>[
 			'title'=>__('Collection Report'),
-			'show'=> isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $sales_forecast,
+			'show'=> $canViewCollectionReport,
 			'link'=>route('collection.quantity.report',['company'=>$companyId]),
 		],
 		'summary-report'=>[
 			'title'=>__('Summary Report'),
-			'show'=> isset($modified_seasonality) && $sales_forecast ,
+			'show'=> $canViewSummaryReport ,
 			'link'=>route('forecast.quantity.report',['company'=>$companyId]),
 		]
 	];
 }
-function getHeaderMenu()
+function getHeaderMenu($currentCompany = null)
 {
-    $company = getCurrentCompany();
+    $company = getCurrentCompany() ?: $currentCompany;
+	
 	/**
 	 * @var User $user
 	 */
@@ -4258,78 +5314,114 @@ function getHeaderMenu()
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
 	$notificationsSubItems = \App\Notification::formatForMenuItem();
+	$canViewNotificationSetting = $user->can('view notification settings');
+	$canViewCashExpenseCategories = $user->can('view cash expense categories');
+	$canViewCustomersSettings = $user->can('view customers settings');
+	$canViewSuppliersSettings = $user->can('view suppliers settings');
+	$canViewBusinessSectorSettings = $user->can('view business sectors settings');
+	$canViewSalesChannelsSettings = $user->can('view sales channels settings');
+	$canViewBranchesSettings = $user->can('view branches settings');
+	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewSalesChannelsSettings||$canViewBranchesSettings || $canViewCashExpenseCategories;
 	$notificationsSubItems[]	= [
 		'title'=>__('Notification Settings'),
 	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
-	'show'=>$user->can('view notification settings'),
+	'show'=>$canViewNotificationSetting,
 	];
+
+	$canViewNotificationsSettingAndGeneralSetting = $canViewNotificationSetting || $canViewGeneralSetting;
+	
+	
+	
+	
+	$notificationsSubItems[]	= [
+		'title'=>__('Permissions'),
+		'link'=>route('roles.permissions.edit', ['company'=>$companyId]),
+		'show'=>$user->can('update permissions') && ! $user->isSuperAdmin(),
+	];
+	
+	$notificationsSubItems[]	= [
+		'title'=>__('Users'),
+		'link'=>route('user.index',['company'=>$companyId]),
+		'show'=>$user->can('view users') && ! $user->isSuperAdmin(),
+	];
+	
+	
 	$notificationsSubItems[] = [
 		'title'=>__('General Settings'),
 		'link'=>'#',
-		'show'=>true ,
+		'show'=>$canViewGeneralSetting ,
 		'submenu'=> [
 			[
 				'title'=>__('Customers'),
 				'link'=>'#',
-				'show'=>true 
+				'show'=>$canViewCustomersSettings 
 			],
 			[
 				'title'=>__('Suppliers'),
 				'link'=>'#',
-				'show'=>true 
+				'show'=>$canViewSuppliersSettings 
 			],
 			[
 				'title'=>__('Business Sectors'),
 				'link'=>'#',
-				'show'=>true 
+				'show'=>$canViewBusinessSectorSettings 
 			],[
 				'title'=>__('Sales Channels'),
 				'link'=>'#',
-				'show'=>true 
+				'show'=>$canViewSalesChannelsSettings 
 			],
 			[
 				'title'=>__('Branches'),
 				'link'=>'#',
-				'show'=>true 
+				'show'=>$canViewBranchesSettings 
 			],
 			[
 				'title'=>__('Cash Expense Categories'),
 			'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
-			'show'=>$user->can('view cash expense categories'),
+			'show'=>$canViewCashExpenseCategories,
 			],
 		]
 	];
+	$canViewCashStatusDashboard = $user->can('view cash status dashboard');
+	$canViewCashForecastDashboard = $user->can('view cash Forecast dashboard');
+	$canViewLgAndLcDashboard = $user->can('view lg & lc dashboard');
+	$canViewCashDashboard = $canViewCashStatusDashboard || $canViewCashForecastDashboard ||$canViewLgAndLcDashboard;
 	
+	
+	$canUpdateCashAndChequesOpeningBalances  =$user->can('update cash & cheques opening balances');
+	$canUpdateLgOpeningBalances  =$user->can('update lg opening balances');
+	$canUpdateLcOpeningBalances  =$user->can('update lc opening balances');
+	$canViewOpeningBalances =$canUpdateCashAndChequesOpeningBalances || $canUpdateLgOpeningBalances || $canUpdateLcOpeningBalances ;
 	$cashManagementSubItems = [
 
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
 		'notifications'=>[
 			'title'=>__('Notifications & Settings'),
 			'link'=>'#',
-			'show'=>true,
+			'show'=>$canViewNotificationsSettingAndGeneralSetting,
 			'submenu'=>$notificationsSubItems
 		],
 		'cash-dashboard'=>[
 			'title'=>__('Cash Dashboard'),
-			'show'=>true ,
+			'show'=>$canViewCashDashboard ,
 			'link'=>'#',
 			'submenu'=>[
 				[
 					'title'=>__('Cash Status'),
 					'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
-					'show'=>$user->can('view cash dashboard'),
+					'show'=>$canViewCashStatusDashboard,
 					'submenu'=>[]
 				],
 				[
 					'title'=>__('Cash Forecast'),
 					'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-					'show'=>$user->can('view cash Forecast dashboard'),
+					'show'=>$canViewCashForecastDashboard,
 					'submenu'=>[]
 				],
 				[
 					'title'=>__('LG & LC Dashboard'),
 					'link'=>route('view.lglc.dashboard', ['company'=>$companyId]),
-					'show'=>$user->can('view lg & lc dashboard'),
+					'show'=>$canViewLgAndLcDashboard,
 					'submenu'=>[]
 				],
 			]
@@ -4512,25 +5604,24 @@ function getHeaderMenu()
 						],[
 					'title'=>__('Opening Balances'),
 					'link'=>'#',
-					'show'=>true ,
+					'show'=>$canViewOpeningBalances ,
 					'submenu'=>[
 						[
 							'title'=>__('Cash & Cheques Opening Balance'),
-						'link'=>route('opening-balance.index', ['company'=>$companyId]),
-						'show'=>$user->can('view opening balances'),
-
+							'link'=>route('opening-balance.index', ['company'=>$companyId]),
+							'show'=>$canUpdateCashAndChequesOpeningBalances,
 						],
 						[
 
 					'title'=>__('LGs Opening Balances'),
 					'link'=>route('lg-opening-balance.index',['company'=>$companyId]),
-					'show'=>true
+					'show'=>$canUpdateLgOpeningBalances
 						],
 						[
 
 							'title'=>__('LCs Opening Balances'),
 							'link'=>route('lc-opening-balance.index',['company'=>$companyId]),
-							'show'=>true
+							'show'=>$canUpdateLcOpeningBalances
 								]
 					]
 						],
@@ -4552,33 +5643,45 @@ function getHeaderMenu()
 			'submenu'=>[]
 		]
 		,
-		// 'settings'=>[
-		// 	'title'=>__('Settings'),
-		// 	'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-		// 	'show'=>$user->can('view cashvero settings'),
-		// 	'submenu'=>[
-
-
-
-				
-		// 	]
-		// ],
-
-		
-
-
-
-
 		];
 		$isCustomerOrSupplierUploading = in_array('CustomerInvoice',Request()->segments()) || in_array('SupplierInvoice',Request()->segments());
-		if(hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading || in_array('LoanSchedule',Request()->segments()) ){
+		if( $company->hasCashVero() && (hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading || in_array('LoanSchedule',Request()->segments())) ){
 			return $cashManagementSubItems ;
 		}
+		
+		$canViewVeroAnalysisDashboard = $user->can('view sales dashboard') || $user->can('view breakdown dashboard') || ($user->can('view customer dashboard')&& $hasSelectCustomerNameInTemplate)
+		|| ($user->can('view sales person dashboard')&&$hasSelectSalesPersonInTemplate) || $user->can('view interval comparing dashboard')
+		|| $user->can('view income statement dashboard');
+		
+		
+		$canViewUploadSalesData = $user->can('upload sales gathering data') ;
+		$canViewUploadExportData = $user->can(uploadExportAnalysisData) ;
+		$canViewUploadCustomerInvoiceData = $user->can(uploadCustomerInvoiceData) ;
+		$canViewUploadSupplierInvoiceData = $user->can(uploadSupplierInvoiceData) ;
+		$canViewUploadLabelingData = $user->can(uploadLabelingItemData);
+		$canViewDataGathering = $canViewUploadSalesData || $canViewUploadExportData || $canViewUploadCustomerInvoiceData || $canViewUploadSupplierInvoiceData || $canViewUploadLabelingData;
+		
+		$salesAnalysisSubItems = getSalesAnalysisReportSubmenu($user, $companyId) ;
+		
+		$canViewSalesAnalysisReport = count($salesAnalysisSubItems) ;
+		$canExportAnalysisReport = $user->can(viewExportAnalysisData) ;
+		$canViewAnalysisReport = $canViewSalesAnalysisReport || $canExportAnalysisReport ;
+		
+		
+		$salesForecastValueBaseSubItems=getSalesForecastValueBaseSubmenu($user,$companyId);
+		$canViewSalesForecastValueBase=count($salesForecastValueBaseSubItems); 
+		// $user->can('view sales forecast value base');
+		$salesForecastQuantityBaseSubItems= getSalesForecastQuantityBaseSubmenu($user,$companyId);
+		$canViewSalesForecastQuantityBase=count($salesForecastQuantityBaseSubItems); 
+		$canViewSalesForecast = ($hasSalesGatheringDataUploadData)  && ($canViewSalesForecastValueBase||$canViewSalesForecastQuantityBase);
+		
+		
+		
     return [
         'home'=>generateMenuItem(__('Home'), $user->can('view home'),route('home'), []),
         'dashboard'=>[
             'title'=>__('Dashboard'),
-            'show'=>$user->can('view dashboard') ,
+            'show'=>$canViewVeroAnalysisDashboard ,
             'submenu'=>[
                 'sales-dashboard'=>generateMenuItem(__('Sales Dashboard'), $user->can('view sales dashboard'), route('dashboard', ['company'=>$companyId]), []),
                 'breakdown-dashboard'=>generateMenuItem(__('Breakdown Dashboard'), $user->can('view breakdown dashboard'), route('dashboard.breakdown', ['company'=>$companyId])),
@@ -4590,56 +5693,56 @@ function getHeaderMenu()
                 ],
                 'data-gathering'=>[
                     'title'=>__('Data Gathering'),
-                    'show'=>$user->can('view data gathering'),
+                    'show'=>$canViewDataGathering,
                     'link'=>'#',
                     'submenu'=>[
                         'upload new sales data'=>[
                             'title'=>__('Upload New Sales Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SalesGathering']),
-                            'show'=>$user->can('upload sales gathering data'),
+                            'show'=>$canViewUploadSalesData,
                             'submenu'=>[]
                         ],
                         'upload new export data'=>[
                             'title'=>__('Upload New Export Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'ExportAnalysis']),
-                            'show'=>$user->can(uploadExportAnalysisData),
+                            'show'=>$canViewUploadExportData,
                             'submenu'=>[]
                         ],
                         'upload new customer invoice data'=>[
                             'title'=>__('Upload New Customer Invoice Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
-                            'show'=>$user->can(uploadCustomerInvoiceData),
+                            'show'=>$canViewUploadCustomerInvoiceData,
                             'submenu'=>[]
 						],
 						'upload new supplier invoice data'=>[
                             'title'=>__('Upload New Supplier Invoice Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice']),
-                            'show'=>$user->can(uploadSupplierInvoiceData),
+                            'show'=>$canViewUploadSupplierInvoiceData,
                             'submenu'=>[]
 						],
 						'upload-new-labeling-data'=>[
                             'title'=>__('Upload New Labeling Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'LabelingItem']),
-                            'show'=>$user->can(uploadLabelingItemData),
+                            'show'=>$canViewUploadLabelingData,
                             'submenu'=>[]
                         ]
                     ]
                         ],
                         'analysis-report'=>[
                             'title'=>__('Analysis Report'),
-                            'show'=>$user->can('view analysis report') ,
+                            'show'=>$canViewAnalysisReport,
                             'link'=>'#',
                             'submenu'=>[
                                 'sales-analysis-report'=>[
                                     'title'=>__('Sales Analysis Report'),
-                                    'show'=>$user->can('view sales analysis report'),
+                                    'show'=>$canViewSalesAnalysisReport,
                                     'link'=>'#',
-                                    'submenu'=>getSalesAnalysisReportSubmenu($user, $companyId)
+                                    'submenu'=>$salesAnalysisSubItems 
                                 ] ,
 								'export-analysis-report'=>[
 									'title'=>__('Export Analysis Report'),
 									'link'=>route('sales.export.analysis', ['company'=>$companyId]),
-									'show'=>$user->can('view export analysis data')
+									'show'=>$canExportAnalysisReport
 								],
 
 
@@ -4650,18 +5753,18 @@ function getHeaderMenu()
 								'sales-forecast'=>[
 									'title'=>__('Sales Forecast'),
 									'link'=>'#',
-									'show'=>$user->can('view sales forecast') && $hasSalesGatheringDataUploadData ,
+									'show'=>$canViewSalesForecast  ,
 									'submenu'=>[
 										'sales-forecast-value-base'=>[
-											'title'=>__('Sales Forecast Value Base'),
+										'title'=>__('Sales Forecast Value Base'),
 										'link'=>'#',
-										'show'=>$user->can('view sales forecast value base'),
-										'submenu'=>getSalesForecastValueBaseSubmenu($user,$companyId)
+										'show'=>$canViewSalesForecastValueBase,
+										'submenu'=>$salesForecastValueBaseSubItems
 										],
 										'sales-forecast-quantity-base'=>[
 											'title'=>__('Sales Forecast Quantity Base'),
 											'link'=>'#',
-											'show'=>$user->can('view sales forecast quantity base'),
+											'show'=>$canViewSalesForecastQuantityBase,
 											'submenu'=>getSalesForecastQuantityBaseSubmenu($user,$companyId)
 										]
 									]
@@ -4674,7 +5777,7 @@ function getHeaderMenu()
 										'cash-management'=>[
 											'title'=>__('Cash Management'),
 											'link'=>'#',
-											'show'=>$user->can('view cash management'),
+											'show'=>$company->hasCashVero()   ,
 											'submenu'=>$cashManagementSubItems
 												],
 
@@ -5010,6 +6113,10 @@ function touppercase($currentName){
 function toupperfirst($currentName){
 	return ucfirst($currentName);
 }
+function capitalize($currentName)
+{
+	return toupperfirst($currentName);
+}
 
 function dashesToCamelCase($string)
 {
@@ -5251,3 +6358,42 @@ if (!function_exists('getFixedLoanTypes')) {
 	}
 		return $formattedResult ; 
 	}
+function hasAuthFor($permissionName)
+{
+	return auth()->user()->can($permissionName);
+}
+function formatArrayAsGroup(array $permissions):array
+{
+	$result = [];
+	foreach($permissions as $permissionArr){
+		if(!isset($permissionArr['group'])){
+			dd($permissionArr);
+		}
+		$result[$permissionArr['group']][] =$permissionArr; 
+	}
+	return $result;
+}
+function generateModelData($fieldName , $model, $functionName = null , $defaultValue = null ){
+	$oldFromModel = isset($model) ? $model->{$fieldName} : $defaultValue ;
+	if($functionName){
+		$oldFromModel = isset($model) ? $model->$functionName() : $defaultValue ;
+	}
+		return old($fieldName ,  $oldFromModel);
+}
+function fillObjectFromArray(array $items,$object)
+{
+	$result = [];
+	$isString  = $object;
+	
+	foreach($items as $arrWithItsKeys){
+		if($isString){
+			$object = new $object;
+		}
+		foreach((array)$arrWithItsKeys as $key => $val){
+			$object->{$key}  = $val;
+		}
+		$result[] = $object ;
+	}
+
+	return $result ;
+}

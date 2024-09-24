@@ -176,7 +176,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
+                                                        <select required name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -192,7 +192,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select required data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                         </select>
                                                     </div>

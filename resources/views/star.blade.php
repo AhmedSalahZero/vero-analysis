@@ -1,2 +1,2 @@
 
-<span class="text-danger ">*</span>
+<span class="text-danger required-label">*</span>

@@ -4,7 +4,9 @@
     <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
     <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
-
+<?php
+	use App\Models\User;
+?>
 
 
 <div class="row">
@@ -14,40 +16,68 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        <?php echo e(__(isset($roles) ?'Edit Section' : 'Create Section')); ?>
+                        
+						<?php echo e(__('Permissions')); ?>
 
                     </h3>
                 </div>
             </div>
         </div>
+
             <!--begin::Form-->
-            <?php $roles_row = isset($roles) ? $roles : old(); ?>
-            <form class="kt-form kt-form--label-right" method="POST" action= <?php echo e(isset($role) ? route('roles.permissions.update',[$scope,$role]): route('roles.permissions.store',$scope)); ?> enctype="multipart/form-data">
+          
+            <form class="kt-form kt-form--label-right" method="POST" 
+			
+			action="<?php echo e(route('roles.permissions.update',$company ? [$company->id] : [])); ?>"
+			 enctype="multipart/form-data">
                 <?php echo csrf_field(); ?>
                 <?php echo e(isset($role) ?  method_field('POST'): ""); ?>
 
                 <div class="kt-portlet">
                     <div class="kt-portlet__body">
                         <div class="form-group row section">
+						   <div class="col-md-4">
+                                <label><?php echo e(__('Company')); ?> </label>
+                                <select id="company-select-id" update-users-based-on-company-and-role required name="company_id" class="form-control kt-selectpicker" >
+                                    <?php $selectedcompanies = isset($user) ?  $user->companies->pluck('id')->toArray() : []; ?>
+                                    <?php $__currentLoopData = $companies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option <?php echo e(old('company_id') == $item->id || in_array($item->id, $selectedcompanies) ? 'selected' : ''); ?>  value="<?php echo e($item->id); ?>"><?php echo e($item->name[$lang]); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
 
-                                <div class="col-md-12">
-                                    <label><?php echo e(__('Role Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                                    <div class="kt-input-icon">
-                                        <input type="text" name="role" value="<?php echo e(isset($role) ? $role->name : old('name')); ?>" class="form-control" placeholder="<?php echo e(__('Role Name')); ?>" required>
-                                         <?php if (isset($component)) { $__componentOriginalffdb2b47423986c543526403ae50ad342b26dbd3 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\ToolTip::class, ['title' => ''.e(__('Kash Vero')).'']); ?>
-<?php $component->withName('tool-tip'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?>
-<?php if (isset($__componentOriginalffdb2b47423986c543526403ae50ad342b26dbd3)): ?>
-<?php $component = $__componentOriginalffdb2b47423986c543526403ae50ad342b26dbd3; ?>
-<?php unset($__componentOriginalffdb2b47423986c543526403ae50ad342b26dbd3); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+                            </div> 
+							
+  							<div class="col-md-4">
+                                <label><?php echo e(__('Role')); ?> </label>
+                                <select  required id="role-select-id" name="role_id" class="form-control kt-selectpicker" update-users-based-on-company-and-role >
+	                                    <?php if(auth()->user()->isSuperAdmin() || (isset($user) && $user->hasRole(User::SUPER_ADMIN) )): ?>
+										<option   value="<?php echo e(User::SUPER_ADMIN); ?>" <?php if(isset($user) && $user->hasRole(User::SUPER_ADMIN) || old('role_id') ==User::SUPER_ADMIN  ): ?> selected <?php endif; ?> > <?php echo e(__("Super Admin")); ?></option>
+										<?php endif; ?> 
+										<?php if(auth()->user()->can('create company admin') || (isset($user) && $user->hasRole(User::COMPANY_ADMIN) )): ?>
+										<option   value="<?php echo e(User::COMPANY_ADMIN); ?>" <?php if(isset($user) && $user->hasRole(User::COMPANY_ADMIN) || old('role_id') ==User::COMPANY_ADMIN): ?> selected <?php endif; ?> > <?php echo e(__("Company Admin")); ?></option>
+										<?php endif; ?>
+										<?php if(auth()->user()->can('create manager') || (isset($user) && $user->hasRole(User::MANAGER) )): ?>
+										<option   value="<?php echo e(User::MANAGER); ?>" <?php if(isset($user) && $user->hasRole(User::MANAGER) || old('role_id') ==User::MANAGER ): ?> selected <?php endif; ?> > <?php echo e(__("Manager")); ?></option>
+										<?php endif; ?>
+										<?php if(auth()->user()->can('create user') || (isset($user) && $user->hasRole(User::USER) )): ?>
+										<option   value="<?php echo e(User::USER); ?>" <?php if(isset($user) && $user->hasRole(User::USER) || old('role_id') ==User::USER): ?> selected <?php endif; ?> > <?php echo e(__("User")); ?></option>
+										<?php endif; ?>
+                                </select>
+
+                            </div>
+                                    <div class="col-md-4">
+                                        <label><?php echo e(__('User')); ?> <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select
+												 id="user-id"  data-current-selected="<?php echo e(isset($model) ? $model->getUserId(): old('user_id')); ?>" name="user_id" class="form-control role-users">
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+									
+
 
                         </div>
                     </div>
@@ -57,59 +87,13 @@
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title head-title text-primary">
-                                <?php echo e(__('Section Information')); ?>
+                                <?php echo e(__('Permissions')); ?>
 
                             </h3>
                         </div>
                     </div>
-                    <div class="kt-portlet__body">
-                        <div class="form-group-marginless">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-lg-12 " >
-                                        <label class="kt-option bg-secondary">
-                                            <span class="kt-option__control">
-                                                <span
-                                                    class="kt-checkbox kt-checkbox--bold kt-checkbox--brand kt-checkbox--check-bold"
-                                                    checked>
-                                                    <input type="checkbox" id="select_all"  >
-                                                    <span></span>
-                                                </span>
-                                            </span>
-                                            <span class="kt-option__label">
-                                                <span class="kt-option__head">
-                                                    <span class="kt-option__title"><b> <?php echo e(__('Select All')); ?> </b> </span>
-                                                </span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-							 <?php $__currentLoopData = getPermissions(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $permissionArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <div class="form-group kt-checkbox-list">
-                                        <div class="row col-md-12">
-                                            <label class="col-3 col-form-label text-left text-capitalize"><b> <?php echo e($permissionArray['name']); ?> </b></label>
-                                            <div class="col-9">
-                                                <div class="kt-checkbox-inline d-flex justify-content-between">
-                                                    <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success " cheched="">
-                                                        <input type="checkbox" class="view" value="1" name="permissions[<?php echo e($permissionArray['name']); ?>]"
-                                                        <?php echo e(isset($role)&&$role->hasPermissionTo($permissionArray['name']) ? 'checked' : ''); ?>
-
-                                                        > <?php echo e($permissionArray['name']); ?>
-
-                                                        <span></span>
-                                                    </label>
-                                                    
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div class="kt-portlet__body" id="append-permission-views">
                         
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-							
-                            
-                        </div>
                     </div>
                 </div>
 
@@ -139,7 +123,7 @@
     <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')); ?>" type="text/javascript"></script>
     <!--end::Page Scripts -->
     <script>
-        $('#select_all').change(function(e) {
+        $(document).on('change','#select_all',function(e) {
             if ($(this).prop("checked")) {
                 $('.view').prop("checked", true);
                 $('.create').prop("checked", true);
@@ -153,6 +137,53 @@
             }
         });
     </script>
+	<script>
+	$(document).on('change','[update-users-based-on-company-and-role]',function(e){
+		const companyId = $('select#company-select-id').val();
+		const roleName = $('select#role-select-id').val();
+		const currentUserSelect = $('select#user-id').attr('data-current-selected')
+	
+		if(roleName && companyId){
+			$.ajax({
+			url:"<?php echo e(route('update.users.based.on.company.and.role')); ?>",
+			data:{
+				companyId,
+				roleName
+			},
+			type:"get",
+			success:function(res){
+				const users = res.users
+				let userOptions = '';
+				for(var i = 0 ; i <users.length ; i++){
+					var selected = currentUserSelect == users[i].id ? 'selected':''
+					userOptions =' <option '+ selected +' value="'+users[i].id+'" >'+ users[i].name +'</option>';
+				}
+				$('select#user-id').empty().append(userOptions).trigger('change')
+			}
+		})
+		}
+		
+	})
+	$(document).on('change','select#user-id',function(){
+		const userId = $('select#user-id').val();
+		const companyId = $('select#company-select-id').val()
+		if(userId){
+			$.ajax({
+				url:"<?php echo e(route('render.permissions.html.for.user')); ?>",
+				data:{
+					userId,
+					companyId
+				},
+				success:function(res){
+					$('#append-permission-views').empty().append(res.view)
+				}
+			})
+		}else{
+			$('#append-permission-views').empty()
+		}
+	})
+	$('[update-users-based-on-company-and-role]:eq(0)').trigger('change');
+	</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/super_admin_view/roles_and_permissions/form.blade.php ENDPATH**/ ?>

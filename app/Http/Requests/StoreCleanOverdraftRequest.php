@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\OutstandingBreakdown;
+use App\Rules\OutstandingBreakdownRule;
 use App\Rules\UniqueAccountNumberRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,8 +26,15 @@ class StoreCleanOverdraftRequest extends FormRequest
      */
     public function rules(array $excludeAccountNumbers = [])
     {
+
+	
         return [
-            'account_number'=>new UniqueAccountNumberRule($excludeAccountNumbers)
+			'contract_start_date'=>'required|date',
+			'contract_end_date'=>'required|date|after:contract_start_date',
+            'account_number'=>['required',new UniqueAccountNumberRule($excludeAccountNumbers)],
+			'limit'=>['required','gt:0'],
+			'interest_rate'=>['required','gt:0'],
+			'outstanding_breakdowns'=>[new OutstandingBreakdownRule($this->outstanding_balance?:0,$this->contract_start_date)]
         ];
     }
 }

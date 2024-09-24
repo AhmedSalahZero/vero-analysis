@@ -51,6 +51,9 @@ class ContractCashFlowReportController
 		 * @var Contract $contract 
 		 */
 		$contractCode = $contract ? $contract->getCode() : null ;
+		if(is_null($contractCode)){
+			return redirect()->back()->with('fail',__('Please Select Contract'));
+		}
 		$customer = $contract ? $contract->client : null ;
 		// dd($customer);
 		// $customerName = $customer ? $customer->getName() : null ;
@@ -72,7 +75,7 @@ class ContractCashFlowReportController
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
 		$startDate = $request->get('start_date',$request->get('cash_start_date'));
-		$currency = $contract->getCurrency();
+		$currency = $contract ? $contract->getCurrency() : $company->getMainFunctionalCurrency();
 		$year = explode('-',$startDate)[0];
 		$endDate  = $request->get('end_date',$request->get('cash_end_date'));
 		$datesWithWeeks = [];

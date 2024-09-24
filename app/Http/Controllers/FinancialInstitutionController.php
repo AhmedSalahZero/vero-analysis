@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Http\Requests\StoreCurrentAccountRequest;
+use App\Http\Requests\StoreFinancialInstitutionRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CertificatesOfDeposit;
@@ -10,6 +11,7 @@ use App\Models\LetterOfCreditFacility;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
+use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -118,10 +120,11 @@ class FinancialInstitutionController
 		]);
     }
 	
-	public function store(Company $company , Request $request){
+	public function store(Company $company , StoreFinancialInstitutionRequest $request){
 		$type = $request->get('type');
 		$data = $request->only(['type','branch_name']);
 		$accounts = $type == 'bank' ? $request->get('accounts',[]) : [];
+
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		$additionalData = [];
@@ -168,7 +171,7 @@ class FinancialInstitutionController
 		
 	}
 	
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution){
+	public function update(Company $company , StoreFinancialInstitutionRequest $request , FinancialInstitution $financialInstitution){
 		$type = $request->get('type');
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only(['type','branch_name']);

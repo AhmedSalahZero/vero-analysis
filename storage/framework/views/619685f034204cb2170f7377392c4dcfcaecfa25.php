@@ -46,15 +46,15 @@
                 </li>
 
             </ul>
-
+			<?php if(hasAuthFor('create clean overdraft')): ?>
             <div class="flex-tabs">
                 <a href="<?php echo e(route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])); ?>" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     <?php echo e(__('New Record')); ?>
 
                 </a>
-                
             </div>
+			<?php endif; ?> 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -130,7 +130,10 @@
                                         <?php echo $__env->make('reports.clean-overdraft.apply-rate', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											<?php if(auth()->user()->can('update clean overdraft')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
+											<?php if(auth()->user()->can('delete clean overdraft')): ?>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($cleanOverdraft->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-<?php echo e($cleanOverdraft->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -153,14 +156,18 @@
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
                                         </span>
+										
+										  <?php $__currentLoopData = $cleanOverdraft->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+											<?php echo $__env->make('reports.clean-overdraft.rate-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+								
                                     </td>
                                 </tr>
 
 
-                                <?php $__currentLoopData = $cleanOverdraft->rates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$rate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-									<?php echo $__env->make('reports.clean-overdraft.rate-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                              
 
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
@@ -206,17 +213,6 @@
 </script>
 <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
 <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
-<script>
-
-</script>
-<script>
-
-
-</script>
-
-
-
-
 
 
 
@@ -254,7 +250,6 @@
 </script>
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('js'); ?>
-
 
 <?php $__env->stopPush(); ?>
 

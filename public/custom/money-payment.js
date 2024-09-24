@@ -108,7 +108,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 		}).then(function (res) {
 			var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 			$('.js-append-down-payment-to').empty()
-		
+			
 			for (var i = 0; i < res.purchases_orders.length; i++) {
 				 var salesOrderId = res.purchases_orders[i].id
 				 var salesOrderNumber = res.purchases_orders[i].po_number
@@ -127,6 +127,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 					var domPaidAmount = $(lastNode).find('.js-paid-amount')
 					domPaidAmount.val(paidAmount)
 					domPaidAmount.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][paid_amount]')
+					console.log(lastNode,'--')
 					$('.js-append-down-payment-to').append(lastNode)
 					var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 				}
@@ -474,8 +475,11 @@ $(document).on('change','select.invoice-currency-class',function(){
 				var supplierName = res.supplierInvoices[supplierId]
 				options +=` <option value="${supplierId}">${supplierName}</option>`
 			}
-			$('#supplier_name').empty().append(options)
-			//.trigger('change')
+			if($('#is-down-payment-id').val()){
+				$('#supplier_name').empty().append(options).trigger('change')
+			}else{
+				$('#supplier_name').empty().append(options)
+			}
 		}
 	})
 });

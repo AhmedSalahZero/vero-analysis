@@ -108,8 +108,9 @@ use App\Models\MoneyReceived;
                 </li>
 
             </ul>
-
+			<?php if(auth()->user()->can('create money received')): ?>
             <div class="flex-tabs">
+			
 			<a href="<?php echo e(route('create.money.receive',['company'=>$company->id])); ?>" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 <?php echo e(__('Money Received')); ?>
@@ -122,7 +123,7 @@ use App\Models\MoneyReceived;
 
             </a>
 			</div>
-
+			<?php endif; ?> 
         </div>
     </div>
     
@@ -198,11 +199,14 @@ use App\Models\MoneyReceived;
                                     <td class="font-weight-bold" style="color:<?php echo e($dueStatus['color']); ?>!important"><?php echo e($dueStatus['status']); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											<?php if(auth()->user()->can('update money received')): ?>
 										<?php if(!$moneyReceived->isOpenBalance()): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
                                             <a data-id="<?php echo e($moneyReceived->id); ?>" data-type="single" data-currency="<?php echo e($moneyReceived->getCurrency()); ?>" data-money-type="<?php echo e(MoneyReceived::CHEQUE); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyReceived::CHEQUE); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Send Under Collection')); ?>" href=""><i class="fa fa-money-bill"></i></a>
+											<?php endif; ?> 
 											
+											<?php if(auth()->user()->can('delete money received')): ?>
                                             <a data-toggle="modal" data-target="#delete-cheque-id-<?php echo e($moneyReceived->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-<?php echo e($moneyReceived->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -225,6 +229,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											
                                         </span>
                                     </td>
@@ -307,10 +312,13 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											<?php if(!$moneyReceived->isOpenBalance()): ?>
+											<?php if(auth()->user()->can('update money received')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
 											<?php endif; ?> 
                                             <a data-id="<?php echo e($moneyReceived->id); ?>" data-type="single" data-currency="<?php echo e($moneyReceived->getCurrency()); ?>" data-id="<?php echo e($moneyReceived->id); ?>" data-money-type="<?php echo e(MoneyReceived::CHEQUE_REJECTED); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyReceived::CHEQUE_REJECTED); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Send Under Collection')); ?>" href=""><i class="fa fa-money-bill"></i></a>
 											<?php if(!$moneyReceived->isOpenBalance()): ?>
+											<?php if(auth()->user()->can('delete money received')): ?>
                                             <a data-toggle="modal" data-target="#delete-cheque-id-<?php echo e($moneyReceived->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-<?php echo e($moneyReceived->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -333,6 +341,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?>
                                         </span>
                                     </td>
@@ -426,7 +435,9 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$moneyReceived->isOpenBalance()): ?>
+										<?php if(auth()->user()->can('update money received')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
 											<?php endif; ?> 
 											<?php if($moneyReceived->cheque->getDueStatus()): ?>
 											
@@ -511,6 +522,7 @@ use App\Models\MoneyReceived;
 											<?php endif; ?> 
                                             <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="<?php echo e(__('Send In Safe')); ?>" href="<?php echo e(route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ])); ?>"><i class="fa fa-sync-alt"></i></a>
 											<?php if($moneyReceived->cheque->getDueStatus()): ?>
+											<?php if(auth()->user()->can('delete money received')): ?>
                                             <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="<?php echo e(__('Rejected')); ?>" href="<?php echo e(route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ])); ?>"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-<?php echo e($moneyReceived->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -534,6 +546,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?>
 										
                                         </span>
@@ -694,9 +707,12 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$money->isOpenBalance()): ?>
+										<?php if(auth()->user()->can('update money received')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
 <?php endif; ?> 
 <?php if(!$money->isOpenBalance()): ?>
+<?php if(auth()->user()->can('delete money received')): ?>
                                             <a data-toggle="modal" data-target="#delete-transfer-id-<?php echo e($money->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-<?php echo e($money->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -720,6 +736,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?> 
                                         </span>
                                     </td>
@@ -798,7 +815,10 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$moneyReceived->isOpenBalance()): ?>
+											<?php if(auth()->user()->can('update money received')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+											<?php endif; ?> 
+											<?php if(auth()->user()->can('delete money received')): ?>
                                             <a data-toggle="modal" data-target="#delete-transfer-id-<?php echo e($moneyReceived->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-<?php echo e($moneyReceived->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -822,6 +842,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 <?php endif; ?> 
                                         </span>
                                     </td>
@@ -911,8 +932,11 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$money->isOpenBalance()): ?>
+										<?php if(auth()->user()->can('update money received')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id])); ?>"><i class="fa fa-pen-alt"></i></a>
-
+											<?php endif; ?> 
+											<?php if(auth()->user()->can('delete money received')): ?>
+											
                                             <a data-toggle="modal" data-target="#delete-cash-in-bank-id-<?php echo e($money->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cash-in-bank-id-<?php echo e($money->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -936,6 +960,7 @@ use App\Models\MoneyReceived;
                                                     </div>
                                                 </div>
                                             </div>
+											<?php endif; ?> 
 											<?php endif; ?> 
                                         </span>
                                     </td>

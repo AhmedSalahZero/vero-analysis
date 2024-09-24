@@ -58,7 +58,10 @@ $selectedBanks = [];
         
 <form method="post" action="<?php echo e(isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
-    <input id="js-money-payment-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+	
+	<input id="is-down-payment-id" type="hidden" name="is_down_payment" value="1">
+	<input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->payableCheque ? $model->payableCheque->id : 0); ?>">
+	<input id="js-money-payment-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
     <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
     <?php echo csrf_field(); ?>
     <?php if(isset($model)): ?>
@@ -171,7 +174,7 @@ $selectedBanks = [];
                             <label><?php echo e(__('Select Receiving Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+                                    <select when-change-trigger-account-type-change name="payment_currency" class="form-control 
 							current-currency
 							currency-class
 							receiving-currency-class
@@ -214,11 +217,11 @@ $selectedBanks = [];
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-2 mt-4">
         <label><?php echo e(__('Payment Date')); ?></label>
         <div class="kt-input-icon">
             <div class="input-group date">
-                <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                <input type="text" name="delivery_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                 <div class="input-group-append">
                     <span class="input-group-text">
                         <i class="la la-calendar-check-o"></i>
@@ -304,7 +307,7 @@ $selectedBanks = [];
                             <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_paying_currency[<?php echo e(MoneyPayment::CASH_PAYMENT); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::CASH_PAYMENT); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_paying_currency[<?php echo e(MoneyPayment::CASH_PAYMENT); ?>]" class="form-control  amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::CASH_PAYMENT); ?>">
                                 </div>
                             </div>
                 </div>
@@ -380,7 +383,7 @@ $selectedBanks = [];
                         <label><?php echo e(__('Due Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input type="text" value="<?php echo e(isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d'))); ?>" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                <input type="text" value="<?php echo e(isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d'))); ?>" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="la la-calendar-check-o"></i>
@@ -391,14 +394,14 @@ $selectedBanks = [];
                     </div>
 
 
-                    <div class="col-md-2 width-12">
+                    <div class="col-md-2 width-12 mt-4">
                         <label><?php echo e(__('Cheque Number')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
-                            <input type="text" name="cheque_number" value="<?php echo e(isset($model) && $model->cheque ? $model->cheque->getChequeNumber() : 0); ?>" class="form-control" placeholder="<?php echo e(__('Cheque Number')); ?>">
+                            <input type="text" name="cheque_number" value="<?php echo e(isset($model) && $model->payableCheque ? $model->payableCheque->getChequeNumber() : 0); ?>" class="form-control" placeholder="<?php echo e(__('Cheque Number')); ?>">
                         </div>
                     </div>
 
-                  <div class="col-md-2 width-12">
+                  <div class="col-md-2 width-12 mt-4">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>">
@@ -408,7 +411,7 @@ $selectedBanks = [];
                             <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_paying_currency[<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_paying_currency[<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>]" class="form-control  amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>">
                                 </div>
                             </div>
 
@@ -493,7 +496,7 @@ $selectedBanks = [];
                             <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_paying_currency[<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_paying_currency[<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>]" class="form-control  amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>">
                                 </div>
                             </div>
 
@@ -521,7 +524,7 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
 
-            <div class="js-append-to">
+            <div class="js-append-down-payment-to">
                 <div class="col-md-12 js-duplicate-node">
 
                 </div>
@@ -530,37 +533,10 @@ $selectedBanks = [];
 
 
 
-            <div class="js-template hidden">
+            <div class="js-down-payment-template hidden">
                 <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
-                        <div class="form-group row align-items-end">
-
-                            <div class="col-md-4">
-                                <label><?php echo e(__('PO Number')); ?> </label>
-                                <div class="kt-input-icon">
-                                    <input name="purchases_orders_amounts[][purchases_order_name]" type="text" readonly class="form-control js-purchases-order-name">
-                                    <input name="purchases_orders_amounts[][purchases_order_id]" type="hidden" readonly class="form-control js-purchases-order-number">
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label><?php echo e(__('Amount')); ?> </label>
-                                <div class="kt-input-icon">
-                                    <input name="purchases_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-2">
-                                <label><?php echo e(__('Paid Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                                <div class="kt-input-icon">
-                                    <input name="purchases_orders_amounts[][paid_amounts]" placeholder="<?php echo e(__('Paid Amount')); ?>" type="text" class="form-control js-paid-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
-                                </div>
-                            </div>
-
-
-                        </div>
-
+                      <?php echo $__env->make('reports.moneyPayments._down-payments-purchase-orders', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                     </div>
                 </div>
             </div>
@@ -569,15 +545,15 @@ $selectedBanks = [];
     </div>
     </div>
 
-     <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
-<?php $component->withName('submitting'); ?>
+     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>
+<?php $component->withName('submitting-by-ajax'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes([]); ?>
-<?php if (isset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34)): ?>
-<?php $component = $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34; ?>
-<?php unset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34); ?>
+<?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
@@ -705,6 +681,7 @@ $(function(){
 		$('select.currency-class').trigger('change')
 			$('.recalculate-amount-class').trigger('change')
 	})
+	$()
 </script>
 <?php $__env->stopSection(); ?>
 

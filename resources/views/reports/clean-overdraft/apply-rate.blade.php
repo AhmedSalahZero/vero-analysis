@@ -1,4 +1,4 @@
-<a data-toggle="modal" data-target="#apply-rate-for-{{ $cleanOverdraft->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Update Interest Rate	') }}" href="#"><i class=" fa fa-percentage"></i></a>
+					<a data-toggle="modal" data-target="#apply-rate-for-{{ $cleanOverdraft->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Update Interest Rate	') }}" href="#"><i class=" fa fa-percentage"></i></a>
                                         <div class="modal fade" id="apply-rate-for-{{ $cleanOverdraft->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                 <div class="modal-content">
@@ -15,11 +15,11 @@
                                                         <div class="modal-body">
 
                                                             <div class="row mb-3 closest-parent">
-
+									@if(auth()->user()->can('create clean overdraft'))
                                                                 @include('reports.clean-overdraft.rates-form' , [
 
                                                                 ])
-
+										@endif 
 
 
 
@@ -48,8 +48,12 @@
                                                                                     <td> {{ $rate->getInterestRateFormatted() }} </td>
                                                                                     <td>
                                                                                         @if($loop->last)
+																						@if(auth()->user()->can('update clean overdraft'))
                                                                                         <a data-toggle="modal" data-target="#edit-rates-{{ $rate->id }}" type="button" class="btn btn-secondary btn-outline-hover-primary btn-icon" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="#"><i class="fa fa-pen-alt"></i></a>
+																						@endif 
+																						@if(auth()->user()->can('delete clean overdraft'))
                                                                                         <a data-toggle="modal" data-target="#delete-rates-{{ $rate->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+																						@endif 
                                                                                         @endif
 
                                                                                     </td>

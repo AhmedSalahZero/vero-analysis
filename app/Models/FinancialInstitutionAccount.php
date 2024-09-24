@@ -41,6 +41,16 @@ class FinancialInstitutionAccount extends Model
     {
         return $this->iban ;
     }
+	
+	public function getMinBalance()
+	{
+		return $this->min_balance?:0 ;
+	}
+
+	public function getInterestRate()
+    {
+        return $this->interest_rate ?: 0 ;
+    }
 
     public function getMainCurrency()
     {

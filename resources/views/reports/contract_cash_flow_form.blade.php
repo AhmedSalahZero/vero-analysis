@@ -48,7 +48,7 @@
 
 
                         <div class="col-md-3">
-                            <x-form.select :label="__('Customer')" :pleaseSelect="false" :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
+                            <x-form.select :label="__('Customer')" :pleaseSelect="false"  :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
                         </div>
                         <div class="col-md-3">
                             <x-form.select :label="__('Contract')" :pleaseSelect="false" data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="contract_id"></x-form.select>
@@ -75,7 +75,7 @@
                             <label>{{__('Contract Start Date')}} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="date" value="" class="form-control contract-start-date-class" />
+                                    <input required disabled type="date" value="" class="form-control contract-start-date-class" />
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                             <label>{{__('Contract End Date')}} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="date" value="" class="form-control contract-end-date-class" />
+                                    <input required disabled type="date" value="" class="form-control contract-end-date-class" />
                                 </div>
                             </div>
                         </div>
@@ -97,20 +97,20 @@
 
 
                         <div class="col-md-3">
-                            <label>{{ __('Report Start Date') }} </label>
+                            <label>{{ __('Report Start Date') }}  @include('star') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="start_date">
-                                    <input type="date" class="form-control" name="start_date" value="{{ now() }}">
+                                    <input required type="date" class="form-control" name="start_date" value="{{ now() }}">
                                 </div>
                             </div>
                         </div>
 
 
                         <div class="col-md-3">
-                            <label>{{ __('Report End Date') }}</span> </label>
+                            <label>{{ __('Report End Date') }} @include('star') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="end_date">
-                                    <input type="date" class="form-control" name="end_date" value="{{ now() }}">
+                                    <input required type="date" class="form-control" name="end_date" value="{{ now() }}">
                                 </div>
                             </div>
 
@@ -160,7 +160,7 @@
         const parent = $(this).closest('.closest-parent-tr')
         const code = $(this).find('option:selected').data('code')
         const amount = $(this).find('option:selected').data('amount')
-        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        const currency = $(this).find('option:selected').data('currency') ? $(this).find('option:selected').data('currency').toUpperCase() : ''
         const startDate = $(this).find('option:selected').data('start-date')
         const endDate = $(this).find('option:selected').data('end-date')
         $(parent).find('.contract-code').val(code)

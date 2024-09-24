@@ -61,13 +61,14 @@ use \App\Models\TimeOfDeposit;
 
 
             </ul>
-
+@if(hasAuthFor('create time of deposit'))
            <div class="flex-tabs">
 		    <a href="{{ route('create.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
 		   </div>
+		   @endif 
         </div>
     </div>
     <div class="kt-portlet__body">
@@ -121,7 +122,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
-											
+											@if(hasAuthFor('create time of deposit'))
                                             <a
 											
 											 data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn 
@@ -131,6 +132,7 @@ use \App\Models\TimeOfDeposit;
 											@endif 
 											 
 											  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Deposit') }}" href="#"><i class="fa fa-coins"></i></a>
+											 
                                             <div class="modal fade" id="apply-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -185,10 +187,10 @@ use \App\Models\TimeOfDeposit;
 											
 											
 											
+											 @endif 
 											
 											
-											
-											
+												@if(hasAuthFor('create time of deposit'))
 											<a data-toggle="modal" data-target="#apply-break-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Break') }}" href="#"><i class="fa fa-ban"></i></a>
                                             <div class="modal fade" id="apply-break-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
@@ -261,11 +263,16 @@ use \App\Models\TimeOfDeposit;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											
 
-
+	@if(hasAuthFor('update time of deposit'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											
+												@if(hasAuthFor('delete time of deposit'))
                                             <a data-toggle="modal" data-target="#delete-time-of-deposits-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+									
 
 
 
@@ -290,6 +297,9 @@ use \App\Models\TimeOfDeposit;
                                                     </div>
                                                 </div>
                                             </div>
+											
+													@endif 
+													
                                         </span>
                                     </td>
                                 </tr>

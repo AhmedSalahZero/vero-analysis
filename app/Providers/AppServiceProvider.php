@@ -7,9 +7,12 @@ use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\Section;
 use App\Models\User;
+use Artisan;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use PhpOffice\PhpSpreadsheet\Shared\Font;
@@ -38,6 +41,15 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		// logger('start app service');
+		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
+		// DB::table('permissions')->delete();
+		// DB::table('model_has_permissions')->delete();
+		// DB::table('role_has_permissions')->delete();
+		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
+		
 		// dd(phpinfo());
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
@@ -133,22 +145,7 @@ class AppServiceProvider extends ServiceProvider
 		
 		
 		
-		if(true){
-			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
-			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
-			$permissions = getPermissions();
-			foreach($permissions as $permission){
-				try{
-					Permission::findByName($permission['name']);
-				}
-				catch(\Exception $e){
-					$permission = Permission::create($permission);
-					foreach(User::all() as $user){
-						$user->givePermissionTo($permission);
-					}
-				}
-			}	
-		}
+	
 		
 
 		$Language = new stdClass();
@@ -167,6 +164,34 @@ class AppServiceProvider extends ServiceProvider
 			$Language
 		]);
 		
+		
+		
+		if(false ){
+			app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+			app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
+			$permissions = getPermissions();
+			foreach($permissions as $permissionArr){
+				try{
+					 Permission::findByName($permissionArr['name']);
+				}
+				catch(\Exception $e){
+				
+					$permission = Permission::create([
+						'name'=>$permissionArr['name']
+					]);
+
+					foreach(User::all() as $user){
+						/**
+						 * @var User $user;
+						 */
+						
+						$user->assignNewPermission($permissionArr,$permission);
+						
+					}
+				}
+			}	
+		}
+		
 
 		View::share('langs', $languages);
 		// View::share('langs',Language::all());
@@ -178,8 +203,13 @@ class AppServiceProvider extends ServiceProvider
 		catch(\Exception $e){
 			
 		}
-		
 		if ($currentCompany) {
+			
+			
+			
+			
+			
+			
 			$excelType ='SalesGathering';
 			if(in_array('uploading',Request()->segments())){
 				$excelType = Request()->segment(4);
@@ -204,8 +234,7 @@ class AppServiceProvider extends ServiceProvider
 		});
 		View::composer('*', function ($view) {
 			if (Auth::check()) {
-
-
+				
 				if (request()->route()->named('home') || (!isset(request()->company))) {
 					$sections = [Section::with('subSections')->find(2)];
 					$view->with('client_sections', $sections);
@@ -218,6 +247,7 @@ class AppServiceProvider extends ServiceProvider
 				if (Auth::user()->hasrole('company-admin')) {
 					$view->with('super_admin_sections', Section::mainCompanyAdminSections()->get());
 				}
+				
 			}
 		});
 	}

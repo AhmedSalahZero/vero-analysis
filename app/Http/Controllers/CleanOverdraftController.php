@@ -89,7 +89,7 @@ class CleanOverdraftController
 		,'highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCleanOverdraftRequest $request){
-		
+
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;

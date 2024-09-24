@@ -13,6 +13,10 @@ use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
+	public function __construct()
+	{
+		$this->middleware(['can:view users'])->only(['index']);
+	}
 	public function freeSubscription(Request $request)
 	{
 		if ($request->isMethod('POST')) {
@@ -66,19 +70,18 @@ class UserController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Company $company = null)
 	{
+
 		$users = collect([]);
+		$authUser = Auth()->user() ;
+		// dd($authUser->can('view users'));;
+		/**
+		 * @var \App\Models\User $authUser;
+		 */
+		$users = User::getUsersWithRoles($company);
 
-		if (Auth()->user()->isCompanyAdmin()) {
-			$users = User::where(function ($q) {
-				$q->where('id', Auth()->user()->id)->orWhere('created_by', Auth()->user()->id);
-			})->get();
-		} else {
-			$users = User::with('roles')->get();
-		}
-
-		return view('super_admin_view.users.index', compact('users'));
+		return view('super_admin_view.users.index', compact('users','company'));
 	}
 
 	/**
@@ -86,11 +89,14 @@ class UserController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create()
+	public function create(Company $company = null)
 	{
-		$companies = Company::all();
 
-		return view('super_admin_view.users.form', compact('companies'));
+		$companies = Company::all();
+		if($company){
+			$companies = Company::where('id',$company->id)->get();
+		}
+		return view('super_admin_view.users.form', compact('companies','company'));
 	}
 
 	/**
@@ -103,6 +109,9 @@ class UserController extends Controller
 	public function store(Request $request)
 	{
 		$user = Auth()->user();
+		/**
+		 * @var User $user
+		 */
 		$request->validate([
 			'email'=>'unique:users,email'
 		]);
@@ -120,12 +129,15 @@ class UserController extends Controller
 		);
 		$user->companies()->attach($request->companies);
 		$user->assignRole($request->role);
-
+		/**
+		 * @var User $user
+		 */
 		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
-		$permissions = getPermissions();
-		foreach ($permissions as $permission) {
-			$user->givePermissionTo($permission);
+		$permissions = getPermissions($user->getSystemsNames());
+		foreach ($permissions as $permissionArr) {
+			$permission = Permission::findByName($permissionArr['name']);
+			$user->assignNewPermission($permissionArr,$permission);
 		}
 
 		ImageSave::saveIfExist('image', $user);
@@ -152,11 +164,10 @@ class UserController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit(User $user)
+	public function edit(User $user,Company $company = null)
 	{
 		$companies = Company::all();
-
-		return view('super_admin_view.users.form', compact('companies', 'user'));
+		return view('super_admin_view.users.form', compact('companies', 'user','company'));
 	}
 
 	/**
@@ -190,5 +201,22 @@ class UserController extends Controller
 	public function destroy($id)
 	{
 
+	}
+	public function getUsersBasedOnCompanyAndRole(Request $request){
+		$roleName = $request->get('roleName');
+		$companyId = $request->get('companyId');
+		$company = Company::find($companyId);
+		$users = User::getUsersWithRoles($company,$roleName);
+		return response()->json([
+			'users'=>$users
+		]);
+	}
+	public function renderPermissionForUser(Request $request)
+	{
+		$user = User::find($request->get('userId'));
+		$permissionViews = view('super_admin_view.roles_and_permissions.permissions-radio',['user'=>$user])->render();
+		return response()->json([
+			'view'=>$permissionViews
+		]);
 	}
 }

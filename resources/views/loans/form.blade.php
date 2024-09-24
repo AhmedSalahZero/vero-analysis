@@ -221,61 +221,6 @@
                                             </div>
 											 
 											
-											
-											 {{-- <div class="col-md-3 ">
-                                                <label>{{__('Remaining Balance')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <input id="remaining-balance-id" readonly step="1" type="numeric" value="0" class="form-control  " >
-                                                </div>
-                                            </div>
-											 --}}
-
-
-
-{{-- 
-                                            <div class="col-md-3">
-                                                <label>{{__('From Account Type')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
-                                                   
-                                                            @foreach($accountTypes as $index => $accountType)
-                                                            <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label>{{__('From Account Number')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
-                                                            <option value="" selected>{{__('Select')}}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-											
-											
-                                          
-
-                                            <div class="col-md-3 ">
-                                                <label>{{__('Amount')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getAmount():0 }}" name="amount" class="form-control greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
-                                                </div>
-                                            </div>
-                                          --}}
 
 
 
@@ -391,6 +336,12 @@
             })
 
         </script>
+		
+		<script>
+		$(document).on('change','.type',function(){
+			
+		})
+		</script>
 
         <script>
             $('input[name="borrowing_rate"],input[name="margin_rate"]').on('change', function() {

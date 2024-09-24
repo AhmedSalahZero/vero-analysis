@@ -106,24 +106,27 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <x-form.date :label="__('Contract Start Date')" :required="true" :model="$model??null" :name="'contract_start_date'" :placeholder="__('Select Contract Start Date')"></x-form.date>
+                                <x-form.date :useOldValue="true" :label="__('Contract Start Date')" :required="true" :model="$model??null" :name="'contract_start_date'" :placeholder="__('Select Contract Start Date')"></x-form.date>
                             </div>
                             <div class="col-md-2">
-                                <x-form.date :label="__('Contract End Date')" :required="true" :model="$model??null" :name="'contract_end_date'" :placeholder="__('Select Contract End Date')"></x-form.date>
+                                <x-form.date :useOldValue="true" :label="__('Contract End Date')" :required="true" :model="$model??null" :name="'contract_end_date'" :placeholder="__('Select Contract End Date')"></x-form.date>
                             </div>
 
 
                             <div class="col-md-2 ">
-                                <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                             </div>
 
                           <div class="col-md-2">
                                 <label>{{__('Select Currency')}} @include('star')</label>
                                 <div class="input-group">
-                                    <select name="currency" class="form-control repeater-select">
-                                        <option selected>{{__('Select')}}</option>
+                                    <select required name="currency" class="form-control repeater-select">
+                                        <option value="" selected>{{__('Select')}}</option>
                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                        <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrency() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
+										@php
+											$currentSelectedCurrency = old('currency') ?: (isset($model) && $model->getCurrency() ? $model->getCurrency() : null )
+										@endphp
+                                        <option value="{{ $currencyName }}" @if( $currentSelectedCurrency == $currencyName ) selected @endif > {{ $currencyValue }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -146,50 +149,50 @@
                     <div class="kt-portlet__body">
                         <div class="form-group row">
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                <x-form.input useOldValue="true" :model="$model??null" :label="__('Limit')" :type="'text'" :placeholder="__('Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                             </div>
 
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Outstanding Balance')" :type="'text'" :placeholder="__('Outstanding Balance')" :name="'outstanding_balance'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                <x-form.input :id="'total-outstanding-breakdown-id'" useOldValue="true" :model="$model??null" :default-value="0" :label="__('Outstanding Balance')" :type="'text'" :placeholder="__('Outstanding Balance')" :name="'outstanding_balance'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                             </div>
 
 
                             <div class="col-md-4">
-                                <x-form.date :label="__('Balance Date')" :required="true" :model="$model??null" :name="'balance_date'" :placeholder="__('Select Balance Date')"></x-form.date>
+                                <x-form.date useOldValue="true" :label="__('Balance Date')" :required="true" :model="$model??null"  :name="'balance_date'" :placeholder="__('Select Balance Date')"></x-form.date>
                             </div>
 							@if(!isset($model))
 							{{-- في حاله التحديث هيتم تحديثهم من البوب اب --}}
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Borrowing Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'borrowing_rate'" :required="true"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :default-value="0" :class="'only-percentage-allowed'" :label="__('Borrowing Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'borrowing_rate'" :required="true"></x-form.input>
                             </div>
 
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'margin_rate'" :required="true" :type="'text'"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null"  :default-value="0" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'margin_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
 
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Interest Rate (%)')" :placeholder="__('Interest Rate (%)')" :name="'interest_rate'" :required="true" :type="'text'"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :default-value="0" :class="'only-percentage-allowed'" :label="__('Interest Rate (%)')" :placeholder="__('Interest Rate (%)')" :name="'interest_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
 
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Min Intrest Rate (%)')" :placeholder="__('Min Intrest Rate (%)')" :name="'min_interest_rate'" :required="true" :type="'text'"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :default-value="0" :class="'only-percentage-allowed'" :label="__('Min Intrest Rate (%)')" :placeholder="__('Min Intrest Rate (%)')" :name="'min_interest_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
 							@endif
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :default-value="0" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="false" :type="'text'"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :default-value="0" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
                             <div class="col-md-4 ">
-                                <x-form.input :model="$model??null" :label="__('Setteled Max Within (Days)')" :type="'text'" :placeholder="__('Setteled Max Within (Days)')" :name="'to_be_setteled_max_within_days'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                <x-form.input :useOldValue="true" :model="$model??null" :default-value="0" :label="__('Setteled Max Within (Days)')" :type="'text'" :placeholder="__('Setteled Max Within (Days)')" :name="'to_be_setteled_max_within_days'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                             </div>
                         </div>
                     </div>
                 </div>
 
 
-                <div class="kt-portlet">
+                <div class="kt-portlet" id="outstanding-breakdown-id">
 
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
@@ -210,19 +213,21 @@
                                     <div id="m_repeater_0" class="cash-and-banks-repeater">
                                         <div class="form-group  m-form__group row  ">
                                             <div data-repeater-list="outstanding_breakdowns" class="col-lg-12">
-                                                @if(isset($model) && count($model->outstandingBreakdowns))
-                                                @foreach($model->outstandingBreakdowns as $outstandingBreakdown)
+											
+											@php
+													$outstandingBreakdowns =  old('outstanding_breakdowns',$model->outstandingBreakdowns ?? [null]) ; 
+												
+													$outstandingBreakdowns = is_array($outstandingBreakdowns) ? fillObjectFromArray($outstandingBreakdowns,\App\OutstandingBreakdown::class) : $outstandingBreakdowns;
+												@endphp
+
+                                                @foreach($outstandingBreakdowns as $outstandingBreakdown)
                                                 @include('outstanding-breakdown.repeater' , [
                                                 'outstandingBreakdown'=>$outstandingBreakdown,
-
                                                 ])
 
                                                 @endforeach
-                                                @else
-                                                @include('outstanding-breakdown.repeater' , [
-                                                ])
+                                                
 
-                                                @endif
 
 
 
@@ -371,5 +376,16 @@
         $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);
     })
     $('input[name="borrowing_rate"]').trigger('change');
+</script>
+<script>
+$(document).on('change','#total-outstanding-breakdown-id',function(e){
+	const totalOutstandingBalance = $(this).val();
+	if(totalOutstandingBalance <= 0){
+		$('#outstanding-breakdown-id').fadeOut();
+	}else{
+		$('#outstanding-breakdown-id').fadeIn();
+	}
+})
+$('#total-outstanding-breakdown-id').trigger('change')
 </script>
 @endsection

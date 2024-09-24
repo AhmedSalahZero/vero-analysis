@@ -66,8 +66,10 @@ $selectedBanks = [];
 </div> --}}
 <form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-	<input type="hidden" name="is_down_payment" value="1">
-    <input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
+	
+	<input id="is-down-payment-id" type="hidden" name="is_down_payment" value="1">
+	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
+	<input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
     @csrf
     @if(isset($model))
@@ -77,7 +79,7 @@ $selectedBanks = [];
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{__('Money Payment')}}
+                    {{__('Money Payment [ DownPayment ]')}}
                 </h3>
             </div>
         </div>
@@ -179,7 +181,7 @@ $selectedBanks = [];
                             <label>{{__('Select Receiving Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+                                    <select when-change-trigger-account-type-change name="payment_currency" class="form-control 
 							current-currency
 							currency-class
 							receiving-currency-class
@@ -221,11 +223,11 @@ $selectedBanks = [];
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-2 mt-4">
         <label>{{__('Payment Date')}}</label>
         <div class="kt-input-icon">
             <div class="input-group date">
-                <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                 <div class="input-group-append">
                     <span class="input-group-text">
                         <i class="la la-calendar-check-o"></i>
@@ -288,7 +290,7 @@ $selectedBanks = [];
                             <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
+                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                                 </div>
                             </div>
                 </div>
@@ -363,7 +365,7 @@ $selectedBanks = [];
                         <label>{{__('Due Date')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="la la-calendar-check-o"></i>
@@ -374,14 +376,14 @@ $selectedBanks = [];
                     </div>
 
 
-                    <div class="col-md-2 width-12">
+                    <div class="col-md-2 width-12 mt-4">
                         <label>{{__('Cheque Number')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input type="text" name="cheque_number" value="{{ isset($model) && $model->cheque ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
+                            <input type="text" name="cheque_number" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
                         </div>
                     </div>
 
-                  <div class="col-md-2 width-12">
+                  <div class="col-md-2 width-12 mt-4">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
@@ -391,7 +393,7 @@ $selectedBanks = [];
                             <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                                 </div>
                             </div>
 
@@ -475,7 +477,7 @@ $selectedBanks = [];
                             <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
+                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_paying_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                                 </div>
                             </div>
 
@@ -502,7 +504,7 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
 
-            <div class="js-append-to">
+            <div class="js-append-down-payment-to">
                 <div class="col-md-12 js-duplicate-node">
 
                 </div>
@@ -511,7 +513,7 @@ $selectedBanks = [];
 
 
 
-            <div class="js-template hidden">
+            <div class="js-down-payment-template hidden">
                 <div class="col-md-12 js-duplicate-node">
                     <div class=" kt-margin-b-10 border-class">
                       @include('reports.moneyPayments._down-payments-purchase-orders')
@@ -523,7 +525,7 @@ $selectedBanks = [];
     </div>
     </div>
 
-    <x-submitting />
+    <x-submitting-by-ajax />
 
 </form>
 <!--end::Form-->
@@ -648,5 +650,6 @@ $(function(){
 		$('select.currency-class').trigger('change')
 			$('.recalculate-amount-class').trigger('change')
 	})
+	$()
 </script>
 @endsection

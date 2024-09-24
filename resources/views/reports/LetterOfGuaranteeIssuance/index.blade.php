@@ -65,7 +65,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 @endforeach
 
             </ul>
-
+			@if(hasAuthFor('create letter of guarantee issuance'))
             <div class="flex-tabs">
 				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
@@ -86,6 +86,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 			</div >
 
         </div>
+		@endif 
     </div>
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
@@ -140,7 +141,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
 										@if(!$model->isCancelled())
+											@if(hasAuthFor('update letter of guarantee issuance'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+												@if(hasAuthFor('delete letter of guarantee issuance'))
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -163,6 +167,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 											@endif 
                                         </span>
                                     </td>

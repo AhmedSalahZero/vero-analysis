@@ -95,7 +95,7 @@
                             <label><?php echo e(__('Contract Start Date')); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="date" value="" class="form-control contract-start-date-class" />
+                                    <input required disabled type="date" value="" class="form-control contract-start-date-class" />
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                             <label><?php echo e(__('Contract End Date')); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input disabled type="date" value="" class="form-control contract-end-date-class" />
+                                    <input required disabled type="date" value="" class="form-control contract-end-date-class" />
                                 </div>
                             </div>
                         </div>
@@ -117,20 +117,20 @@
 
 
                         <div class="col-md-3">
-                            <label><?php echo e(__('Report Start Date')); ?> </label>
+                            <label><?php echo e(__('Report Start Date')); ?>  <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="start_date">
-                                    <input type="date" class="form-control" name="start_date" value="<?php echo e(now()); ?>">
+                                    <input required type="date" class="form-control" name="start_date" value="<?php echo e(now()); ?>">
                                 </div>
                             </div>
                         </div>
 
 
                         <div class="col-md-3">
-                            <label><?php echo e(__('Report End Date')); ?></span> </label>
+                            <label><?php echo e(__('Report End Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="end_date">
-                                    <input type="date" class="form-control" name="end_date" value="<?php echo e(now()); ?>">
+                                    <input required type="date" class="form-control" name="end_date" value="<?php echo e(now()); ?>">
                                 </div>
                             </div>
 
@@ -191,7 +191,7 @@
         const parent = $(this).closest('.closest-parent-tr')
         const code = $(this).find('option:selected').data('code')
         const amount = $(this).find('option:selected').data('amount')
-        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        const currency = $(this).find('option:selected').data('currency') ? $(this).find('option:selected').data('currency').toUpperCase() : ''
         const startDate = $(this).find('option:selected').data('start-date')
         const endDate = $(this).find('option:selected').data('end-date')
         $(parent).find('.contract-code').val(code)

@@ -215,7 +215,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
+                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -234,7 +234,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
+                                                        <select required required name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -250,7 +250,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select required data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         </select>
                                                     </div>
@@ -264,7 +264,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
 
-                                                        <select js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
+                                                        <select required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -279,7 +279,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
+                                                        <select required name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getToAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -295,7 +295,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
+                                                        <select required data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         </select>
                                                     </div>
@@ -345,7 +345,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
 
-                                                        <select js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
+                                                        <select required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -360,7 +360,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
+                                                        <select required name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($model) && $model->getToAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -376,7 +376,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
+                                                        <select required data-current-selected="{{ isset($model) ? $model->getToAccountNumber(): 0 }}" name="to_account_number" class="form-control js-to-account-number">
                                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         </select>
                                                     </div>
@@ -622,7 +622,11 @@ $(document).on('change','.type',function(e){
 	$('.show-only-if[data-type*="'+type+'"] input,.show-only-if[data-type*="'+type+'"] select').each(function(index,element){
 		$(element).attr('name',$(element).attr('data-name'))
 	})
-})	
+	
+	$('div.show-only-if.hidden input,div.show-only-if.hidden select').removeAttr('required')
+	$('div.show-only-if:not(.hidden) input,div.show-only-if.hidden select').removeAttr('required')
+})
+	
 $('.type').trigger('change')	
 		</script>
 

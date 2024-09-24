@@ -109,18 +109,16 @@ td{
                 </li> --}}
 
             </ul>
-
+@if(auth()->user()->can('create cash expenses'))
             <div class="flex-tabs">
 			<a href="{{route('create.cash.expense',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('Cash Expense') }}
             </a>
 			
-			  {{-- <a href="{{route('create.cash.expense',['company'=>$company->id,'type'=>'down-payment'])}}" class="btn btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Down Payment') }}
-            </a> --}}
+			  
 			</div>
+			@endif 
 
         </div>
     </div>
@@ -191,8 +189,9 @@ td{
 									</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@if(auth()->user()->can('update cash expenses'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}"><i class="fa fa-pen-alt"></i></a>
-									
+									@endif 
                                             <a data-id="{{ $cashExpense->id }}" data-type="single" data-currency="{{ $cashExpense->getCurrency() }}" data-money-type="{{ CashExpense::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ CashExpense::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Mark As Paid') }}" href=""><i class="fa fa-money-bill"></i></a>
 								
 											@if(!$cashExpense->isOpenBalance())
@@ -291,7 +290,9 @@ td{
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
+										@if(auth()->user()->can('update cash expenses'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
 										@endif 
 										@if(!$money->isOpenBalance())
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -387,7 +388,10 @@ td{
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$cashExpense->isOpenBalance())
+										@if(auth()->user()->can('update cash expenses'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+											@if(auth()->user()->can('delete cash expenses'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $cashExpense->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $cashExpense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -411,6 +415,7 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
+											@endif 
 @endif 
                                         </span>
                                     </td>

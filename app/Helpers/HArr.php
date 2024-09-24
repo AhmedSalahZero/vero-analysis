@@ -154,4 +154,18 @@ class HArr
 		}
 		return $result; 
 	}
+	public static function filterTrulyValue(array $arr):array 
+	{
+		return array_filter($arr,function($value){
+			return $value ;
+		});
+	}
+	public static function atLeastOneValueExistInArray(array $items , array $itemsToSearchIn){
+		foreach($items as $item){
+			if(in_array($item,$itemsToSearchIn)){
+				return true  ;
+			}
+		}
+		return false ;
+	}
 }

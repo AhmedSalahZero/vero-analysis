@@ -1,4 +1,4 @@
-<!-- begin:: Header -->
+						
 
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
     
@@ -12,8 +12,7 @@
                 <img alt="Logo" src="<?php echo e(url('assets/media/logos/logo_va.png')); ?>" class="kt-header__brand-logo-default" />
                 <img alt="Logo" src="<?php echo e(url('assets/media/logos/vero analysis blue logo.png')); ?>" width="25%" class="kt-header__brand-logo-sticky" />
             </a>
-        </div>
-
+        </div> 
         <?php echo $__env->make('layouts.new-topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
         <!-- end: Header Menu -->
@@ -66,7 +65,7 @@
                             <?php if($counter == 1): ?>
                             <div class="kt-grid-nav__row">
                                 <?php endif; ?>
-                                <a href="<?php echo e($section->route == 'roles.permissions.index' ? route($section->route, 'admin') : route($section->route)); ?>" class="kt-grid-nav__item">
+                                <a href="<?php echo e($section->route == 'roles.permissions.index' ? route('roles.permissions.edit') : route($section->route)); ?>" class="kt-grid-nav__item">
                                     <span class="kt-grid-nav__icon">
                                         <?php if($section->name[$lang] == 'Admin Users'): ?>
                                         <svg aria-hidden="true" style="height: 32;" focusable="false" data-prefix="fas" data-icon="users-crown" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="svg-inline--fa fa-users-crown fa-w-20 fa-9x">
@@ -79,6 +78,9 @@
                                     <span class="kt-grid-nav__title"><?php echo e(__($section->name[$lang])); ?></span>
                                     <span class="kt-grid-nav__desc"><?php echo e(__('Admin Side')); ?></span>
                                 </a>
+								
+								
+								
                                 <?php if($counter == 2): ?>
                             </div> <?php $counter = 0; ?>
                             <?php endif; ?>
@@ -92,6 +94,7 @@
                 <!--end: Grid Nav -->
                 </form>
             </div>
+
             <?php elseif(auth()->check() && auth()->user()->hasRole('company-admin')): ?>
 
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px" aria-expanded="true">
@@ -124,7 +127,7 @@
                         <?php if($counter == 1): ?>
                         <div class="kt-grid-nav__row">
                             <?php endif; ?>
-                            <a href="<?php echo e($section->route == 'roles.permissions.index' ? route($section->route, 'admin') : route($section->route)); ?>" class="kt-grid-nav__item">
+                            <a href="<?php echo e($section->route == 'roles.permissions.index' ? route('roles.permissions.edit') : route($section->route)); ?>" class="kt-grid-nav__item">
                                 <span class="kt-grid-nav__icon">
                                     <?php if($section->name[$lang] == 'Admin Users'): ?>
                                     <svg aria-hidden="true" style="height: 32;" focusable="false" data-prefix="fas" data-icon="users-crown" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="svg-inline--fa fa-users-crown fa-w-20 fa-9x">

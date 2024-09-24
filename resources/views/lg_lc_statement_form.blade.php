@@ -63,7 +63,7 @@
                             <div class="kt-input-icon">
                                 <div class="input-group date">
 
-                                    <select js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_id" class="form-control ">
+                                    <select required js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_id" class="form-control ">
                                         @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                         <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                         @endforeach

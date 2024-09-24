@@ -103,7 +103,7 @@ $(document).on('change','.only-greater-than-or-equal-zero-allowed',function(){
     if(! isGreaterThanOrEqualZero(val) && val  != '')
     {
         let currentLang = $('body').data('lang');
-
+		console.log(this)
          Swal.fire({
             icon: "warning",
             title: {

@@ -29,7 +29,7 @@
                             @if ($counter == 1)
                             <div class="kt-grid-nav__row">
                                 @endif
-                                <a href="{{ $section->route == 'roles.permissions.index' ? route($section->route, 'admin') : route($section->route) }}" class="kt-grid-nav__item">
+                                <a href="{{ $section->route == 'roles.permissions.index' ? route('roles.permissions.edit') : route($section->route) }}" class="kt-grid-nav__item">
                                     <span class="kt-grid-nav__icon">
                                         @if ($section->name[$lang] == 'Admin Users')
                                         <svg aria-hidden="true" style="height: 32;" focusable="false" data-prefix="fas" data-icon="users-crown" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="svg-inline--fa fa-users-crown fa-w-20 fa-9x">

@@ -5,7 +5,6 @@ use App\Models\MoneyReceived ;
 ?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
-
 <style>
     label {
         text-align: left !important;
@@ -58,6 +57,8 @@ use App\Models\MoneyReceived ;
 
         <form method="post" action="<?php echo e(isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
+            <input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->cheque ? $model->cheque->id : 0); ?>">
+            <input type="hidden" name="current_branch" value="<?php echo e(isset($model) && $model->cashInSafe ? $model->cashInSafe->receiving_branch_id : 0); ?>">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
 			<input type="hidden" id="js-down-payment-id" value="<?php echo e(isset($model) && $model->downPayment ? $model->downPayment->id : 0); ?>">
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
@@ -77,12 +78,11 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-
                         <div class="col-md-3">
                             <label><?php echo e(__('Receiving Date')); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="text" name="receiving_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                    <input type="text" name="receiving_date" max-date="<?php echo e(formatDateForDatePicker(now())); ?>" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -671,18 +671,19 @@ use App\Models\MoneyReceived ;
                 </div>
             </div>
 
-             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
-<?php $component->withName('submitting'); ?>
+             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>
+<?php $component->withName('submitting-by-ajax'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes([]); ?>
-<?php if (isset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34)): ?>
-<?php $component = $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34; ?>
-<?php unset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34); ?>
+<?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+            
 
         </form>
         <!--end::Form-->

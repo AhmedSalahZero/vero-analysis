@@ -18,9 +18,13 @@ class HHelpers
             }
 			return $randomCode ; 
 	}
-	public static function generateCodeOfLength($length)
+	public static function generateCodeOfLength($length,$onlyNumbers = false )
 	{
+		
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if($onlyNumbers){
+			$characters = '0123456789';
+		}
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {

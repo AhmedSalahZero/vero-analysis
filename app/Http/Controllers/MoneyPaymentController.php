@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Helpers\HHelpers;
 use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -15,7 +14,6 @@ use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\PurchaseOrder;
-use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
@@ -104,16 +102,6 @@ class MoneyPaymentController
 		$payableChequesStartDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['startDate'] ?? null ;
 		$payableChequesEndDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['endDate'] ?? null ;
 
-		/**
-		 * * rejected cheques
-		 */
-		// $chequesRejectedStartDate = $filterDates[MoneyPayment::CHEQUE_REJECTED]['startDate'] ?? null ;
-		// $chequesRejectedEndDate = $filterDates[MoneyPayment::CHEQUE_REJECTED]['endDate'] ?? null ;
-
-
-
-
-
 
 		$user = $request->user()->load('moneyPayments') ;
 		/**
@@ -123,9 +111,6 @@ class MoneyPaymentController
 
 		$outgoingTransfer = $user->getOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
 		$payableCheques = $user->getPayableCheques($payableChequesStartDate,$payableChequesEndDate);
-		// $receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe($chequesRejectedStartDate,$chequesRejectedEndDate);
-		// $receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
-		// $collectedCheques=  $user->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
 
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 
@@ -135,13 +120,6 @@ class MoneyPaymentController
 
 
 		$payableCheques = $moneyType == MoneyPayment::PAYABLE_CHEQUE ? $this->applyFilter($request,$payableCheques) : $payableCheques;
-
-
-		// $receivedRejectedChequesInSafe = $moneyType == MoneyPayment::CHEQUE_REJECTED ? $this->applyFilter($request,$receivedRejectedChequesInSafe) : $receivedRejectedChequesInSafe;
-
-		// $receivedChequesUnderCollection=  $moneyType == MoneyPayment::CHEQUE_UNDER_COLLECTION ? $this->applyFilter($request,$receivedChequesUnderCollection) : $receivedChequesUnderCollection ;
-
-		// $collectedCheques=  $moneyType == MoneyPayment::CHEQUE_COLLECTED ? $this->applyFilter($request,$collectedCheques) : $collectedCheques ;
 
 
 		$payableChequesTableSearchFields = [
@@ -155,33 +133,7 @@ class MoneyPaymentController
 		];
 
 
-		// $chequesRejectedTableSearchFields = [
-		// 	'supplier_name'=>__('Supplier Name'),
-		// 	'delivery_date'=>__('Delivery Date'),
-		// 	'cheque_number'=>__('Cheque Number'),
-		// 	'currency'=>__('Currency'),
-		// 	'delivery_bank_id'=>__('Delivery Bank'),
-		// 	'due_date'=>__('Due Date'),
-		// 	'cheque_status'=>__('Status')
-		// ];
-
-		// $chequesUnderCollectionTableSearchFields = [
-		// 	'supplier_name'=>__('Supplier Name'),
-		// 	'cheque_number'=>__('Cheque Number'),
-		// 	'paid_amount'=>__('Cheque Amount'),
-		// 	'delivery_date'=>__('Deposit Date'),
-		// 	'delivery_bank_id'=>__('Delivery Bank'),
-		// 	'clearance_days'=>'Clearance Days'
-		// ];
-
-		// $collectedChequesTableSearchFields = [
-		// 	'supplier_name'=>__('Supplier Name'),
-		// 	'cheque_number'=>__('Cheque Number'),
-		// 	'paid_amount'=>__('Cheque Amount'),
-		// 	'delivery_date'=>__('Deposit Date'),
-		// 	'delivery_bank_id'=>__('Delivery Bank'),
-		// 	'clearance_days'=>'Clearance Days'
-		// ];
+		
 
 		$outgoingTransferTableSearchFields = [
 			'supplier_name'=>__('Supplier Name'),
@@ -192,8 +144,6 @@ class MoneyPaymentController
 			'account_number'=>__('Account Number')
 		];
 
-
-
 		$payableCashTableSearchFields = [
 			'supplier_name'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
@@ -203,10 +153,6 @@ class MoneyPaymentController
 			'receipt_number'=>__('Receipt Number')
 		];
 
-
-
-
-
 		$accountTypes = AccountType::onlyCashAccounts()->get();
         return view('reports.moneyPayments.index', [
 			'company'=>$company ,
@@ -214,18 +160,11 @@ class MoneyPaymentController
 			'cashPayments'=>$cashPayments,
 			'payableChequesTableSearchFields'=>$payableChequesTableSearchFields,
 			'outgoingTransfer'=>$outgoingTransfer,
-			// 'receivedChequesUnderCollection'=>$receivedChequesUnderCollection,
-			// 'chequesUnderCollectionTableSearchFields'=>$chequesUnderCollectionTableSearchFields ,
 			'payableCashTableSearchFields'=>$payableCashTableSearchFields,
 			'outgoingTransferTableSearchFields'=>$outgoingTransferTableSearchFields,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
 			'accountTypes'=>$accountTypes,
-			// 'chequesRejectedTableSearchFields'=>$chequesRejectedTableSearchFields,
-			// 'receivedRejectedChequesInSafe'=>$receivedRejectedChequesInSafe,
-			// 'collectedCheques'=>$collectedCheques,
-			// 'collectedChequesTableSearchFields'=>$collectedChequesTableSearchFields,
 			'filterDates'=>$filterDates,
-
 		]);
         return view('reports.moneyPayments.index', compact('financialInstitutionBanks','accountTypes'));
     }
@@ -394,6 +333,7 @@ class MoneyPaymentController
 		if($moneyType == MoneyPayment::CASH_PAYMENT){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['delivery_branch_id'] = $this->generateBranchId($paymentBranchName,$company->id) ;
+			$relationData['company_id'] = $company->id ;
 			$relationName = 'cashPayment';
 		}
 		elseif($moneyType ==MoneyPayment::OUTGOING_TRANSFER ){
@@ -474,8 +414,8 @@ class MoneyPaymentController
 		
 		if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 ){
 			// start store unapplied amount as new down payment
-			$this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]],['allocations'=>[]])),$moneyPayment->id);
-			return ;
+			return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]],['allocations'=>[]])),$moneyPayment->id);
+			
 		}
 		foreach($request->get('purchases_orders_amounts',[]) as $salesOrderReceivedAmountArr)
 		{
@@ -491,14 +431,15 @@ class MoneyPaymentController
 					));
 			}
 		}
-		
-
-
-		
 		/**
 		 * @var SupplierInvoice $supplierInvoice
 		 */
 		$activeTab = $moneyType;
+		if($request->ajax()){
+			return response()->json([
+				'redirectTo'=>route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])
+			]);
+		}
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 
 	}
@@ -561,6 +502,11 @@ class MoneyPaymentController
 		$moneyPayment->delete();
 		$this->store($company,$request);
 		 $activeTab = $newType;
+		 if($request->ajax()){
+			return response()->json([
+				'redirectTo'=>route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])
+			]);
+		}
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
 

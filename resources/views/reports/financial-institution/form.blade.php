@@ -1,5 +1,8 @@
 @extends('layouts.dashboard')
 @section('css')
+@php
+	use App\Models\FinancialInstitutionAccount;
+@endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
@@ -129,7 +132,7 @@
                                     <div class="col-lg-4">
                                         <label>{{__('Branch Name')}} @include('star')</label>
                                         <div class="kt-input-icon">
-                                            <input value="{{ isset($model) ? $model->getBranchName() : null  }}" type="text" name="branch_name" class="form-control" placeholder="{{__('Branch Name')}}">
+                                            <input required	 value="{{ old('branch_name',isset($model) ? $model->getBranchName() : null)  }}" type="text" name="branch_name" class="form-control" placeholder="{{__('Branch Name')}}">
                                         </div>
                                     </div>
 
@@ -151,7 +154,7 @@
                                     <div class="col-lg-4">
                                         <label>{{__('Company Account Number')}} @include('star')</label>
                                         <div class="kt-input-icon">
-                                            <input type="text" value="{{ isset($model) ? $model->getCompanyAccountNumber() : old('company_account_number') }}" name="company_account_number" class="form-control" placeholder="{{__('Company Account Number')}}">
+                                            <input required type="text" value="{{ old('company_account_number',isset($model) ? $model->getCompanyAccountNumber() : null)   }}" name="company_account_number" class="form-control" placeholder="{{__('Company Account Number')}}">
                                         </div>
                                     </div>
 
@@ -163,7 +166,7 @@
                                     <label>{{__('Balance Date')}} @include('star')</label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
-                                            <input type="text" name="balance_date" value="{{ isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : null }}" class="form-control" readonly placeholder="{{ __('Select Balance Date') }}" id="kt_datepicker_2" />
+                                            <input type="text" name="balance_date" value="{{ old('balance_date', isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : formatDateForDatePicker(now()) )  }}" class="form-control" readonly placeholder="{{ __('Select Balance Date') }}" id="kt_datepicker_2" />
                                             <div class="input-group-append">
                                                 <span class="input-group-text">
                                                     <i class="la la-calendar-check-o"></i>
@@ -181,26 +184,22 @@
                                 <div class="col-md-12 mt-3">
 
 
-
                                     <div class="" style="width:100%">
 
                                         <div id="m_repeater_0" class="cash-and-banks-repeater">
                                             <div class="form-group  m-form__group row  ">
                                                 <div data-repeater-list="accounts" class="col-lg-12">
-                                                    @if(isset($model) )
-                                                    @foreach($model->accounts as $account)
+												@php
+													$accounts =  old('accounts',$model->accounts ?? [null]) ; 
+													$accounts = is_array($accounts) ? fillObjectFromArray($accounts,FinancialInstitutionAccount::class) : $accounts;
+												@endphp
+                                                    @foreach( $accounts as $account)
                                                     @include('reports.financial-institution.repeater' , [
-                                                    'account'=>$account,
-
+                                             	       'account'=>$account,
                                                     ])
 
                                                     @endforeach
-                                                    @else
-                                                    @include('reports.financial-institution.repeater' , [
-
-                                                    ])
-
-                                                    @endif
+                                                   
 
 
 

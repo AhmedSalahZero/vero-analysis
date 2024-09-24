@@ -1,4 +1,7 @@
 @extends('layouts.dashboard')
+@php
+	use App\Models\User;
+@endphp
 @section('css')
     <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
@@ -13,7 +16,7 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('SECTIONS')}}
+                        {{__('Users')}}
                     </h3>
                 </div>
             </div>
@@ -110,15 +113,18 @@
                                 <label>{{__('Role')}} </label>
                                 <select required id="role-select-id" name="role" class="form-control kt-selectpicker"  >
                                     <option value="">{{__('Select')}}</option>
-									@if(Auth()->user()->isCompanyAdmin() || Auth()->user()->isUser() )
-	                                    <option selected  value="user">{{__("User")}}</option>
-									@else 
-                                    <option {{ (isset($user) && $user->hasRole('super-admin')) ? 'selected' : ''}}  value="super-admin">{{__("Super Admin")}}</option>
-                                    <option {{ (isset($user) && $user->hasRole('company-admin')) ? 'selected' : ''}}  value="company-admin">{{__("Company Admin")}}</option>
-                                    {{-- <option {{ (isset($user) && $user->hasRole('admin') )? 'selected' : ''}}  value="admin">{{__("Admin")}}</option> --}}
-                                    <option {{ (isset($user) && $user->hasRole('user') )? 'selected' : ''}}  value="user">{{__("User")}}</option>
-									@endif 
-									
+	                                    @if(auth()->user()->isSuperAdmin() || (isset($user) && $user->hasRole(User::SUPER_ADMIN) ))
+										<option   value="{{ User::SUPER_ADMIN }}" @if(isset($user) && $user->hasRole(User::SUPER_ADMIN)) selected @endif > {{__("Super Admin")}}</option>
+										@endif 
+										@if(auth()->user()->can('create company admin') || (isset($user) && $user->hasRole(User::COMPANY_ADMIN) ))
+										<option   value="{{ User::COMPANY_ADMIN }}" @if(isset($user) && $user->hasRole(User::COMPANY_ADMIN)) selected @endif > {{__("Company Admin")}}</option>
+										@endif
+										@if(auth()->user()->can('create manager') || (isset($user) && $user->hasRole(User::MANAGER) ))
+										<option   value="{{ User::MANAGER }}" @if(isset($user) && $user->hasRole(User::MANAGER)) selected @endif > {{__("Manager")}}</option>
+										@endif
+										@if(auth()->user()->can('create user') || (isset($user) && $user->hasRole(User::USER) ))
+										<option   value="{{ User::USER }}" @if(isset($user) && $user->hasRole(User::USER)) selected @endif > {{__("User")}}</option>
+										@endif
                                 </select>
 
                             </div>
