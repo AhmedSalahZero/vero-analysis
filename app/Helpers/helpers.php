@@ -4207,7 +4207,7 @@ function getPermissions(array $systemsNames  = []):array
         $permissions[] = [
             'name'=>generateReportName($reportName),
 			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>$reportName,
 			'view-name'=>'view ' .$reportName 
         ];
@@ -4218,7 +4218,7 @@ function getPermissions(array $systemsNames  = []):array
             $permissions[] = [
                 'name'=>'edit ' . $reportType . ' ' . $statementName,
 				'systems'=>[VERO],
-				'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+				'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 				 'group'=>$statementName,
 				'view-name'=>'view ' .$reportType . ' ' . $statementName
             ];
