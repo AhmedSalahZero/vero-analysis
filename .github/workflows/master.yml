@@ -62,5 +62,6 @@ jobs:
          password: Aa@112233@aA
          exclude: |
             **/node_modules/**
+            **/storage/**
     
     
