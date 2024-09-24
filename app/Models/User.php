@@ -300,8 +300,6 @@ class User extends Authenticatable implements HasMedia
 				$q->where('companies.id',$company->id);
 			});
 		})
-		
-		
 		->get();
 	}
 }
