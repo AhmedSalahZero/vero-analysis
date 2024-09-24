@@ -73,7 +73,7 @@
 							 @foreach (formatArrayAsGroup(getPermissions($user->getSystemsNames())) as $groupName=>$permissionArrays)
 							 <tr>
 							 	<td class="text-left text-capitalize">
-								{{ $groupIndex+1 }}
+								{{-- {{ $groupIndex+1 }} --}}
 								 <div class="kt-checkbox-inline d-flex  ">
                                                     <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success text-capitalize" cheched="">
                                                         <input data-group-index="{{ $groupIndex }}" type="checkbox" class="checkbox-for-row" value="1" 
