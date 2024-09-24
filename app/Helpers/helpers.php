@@ -3447,7 +3447,7 @@ function getPermissions(array $systemsNames  = []):array
 
 		[
             'name'=>'view notification settings',
-			'systems'=>[VERO,CASH_VERO],
+			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>'notification & settings',
 			'view-name'=>'view notification settings'
@@ -4085,28 +4085,28 @@ function getPermissions(array $systemsNames  = []):array
 		],
 		[
 			'name'=>'view quick price setting',
-			'systems'=>[VERO],
+			'systems'=>[PRICING_CALCULATOR],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>'quick price calculator',
 			'view-name'=>'setting'
 		],
 		[
 			'name'=>'view revenue business line',
-			'systems'=>[VERO],
+			'systems'=>[PRICING_CALCULATOR],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 				'group'=>'revenue business line',
 			'view-name'=>'view'
 		],
 		[
 			'name'=>'view positions',
-			'systems'=>[VERO],
+			'systems'=>[PRICING_CALCULATOR],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>'positions',
 			'view-name'=>'view'
 		],
 		[
 			'name'=>'view expenses',
-			'systems'=>[VERO],
+			'systems'=>[PRICING_CALCULATOR],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 				'group'=>'expenses',
 			'view-name'=>'view'
