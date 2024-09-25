@@ -100,9 +100,12 @@ use App\Models\MoneyReceived ;
 							currency-class
 							contract-currency
 							ajax-update-contracts
-							invoice-currency-class update-exchange-rate
-							
+							<?php if(!$singleModel): ?>
+							invoice-currency-class 
+							<?php endif; ?>
+							update-exchange-rate
 							current-invoice-currency
+							
 							 ajax-get-invoice-numbers">
                                         <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php

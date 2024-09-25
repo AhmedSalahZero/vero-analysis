@@ -99,9 +99,12 @@ use App\Models\MoneyReceived ;
 							currency-class
 							contract-currency
 							ajax-update-contracts
-							invoice-currency-class update-exchange-rate
-							{{-- current-currency --}}
+							@if(!$singleModel)
+							invoice-currency-class 
+							@endif
+							update-exchange-rate
 							current-invoice-currency
+							
 							 ajax-get-invoice-numbers">
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                         @php

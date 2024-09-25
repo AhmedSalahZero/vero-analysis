@@ -537,7 +537,7 @@ class CustomerInvoiceDashboardController extends Controller
         $invoices = ('App\Models\\' . $modelType)::where('company_id', $company->id)
         ->where($clientIdColumnName, $partnerId)
         ->where('currency', $currency)
-		->orderByRaw('invoice_date asc , invoice_due_date asc , net_balance desc')
+		->orderByRaw('invoice_date asc , invoice_due_date desc , net_balance desc')
         ->get();
 		
         $customer = Partner::find($partnerId);

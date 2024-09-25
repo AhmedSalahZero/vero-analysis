@@ -363,7 +363,9 @@ $(function () {
 			}
 		})
 	});
-	$('select.invoice-currency-class').trigger('change')
+
+		
+		$('select.invoice-currency-class').trigger('change')
 
 	
 	
