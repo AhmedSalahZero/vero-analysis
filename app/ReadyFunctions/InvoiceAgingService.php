@@ -36,6 +36,7 @@ class InvoiceAgingService
         $result = [];
         $invoices = $fullModelName::where('invoice_date', '<=', $this->aging_date)
 		->orderBy('invoice_due_date','asc')
+		->where('net_balance','>',0) 
 		->where('company_id', $this->company_id);
         if (count($clientNames)) {
             $invoices->whereIn($clientNameColumnName, $clientNames);
