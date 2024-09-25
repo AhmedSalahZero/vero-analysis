@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\ForeignExchangeRate;
 use App\Traits\GeneralFunctions;
+use Arr;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -51,6 +52,8 @@ class ForeignExchangeRateController
 		$models = [];
 		$existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency')->toArray();
 		
+		$isMainFunctionCurrencyExistInHisCurrency = in_array($mainFunctionalCurrency,$existingCurrencies );
+		$activeType = $isMainFunctionCurrencyExistInHisCurrency ? $mainFunctionalCurrency : Arr::first($existingCurrencies);
 		foreach($existingCurrencies as $currentCurrency){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$currentCurrency) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$currentCurrency) : now()->format('Y-m-d');
@@ -59,7 +62,6 @@ class ForeignExchangeRateController
 				'endDate'=>$endDate
 			];
 			$models[$currentCurrency]   = ForeignExchangeRate::where('company_id',$company->id)->where('from_currency',$currentCurrency)->orderByRaw('date desc')->get(); ;
-
 			if($currentCurrency == $activeType ){
 				$models[$currentCurrency]   = $this->applyFilter($request,$models[$currentCurrency],$filterDates[$currentCurrency]['startDate'] , $filterDates[$currentCurrency]['endDate']) ;
 			}
