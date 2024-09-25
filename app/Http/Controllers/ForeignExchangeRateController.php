@@ -17,10 +17,11 @@ class ForeignExchangeRateController
 			return $collection;
 		}
 		$searchFieldName = $request->get('field');
-		$dateFieldName =  'issuance_date' ; // change it
+		$dateFieldName =  'date' ; // change it
 		$from = $request->get('from');
 		$to = $request->get('to');
 		$value = $request->query('value');
+		
 		$collection = $collection
 		->when($request->has('value'),function($collection) use ($request,$value,$searchFieldName){
 			return $collection->filter(function($letterOfCreditIssuance) use ($value,$searchFieldName){
@@ -35,7 +36,7 @@ class ForeignExchangeRateController
 			return $collection->where($dateFieldName,'<=',$to);
 		})
 		->when($filterStartDate , function($collection) use ($filterStartDate,$filterEndDate){
-			return $collection->filterByIssuanceDate($filterStartDate,$filterEndDate);
+			return $collection->filterByDate($filterStartDate,$filterEndDate);
 		})
 		->sortByDesc('id');
 
@@ -63,7 +64,7 @@ class ForeignExchangeRateController
 			];
 			$models[$currentCurrency]   = ForeignExchangeRate::where('company_id',$company->id)->where('from_currency',$currentCurrency)->orderByRaw('date desc')->get(); ;
 			if($currentCurrency == $activeType ){
-				// $models[$currentCurrency]   = $this->applyFilter($request,$models[$currentCurrency],$filterDates[$currentCurrency]['startDate'] , $filterDates[$currentCurrency]['endDate']) ;
+				$models[$currentCurrency]   = $this->applyFilter($request,$models[$currentCurrency],$filterDates[$currentCurrency]['startDate'] , $filterDates[$currentCurrency]['endDate']) ;
 			}
 			$searchFields[$currentCurrency] =  [
 				'from_currency'=>__('From Currency'),
