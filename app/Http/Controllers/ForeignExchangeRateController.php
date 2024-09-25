@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers;
-use App\Interfaces\Models\IInvoice;
 use App\Models\Company;
 use App\Models\ForeignExchangeRate;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class ForeignExchangeRateController
