@@ -136,7 +136,9 @@ $selectedBanks = [];
                         <div class="input-group date">
                             <select name="currency" class="form-control
 							contract-currency ajax-update-contracts
-							invoice-currency-class
+							@if(!$singleModel)
+							invoice-currency-class 
+							@endif
 							currency-class update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
