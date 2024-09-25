@@ -101,6 +101,7 @@ $selectedBanks = [];
     @if(isset($model))
     @method('put')
     @endif
+	
     <div class="kt-portlet">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
