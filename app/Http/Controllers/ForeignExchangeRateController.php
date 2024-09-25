@@ -63,7 +63,7 @@ class ForeignExchangeRateController
 			];
 			$models[$currentCurrency]   = ForeignExchangeRate::where('company_id',$company->id)->where('from_currency',$currentCurrency)->orderByRaw('date desc')->get(); ;
 			if($currentCurrency == $activeType ){
-				$models[$currentCurrency]   = $this->applyFilter($request,$models[$currentCurrency],$filterDates[$currentCurrency]['startDate'] , $filterDates[$currentCurrency]['endDate']) ;
+				// $models[$currentCurrency]   = $this->applyFilter($request,$models[$currentCurrency],$filterDates[$currentCurrency]['startDate'] , $filterDates[$currentCurrency]['endDate']) ;
 			}
 			$searchFields[$currentCurrency] =  [
 				'from_currency'=>__('From Currency'),
