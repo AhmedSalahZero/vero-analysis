@@ -215,6 +215,13 @@ class SalesGatheringTestController extends Controller
 			'modelName'=>$modelName
 		]);
 	}
+	protected function removeCommaFromNumbers(array $items):array{
+		$result = [];
+		foreach($items as $key => $value){
+			$result[$key] = str_replace(",","",$value);
+		}
+		return $result ;
+	}
 	public function storeModel(Company $company ,Request $request, string $modelName )
 	{
 		$companyId = $company->id;
@@ -223,8 +230,8 @@ class SalesGatheringTestController extends Controller
 		foreach((array)$request->get('tableIds') as $tableId){
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['company_id']  = $companyId ;
+					$tableDataArr = $this->removeCommaFromNumbers($tableDataArr);
 					$modelItem=$model->create($tableDataArr);
-				
 			}
 		}
 		if($modelName == 'SalesGathering'){
