@@ -73,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('receiving_date','>=',$startDate)->where('receiving_date','<=',$endDate);
+				return $items->where('receiving_date','>=',Carbon::make($startDate)->startOfDay())->where('receiving_date','<=',Carbon::make($endDate)->endOfDay());
 			})->sortByDesc('receiving_date') ;
 		});
 		
@@ -83,7 +83,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('start_date','>=',$startDate)->where('start_date','<=',$endDate);
+				return $items->where('start_date','>=',Carbon::make($startDate)->startOfDay())->where('start_date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -92,7 +92,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('transfer_date','>=',$startDate)->where('transfer_date','<=',$endDate);
+				return $items->where('transfer_date','>=',Carbon::make($startDate)->startOfDay())->where('transfer_date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -101,7 +101,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('transaction_date','>=',$startDate)->where('transaction_date','<=',$endDate);
+				return $items->where('transaction_date','>=',Carbon::make($startDate)->startOfDay())->where('transaction_date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -110,7 +110,8 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('created_at','>=',$startDate)->where('created_at','<=',$endDate);
+				// dd();
+				return $items->where('created_at','>=',Carbon::make($startDate)->startOfDay())->where('created_at','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -119,7 +120,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('delivery_date','>=',$startDate)->where('delivery_date','<=',$endDate);
+				return $items->where('delivery_date','>=',Carbon::make($startDate)->startOfDay())->where('delivery_date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -128,7 +129,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('payment_date','>=',$startDate)->where('payment_date','<=',$endDate);
+				return $items->where('payment_date','>=',Carbon::make($startDate)->startOfDay())->where('payment_date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -137,7 +138,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('issuance_date','>=',$startDate)->where('issuance_date','<=',$endDate);
+				return $items->where('issuance_date','>=',Carbon::make($startDate)->startOfDay())->where('issuance_date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		
@@ -147,7 +148,7 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				return $items->where('date','>=',$startDate)->where('date','<=',$endDate);
+				return $items->where('date','>=',Carbon::make($startDate)->startOfDay())->where('date','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});
 		

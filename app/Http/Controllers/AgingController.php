@@ -29,19 +29,23 @@ class AgingController
 		$businessUnits = [];
 		$businessSectors = [];
 		if(isset($exportables['business_unit'])){
-			$businessUnits = DB::table($invoiceTableName)
-			->where('company_id',$company->id)->where('business_unit','!=',null)
-			->where('business_unit','!=',null)
-			->where('business_unit','!=','')
-			->selectRaw('business_unit')->get()->pluck('business_unit')->unique()->values()->toArray();
+			$businessUnits = DB::table('cash_vero_business_units')->where('company_id',$company->id)->pluck('name')->toArray();
+			// $businessUnits = DB::table($invoiceTableName)
+			// ->where('company_id',$company->id)->where('business_unit','!=',null)
+			// ->where('business_unit','!=',null)
+			// ->where('business_unit','!=','')
+			// ->selectRaw('business_unit')->get()->pluck('business_unit')->unique()->values()->toArray();
 		}
 		if(isset($exportables['sales_person'])){
-			$salesPersons = DB::table($invoiceTableName)->where('company_id',$company->id)->where('sales_person','!=',null)->where('sales_person','!=','')
-			->selectRaw('sales_person')->get()->pluck('sales_person')->unique()->values()->toArray();
+			$salesPersons = DB::table('cash_vero_sales_persons')->where('company_id',$company->id)->pluck('name')->toArray();
+			
+			// $salesPersons = DB::table($invoiceTableName)->where('company_id',$company->id)->where('sales_person','!=',null)->where('sales_person','!=','')
+			// ->selectRaw('sales_person')->get()->pluck('sales_person')->unique()->values()->toArray();
 		}
 		if(isset($exportables['business_sector'])){
-			$businessSectors = DB::table($invoiceTableName)->where('company_id',$company->id)->where('business_sector','!=',null)->where('business_sector','!=','')
-			->selectRaw('business_sector')->get()->pluck('business_sector')->unique()->values()->toArray();
+			$businessSectors = DB::table('cash_vero_business_sectors')->where('company_id',$company->id)->pluck('name')->toArray();
+			// $businessSectors = DB::table($invoiceTableName)->where('company_id',$company->id)->where('business_sector','!=',null)->where('business_sector','!=','')
+			// ->selectRaw('business_sector')->get()->pluck('business_sector')->unique()->values()->toArray();
 		}
 	
 		$currencies = DB::table($invoiceTableName)

@@ -23,8 +23,10 @@ use App\Models\TablesField;
 use App\Notifications\DueInvoiceNotification;
 use Carbon\Carbon;	
 use Illuminate\Console\Command;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class TestCommand extends Command
 {
@@ -59,17 +61,35 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+		
+		foreach(['cash_vero_branches'] as $mainTableName){
+			Schema::create($mainTableName,function(Blueprint $table){
+				$table->id();
+				$table->string('name');
+				$table->unsignedBigInteger('company_id');
+				$table->timestamps();
+			});
+		}
+		
+	// 	$x = DB::table('customer_invoices')->pluck('company_id')->unique()->values()->toArray();
+	// 	$y = ['ahmed','mohamed'] ;
+		
+	// ;	dd(array_map(function($item){
+	// 	return ['x'=>$item,'y'=>5];
+	// },$y));
+		
+		// dd($result);
 		// $arr = collect([
 		// 	true ? 'ahmed' : false ,
 		// 	true ? 'salah' : false,
 		// 	false ? 'khaled' : false  ,
 		// ])->filter(function($value){return $value;})->toArray() ;
 		// dd($arr);
-		DB::table('permissions')->delete();
-		DB::table('model_has_permissions')->delete();
-		DB::table('role_has_permissions')->delete();
-		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
-		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
+		// DB::table('permissions')->delete();
+		// DB::table('model_has_permissions')->delete();
+		// DB::table('role_has_permissions')->delete();
+		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 		
 	}
 }

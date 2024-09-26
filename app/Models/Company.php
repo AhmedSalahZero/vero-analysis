@@ -314,4 +314,32 @@ class Company extends Model implements HasMedia
 			$user->syncPermissions($permissions);
 		}	
 	}
+	public function customers()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_customer',1);
+	}
+	public function suppliers()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_supplier',1);
+	}
+	public function businessSectors()
+	{
+		return $this->hasMany(CashVeroBusinessSector::class,'company_id','id');
+	}
+	public function salesChannels()
+	{
+		return $this->hasMany(CashVeroSalesChannel::class,'company_id','id');
+	}
+	public function salesPersons()
+	{
+		return $this->hasMany(CashVeroSalesPerson::class,'company_id','id');
+	}
+	public function businessUnits()
+	{
+		return $this->hasMany(CashVeroBusinessUnit::class,'company_id','id');
+	}
+	public function branches()
+	{
+		return $this->hasMany(CashVeroBranch::class,'company_id','id');
+	}
 }

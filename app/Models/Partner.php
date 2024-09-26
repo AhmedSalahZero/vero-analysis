@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCreatedAt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class Partner extends Model
 {
+	const CUSTOMERS = 'customers';
+	use HasCreatedAt,HasBasicStoreRequest;
     protected $dates = [
     ];
 	public function contracts()
@@ -103,5 +109,21 @@ class Partner extends Model
 		return $this->hasMany(SupplierInvoice::class,'supplier_id','id');
 	}
 	
-	
+	public function updateNamesInAllTables(string $columnName , string $oldPartnerName,string $newPartnerName, int $companyId )
+	{
+		// $columnName = 'customer_name' , 'supplier_name';
+		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+
+		foreach($tables as $tableName){
+			if(Schema::hasColumn($tableName,$columnName)){
+				if($tableName == 'sales_gathering'){
+					continue;
+				}
+				DB::table($tableName)->where('company_id',$companyId)
+				->where($columnName,$oldPartnerName)
+				->update([$columnName=>$newPartnerName])
+				;
+			}
+		}
+	}
 }
