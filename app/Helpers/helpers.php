@@ -3452,43 +3452,214 @@ function getPermissions(array $systemsNames  = []):array
 			'group'=>'notification & settings',
 			'view-name'=>'view notification settings'
         ],
+		[
+            'name'=>'view customers',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customers',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create customers',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customers',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update customers',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customers setting',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete customers',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'customers',
+			'view-name'=>'delete'
+        ],
 		
 		[
-            'name'=>'view customers settings',
+            'name'=>'view suppliers',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view customers'
+			'group'=>'suppliers',
+			'view-name'=>'view'
         ],
 		[
-            'name'=>'view suppliers settings',
+            'name'=>'create suppliers',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view suppliers'
+			'group'=>'suppliers',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update suppliers',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'suppliers setting',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete suppliers',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'suppliers',
+			'view-name'=>'delete'
         ],
 		
 		[
-            'name'=>'view business sectors settings',
+            'name'=>'view business sectors',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view business sectors'
+			'group'=>'business sectors',
+			'view-name'=>'view'
         ],
 		[
-            'name'=>'view sales channels settings',
+            'name'=>'create business sectors',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view sales channels'
+			'group'=>'business sectors',
+			'view-name'=>'create'
         ],
 		[
-            'name'=>'view branches settings',
+            'name'=>'update business sectors',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view branch'
+			'group'=>'business sectors setting',
+			'view-name'=>'update'
         ],
+		[
+            'name'=>'delete business sectors',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'business sectors',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view business units',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'business units',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create business units',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'business units',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update business units',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'business units setting',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete business units',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'business units',
+			'view-name'=>'delete'
+        ],
+	
+		[
+            'name'=>'view sales channels',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales channels',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create sales channels',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales channels',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update sales channels',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales channels setting',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete sales channels',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales channels',
+			'view-name'=>'delete'
+        ],
+		
+		
+		
+		[
+            'name'=>'view sales persons',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales persons',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create sales persons',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales persons',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update sales persons',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales persons setting',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete sales persons',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'sales persons',
+			'view-name'=>'delete'
+        ],
+		
+		
+		[
+            'name'=>'view branches',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'branches',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create branches',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'branches',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update branches',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'branches setting',
+			'view-name'=>'update'
+        ],
+		[
+            'name'=>'delete branches',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'branches',
+			'view-name'=>'delete'
+        ],
+		
+		
 		[
             'name'=>'view cash expense categories',
 			'systems'=>[CASH_VERO],
@@ -3501,7 +3672,7 @@ function getPermissions(array $systemsNames  = []):array
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>'notification & settings',
-			'view-name'=>'view cash expense categories'
+			'view-name'=>'view customer invoice past due notification'
 		],
 		[
 			'name'=>'view customer invoice coming due notification',
@@ -5316,12 +5487,14 @@ function getHeaderMenu($currentCompany = null)
 	$notificationsSubItems = \App\Notification::formatForMenuItem();
 	$canViewNotificationSetting = $user->can('view notification settings');
 	$canViewCashExpenseCategories = $user->can('view cash expense categories');
-	$canViewCustomersSettings = $user->can('view customers settings');
-	$canViewSuppliersSettings = $user->can('view suppliers settings');
-	$canViewBusinessSectorSettings = $user->can('view business sectors settings');
-	$canViewSalesChannelsSettings = $user->can('view sales channels settings');
-	$canViewBranchesSettings = $user->can('view branches settings');
-	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewSalesChannelsSettings||$canViewBranchesSettings || $canViewCashExpenseCategories;
+	$canViewCustomersSettings = $user->can('view customers');
+	$canViewSuppliersSettings = $user->can('view suppliers');
+	$canViewBusinessSectorSettings = $user->can('view business sectors');
+	$canViewBusinessUnitSettings = $user->can('view business units');
+	$canViewSalesChannelsSettings = $user->can('view sales channels');
+	$canViewSalesPersonsSettings = $user->can('view sales persons');
+	$canViewBranchesSettings = $user->can('view branches');
+	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
 	$notificationsSubItems[]	= [
 		'title'=>__('Notification Settings'),
 	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
@@ -5353,26 +5526,37 @@ function getHeaderMenu($currentCompany = null)
 		'submenu'=> [
 			[
 				'title'=>__('Customers'),
-				'link'=>'#',
+				'link'=>route('customers.index',['company'=>$companyId]),
 				'show'=>$canViewCustomersSettings 
 			],
 			[
 				'title'=>__('Suppliers'),
-				'link'=>'#',
+				'link'=>route('suppliers.index',['company'=>$companyId]),
 				'show'=>$canViewSuppliersSettings 
 			],
 			[
 				'title'=>__('Business Sectors'),
-				'link'=>'#',
+				'link'=>route('business.sectors.index',['company'=>$companyId]),
 				'show'=>$canViewBusinessSectorSettings 
-			],[
+			],
+			[
+				'title'=>__('Business Units'),
+				'link'=>route('business.units.index',['company'=>$companyId]),
+				'show'=>$canViewBusinessUnitSettings 
+			]
+			,[
 				'title'=>__('Sales Channels'),
-				'link'=>'#',
+				'link'=>route('sales.channels.index',['company'=>$companyId]),
 				'show'=>$canViewSalesChannelsSettings 
 			],
 			[
+				'title'=>__('Sales Persons'),
+				'link'=>route('sales.persons.index',['company'=>$companyId]),
+				'show'=>$canViewSalesPersonsSettings 
+			],
+			[
 				'title'=>__('Branches'),
-				'link'=>'#',
+				'link'=>route('branches.index',['company'=>$companyId]),
 				'show'=>$canViewBranchesSettings 
 			],
 			[
@@ -6396,4 +6580,47 @@ function fillObjectFromArray(array $items,$object)
 	}
 
 	return $result ;
+}
+function getCashVeroTableNames()
+{
+	return [
+		'cash_expenses',
+		'overdraft_against_commercial_papers',
+		'clean_overdrafts',
+		'overdraft_against_assignment_of_contracts',
+		'fully_secured_overdrafts',
+		'settlement_allocations',
+		'buy_or_sell_currencies',
+		'cash_in_banks','cash_in_safes','cash_in_safe_statements',
+		'cash_payments','certificates_of_deposits','cheques'
+		,'supplier_invoices' ,'clean_overdrafts','customer_invoices','financial_institutions','financial_institution_accounts','fully_secured_overdrafts'
+		,'clean_overdraft_bank_statements','clean_overdraft_withdrawals',
+		'notifications',
+		'current_account_bank_statements','debugging','down_payment_money_payment_settlements','down_payment_settlements','due_date_histories','fully_secured_overdraft_bank_statements','fully_secured_overdraft_withdrawals','incoming_transfers','internal_money_transfers','lc_hundred_percentage_cash_cover_opening_balances'
+, "lc_hundred_percentage_cash_cover_opening_balances"
+, "lending_information"
+, "lending_information_against_assignment_of_contracts"
+, "letter_of_credit_cash_cover_statements"
+, "letter_of_credit_facilities"
+, "letter_of_credit_facility_term_and_conditions"
+, "letter_of_credit_opening_balances"
+, "letter_of_credit_statements"
+, "letter_of_guarantee_cash_cover_statements"
+, "letter_of_guarantee_facilities"
+, "letter_of_guarantee_facility_term_and_conditions"
+, "letter_of_guarantee_issuances"
+, "letter_of_guarantee_opening_balances"
+, "letter_of_guarantee_statements"
+, "lg_against_td_or_cd_opening_balances"
+, "lg_hundred_percentage_cash_cover_opening_balances"
+, "lg_issuance_advanced_payment_histories"
+, "lg_opening_balances"
+, "loans",'opening_balances','outgoing_transfers',
+'outstanding_breakdowns','overdraft_against_assignment_of_contract_bank_statements',
+'overdraft_against_assignment_of_contract_limits','overdraft_against_assignment_of_contract_withdrawals',
+'overdraft_against_commercial_paper_bank_statements','overdraft_against_commercial_paper_limits',
+'overdraft_against_commercial_paper_withdrawals','payable_cheques',
+'payment_settlements','settlements','money_received','money_payments','contracts'
+
+	];
 }

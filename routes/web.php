@@ -341,6 +341,71 @@ Route::middleware([])->group(function () {
 				//  Route::resource('buy-or-sell-currencies', 'InternalMoneyTransferController');
 				 //
 				 
+				 Route::group(['prefix'=>'general-settings'],function(){
+					Route::get('customers','CustomersController@index')->name('customers.index');
+					Route::get('customers/create','CustomersController@create')->name('customers.create');
+					Route::post('customers/store','CustomersController@store')->name('customers.store');
+					Route::get('customers/{customer}/edit','CustomersController@edit')->name('customers.edit');
+					Route::put('customers/{customer}/update','CustomersController@update')->name('customers.update');
+					Route::delete('customers/{customer}/delete','CustomersController@destroy')->name('customers.destroy');
+					
+					
+					
+					Route::get('suppliers','SuppliersController@index')->name('suppliers.index');
+					Route::get('suppliers/create','SuppliersController@create')->name('suppliers.create');
+					Route::post('suppliers/store','SuppliersController@store')->name('suppliers.store');
+					Route::get('suppliers/{supplier}/edit','SuppliersController@edit')->name('suppliers.edit');
+					Route::put('suppliers/{supplier}/update','SuppliersController@update')->name('suppliers.update');
+					Route::delete('suppliers/{supplier}/delete','SuppliersController@destroy')->name('suppliers.destroy');
+					
+					
+					Route::get('business-sectors','BusinessSectorsController@index')->name('business.sectors.index');
+					Route::get('business-sectors/create','BusinessSectorsController@create')->name('business.sectors.create');
+					Route::post('business-sectors/store','BusinessSectorsController@store')->name('business.sectors.store');
+					Route::get('business-sectors/{businessSector}/edit','BusinessSectorsController@edit')->name('business.sectors.edit');
+					Route::put('business-sectors/{businessSector}/update','BusinessSectorsController@update')->name('business.sectors.update');
+					Route::delete('business-sectors/{businessSector}/delete','BusinessSectorsController@destroy')->name('business.sectors.destroy');
+					
+					
+					Route::get('business-units','BusinessUnitsController@index')->name('business.units.index');
+					Route::get('business-units/create','BusinessUnitsController@create')->name('business.units.create');
+					Route::post('business-units/store','BusinessUnitsController@store')->name('business.units.store');
+					Route::get('business-units/{businessUnit}/edit','BusinessUnitsController@edit')->name('business.units.edit');
+					Route::put('business-units/{businessUnit}/update','BusinessUnitsController@update')->name('business.units.update');
+					Route::delete('business-units/{businessUnit}/delete','BusinessUnitsController@destroy')->name('business.units.destroy');
+					
+					
+					Route::get('sales-channels','SalesChannelsController@index')->name('sales.channels.index');
+					Route::get('sales-channels/create','SalesChannelsController@create')->name('sales.channels.create');
+					Route::post('sales-channels/store','SalesChannelsController@store')->name('sales.channels.store');
+					Route::get('sales-channels/{salesChannel}/edit','SalesChannelsController@edit')->name('sales.channels.edit');
+					Route::put('sales-channels/{salesChannel}/update','SalesChannelsController@update')->name('sales.channels.update');
+					Route::delete('sales-channels/{salesChannel}/delete','SalesChannelsController@destroy')->name('sales.channels.destroy');
+					
+					
+					
+										
+					Route::get('sales-persons','SalesPersonsController@index')->name('sales.persons.index');
+					Route::get('sales-persons/create','SalesPersonsController@create')->name('sales.persons.create');
+					Route::post('sales-persons/store','SalesPersonsController@store')->name('sales.persons.store');
+					Route::get('sales-persons/{salesPerson}/edit','SalesPersonsController@edit')->name('sales.persons.edit');
+					Route::put('sales-persons/{salesPerson}/update','SalesPersonsController@update')->name('sales.persons.update');
+					Route::delete('sales-persons/{salesPerson}/delete','SalesPersonsController@destroy')->name('sales.persons.destroy');
+					
+					
+					
+					Route::get('branches','BranchesController@index')->name('branches.index');
+					Route::get('branches/create','BranchesController@create')->name('branches.create');
+					Route::post('branches/store','BranchesController@store')->name('branches.store');
+					Route::get('branches/{branch}/edit','BranchesController@edit')->name('branches.edit');
+					Route::put('branches/{branch}/update','BranchesController@update')->name('branches.update');
+					Route::delete('branches/{branch}/delete','BranchesController@destroy')->name('branches.destroy');
+					
+					
+				 });
+				 
+				 
+				 
 				 
 				 Route::get('lc-settlement-internal-money-transfers','LcSettlementInternalMoneyTransferController@index')->name('lc-settlement-internal-money-transfers.index');
 				 Route::get('lc-settlement-internal-money-transfers/create','LcSettlementInternalMoneyTransferController@create')->name('lc-settlement-internal-money-transfers.create');
@@ -372,6 +437,8 @@ Route::middleware([])->group(function () {
 				 Route::delete('buy-or-sell-currencies/{buy_or_sell_currency}/delete','BuyOrSellCurrenciesController@destroy')->name('buy-or-sell-currencies.destroy');
 				 
 				 
+				 
+		
 				 
 				 
 				//  Route::get('internal-money-');

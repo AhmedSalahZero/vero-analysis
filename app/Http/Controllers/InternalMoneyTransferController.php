@@ -128,7 +128,8 @@ class InternalMoneyTransferController
         return view('internal-money-transfer.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
-			'models'=>$models
+			'models'=>$models,
+			'filterDates'=>$filterDates
 		]);
     }
 	public function create(Company $company,$type)

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @php
-use App\Models\LcSettlementInternalMoneyTransfer ;
+use App\Models\CashVeroSalesPerson ;
 @endphp
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
@@ -32,7 +32,7 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Lc Settlement Internal Money Transfer') }}
+{{ $title }}
 @endsection
 @section('content')
 
@@ -41,8 +41,8 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT ?'active':'' }}" data-toggle="tab" href="#{{LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT  }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Bank To Letter Of Credit Transfer Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == CashVeroSalesPerson::SALES_PERSONS ?'active':'' }}" data-toggle="tab" href="#{{CashVeroSalesPerson::SALES_PERSONS  }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ $tableTitle }}
                     </a>
                 </li>
 
@@ -50,12 +50,12 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
 
 
             </ul>
-			@if(auth()->user()->can('create lc settlement internal transfer'))
+			@if(auth()->user()->can($createPermissionName))
             <div class="flex-tabs">
                
-                <a href="{{ route('lc-settlement-internal-money-transfers.create',['company'=>$company->id,LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                <a href="{{ route($createRouteName,['company'=>$company->id,CashVeroSalesPerson::SALES_PERSONS]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
-                    {{ __('Bank To Letter Of Credit') }}
+                    {{ __('Sales Persons') }}
                 </a>
             </div>
 		@endif 
@@ -71,13 +71,13 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
 
 
             @php
-            $currentType = LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT ;
+            $currentType = CashVeroSalesPerson::SALES_PERSONS ;
             @endphp
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentType" :title="__('Bank To Lc Issuance')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-lc-settlement-internal-money-transfer :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('lc-settlement-internal-money-transfers.create',['company'=>$company->id])}}" />
+                    <x-table-title.with-two-dates :type="$currentType" :title="$title" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-sales-persons :indexRouteName="$indexRouteName" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{$createRoute}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -86,14 +86,9 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
-                                    <th>{{ __('Date') }}</th>
-                                    <th>{{ __('Amount') }}</th>
-                                    <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('From Bank') }}</th>
-                                    <th>{{ __('From Account Type') }}</th>
-                                    <th>{{ __('From Account Number') }}</th>
-                                    <th>{{ __('To Lc Issuance') }}</th>
-									@if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') )
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Created At') }}</th>
+									@if(hasAuthFor($updatePermissionName) || hasAuthFor($deletePermissionName) )
                                     <th>{{ __('Control') }}</th>
 									@endif 
                                 </tr>
@@ -105,25 +100,20 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $model->getTransferDateFormatted() }}</td>
-                                    <td>{{ $model->getAmountFormatted() }}</td>
-                                    <td>{{ $model->getCurrencyFormatted() }}</td>
-                                    <td>{{ $model->getFromBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
-                                    <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
-                                    <td>{{ $model->getLetterOfCreditIssuanceTransactionName() }}</td>
-									@if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') )
+                                    <td class="text-nowrap">{{ $model->getName() }}</td>
+                                    <td>{{ $model->getCreatedAtFormatted() }}</td>
+									@if(hasAuthFor($updatePermissionName) || hasAuthFor($deletePermissionName) )
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-											@if(hasAuthFor('update lc settlement internal transfer'))
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('lc-settlement-internal-money-transfers.edit',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@if(hasAuthFor($updatePermissionName))
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route($editModelName,['company'=>$company->id,'salesPerson'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
-											@if(hasAuthFor('delete lc settlement internal transfer'))
-                                            <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+											@if(hasAuthFor($deletePermissionName))
+                                            <a data-toggle="modal" data-target="#delete-customer-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-customer-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('lc-settlement-internal-money-transfers.destroy',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route($deleteRouteName,['company'=>$company->id,'salesPerson'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -206,7 +196,7 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
             modal.find('.data-type-span').html('[ {{ __("Balance Date") }} ]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else {
-            modal.find('.data-type-span').html('[ {{ __("Contract Start Date") }} ]')
+            modal.find('.data-type-span').html('[ {{ __("Date") }} ]')
             $(modal).find('.search-field').prop('disabled', false);
         }
     })
