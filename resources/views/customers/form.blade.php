@@ -86,7 +86,7 @@
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Business Sector')"></x-sectionTitle>
+                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Customer')"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                            {{__('Business Sector Information')}}
+                                            {{__('Customer Information')}}
                                         </h3>
                                     </div>
                                 </div>
