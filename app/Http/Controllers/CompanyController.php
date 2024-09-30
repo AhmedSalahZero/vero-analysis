@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Traits\ImageSave;
+use Artisan;
 use Illuminate\Http\Request;
 
 
@@ -134,6 +135,7 @@ class CompanyController extends Controller
     public function destroy(Company $companySection)
     {
         toastr()->error('Deleted Successfully');
+		
         $companySection->delete();
         return redirect()->back();
     }

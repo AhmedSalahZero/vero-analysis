@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Interfaces\Models\IBaseModel;
-use App\Models\Repositories\CustomerRepository;
 use App\Models\Traits\Accessors\BusinessSectorAccessor;
 use App\Models\Traits\Mutators\BusinessSectorMutator;
 use App\Models\Traits\Relations\BusinessSectorRelation;

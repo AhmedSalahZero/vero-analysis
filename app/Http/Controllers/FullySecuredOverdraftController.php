@@ -89,7 +89,7 @@ class FullySecuredOverdraftController
 		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','cd_or_td_account_type_id','cd_or_td_account_number','cd_or_td_lending_percentage'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreFullySecuredOverdraftRequest $request){
-		
+
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
@@ -105,7 +105,10 @@ class FullySecuredOverdraftController
 		$activeTab = $type ; 
 		
 		$fullySecuredOverdraft->storeOutstandingBreakdown($request,$company);
-		return redirect()->route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return response()->json([
+			'redirectTo'=>route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
+		
 		
 	}
 
@@ -134,8 +137,9 @@ class FullySecuredOverdraftController
 		$fullySecuredOverdraft->storeOutstandingBreakdown($request,$company);
 		$type = $request->get('type','fully-secured-over-draft');
 		$activeTab = $type ;
-		return redirect()->route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
+		return response()->json([
+			'redirectTo'=>route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 		
 	}
 	

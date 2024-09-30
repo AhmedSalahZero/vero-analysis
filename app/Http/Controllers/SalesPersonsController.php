@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class SalesPersonsController
 {
@@ -138,6 +139,10 @@ class SalesPersonsController
 	public function update(Company $company, StoreSalesPersonRequest $request , CashVeroSalesPerson $salesPerson){
 		
 		$newName = $request->get('name');
+		$oldName = $salesPerson->getName();
+		DB::table('customer_invoices')->where('company_id',$company->id)->where('sales_person',$oldName)->update([
+			'sales_person'=>$newName
+		]);
 		$salesPerson->update([
 			'name'=>$newName
 		]);

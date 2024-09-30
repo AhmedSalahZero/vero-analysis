@@ -12,6 +12,7 @@ class CashVeroBusinessSector extends Model
 {
 	const BUSINESS_SECTORS = 'business-sectors';
 	use HasCreatedAt,HasBasicStoreRequest;
+
     protected $dates = [
     ];
 

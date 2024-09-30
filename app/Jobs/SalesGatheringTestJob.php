@@ -91,6 +91,28 @@ class SalesGatheringTestJob implements ShouldQueue
 						]);
 						$customerId = $customer->id ;
 					}
+					/**
+					 * * insert sales person , business unit , business sector
+					 */
+					
+					foreach(['sales_person'=>'cash_vero_sales_persons','business_unit'=>'cash_vero_business_units','business_sector'=>'cash_vero_business_sectors'] as $columnName=>$tableName){
+						$currentIds[$columnName] = 0 ;
+						$currentColValue = $value[$columnName] ;
+					$isFound[$columnName] = $currentIds[$columnName] ? true : DB::table($tableName)->where('company_id',$this->company_id)->where('name',$currentColValue)->exists();
+					if($isFound[$columnName]){
+						$currentIds[$columnName] = DB::table($tableName)->where('company_id',$this->company_id)->where('name',$currentColValue)->first()->id;
+					}else{
+						$currentRowInserted = DB::table($tableName)->insert([
+							'name'=>$currentColValue,
+							'created_at'=>now(),
+							'company_id'=>$this->company_id
+						]);
+						$currentIds[$columnName] = $currentRowInserted ;
+					}
+					}
+					
+				
+					
 					
 					/**
 					 * * insert customer contracts

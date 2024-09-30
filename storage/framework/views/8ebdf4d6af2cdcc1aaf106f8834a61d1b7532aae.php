@@ -107,7 +107,7 @@
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                            <?php echo e(__('Customer Information')); ?>
+                                            <?php echo e(__('Business Sector Information')); ?>
 
                                         </h3>
                                     </div>

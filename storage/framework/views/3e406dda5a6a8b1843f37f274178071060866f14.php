@@ -1,12 +1,12 @@
 <?php
 	$mode = isset($rate) ? 'edit' : 'create';
 ?>
-
+<input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
 <div class="col-md-3">
     <label><?php echo e(__('Date')); ?> </label>
     <div class="kt-input-icon">
         <div class="input-group date">
-            <input name="date_<?php echo e($mode); ?>" type="date" value="<?php echo e(isset($rate) ? $rate->getDate() : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control" />
+            <input required required name="date_<?php echo e($mode); ?>" type="date" value="<?php echo e(isset($rate) ? $rate->getDate() : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control" />
         </div>
     </div>
 </div>
@@ -37,7 +37,7 @@
         </div>
     </div>
 </div>
-<?php if (! $__env->hasRenderedOnce('6415dd07-6f11-4e6f-b898-e7cf9743c7aa')): $__env->markAsRenderedOnce('6415dd07-6f11-4e6f-b898-e7cf9743c7aa'); ?>
+<?php if (! $__env->hasRenderedOnce('b73d3ac9-61b8-4b11-a829-e991ac0502bc')): $__env->markAsRenderedOnce('b73d3ac9-61b8-4b11-a829-e991ac0502bc'); ?>
 <?php $__env->startPush('js'); ?>
 	<script>
 		$(document).on('change','.recalculate-interest-rate',function(){

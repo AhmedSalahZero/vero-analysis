@@ -176,7 +176,8 @@ class CleanOverdraft extends Model implements IHaveStatement
 				Request()->get('min_interest_rate'),
 				Request()->get('margin_rate'),
 				Request()->get('borrowing_rate'),
-				Request()->get('interest_rate')
+				Request()->get('interest_rate'),
+				$model->company_id
 			);
 		});
 		static::deleting(function(self $model){

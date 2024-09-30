@@ -56,7 +56,6 @@ class MediumTermLoan extends Model
     }
 	public function getEndDateFormatted()
 	{
-		
 		return Carbon::make($this->getEndDate())->format('d-m-Y') ;
 	}
     public function setEndDateAttribute($value)

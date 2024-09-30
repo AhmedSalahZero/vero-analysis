@@ -115,8 +115,9 @@ class OverdraftAgainstAssignmentOfContractController
 		
 		$odAgainstAssignmentOfContract->storeOutstandingBreakdown($request,$company);
 	
-		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
-		
+		return response()->json([
+			'redirectTo'=>route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 	}
 
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract){
@@ -149,9 +150,9 @@ class OverdraftAgainstAssignmentOfContractController
 
 		$type = $request->get('type','overdraft-against-assignment-of-contract');
 		$activeTab = $type ;
-		return redirect()->route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
-		
+		return response()->json([
+			'redirectTo'=>route('view.overdraft.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 	}
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract)

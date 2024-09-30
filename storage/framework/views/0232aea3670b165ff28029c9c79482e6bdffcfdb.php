@@ -361,6 +361,7 @@
 													$outstandingBreakdowns =  old('outstanding_breakdowns',$model->outstandingBreakdowns ?? [null]) ; 
 												
 													$outstandingBreakdowns = is_array($outstandingBreakdowns) ? fillObjectFromArray($outstandingBreakdowns,\App\OutstandingBreakdown::class) : $outstandingBreakdowns;
+													$outstandingBreakdowns = count($outstandingBreakdowns) ? $outstandingBreakdowns : [null];
 												?>
 
                                                 <?php $__currentLoopData = $outstandingBreakdowns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $outstandingBreakdown): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -412,15 +413,15 @@
                 <!--end::Portlet-->
         </div>
     </div>
-     <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
-<?php $component->withName('submitting'); ?>
+     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>
+<?php $component->withName('submitting-by-ajax'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes([]); ?>
-<?php if (isset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34)): ?>
-<?php $component = $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34; ?>
-<?php unset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34); ?>
+<?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 

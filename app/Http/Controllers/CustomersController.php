@@ -146,6 +146,7 @@ class CustomersController
 	{
 		// $lcSettlementInternalTransfer->deleteRelations();
 		$customer->delete();
+		
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	

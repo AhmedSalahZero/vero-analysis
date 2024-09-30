@@ -109,8 +109,9 @@ class CleanOverdraftController
 		$activeTab = $type ; 
 		
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
-		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
-		
+		return response()->json([
+			'redirectTo'=>route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 	}
 
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft){
@@ -136,7 +137,9 @@ class CleanOverdraftController
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		$type = $request->get('type','clean-over-draft');
 		$activeTab = $type ;
-		return redirect()->route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return response()->json([
+			'redirectTo'=>route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 	}
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , CleanOverdraft $cleanOverdraft)
