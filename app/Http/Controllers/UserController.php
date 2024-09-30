@@ -52,10 +52,11 @@ class UserController extends Controller
 		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 		$permissions = getPermissions();
-		foreach ($permissions as $permission) {
-			if($permission !='view sales forecast quantity base'){
-				$user->givePermissionTo($permission);
-			}
+		foreach ($permissions as $permissionArr) {
+			// if($permission !='view sales forecast quantity base'){
+				$permission =Permission::findByName($permissionArr['name']);;
+				$user->assignNewPermission($permissionArr,$permission);
+			// }
 		}
 			Auth::login($user, $remember = true);
 

@@ -1,7 +1,7 @@
 @php
 	$mode = isset($rate) ? 'edit' : 'create';
 @endphp
-
+<input type="hidden" name="company_id" value="{{ $company->id }}">
 <div class="col-md-3">
     <label>{{__('Date')}} </label>
     <div class="kt-input-icon">

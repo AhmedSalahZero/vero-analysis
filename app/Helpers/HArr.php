@@ -168,4 +168,12 @@ class HArr
 		}
 		return false ;
 	}
+	public static function unformatValues(array $items )
+	{
+		$result = [];
+		foreach($items as $key=>$value){
+			$result[$key] = unformat_number($value); 
+		}
+		return $result;
+	}
 }

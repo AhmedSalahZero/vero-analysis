@@ -42,7 +42,8 @@ class OutstandingBreakdownRule implements ImplicitRule
 			$this->failedMessage = __('Settlement Dates Must Be Greater Than Or Equal Contract Start Date'); 
 			return false ;
 		}
-		return array_sum(array_column($value,'amount')) == $this->totalOutstandingBalance;
+		$amounts = HArr::unformatValues(array_column($value,'amount')) ;
+		return array_sum($amounts) == $this->totalOutstandingBalance;
 		
 		
     }

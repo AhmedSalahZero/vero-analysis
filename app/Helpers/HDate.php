@@ -43,7 +43,11 @@ class HDate
 			return false ;
 		}
 		foreach($dates as $date){
-			$lessThan = Carbon::make($date)->lessThan(Carbon::make($checkDate));
+			$currentDate = Carbon::make($date) ;
+			if(is_null($currentDate)){
+				return false ;
+			}
+			$lessThan = $currentDate->lessThan(Carbon::make($checkDate));
 			if($lessThan){
 				return false ;
 			}

@@ -88,7 +88,9 @@ use App\Models\Partner ;
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('Created At') }}</th>
-									@if(hasAuthFor('update customers') || hasAuthFor('delete customers') )
+									@if(hasAuthFor('update customers') 
+									 // || hasAuthFor('delete customers')
+									 )
                                     <th>{{ __('Control') }}</th>
 									@endif 
                                 </tr>
@@ -102,13 +104,16 @@ use App\Models\Partner ;
 
                                     <td class="text-nowrap">{{ $model->getName() }}</td>
                                     <td>{{ $model->getCreatedAtFormatted() }}</td>
-									@if(hasAuthFor('update customers') || hasAuthFor('delete customers') )
+									@if(hasAuthFor('update customers') 
+									
+									// || hasAuthFor('delete customers')
+									 )
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(hasAuthFor('update customers'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('customers.edit',['company'=>$company->id,'customer'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
-											@if(hasAuthFor('delete customers'))
+											{{-- @if(hasAuthFor('delete customers'))
                                             <a data-toggle="modal" data-target="#delete-customer-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-customer-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -131,7 +136,7 @@ use App\Models\Partner ;
                                                     </div>
                                                 </div>
                                             </div>
-											@endif 
+											@endif  --}}
                                         </span>
                                     </td>
 									@endif

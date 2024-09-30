@@ -160,7 +160,8 @@ class MediumTermLoanController
 		$loanScheduleSettlement=$loanSchedule->settlements()->create([
 			'current_account_number'=>$currentAccountNumber,
 			'amount'=>$amount,
-			'date'=>$date 
+			'date'=>$date ,
+			'company_id'=>$company->id 
 		]);
 		$financialInstitutionId = $loanSchedule->getFinancialInstitutionId();
 		$accountType = AccountType::onlyCurrentAccount()->first();

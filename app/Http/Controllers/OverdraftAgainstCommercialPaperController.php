@@ -114,7 +114,9 @@ class OverdraftAgainstCommercialPaperController
 			$overdraftAgainstCommercialPaper->lendingInformation()->create(array_merge($lendingInformationArr , [
 			]));
 		}
-		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return response()->json([
+			'redirectTo'=>route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 		
 	}
 
@@ -150,7 +152,9 @@ class OverdraftAgainstCommercialPaperController
 		$overdraftAgainstCommercialPaper->updateFirstLimitsTableFromDate();
 		$type = $request->get('type','overdraft-against-commercial-paper');
 		$activeTab = $type ;
-		return redirect()->route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return response()->json([
+			'redirectTo'=>route('view.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
+		]);
 		
 		
 	}

@@ -2,7 +2,6 @@
 namespace App\Models\Traits\Controllers;
 
 use App\Models\CleanOverdraft;
-use App\Models\CleanOverdraftRate;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use Illuminate\Http\Request;
@@ -13,7 +12,6 @@ trait HasOverdraftRate
 	{
 		$modelFullName = (self::getModelName()); // App\Models\CleanOverdraft for example
 		$overdraftModel = $modelFullName::find($overdraftId);
-		// dd($overdraftModel);
 		$date = $request->get('date_create') ;
 		$marginRate = $request->get('margin_rate_create') ;
 		$borrowingRate = $request->get('borrowing_rate_create') ;
@@ -23,6 +21,7 @@ trait HasOverdraftRate
 			'margin_rate'=>$marginRate,
 			'borrowing_rate'=>$borrowingRate,
 			'interest_rate'=>$interestRate,
+			'company_id'=>$request->get('company_id'),
 			'updated_at'=>now()
 		]);
 		$overdraftModel->updateBankStatementsFromDate($date);

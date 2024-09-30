@@ -35,7 +35,8 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 				Request()->get('min_interest_rate'),
 				Request()->get('margin_rate'),
 				Request()->get('borrowing_rate'),
-				Request()->get('interest_rate')
+				Request()->get('interest_rate'),
+				$model->company_id
 			);
 		});
 		static::updated(function(OverdraftAgainstAssignmentOfContract $overdraftAgainstAssignmentOfContract){

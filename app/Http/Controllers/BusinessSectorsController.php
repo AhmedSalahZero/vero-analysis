@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class BusinessSectorsController
 {
@@ -131,13 +132,16 @@ class BusinessSectorsController
 
 	public function edit(Company $company,CashVeroBusinessSector $businessSector)
 	{
-
         return view('business_sectors.form' ,$this->getCommonViewVars($company,$businessSector));
     }
 	
 	public function update(Company $company, StoreBusinessSectorRequest $request , CashVeroBusinessSector $businessSector){
 		
 		$newName = $request->get('name');
+		$oldName = $businessSector->getName();
+		DB::table('customer_invoices')->where('company_id',$company->id)->where('business_sector',$oldName)->update([
+			'business_sector'=>$newName
+		]);
 		$businessSector->update([
 			'name'=>$newName
 		]);

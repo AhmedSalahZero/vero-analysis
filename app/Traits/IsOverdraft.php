@@ -152,21 +152,26 @@ trait IsOverdraft
 	{
 		return number_format($this->getInterestRate(),2);
 	}
-	public function storeRate($date , $minInterestRate , $marginRate , $borrowingRate , $interestRate)
+	public function storeRate($date , $minInterestRate , $marginRate , $borrowingRate , $interestRate,$companyId)
 	{
 		return $this->rates()->create([
 			'date'=>$date,
 			'min_interest_rate'=>$minInterestRate,
 			'margin_rate'=>$marginRate, // or bank_margin_rate 
 			'borrowing_rate'=>$borrowingRate,
-			'interest_rate'=>$interestRate
+			'interest_rate'=>$interestRate,
+			'company_id'=>$companyId
 		]);
 	}	
 	
 	public function updateFirstLimitsTableFromDate()
 	{
+		$smallestFullDate = $this->getSmallestLimitTableFullDate() ;
+		if(is_null($smallestFullDate)){
+			return ;
+		}
 		$firstBankStatementToBeUpdated = (self::getLimitTableClassName())::where(self::generateForeignKeyFormModelName(),$this->id)
-		->where('full_date','>=',$this->getSmallestLimitTableFullDate())
+		->where('full_date','>=',$smallestFullDate)
 		->orderBy('full_date')
 		->first();	
 		if($firstBankStatementToBeUpdated){

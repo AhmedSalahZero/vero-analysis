@@ -6,7 +6,7 @@
     <label><?php echo e(__('Date')); ?> </label>
     <div class="kt-input-icon">
         <div class="input-group date">
-            <input required name="date_<?php echo e($mode); ?>" type="date" value="<?php echo e(isset($rate) ? $rate->getDate() : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control" />
+            <input name="date_<?php echo e($mode); ?>" type="date" value="<?php echo e(isset($rate) ? $rate->getDate() : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control" />
         </div>
     </div>
 </div>
@@ -37,7 +37,7 @@
         </div>
     </div>
 </div>
-<?php if (! $__env->hasRenderedOnce('054ad413-abb5-4dc2-9b52-6c07fee7473a')): $__env->markAsRenderedOnce('054ad413-abb5-4dc2-9b52-6c07fee7473a'); ?>
+<?php if (! $__env->hasRenderedOnce('fd45fa51-cb73-42b3-8880-aecc8aa5283c')): $__env->markAsRenderedOnce('fd45fa51-cb73-42b3-8880-aecc8aa5283c'); ?>
 <?php $__env->startPush('js'); ?>
 	<script>
 		$(document).on('change','.recalculate-interest-rate',function(){
@@ -50,4 +50,4 @@
 	</script>
 <?php $__env->stopPush(); ?>
 <?php endif; ?> 
-<?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/clean-overdraft/rates-form.blade.php ENDPATH**/ ?>
+<?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/overdraft-against-assignment-of-contract/rates-form.blade.php ENDPATH**/ ?>

@@ -3473,13 +3473,13 @@ function getPermissions(array $systemsNames  = []):array
 			'group'=>'customers setting',
 			'view-name'=>'update'
         ],
-		[
-            'name'=>'delete customers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customers',
-			'view-name'=>'delete'
-        ],
+		// [
+        //     'name'=>'delete customers',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'customers',
+		// 	'view-name'=>'delete'
+        // ],
 		
 		[
             'name'=>'view suppliers',
@@ -3502,13 +3502,13 @@ function getPermissions(array $systemsNames  = []):array
 			'group'=>'suppliers setting',
 			'view-name'=>'update'
         ],
-		[
-            'name'=>'delete suppliers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'suppliers',
-			'view-name'=>'delete'
-        ],
+		// [
+        //     'name'=>'delete suppliers',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'suppliers',
+		// 	'view-name'=>'delete'
+        // ],
 		
 		[
             'name'=>'view business sectors',

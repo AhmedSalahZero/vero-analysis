@@ -218,6 +218,7 @@
 													$outstandingBreakdowns =  old('outstanding_breakdowns',$model->outstandingBreakdowns ?? [null]) ; 
 												
 													$outstandingBreakdowns = is_array($outstandingBreakdowns) ? fillObjectFromArray($outstandingBreakdowns,\App\OutstandingBreakdown::class) : $outstandingBreakdowns;
+													$outstandingBreakdowns = count($outstandingBreakdowns) ? $outstandingBreakdowns : [null];
 												@endphp
 
                                                 @foreach($outstandingBreakdowns as $outstandingBreakdown)
@@ -268,7 +269,7 @@
                 <!--end::Portlet-->
         </div>
     </div>
-    <x-submitting />
+    <x-submitting-by-ajax />
 </form>
 
 @endsection

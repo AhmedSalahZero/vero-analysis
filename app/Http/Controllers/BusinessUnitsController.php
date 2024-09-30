@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class BusinessUnitsController
 {
@@ -138,6 +139,11 @@ class BusinessUnitsController
 	public function update(Company $company, StoreBusinessUnitRequest $request , CashVeroBusinessUnit $businessUnit){
 		
 		$newName = $request->get('name');
+		$oldName = $businessUnit->getName();
+		DB::table('customer_invoices')->where('company_id',$company->id)->where('business_unit',$oldName)->update([
+			'business_unit'=>$newName
+		]);
+		
 		$businessUnit->update([
 			'name'=>$newName
 		]);
