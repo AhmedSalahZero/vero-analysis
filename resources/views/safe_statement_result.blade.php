@@ -295,6 +295,9 @@
                                         <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
                                             {{ __('End Balance') }}
                                         </th>
+										<th class="view-table-th   header-th  align-middle text-center">
+                                            {{ __('Reviewed') }}
+                                        </th>
 										  <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
                                             {{ __('Comment') }}
                                         </th>
@@ -325,8 +328,15 @@
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>
                                         <td class="sub-text-bg text-center max-w-currency">{{ number_format($modelAsStdClass->credit) }}</td>
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->end_balance) }}</td>
-                                        <td class="sub-text-bg text-left max-w-amount">{{ getBankStatementComment($modelAsStdClass) }}</td>
-
+                                       @php
+									 		  $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
+											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
+											$reviewedText = getReviewedText($reviewedArr);
+											
+									   @endphp
+									      <td class="sub-text-bg text-left ">{{   $reviewedText   }}</td>
+									    <td class="sub-text-bg text-left max-w-amount">{{ $comment?:  getBankStatementComment($modelAsStdClass) }}</td>
+									
 
                                     </tr>
 

@@ -170,6 +170,7 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(auth()->user()->can('update money received'))
+											@include('reports._review_modal',['model'=>$moneyReceived])
 										@if(!$moneyReceived->isOpenBalance())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
@@ -262,6 +263,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(!$moneyReceived->isOpenBalance())
 											@if(auth()->user()->can('update money received'))
+											@include('reports._review_modal',['model'=>$moneyReceived])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
 											@endif 
@@ -364,6 +366,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$moneyReceived->isOpenBalance())
 										@if(auth()->user()->can('update money received'))
+										
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
 											@endif 
@@ -596,6 +599,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
 										@if(auth()->user()->can('update money received'))
+										@include('reports._review_modal',['model'=>$money])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
 @endif 
@@ -682,7 +686,9 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$moneyReceived->isOpenBalance())
+										
 											@if(auth()->user()->can('update money received'))
+											@include('reports._review_modal',['model'=>$moneyReceived])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
 											@if(auth()->user()->can('delete money received'))
@@ -778,6 +784,7 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
+										@include('reports._review_modal',['model'=>$money])
 										@if(auth()->user()->can('update money received'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 

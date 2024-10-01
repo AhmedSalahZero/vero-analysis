@@ -64,11 +64,13 @@ class BankStatementController
 			->where('current_account_bank_statements.financial_institution_account_id',$financialInstitutionAccount->id)
 			->where('current_account_bank_statements.company_id',$company->id)
 			->join('financial_institution_accounts','financial_institution_account_id','=','financial_institution_accounts.id')
-			->where('currency',$currencyName)
+			->where('financial_institution_accounts.currency',$currencyName)
 			->where('current_account_bank_statements.date', '>=', $startDate)
 			->where('current_account_bank_statements.date', '<', $endDate)
+			->leftJoin('money_received','current_account_bank_statements.money_received_id','=','money_received.id')
 			->orderByRaw('current_account_bank_statements.full_date desc')
 			->get();
+		
 			
 		}
 		elseif($accountType->isCleanOverdraftAccount()){
@@ -80,6 +82,7 @@ class BankStatementController
 				 ->where('clean_overdraft_id',$cleanOverdraft->id)
 				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
 				 ->where('clean_overdrafts.currency','=',$currencyName)
+				//  ->leftJoin('money_received','current_account_bank_statements.money_received_id','=','money_received.id')
 				 ->orderByRaw('full_date desc')
 				 ->get();
 		}

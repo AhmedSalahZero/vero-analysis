@@ -7,6 +7,7 @@ use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
+use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ,HasDebitStatements,HasCreditStatements;
+	use IsMoney ,HasDebitStatements,HasCreditStatements,HasReviewedBy;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';

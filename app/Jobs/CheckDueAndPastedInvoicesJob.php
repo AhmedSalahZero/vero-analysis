@@ -94,7 +94,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 $pastDueCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
 				 ->where('cheques.status',Cheque::IN_SAFE)
 				 ->whereBetween('cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
-				 ->join('money_received','money_received_id','=','cheques.money_received_id')
+				 ->join('money_received','money_received.id','=','cheques.money_received_id')
 				 ->get();
 				 
 				 
@@ -104,7 +104,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				$currentDueCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
 				->where('cheques.status',Cheque::IN_SAFE)
 				->where('cheques.due_date', $dayDate)
-				->join('money_received','money_received_id','=','cheques.money_received_id')
+				->join('money_received','money_received.id','=','cheques.money_received_id')
 				->get();
 				
 				/**
@@ -114,7 +114,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				$underCollectionChequesToday = DB::table('cheques')->where('cheques.company_id', $companyId)
 				->where('cheques.status',Cheque::UNDER_COLLECTION)
 				->where('cheques.expected_collection_date',$dayDate)
-				->join('money_received','money_received_id','=','cheques.money_received_id')
+				->join('money_received','money_received.id','=','cheques.money_received_id')
 				->get();
 				
 				
@@ -124,7 +124,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				$afterIntervalDate = Carbon::make(now()->format($dateFormat))->addDays($chequesUnderCollectionDays)->format($dateFormat);
 				$underCollectionCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
 				->where('cheques.status',Cheque::UNDER_COLLECTION)
-				->join('money_received','money_received_id','=','cheques.money_received_id')
+				->join('money_received','money_received.id','=','cheques.money_received_id')
 				->whereBetween('cheques.expected_collection_date',[$dayAfterNowDate,$afterIntervalDate])->get();
 
                 foreach ($pastDueCustomerInvoices as $customerInvoice) {
@@ -352,7 +352,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 $pendingPayableCheques = PayableCheque::where('payable_cheques.company_id', $companyId)
 				 ->where('payable_cheques.status',PayableCheque::PENDING)
 				 ->whereBetween('payable_cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
-				 ->join('money_payments','money_payments.id','=','money_payment_id')
+				 ->join('money_payments','money_payments.id','=','payable_cheques.money_payment_id')
 				 ->get();
 				 
 				
