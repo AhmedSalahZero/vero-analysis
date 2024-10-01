@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 
 use App\Models\TablesField;
-use Artisan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 

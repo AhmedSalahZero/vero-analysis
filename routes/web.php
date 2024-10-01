@@ -716,8 +716,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
 					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 					Route::get('get-customers-based-on-currency/{currencyName}','MoneyReceivedController@getCustomersBasedOnCurrency');
-
-						
+					 Route::post('confirmed-reviewed/{model}','MoneyReceivedController@markAsConfirmed')->name('confirmed.review');
 
 					Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');

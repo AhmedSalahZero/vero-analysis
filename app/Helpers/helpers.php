@@ -3868,6 +3868,13 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'view'
         ],
 		[
+            'name'=>'review money received',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+			'group'=>'money received',
+			'view-name'=>'review'
+        ],
+		[
             'name'=>'create money received',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
@@ -3894,6 +3901,13 @@ function getPermissions(array $systemsNames  = []):array
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>'supplier payment',
 			'view-name'=>'view'
+        ],
+		[
+            'name'=>'review supplier payments',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+			'group'=>'supplier payment',
+			'view-name'=>'review'
         ],
 		[
             'name'=>'create supplier payment',
@@ -3923,7 +3937,13 @@ function getPermissions(array $systemsNames  = []):array
 				'group'=>'cash expenses',
 			'view-name'=>'view'
         ],
-		
+		[
+            'name'=>'review cash expenses',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+				'group'=>'cash expenses',
+			'view-name'=>'review'
+        ],
 		[
             'name'=>'create cash expenses',
 			'systems'=>[CASH_VERO],
@@ -6467,12 +6487,42 @@ if (!function_exists('getFixedLoanTypes')) {
 	{
 		return $secondDate->diffInDays($firstDate);
 	}
+	function getBankStatementReviewed($stdClass){
+		$tableName = null ;
+		if($id = $stdClass->money_received_id){
+			$tableName = 'money_received';
+		}
+		elseif($id = $stdClass->money_payment_id){
+			$tableName = 'money_payments';
+		}
+		elseif($id = $stdClass->cash_expense_id){
+			$tableName = 'cash_expenses';
+		}
+		elseif($id = $stdClass->buy_or_sell_currency_id){
+			$tableName = 'buy_or_sell_currencies';
+		}
+		elseif($id = $stdClass->internal_money_transfer_id){
+			$tableName = 'internal_money_transfers';
+			
+		}
+		if(is_null($tableName)){
+			return [
+				'can_not_be_reviewed'=>1,
+			];
+		}
+		$raw = DB::table($tableName)->find($id);
+		if($raw && !isset($raw->reviewed_by)){
+			return [
+				'can_not_be_reviewed'=>1,
+			];
+		}
+		return $raw && isset($raw->reviewed_by)  ? ['is_reviewed'=>$raw->is_reviewed,'reviewed_by'=>$raw->reviewed_by] : [];
+	}
 	function getBankStatementComment($stdClass){
 		$lang = app()->getLocale() ;
 		$columnNameWithoutLang = 'comment_';
 		$tableName = null ;
 		if($id = $stdClass->money_received_id){
-			
 			$tableName = 'money_received';
 		}
 		elseif($id = $stdClass->money_payment_id){
@@ -6623,4 +6673,29 @@ function getCashVeroTableNames()
 'payment_settlements','settlements','money_received','money_payments','contracts'
 
 	];
+}
+function getReviewedText(array $reviewedArr)
+{
+										$reviewedText = '-';
+											if(isset($reviewedArr['can_not_be_reviewed']))
+											$reviewedText = '-';
+											elseif(isset($reviewedArr['is_reviewed']) && $reviewedArr['is_reviewed'] == 1){
+												$reviewedText = __('Yes');
+											}
+											elseif(isset($reviewedArr['is_reviewed']) && $reviewedArr['is_reviewed'] == 0){
+												$reviewedText = __('No');
+											}
+											return $reviewedText ;
+}
+function getReviewPermissionName($modelName):string{
+	if($modelName == 'CashExpense'){
+		return 'review cash expenses';
+	}
+	if($modelName =='MoneyReceived'){
+		return 'review money received';
+	}
+	if($modelName=='MoneyPayment'){
+		return 'review supplier payments';
+	}
+	dd('please add permission name here');
 }

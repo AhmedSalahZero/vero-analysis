@@ -477,10 +477,7 @@ class MoneyReceivedController
 		 */
 
 		$activeTab = $moneyType;
-		// if($request->ajax()){
-			
-		// }
-		// logger('from here2');
+		
 
 			return response()->json([
 				'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])
@@ -811,5 +808,14 @@ class MoneyReceivedController
 		return response()->json([
 			'customerInvoices'=>CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id')
 		]);
+	}
+	public function markAsConfirmed(Company $company,Request $request,int $modelId)
+	{
+		$tableName = $request->get('table_name');
+		DB::table($tableName)->where('id',$modelId)->update([
+			'is_reviewed'=>1,
+			'reviewed_by'=>auth()->user()->id 
+		]);
+		return redirect()->back();
 	}
 }

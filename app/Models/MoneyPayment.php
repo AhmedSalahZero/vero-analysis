@@ -6,6 +6,7 @@ use App\Http\Controllers\MoneyPaymentController;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
 use App\Traits\Models\HasCreditStatements;
+use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyPayment extends Model
 {
-	use IsMoney ,HasCreditStatements;
+	use IsMoney ,HasCreditStatements,HasReviewedBy;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
