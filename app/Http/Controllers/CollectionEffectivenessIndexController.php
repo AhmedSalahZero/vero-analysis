@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Partner;
 use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -14,14 +15,17 @@ use Illuminate\Support\Facades\DB;
  * * هو عباره عن الفواتير اللي لسه مفتوحة ( اعمار الديون) .. سواء الدين لسه جايه او المتاخر او حق اليوم
  * * وبالتالي بمجرد ما تندفع مش بتيجي هنا (لو النت بلانس اكبر من صفر يبقي لسه ما استدتش كاملا)
  */
-class AgingController
+class CollectionEffectivenessIndexController
 {
     use GeneralFunctions;
-    public function index(Company $company,string $modelType)
+    public function index(Company $company,Request $request)
 	{
+		$defaultStartDate = now()->subMonths(12);
+		$defaultEndDate = now();
+		$modelType = in_array('collection',$request->segments()) ? 'CustomerInvoice' : 'SupplierInvoice' ;
 		$fullClassName = ('\App\Models\\'.$modelType) ;
 		$customersOrSupplierText = (new $fullClassName)->getClientDisplayName();
-		$title = (new $fullClassName)->getAgingTitle();
+		$title = (new $fullClassName)->getEffectivenessTitle();
 		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
 		$exportables = getExportableFieldsForModel($company->id,$modelType) ; 
@@ -37,7 +41,6 @@ class AgingController
 		if(isset($exportables['business_sector'])){
 			$businessSectors = DB::table('cash_vero_business_sectors')->where('company_id',$company->id)->pluck('name')->toArray();
 		}
-	
 		$currencies = DB::table($invoiceTableName)
 		
 		->where('company_id',$company->id)->where('currency','!=',null)->where('currency','!=','')
@@ -45,7 +48,7 @@ class AgingController
 		
 		$invoices = ('\App\Models\\'.$modelType)::where($clientNameColumnName,'!=',null)->where($clientNameColumnName,'!=','')->onlyCompany($company->id)->get();
 		$invoices = $invoices->unique('customer_name')->values() ;
-        return view('reports.aging_form', [
+        return view('admin.reports.collection-effectiveness-index.form', [
 			'businessUnits'=>$businessUnits,
 			'company'=>$company,
 			'invoices'=>$invoices ,
@@ -54,28 +57,52 @@ class AgingController
 			'currencies'=>$currencies,
 			'customersOrSupplierText'=>$customersOrSupplierText,
 			'title'=>$title,
-			'modelType'=>$modelType
+			'modelType'=>$modelType,
+			'defaultStartDate'=>$defaultStartDate,
+			'defaultEndDate'=>$defaultEndDate
 		]);
     }
-	public function result(Company $company , Request $request,string $modelType , bool $returnResult = false ){
-		
+	public function result(Company $company , Request $request){
+		$modelType = $request->get('model_type');
 		$fullClassName = ('\App\Models\\'.$modelType) ;
-		$customersOrSupplierAgingText = (new $fullClassName)->getCustomerOrSupplierAgingText();
-		
-		$aginDate = $request->get('again_date',$request->get('end_date'));
-		
-		$clientNames = $request->get('clients');
-		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
-		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
-		$weeksDates =formatWeeksDatesFromStartDate($aginDate);
-		
-		if($returnResult){
-			return $agings ;
+		$companyId =$company->id ;
+		$currency = $request->get('currency');
+		$reportName = (new $fullClassName)->getEffectivenessText();
+		$totalCurrentTotalToBeCollected = 0 ;
+		$totalCurrentTotalCollected = 0 ;
+		$customerOrSupplierNameText = (new $fullClassName)->getClientNameText();
+		$agingResult = (new AgingController)->result($company,$request,$modelType,true);
+		$collectionEffectivenessIndexPerCustomer = [];
+		foreach($request->get('clients') as $partnerName){
+			$currentPartner = Partner::getPartnerFromName($partnerName,$companyId);
+			$currentPartnerId = $currentPartner->id; 
+			$currentInvoiceStatementReportResult = (new CustomerInvoiceDashboardController())->showCustomerInvoiceStatementReport($company,$request,$currentPartnerId,$currency,$modelType,true);
+			if(!count($currentInvoiceStatementReportResult)){
+				continue ; 
+			}
+			
+			$currentBeginningBalance = isset($currentInvoiceStatementReportResult) && $currentInvoiceStatementReportResult[0]['debit'] > 0 ? $currentInvoiceStatementReportResult[0]['debit'] : $currentInvoiceStatementReportResult[0]['credit'] * -1;
+			
+			unset($currentInvoiceStatementReportResult[0]);
+			$currentSumOfDebit = array_sum(array_column($currentInvoiceStatementReportResult,'debit'));
+			$currentSumOfCredit = array_sum(array_column($currentInvoiceStatementReportResult,'credit'));
+			// $currentEndBalance = $currentBeginningBalance + $currentSumOfDebit - $currentSumOfCredit ;
+			$currentTotalCollected =  $currentSumOfCredit ;
+			$currentComingDues = $agingResult[$partnerName]['coming_due']['total'] ?? 0 ;
+			$currentTotalToBeCollected =  $currentBeginningBalance + $currentSumOfDebit - $currentComingDues ;
+			$totalCurrentTotalCollected +=$currentTotalCollected;
+			$totalCurrentTotalToBeCollected +=$currentTotalToBeCollected;
+			$collectionEffectivenessIndexPerCustomer[$partnerName] =$currentTotalToBeCollected ? $currentTotalCollected /$currentTotalToBeCollected *100 :0 ;
+			
 		}
-		
+		$collectionEffectivenessIndexForAllCustomers = $totalCurrentTotalToBeCollected ? $totalCurrentTotalCollected /$totalCurrentTotalToBeCollected *100 :0 ;
 
-		
-		return view('admin.reports.invoices-aging',['agings'=>$agings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates,'customersOrSupplierAgingText'=>$customersOrSupplierAgingText]);
+		return view('admin.reports.collection-effectiveness-index.result',[
+			'collectionEffectivenessIndexPerCustomer'=>$collectionEffectivenessIndexPerCustomer,
+			'reportName'=>$reportName,
+			'customerOrSupplierNameText'=>$customerOrSupplierNameText,
+			'collectionEffectivenessIndexForAllCustomers'=>$collectionEffectivenessIndexForAllCustomers
+		]);
 	}
 
 	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)

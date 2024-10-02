@@ -46,6 +46,7 @@ class BalancesController
 		$mainCurrency = $company->getMainFunctionalCurrency();
 		$invoicesBalances =DB::select(DB::raw('select id, '. $clientNameColumnName .' , '. $clientIdColumnName .' , currency , sum(net_balance) as net_balance , sum(net_balance_in_main_currency) as net_balance_in_main_currency from '. $tableName .' where company_id = '. $company->id .'  group by '. $clientNameColumnName .' , currency order by net_balance desc;'));
 		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainCurrency,$clientNameColumnName);
+		
         return view('admin.reports.balances_form', compact('company','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }
 	public function result(Company $company , Request $request,string $modelType){

@@ -69,10 +69,6 @@ class Partner extends Model
 	{
 		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	
 	}
-	public function getUnappliedAmountsWithSettlements(string $startDate , string $endDate):Collection
-	{
-		return $this->unappliedAmounts->load('settlements')->has('settlements')->whereBetween('settlement_date',[$startDate,$endDate]);
-	}
 	public function isCustomer()
 	{
 		return $this->is_customer == 1 ;
@@ -125,5 +121,9 @@ class Partner extends Model
 				;
 			}
 		}
+	}
+	public static function getPartnerFromName(string $name , int $companyId):?self
+	{
+		return self::where('name',$name)->where('company_id',$companyId)->first();
 	}
 }

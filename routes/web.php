@@ -660,6 +660,12 @@ Route::middleware([])->group(function () {
 					
                     Route::get('aging-analysis/{modelType}', 'AgingController@index')->name('view.aging.analysis');
                     Route::post('aging-analysis/{modelType}', 'AgingController@result')->name('result.aging.analysis');
+					
+					
+					
+					
+  					Route::get('effectiveness-index-report/collection', 'CollectionEffectivenessIndexController@index')->name('view.collections.effectiveness.index');
+                    Route::post('effectiveness-index-report/collection', 'CollectionEffectivenessIndexController@result')->name('result.collections.effectiveness.index');
 
 
 					Route::get('safe-statement', 'SafeStatementController@index')->name('view.safe.statement');
@@ -680,7 +686,7 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/invoices-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showInvoiceReport')->name('view.invoice.report');
                     Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showCustomerInvoiceStatementReport')->name('view.invoice.statement.report');
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
-
+				 	// Route::get('collection-effectiveness-index-report',[]);
 					Route::get('cashflow-report', 'CashFlowReportController@index')->name('view.cashflow.report');
 					Route::post('cashflow-report', 'CashFlowReportController@result')->name('result.cashflow.report');
 					

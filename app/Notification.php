@@ -117,6 +117,7 @@ class Notification extends Model
 	public static function formatForMenuItem():array 
 	{
 		$formattedItems = [];
+	
 		foreach(self::getAllTypesFormatted() as $mainTypeId => $detailArray ){
 			$mainArr = [
 				'title'=>$detailArray['title'],

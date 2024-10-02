@@ -687,7 +687,7 @@ class CustomerInvoiceDashboardController extends Controller
     }
 
 
-    public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType)
+    public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , bool $returnResult = false)
     {
 		$showAllPartner = $request->boolean('all_partners');
 		$partnerId = $request->has('partner_id') ? $request->get('partner_id') : $partnerId;
@@ -704,9 +704,6 @@ class CustomerInvoiceDashboardController extends Controller
 		->pluck('name','id')->toArray();
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
-        // $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
-        // $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
-        // $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();
         $startDate = $request->get('start_date', now()->subMonths(4)->format('Y-m-d'));
         $endDate = $request->get('end_date', now()->format('Y-m-d'));
@@ -730,6 +727,13 @@ class CustomerInvoiceDashboardController extends Controller
 		}
         $partnerName = $partner->getName() ;
         $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
+		
+		if($returnResult){
+			if(count($invoicesWithItsReceivedMoney) < 1){
+				return [];
+			}
+			return $invoicesWithItsReceivedMoney ;
+		}
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }

@@ -52,6 +52,14 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return __('Supplier Aging Form');
 	}
+	public function getEffectivenessTitle()
+	{
+		return __('Payment Effectiveness Index Form');
+	}
+	public function getEffectivenessText()
+	{
+		return __('Payment Effectiveness Index');
+	}
 	public function getBalancesTitle()
 	{
 		return __('Supplier Balances');
@@ -126,9 +134,9 @@ class SupplierInvoice extends Model implements IInvoice
 	public static function formatForStatementReport(Collection $supplierInvoices,string $supplierName,string $startDate,string $endDate,string $currency){
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
-			$firstSupplierInvoice = $supplierInvoices->first() ?: null; 
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
-			$beginningBalance = self::getBeginningBalanceUntil($currency,$supplierName,$oneDayBeforeStartDate,$startDate) ;
+			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
+			$beginningBalance = self::getBeginningBalanceUntil($currency,$supplierName,$oneDayBeforeStartDate,$startDateMinusOne) ;
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';

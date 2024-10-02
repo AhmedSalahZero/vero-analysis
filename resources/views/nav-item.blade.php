@@ -54,7 +54,7 @@ kt-menu__toggle align-items-center
 
 				 href="{{ $link }}" class="kt-menu__link ">
                     <i class="kt-menu__link-icon fa fa-crosshairs font-size-15px"></i>
-                    <span class="kt-menu__link-text second-sub-text">{!! $subItemName !!} 22</span>
+                    <span class="kt-menu__link-text second-sub-text">{!! $subItemName !!} </span>
 					
                 </a>
             </li>
@@ -77,7 +77,7 @@ kt-menu__toggle align-items-center
 
                         <li class="kt-menu__item " aria-haspopup="true"><a href="{{ $thirdSubOptions['link'] }}" class="kt-menu__link ">
                                 <i class="kt-menu__link-icon fa fa-crosshairs font-size-15px"></i>
-                                <span class="kt-menu__link-text third-sub-text">{{ $thirdSubOptions['name'] }}</span>
+                                <span class="kt-menu__link-text third-sub-text">{{ $thirdSubOptions['name'] }} </span>
                             </a></li>
                         @endif
                         @endforeach

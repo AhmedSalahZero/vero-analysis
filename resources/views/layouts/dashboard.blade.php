@@ -30,7 +30,13 @@
             background-color: red;
 
         }
-
+.notification-span{
+	background: #ff0000ab;
+    color: white;
+    font-family: 'Poppins';
+    font-weight: bold;
+    padding: 1px;
+}
     </style>
     <style>
         .w-60-percentage {
