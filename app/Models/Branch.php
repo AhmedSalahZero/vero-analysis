@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class Branch extends Model
 {
@@ -27,5 +26,12 @@ class Branch extends Model
 	public function cashInSafeStatements()
 	{
 		return $this->hasMany(CashInSafeStatement::class,'branch_id','id');
+	}
+	public static function storeHeadOffice(int $companyId)
+	{
+		self::create([
+			'company_id'=>$companyId,
+			'name'=>'Head Office'
+		]);
 	}
 }

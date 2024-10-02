@@ -43,10 +43,7 @@ class CompanyController extends Controller
     {
         toastr()->success('Created Successfully');
         $companySection = Company::create($request->except(['image','systems']));
-		Branch::create([
-			'company_id'=>$companySection->id,
-			'name'=>'Head Office'
-		]);
+		Branch::storeHeadOffice($companySection->id);
 		foreach($request->get('systems') as $systemName){
 			$companySection->systems()->create([
 				'system_name'=>$systemName
