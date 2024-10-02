@@ -1,7 +1,7 @@
 <div class="kt-header-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_header_menu_wrapper">
     <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
         <ul class="kt-menu__nav ">
-		
+			
             <?php $__currentLoopData = getHeaderMenu(isset($company) ? $company : null); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $menuArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php
             $hasSubmenu =isset($menuArr['submenu']) && count($menuArr['submenu']);

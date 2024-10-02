@@ -3204,6 +3204,14 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'view customer aging report'
         ],
 		[
+            'name'=>'view collections effectiveness index',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'collection effectiveness index',
+			'view-name'=>'view'
+        ],
+		
+		[
             'name'=>'view supplier aging',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
@@ -5656,6 +5664,16 @@ function getHeaderMenu($currentCompany = null)
 			'show'=>$user->can('view customer aging'),
 			'submenu'=>[]
 			],
+			
+			[
+				'title'=>__('Collections Effectiveness Index'),
+				'link'=>route('view.collections.effectiveness.index',['company'=>$company->id]) ,
+				'show'=>$user->can('view collections effectiveness index'),
+				'submenu'=>[]
+			],
+			
+			
+			
 			[
 				'title'=>__('Customer Contracts'),
 			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
@@ -5765,7 +5783,7 @@ function getHeaderMenu($currentCompany = null)
 					'submenu'=>[]
 				],
 				[
-					'title'=>__('Reports'),
+					'title'=>__('Statement Reports'),
 					'link'=>'#',
 					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewBankStatement|| $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
 					'submenu'=>[
@@ -5805,7 +5823,14 @@ function getHeaderMenu($currentCompany = null)
 							'submenu'=>[]
 						]
 					]
-						],[
+						],
+						
+						
+						
+						
+					
+						
+						[
 					'title'=>__('Opening Balances'),
 					'link'=>'#',
 					'show'=>$canViewOpeningBalances ,

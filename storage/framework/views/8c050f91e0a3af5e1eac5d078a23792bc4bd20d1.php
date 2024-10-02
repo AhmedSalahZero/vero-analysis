@@ -18,6 +18,11 @@
 
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                        class="kt-menu__item " aria-haspopup="true"><a href="<?php echo e($menuArr['link']); ?>" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text"><?php echo e($menuArr['title']); ?></span></a></li>
+                        class="kt-menu__item " aria-haspopup="true"><a href="<?php echo e($menuArr['link']); ?>" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text"><?php echo e($menuArr['title']); ?> 
+					
+						
+						</span> 	
+						
+						</a> </li>
                     <?php endif; ?>
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/nav-menu/single-submenu.blade.php ENDPATH**/ ?>

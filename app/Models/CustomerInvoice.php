@@ -49,6 +49,14 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return __('Customer Aging Form');
 	}
+	public function getEffectivenessTitle()
+	{
+		return __('Collection Effectiveness Index Form');
+	}
+	public function getEffectivenessText()
+	{
+		return __('Collection Effectiveness Index');
+	}
 	public function getBalancesTitle()
 	{
 		return __('Customer Balances');
@@ -128,7 +136,8 @@ class CustomerInvoice extends Model implements IInvoice
 			 * @var CustomerInvoice $firstCustomerInvoice
 			 */
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
-			$beginningBalance = self::getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate,$startDate) ; 
+			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
+			$beginningBalance = self::getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate,$startDateMinusOne) ; 
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';

@@ -461,6 +461,7 @@
                                         <td class="sub-text-bg text-center "><?php echo e(number_format($item['credit'])); ?></td>
 										<?php
 											if($index == 0 ){
+										
 												$balances[$index] = $item['end_balance']  ;
 											}else{
 												$balances[$index] = $balances[$index-1] + $invoicesWithItsReceivedMoney[$index]['debit'] - $invoicesWithItsReceivedMoney[$index]['credit'];
