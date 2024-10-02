@@ -54,7 +54,7 @@ kt-menu__toggle align-items-center
 
 				 href="{{ $link }}" class="kt-menu__link ">
                     <i class="kt-menu__link-icon fa fa-crosshairs font-size-15px"></i>
-                    <span class="kt-menu__link-text second-sub-text">{!! $subItemName !!}</span>
+                    <span class="kt-menu__link-text second-sub-text">{!! $subItemName !!} 22</span>
 					
                 </a>
             </li>
