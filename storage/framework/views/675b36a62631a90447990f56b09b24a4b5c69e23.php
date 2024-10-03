@@ -111,7 +111,9 @@ use App\Models\Partner ;
                                     <th><?php echo e(__('#')); ?></th>
                                     <th><?php echo e(__('Name')); ?></th>
                                     <th><?php echo e(__('Created At')); ?></th>
-									<?php if(hasAuthFor('update customers') || hasAuthFor('delete customers') ): ?>
+									<?php if(hasAuthFor('update customers') 
+									 // || hasAuthFor('delete customers')
+									 ): ?>
                                     <th><?php echo e(__('Control')); ?></th>
 									<?php endif; ?> 
                                 </tr>
@@ -126,36 +128,16 @@ use App\Models\Partner ;
 
                                     <td class="text-nowrap"><?php echo e($model->getName()); ?></td>
                                     <td><?php echo e($model->getCreatedAtFormatted()); ?></td>
-									<?php if(hasAuthFor('update customers') || hasAuthFor('delete customers') ): ?>
+									<?php if(hasAuthFor('update customers') 
+									
+									// || hasAuthFor('delete customers')
+									 ): ?>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											<?php if(hasAuthFor('update customers')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('customers.edit',['company'=>$company->id,'customer'=>$model->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
-											<?php if(hasAuthFor('delete customers')): ?>
-                                            <a data-toggle="modal" data-target="#delete-customer-<?php echo e($model->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-customer-<?php echo e($model->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="<?php echo e(route('customers.destroy',['company'=>$company->id,'customer'=>$model->id ])); ?>" method="post">
-                                                            <?php echo csrf_field(); ?>
-                                                            <?php echo method_field('delete'); ?>
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Do You Want To Delete This Item ?')); ?></h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-                                                                <button type="submit" class="btn btn-danger"><?php echo e(__('Confirm Delete')); ?></button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											<?php endif; ?> 
+											
                                         </span>
                                     </td>
 									<?php endif; ?>

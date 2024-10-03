@@ -121,7 +121,7 @@ use App\Models\MoneyReceived ;
 
                         <div class="col-md-3">
 
-                            <label>{{__('Customer Name')}} @include('star')</label>
+                            <label>{{__('Name')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">

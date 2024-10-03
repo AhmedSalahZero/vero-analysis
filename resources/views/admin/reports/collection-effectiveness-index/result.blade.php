@@ -318,9 +318,18 @@
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ $customerOrSupplierNameText }}
                                         </th>
+										@foreach($tableHeaders as $tableHeader)
 										  <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ $reportName }}
+                                            {{ $tableHeader }}
                                         </th>
+										@endforeach 
+										
+											@if($isMonthlyReport)
+											<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+											{{ __('Total') }}
+	                                        </th>
+												@endif 
+												
                                       
                                     </tr>
 
@@ -334,21 +343,31 @@
 									$index = 0 ;
                                     @endphp
 									
-										@foreach($collectionEffectivenessIndexPerCustomer as $partnerName => $effectivenessIndexPercentage)
+										@foreach($collectionEffectivenessIndexPerCustomer as $partnerName => $effectivenessIndexArrs)
 											<tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
 												<td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
 												<td class="sub-text-bg  is-name-cell text-left">{{ $partnerName }}</td>
-												<td class="sub-text-bg text-center ">{{ number_format($effectivenessIndexPercentage,2) .  ' %' }}</td>
+												@foreach($tableHeaders as $tableHeader)
+												<td class="sub-text-bg text-center ">{{ number_format($effectivenessIndexArrs[$tableHeader],2) .  ' %' }}</td>
+												@endforeach 
+												@if($isMonthlyReport)
+												<td class="sub-text-bg text-center ">{{ number_format($collectionEffectivenessIndexForAllCustomersPerCustomer[$partnerName],2) .  ' %' }}</td>
+												@endif 
 											</tr>
-										@php
+											@php
 											$index++;
 										@endphp
 										@endforeach 
-										
 										<tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer text-capitalize  ">
 												<th class="sub-text-bg max-w-serial   ">{{ '-' }}</td>
 												<th class="sub-text-bg  is-name-cell text-left">{{ __('All Company') }}</th>
-												<th class="sub-text-bg text-center custom-th">{{ number_format($collectionEffectivenessIndexForAllCustomers,2) .  ' %' }}</th>
+													@foreach($tableHeaders as $tableHeader)
+												<th class="sub-text-bg text-center custom-th">{{ number_format($collectionEffectivenessIndexForAllCustomersPerDate[$tableHeader],2) .  ' %' }}</th>
+												@endforeach
+												@if($isMonthlyReport)
+												<th class="sub-text-bg text-center custom-th">{{ number_format($collectionEffectivenessIndexForAllCustomersPerAll,2) .  ' %' }}</th>
+												
+												@endif 
 											</tr>
 											
 

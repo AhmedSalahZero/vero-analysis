@@ -24,7 +24,18 @@
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-					
+					<div class="col-md-3 mb-4">
+                            <label>{{ __('Select Report Type') }}  </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" >
+                                    <select  data-live-search="true" data-actions-box="true" name="report_type" class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select " >
+                                        <option value="whole_interval"> {{ __('Whole Internal') }}</option>
+                                        <option value="monthly"> {{ __('Monthly') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						
 					 <div class="col-md-3 mb-4">
                             <label>{{ __('Start Date') }}</span> </label>
                             <div class="kt-input-icon">

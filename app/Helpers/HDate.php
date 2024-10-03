@@ -54,4 +54,22 @@ class HDate
 		}
 		return true ;
 	}
+	public static function generateStartDateAndEndDateBetween(string $startDate , string $endDate):array{
+		$result  = [];
+		$dates = generateDatesBetweenTwoDates(Carbon::make($startDate),Carbon::make($endDate));
+		$currentStartDate = null;
+		foreach($dates as $startDate){
+			$startDate = $currentStartDate ?: $startDate;
+			$endDateOfCurrentMonth = Carbon::make($startDate)->endOfMonth()->format('Y-m-d');
+			if(Carbon::make($endDateOfCurrentMonth)->greaterThan(Carbon::make($endDate))){
+				$endDateOfCurrentMonth = $endDate ;
+			}
+			$result[] = ['start_date'=>$startDate,'end_date'=>$endDateOfCurrentMonth];
+			$currentStartDate = Carbon::make($endDateOfCurrentMonth)->addDay()->format('Y-m-d');
+		}
+		// dd($result);
+		return $result;
+		
+	}
+	
 }
