@@ -330,10 +330,20 @@
                                             <?php echo e($customerOrSupplierNameText); ?>
 
                                         </th>
+										<?php $__currentLoopData = $tableHeaders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tableHeader): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 										  <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            <?php echo e($reportName); ?>
+                                            <?php echo e($tableHeader); ?>
 
                                         </th>
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+										
+											<?php if($isMonthlyReport): ?>
+											<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+											<?php echo e(__('Total')); ?>
+
+	                                        </th>
+												<?php endif; ?> 
+												
                                       
                                     </tr>
 
@@ -347,21 +357,31 @@
 									$index = 0 ;
                                     ?>
 									
-										<?php $__currentLoopData = $collectionEffectivenessIndexPerCustomer; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $partnerName => $effectivenessIndexPercentage): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+										<?php $__currentLoopData = $collectionEffectivenessIndexPerCustomer; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $partnerName => $effectivenessIndexArrs): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 											<tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
 												<td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
 												<td class="sub-text-bg  is-name-cell text-left"><?php echo e($partnerName); ?></td>
-												<td class="sub-text-bg text-center "><?php echo e(number_format($effectivenessIndexPercentage,2) .  ' %'); ?></td>
+												<?php $__currentLoopData = $tableHeaders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tableHeader): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+												<td class="sub-text-bg text-center "><?php echo e(number_format($effectivenessIndexArrs[$tableHeader],2) .  ' %'); ?></td>
+												<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+												<?php if($isMonthlyReport): ?>
+												<td class="sub-text-bg text-center "><?php echo e(number_format($collectionEffectivenessIndexForAllCustomersPerCustomer[$partnerName],2) .  ' %'); ?></td>
+												<?php endif; ?> 
 											</tr>
-										<?php
+											<?php
 											$index++;
 										?>
 										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
-										
 										<tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer text-capitalize  ">
 												<th class="sub-text-bg max-w-serial   "><?php echo e('-'); ?></td>
 												<th class="sub-text-bg  is-name-cell text-left"><?php echo e(__('All Company')); ?></th>
-												<th class="sub-text-bg text-center custom-th"><?php echo e(number_format($collectionEffectivenessIndexForAllCustomers,2) .  ' %'); ?></th>
+													<?php $__currentLoopData = $tableHeaders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tableHeader): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+												<th class="sub-text-bg text-center custom-th"><?php echo e(number_format($collectionEffectivenessIndexForAllCustomersPerDate[$tableHeader],2) .  ' %'); ?></th>
+												<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+												<?php if($isMonthlyReport): ?>
+												<th class="sub-text-bg text-center custom-th"><?php echo e(number_format($collectionEffectivenessIndexForAllCustomersPerAll,2) .  ' %'); ?></th>
+												
+												<?php endif; ?> 
 											</tr>
 											
 

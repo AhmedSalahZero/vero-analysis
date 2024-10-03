@@ -687,7 +687,7 @@ class CustomerInvoiceDashboardController extends Controller
     }
 
 
-    public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , bool $returnResult = false)
+    public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , string $startDate = null , string $endDate = null , bool $returnResult = false)
     {
 		$showAllPartner = $request->boolean('all_partners');
 		$partnerId = $request->has('partner_id') ? $request->get('partner_id') : $partnerId;
@@ -705,8 +705,8 @@ class CustomerInvoiceDashboardController extends Controller
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();
-        $startDate = $request->get('start_date', now()->subMonths(4)->format('Y-m-d'));
-        $endDate = $request->get('end_date', now()->format('Y-m-d'));
+        $startDate = $startDate ?: $request->get('start_date', now()->subMonths(4)->format('Y-m-d'));
+        $endDate = $endDate?: $request->get('end_date', now()->format('Y-m-d'));
         $invoices = ('\App\Models\\' . $modelType)::where('company_id', $company->id)
         ->where('currency', $currency)
         ->whereBetween('invoice_date', [$startDate, $endDate])
