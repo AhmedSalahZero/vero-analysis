@@ -179,7 +179,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() / 30 : null)  }}">
+                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() * (12/365) : null)  }}">
                                         </div>
                                     </div>
                                 </div>
@@ -752,7 +752,7 @@ use App\Models\MoneyReceived ;
         const startDate = new Date($('.start-date').val());
         const duration = parseFloat($('.duration').val());
         if (duration || duration == '0') {
-            const numberOfDays = duration * 30
+            const numberOfDays = duration * 365/12
 			
 		
             let endDate = startDate.addDays(numberOfDays)
@@ -771,7 +771,7 @@ use App\Models\MoneyReceived ;
         const startDate = new Date(parent.find('.start-date-2').val());
         const duration = parseFloat(parent.find('.duration-2').val());
         if (duration || duration == '0') {
-            const numberOfDays = duration * 30
+            const numberOfDays = duration * 365/12
             let endDate = startDate.addDays(numberOfDays)
             endDate = formatDate(endDate)
             parent.find('.end-date-2').val(endDate).trigger('change')
