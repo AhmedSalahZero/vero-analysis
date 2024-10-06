@@ -356,13 +356,14 @@ use App\Models\Contract;
                                 </td>
 								 <td class="text-center">
                                     <b class="text-capitalize ">
-                                        <b class="text-capitalize "><?php echo e($parent['contract_code']); ?></b>
+                                     
+										  <b class="text-capitalize "><?php echo e($parent['name']); ?></b>
                                     </b>
 
                                 </td>
                                 <td class="text-center">
-                                   
-  <b class="text-capitalize "><?php echo e($parent['name']); ?></b>
+                                      <b class="text-capitalize "><?php echo e($parent['contract_code']); ?></b>
+
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize  ">

@@ -339,13 +339,14 @@ use App\Models\Contract;
                                 </td>
 								 <td class="text-center">
                                     <b class="text-capitalize ">
-                                        <b class="text-capitalize ">{{ $parent['contract_code'] }}</b>
+                                     
+										  <b class="text-capitalize ">{{ $parent['name'] }}</b>
                                     </b>
 
                                 </td>
                                 <td class="text-center">
-                                   
-  <b class="text-capitalize ">{{ $parent['name'] }}</b>
+                                      <b class="text-capitalize ">{{ $parent['contract_code'] }}</b>
+
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize  ">

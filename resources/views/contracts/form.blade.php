@@ -125,12 +125,13 @@ use App\Models\MoneyReceived ;
                                     <label>{{__('Partner Name')}}
                                         @include('star')
                                     </label>
+									
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select regenerate-code-ajax">
+                                                <select  data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select regenerate-code-ajax">
                                                     @foreach($clients as $index => $customer )
-                                                    <option @if( old('partner_id',isset($model) && $model->getClientId()) == $customer->id ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
+                                                    <option @if( old('partner_id',isset($model) && $model->getClientId() == $customer->id  ) ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
