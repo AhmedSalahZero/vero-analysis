@@ -299,9 +299,9 @@ use App\Models\Contract;
                             @endslot
                             @slot('table_body')
                             <tr class=" text-center first-tr-bg ">
+                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Contract Name') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Contract Code') }}</b></td>
-                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Partner Name') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Start Date') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('End Date') }}</b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Amount') }}</b></td>
@@ -331,7 +331,10 @@ use App\Models\Contract;
                                         @if(count($subItems))
                                         <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
                                         @endif
-                                        <b class="text-capitalize ">{{ $parent['name'] }}</b>
+										 <b class="text-capitalize ">
+                                        <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
+                                    </b>
+                                      
                                     </div>
                                 </td>
 								 <td class="text-center">
@@ -341,10 +344,8 @@ use App\Models\Contract;
 
                                 </td>
                                 <td class="text-center">
-                                    <b class="text-capitalize ">
-                                        <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
-                                    </b>
-
+                                   
+  <b class="text-capitalize ">{{ $parent['name'] }}</b>
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize  ">

@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Schema;
 class Partner extends Model
 {
 	const CUSTOMERS = 'customers';
+	const SUPPLIERS = 'suppliers';
+	const EMPLOYEES = 'employees';
+	const SHAREHOLDERS = 'shareholders';
+	const SUBSIDIARY_COMPANIES = 'subsidiary-companies';
 	use HasCreatedAt,HasBasicStoreRequest;
     protected $dates = [
     ];
@@ -64,7 +68,21 @@ class Partner extends Model
 			$q->where('is_supplier',1);
 		});
 	}
-
+	public function scopeOnlyEmployees(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_employee',1);
+		});
+	}
+	public function scopeOnlyShareholders(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_shareholders',1);
+		});
+	}
+	public function scopeOnlySubsidiaryCompanies(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_subsidiary_company',1);
+		});
+	}
 	public function unappliedAmounts()
 	{
 		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	
@@ -77,6 +95,18 @@ class Partner extends Model
 	public function isSupplier()
 	{
 		return $this->is_supplier == 1 ;
+	}
+	public function isEmployee()
+	{
+		return $this->is_employee == 1 ;
+	}
+	public function isSubsidiaryCompany()
+	{
+		return $this->is_subsidiary_company == 1 ;
+	}
+	public function isShareholder()
+	{
+		return $this->is_shareholder == 1 ;
 	}
 	
 	public function settlementForUnappliedAmounts()

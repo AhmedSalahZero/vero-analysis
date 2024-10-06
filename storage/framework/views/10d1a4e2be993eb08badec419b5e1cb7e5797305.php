@@ -129,7 +129,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="code" id="contract-code" type="text" class="form-control " value="<?php echo e(old('code',isset($model) ? $model : null)); ?>">
+                                            <input required name="code" id="contract-code" type="text" class="form-control " value="<?php echo e(old('code',isset($model) ? $model->getCode() : null)); ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -199,13 +199,13 @@ use App\Models\MoneyReceived ;
 <?php endif; ?> 
                                 </div>
                                 <div class="col-md-2 ">
-                                    <label> <?php echo e(__('Duration (Days)')); ?>
+                                    <label> <?php echo e(__('Duration (Months)')); ?>
 
                                         <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="<?php echo e(old('duration',isset($model) ? $model->getDuration() : null)); ?>">
+                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="<?php echo e(old('duration',isset($model) ? $model->getDuration() / 30 : null)); ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -598,7 +598,9 @@ use App\Models\MoneyReceived ;
         const startDate = new Date($('.start-date').val());
         const duration = parseFloat($('.duration').val());
         if (duration || duration == '0') {
-            const numberOfDays = duration
+            const numberOfDays = duration * 30
+			
+		
             let endDate = startDate.addDays(numberOfDays)
             endDate = formatDate(endDate)
             $('#end-date').val(endDate).trigger('change')
@@ -615,7 +617,7 @@ use App\Models\MoneyReceived ;
         const startDate = new Date(parent.find('.start-date-2').val());
         const duration = parseFloat(parent.find('.duration-2').val());
         if (duration || duration == '0') {
-            const numberOfDays = duration
+            const numberOfDays = duration * 30
             let endDate = startDate.addDays(numberOfDays)
             endDate = formatDate(endDate)
             parent.find('.end-date-2').val(endDate).trigger('change')

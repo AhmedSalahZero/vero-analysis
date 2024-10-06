@@ -315,9 +315,9 @@ use App\Models\Contract;
                             <?php $__env->endSlot(); ?>
                             <?php $__env->slot('table_body'); ?>
                             <tr class=" text-center first-tr-bg ">
+                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Partner Name')); ?></b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Contract Name')); ?></b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Contract Code')); ?></b></td>
-                                <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Partner Name')); ?></b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Start Date')); ?></b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('End Date')); ?></b></td>
                                 <td class=" text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Amount')); ?></b></td>
@@ -348,7 +348,10 @@ use App\Models\Contract;
                                         <?php if(count($subItems)): ?>
                                         <i class="row_icon<?php echo e($mainItemId); ?> flaticon2-up  mr-2  "></i>
                                         <?php endif; ?>
-                                        <b class="text-capitalize "><?php echo e($parent['name']); ?></b>
+										 <b class="text-capitalize ">
+                                        <b class="text-capitalize "><?php echo e($parent['client_name']); ?></b>
+                                    </b>
+                                      
                                     </div>
                                 </td>
 								 <td class="text-center">
@@ -358,10 +361,8 @@ use App\Models\Contract;
 
                                 </td>
                                 <td class="text-center">
-                                    <b class="text-capitalize ">
-                                        <b class="text-capitalize "><?php echo e($parent['client_name']); ?></b>
-                                    </b>
-
+                                   
+  <b class="text-capitalize "><?php echo e($parent['name']); ?></b>
                                 </td>
                                 <td class="text-center">
                                     <b class="text-capitalize  ">
