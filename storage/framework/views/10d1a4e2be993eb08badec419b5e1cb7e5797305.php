@@ -140,12 +140,13 @@ use App\Models\MoneyReceived ;
 
                                         <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
+									
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select regenerate-code-ajax">
+                                                <select data-ii="<?php echo e($model->getClientId()); ?>" data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select regenerate-code-ajax">
                                                     <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option <?php if( old('partner_id',isset($model) && $model->getClientId()) == $customer->id ): ?> selected <?php endif; ?> value="<?php echo e($customer->id); ?>"><?php echo e($customer->getName()); ?></option>
+                                                    <option <?php if( old('partner_id',isset($model) && $model->getClientId() == $customer->id  ) ): ?> selected <?php endif; ?> value="<?php echo e($customer->id); ?>"><?php echo e($customer->getName()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
