@@ -115,7 +115,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="code" id="contract-code" type="text" class="form-control " value="{{ old('code',isset($model) ? $model : null)   }}">
+                                            <input required name="code" id="contract-code" type="text" class="form-control " value="{{ old('code',isset($model) ? $model->getCode() : null)   }}">
                                         </div>
                                     </div>
                                 </div>
@@ -173,12 +173,12 @@ use App\Models\MoneyReceived ;
                                     <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date regenerate-code-ajax'" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
                                 </div>
                                 <div class="col-md-2 ">
-                                    <label> {{ __('Duration (Days)') }}
+                                    <label> {{ __('Duration (Months)') }}
                                         @include('star')
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() : null)  }}">
+                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() / 30 : null)  }}">
                                         </div>
                                     </div>
                                 </div>
@@ -751,7 +751,9 @@ use App\Models\MoneyReceived ;
         const startDate = new Date($('.start-date').val());
         const duration = parseFloat($('.duration').val());
         if (duration || duration == '0') {
-            const numberOfDays = duration
+            const numberOfDays = duration * 30
+			
+		
             let endDate = startDate.addDays(numberOfDays)
             endDate = formatDate(endDate)
             $('#end-date').val(endDate).trigger('change')
@@ -768,7 +770,7 @@ use App\Models\MoneyReceived ;
         const startDate = new Date(parent.find('.start-date-2').val());
         const duration = parseFloat(parent.find('.duration-2').val());
         if (duration || duration == '0') {
-            const numberOfDays = duration
+            const numberOfDays = duration * 30
             let endDate = startDate.addDays(numberOfDays)
             endDate = formatDate(endDate)
             parent.find('.end-date-2').val(endDate).trigger('change')

@@ -67,6 +67,7 @@ class Contract extends Model
     {
         parent::boot();
         self::saving(function($model){
+			$model->duration = $model->duration * 30;
 			$model->end_date = $model->start_date && $model->duration ? Carbon::make($model->start_date)->addDays($model->duration)->format('Y-m-d') : null;  
         });
 		

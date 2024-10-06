@@ -231,6 +231,7 @@ class FinancialInstitutionController
 			$financialInstitution->overdraftAgainstCommercialPapers ,
 			$financialInstitution->overdraftAgainstAssignmentOfContracts ,
 		];
+
 		return view('bank-accounts.index',[
 			'allBankAccounts'=>$bankAccounts,
 			'financialInstitution'=>$financialInstitution,

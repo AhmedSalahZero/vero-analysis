@@ -322,6 +322,18 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Partner::class,'company_id','id')->where('is_supplier',1);
 	}
+	public function employees()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_employee',1);
+	}
+	public function shareholders()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_shareholder',1);
+	}	
+	public function subsidiaryCompanies()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_subsidiary_company',1);
+	}
 	public function businessSectors()
 	{
 		return $this->hasMany(CashVeroBusinessSector::class,'company_id','id');

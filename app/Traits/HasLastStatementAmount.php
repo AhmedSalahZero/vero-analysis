@@ -12,13 +12,14 @@ trait HasLastStatementAmount
 	{
 		return $this->financial_institution_id;
 	}
-	public static function getLastAmountFormatted(int $companyId , string $currencyName , int $fullySecuredOverdraftId ) 
+	public static function getLastAmountFormatted(int $companyId , string $currencyName , int $fullySecuredOverdraftId,$accountNumber ) 
 	{
 		$currentTableName = (new self)->getTable();
 		$row = 	DB::table(self::getBankStatementTableName())
 				->join($currentTableName,$currentTableName.'.id' ,'=',self::getBankStatementTableName().'.'.self::generateForeignKeyFormModelName())
                 ->where(self::getBankStatementTableName().'.company_id', $companyId)
                 ->where('currency', $currencyName)
+				->where('account_number',$accountNumber)
 				->where(self::generateForeignKeyFormModelName(),$fullySecuredOverdraftId)
                 ->orderBy(self::getBankStatementTableName().'.full_date', 'desc')
                 ->limit(1)

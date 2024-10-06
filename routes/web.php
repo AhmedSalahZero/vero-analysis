@@ -359,6 +359,28 @@ Route::middleware([])->group(function () {
 					Route::delete('suppliers/{supplier}/delete','SuppliersController@destroy')->name('suppliers.destroy');
 					
 					
+					
+					Route::get('shareholders','ShareholdersController@index')->name('shareholders.index');
+					Route::get('shareholders/create','ShareholdersController@create')->name('shareholders.create');
+					Route::post('shareholders/store','ShareholdersController@store')->name('shareholders.store');
+					Route::get('shareholders/{shareholder}/edit','ShareholdersController@edit')->name('shareholders.edit');
+					Route::put('shareholders/{shareholder}/update','ShareholdersController@update')->name('shareholders.update');
+					Route::delete('shareholders/{shareholder}/delete','ShareholdersController@destroy')->name('shareholders.destroy');
+					
+					Route::get('employees','EmployeesController@index')->name('employees.index');
+					Route::get('employees/create','EmployeesController@create')->name('employees.create');
+					Route::post('employees/store','EmployeesController@store')->name('employees.store');
+					Route::get('employees/{employee}/edit','EmployeesController@edit')->name('employees.edit');
+					Route::put('employees/{employee}/update','EmployeesController@update')->name('employees.update');
+					Route::delete('employees/{employee}/delete','EmployeesController@destroy')->name('employees.destroy');
+					
+					Route::get('subsidiary-companies','SubsidiaryCompaniesController@index')->name('subsidiary.companies.index');
+					Route::get('subsidiary-companies/create','SubsidiaryCompaniesController@create')->name('subsidiary.companies.create');
+					Route::post('subsidiary-companies/store','SubsidiaryCompaniesController@store')->name('subsidiary.companies.store');
+					Route::get('subsidiary-companies/{subsidiaryCompany}/edit','SubsidiaryCompaniesController@edit')->name('subsidiary.companies.edit');
+					Route::put('subsidiary-companies/{subsidiaryCompany}/update','SubsidiaryCompaniesController@update')->name('subsidiary.companies.update');
+					Route::delete('subsidiary-companies/{subsidiaryCompany}/delete','SubsidiaryCompaniesController@destroy')->name('subsidiary.companies.destroy');
+					
 					Route::get('business-sectors','BusinessSectorsController@index')->name('business.sectors.index');
 					Route::get('business-sectors/create','BusinessSectorsController@create')->name('business.sectors.create');
 					Route::post('business-sectors/store','BusinessSectorsController@store')->name('business.sectors.store');

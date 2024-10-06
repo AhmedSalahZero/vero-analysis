@@ -3478,7 +3478,7 @@ function getPermissions(array $systemsNames  = []):array
             'name'=>'update customers',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customers setting',
+			'group'=>'customers',
 			'view-name'=>'update'
         ],
 		// [
@@ -3488,6 +3488,10 @@ function getPermissions(array $systemsNames  = []):array
 		// 	'group'=>'customers',
 		// 	'view-name'=>'delete'
         // ],
+		
+		
+		
+		
 		
 		[
             'name'=>'view suppliers',
@@ -3507,7 +3511,7 @@ function getPermissions(array $systemsNames  = []):array
             'name'=>'update suppliers',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'suppliers setting',
+			'group'=>'suppliers',
 			'view-name'=>'update'
         ],
 		// [
@@ -3515,6 +3519,96 @@ function getPermissions(array $systemsNames  = []):array
 		// 	'systems'=>[CASH_VERO],
 		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 		// 	'group'=>'suppliers',
+		// 	'view-name'=>'delete'
+        // ],
+		
+		
+		
+		[
+            'name'=>'view employees',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'employees',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create employees',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'employees',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update employees',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'employees',
+			'view-name'=>'update'
+        ],
+		// [
+        //     'name'=>'delete employees',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'employees',
+		// 	'view-name'=>'delete'
+        // ],
+		
+		
+		[
+            'name'=>'view shareholders',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'shareholders',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create shareholders',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'shareholders',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update shareholders',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'shareholders',
+			'view-name'=>'update'
+        ],
+		// [
+        //     'name'=>'delete shareholders',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'shareholders',
+		// 	'view-name'=>'delete'
+        // ],
+		
+		[
+            'name'=>'view subsidiary companies',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'subsidiary companies',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create subsidiary companies',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'subsidiary companies',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update subsidiary companies',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'subsidiary companies',
+			'view-name'=>'update'
+        ],
+		// [
+        //     'name'=>'delete subsidiary companies',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'subsidiary companies',
 		// 	'view-name'=>'delete'
         // ],
 		
@@ -5516,13 +5610,16 @@ function getHeaderMenu($currentCompany = null)
 	$canViewNotificationSetting = $user->can('view notification settings');
 	$canViewCashExpenseCategories = $user->can('view cash expense categories');
 	$canViewCustomersSettings = $user->can('view customers');
+	$canViewSubsidiaryCompaniesSettings = $user->can('view subsidiary companies');
+	$canViewShareholdersSettings = $user->can('view shareholders');
+	$canViewEmployeesSettings = $user->can('view employees');
 	$canViewSuppliersSettings = $user->can('view suppliers');
 	$canViewBusinessSectorSettings = $user->can('view business sectors');
 	$canViewBusinessUnitSettings = $user->can('view business units');
 	$canViewSalesChannelsSettings = $user->can('view sales channels');
 	$canViewSalesPersonsSettings = $user->can('view sales persons');
 	$canViewBranchesSettings = $user->can('view branches');
-	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
+	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSubsidiaryCompaniesSettings || $canViewShareholdersSettings || $canViewEmployeesSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
 	$notificationsSubItems[]	= [
 		'title'=>__('Notification Settings'),
 	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
@@ -5561,6 +5658,21 @@ function getHeaderMenu($currentCompany = null)
 				'title'=>__('Suppliers'),
 				'link'=>route('suppliers.index',['company'=>$companyId]),
 				'show'=>$canViewSuppliersSettings 
+			],
+			[
+				'title'=>__('Subsidiary Companies'),
+				'link'=>route('subsidiary.companies.index',['company'=>$companyId]),
+				'show'=>$canViewSubsidiaryCompaniesSettings 
+			],
+			[
+				'title'=>__('Employees'),
+				'link'=>route('employees.index',['company'=>$companyId]),
+				'show'=>$canViewEmployeesSettings 
+			],
+			[
+				'title'=>__('Shareholders'),
+				'link'=>route('shareholders.index',['company'=>$companyId]),
+				'show'=>$canViewShareholdersSettings 
 			],
 			[
 				'title'=>__('Business Sectors'),

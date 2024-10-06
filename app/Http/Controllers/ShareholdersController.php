@@ -1,14 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSupplierRequest;
+use App\Http\Requests\StoreShareholderRequest;
 use App\Models\Company;
 use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class SuppliersController
+class ShareholdersController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -45,10 +45,10 @@ class SuppliersController
 	{
 		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		$currentType = $request->get('active',Partner::SUPPLIERS);
+		$currentType = $request->get('active',Partner::SHAREHOLDERS);
 		
 		$filterDates = [];
-		foreach([Partner::SUPPLIERS] as $type){
+		foreach([Partner::SHAREHOLDERS] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
@@ -61,43 +61,42 @@ class SuppliersController
 		
 		 
 		  /**
-		 * * start of suppliers 
+		 * * start of shareholders 
 		 */
 		
-		$supplierStartDate = $filterDates[Partner::SUPPLIERS]['startDate'] ?? null ;
-		$supplierEndDate = $filterDates[Partner::SUPPLIERS]['endDate'] ?? null ;
-		$suppliers = $company->suppliers ;
-		$suppliers =  $suppliers->filterByCreatedAt($supplierStartDate,$supplierEndDate) ;
-		$suppliers =  $currentType == Partner::SUPPLIERS ? $this->applyFilter($request,$suppliers):$suppliers ;
+		$shareholderStartDate = $filterDates[Partner::SHAREHOLDERS]['startDate'] ?? null ;
+		$shareholderEndDate = $filterDates[Partner::SHAREHOLDERS]['endDate'] ?? null ;
+		$shareholders = $company->shareholders ;
+		$shareholders =  $shareholders->filterByCreatedAt($shareholderStartDate,$shareholderEndDate) ;
+		$shareholders =  $currentType == Partner::SHAREHOLDERS ? $this->applyFilter($request,$shareholders):$shareholders ;
 
 		/**
-		 * * end of suppliers 
+		 * * end of shareholders 
 		 */
 		 
 		
 		 $searchFields = [
-			Partner::SUPPLIERS=>[
-				
+			Partner::SHAREHOLDERS=>[
 				'created_at'=>__('Created At'),
 				'name'=>__('Name')
 			],
 		];
 	
 		$models = [
-			Partner::SUPPLIERS =>$suppliers ,
+			Partner::SHAREHOLDERS =>$shareholders ,
 		];
 
-        return view('suppliers.index', [
+        return view('shareholders.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
 			'models'=>$models,
 			'filterDates'=>$filterDates,
-			'indexRouteName'=>'suppliers.index'
+			'indexRouteName'=>'shareholders.index'
 		]);
     }
 	public function create(Company $company)
 	{
-        return view('suppliers.form',$this->getCommonViewVars($company));
+        return view('shareholders.form',$this->getCommonViewVars($company));
     }
 	public function getCommonViewVars(Company $company,$model = null)
 	{
@@ -107,48 +106,47 @@ class SuppliersController
 		];
 	}
 	
-	public function store(Company $company   , StoreSupplierRequest $request){
-		$type = Partner::SUPPLIERS;
-		$supplier = new Partner ;
-		$supplier->is_supplier = 1 ;
-		$supplier->storeBasicForm($request);
+	public function store(Company $company   , StoreShareholderRequest $request){
+		$type = Partner::SHAREHOLDERS;
+		$shareholder = new Partner ;
+		$shareholder->is_shareholder = 1 ;
+		$shareholder->storeBasicForm($request);
 		$activeTab = $type ; 
 		return response()->json([
-			'redirectTo'=>route('suppliers.index',['company'=>$company->id,'active'=>$activeTab])
+			'redirectTo'=>route('shareholders.index',['company'=>$company->id,'active'=>$activeTab])
 		]);
 		
 	}
 
-	public function edit(Company $company,Partner $supplier)
+	public function edit(Company $company,Partner $shareholder)
 	{
 
-        return view('suppliers.form' ,$this->getCommonViewVars($company,$supplier));
+        return view('shareholders.form' ,$this->getCommonViewVars($company,$shareholder));
     }
 	
-	public function update(Company $company, StoreSupplierRequest $request , Partner $supplier){
+	public function update(Company $company, StoreShareholderRequest $request , Partner $shareholder){
 		
 		// $lcSettlementInternalTransfer->deleteRelations();
-		// $supplier->delete();
-		$oldName = $supplier->getName();
+		// $shareholder->delete();
+		$oldName = $shareholder->getName();
 		$newName = $request->get('name');
-		$supplier->update([
+		$shareholder->update([
 			'name'=>$newName
 		]);
-		if($oldName != $newName){
-			$supplier->updateNamesInAllTables('supplier_name',$oldName,$newName,$company->id);
-		}
-		$type = Partner::SUPPLIERS;
+		// $shareholder->updateNamesInAllTables('shareholder_name',$oldName,$newName,$company->id);
+		$type = Partner::SHAREHOLDERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;
 		return response()->json([
-			'redirectTo'=>route('suppliers.index',['company'=>$company->id,'active'=>$activeTab])
+			'redirectTo'=>route('shareholders.index',['company'=>$company->id,'active'=>$activeTab])
 		]);
 	}
 	
-	public function destroy(Company $company , Partner $supplier)
+	public function destroy(Company $company , Partner $shareholder)
 	{
 		// $lcSettlementInternalTransfer->deleteRelations();
-		$supplier->delete();
+		$shareholder->delete();
+		
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	
