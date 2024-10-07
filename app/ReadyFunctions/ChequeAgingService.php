@@ -18,14 +18,16 @@ class ChequeAgingService
     public const MORE_THAN_150 = 'More Than 150';
     protected $company_id ;
     protected $aging_date ;
+    protected $currency ;
 
-    public function __construct(int $companyId, string $agingDate)
+    public function __construct(int $companyId, string $agingDate,string $currency)
     {
         $this->company_id = $companyId ;
         if (!isValidDateFormat($agingDate, 'Y-m-d')) {
             throw new Exception('Custom Exception Invalid Date Format Passed .. Excepted Format To Be Y-m-d');
         }
         $this->aging_date = $agingDate ;
+        $this->currency = $currency ;
     }
 
 	public function __execute(array $clientNames, string $modelType)
@@ -35,18 +37,22 @@ class ChequeAgingService
         $clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
         $modelModelName = $fullModelName::MONEY_MODEL_NAME ;
 		$chequeModelName = $fullModelName::AGING_CHEQUE_MODEL_NAME;
+		$moneyReceivedOrPaymentTableName = $fullModelName::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME;
+		$moneyReceivedOrPaymentTableForeignName = $fullModelName::MONEY_RECEIVED_OR_PAYMENT_TABLE_FOREIGN_NAME;
+		$chequesTableName = $fullModelName::AGING_CHEQUE_TABLE_NAME;
 		 $chequeTypesForSafe = ('\App\Models\\'.$chequeModelName)::getChequeTypesForAging() ;
 	
         $result = [];
 		/**
 		 * * هنا شرط الديو ديت اكبر من او يساوي
 		 */
-
         $invoices = ('\App\Models\\'.$chequeModelName)
 		::whereIn('status',$chequeTypesForSafe)
 		->where('due_date', '>=', $this->aging_date)
+		->where('currency',$this->currency)
+		->join($moneyReceivedOrPaymentTableName,$moneyReceivedOrPaymentTableName.'.id','=',$chequesTableName.'.'.$moneyReceivedOrPaymentTableForeignName)
 		->has($modelModelName)
-		->where('company_id', $this->company_id)
+		->where($chequesTableName.'.company_id', $this->company_id)
 		;
         if (count($clientNames)) {
             $invoices->whereHas($modelModelName,function($q) use($clientNames,$clientNameColumnName){
@@ -54,7 +60,7 @@ class ChequeAgingService
             });
         }
         $invoices = $invoices->get();
-		
+
         /**
          * @var CustomerInvoice[] $invoices
          */

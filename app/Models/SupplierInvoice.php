@@ -31,11 +31,13 @@ class SupplierInvoice extends Model implements IInvoice
 	const RECEIVED_OR_PAYMENT_AMOUNT = 'paid_amount';
 	const RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME = 'delivery_date';
 	const MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME = 'money_payments';
+	const MONEY_RECEIVED_OR_PAYMENT_TABLE_FOREIGN_NAME = 'money_payment_id';
 	const TABLE_NAME = 'supplier_invoices';
 	const COLLETED_OR_PAID = 'paid';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_paid_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyPayment';
 	const AGING_CHEQUE_MODEL_NAME = 'PayableCheque';
+	const AGING_CHEQUE_TABLE_NAME = 'payable_cheques';
 
     protected $guarded = [];
 	

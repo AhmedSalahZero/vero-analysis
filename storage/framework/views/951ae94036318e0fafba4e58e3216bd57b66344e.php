@@ -406,11 +406,14 @@
                                         <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->interest_amount)); ?></td>
                                         <?php endif; ?>
 										<?php
-											$comment = $modelAsStdClass->{'comment_'.$lang} ;
+								
+											 $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
+											
 											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
 											$reviewedText = getReviewedText($reviewedArr);
 											
 										?>
+								
                                         <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
                                         <td class="sub-text-bg text-left max-w-amount"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
 

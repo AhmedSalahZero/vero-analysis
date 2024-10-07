@@ -227,10 +227,13 @@ class FinancialInstitution extends Model
 				$account->currentAccountBankStatements()->create([
 					'company_id'=>getCurrentCompanyId() ,
 					'beginning_balance'=>0,
+					'is_beginning_balance'=>1 ,
 					'debit'=>$balanceAmount,
 					'is_debit'=>$isDebit =$balanceAmount > 0 ,
 					'is_credit' => !$isDebit,
 					'date'=>$startDate ,
+					'comment_en'=>__('Beginning Balance',[],'en'),
+					'comment_ar'=>__('Beginning Balance',[],'ar'),
 				]);
 
 			}

@@ -302,7 +302,7 @@ use App\Models\MoneyReceived ;
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select name="receiving_branch_id" class="form-control">
-                                            <option value="-1">{{__('New Branch')}}</option>
+                                            <option value="-1">{{__('Select Branch')}}</option>
                                             @foreach($selectedBranches as $branchId=>$branchName)
                                             <option value="{{ $branchId }}" {{ isset($model) && $model->getCashInSafeReceivingBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
                                             @endforeach

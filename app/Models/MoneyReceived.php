@@ -150,6 +150,16 @@ class MoneyReceived extends Model
 	{
 		return strtoupper($this->currency);
 	}
+	public function getCurrencyToReceivingCurrencyFormatted()
+	{
+		$currency = $this->getCurrency();
+		$receivingCurrency = $this->getReceivingCurrency();
+		if($currency == $receivingCurrency || is_null($receivingCurrency)){
+			return $this->getCurrencyFormatted();
+		}
+		return $this->getCurrencyFormatted().'/'.$this->getReceivingCurrencyFormatted();
+		
+	}
 	public function getReceivingCurrency()
 	{
 		return $this->receiving_currency;

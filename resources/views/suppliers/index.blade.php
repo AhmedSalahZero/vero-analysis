@@ -41,7 +41,7 @@ use App\Models\Partner ;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == Partner::CUSTOMERS ?'active':'' }}" data-toggle="tab" href="#{{Partner::CUSTOMERS  }}" role="tab">
+                    <a class="nav-link {{ !Request('active') || Request('active') == Partner::SUPPLIERS ?'active':'' }}" data-toggle="tab" href="#{{Partner::SUPPLIERS  }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Suppliers Table') }}
                     </a>
                 </li>
@@ -53,7 +53,7 @@ use App\Models\Partner ;
 			@if(auth()->user()->can('create suppliers'))
             <div class="flex-tabs">
                
-                <a href="{{ route('suppliers.create',['company'=>$company->id,Partner::CUSTOMERS]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                <a href="{{ route('suppliers.create',['company'=>$company->id,Partner::SUPPLIERS]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Supplier') }}
                 </a>
@@ -71,7 +71,7 @@ use App\Models\Partner ;
 
 
             @php
-            $currentType = Partner::CUSTOMERS ;
+            $currentType = Partner::SUPPLIERS ;
             @endphp
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
@@ -102,7 +102,7 @@ use App\Models\Partner ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $model->getName() }}</td>
+                           	    	<td class="text-nowrap text-left">{{ $model->getName() }}</td>
                                     <td>{{ $model->getCreatedAtFormatted() }}</td>
 									@if(hasAuthFor('update suppliers') 
 									// || hasAuthFor('delete suppliers')

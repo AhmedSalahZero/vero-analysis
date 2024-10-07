@@ -253,7 +253,10 @@ class Company extends Model implements HasMedia
 	}
 	public function financialInstitutions()
 	{
-		return $this->hasMany(FinancialInstitution::class,'company_id','id');
+		return $this->hasMany(FinancialInstitution::class,'company_id','id')
+		->join('banks','banks.id','=','financial_institutions.bank_id')
+		->selectRaw('financial_institutions.* , banks.name_en as bank_name')
+		->orderBy('bank_name');
 	}
 	public function getNotificationsBasedOnType($type):Collection
 	{
@@ -316,42 +319,59 @@ class Company extends Model implements HasMedia
 	}
 	public function customers()
 	{
-		return $this->hasMany(Partner::class,'company_id','id')->where('is_customer',1);
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_customer',1)->orderBy('name');
 	}
 	public function suppliers()
 	{
-		return $this->hasMany(Partner::class,'company_id','id')->where('is_supplier',1);
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_supplier',1)->orderBy('name');
 	}
 	public function employees()
 	{
-		return $this->hasMany(Partner::class,'company_id','id')->where('is_employee',1);
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_employee',1)->orderBy('name');
 	}
 	public function shareholders()
 	{
-		return $this->hasMany(Partner::class,'company_id','id')->where('is_shareholder',1);
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_shareholder',1)->orderBy('name');
 	}	
 	public function subsidiaryCompanies()
 	{
-		return $this->hasMany(Partner::class,'company_id','id')->where('is_subsidiary_company',1);
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_subsidiary_company',1)->orderBy('name');
 	}
 	public function businessSectors()
 	{
-		return $this->hasMany(CashVeroBusinessSector::class,'company_id','id');
+		return $this->hasMany(CashVeroBusinessSector::class,'company_id','id')->orderBy('name');
 	}
 	public function salesChannels()
 	{
-		return $this->hasMany(CashVeroSalesChannel::class,'company_id','id');
+		return $this->hasMany(CashVeroSalesChannel::class,'company_id','id')->orderBy('name');
 	}
 	public function salesPersons()
 	{
-		return $this->hasMany(CashVeroSalesPerson::class,'company_id','id');
+		return $this->hasMany(CashVeroSalesPerson::class,'company_id','id')->orderBy('name');
 	}
 	public function businessUnits()
 	{
-		return $this->hasMany(CashVeroBusinessUnit::class,'company_id','id');
+		return $this->hasMany(CashVeroBusinessUnit::class,'company_id','id')->orderBy('name');
 	}
 	public function branches()
 	{
-		return $this->hasMany(CashVeroBranch::class,'company_id','id');
+		return $this->hasMany(CashVeroBranch::class,'company_id','id')->orderBy('name');
 	}
+	public function financialInstitutionsBanks():Collection
+	{
+		return $this->financialInstitutions->where('type','bank') ;
+	}
+	public function financialInstitutionsLeasingCompanies():Collection
+	{
+		return $this->financialInstitutions->where('type','leasing_companies') ;
+	}
+	public function financialInstitutionsFactoringCompanies():Collection
+	{
+		return $this->financialInstitutions->where('type','factoring_companies') ;
+	}
+	public function financialInstitutionsMortgageCompanies():Collection
+	{
+		return $this->financialInstitutions->where('type','mortgage_companies') ;
+	}
+	
 }

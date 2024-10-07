@@ -15,7 +15,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
-
+<script>
+let pageLoaded = false ;
+</script>
     <style>
 	.width-9 {
         max-width: initial !important;
@@ -1468,6 +1470,10 @@ td{
 	
 		
 $(document).on('change','.update-exchange-rate',function(){
+
+	if(!pageLoaded){
+		return 
+	}
 	const fromCurrency = $('select.current-invoice-currency').val()
 	let toCurrency = $('input[type="hidden"].to-currency').val() 
 	toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
@@ -1480,6 +1486,7 @@ $(document).on('change','.update-exchange-rate',function(){
 		$('.exchange-rate-class').val(1).trigger('change')
 		return 
 	}
+
 	$.ajax({
 		url,
 		data:{
@@ -1489,11 +1496,15 @@ $(document).on('change','.update-exchange-rate',function(){
 		},
 		success:function(res){
 			exchangeRate = res.exchange_rate ;
+		
 			$('.exchange-rate-class').val(exchangeRate).trigger('change')
 		}
 	})
 })
-$('select.current-invoice-currency.update-exchange-rate').trigger('change')
+	
+
+
+
 
 
         $(document).on('click', '.js-mark-notifications-as-read', function() {
@@ -1506,6 +1517,14 @@ $('select.current-invoice-currency.update-exchange-rate').trigger('change')
     </script>
 
     <?php endif; ?>
+	<?php if(!isset($model) && !isset($singleModel) ): ?>
+<script>
+
+	$('select.current-invoice-currency.update-exchange-rate').trigger('change')
+</script>	
+	<?php endif; ?>
+	
+	
     <?php if(isset($company) && $company->id): ?>
     <?php if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName ))): ?>
     <script>
@@ -1902,7 +1921,11 @@ $('#kt_datepicker_max_date_is_today').datepicker({
 });
 
 </script>
-
+<script>
+$(function(){
+	pageLoaded = true;
+})
+</script>
 
 
 </body>

@@ -68,6 +68,7 @@ class BankStatementController
 			->where('current_account_bank_statements.date', '>=', $startDate)
 			->where('current_account_bank_statements.date', '<', $endDate)
 			->leftJoin('money_received','current_account_bank_statements.money_received_id','=','money_received.id')
+			->selectRaw('current_account_bank_statements.*,financial_institution_accounts.*,money_received.is_reviewed,money_received.reviewed_by')
 			->orderByRaw('current_account_bank_statements.full_date desc')
 			->get();
 		
@@ -75,6 +76,10 @@ class BankStatementController
 		}
 		elseif($accountType->isCleanOverdraftAccount()){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+			
+		
+			
+			
 			$results = DB::table('clean_overdraft_bank_statements')
 				 ->where('clean_overdraft_bank_statements.company_id',$company->id)
 				 ->where('date', '>=', $startDate)
@@ -85,6 +90,7 @@ class BankStatementController
 				//  ->leftJoin('money_received','current_account_bank_statements.money_received_id','=','money_received.id')
 				 ->orderByRaw('full_date desc')
 				 ->get();
+			
 		}
 		elseif($accountType->isFullySecuredOverdraftAccount()){
 			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);

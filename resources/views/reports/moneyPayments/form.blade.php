@@ -136,11 +136,11 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select name="currency" class="form-control
-							contract-currency ajax-update-contracts
-							@if(!$singleModel)
+							contract-currency currency-class ajax-update-contracts
+							@if(!$singleModel && !isset($model) )
 							invoice-currency-class 
 							@endif
-							currency-class update-exchange-rate 
+							 update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
@@ -165,7 +165,7 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select">
-                                  
+                                  {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                     @foreach($suppliers as $supplierId => $supplierName)
                                     <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
                                     @endforeach
@@ -195,6 +195,7 @@ $selectedBanks = [];
                                 if(!$selected && $currentPaymentCurrency == $currencyId){
                                 $selected = 'selected';
                                 }
+								 $selected = isset($singleModel) && in_array($currentName,$currencies) ? 'selected':$selected;
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach
@@ -268,7 +269,7 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select name="delivery_branch_id" class="form-control">
-                                    <option value="-1">{{__('New Branch')}}</option>
+                                    <option value="-1">{{__('Select Branch')}}</option>
                                     @foreach($selectedBranches as $branchId=>$branchName)
                                     <option value="{{ $branchId }}" {{ isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
                                     @endforeach
@@ -294,7 +295,7 @@ $selectedBanks = [];
                     <div class="col-md-3 width-12">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
+                            <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                         </div>
                     </div>
 
@@ -432,7 +433,7 @@ $selectedBanks = [];
                     <div class="col-md-2 width-12">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                            <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                         </div>
                     </div>
 
@@ -547,7 +548,7 @@ $selectedBanks = [];
                     <div class="col-md-1 max-w-6">
                         <label>{!! __('Exchange <br> Rate') !!} @include('star')</label>
                         <div class="kt-input-icon">
-                            <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
+                            <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                         </div>
                     </div>
 

@@ -474,8 +474,8 @@ class CustomerInvoiceDashboardController extends Controller
 		
 		$agingDate = $request->get('aging_date',now()->format('Y-m-d'))  ;
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
-		$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate);
-		$chequeAgingService = new ChequeAgingService($company->id, $agingDate);
+
+		
 		$allFinancialInstitutionIds = $company->financialInstitutions->pluck('id')->toArray(); 
 		foreach($selectedCurrencies as $currencyName)
 		{
@@ -484,6 +484,9 @@ class CustomerInvoiceDashboardController extends Controller
 				/**
 				 * * Customers Invoices Aging & Supplier Invoices Aging
 				 */
+				$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate,$currencyName);
+				$chequeAgingService = new ChequeAgingService($company->id, $agingDate,$currencyName);
+		
 				$agingsForInvoices = $invoiceAgingService->__execute($clientNames, $modelType) ;
 				$agingsForInvoices = $invoiceAgingService->formatForDashboard($agingsForInvoices,$modelType);
 				/**

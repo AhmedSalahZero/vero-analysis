@@ -301,6 +301,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
+	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	if (!val || !currency || !financialInstitutionBankId) {

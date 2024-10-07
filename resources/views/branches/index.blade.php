@@ -100,7 +100,7 @@ use App\Models\CashVeroBranch ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $model->getName() }}</td>
+                                  <td class="text-nowrap text-left">{{ $model->getName() }}</td>
                                     <td>{{ $model->getCreatedAtFormatted() }}</td>
 									@if(hasAuthFor($updatePermissionName) || hasAuthFor($deletePermissionName) )
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

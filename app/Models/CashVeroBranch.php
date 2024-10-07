@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class CashVeroBranch extends Model
 {
 	const BRANCHES = 'branches';
+	protected $table ='branch';
 	use HasCreatedAt,HasBasicStoreRequest;
     protected $dates = [
     ];

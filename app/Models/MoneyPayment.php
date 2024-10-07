@@ -132,6 +132,17 @@ class MoneyPayment extends Model
 		return strtoupper($this->currency);
 	}
 
+	public function getCurrencyToPaymentCurrencyFormatted()
+	{
+		$currency = $this->getCurrency();
+		$paymentCurrency = $this->getPaymentCurrency();
+		if($currency == $paymentCurrency || is_null($paymentCurrency)){
+			return $this->getCurrencyFormatted();
+		}
+		return $this->getCurrencyFormatted().'/'.$this->getPaymentCurrencyFormatted();
+		
+	}
+	
 	public function getPaymentCurrency()
 	{
 		return $this->payment_currency;

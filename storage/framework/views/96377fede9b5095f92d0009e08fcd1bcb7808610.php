@@ -111,6 +111,39 @@
             },
              
             show: function() {
+				var appendNewOptionsToAllSelects = function (currentRepeaterItem) {
+	
+		if ($('[data-modal-title]').length) {
+			
+			let currentSelect = $(currentRepeaterItem).find('select').attr('data-modal-name')
+			let modalType = $(currentRepeaterItem).find('select').attr('data-modal-type')
+			let selects = {}
+			$('select[data-modal-name="' + currentSelect + '"][data-modal-type="' + modalType + '"] option').each(function (index, option) {
+				selects[$(option).attr('value')] = $(option).html()
+			})
+
+			$('select[data-modal-name="' + currentSelect + '"][data-modal-type="' + modalType + '"]').each(function (index, select) {
+				var selectedValue = $(select).val()
+				var currentOptions = ''
+				var currentOptionsValue = []
+				$(select).find('option').each(function (index, option) {
+					var currentOption = $(option).attr('value')
+					var isCurrentSelected = currentOption == selectedValue ? 'selected' : ''
+					currentOptions += '<option value="' + currentOption + '" ' + isCurrentSelected + ' > ' + $(option).html() + ' </option>'
+					currentOptionsValue.push(currentOption)
+				})
+				for (var allOptionValue in selects) {
+					if (!currentOptionsValue.includes(allOptionValue)) {
+						var isCurrentSelected = false
+						currentOptions += '<option value="' + allOptionValue + '" ' + isCurrentSelected + ' > ' + selects[allOptionValue] + ' </option>'
+						currentOptionsValue.push(allOptionValue)
+					}
+				}
+				$(select).empty().append(currentOptions).selectpicker('refresh').trigger('change')
+
+			})
+		}
+	}
                 $(this).slideDown();      
 				$('input.trigger-change-repeater').trigger('change')   
 				 $(this).find('.only-month-year-picker').each(function(index,dateInput){
@@ -123,7 +156,7 @@
 				$('input:not([type="hidden"])').trigger('change');
 				$(this).find('.dropdown-toggle').remove();
 				$(this).find('select.repeater-select').selectpicker("refresh");
-					
+						appendNewOptionsToAllSelects(this)
             },
 
             hide: function(deleteElement) {

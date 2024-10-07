@@ -42,8 +42,7 @@ class FinancialInstitutionController
 		})
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
-		})
-		->sortByDesc('id');
+		});
 		
 		return $collection;
 	}
@@ -51,16 +50,15 @@ class FinancialInstitutionController
 	{
 		$financialInst = new CertificatesOfDeposit();
 		
-		$type = $request->get('active') ;
-		$user = $request->user()->load('financialInstitutions') ;
-		
-		$financialInstitutionsBanks = $user->financialInstitutionsBanks() ;
+		$type = $request->get('active','bank') ;
+		$financialInstitutionsBanks = $company->financialInstitutionsBanks() ;
 		$financialInstitutionsBanks = $type == 'bank' ?  $this->applyFilter($request,$financialInstitutionsBanks)  :$financialInstitutionsBanks ;
-		$financialInstitutionsLeasingCompanies = $user->financialInstitutionsLeasingCompanies() ;
+// dd($financialInstitutionsBanks,$financialInstitutionsBanks->pluck('name')->toArray());
+		$financialInstitutionsLeasingCompanies = $company->financialInstitutionsLeasingCompanies() ;
 		$financialInstitutionsLeasingCompanies = $type == 'leasing_companies' ? $this->applyFilter($request,$financialInstitutionsLeasingCompanies) : $financialInstitutionsLeasingCompanies ;
-		$financialInstitutionsFactoringCompanies = $user->financialInstitutionsFactoringCompanies() ;
+		$financialInstitutionsFactoringCompanies = $company->financialInstitutionsFactoringCompanies() ;
 		$financialInstitutionsFactoringCompanies = $type == 'factoring_companies' ? $this->applyFilter($request,$financialInstitutionsFactoringCompanies) : $financialInstitutionsFactoringCompanies ;
-		$financialInstitutionsMortgageCompanies = $user->financialInstitutionsMortgageCompanies() ;
+		$financialInstitutionsMortgageCompanies = $company->financialInstitutionsMortgageCompanies() ;
 		$financialInstitutionsMortgageCompanies = $type == 'mortgage_companies' ? $this->applyFilter($request,$financialInstitutionsMortgageCompanies) : $financialInstitutionsMortgageCompanies ;
 		
 		$companiesSearchFields = [

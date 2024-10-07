@@ -6684,6 +6684,7 @@ if (!function_exists('getFixedLoanTypes')) {
 				$columnNameWithoutLang = 'to_comment_';
 			}
 		}
+	
 		if(is_null($tableName)){
 			return __('N/A',[],$lang);
 		}
