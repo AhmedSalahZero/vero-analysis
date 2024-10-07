@@ -8,6 +8,7 @@ use App\Models\FinancialInstitutionAccount;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FinancialInstitutionAccountController
 {
@@ -25,6 +26,7 @@ class FinancialInstitutionAccountController
 	public function update(Company $company , UpdateCurrentAccountRequest $request ,FinancialInstitution $financialInstitution , FinancialInstitutionAccount $financialInstitutionAccount){
 
 		$currency = $request->get('currency',$financialInstitutionAccount->getCurrency());
+		
 		$financialInstitutionAccount->update([
 			'account_number'=>$request->get('account_number'),
 			'currency'=>$currency ,
@@ -32,6 +34,15 @@ class FinancialInstitutionAccountController
 			'iban'=>$request->get('iban'),
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
+		$currentAccountBeginningBalance = $financialInstitutionAccount->currentAccountBankStatements->where('is_beginning_balance',1)->first() ;
+		if($currentAccountBeginningBalance){
+			$currentAccountBeginningBalance->update([
+				'balance_amount'=>$request->get('balance_amount'),
+				'comment_en'=>__('Beginning Balance',[],'en'),
+				'comment_ar'=>__('Beginning Balance',[],'ar'),
+			]);
+		}
+		
 		$oldAccountInterestsIds = $financialInstitutionAccount->accountInterests->pluck('id')->toArray();
 		$AccountInterestsIdsFromRequest =array_column($request->get('account_interests',[]),'id') ;
 		$elementsToDelete = array_diff($oldAccountInterestsIds,$AccountInterestsIdsFromRequest);

@@ -168,7 +168,7 @@ td{
                                     <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->payableCheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
-                                    <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
+                                    <td class="text-transform" data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td class="bank-max-width ">{{ $moneyPayment->payableCheque->getDeliveryBankName() }}</td>
                                     <td class="bank-max-width">{{ $moneyPayment->payableCheque->getAccountTypeName() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
@@ -282,7 +282,7 @@ td{
                                     <td class="text-nowrap">{{ $money->getDeliveryDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
                                     <td>{{ $money->getPaidAmountFormatted() }}</td>
-                                    <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyFormatted() }}</td>
+                                    <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getOutgoingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
@@ -371,7 +371,7 @@ td{
                                     <td class="text-nowrap">{{ $moneyPayment->getDeliveryDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->getCashPaymentBranchName() }}</td>
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
-                                    <td data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyFormatted() }}</td>
+                                    <td data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td>{{ $moneyPayment->getCashPaymentReceiptNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">

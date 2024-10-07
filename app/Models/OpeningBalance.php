@@ -6,7 +6,6 @@ use App\Models\Company;
 use App\Models\MoneyReceived;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class OpeningBalance extends Model
 {
@@ -54,6 +53,7 @@ class OpeningBalance extends Model
 	}
 	public function payableCheques()
 	{
+
 		return $this->hasMany(MoneyPayment::class,'opening_balance_id','id')->where('type',MoneyPayment::PAYABLE_CHEQUE)->whereHas('payableCheque',function(Builder $builder){
 			$builder->where('status',PayableCheque::PENDING);
 		});

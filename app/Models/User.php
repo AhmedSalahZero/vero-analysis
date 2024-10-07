@@ -184,26 +184,9 @@ class User extends Authenticatable implements HasMedia
 	{
 		return $this->moneyReceived->where('type',MoneyReceived::INCOMING_TRANSFER)->filterByReceivingDate($startDate,$endDate) ;
 	}
-	public function financialInstitutions()
-	{
-		return $this->hasMany(FinancialInstitution::class , 'created_by','id')->where('company_id',getCurrentCompanyId());
-	}
-	public function financialInstitutionsBanks():Collection
-	{
-		return $this->financialInstitutions->where('type','bank') ;
-	}
-	public function financialInstitutionsLeasingCompanies():Collection
-	{
-		return $this->financialInstitutions->where('type','leasing_companies') ;
-	}
-	public function financialInstitutionsFactoringCompanies():Collection
-	{
-		return $this->financialInstitutions->where('type','factoring_companies') ;
-	}
-	public function financialInstitutionsMortgageCompanies():Collection
-	{
-		return $this->financialInstitutions->where('type','mortgage_companies') ;
-	}
+	
+	
+	
 	public function overdraftAgainstCommercialPaper()
 	{
 		return $this->hasMany(OverdraftAgainstCommercialPaper::class , 'created_by','id')->where('company_id',getCurrentCompanyId());

@@ -49,15 +49,15 @@ class BalancesController
 		
         return view('admin.reports.balances_form', compact('company','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }
-	public function result(Company $company , Request $request,string $modelType){
+	// public function result(Company $company , Request $request,string $modelType){
 		
-		$aginDate = $request->get('again_date');
-		$customerNames = $request->get('customers');
-		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
-		$customerAgings  = $invoiceAgingService->__execute($customerNames,$modelType) ;
-		$weeksDates = formatWeeksDatesFromStartDate($aginDate);
-		return view('admin.reports.customer-invoices-aging',['customerAgings'=>$customerAgings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
-	}
+	// 	$aginDate = $request->get('again_date');
+	// 	$customerNames = $request->get('customers');
+	// 	$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
+	// 	$customerAgings  = $invoiceAgingService->__execute($customerNames,$modelType) ;
+	// 	$weeksDates = formatWeeksDatesFromStartDate($aginDate);
+	// 	return view('admin.reports.customer-invoices-aging',['customerAgings'=>$customerAgings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
+	// }
 	public function showTotalNetBalanceDetailsReport(Request $request,Company $company , string $currency , string $modelType)
 	{
 		$onlyPasted = $request->has('only') ;

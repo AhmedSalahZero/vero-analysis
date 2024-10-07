@@ -102,7 +102,7 @@ use App\Models\Partner ;
                                         {{ $index+1 }}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $model->getName() }}</td>
+                                <td class="text-nowrap text-left">{{ $model->getName() }}</td>
                                     <td>{{ $model->getCreatedAtFormatted() }}</td>
 									@if(hasAuthFor('update shareholders') 
 									

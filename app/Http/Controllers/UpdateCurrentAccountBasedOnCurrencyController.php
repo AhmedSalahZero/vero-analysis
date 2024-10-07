@@ -11,6 +11,7 @@ class UpdateCurrentAccountBasedOnCurrencyController extends Controller
 {
 	public function index(Request $request , Company $company,FinancialInstitution $financialInstitution)
 	{
+		
 		return response()->json([
 			'status'=>true ,
 			'message'=>'success',
@@ -18,7 +19,7 @@ class UpdateCurrentAccountBasedOnCurrencyController extends Controller
 				return [
 					$account->getId() => $account->getAccountNumber()
 				];
-			})
+			})->values()
 		]);
 	}
 }

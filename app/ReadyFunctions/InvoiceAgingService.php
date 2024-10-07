@@ -17,14 +17,16 @@ class InvoiceAgingService
     public const MORE_THAN_150 = 'More Than 150';
     protected $company_id ;
     protected $aging_date ;
+    protected $currency ;
 
-    public function __construct(int $companyId, string $agingDate)
+    public function __construct(int $companyId, string $agingDate,string $currency)
     {
         $this->company_id = $companyId ;
         if (!isValidDateFormat($agingDate, 'Y-m-d')) {
             throw new Exception('Custom Exception Invalid Date Format Passed .. Excepted Format To Be Y-m-d');
         }
         $this->aging_date = $agingDate ;
+		$this->currency = $currency;
     }
 
 
@@ -37,6 +39,7 @@ class InvoiceAgingService
         $invoices = $fullModelName::where('invoice_date', '<=', $this->aging_date)
 		->orderBy('invoice_due_date','asc')
 		->where('net_balance','>',0) 
+		->where('currency',$this->currency)
 		->where('company_id', $this->company_id);
         if (count($clientNames)) {
             $invoices->whereIn($clientNameColumnName, $clientNames);

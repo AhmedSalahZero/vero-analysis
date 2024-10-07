@@ -19,9 +19,19 @@ use App\Models\MoneyPayment ;
     }
 
     .customer-name-width {
+        max-width: 500px !important;
+        width: 500px !important;
+        min-width: 500px !important;
+    }
+	.account-number-width {
         max-width: 250px !important;
         width: 250px !important;
         min-width: 250px !important;
+    }
+    .account-type-width {
+        max-width: 400px !important;
+        width: 400px !important;
+        min-width: 400px !important;
     }
 
     .drawee-bank-width {
@@ -216,7 +226,7 @@ use App\Models\MoneyPayment ;
 
 
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
+                                                    <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
                                                         {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
@@ -424,8 +434,8 @@ use App\Models\MoneyPayment ;
 
                                             <input type="hidden" name="id" value="{{ isset($chequeInSafe) ? $chequeInSafe->id : 0 }}">
                                             <td>
-                                                <div class="input-group css-fix-plus-direction">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeInSafe) ? $chequeInSafe->getCustomerId() : 0"></x-form.select>
+                                                <div class="input-group css-fix-plus-direction name-class">
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Customer'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeInSafe) ? $chequeInSafe->getCustomerId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
@@ -433,7 +443,7 @@ use App\Models\MoneyPayment ;
                                             <td>
 
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers width-8" js-when-change-trigger-change-account-type>
+                                                    <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers width-8" js-when-change-trigger-change-account-type>
                                                         {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($chequeInSafe) && $chequeInSafe->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
@@ -633,8 +643,8 @@ use App\Models\MoneyPayment ;
                                         __('Exchange <br> Rate')=>'width-8',
                                         __('Deposit <br> Date') => 'width-12',
                                         __('Drawal <br> Bank')=>'drawee-bank-width',
-                                        __('Account <br> Type')=>'customer-name-width',
-                                        __('Account <br> Number')=>'customer-name-width',
+                                        __('Account <br> Type')=>'account-type-width',
+                                        __('Account <br> Number')=>'account-number-width',
                                         __('Clearance <br> Days')=>'width-8'
 
                                         ] as $title=>$classes)
@@ -666,8 +676,8 @@ use App\Models\MoneyPayment ;
 
                                             <td>
 
-                                                <div class="input-group css-fix-plus-direction">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeUnderCollection) ? $chequeUnderCollection->getCustomerId() : 0"></x-form.select>
+                                                <div class="input-group css-fix-plus-direction name-class">
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Customer'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeUnderCollection) ? $chequeUnderCollection->getCustomerId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
@@ -675,7 +685,7 @@ use App\Models\MoneyPayment ;
                                             <td>
 
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
+                                                    <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($chequeUnderCollection) && $chequeUnderCollection->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -750,7 +760,7 @@ use App\Models\MoneyPayment ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                        <select  name="account_type" class="form-control js-update-account-number-based-on-account-type">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($chequeUnderCollection) && $chequeUnderCollection->getChequeAccountType() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -914,8 +924,8 @@ use App\Models\MoneyPayment ;
                                         __('Cheque <br> Number')=>'width-15',
                                         __('Exchange <br> Rate')=>'width-8',
                                         __('Pament <br> Bank')=>'drawee-bank-width',
-                                        __('Account <br> Type')=>'customer-name-width',
-                                        __('Account <br> Number')=>'customer-name-width',
+                                        __('Account <br> Type')=>'account-type-width',
+                                        __('Account <br> Number')=>'account-number-width',
 
 
                                         ] as $title=>$classes)
@@ -948,7 +958,7 @@ use App\Models\MoneyPayment ;
                                             <td>
 
                                                 <div class="input-group css-fix-plus-direction">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Supplier Name')" :options="$suppliersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="supplier_id" :selected-value="isset($payableCheques) ? $payableCheques->getSupplierId() : 0"></x-form.select>
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Supplier'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Supplier Name')" :options="$suppliersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="supplier_id" :selected-value="isset($payableCheques) ? $payableCheques->getSupplierId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
@@ -956,7 +966,7 @@ use App\Models\MoneyPayment ;
                                             <td>
 
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
+                                                    <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
                                                         {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($payableCheques) && $payableCheques->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
@@ -967,7 +977,7 @@ use App\Models\MoneyPayment ;
                                             </td>
 
                                             <td>
-                                                <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($payableCheques) ?  formatDateForDatePicker($payableCheques->getChequeDueDate()) : formatDateForDatePicker(now())" :label="__('Due Date')" :id="'due_date'" name="due_date"></x-calendar>
+                                                <x-calendar :onlyMonth="false" :showLabel="false" :value="isset($payableCheques) ?  formatDateForDatePicker($payableCheques->getPayableChequeDueDate()) : formatDateForDatePicker(now())" :label="__('Due Date')" :id="'due_date'" name="due_date"></x-calendar>
 
                                             </td>
 
@@ -982,7 +992,7 @@ use App\Models\MoneyPayment ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="{{ number_format(isset($payableCheques) ? $payableCheques->getChequeNumber() : old('cheuqe_number',0)) }}">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getPayableChequeNumber() : old('cheuqe_number',0)}}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -1003,7 +1013,7 @@ use App\Models\MoneyPayment ;
                                                     <div class="input-group date ">
                                                         <select js-when-change-trigger-change-account-type data-financial-institution-id required name="delivery_bank_id" class="form-control">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($payableCheques) && $payableCheques && $payableCheques->getChequeAccountType() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($payableCheques) && $payableCheques && $payableCheques->getPayableChequeAccountType() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -1013,10 +1023,10 @@ use App\Models\MoneyPayment ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                        <select  name="account_type" class="form-control js-update-account-number-based-on-account-type">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                             @foreach($accountTypes as $index => $accountType)
-                                                            <option value="{{ $accountType->id }}" @if(isset($payableCheques) && $payableCheques->getChequeAccountType() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                            <option value="{{ $accountType->id }}" @if(isset($payableCheques) && $payableCheques->getPayableChequeAccountType() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -1025,7 +1035,7 @@ use App\Models\MoneyPayment ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-current-selected="{{ isset($payableCheques) ? $payableCheques->getChequeAccountNumber(): 0 }}" name="account_number" class="form-control js-account-number">
+                                                        <select data-current-selected="{{ isset($payableCheques) ? $payableCheques->getPayableChequeAccountNumber(): 0 }}" name="account_number" class="form-control js-account-number">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                         </select>
                                                     </div>
@@ -1135,7 +1145,7 @@ use App\Models\MoneyPayment ;
 
                 </div>
             </div>
-            <x-submitting />
+            <x-submitting-by-ajax />
 
             @endsection
             @section('js')

@@ -36,8 +36,7 @@ class ShareholdersController
 		})
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
-		})
-		->sortByDesc('id');
+		});
 		
 		return $collection;
 	}

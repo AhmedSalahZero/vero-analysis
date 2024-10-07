@@ -24,7 +24,7 @@
                                 <th class="text-center">{{ __('Execution Percentage %') }}</th>
                                 <th class="text-center">{{ __('Amount') }}</th>
                                 <th class="text-center">{{ __('Start Date') }}</th>
-                                <th class="text-center">{{ __('Execution Days') }}</th>
+                                <th class="text-center">{{ __('Execution Months') }}</th>
                                 <th class="text-center">{{ __('End Date') }}</th>
                                 <th class="text-center">{{ __('Collection Days') }}</th>
                             </tr>

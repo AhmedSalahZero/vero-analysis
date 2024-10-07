@@ -41,7 +41,9 @@ var FormRepeater = function () {
 	// m_repeater_2
 
 	var appendNewOptionsToAllSelects = function (currentRepeaterItem) {
+	
 		if ($('[data-modal-title]').length) {
+			
 			let currentSelect = $(currentRepeaterItem).find('select').attr('data-modal-name')
 			let modalType = $(currentRepeaterItem).find('select').attr('data-modal-type')
 			let selects = {}
@@ -309,9 +311,12 @@ var FormRepeater = function () {
 			},
 
 			show: function () {
+				
 				$(this).find('.dropdown-toggle').remove();
 				$(this).find('select.repeater-select').selectpicker("refresh");
 				$(this).slideDown()
+				appendNewOptionsToAllSelects(this)
+				
 			},
 
 			hide: function (deleteElement) {

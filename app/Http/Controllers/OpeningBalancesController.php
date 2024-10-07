@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMoneyPaymentRequest;
+use App\Http\Requests\StoreOpeningBalanceRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\OpeningBalance;
 use App\Models\Partner;
+use App\Models\PayableCheque;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasDebitStatements;
 use Illuminate\Http\Request;
@@ -41,7 +45,7 @@ class OpeningBalancesController
         ]);
     }
 
-    public function store(Request $request, Company $company)
+    public function store(StoreOpeningBalanceRequest $request, Company $company)
     {
         $openingBalanceDate = $request->get('date');
         $openingBalance = OpeningBalance::create([
@@ -87,10 +91,13 @@ class OpeningBalancesController
                     'drawee_bank_id' => isset($cheque['drawee_bank_id']) ? $cheque['drawee_bank_id'] : null,
                     'due_date' => $cheque['due_date'] ?: null,
                 ]);
-				// $moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
             }
         }
 
+		
+		
+		
+		
         foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION) as $index => $chequeUnderCollection) {
             $customer = Partner::find($chequeUnderCollection['customer_id'] ?: null);
             $currentAmount = $chequeUnderCollection['received_amount'] ?: 0 ;
@@ -122,12 +129,54 @@ class OpeningBalancesController
 				
             }
         }
+		
+		
+		
+		
+		foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE) as $index => $payableChequeArr) {
+            $supplier = Partner::find($payableChequeArr['supplier_id'] ?: null);
+            $currentAmount = $payableChequeArr['paid_amount'] ?: 0 ;
+            if ($currentAmount > 0) {
+                $moneyPayment = $openingBalance->moneyPayments()->create([
+                    'type' => MoneyPayment::PAYABLE_CHEQUE,
+                    'supplier_name' => $supplier ? $supplier->getName() : null,
+                    'received_amount' => $currentAmount,
+                    'currency' => $payableChequeArr['currency'],
+                    'delivery_date' => $openingBalanceDate,
+                    'company_id' => $company->id,
+                    'user_id' => auth()->id(),
+                    'exchange_rate' => isset($payableChequeArr['exchange_rate']) ? $payableChequeArr['exchange_rate'] : 1
+                ]);
+                $currentPayableCheque = $moneyPayment->payableCheque()->create([
+                    'status' => PayableCheque::PENDING,
+                    'cheque_number' => $payableChequeArr['cheque_number'] ?: null,
+                    'delivery_bank_id' => isset($payableChequeArr['delivery_bank_id']) ? $payableChequeArr['delivery_bank_id'] : null,
+                    'due_date' => $payableChequeArr['due_date'] ?: null,
+                    // 'delivery_date' => $chequeUnderCollection['delivery_date'] ?: null,
+                    // 'drawl_bank_id' => $chequeUnderCollection['drawl_bank_id'] ?: null,
+                    'account_type' => $payableChequeArr['account_type'] ?: null,
+                    'account_number' => $payableChequeArr['account_number'] ?: null,
+                ]);
+				$currentPayableCheque->update([
+					'updated_at'=>now()
+				]);
+				
+            }
+        }
+		
+		
+		
+		
+		
+		
 
         return redirect()->route('opening-balance.index', ['company' => $company->id]);
     }
 
     public function update(Company $company, Request $request, OpeningBalance $openingBalance)
     {
+
+		
         $openingBalance->update([
             'date' => $request->get('date'),
         ]);
@@ -269,6 +318,95 @@ class OpeningBalancesController
 				$cheque->update(['updated_at'=>now()]);
             }
         }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		 /**
+         * * هنا تحديث ال payable cheques
+         * * payable cheques
+         */
+
+		 $oldIdsFromDatabase = $openingBalance->payableCheques->pluck('id')->toArray();
+		 $idsFromRequest = array_column($request->input(MoneyPayment::PAYABLE_CHEQUE, []), 'id') ;
+		
+		 $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
+		 $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase);
+		 $openingBalance->payableCheques()->whereIn('money_payments.id', $elementsToDelete)->delete();
+ 
+
+		 foreach ($elementsToUpdate as $id) {
+			 $dataToUpdate = findByKey($request->input(MoneyPayment::PAYABLE_CHEQUE), 'id', $id);
+			 unset($dataToUpdate['id']);
+			 $pivotData = [
+				 'due_date' => $dataToUpdate['due_date'],
+				 'delivery_bank_id' => isset($dataToUpdate['delivery_bank_id']) ? $dataToUpdate['delivery_bank_id'] : null,
+				 'cheque_number' => $dataToUpdate['cheque_number'],
+				 'account_type' => $dataToUpdate['account_type'] ?: null,
+				 'account_number' => $dataToUpdate['account_number'] ?: null,
+			 ];
+			 foreach ($pivotData as $key => $val) {
+				 unset($dataToUpdate[$key]);
+			 }
+ 
+			 $dataToUpdate['supplier_name'] = is_numeric($dataToUpdate['supplier_id']) ? Partner::find($dataToUpdate['supplier_id'])->getName() : $dataToUpdate['supplier_id'] ;
+ 
+			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
+			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->payableCheque->update(array_merge($pivotData,['updated_at'=>now()]));
+		 
+		 }
+ 
+		 foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE, []) as $data) {
+			 if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0')  ) {
+				 unset($data['id']);
+				 $pivotData = [
+					 'due_date' => $data['due_date'],
+					 'status' => PayableCheque::PENDING,
+					 'delivery_bank_id' => isset($data['delivery_bank_id']) ? $data['delivery_bank_id'] : null,
+					 'cheque_number' => $data['cheque_number'],
+					 'account_type' => $data['account_type'] ?: null,
+					 'account_number' => $data['account_number'] ?: null,
+				 ];
+				 foreach ($pivotData as $key => $val) {
+					 unset($data[$key]);
+				 }
+				 $data['supplier_name'] = is_numeric($data['supplier_id']) ? Partner::find($data['supplier_id'])->getName() : $data['supplier_id'] ;
+				 $moneyPayment = $openingBalance->payableCheques()->create(array_merge($data, [
+					 'type' => MoneyPayment::PAYABLE_CHEQUE,
+					 'user_id' => auth()->id()
+				 ]));
+				 $payableCheque = $moneyPayment->payableCheque()->create($pivotData);
+				 $payableCheque->update(['updated_at'=>now()]);
+			 }
+		 }
+		 
+		
+		
         return redirect()->route('opening-balance.index', ['company' => $company->id]);
     }
 }

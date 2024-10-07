@@ -374,11 +374,14 @@
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->interest_amount) }}</td>
                                         @endif
 										@php
+								
 											 $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
+											
 											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
 											$reviewedText = getReviewedText($reviewedArr);
 											
 										@endphp
+								
                                         <td class="sub-text-bg text-left ">{{   $reviewedText   }}</td>
                                         <td class="sub-text-bg text-left max-w-amount">{{ $comment?: getBankStatementComment($modelAsStdClass)   }}</td>
 

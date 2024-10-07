@@ -63,9 +63,9 @@ class AgingController
 		$customersOrSupplierAgingText = (new $fullClassName)->getCustomerOrSupplierAgingText();
 		
 		$aginDate = $request->get('again_date',$request->get('end_date'));
-		
+		$currency = $request->get('currency');
 		$clientNames = $request->get('clients');
-		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
+		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate,$currency);
 		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
 		$weeksDates =formatWeeksDatesFromStartDate($aginDate);
 		

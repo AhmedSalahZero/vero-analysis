@@ -7,7 +7,6 @@ use App\Interfaces\Models\IInvoice;
 use App\Traits\Models\IsInvoice;
 use App\Traits\StaticBoot;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -29,12 +28,14 @@ class CustomerInvoice extends Model implements IInvoice
 	const RECEIVED_OR_PAYMENT_AMOUNT = 'received_amount';
 	const RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME = 'receiving_date';
 	const MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME = 'money_received';
+	const MONEY_RECEIVED_OR_PAYMENT_TABLE_FOREIGN_NAME = 'money_received_id';
 	const TABLE_NAME = 'customer_invoices';
 	const JS_FILE = 'money-receive.js';
 	const COLLETED_OR_PAID = 'collected';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_collected_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyReceived';
 	const AGING_CHEQUE_MODEL_NAME = 'Cheque';
+	const AGING_CHEQUE_TABLE_NAME = 'cheques';
     protected $guarded = [];
 
 	public function getClientDisplayName()
