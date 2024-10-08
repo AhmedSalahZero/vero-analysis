@@ -99,7 +99,23 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-6">
+								
+									 <div class="col-md-2">
+                                        <label><?php echo e(__('Category Name')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="category_name" class="form-control repeater-select">
+                                                <?php $__currentLoopData = LetterOfGuaranteeIssuance::getCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getLgCategoryName() == $key ): ?> selected <?php endif; ?> > <?php echo e($title); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
+                                        </div>
+
+                                    </div>
+									
+                                    <div class="col-md-4">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Transaction Name'),'type' => 'text','placeholder' => __('Transaction Name'),'name' => 'transaction_name','class' => '','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -377,6 +393,8 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
+								
+								
 
                                     <div class="col-md-3">
 
@@ -562,17 +580,14 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    <div class="col-md-3">
-                                        <label><?php echo e(__('Account Type')); ?>
 
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
+									 <div class="col-md-3">
+                                        <label><?php echo e(__('Cash Cover From Account Type')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
-                                                    
-                                                    <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                <select id="account_type_id" name="cash_cover_deducted_from_account_number" class="form-control js-update-account-number-based-on-account-type">
+                                                    <?php $__currentLoopData = $cashCoverAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option <?php if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ): ?> selected <?php endif; ?> value="<?php echo e($accountType->id); ?>"><?php echo e($accountType->getName()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
@@ -580,18 +595,77 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label><?php echo e(__('Deducted From Account # (Cover & Commission)')); ?>
-
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
+                                        <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0); ?>" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0); ?>" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-3 ">
+                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'cd-or-td-amount-id','readonly' => true,'defaultValue' => 0,'model' => $model??null,'label' => __('Amount'),'type' => 'text','placeholder' => '','name' => 'test__name','class' => '','required' => true]]); ?>
+<?php $component->withName('form.input'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('cd-or-td-amount-id'),'readonly' => true,'default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('test__name'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                    </div>
+									
+
+                                    <div class="col-md-3">
+                                        <label><?php echo e(__('Fees & Commission Account Type')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-append-to-query=".js-account-number-2" name="lg_fees_and_commission_account_type" class="form-control 
+												js-update-account-number-based-on-account-type
+												">
+                                                    
+                                                    <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label><?php echo e(__('Deducted From Account # (Fees & Commission)')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0); ?>" name="lg_fees_and_commission_account_number" class="form-control js-account-number-2">
+                                                    <option value="" selected><?php echo e(__('Select')); ?></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+									
+									
+									
+									
+									
+									
+									
+									
+								
+									
+									
+									
+									
 
 
 
@@ -913,6 +987,30 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
             </script>
+			
+			
+			
+            <script>
+                $(document).on('change', '[js-cd-or-td-account-number]', function() {
+                    const parent = $(this).closest('.kt-portlet__body');
+					const financialInstitutionId = $('select#financial-instutition-id').val();
+			
+                    const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
+                    const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
+                    let url = "<?php echo e(route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ])); ?>";
+                    url = url.replace('replace_account_type', accountType);
+                    url = url.replace('replace_account_number', accountNumber);
+                    url = url.replace('replace_financial_institution_id', financialInstitutionId);
+                    $.ajax({
+                        url
+                        , success: function(res) {
+                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
+                        }
+                    });
+                })
+
+            </script>
+			
                <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.commonJs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <?php $__env->stopSection(); ?>
 

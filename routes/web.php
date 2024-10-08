@@ -499,8 +499,10 @@ Route::middleware([])->group(function () {
 				 Route::get('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@edit')->name('edit.adjust.due.dates');
 				 Route::patch('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@update')->name('update.adjust.due.dates');
 				 Route::delete('delete-adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@destroy')->name('delete.adjust.due.dates');
+				 
+				 
 
-
+				 
 
 				 Route::get('foreign-exchange-rate', 'ForeignExchangeRateController@index')->name('view.foreign.exchange.rate');
 				 Route::post('foreign-exchange-rate', 'ForeignExchangeRateController@store')->name('store.foreign.exchange.rate');
@@ -647,6 +649,14 @@ Route::middleware([])->group(function () {
                     Route::get('letter-of-guarantee-issuance/delete-advanced-payment/{lgAdvancedPaymentHistory}', 'LetterOfGuaranteeIssuanceController@deleteAdvancedPayment')->name('delete.lg.advanced.payment');
                     Route::post('letter-of-guarantee-issuance/back-to-running/{letterOfGuaranteeIssuance}/{source}', 'LetterOfGuaranteeIssuanceController@bankToRunningStatus')->name('back.to.running.letter.of.guarantee.issuance');
 					
+									 
+				 Route::get('letter-of-guarantee-issuance-renewal-date/{letterOfGuaranteeIssuance}', 'LetterOfGuaranteeIssuanceRenewalDateController@index')->name('letter.of.issuance.renewal.date');
+				 Route::post('letter-of-guarantee-issuance-renewal-date/{letterOfGuaranteeIssuance}', 'LetterOfGuaranteeIssuanceRenewalDateController@store')->name('store.letter.of.issuance.renewal.date');
+				 Route::get('letter-of-guarantee-issuance-renewal-date/edit/{letterOfGuaranteeIssuance}/{LgRenewalDateHistory}', 'LetterOfGuaranteeIssuanceRenewalDateController@edit')->name('edit.letter.of.issuance.renewal.date');
+				 Route::patch('letter-of-guarantee-issuance-renewal-date/edit/{letterOfGuaranteeIssuance}/{LgRenewalDateHistory}', 'LetterOfGuaranteeIssuanceRenewalDateController@update')->name('update.letter.of.issuance.renewal.date');
+				 Route::delete('delete-letter-of-guarantee-issuance-renewal-date/{letterOfGuaranteeIssuance}/{LgRenewalDateHistory}', 'LetterOfGuaranteeIssuanceRenewalDateController@destroy')->name('delete.letter.of.issuance.renewal.date');
+				 
+				
 					
 					// letter of credit issuance
 					
@@ -742,7 +752,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
 					Route::get('money-received/get-net-balance-based-on-account-number', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumber')->name('update.balance.and.net.balance.based.on.account.number');
 					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
-					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
+					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 					Route::get('get-customers-based-on-currency/{currencyName}','MoneyReceivedController@getCustomersBasedOnCurrency');
 					 Route::post('confirmed-reviewed/{model}','MoneyReceivedController@markAsConfirmed')->name('confirmed.review');
 

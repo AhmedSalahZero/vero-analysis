@@ -48,7 +48,7 @@ trait HasLetterOfGuaranteeCashCoverStatements
 			'date'=>$date,
 		]);
 	}
-	public function storeCurrentAccountCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lgAdvancedPaymentHistoryId = 0 ,  $isActive = 1 , ? string $commentEn = null , ? string $commentAr = null)
+	public function storeCurrentAccountCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lgAdvancedPaymentHistoryId = 0 ,  $isActive = 1 , ? string $commentEn = null , ? string $commentAr = null , bool $isRenewalFees = false, bool $isCommissionFees = false , int $lgRenewalDateHistoryId = null)
 	{
 		return $this->currentAccountCreditBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
@@ -59,7 +59,10 @@ trait HasLetterOfGuaranteeCashCoverStatements
 			'debit'=>0,
 			'date'=>$date,
 			'comment_en'=>$commentEn ,
-			'comment_ar'=>$commentAr
+			'comment_ar'=>$commentAr,
+			'is_renewal_fees'=>$isRenewalFees,
+			'is_commission_fees'=>$isCommissionFees,
+			'lg_renewal_date_history_id'=>$lgRenewalDateHistoryId
 		]);
 	}
 }

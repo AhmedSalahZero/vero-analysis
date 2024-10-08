@@ -676,7 +676,7 @@ let pageLoaded = false ;
             height: 100%;
         }
 
-        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.active-style):not(.exclude-td):not(.disabled.day) {
+        table:not(.exclude-table) tbody tr:not(.table-active):not(.active-style):not(.is-rate):not(.is-sub-row):not(.group-color)>td:not(.dtfc-fixed-left):not(.bg-expired):not(.active-style):not(.exclude-td):not(.disabled.day) {
             color: black !important;
             font-weight: bold !important;
         }

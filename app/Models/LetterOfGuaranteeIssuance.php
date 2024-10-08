@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LgTypes;
+use App\Models\LgRenewalDateHistory;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
@@ -13,12 +14,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class LetterOfGuaranteeIssuance extends Model
 {
 	use HasBasicStoreRequest,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
+	const OPENING_BALANCE = 'opening-balance';
+	const NEW_ISSUANCE = 'new-issuance';
 	const LG_FACILITY = 'lg-facility';
 	const AGAINST_TD ='against-td';
 	const AGAINST_CD ='against-cd';
 	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
 	const RUNNING = 'running';
 	const CANCELLED = 'cancelled';
+	const EXPIRED = 'expired';
     const LG_FACILITY_BEGINNING_BALANCE = 'lg-facility-beginning-balance';
     const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
     const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
@@ -35,6 +39,24 @@ class LetterOfGuaranteeIssuance extends Model
 			self::HUNDRED_PERCENTAGE_CASH_COVER=>__('100% Cash Cover')
 		];
 	}
+	public static function getCategories():array 
+	{
+		return [
+			self::NEW_ISSUANCE=>__('New Issuance'),
+			self::OPENING_BALANCE=>__('Opening Balance')
+		];
+	}
+	/**
+	 * * هل هو opening balance or new issuance 
+	 */
+	public function getLgCategoryName():string 
+	{
+		return $this->category_name;
+	}
+	public function isOpeningBalance():bool
+	{
+		return $this->getLgCategoryName() == self::OPENING_BALANCE;
+	}
 	public function isRunning()
 	{
 		return $this->getStatus() === self::RUNNING;
@@ -43,9 +65,15 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->getStatus() === self::CANCELLED;
 	}
-
+	public function isExpired()
+	{
+		return $this->getStatus() == self::EXPIRED;
+	}
 	public function getStatus()
 	{
+		if($this->getRenewalDate() <= now()){
+			return self::EXPIRED;
+		}
 		return $this->status ;
 	}
 	public function getStatusFormatted()
@@ -85,7 +113,7 @@ class LetterOfGuaranteeIssuance extends Model
 
 	public function getFinancialInstitutionBankId()
 	{
-		return $this->financialInstitutionBank ? $this->financialInstitutionBank->getName() : __('N/A') ;
+		return $this->financialInstitutionBank ? $this->financialInstitutionBank->id : 0 ;
 	}
 	public function getLgType()
 	{
@@ -295,6 +323,15 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_number;
 	}
+	
+	public function getLgFeesAndCommissionAccountTypeId()
+	{
+		return $this->lg_fees_and_commission_account_type;
+	}
+	public function getLgFeesAndCommissionAccountNumber()
+	{
+		return $this->lg_fees_and_commission_account_number;
+	}
 
 	public function getLgCommissionRate()
 	{
@@ -393,6 +430,37 @@ class LetterOfGuaranteeIssuance extends Model
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeCashCoverStatements);
 		return $this;
 	}
-		
+	public function renewalDateHistories():HasMany
+	{
+		return $this->hasMany(LgRenewalDateHistory::class,'letter_of_guarantee_issuance_id','id');
+	}	
+	public function renewalFeesCurrentAccountBankStatement(string $renewalDate)
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->withoutGlobalScope('only_active')->where('date',$renewalDate)->where('is_renewal_fees',1)->first();
+	}
+
+	public function storeCommissionAmountCreditBankStatement(string $lgCommissionInterval , int $numberOfIterationsForQuarter , string $issuanceDate,string $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount,int $financialInstitutionAccountIdForFeesAndCommission,string $transactionName,string $lgType,bool $isOpeningBalance , int $lgRenewalDateHistoryId = null):void
+	{
+		if($lgCommissionInterval == 'quarterly'){
+			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
+				$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
+				$isActive = now()->greaterThanOrEqualTo($currentDate);
+				if(!$isOpeningBalance ||  Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount) ){
+					$this->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,$isActive,__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
+				}
+			}
+		}else{
+			$this->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,1, __('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
+		}
+	}
+	public function getMinLgCommissionFees():float
+	{
+		return $this->min_lg_commission_fees;
+	}
+	public function getRenewalDateBefore(string $date):string{
+	
+		return  $this->renewalDateHistories->where('renewal_date','<',$date)->first()->renewal_date;
+	}
+	
 
 }

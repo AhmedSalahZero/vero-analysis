@@ -97,7 +97,22 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-6">
+								
+								 <div class="col-md-2">
+                                        <label>{{__('Category Name')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="category_name" class="form-control repeater-select">
+                                                @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+									
+                                    <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -678,10 +693,14 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const parent = $(this).closest('.kt-portlet__body');
                     const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
                     const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
-                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number' ]) }}";
+					const financialInstitutionId = $('select#financial-instutition-id').val();
+                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
+					
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_number', accountNumber);
-                    $.ajax({
+					url = url.replace('replace_financial_institution_id', financialInstitutionId);
+                    
+					$.ajax({
                         url
                         , success: function(res) {
                             parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )

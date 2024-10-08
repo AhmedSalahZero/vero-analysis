@@ -691,9 +691,12 @@ use App\Models\LetterOfCreditIssuance;
         const parent = $(this).closest('.kt-portlet__body');
         const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
         const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
-        let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number' ]) }}";
-        url = url.replace('replace_account_type', accountType);
-        url = url.replace('replace_account_number', accountNumber);
+      const financialInstitutionId = $('select#financial-instutition-id').val();
+                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
+					
+                    url = url.replace('replace_account_type', accountType);
+                    url = url.replace('replace_account_number', accountNumber);
+					url = url.replace('replace_financial_institution_id', financialInstitutionId);
         $.ajax({
             url
             , success: function(res) {

@@ -97,7 +97,23 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-6">
+								
+								 <div class="col-md-2">
+                                        <label>{{__('Category Name')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="category_name" class="form-control repeater-select">
+                                                @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+									
+									
+                                    <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
 

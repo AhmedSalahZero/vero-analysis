@@ -8,7 +8,6 @@ use App\Models\FinancialInstitutionAccount;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class FinancialInstitutionAccountController
 {
@@ -34,7 +33,7 @@ class FinancialInstitutionAccountController
 			'iban'=>$request->get('iban'),
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
-		$currentAccountBeginningBalance = $financialInstitutionAccount->currentAccountBankStatements->where('is_beginning_balance',1)->first() ;
+		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
 		if($currentAccountBeginningBalance){
 			$currentAccountBeginningBalance->update([
 				'balance_amount'=>$request->get('balance_amount'),

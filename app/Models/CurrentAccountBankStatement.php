@@ -245,4 +245,6 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 			
 		});
 	}
+	
+	
 }
