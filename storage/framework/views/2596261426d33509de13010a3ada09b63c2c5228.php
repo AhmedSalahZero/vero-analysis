@@ -33,4 +33,13 @@
 					})
 
             </script>
+<?php if(isset($model) && $model->renewalDateHistories->count()  > 1 ): ?>
+<script>
+$('input:not([type="hidden"]),select').each(function(index,element){
+	$(element).prop('disabled',true)
+	$('button[type="submit"]').html("<?php echo e(__('Back')); ?>")
+
+})
+</script>
+<?php endif; ?> 
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfGuaranteeIssuance/commonJs.blade.php ENDPATH**/ ?>

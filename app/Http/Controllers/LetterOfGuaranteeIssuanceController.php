@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeIssuanceAdvancedPaymentHistory;
@@ -108,6 +109,7 @@ class LetterOfGuaranteeIssuanceController
 			'contracts'=>Contract::onlyForCompany($company->id)->get(),
 			'purchaseOrders'=>PurchaseOrder::onlyForCompany($company->id)->get(),
 			'accountTypes'=> AccountType::onlyCurrentAccount()->get(),
+			'cashCoverAccountTypes'=>AccountType::onlyCashCoverAccounts()->get(),
 			'source'=>$source,
 			'cdOrTdAccountTypes'=>$cdOrTdAccountTypes
 		];
@@ -130,7 +132,7 @@ class LetterOfGuaranteeIssuanceController
 		return ['contract_start_date','contract_end_date','currency','limit'];
 	}
 	public function store(Company $company  , Request $request , string $source){
-
+		$isOpeningBalance = $request->get('category_name') == LetterOfGuaranteeIssuance::OPENING_BALANCE;
 		$financialInstitutionId = $request->get('financial_institution_id') ;
 		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
 		$letterOfGuaranteeFacilityId =  null ; 
@@ -164,24 +166,29 @@ class LetterOfGuaranteeIssuanceController
 		$issuanceFees = $request->get('issuance_fees',0);
 	
 		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
-		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId,0,1,__('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar') );
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId,0,1,__('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
+		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($request->get('lg_fees_and_commission_account_number'),$company->id , $financialInstitutionId);
+		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId);
+		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
+		$openingBalanceFromCurrentAccountBankStatementForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceFromCurrentAccountBankStatement();
+		
+		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id;
+		// $openingBalanceFromCurrentAccountBankStatementForCashCover = $financialInstitutionAccountForCashCover->getOpeningBalanceFromCurrentAccountBankStatement();
+		
+		
+		$openingBalanceDateOfCurrentAccount = $openingBalanceFromCurrentAccountBankStatementForFeesAndCommission->date ;
+		if(!$isOpeningBalance){
+			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar') );
+		}
+		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,0,$cdOrTdId,'credit-lg-amount');
 		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lg-amount');
 		
 		$lgDurationMonths = $request->get('lg_duration_months',1);
 		$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 
 		$lgCommissionInterval = $request->get('lg_commission_interval');
-		if($lgCommissionInterval == 'quarterly'){
-			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
-				$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
-				$isActive = now()->greaterThanOrEqualTo($currentDate);
-				$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountId,0,$isActive,__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
-			}
-		}else{
-			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountId,0,1, __('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
-		}
+		
+		$model->storeCommissionAmountCreditBankStatement( $lgCommissionInterval ,  $numberOfIterationsForQuarter ,  $issuanceDate, $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount, $financialInstitutionAccountIdForFeesAndCommission, $transactionName, $lgType, $isOpeningBalance);
+		
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 
 	}
@@ -198,14 +205,16 @@ class LetterOfGuaranteeIssuanceController
 	}
 
 	public function update(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
+		if($letterOfGuaranteeIssuance->renewalDateHistories->count()  > 1){
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
+			
+		}
+
 		$letterOfGuaranteeIssuance->deleteAllRelations();
 		$letterOfGuaranteeIssuance->delete();
 		$this->store($company,$request,$source);
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
-
-	
-
 
 		/**
 		 * * هنرجعه تاني لل

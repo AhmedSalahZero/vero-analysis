@@ -20,7 +20,11 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     input[type="checkbox"] {
         cursor: pointer;
     }
-
+.bg-expired{
+	background-color:red;
+	color:white !important;
+	 font-weight: bold !important;
+}
     th {
         background-color: #0742A6;
         color: white;
@@ -129,7 +133,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
-                                    <td class="text-transform">{{ $model->getStatusFormatted() }}</td>
+                                    <td class="text-transform
+									
+									@if($model->isExpired())
+									bg-expired
+									@endif 
+									
+									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
@@ -140,6 +150,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
+                                          @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 										@if(!$model->isCancelled())
 											@if(hasAuthFor('update letter of guarantee issuance'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
@@ -228,7 +239,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td>{{ $model->getSourceFormatted() }}</td>
-                                    <td>{{ $model->getStatusFormatted() }}</td>
+                                    <td class="
+									@if($model->isExpired())
+									bg-expired
+									@endif 
+									
+									"> {{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
@@ -238,6 +254,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
+										  @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 											@if(!$model->isCancelled())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -319,7 +336,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
 									<td>{{ $model->getSourceFormatted() }}</td>
-									<td>{{ $model->getStatusFormatted() }}</td>
+									<td class="
+									@if($model->isExpired())
+									bg-expired
+									@endif 
+									
+									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
@@ -330,6 +352,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                         	  @include('reports.LetterOfGuaranteeIssuance.actions')
+											  @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 											  
 											@if(!$model->advancedPaymentHistories->count() && !$model->isCancelled())  
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}">
@@ -417,7 +440,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
                                     <td>{{ $model->getSourceFormatted() }}</td>
-                                    <td>{{ $model->getStatusFormatted() }}</td>
+                                    <td class="
+									@if($model->isExpired())
+									bg-expired
+									@endif 
+									
+									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
@@ -428,6 +456,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
+										  @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 
 					@if(!$model->isCancelled())
                     <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>

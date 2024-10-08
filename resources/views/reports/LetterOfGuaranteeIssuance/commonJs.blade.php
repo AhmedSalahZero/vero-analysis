@@ -33,3 +33,12 @@
 					})
 
             </script>
+@if(isset($model) && $model->renewalDateHistories->count()  > 1 )
+<script>
+$('input:not([type="hidden"]),select').each(function(index,element){
+	$(element).prop('disabled',true)
+	$('button[type="submit"]').html("{{ __('Back') }}")
+
+})
+</script>
+@endif 

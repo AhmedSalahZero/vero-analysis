@@ -169,4 +169,21 @@ class FinancialInstitutionAccount extends Model
 	{
 		return 'current_account_bank_statements';
 	}
+	public function getOpeningBalanceFromCurrentAccountBankStatement()
+	{
+		return $this->currentAccountBankStatements->where('is_beginning_balance',1)->first();
+	}
+	public function getAmount(string $currencyName , string $accountNumber,int $financialInstitutionId , int $companyId)
+	{
+		$row = 	DB::table(self::getBankStatementTableName())
+                ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
+                ->where('financial_institution_accounts.company_id', $companyId)
+                ->where('currency', $currencyName)
+				->where('account_number',$accountNumber)
+                ->where('financial_institution_accounts.financial_institution_id', '=', $financialInstitutionId)
+                ->orderBy(self::getBankStatementTableName().'.full_date', 'desc')
+                ->limit(1)
+                ->first();
+		return $row ? number_format($row->end_balance) : 0;
+	}
 }

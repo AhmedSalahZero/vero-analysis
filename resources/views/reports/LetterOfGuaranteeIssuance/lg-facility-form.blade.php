@@ -97,7 +97,22 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-6">
+								
+									 <div class="col-md-2">
+                                        <label>{{__('Category Name')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="category_name" class="form-control repeater-select">
+                                                @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+									
+                                    <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
                                      <div class="col-md-6">
@@ -281,6 +296,8 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
+								
+								
 
                                     <div class="col-md-3">
 
@@ -364,16 +381,14 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    <div class="col-md-3">
-                                        <label>{{__('Account Type')}}
-                                            @include('star')
-                                        </label>
+
+									 <div class="col-md-3">
+                                        <label>{{ __('Cash Cover From Account Type') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
-                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                                    @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                <select id="account_type_id" name="cash_cover_deducted_from_account_number" class="form-control js-update-account-number-based-on-account-type">
+                                                    @foreach($cashCoverAccountTypes as $index => $accountType)
+                                                    <option @if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ) selected @endif value="{{ $accountType->id }}">{{ $accountType->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -381,17 +396,65 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label>{{__('Deducted From Account # (Cover & Commission)')}}
-                                            @include('star')
-                                        </label>
+                                        <label>{{ __('Account Number') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-3 ">
+                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'test__name'" :class="''" :required="true"></x-form.input>
+                                    </div>
+									
+
+                                    <div class="col-md-3">
+                                        <label>{{__('Fees & Commission Account Type')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-append-to-query=".js-account-number-2" name="lg_fees_and_commission_account_type" class="form-control 
+												js-update-account-number-based-on-account-type
+												">
+                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                    @foreach($accountTypes as $index => $accountType)
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>{{__('Deducted From Account # (Fees & Commission)')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0 }}" name="lg_fees_and_commission_account_number" class="form-control js-account-number-2">
+                                                    <option value="" selected>{{__('Select')}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+									
+									
+									
+									
+									
+									
+									
+									
+								
+									
+									
+									
+									
 
 
 
@@ -704,5 +767,29 @@ use App\Models\LetterOfGuaranteeIssuance;
                 $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
             </script>
+			
+			
+			
+            <script>
+                $(document).on('change', '[js-cd-or-td-account-number]', function() {
+                    const parent = $(this).closest('.kt-portlet__body');
+					const financialInstitutionId = $('select#financial-instutition-id').val();
+			
+                    const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
+                    const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
+                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
+                    url = url.replace('replace_account_type', accountType);
+                    url = url.replace('replace_account_number', accountNumber);
+                    url = url.replace('replace_financial_institution_id', financialInstitutionId);
+                    $.ajax({
+                        url
+                        , success: function(res) {
+                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
+                        }
+                    });
+                })
+
+            </script>
+			
                @include('reports.LetterOfGuaranteeIssuance.commonJs')
             @endsection

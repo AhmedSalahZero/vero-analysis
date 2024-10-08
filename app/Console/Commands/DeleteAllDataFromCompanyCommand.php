@@ -45,12 +45,12 @@ class DeleteAllDataFromCompanyCommand extends Command
 				if(Schema::hasColumn($tableNameToBeDeleted,'company_id')){
 					DB::table($tableNameToBeDeleted)->where('company_id',$companyId)->delete();
 				}else{
-					logger('this table does not has company id ' . $tableNameToBeDeleted);
+				//	logger('this table does not has company id ' . $tableNameToBeDeleted);
 				}
 			}catch(\Exception $e){
 				$tablesCanNotBeDeletedInFirstAttempt[]=$tableNameToBeDeleted;
-				logger('can not delete this table in '.  $attemptNumber .' time ' . $tableNameToBeDeleted );
-				logger('error message ' . $e->getMessage()  );
+				// logger('can not delete this table in '.  $attemptNumber .' time ' . $tableNameToBeDeleted );
+				// logger('error message ' . $e->getMessage()  );
 			}
 		}
 		return $tablesCanNotBeDeletedInFirstAttempt;

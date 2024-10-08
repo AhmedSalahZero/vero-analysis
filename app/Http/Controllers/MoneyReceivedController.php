@@ -719,17 +719,17 @@ class MoneyReceivedController
 			
 		]);
 	}
-	public function getAccountAmountForAccountNumber(Company $company ,  Request $request ,  string $accountTypeId , string $accountNumber  ){
+	public function getAccountAmountForAccountNumber(Company $company ,  Request $request ,  string $accountTypeId , string $accountNumber  , int $financialInstitutionId ){
 	
 		
-		
+	
 		$accountType = AccountType::find($accountTypeId);
-		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id);
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 		$currencyName = $accountNumberModel ? $accountNumberModel->currency : '';
 	
 		return response()->json([
 			'status'=>true , 
-			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount() : 0 ,
+			'amount'=>$accountNumberModel ? $accountNumberModel->getAmount($currencyName,$accountNumber,$financialInstitutionId,$company->id) : 0 ,
 			'interest_rate'=>$accountNumberModel ? $accountNumberModel->getInterestRate() : 0,
 			'currencyName'=>$currencyName
 		]);
@@ -751,6 +751,7 @@ class MoneyReceivedController
 				]
 			]);
 		}
+	
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
 		if(!$accountNumberModel){
 			if(!$accountType || !$accountNumberModel){

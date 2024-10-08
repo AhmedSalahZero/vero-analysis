@@ -291,6 +291,9 @@ $('.js-send-to-collection').on('change', function () {
 
 $(document).on('change', '.js-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
+	let appendTo = $(this).attr('data-append-to-query');
+	appendTo = appendTo ? appendTo : '.js-account-number';
+	console.log(appendTo)
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
 	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
@@ -313,7 +316,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 		data:{allAccounts:window.location.href.split('/').includes('bank-statement')},
 		success: function (res) {
 			options = ''
-			var selectToAppendInto = $(parent).find('.js-account-number')
+			var selectToAppendInto = $(parent).find(appendTo)
 
 			for (key in res.data) {
 				var val = res.data[key]

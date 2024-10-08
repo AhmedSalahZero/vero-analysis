@@ -19,7 +19,11 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     input[type="checkbox"] {
         cursor: pointer;
     }
-
+.bg-expired{
+	background-color:red;
+	color:white !important;
+	 font-weight: bold !important;
+}
     th {
         background-color: #0742A6;
         color: white;
@@ -156,7 +160,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td><?php echo e($model->getTransactionName()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getSourceFormatted()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getStatusFormatted()); ?></td>
+                                    <td class="text-transform
+									
+									<?php if($model->isExpired()): ?>
+									bg-expired
+									<?php endif; ?> 
+									
+									"><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getTransactionReference()); ?></td>
@@ -167,6 +177,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                          <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$model->isCancelled()): ?>
 											<?php if(hasAuthFor('update letter of guarantee issuance')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()])); ?>"><i class="fa fa-pen-alt"></i></a>
@@ -277,7 +288,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td><?php echo e($model->getTransactionName()); ?></td>
                                     <td><?php echo e($model->getSourceFormatted()); ?></td>
-                                    <td><?php echo e($model->getStatusFormatted()); ?></td>
+                                    <td class="
+									<?php if($model->isExpired()): ?>
+									bg-expired
+									<?php endif; ?> 
+									
+									"> <?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
@@ -287,6 +303,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(!$model->isCancelled()): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()])); ?>"><i class="fa fa-pen-alt"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-<?php echo e($model->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -390,7 +407,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td><?php echo e($model->getTransactionName()); ?></td>
 									<td><?php echo e($model->getSourceFormatted()); ?></td>
-									<td><?php echo e($model->getStatusFormatted()); ?></td>
+									<td class="
+									<?php if($model->isExpired()): ?>
+									bg-expired
+									<?php endif; ?> 
+									
+									"><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
@@ -401,6 +423,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                         	  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+											  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											  
 											<?php if(!$model->advancedPaymentHistories->count() && !$model->isCancelled()): ?>  
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()])); ?>">
@@ -510,7 +533,12 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     </td>
                                     <td><?php echo e($model->getTransactionName()); ?></td>
                                     <td><?php echo e($model->getSourceFormatted()); ?></td>
-                                    <td><?php echo e($model->getStatusFormatted()); ?></td>
+                                    <td class="
+									<?php if($model->isExpired()): ?>
+									bg-expired
+									<?php endif; ?> 
+									
+									"><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
@@ -521,6 +549,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 					<?php if(!$model->isCancelled()): ?>
                     <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()])); ?>"><i class="fa fa-pen-alt"></i></a>

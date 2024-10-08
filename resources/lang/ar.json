@@ -1182,6 +1182,7 @@
 "Cheque Collection Fees - Cheque [ :number ]":"مصاريف تحصيل الشيكات - شيك رقم [ :number ]",
 "Cash Cover [ :lgType ] Transaction Name [ :transactionName ]":"غطاء نقدي [ :lgType ] عن العملية [ :transactionName ]",
 "Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]":"مصاريف إصدار [ :lgType ] عن العملية [ :transactionName ]",
+"Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]":"مصاريف تجديد [ :lgType ] عن العملية [ :transactionName ]",
 "Commission Fees [ :lgType ] Transaction Name [ :transactionName ]":"عمولة [ :lgType ] عن العملية [ :transactionName ]",
 "Cash Cover [ :lcType ] Transaction Name [ :transactionName ]":"غطاء نقدي [ :lcType ] عن العملية [ :transactionName ]",
 "Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]":"مصاريف إصدار [ :lcType ] عن العملية [ :transactionName ]",
