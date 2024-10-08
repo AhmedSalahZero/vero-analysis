@@ -176,7 +176,8 @@ class LetterOfGuaranteeIssuanceController
 		
 		
 		$openingBalanceDateOfCurrentAccount = $openingBalanceFromCurrentAccountBankStatementForFeesAndCommission->date ;
-		if(!$isOpeningBalance){
+		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_number',[]),[28,29]);
+		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar') );
 		}
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
