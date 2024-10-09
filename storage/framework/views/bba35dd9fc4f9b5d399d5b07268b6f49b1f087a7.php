@@ -869,13 +869,15 @@ use App\Models\LetterOfGuaranteeIssuance;
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_number', accountNumber);
 					url = url.replace('replace_financial_institution_id', financialInstitutionId);
-                    
+                    if(accountType &&accountNumber &&financialInstitutionId){
 					$.ajax({
                         url
                         , success: function(res) {
                             parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
                         }
                     });
+						
+					}
                 })
 				$('[js-cd-or-td-account-number]').trigger('change')
 
