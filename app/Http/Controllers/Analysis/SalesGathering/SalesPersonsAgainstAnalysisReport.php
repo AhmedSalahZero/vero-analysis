@@ -118,7 +118,6 @@ class SalesPersonsAgainstAnalysisReport
             $salesPersons_names[] = (str_replace(' ', '_', $main_row));
         }
 
-        // dd($salesPersons_names);
         // Total Zones & Growth Rate
 
 

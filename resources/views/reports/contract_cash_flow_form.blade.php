@@ -122,7 +122,6 @@
                     <x-submitting />
 
                 </div>
-                {{-- @dd($name_of_selector_label) --}}
             </div>
 
 
@@ -136,7 +135,6 @@
         <!--end::Portlet-->
     </div>
 </div>
-{{-- @dd(get_defined_vars()) --}}
 @endsection
 @section('js')
 <!--begin::Page Scripts(used by this page) -->

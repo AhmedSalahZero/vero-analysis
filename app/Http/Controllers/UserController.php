@@ -76,7 +76,6 @@ class UserController extends Controller
 
 		$users = collect([]);
 		$authUser = Auth()->user() ;
-		// dd($authUser->can('view users'));;
 		/**
 		 * @var \App\Models\User $authUser;
 		 */

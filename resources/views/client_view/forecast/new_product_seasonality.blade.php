@@ -32,7 +32,6 @@
 </style>
 @endsection
 @section('content')
-{{-- @dd(get_defined_vars()) --}}
 <form action="{{ route('new.product.seasonality', $company) }}" method="POST">
     @csrf
 
@@ -161,7 +160,6 @@
                 <tr>
                     <td class="{{ $class_name }}">{{ $base_name }}</td>
                     @foreach ($total_products_items['Total'] as $date => $total)
-                    {{-- @dd($value) --}}
                     <?php $total_value = ($existing_product_data_with_dates[$base_name][$date] ?? 0) + ($value[$date] ?? 0); ?>
                     <td class="text-center {{ $class_name }}"> {{ number_format($total_value ?? 0) }}
                     </td>

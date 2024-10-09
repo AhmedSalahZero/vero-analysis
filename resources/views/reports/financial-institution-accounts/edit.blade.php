@@ -54,7 +54,6 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-{{-- {{ dd() }} --}}
         <form method="post" action="{{ route('update.financial.institutions.account',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id , 'financialInstitutionAccount'=>$model->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input id="js-money-received-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">

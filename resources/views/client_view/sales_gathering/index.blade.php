@@ -355,7 +355,6 @@ $date = now()->format('d-m-Y')
         </tr>
         @endslot
         @slot('table_body')
-		{{-- {{ dd($salesGatherings) }} --}}
         @foreach ($salesGatherings as $index=>$item)
 		@php
 		$serial = \App\Models\LabelingItem::generateSerial($salesGatherings,$index) ;

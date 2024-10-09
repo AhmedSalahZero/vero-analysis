@@ -133,7 +133,6 @@
 
 
         <?php $key = 0;?>
-        {{-- @dd($errors) --}}
         @for ($number = 1; $number <= $sales_forecast->number_of_products; $number++)
             <div class="row">
                 <div class="col-md-12">

@@ -125,12 +125,9 @@ class SalesForecastReport
 		$previousYearSeasonality = ($sales_forecast['previous_year_seasonality'] ?? []) ;
 		
 		$sales_forecast['previous_year_seasonality'] = $this->sortDates($previousYearSeasonality);
-// 		dd($sales_forecast['previous_year_seasonality']);
 $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
-// 		dd();
 		$sales_forecast['last_3_years_seasonality'] = $this->sorting($sales_forecast['last_3_years_seasonality']);
 		$sales_forecast['last_3_years_seasonality'] = sortMonthsByItsNames($sales_forecast['last_3_years_seasonality']);
-// 		dd($sales_forecast['last_3_years_seasonality']);
 		return view(
 			'client_view.forecast.sales_forecast',
 			compact('company', 'sales_forecast', 'has_product_item')
@@ -143,7 +140,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 	    
         return \DateTime::createFromFormat('d-m-Y', $a) <=> \DateTime::createFromFormat('d-m-Y', $b);
 });
-// dd($items);
 	    
 	}
 
@@ -300,7 +296,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 		$sales_forecast = SalesForecast::company()->first();
 		$categories = Category::company()->get();
 		$products = Product::company()->where('type', 'new')->with('category')->get();
-		// dd(Product::company()->where('type', 'existing')->count() == 0);
 		// Saving
 		if ($request->isMethod('POST')) {
 			// if there are existing saved Cats dont sve it again
@@ -611,7 +606,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 		$sales_forecast = SalesForecast::company()->first();
 		$products_seasonality = ProductSeasonality::company()->get();
 		$year = $sales_forecast ? date('Y', strtotime($sales_forecast->start_date)) : null;
-		// dd($sales_forecast,$products_seasonality);
 		if(!$year){
 			return ;
 		}
@@ -640,8 +634,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 
 
 				$this->seasonalityFun($seasonality, $seasonality_data, $monthly_dates, $sales_target_value, $product_seasonality, $year);
-			// dd($new_products_seasonalities);
-			// }
 
 		}
 
@@ -683,7 +675,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 		//end
 
 
-		// dd($new_products_totals);
 
 		if (($result == 'view') || ($result == 'total_sales_target')) {
 			$modified_targets = ModifiedTarget::company()->first();
@@ -795,7 +786,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 
 
 			// total_company_sales_target
-			// dd($result);
 			if ($result ==  'total_sales_target') {
 
 				unset($existing_products_seasonalities['Totals']);
@@ -803,7 +793,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 				$total_company_sales_target = $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);
 				arsort($total_company_sales_target);
 				$targets = array_merge($existing_products_targets, $new_products_seasonalities);
-				// dd($targets);
 
 				if ($noReturn) {
 					return;
@@ -812,7 +801,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 				return $targets;
 			}
 
-			// dd($totals_per_month);
 
 			$totals_per_month = $totals_per_month ?? [];
 

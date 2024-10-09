@@ -31,7 +31,7 @@
                                     <div class="kt-widget5__item">
                                         <div class="kt-widget5__content">
                                             <div class="kt-widget5__pic">
-                                                {{-- @dd($company->getFirstMediaUrl()) --}}
+                                         
                                                 <img class="kt-widget7__img" src="{{$company->getFirstMediaUrl()}}" alt="">
                                             </div>
                                             <div class="kt-widget5__section">

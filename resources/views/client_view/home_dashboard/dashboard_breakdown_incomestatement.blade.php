@@ -137,7 +137,6 @@ $totalOfDepreactionAndAmortization = 0;
         </div>
         <div class="kt-portlet__body  kt-portlet__body--fit">
             <div class="row row-no-padding row-col-separator-xl">
-{{-- {{ dd($types) }} --}}
                 @foreach ($types as $singleType=>$type )
 				@if ($singleType == 'Corporate Taxes')
 					@continue
@@ -509,10 +508,7 @@ $totalOfDepreactionAndAmortization = 0;
                                         @endphp
 
                                         <tr>
-                                            {{-- {{ dd(number_format($item )) }} --}}
-                                            {{-- <th>{{($key??0)+1}}</th> --}}
                                             <td>{{$key?? '-'}}</td>
-                                            {{-- {{ dd($item) }} --}}
 
 
                                             <td class="text-center">{{number_format($item)}}</td>

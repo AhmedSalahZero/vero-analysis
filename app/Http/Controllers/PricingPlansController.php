@@ -72,8 +72,6 @@ class PricingPlansController extends Controller
 				
 			}
 			
-			// dd('ddd');
-		// dd('good');
 		return response()->json([
 			'status'=>true ,
 			'message'=>'good'

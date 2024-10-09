@@ -24,7 +24,6 @@ class UsersAndPermissionsController extends Controller
     public function store(Request $request ,$scope)
     {
         $role = Role::create(['name' => $request->role,'scope' => $scope]);
-        // dd($request->permissions);
         $prev_name = '';
         $name_arr = [];
         $sections = Section::where('section_side','client')->get();

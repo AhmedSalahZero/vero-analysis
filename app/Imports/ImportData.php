@@ -69,7 +69,6 @@ class ImportData implements
 
 	public function __construct($company_id, $format, $model, $modelFields, $jobId, $userId,$uploadModelName)
 	{
-		// dd($modelFields);
 		Self::$company_id = $company_id;
 		Self::$static_model = $model;
 		$this->modelFields = $modelFields;

@@ -169,7 +169,6 @@
 
                     </tr>
 
-                    {{-- @dd() --}}
                     @if($type != 'product_item')
 
                     <tr class="row{{ $idd }}  active-style text-center" style="display: none">

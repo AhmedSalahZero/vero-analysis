@@ -33,7 +33,6 @@
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    {{-- @dd($errors) --}}
                     @if ($errors->has('percentages_total'))
                         <h4 style="color: red"><i class="fa fa-hand-point-right">
                             </i></i>{{ $errors->first('percentages_total') }}</h4>

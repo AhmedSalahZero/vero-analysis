@@ -94,7 +94,6 @@ class SalesChannelsAgainstAnalysisReport
         $view_name = $request->view_name;
         $name_of_report_item  = ($result=='view') ? 'Sales Values' : 'Avg. Prices';
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
-    //   dd($salesChannels);
         foreach ($salesChannels as  $salesChannelName) {
 
             if ($result == 'view') {
@@ -180,22 +179,17 @@ class SalesChannelsAgainstAnalysisReport
 
 
             foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
-// dd($request->sales_channels);
                 $years = [];
-// dd($salesChannels_data);
                 $data_per_main_item = $salesChannels_data[$sales_channel]??[];
-				// dd($data_per_main_item);
                 if (count(($data_per_main_item))>0 ) {
                     array_walk($data_per_main_item, function ($val, $date) use (&$years) {
 						$years[] = date('Y', strtotime($date));
-						// dd($years);
                     });
                     $years = array_unique($years);
 
                     $report_data[$salesChannelName][$sales_channel][$name_of_report_item] = $data_per_main_item;
                     $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$report_data[$salesChannelName][$sales_channel], $years, $request->interval);
                     $report_data[$salesChannelName][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
-					// dd($interval_data['data_intervals'][$request->interval]);
                     $report_data[$salesChannelName]['Total']  = $this->finalTotal([($report_data[$salesChannelName]['Total']  ?? []) ,($report_data[$salesChannelName][$sales_channel][$name_of_report_item]??[]) ]);
                     $report_data[$salesChannelName][$sales_channel]['Growth Rate %'] = $this->growthRate(($report_data[$salesChannelName][$sales_channel][$name_of_report_item] ?? []));
 
@@ -203,7 +197,6 @@ class SalesChannelsAgainstAnalysisReport
             }
 
             
-// dd($type);
 
             if($result == 'array'){
                  foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
@@ -242,7 +235,6 @@ class SalesChannelsAgainstAnalysisReport
                     foreach($items as $itemKey=> $values){
                         if($itemKey == 'Avg. Prices'){
                             foreach($values as $datee => $dateVal){
-                                // dd( $report_data[$reportType][$dateName][$itemKey][$datee] );
                             $report_data[$reportType][$dateName][$itemKey][$datee] =  
                             $report_data_quantity[$reportType][$dateName][$itemKey][$datee] ?
                             $report_data[$reportType][$dateName][$itemKey][$datee] / $report_data_quantity[$reportType][$dateName][$itemKey][$datee]
@@ -261,7 +253,6 @@ class SalesChannelsAgainstAnalysisReport
 
                         elseif($itemKey == 'Growth Rate %'){
                             foreach($values as $datee => $dateVal){
-                                // dd($report_data[$reportType]);
                                 $report_data[$reportType][$dateName]['Avg. Prices'][$datee];
                                 $keys = array_flip(array_keys($report_data[$reportType][$dateName]['Avg. Prices']));
                                 $values = array_values($report_data[$reportType][$dateName]['Avg. Prices']);
@@ -290,22 +281,16 @@ class SalesChannelsAgainstAnalysisReport
 
             
             }
-        //    dd($report_data);
-     
-		// dd($report_data[$salesChannelName]['Total']);
             $final_report_total = $this->finalTotal( [($report_data[$salesChannelName]['Total']??[]) , ($final_report_total??[]) ]);
             $report_data[$salesChannelName]['Growth Rate %'] =  $this->growthRate(($report_data[$salesChannelName]['Total']??[]));
             $sales_channels_names[] = (str_replace( ' ','_', $salesChannelName));
         }
-		// dd($report_data);
         foreach($report_data as $r=>$d){
             unset($report_data[$r]['Totals']);
         }
-        // dd($report_data);
         // Total Sales Channel & Growth Rate
 
         $report_data['Total'] = $final_report_total;
-		// dd($final_report_total);
         $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
         $dates = array_keys($report_data['Total']);
 		
@@ -317,7 +302,6 @@ class SalesChannelsAgainstAnalysisReport
         {
             return $report_view ; 
         }
-		// dd($dates,$request->start_date , $request->end_date,$report_data);
 		
         if($request->report_type =='comparing')
         {
@@ -328,15 +312,10 @@ class SalesChannelsAgainstAnalysisReport
              ];
         }
         
-        // dd($report_data);
-		// dd($result);
 		
         if ($result =='view') {
-			// dd($report_data,$dates);
-			// dd($dates , $report_data);
 			return view('client_view.reports.sales_gathering_analysis.salesChannels_analysis_report',compact('company','name_of_report_item','view_name','sales_channels_names','dates','report_data',));
         }else {
-			// dd($report_data);
             return [ 'report_data'=>$report_data,'view_name'=>$view_name,'names'=> $sales_channels_names];
         }
     }
@@ -441,8 +420,6 @@ class SalesChannelsAgainstAnalysisReport
         $dates = array_keys($report_data['Total']);
         // $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $type_name = 'Sales Channels';
-		
-		// dd('e');
         
         
         

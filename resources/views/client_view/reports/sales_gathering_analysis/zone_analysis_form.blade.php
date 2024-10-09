@@ -88,7 +88,6 @@
                         $formattedZones = '[' .  implode(',', $zones) . ']';
                         
                         ?>
-						{{-- {{ dd(get_defined_vars()) }} --}}
                     <div class="form-group row">
 					@if(isset(get_defined_vars()['__data']['type']) && get_defined_vars()['__data']['type'] !='averagePrices' && get_defined_vars()['__data']['type']!='averagePricesProductItems')
                         <div class="col-md-4  first-interval">

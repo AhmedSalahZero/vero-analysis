@@ -85,7 +85,6 @@ class InvoicesAgainstAnalysisReport
         $branches = $this->formatTypesAsString($branches);
 
         
-        // dd($branches);
        $queryResult =  collect(DB::select("select ". $type.",((product_item)) as product_items, ((document_number)) as invoice_number  , Year , Month , net_sales_value
             from sales_gathering
             where document_type in ('INV' , 'inv' , 'invoice','INVOICE','فاتوره') and company_id = ". $company->id ."  

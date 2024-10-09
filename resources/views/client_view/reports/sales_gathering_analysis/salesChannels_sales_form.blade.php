@@ -48,7 +48,6 @@
                                 @include('max-option-span')
 
                             </label>
-							{{-- {{ dd($sales_channels) }} --}}
                             <div class="kt-input-icon">
                                 <div id="append-main-select" class="input-group date">
                                     <select data-max-options="{{ maxOptionsForOneSelector() }}" data-live-search="true" data-actions-box="true" name="sales_channels[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple>

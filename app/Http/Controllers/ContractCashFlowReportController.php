@@ -55,10 +55,7 @@ class ContractCashFlowReportController
 			return redirect()->back()->with('fail',__('Please Select Contract'));
 		}
 		$customer = $contract ? $contract->client : null ;
-		// dd($customer);
-		// $customerName = $customer ? $customer->getName() : null ;
 		$customerId = $customer ? $customer->getId() : null ;
-		// $result = [];
 		$result['customers']=[
 			'Checks Collected'=>[],
 			'Incoming Transfers'=>[],

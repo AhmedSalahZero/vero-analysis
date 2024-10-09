@@ -93,9 +93,7 @@
                     <?php $id =1 ;?>
                     @php
                     sortReportForTotals($report_data);
-                    // dd(array_sum($report_data['Alex']['Total']) ,array_sum($report_data['Cairo']['Total']));
                     @endphp
-                    {{-- @dd($report_data) --}}
                     @foreach ($report_data as $zone_name => $zone_channels_data)
                     <?php $chart_data = [];?>
                     @if ($zone_name != 'Total' && $zone_name != 'Growth Rate %')

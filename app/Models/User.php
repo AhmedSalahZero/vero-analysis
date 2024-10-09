@@ -205,7 +205,6 @@ class User extends Authenticatable implements HasMedia
 	{
 		$now = strtotime(date('Y-m-d')); // or your date as well
             $your_date = strtotime($this->expiration_date);
-			# dd($your_date); 
             $datediff = $your_date - $now;
             return round($datediff / (60 * 60 * 24));
 	}

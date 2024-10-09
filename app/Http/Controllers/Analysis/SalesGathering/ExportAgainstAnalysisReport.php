@@ -44,7 +44,6 @@ class ExportAgainstAnalysisReport
         $secondColumnName = $request->type ;
 		$type = $secondColumnName;
 		
-		// dd($type);
         $name_of_report_item  = ($result=='view') ? 'Sales Values' : 'Avg. Prices';
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'purchase_order_net_value' : 'quantity';
 		$firstColumn = $request->get('firstColumnName');
@@ -103,7 +102,6 @@ class ExportAgainstAnalysisReport
                     })->toArray();
 
                 }
-// dd($report_data,$request->secondColumnData);
 				
             foreach (($request->secondColumnData??[]) as $second_column_key => $second_column) {
 
@@ -240,7 +238,6 @@ class ExportAgainstAnalysisReport
         }
         
         if ($result=='view') {
-            // dd(get_defined_vars());
             return view('client_view.reports.sales_gathering_analysis.first_columns_analysis_report',compact('company','firstColumnViewName','name_of_report_item','view_name','first_columns_names','dates','report_data'));
         }else {
             return [ 'report_data'=>$report_data,'view_name'=>$view_name,'names'=> $first_columns_names];
@@ -248,175 +245,7 @@ class ExportAgainstAnalysisReport
 
 
     }
-    // public function resultForSalesDiscount(Request $request, Company $company)
-    // {
-
-    //     $report_data =[];
-    //     $final_report_data =[];
-    //     $growth_rate_data =[];
-    //     $zones_names = [];
-    //     $sales_values = [];
-    //     $sales_years = [];
-    //     $zones = is_array(json_decode(($request->first_columnsData[0]))) ? json_decode(($request->first_columnsData[0])) :$request->first_columnsData ;
-
-    //     $type = $request->type;
-    //     $view_name = $request->view_name;
-
-    //     $fields ='';
-    //     foreach ($request->sales_discounts_fields as $sales_discount_field_key => $sales_discount_field) {
-    //         $fields .= $sales_discount_field .',';
-    //     }
-
-
-    //     foreach ($zones as  $firstColumnItem) {
-
-    //         $sales =collect(DB::select(DB::raw("
-    //             SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , sales_value ," . $fields ." category
-    //             FROM sales_gathering
-    //             WHERE ( company_id = '".$company->id."'AND category = '".$firstColumnItem."' AND date between '".$request->start_date."' and '".$request->end_date."')
-    //             ORDER BY id"
-    //         )))->groupBy('gr_date');
-    //         $sales_values_per_zone[$firstColumnItem] = $sales->map(function($sub_item){
-    //                                 return $sub_item->sum('sales_value');
-    //                             })->toArray();
-
-
-
-    //         foreach ($request->sales_discounts_fields as $sales_discount_field_key => $sales_discount_field) {
-    //             $zones_discount = $sales->map(function($sub_item) use($sales_discount_field){
-    //                                     return $sub_item->sum($sales_discount_field);
-    //                                 })->toArray();
-
-    //             $zones_sales_values = [];
-    //             $zones_per_month = [];
-    //             $results = [];
-    //             $discount_years = [];
-
-    //             if (@count($zones_discount) > 0) {
-
-    //                 // Data & Growth Rate Per Sales Channel
-
-
-    //                 array_walk($zones_discount, function ($val, $date) use (&$discount_years) {
-    //                     $discount_years[] = date('Y', strtotime($date));
-    //                 });
-    //                 $discount_years = array_unique($discount_years);
-
-    //                 array_walk($zones_sales_values, function ($val, $date) use (&$sales_years) {
-    //                     $sales_years[] = date('Y', strtotime($date));
-    //                 });
-    //                 $sales_years = array_unique($sales_years);
-
-
-
-    //                 $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
-
-    //                 $sales_values[$firstColumnItem]  = $interval_data['data_intervals'][$request->interval][$firstColumnItem] ?? [];
-
-
-
-
-    //                 $final_report_data[$firstColumnItem][$sales_discount_field]['Values'] = $zones_discount;
-    //                 $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$final_report_data[$firstColumnItem][$sales_discount_field], $discount_years, $request->interval);
-    //                 $final_report_data[$firstColumnItem][$sales_discount_field] = $interval_data['data_intervals'][$request->interval] ?? [];
-
-
-    //                 $final_report_data[$firstColumnItem]['Total']  = $this->finalTotal([($final_report_data[$firstColumnItem]['Total']  ?? []) ,($final_report_data[$firstColumnItem][$sales_discount_field]['Values']??[]) ]);
-
-
-
-
-
-
-    //                 $final_report_data['Total'] = $this->finalTotal([($final_report_data['Total'] ?? []), (($final_report_data[$firstColumnItem][$sales_discount_field]['Values']??[]))]);
-
-
-    //                 $final_report_data[$firstColumnItem][$sales_discount_field]['Perc.% / Sales'] = $this->operationAmongTwoArrays(($final_report_data[$firstColumnItem][$sales_discount_field]['Values']??[]), ($sales_values[$firstColumnItem]??[]));
-
-
-    //             }
-    //         }
-    //         $zones_names[] = (str_replace( ' ','_', $firstColumnItem));
-    //     }
-
-    //     $sales_values = $this->finalTotal([$sales_values??[]]);
-    //     $total = $final_report_data['Total'] ?? [];
-    //     unset($final_report_data['Total']);
-    //     $final_report_data['Total'] = $total;
-    //     $final_report_data['Discount % / Total Sales'] = $this->operationAmongTwoArrays($final_report_data['Total'],$sales_values);
-
-    //     // Total Zones & Growth Rate
-
-    //     $report_data = $final_report_data;
-
-    //     $dates = array_keys(($report_data['Total']??[]));
-
-    //     $type_name = 'Categories';
-    //     return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report',compact('company','view_name','zones_names','dates','report_data','type_name'));
-
-    // }
-
-
-    // public function CategoriesSalesAnalysisResult(Request $request, Company $company)
-    // {
-    //     $dimension = $request->report_type;
-
-    //     $report_data =[];
-    //     $growth_rate_data =[];
-    //     $first_columns = is_array(json_decode(($request->first_columns[0]))) ? json_decode(($request->first_columns[0])) :$request->first_columns ;
-
-    //     foreach ($first_columns as  $category) {
-
-    //         $first_columns_data = [];
-
-
-
-    //         $first_columns_data =collect(DB::select(DB::raw("
-    //             SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , purchase_order_net_value ,category
-    //             FROM sales_gathering
-    //             WHERE ( company_id = '".$company->id."'AND category = '".$category."' AND date between '".$request->start_date."' and '".$request->end_date."')
-    //             ORDER BY id "
-    //             )))->groupBy('gr_date')->map(function($item){
-    //                 return $item->sum('purchase_order_net_value');
-    //             })->toArray();
-
-
-    //         $interval_data_per_item = [];
-    //         $years = [];
-    //         if (count($first_columns_data)>0) {
-
-    //             // Data & Growth Rate Per Sales Channel
-    //             array_walk($first_columns_data, function ($val, $date) use (&$years) {
-    //                 $years[] = date('Y', strtotime($date));
-    //             });
-    //             $years = array_unique($years);
-    //             $report_data[$category] = $first_columns_data;
-    //             $interval_data_per_item[$category] = $first_columns_data;
-    //             $interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$interval_data_per_item, $years, $request->interval);
-
-    //             $report_data[$category] = $interval_data['data_intervals'][$request->interval][$category] ?? [];
-    //             $growth_rate_data[$category] = $this->growthRate($report_data[$category]);
-
-
-
-    //         }
-    //     }
-
-    //     $total_first_columns = $this->finalTotal($report_data);
-    //     $total_first_columns_growth_rates =  $this->growthRate($total_first_columns);
-    //     $final_report_data = [];
-    //     $first_columns_names =[];
-    //     foreach ($first_columns as  $category) {
-    //         $final_report_data[$category]['Sales Values'] = ($report_data[$category]??[]);
-    //         $final_report_data[$category]['Growth Rate %'] = ($growth_rate_data[$category]??[]);
-    //         $first_columns_names[] = (str_replace( ' ','_', $category));
-    //     }
-	// 	// dd(get_defined_vars());
-	// 	$dates = array_keys($total_first_columns ?? []); 
-	// 	// dd($total_first_columns , $first_columns_data);
-    //     return view('client_view.reports.sales_gathering_analysis.first_columns_sales_report',compact('company','first_columns_names','total_first_columns_growth_rates','final_report_data','total_first_columns','dates'));
-
-    // }
+  
     public function growthRate($data)
     {
 

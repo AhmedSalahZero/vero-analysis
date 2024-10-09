@@ -25,11 +25,7 @@ class ContractsController
 			Contract::FINISHED 
 		];
 		
-		// $runningContracts = Contract::where('contracts.company_id',$company->id)->where('status',Contract::RUNNING )->where('model_type',$type)->orderByRaw('start_date desc,partners.name')->join('partners','partners.id','=','contracts.partner_id')->with(['relatedContracts'])->get();
-		// dump($runningContracts);
-		// $runningContracts = Contract::where('contracts.company_id',$company->id)->where('status',Contract::RUNNING )->where('model_type',$type)->orderByRaw('start_date desc')->with(['relatedContracts'])->get();
 		$runningContracts = Contract::where('contracts.company_id',$company->id)->where('status',Contract::RUNNING )->where('model_type',$type)->join('partners','partners.id','=','contracts.partner_id')->selectRaw('contracts.*,partners.name as partner_name')->orderByRaw('start_date desc , partner_name asc')->with(['relatedContracts'])->get();
-	// dd($runningContracts);
 		$runningAndAgainstContracts = Contract::where('contracts.company_id',$company->id)->where('status',Contract::RUNNING_AND_AGAINST )->join('partners','partners.id','=','contracts.partner_id')->selectRaw('contracts.*,partners.name as partner_name')->orderByRaw('start_date desc , partner_name asc')->with(['relatedContracts'])->where('model_type',$type)->get();
 		$finishedContracts = Contract::where('contracts.company_id',$company->id)->where('status',Contract::FINISHED )->where('model_type',$type)->join('partners','partners.id','=','contracts.partner_id')->selectRaw('contracts.*,partners.name as partner_name')->orderByRaw('start_date desc , partner_name asc')->with(['relatedContracts'])->get();
 	

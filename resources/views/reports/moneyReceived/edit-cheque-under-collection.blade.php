@@ -84,9 +84,6 @@ use App\Models\MoneyReceived;
                                 </div>
                             </div>
                         </div>
-						{{-- {{ dd() }} --}}
-						{{-- {{ dd($model->cheque,$model->cheque->drawl_bank_id,$financialInstitutionBanks	) }} --}}
-{{-- {{ dd($model->cheque->getDraweeBankId(),$model->getCashInBankReceivingBankId()) }} --}}
                         <div class="col-md-9 mb-3">
                             <label>{{__('Drawal Bank')}} @include('star')</label>
                             <div class="kt-input-icon">
@@ -104,7 +101,6 @@ use App\Models\MoneyReceived;
 
                     </div>
                     <div class="row mb-3">
-	{{-- {{ dd($model->cheque->getDraweeBankId() , $model->cheque) }} --}}
                         <div class="col-md-4">
                             <label>{{__('Account Type')}} @include('star')</label>
                             <div class="kt-input-icon">

@@ -180,11 +180,6 @@ class SalesBreakdownDataWithQuantity
 			$last_date = DB::table('sales_gathering')->where('company_id', $company->id)->latest('date')->first()->date;
 			$last_date = date('d-M-Y', strtotime($last_date));
 
-
-
-			// dd($report_data);
-
-
 			return view('client_view.reports.sales_gathering_analysis.breakdown.sales_report', compact('last_date', 'report_count_data', 'type', 'view_name', 'dates', 'company', 'report_view_data'));
 		} elseif ($result == "withOthers") {
 			return $report_data;

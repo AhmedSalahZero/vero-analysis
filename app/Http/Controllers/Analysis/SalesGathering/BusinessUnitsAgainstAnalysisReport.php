@@ -80,7 +80,6 @@ class BusinessUnitsAgainstAnalysisReport
     }
     public function result(Request $request, Company $company,$result='view' , $secondReport = true )
     {
-        // dd($request->all());
         
 
         $report_data =[];
@@ -90,7 +89,6 @@ class BusinessUnitsAgainstAnalysisReport
         $businessUnits_names = [];
 		
         $businessUnits = is_array(json_decode(($request->businessUnits[0]))) ? json_decode(($request->businessUnits[0])) :$request->businessUnits ;
-        // dd($businessUnits);
         $type = $request->type;
         $view_name = $request->view_name;
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
@@ -213,7 +211,6 @@ class BusinessUnitsAgainstAnalysisReport
                     foreach($items as $itemKey=> $values){
                         if($itemKey == 'Avg. Prices'){
                             foreach($values as $datee => $dateVal){
-                                // dd( $report_data[$reportType][$dateName][$itemKey][$datee] );
                             $report_data[$reportType][$dateName][$itemKey][$datee] =  
                             $report_data_quantity[$reportType][$dateName][$itemKey][$datee] ?
                             $report_data[$reportType][$dateName][$itemKey][$datee] / $report_data_quantity[$reportType][$dateName][$itemKey][$datee]
@@ -232,10 +229,8 @@ class BusinessUnitsAgainstAnalysisReport
 
                         elseif($itemKey == 'Growth Rate %'){
                             foreach($values as $datee => $dateVal){
-                                // dd($report_data[$reportType]);
                                 $report_data[$reportType][$dateName]['Avg. Prices'][$datee];
                                 $keys = array_flip(array_keys($report_data[$reportType][$dateName]['Avg. Prices']));
-                                // dd($report_data[$reportType][$dateName]['Avg. Prices']);
                                 $values = array_values($report_data[$reportType][$dateName]['Avg. Prices']);
                                 $previousValue = isset($values[$keys[$datee]-1]) ? $values[$keys[$datee]-1] : 0 ;
                           
@@ -427,7 +422,6 @@ class BusinessUnitsAgainstAnalysisReport
 
         $report_data =[];
         $growth_rate_data =[];
-		// dd($request->all());
         $businessUnits = is_array(json_decode(($request->businessUnits[0]))) ? json_decode(($request->businessUnits[0])) :$request->businessUnits ;
 
         foreach ($businessUnits as  $businessUnit) {

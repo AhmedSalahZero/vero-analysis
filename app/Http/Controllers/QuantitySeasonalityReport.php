@@ -70,7 +70,6 @@ class QuantitySeasonalityReport
 
         // $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers', $products_data);
         // $product_item_breakdown_data = (new QuantitySalesForecastReport)->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
-        // // dd($modified_targets);
         // $products_items = array_column($product_item_breakdown_data, 'item');
         // $last_key = (array_key_last($products_items));
         // $products_items_monthly_values = [];
@@ -119,7 +118,6 @@ class QuantitySeasonalityReport
 
         // $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers', $products_data);
         // $product_item_breakdown_data = $this->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
-        // dd($sales_forecast->forecasted_sales);
 
         $product_item_breakdown_data = $sales_forecast->forecasted_sales;
         $products_items = array_column($product_item_breakdown_data, 'item');
@@ -174,7 +172,6 @@ class QuantitySeasonalityReport
         }else{
             $products_items_monthly_percentage = $modified_seasonality->original_seasonality;
         }
-        // dd($products_items_monthly_percentage);
         return view('client_view.quantity_forecast.modify_seasonality', compact(
                     'company',
                 'monthly_dates',

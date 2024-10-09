@@ -86,7 +86,6 @@ class  BalanceSheet extends Model implements IBaseModel, IHaveAllRelations, IExp
 
 		$currentCompanyId =  getCurrentCompanyId();
 		$reportType = $options['reportType'];
-		// dd();
 		return [
 			'getDataRoute' => route('admin.get.balance.sheet.report', ['company' => $currentCompanyId, 'balanceSheet' => $options['financial_statement_able_id']]),
 			'modelName' => 'BalanceSheetReport',

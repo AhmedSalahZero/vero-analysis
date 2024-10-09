@@ -1,5 +1,4 @@
 
-					{{-- {{ dd($invoiceNumbers) }} --}}
 					
 						<tr class="edit-info-row add-sub maintable-1-row-class{{ $rowIndex }} is-sub-row d-none">
                                             <td class=" reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize is-close "></td>

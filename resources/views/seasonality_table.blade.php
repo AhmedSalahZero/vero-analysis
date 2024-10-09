@@ -84,7 +84,6 @@ $TheMainSectionTitle = @explode('Sales', Request()->segments()[count(Request()->
     </tr>
 
     @endforeach
-    {{-- @dd($total_branches) --}}
 
 
 

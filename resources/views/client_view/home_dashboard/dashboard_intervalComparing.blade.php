@@ -34,7 +34,6 @@
                   </div>
                 <div class="col-md-9">
                     <div class="input-group date" >
-                                          {{-- @dd($permittedTypes) --}}
                                         <select  data-live-search="true" data-max-options="2" name="types[]" required class="form-control select2-select form-select form-select-2 form-select-solid fw-bolder"
                                             id="types" multiple>
                                             <option disabled value="0

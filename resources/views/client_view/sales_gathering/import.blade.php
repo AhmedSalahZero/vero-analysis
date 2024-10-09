@@ -185,7 +185,6 @@ $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Reques
                 @slot('table_body')
                 @foreach ($salesGatherings->take(20) as $index=> $item)
 
-                {{-- @dd($item) --}}
                 <tr>
                     <td class="text-center">
                         <label class="kt-option">

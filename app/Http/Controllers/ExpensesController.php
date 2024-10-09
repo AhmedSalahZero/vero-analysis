@@ -21,7 +21,6 @@ class ExpensesController extends Controller
 		$items = [];
 		foreach($expenses as $index=>$expenseArr){
 				$expenseType = camelizeWithSpace($expenseArr->expense_type,'-') ;
-				// dd($expenseArr->name);
 				$items[$expenseType][$index]['name'] =$expenseArr->name ;
 				$items[$expenseType][$index]['id'] =$expenseArr->id ;
 		}

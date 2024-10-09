@@ -29,24 +29,13 @@ class QuantitySummaryController extends Controller
 		
         $detailed_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company, $request,'detailed_company_sales_target');
 		// salah 
-		// dd($detailed_company_sales_target);
 		// $detailed_company_sales_target = $this->getTotalSalesTarget()
-// dd($detailed_company_sales_target);
         // Calculation of Total Company Sales Target In Quarters
-		// dd($detailed_company_sales_target['total']);
         $total = $total = array_sum($detailed_company_sales_target['total']);
-		// dd($total);
-		// dd($sales_forecast ,$detailed_company_sales_target,$total );
-		// dd($detailed_company_sales_target['total']);
         $quarters = $this->companySalesTargetsQuarters($detailed_company_sales_target['total']);
-		// dd($quarters);
-		
-		// dd($quarters);
-		// dd($quarters);
         //  Total Company Sales Target Data For Chart
         $chart_data = $this->totalCompanySalesTargetsChartData($detailed_company_sales_target['total'], $total);
         $new_products_targets_data['value'] = array_sum($detailed_company_sales_target['totalNew']);
-		// dd($this->findTotal($detailed_company_sales_target['existing']));
         $existing_products_targets_data['value'] = array_sum($detailed_company_sales_target['totalExisting']);
         $new_products_targets_data['percentage'] = $total == 0 ? 0 : (($new_products_targets_data['value'] / $total) * 100);
         $existing_products_targets_data['percentage'] = $total == 0 ? 0 : (($existing_products_targets_data['value'] / $total) * 100);
@@ -84,8 +73,6 @@ class QuantitySummaryController extends Controller
 		
         $counter = 1;
         $total_quarter = 0;
-		// dd($total_company_sales_target);
-		// dd($total_company_sales_target);
         foreach ($total_company_sales_target as $date => $value) {
             $total_quarter += $value;
             if ($counter == 3) {
@@ -150,8 +137,6 @@ class QuantitySummaryController extends Controller
         $second_allocation_setting_base = QuantitySecondAllocationSetting::company()->first();
         // Company Sales Target
         $company_sales_targets = (new QuantitySalesForecastReport)->productsAllocations($company, $request, 'total_sales_target');
-        // dd($company_sales_targets);
-        // dd($company_sales_targets);
         $reports_data['product_sales_target'] = $this->breakdownData($company_sales_targets);
         $types['product_sales_target'] = 'brand';
         $top_data['product_sales_target'] = $reports_data['product_sales_target'][0] ?? '-';
@@ -161,24 +146,17 @@ class QuantitySummaryController extends Controller
             $first_allocation_total_sales_targets = (new QuantityAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
             $base = $first_allocation_setting_base->allocation_base;
             arsort($first_allocation_total_sales_targets);
-            // dd($first_allocation_total_sales_targets);
             $name = $base.'_sales_targets';
-            // dd($first_allocation_total_sales_targets);
             $reports_data[$name] = $this->breakdownData($first_allocation_total_sales_targets);
-// dd($reports_data[$name]);
             $types[$name] = 'warning';
-            // dd($reports_data[$name]);
             $top_data[$name] = $reports_data[$name][0] ?? '-';
         }
         // Second Allocation sales targets
         $second_allocation_total_sales_targets = [];
         if (isset($second_allocation_setting_base)) {
             $second_allocation_total_sales_targets = (new QuantitySecondAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
-            // dd($second_allocation_total_sales_targets);
             $base = $second_allocation_setting_base->allocation_base;
             arsort($second_allocation_total_sales_targets);
-            // dd($second_allocation_total_sales_targets);
-            // dd($second_allocation_total_sales_targets);
             $name = $base.'_sales_targets';
             $reports_data[$name] = $this->breakdownData($second_allocation_total_sales_targets);
 
@@ -187,7 +165,6 @@ class QuantitySummaryController extends Controller
             $top_data[$name] = $reports_data[$name][0] ?? '-';
 
         }
-        // dd($reports_data);
         return view('client_view.quantity_forecast_summary_reports.breakdown_dashboard', compact(
                 'company',
             'reports_data',
@@ -198,13 +175,7 @@ class QuantitySummaryController extends Controller
 
     public function breakdownData($data)
     {
-        //  if($x != 6)
-        // {
-        // dd($data);
 
-        // }
-    //  (sort($data));
-    //  dd($data);
         $result = collect($data)->flatMap(function($values,$name){
             return [[
                 "item" => $name ,
@@ -324,12 +295,6 @@ class QuantitySummaryController extends Controller
         }
 
 
-        // dd($request['existing_products_target'] , $request['total_existing_target']  , $request['modify_sales_target'] , $request['use_modified_targets']);
-
-
-
-
-          //
           $collectionSetting = QuantityCollectionSetting::company()->first();
           $request['collection_base'] = $collectionSetting->collection_base ;
           $request['general_collection']  = $collectionSetting->general_collection ;

@@ -135,7 +135,6 @@
 
                         ?>
 
-                {{-- @dd($existing_products_targets) --}}
                 @foreach ($existing_products_targets as $item => $product_data)
                 <?php $total_existing_targets = 0; ?>
                 <tr>

@@ -110,19 +110,7 @@ class SecondAllocationsReport
 
             $allocation_base_data = $request->allocation_base_data;
             Cache::forever(getCacheKeyForSecondAllocationReport($company->id), ['allocation_base_data'=>$allocation_base_data , 'new_allocation_base_items'=>$request->new_allocation_base_items]);
-// dd($request->totalsss);
-//             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
-//                 foreach ($item_data as $base => $value) {
-//                     if (strstr($base, 'new_item') !== false) {
-//                         $index = substr($base, strpos($base, "new_item_") + 9);
-//                         $name_of_new_allocation_base = $request->new_allocation_base_items[$index];
-//                         array_merge($allocation_base_data[$product_item_name][$base] , ['actual_value'=>$allocation_base_data[$product_item_name][$base]['new']/100 * $request->totalsss]); // by salah
-//                         // $allocation_base_data[$product_item_name][$name_of_new_allocation_base] = $allocation_base_data[$product_item_name][$base];
 
-//                         unset($allocation_base_data[$product_item_name][$base]);
-//                     }
-//                 }
-//             }
             foreach ((array)$allocation_base_data as $product_item_name => $item_data) {
                 foreach ($item_data as $base => $value) {
                     if (strstr($base, 'new_item') !== false) {
@@ -407,13 +395,11 @@ class SecondAllocationsReport
 
                 }
             }
-// dd();
 foreach ($allocation_data as $base => $data) {
 	foreach($data as $item=>$arr) // this foreach add by me
 	{
 		$allocation_data_total[$base][$item] = $this->finalTotal($data);
 	}
-	// dd('d',$allocation_data_total);
 
 
 
@@ -432,16 +418,10 @@ foreach ($allocation_data as $base => $data) {
 		// 	}
 		// }
 		// $allocation_data_total['Total'] = $total ;
-		// dd($allocation_data_total);
-		
-		// dd($allocation_data_total);
-		// dd('e',$allocation_data,$allocation_data_total);
         // Existing
 
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
-		// dd($allocation_data);
-		// DD($allocation_data);
         if ($result == 'view') {
             return view('client_view.forecast.second_new_product_seasonality', compact(
                 'new_products_allocations',
@@ -494,13 +474,7 @@ foreach ($allocation_data as $base => $data) {
                 return $existing_product_data ;
 
             }
-			// dd($total_sales_targets);
-			// dd($total_sales_targets);
-			// $total_sales_targets['Total'] = $this->finalTotal($total_sales_targets);
-			// 
-			// dd('d',$total_sales_targets);
 			return get_total_with_preserve_key($total_sales_targets);
-            // return $total_sales_targets;
         }
     }
 

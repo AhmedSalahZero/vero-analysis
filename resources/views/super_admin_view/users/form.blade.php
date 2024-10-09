@@ -7,8 +7,6 @@
     <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
     @endsection
 @section('content')
-{{-- {{ dd($user->roles->first()->name,$user->hasRole('Admin')) }} --}}
-{{-- {{ dd($user) }} --}}
 <div class="row">
     <div class="col-12">
         <!--begin::Portlet-->

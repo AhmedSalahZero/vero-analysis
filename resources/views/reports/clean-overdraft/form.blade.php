@@ -97,7 +97,6 @@
                     <div class="kt-portlet__body">
 
 
-                        {{-- {{ dd($financialInstitution) }} --}}
                         <div class="form-group row">
                             <div class="col-md-4 ">
                                 <label>{{__('Financial Institution Name')}} </label>

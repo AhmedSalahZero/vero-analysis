@@ -191,7 +191,6 @@
                             <input type="hidden" name="firstColumnName" value="{{ $firstColumn }}">
                             <input type="hidden" name="secondColumnName" value="{{ $secondColumn }}">
                             <input type="hidden" id="append-to" value="firstColumnData">
-                            {{-- {{ dd($firstColumnData) }} --}}
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -242,7 +241,6 @@
                     </div>
 
                 </div>
-                {{-- @dd($name_of_selector_label) --}}
                 <x-submitting />
             </div>
 
@@ -257,7 +255,6 @@
         <!--end::Portlet-->
     </div>
 </div>
-{{-- @dd(get_defined_vars()) --}}
 @endsection
 @section('js')
 <!--begin::Page Scripts(used by this page) -->

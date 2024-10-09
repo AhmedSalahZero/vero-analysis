@@ -210,7 +210,6 @@ class SalesGatheringController extends Controller
     }
     public function getUploadingPageExportNavigation(string $modelName,string $uploadPermissionName,string $exportPermissionName,string $deletePermissionName,int $fromIndex=  0 , int $toIndex=0)
     {
-		// dd();
 		$additionalUploadDataArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>getLastSegmentInRequest()] : [];
 		$viewName = $modelName == 'LoanSchedule' ? 'upload' : 'sales_gathering'; // i do not know the purpose of this variable
 		$user = auth()->user();

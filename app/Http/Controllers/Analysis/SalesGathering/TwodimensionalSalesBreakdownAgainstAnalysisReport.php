@@ -156,8 +156,6 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'product_item';
             $view_name = 'Countries Versus Products Items' ;
         }
-		
-        // dd($view_name);
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
     }
     public function result(Request $request, Company $company)
@@ -216,8 +214,6 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $main_type_items_totals['Others '.count($report_data)]  = array_sum(($result['Others '.count($report_data)]??[]));
             $report_data = $result;
         }
-
-        // dd();
         if($request->get('direction') == 'asc')
         {
             $report_data = \array_reverse($report_data , true );

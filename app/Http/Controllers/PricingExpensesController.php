@@ -21,7 +21,6 @@ class PricingExpensesController extends Controller
 		$items = [];
 		foreach($expenses as $index=>$expenseArr){
 				$expenseType = camelizeWithSpace($expenseArr->expense_type,'-') ;
-				// dd($expenseArr->name);
 				$items[$expenseType][$index]['name'] =$expenseArr->name ;
 				$items[$expenseType][$index]['id'] =$expenseArr->id ;
 		}
@@ -93,7 +92,6 @@ class PricingExpensesController extends Controller
 			'expense_type'=>$request->get('expense_type'),
 			'updated_by'=>auth()->user()->id 
 		]);
-		// dd($request->get('expense_type'));
 				
 				session::flash('success',__('Updated Successfully'));
 				return redirect()->route('pricing-expenses.index',['company'=>$company->id ] );

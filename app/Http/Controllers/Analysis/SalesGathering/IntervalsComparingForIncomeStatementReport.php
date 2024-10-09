@@ -122,7 +122,6 @@ class IntervalsComparingForIncomeStatementReport
 		$secondIncomeStatementDurationType = $secondIncomeStatement->duration_type;
 		$secondIntervalDates = $firstIntervalDates;
 		$report_result = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, $mainItemName, true);
-		// dd($report_result);
 		$report_result_for_charts = IncomeStatementItem::_compareBetweenTwoItems($firstIncomeStatementItemSubItemsPivot, $firstIntervalDates, $firstIncomeStatementDurationType, $firstReportType, $secondIncomeStatementItemSubItemsPivot, $secondIntervalDates, $secondIncomeStatementDurationType, $secondReportType, $mainItemName, false);
 		$charts = [];
 		$charts = IncomeStatementItem::_generateChartsData($firstIntervalDates, $chartItems, $report_result_for_charts, $mainItemName);

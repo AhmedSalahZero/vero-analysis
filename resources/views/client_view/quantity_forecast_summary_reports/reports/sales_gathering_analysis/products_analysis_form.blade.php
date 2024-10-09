@@ -11,7 +11,6 @@
     <div class="col-md-12">
 
 
-{{ dd($view_name) }}
 
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($name_of_selector_label=='Sales Discount' ) {{ route('products.salesDiscount.analysis.result', $company) }} @elseif ($type=='averagePricesProductItems' ) {{ route('averagePrices.result', $company) }} @else {{ route('products.analysis.result', $company)  }} @endif enctype="multipart/form-data">

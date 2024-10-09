@@ -1,7 +1,5 @@
-						{{-- {{ dd($super_admin_sections) }} --}}
 
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
-    {{-- {{ dd() }} --}}
 
 
     <div class="kt-container ">

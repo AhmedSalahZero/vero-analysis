@@ -111,7 +111,6 @@
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
                 <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
-                    {{-- @dd(()) --}}
                     <tr class="table-active text-center">
                         @if($view_name ==Customers_Against_Categories_Trend_Analysis
                         || $view_name == Customers_Against_Products_Trend_Analysis
@@ -136,7 +135,6 @@
                     @php
                     sortReportForTotals($report_data)
                     @endphp
-                    {{-- @dd($sortReportForTotalsSalesValues) --}}
                     @foreach ($report_data as $sales_channel_name => $sales_channel_channels_data)
                     <?php $chart_data = []; ?>
 

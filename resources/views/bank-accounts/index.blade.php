@@ -79,7 +79,6 @@
                             <tbody>
                                 @foreach($allBankAccounts as $index=>$bankAccounts)
 								@foreach($bankAccounts as $bankAccount)
-								{{-- {{ dd($bankAccount,) }} --}}
                                 <tr>
                                     <td>
                                         {{ $index+1 }}

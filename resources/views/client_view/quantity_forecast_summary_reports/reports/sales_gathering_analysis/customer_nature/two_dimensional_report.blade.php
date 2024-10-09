@@ -67,7 +67,6 @@
 
 <!--Sales Values Table -->
 @php
-// dd();
 $startTime = microtime(true);
 $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $customersNaturesDead));
 
@@ -96,10 +95,8 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
     @endslot
     @slot('table_body')
     @php
-    // dd();
     $totalForTotalSales = calcTotalsForTotalsActiveItems($customersNaturesActive , 'total_sales') ;
     @endphp
-    {{-- @dd($getIterableTimes) --}}
     @foreach($getIterableTimes as $mainTypeItem=>$totalPerType)
     <tr>
         <th> {{ __($mainTypeItem) }} </th>

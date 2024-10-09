@@ -15,7 +15,6 @@
     </style>
 @endsection
 @section('content')
-{{-- {{ dd('e') }} --}}
     <form action="{{ route('allocations', $company) }}" method="POST">
         @csrf
 
@@ -34,7 +33,6 @@
                             <?php $allocations_setting = isset($allocations_setting) ? $allocations_setting : old(); ?>
                             <div class="kt-portlet__body">
                                 <!--begin: Datatable -->
-                                                    {{-- @dd() --}}
 
 
                                 <div class="row">

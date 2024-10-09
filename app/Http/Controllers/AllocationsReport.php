@@ -128,7 +128,6 @@ class AllocationsReport
 				}
 			}
 			#TODO:create now 
-			// dd($allocation_base,$allocation_base_data);
 			NewProductAllocationBase::updateOrCreate(
 				['company_id' => $company->id],
 				[
@@ -353,7 +352,6 @@ class AllocationsReport
 			$seasonality = $row->seasonality;
 			$seasonality_data = $row->seasonality_data;
 			foreach ($base_items as $base => $percentage) {
-				// dd($base_items);
 				$percentage = $percentage ?? 0;
 				$allocation_data_per_allocation_base[$base][$product_name]['target'] = $sales_target_value * ($percentage / 100);
 				$allocation_data_per_allocation_base[$base][$product_name]['seasonality'] = $seasonality;
@@ -416,7 +414,6 @@ class AllocationsReport
 
 
 			$total_sales_targets = [];
-			// dd($existing_product_data);
 			foreach ($allocation_data_total as $base => $base_data) {
 				foreach ($base_data as $date => $value) {
 					$month = date('F', strtotime(('01-' . $date)));
@@ -429,7 +426,6 @@ class AllocationsReport
 				unset($existing_product_data['Total']);
 				return $existing_product_data;
 			}
-			// dd('first',$total_sales_targets);
 			return $total_sales_targets;
 		}
 	}
@@ -460,7 +456,6 @@ class AllocationsReport
 
 
 		$existing_product_allocation_base =  ExistingProductAllocationBase::company()->first();
-		// dd($existing_product_allocation_base);
 		$existing_sales_targets  = $existing_product_allocation_base->existing_products_target ?? [];
 		$sales_targets = [];
 
@@ -569,7 +564,6 @@ class AllocationsReport
 			if (count($products_items) > 0) {
 				foreach ($products_items as $product_item_name => $product_value) {
 					$name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;
-					// dd( $seasonality['Others']);
 					$product_seasonality = $seasonality[$name] ?? [];
 					$existing_product_per_allocation_base[$product_item_name] = $this->operationAmongArrayAndNumber($product_seasonality, $product_value, 'multiply');
 				}

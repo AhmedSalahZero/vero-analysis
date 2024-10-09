@@ -6741,9 +6741,6 @@ function formatArrayAsGroup(array $permissions):array
 {
 	$result = [];
 	foreach($permissions as $permissionArr){
-		if(!isset($permissionArr['group'])){
-			dd($permissionArr);
-		}
 		$result[$permissionArr['group']][] =$permissionArr; 
 	}
 	return $result;

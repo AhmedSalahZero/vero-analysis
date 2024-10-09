@@ -84,7 +84,6 @@ class RatioAnalysisService
 		$current_ratio = $this->operationAmongTwoArrays(($totalCurrentAssets), ($totalCurrentLiabilities));
 		// Quick Ratio
 		$cash_and_ar = HArr::sumAtDates([$cashAndBanks,$customersReceivablesAndChecks],getDateFromTwoArrays($cashAndBanks,$customersReceivablesAndChecks)) ;
-		// dd('dd',$cash_and_ar);
 		$quick_ratio = $this->operationAmongTwoArrays($cash_and_ar, $totalCurrentLiabilities);
 		//Cash Ratio
 		$cash_ratio = $this->operationAmongTwoArrays($cashAndBanks, $totalCurrentLiabilities);
@@ -111,7 +110,6 @@ class RatioAnalysisService
 		//Cash Conversion Cycle "CCC"
 		$dso_dio = HArr::sumAtDates([$dso , $dio] , getDateFromTwoArrays($dso,$dio)) ;
 		// $dso_dio =  $this->finalTotal([$dso, $dio]);
-		// dd($dso_dio , $dpo , $dso , $dio);
 		$ccc = $this->operationAmongTwoArrays($dso_dio, $dpo, 'subtraction');
 
 		// Debt to Asset Ratio

@@ -27,7 +27,6 @@ table.dataTable tbody tr>.dtfc-fixed-right,
 @section('content')
     <form action="{{ route('second.existing.products.allocations.quantity', $company) }}" method="POST">
         @csrf
-		{{-- {{ dd($total_monthly_targets) }} --}}
 @if(canShowNewItemsProducts($company->id) && count($total_monthly_targets['new']))
         <div class="kt-portlet">
             <div class="kt-portlet__head">

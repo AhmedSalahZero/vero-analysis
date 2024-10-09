@@ -498,7 +498,6 @@ class SKUsAgainstAnalysisReport
             }
         }
 
-// dd($report_data);
 
 
 
@@ -551,7 +550,6 @@ class SKUsAgainstAnalysisReport
         //     $Items_names[] = (str_replace(' ', '_', $main_row));
         // }
 
-        // dd($Items_names);
         // Total Zones & Growth Rate
 
 
@@ -639,7 +637,6 @@ class SKUsAgainstAnalysisReport
             $Items_names[] = (str_replace(' ', '_', $main_row));
         }
 
-        // dd($report_data);
         // Total Zones & Growth Rate
 
 

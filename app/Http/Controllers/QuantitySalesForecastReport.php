@@ -108,7 +108,6 @@ class QuantitySalesForecastReport
 			$sales_forecast["end_date"] =   $end_date;
 			$sales_forecast["previous_year"] = $previous_year;
 			$sales_forecast["previous_1_year_sales"] = $previous_1_year_sales;
-			// dd($previous_1_year_sales);
 			$sales_forecast["previous_year_gr"] = $previous_year_gr;
 			$sales_forecast["average_last_3_years"] = $average_last_3_years;
 			$sales_forecast["previous_year_seasonality"] = $product_item_breakdown_data_previous_1_year;
@@ -193,7 +192,6 @@ class QuantitySalesForecastReport
 
 	public function save(Company $company, Request $request, $noReturn = false)
 	{
-		// dd($request->all());
 		if ($request->submit == 'Show Result') {
 
 			$request['start_date']  = $request->previous_year . '-01-01';
@@ -443,8 +441,6 @@ class QuantitySalesForecastReport
 					];
 				}
 			})->toArray();
-			// dd($forecasted_sales_date);
-			// dd($sales_forecast->previous_year_seasonality );
 		}
 		$sales_forecast->forecasted_sales = $forecasted_sales_date;
 		$sales_forecast->save();
@@ -534,9 +530,6 @@ class QuantitySalesForecastReport
 		$sales_forecast = QuantitySalesForecast::company()->first();
 		$categories = QuantityCategory::company()->get();
 		$products = QuantityProduct::company()->where('type', 'new')->with('category')->get();
-		// dd(QuantityProduct::company()->where('type', 'existing')->count() == 0);
-		// Saving
-
 		if ($request->isMethod('POST')) {
 			// if there are existing saved Cats dont sve it again
 			// if (1) {
@@ -585,7 +578,6 @@ class QuantitySalesForecastReport
 
 	public function productsSeasonality(Company $company, Request $request)
 	{
-		dd('from 1');
 		$product_seasonality = QuantityProductSeasonality::company()->get();
 		$sales_forecast = QuantitySalesForecast::company()->first();
 		if ($request->isMethod('POST')) {
@@ -852,9 +844,7 @@ class QuantitySalesForecastReport
 		}
 		$sales_forecast = QuantitySalesForecast::company()->first();
 		$products_seasonality = QuantityProductSeasonality::company()->get();
-		// dd($products_seasonality);
 		$year = date('Y', strtotime($sales_forecast->start_date));
-		// dd($sales_forecast,$products_seasonality);
 
 		$monthly_dates = [];
 		$quarter_dates = [];
@@ -961,10 +951,6 @@ class QuantitySalesForecastReport
 			}
 
 
-			// $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers', $products_data);
-			// $product_item_breakdown_data = $this->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
-			// dd($sales_forecast->forecasted_sales);
-			// $modified_seasonality = QuantityModifiedSeasonality::company()->first();
 
 			$product_item_breakdown_data = $sales_forecast->forecasted_sales;
 			$products_items = array_column($product_item_breakdown_data, 'item');
@@ -998,7 +984,6 @@ class QuantitySalesForecastReport
 				}
 			});
 			$products_items_monthly_percentage =  (new QuantitySeasonalityReport)->productsItemsData($request, $company, $sales_forecast, $product_item_breakdown_data_items, $type);
-// dd($products_items_monthly_percentage);
 			if ($modified_seasonality === null || count($product_item_breakdown_data_items) != (count(($modified_seasonality->original_seasonality ?? [])))) {
 
 				if ($modified_seasonality === null) {
@@ -1026,7 +1011,6 @@ class QuantitySalesForecastReport
 			$totals_per_month = [];
 
 			
-			// dd();
 
 			foreach ($product_item_breakdown_data as $key => $product_data) {
 
@@ -1065,8 +1049,6 @@ class QuantitySalesForecastReport
 					$total_existing_targets += $result_per_month;
 				}
 			}
-			// dd('existing',$existing_products_targets);
-// 
 			if ($result ==  'total_sales_target') {
 
 				unset($existing_products_seasonalities['Totals']);
@@ -1096,12 +1078,9 @@ class QuantitySalesForecastReport
 				return;
 			}
 			if($result == 'detailed_company_sales_target'){
-				// dd($existing_products_targets);
 			
 				unset($existing_products_targets['Totals']);
 				$total_company_sales_target = $this->finalTotal([$new_products_totals, $existing_products_targets]);
-				// dd($total_company_sales_target );
-				// dd('total_existing',$this->finalTotal($existing_products_targets));
 				return [
 					'existing' => $existing_products_targets,
 					'new' => $new_products_totals,
@@ -1140,8 +1119,6 @@ class QuantitySalesForecastReport
 			// return $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);
 		}
 		 elseif ($result == 'detailed_company_sales_target') {
-			// dd('detailw',$existing_products_targets);
-// dd($new_products_totals , $existing_products_seasonalities);
 			// unset($existing_products_seasonalities['Totals']);
 
 			// $total_company_sales_target = $this->finalTotal([$new_products_totals, $existing_products_seasonalities]);

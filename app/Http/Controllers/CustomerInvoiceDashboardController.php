@@ -501,7 +501,6 @@ class CustomerInvoiceDashboardController extends Controller
 				
 			}
 		}
-		// dd($dashboardResult['cheques_aging']);
         return view('admin.dashboard.forecast', [
             'company' => $company,
 			'dashboardResult'=>$dashboardResult,

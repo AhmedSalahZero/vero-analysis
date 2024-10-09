@@ -67,7 +67,6 @@ class HDate
 			$result[] = ['start_date'=>$startDate,'end_date'=>$endDateOfCurrentMonth];
 			$currentStartDate = Carbon::make($endDateOfCurrentMonth)->addDay()->format('Y-m-d');
 		}
-		// dd($result);
 		return $result;
 		
 	}

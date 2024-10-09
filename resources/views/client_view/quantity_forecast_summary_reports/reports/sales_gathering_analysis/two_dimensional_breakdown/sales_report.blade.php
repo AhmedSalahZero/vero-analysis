@@ -167,11 +167,9 @@
     <?php $total_per_item = []; ?>
     <?php $final_total = array_sum($items_totals);
             $final_percentage = $final_total == 0 ? 0 : (($final_total ?? 0) / $final_total) * 100; ?>
-    {{-- @dd($main_type_items_totals) --}}
     @foreach ($main_type_items_totals as $main_type_item_name => $main_item_total)
     <tr>
         <th> {{ __($main_type_item_name) }} </th>
-        {{-- @dd($all_items) --}}
         @foreach ($all_items as $item)
         <?php $value = $report_data[$main_type_item_name][$item] ?? 0;
                         $percentage_per_value = $main_item_total == 0 ? 0 : ($value / $main_item_total) * 100; ?>

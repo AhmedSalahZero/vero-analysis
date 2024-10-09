@@ -297,7 +297,6 @@ class BranchesAgainstAnalysisReport
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');
                 })->toArray();
-// dd($branches_data);
             $interval_data_per_item = [];
             $years = [];
             if (count($branches_data)>0) {
@@ -313,10 +312,8 @@ class BranchesAgainstAnalysisReport
 				
                 $report_data[$branch] = $interval_data['data_intervals'][$request->interval][$branch] ?? [];
                 $growth_rate_data[$branch] = $this->growthRate($report_data[$branch]);
-				// dd(get_defined_vars());
             }
         }
-// dd($report_data);
         $total_branches = $this->finalTotal($report_data);
         $total_branches_growth_rates =  $this->growthRate($total_branches);
         $final_report_data = [];

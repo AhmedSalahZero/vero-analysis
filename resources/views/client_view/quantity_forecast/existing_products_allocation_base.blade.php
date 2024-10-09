@@ -26,8 +26,6 @@
     <form action="{{ route('existing.products.allocations.quantity', $company) }}" method="POST">
         @csrf
 
-{{-- @dd(get_defined_vars()) --}}
-{{-- {{ dd() }} --}}
 @if((canShowNewItemsProducts($company->id)) &&  count($sales_targets_values))
         <div class="kt-portlet">
             <div class="kt-portlet__head">
@@ -46,7 +44,6 @@
                         <tr class="table-active text-center">
                             <th>{{ __(str_replace('_', ' ', ucwords($allocation_base))) }}</th>
                             <th>{{ __('Sales Target Value') }}</th>
-                            {{-- @dd($sales_forecast->target_base) --}}
                             @if (
 
                             $sales_forecast->target_base !== 'new_start'
@@ -60,7 +57,6 @@
                         </tr>
                     @endslot
                     @slot('table_body')
-                    {{-- @dd() --}}
                     @php
                         sortTwoDimensionalArr($sales_targets_values);
                     @endphp
@@ -96,7 +92,6 @@
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    {{-- @dd($existing_items_target) --}}
                     <h2>
                         {{ __('Existing Products Items Sales Target Year ') .date('Y', strtotime($sales_forecast->start_date)) .' : ' .number_format($existing_items_target) }}
                     </h2>

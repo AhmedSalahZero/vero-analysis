@@ -17,22 +17,9 @@
             @csrf
             <div class="kt-portlet">
                 <?php 
-                    // $branches = App\Models\SalesGathering::company()
-                    //     ->whereNotNull('branch')
-                    //     ->where('branch','!=','')
-                    //     ->groupBy('branch')
-                    //     ->selectRaw('branch')
-                    //     ->get()
-                    //     ->pluck('branch')
-                    //     ->toArray();
-// dd($branches);
+                   
                         $branches = getTypeFor('branch',$company->id,false);
                         
-                        
-                        // dd($branches);
-
-
-
                         if ($name_of_selector_label == 'Products Items') {
 
                             $column =  3 ;

@@ -131,8 +131,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
-							
-                                @foreach($models[$currentTab] as $index=>$model)
+							@php
+								$index = 0 ;
+							@endphp
+                                @foreach($models[$currentTab] as $model)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
@@ -192,6 +194,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         </span>
                                     </td>
                                 </tr>
+								@php
+									$index++;
+								@endphp
                                 @endforeach
                             </tbody>
                         </table>
@@ -241,6 +246,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
+							@php
+								$index = 0 ;
+							@endphp
                                 @foreach($models[$currentTab] as $index=>$model)
                                 <tr>
                                     <td>
@@ -294,6 +302,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         </span>
                                     </td>
                                 </tr>
+								@php
+									$index++;
+								@endphp
                                 @endforeach
                             </tbody>
                         </table>
@@ -340,6 +351,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
+							@php
+								$index = 0 ;
+							@endphp
                                 @foreach($models[$currentTab] as $index=>$model)
                                 <tr>
                                     <td>
@@ -399,6 +413,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         </span>
                                     </td>
                                 </tr>
+								@php
+									$index++;
+								@endphp
                                 @endforeach
                             </tbody>
                         </table>
@@ -445,7 +462,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
-					
+					@php
+						$index = 0 ;
+					@endphp
                                 @foreach($models[$currentTab] as $index=>$model)
                                 <tr>
                                     <td>
@@ -501,6 +520,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                     </span>
                     </td>
                     </tr>
+					@php
+						$index++;
+					@endphp
                     @endforeach
                     </tbody>
                     </table>

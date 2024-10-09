@@ -5,18 +5,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\QuantitySalesForecastReport;
-use App\Models\QuantityAllocationSetting;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
+use App\Models\Product;
+use App\Models\QuantityAllocationSetting;
 use App\Models\QuantityModifiedSeasonality;
 use App\Models\QuantityModifiedTarget;
-use App\Models\Product;
 use App\Models\QuantityProductSeasonality;
 use App\Models\QuantitySalesForecast;
-use App\Models\SalesGathering;
 use App\Models\QuantitySecondAllocationSetting;
 use App\Models\QuantitySecondExistingProductAllocationBase;
 use App\Models\QuantitySecondNewProductAllocationBase;
+use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -88,7 +88,6 @@ class QuantitySecondAllocationsReport
         $allocations_setting = QuantitySecondAllocationSetting::company()->first();
         $allocation_base = $allocations_setting->allocation_base;
         $hasNewProductsItems  =getNumberOfProductsItemsQuantity($company->id) ;
-        // dd($hasNewProductsItems);
      if ( ($request->isMethod('POST')
             || (! $allocations_setting->add_new_items) )){
             //  if (($request->isMethod('POST') || (! $hasNewProductsItems && ! $allocations_setting->number_of_items) )){
@@ -141,7 +140,6 @@ class QuantitySecondAllocationsReport
                 ]
             );
             $allocations_base_row->save();
-            // dd($name_of_new_allocation_base);
             $allocations_base_row = QuantitySecondNewProductAllocationBase::company()->first();
             return redirect()->route('second.existing.products.allocations.quantity', $company);
         }

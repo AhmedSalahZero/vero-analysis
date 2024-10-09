@@ -58,7 +58,6 @@
 
                     </div>
 					
-					{{-- {{ dd(get_defined_vars()) }} --}}
 
                     <div class="form-group row">
 					@if(isset(get_defined_vars()['__data']['type']) && get_defined_vars()['__data']['type'] !='averagePrices')

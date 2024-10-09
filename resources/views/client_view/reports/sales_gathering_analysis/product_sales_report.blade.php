@@ -1,7 +1,5 @@
 @extends('layouts.dashboard')
 @section('css')
-{{-- {{ dd($final_report_data) }} --}}
-{{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
 <style>
     table {
         white-space: nowrap;

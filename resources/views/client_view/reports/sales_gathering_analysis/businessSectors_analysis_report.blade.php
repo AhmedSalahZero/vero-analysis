@@ -141,7 +141,6 @@
         <?php $id =1 ;
                             sortReportForTotals($report_data);
 
-                            // dd($report_data);
                             ?>
         @foreach ($report_data as $zone_name => $data)
 

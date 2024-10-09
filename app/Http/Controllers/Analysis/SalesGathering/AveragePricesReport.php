@@ -39,7 +39,6 @@ class AveragePricesReport
 			$type = 'Zones / Products Items';
 		} elseif ($request->type_of_report == "salesChannels_Items_avg") {
 			$full_report_data = (new SalesChannelsAgainstAnalysisReport)->result($request, $company, 'array');
-			// dd($full_report_data , $request->all());
 			$type = 'Sales Channels / Products Items';
 		} elseif ($request->type_of_report == "businessSectors_Items_avg") {
 			$full_report_data = (new BusinessSectorsAgainstAnalysisReport)->result($request, $company, 'array');
@@ -86,7 +85,6 @@ class AveragePricesReport
 		foreach ($report_data as $r => $d) {
 			unset($report_data[$r]['Totals']);
 		}
-		// dd($report_data);
 
 		$view_name = $full_report_data['view_name'] ?? '';
 		$names = $full_report_data['names'] ?? [];

@@ -4,10 +4,10 @@
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\InventoryStatement;
-use Illuminate\Http\Request;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class EndBalanceAnalysisReport
     {
@@ -102,7 +102,6 @@ class EndBalanceAnalysisReport
             // }
 
 
-            // dd($volume_outs_data);
             $final = ['End Balance'=>$new_end_balances];
             $indexes_intervals_type = [
                 "End Balance"   => "end_balance_interval",
@@ -149,7 +148,6 @@ class EndBalanceAnalysisReport
                     }
                 }
 
-            // dd($income_statement_updated_data);
             return$income_statement_updated_data ;
         }
     }

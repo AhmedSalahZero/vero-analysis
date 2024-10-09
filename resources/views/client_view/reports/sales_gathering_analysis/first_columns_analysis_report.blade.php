@@ -110,7 +110,6 @@
 				<div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
 					<x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
 						@slot('table_header')
-						{{-- @dd(()) --}}
 						<tr class="table-active text-center">
 						
 							<th class="text-center absorbing-column">{{ __($firstColumnViewName) }}</th>
@@ -126,7 +125,6 @@
 						@php
 						sortReportForTotals($report_data)
 						@endphp
-						{{-- @dd($sortReportForTotalsSalesValues) --}}
 						@foreach ($report_data as $sales_channel_name => $sales_channel_channels_data)
 						<?php $chart_data = []; ?>
 
@@ -167,7 +165,6 @@
 
 
 						@endphp
-						{{-- {{ dd($sales_channel_channels_data , $dates) }} --}}
 						@foreach ($sales_channel_channels_data as $channel_name => $channel_section)
 						<tr class="row{{ $id }}  text-center" style="display: none">
 
@@ -175,7 +172,6 @@
 
 							@foreach ($dates as $date)
 							<td class="text-center">
-							{{-- {{ dd($name_of_report_item) }} --}}
 								{{ number_format($channel_section[$name_of_report_item][$date] ?? 0, 0) }}
 								<span class="active-text-color color-{{ getPercentageColor($channel_section['Growth Rate %'][$date] ?? 0, 1) }}"><b>
 

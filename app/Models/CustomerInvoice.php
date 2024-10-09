@@ -392,7 +392,6 @@ class CustomerInvoice extends Model implements IInvoice
 	
 		if($queryResultRaw->current_sum){
 			$invoiceNumber = __('Invoice No.') . ' ' .  $queryResultRaw->invoice_number ;
-			// dd($queryResultRaw);
 			$sum = $queryResultRaw->current_sum;
 			$result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] =  $sum;
 			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $sum : $sum;

@@ -35,7 +35,6 @@ class RevenueBusinessLineController extends Controller
         
         $items = [];
         $revenueBusinessLines = RevenueBusinessLine::with('serviceCategories.serviceItems')->where('company_id', $company->id)->get();
-        // dd($revenueBusinessLines[0]);
         foreach($revenueBusinessLines as $index=>$revenueBusinessLine) {
             $revenueBusinessLineName = $revenueBusinessLine->getName();
 			if($revenueBusinessLineName){
@@ -104,12 +103,10 @@ class RevenueBusinessLineController extends Controller
      */
     public function edit(Company $company,$id)
     {
-		// dd($revenueBusinessLine,$serviceCategory , $serviceItem);
     }
 	
 	public function editForm(Company $company,  $revenueBusinessLine ,  $serviceCategory = null, $serviceItem = null )
     {
-		// dd(RevenueBusinessLine::getViewVars());
 		return view(
             'admin.revenue-business-line.create',
             array_merge([
@@ -134,7 +131,6 @@ class RevenueBusinessLineController extends Controller
 		$oldRevenueBusinessLine = RevenueBusinessLine::find($request->get('old_revenue_business_line_id'));
 		$oldServiceCategory = ServiceCategory::find($request->get('old_service_category__id'));
 		$oldServiceItem = ServiceItem::find($request->get('old_service_item_id'));
-		// dd($oldServiceItem,$oldServiceCategory);
 		if($oldServiceCategory && !$oldServiceItem){
 			$oldServiceCategory->revenue_business_line_id = $request->get('revenue_business_line_id');
 			$oldServiceCategory->save();

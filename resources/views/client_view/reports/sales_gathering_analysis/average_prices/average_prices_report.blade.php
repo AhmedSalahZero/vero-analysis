@@ -116,7 +116,6 @@
 @endforeach
 </div> --}}
 <!--End:: Tab  EGP FX Rate Table -->
-{{-- {{ dd() }} --}}
 @php
 	$view_name = str_replace('Items',' Products Items',$view_name);
 @endphp

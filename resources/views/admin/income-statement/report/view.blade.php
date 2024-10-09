@@ -11,7 +11,6 @@
 
         <div class="kt-portlet">
 
-{{-- {{dd($incomeStatement)}} --}}
             <div class="kt-portlet__body">
                 @include('admin.income-statement.report.view-table' )
             </div>

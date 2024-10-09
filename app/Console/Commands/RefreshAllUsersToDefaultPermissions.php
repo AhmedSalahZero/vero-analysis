@@ -41,18 +41,11 @@ class RefreshAllUsersToDefaultPermissions extends Command
      */
     public function handle()
     {
-		// $user = User::find(1);
-		// dd($user->permissions->pluck('name')->toArray(),$user->can('view money received'));
-		// dd('good');
-	
-        // dd(User::orderBy('id','asc')->where('id',47)->first()->companies->first();
 		DB::table('permissions')->delete();
 		DB::table('model_has_permissions')->delete();
 		DB::table('role_has_permissions')->delete();
 		app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 		app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
-		// sleep(10);
-		// dd('good');	
         $users = User::orderBy('id','asc')->get();
 		
 		foreach(Company::all() as $company){

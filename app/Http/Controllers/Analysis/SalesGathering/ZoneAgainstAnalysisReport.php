@@ -585,7 +585,6 @@ class ZoneAgainstAnalysisReport
 
 				->toArray();
 		}
-		// dd($data);
 		return $data;
 	}
 	public function dataView(Request $request, Company $company)
@@ -614,92 +613,4 @@ class ZoneAgainstAnalysisReport
 		return view('ajax_views.multi_selections_view', compact('data', 'name', 'company'));
 	}
 }
-    // public function resultold(Request $request, Company $company, $result = 'view')
-    // {
-    //     $report_data = [];
-    //     $growth_rate_data = [];
-    //     $zones_names = [];
-    //     $final_report_total = [];
-    //     $main_type =
-    //         $zones = is_array(json_decode(($request->zones[0]))) ? json_decode(($request->zones[0])) : $request->zones;
-    //     $type = $request->type;
-    //     $view_name = $request->view_name;
-    //     $name_of_report_item  = ($result == 'view') ? 'Sales Values' : 'Avg. Prices';
-    //     foreach ($zones as  $zone) {
-
-    //         $sales_gatherings = SalesGathering::company()
-    //             ->where('zone', $zone)
-    //             ->whereNotNull($type)
-    //             ->whereBetween('date', [$request->start_date, $request->end_date])
-    //             ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,zone,quantity,quantity_bonus,' . $type)
-    //             ->get()
-    //             ->toArray();
-
-    //         foreach ($request->sales_channels as $sales_channel_key => $sales_channel) {
-
-    //             $zones_per_month = [];
-    //             $zones_data = [];
-    //             $years = [];
-    //             $sales_gatherings_per_channel = collect($sales_gatherings)->where($type, $sales_channel)->toArray();
-
-    //             $first_key_of_array = array_key_first($sales_gatherings_per_channel);
-    //             if (isset($sales_gatherings_per_channel[$first_key_of_array]['date'])) {
-
-    //                 $dt = Carbon::parse($sales_gatherings_per_channel[$first_key_of_array]['date']);
-    //                 $month = $dt->endOfMonth()->format('d-m-Y');
-
-
-
-    //                 foreach ($sales_gatherings_per_channel as $key => $row) {
-
-    //                     $dt = Carbon::parse($row['date']);
-    //                     $current_month = $dt->endOfMonth()->format('d-m-Y');
-    //                     if ($result == 'view') {
-    //                         $net_sales = $row['net_sales_value'];
-    //                     } else {
-    //                         $quantitys = $row['quantity'] + $row['quantity_bonus'];
-    //                         $net_sales = ($quantitys == 0)  ? 0 : $row['net_sales_value'] / $quantitys;
-    //                     }
-    //                     if ($current_month == $month) {
-    //                         $zones_per_month[$current_month][] = $net_sales;
-    //                     } else {
-    //                         $month = $current_month;
-    //                         $zones_per_month[$current_month][] = $net_sales;
-    //                     }
-
-    //                     $zones_data[$month] = array_sum($zones_per_month[$month]);
-    //                 }
-    //                 // Data & Growth Rate Per Sales Channel
-    //                 array_walk($zones_data, function ($val, $date) use (&$years) {
-    //                     $years[] = date('Y', strtotime($date));
-    //                 });
-    //                 $years = array_unique($years);
-
-    //                 $report_data[$zone][$sales_channel][$name_of_report_item] = $zones_data;
-    //                 $interval_data = Intervals::intervals($report_data[$zone][$sales_channel], $years, $request->interval);
-    //                 $report_data[$zone][$sales_channel] = $interval_data['data_intervals'][$request->interval] ?? [];
-
-    //                 $report_data[$zone]['Total']  = $this->finalTotal([($report_data[$zone]['Total']  ?? []) ,($report_data[$zone][$sales_channel][$name_of_report_item]??[]) ]);
-    //                 $report_data[$zone][$sales_channel]['Growth Rate %'] = $this->growthRate(($report_data[$zone][$sales_channel][$name_of_report_item] ?? []));
-    //             }
-    //         }
-    //         // Total & Growth Rate Per Zone
-
-    //         $final_report_total = $this->finalTotal( [($report_data[$zone]['Total']??[]) , ($final_report_total??[]) ]);
-    //         $report_data[$zone]['Growth Rate %'] =  $this->growthRate(($report_data[$zone]['Total'] ?? []));
-    //         $zones_names[] = (str_replace(' ', '_', $zone));
-    //     }
-
-    //     // Total Zones & Growth Rate
-
-    //     $report_data['Total'] = $final_report_total;
-    //     $report_data['Growth Rate %'] =  $this->growthRate($report_data['Total']);
-    //     $dates = array_keys($report_data['Total']);
-
-    //     // dd($report_data);
-    //     if ($result == 'view') {
-    //         return view('client_view.reports.sales_gathering_analysis.zone_analysis_report', compact('company','name_of_report_item', 'view_name', 'zones_names', 'dates', 'report_data',));
-    //     } else {
-    //         return ['report_data' => $report_data, 'view_name' => $view_name, 'names' => $zones_names];
-    //     }
-    // }
+  

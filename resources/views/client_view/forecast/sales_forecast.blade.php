@@ -254,7 +254,6 @@
                 <div class="kt-portlet kt-portlet--mobile">
                     <div class="kt-portlet__body">
                         <!--begin: Datatable -->
-						{{-- {{ dd($sales_forecast['last_3_years_seasonality']) }} --}}
                         <x-table :tableTitle="__('Last 3 Years Seasonality')"
                             :tableClass="'kt_table_with_no_pagination_no_scroll'">
                             @slot('table_header')

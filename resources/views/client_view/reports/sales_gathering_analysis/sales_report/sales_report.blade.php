@@ -156,7 +156,6 @@
 
 
                     <tr>
-                        {{-- @dd($label??) --}}
                         <th>{{ __('Sales Values') }}</th>
                         <?php $accumulated_total = 0; ?>
                         @foreach ($dates as $date)

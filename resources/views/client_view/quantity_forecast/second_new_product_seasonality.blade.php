@@ -83,12 +83,10 @@
 
     @else
     @php
-        // dd(get_defined_vars());
             $allocation_base = '';
         @endphp
 
     @endif
-{{-- @dd() --}}
 
         {{-- Existing Products  --}}
         @if(hasProductsItems($company))
