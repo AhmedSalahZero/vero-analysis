@@ -448,7 +448,6 @@ class LetterOfGuaranteeIssuance extends Model
 			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
 				$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
 				$isActive = now()->greaterThanOrEqualTo($currentDate);
-				dd(!$isOpeningBalance,$currentDate , $openingBalanceDateOfCurrentAccount , Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount));
 				if(!$isOpeningBalance ||  Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount) ){
 					$this->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,$isActive,__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
 				}
