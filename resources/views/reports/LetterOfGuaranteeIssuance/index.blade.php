@@ -25,6 +25,11 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 	color:white !important;
 	 font-weight: bold !important;
 }
+.bg-cancelled{
+	background-color:orange;
+	color:white !important;
+	 font-weight: bold !important;
+}
     th {
         background-color: #0742A6;
         color: white;
@@ -138,6 +143,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									
 									@if($model->isExpired())
 									bg-expired
+									
+									@elseif($model->isCancelled())
+									bg-cancelled
 									@endif 
 									
 									">{{ $model->getStatusFormatted() }}</td>
@@ -243,6 +251,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="
 									@if($model->isExpired())
 									bg-expired
+									@elseif($model->isCancelled())
+									bg-cancelled
 									@endif 
 									
 									"> {{ $model->getStatusFormatted() }}</td>
@@ -340,13 +350,15 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<td class="
 									@if($model->isExpired())
 									bg-expired
+									@elseif($model->isCancelled())
+									bg-cancelled
 									@endif 
 									
 									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
-                                    <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }} <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
@@ -358,7 +370,6 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 											@if(!$model->advancedPaymentHistories->count() && !$model->isCancelled())  
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()]) }}">
 											<i class="fa fa-pen-alt"></i>
-											
 											</a>
 											@endif
 											@if(!$model->isCancelled())
@@ -445,6 +456,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="
 									@if($model->isExpired())
 									bg-expired
+									@elseif($model->isCancelled())
+									bg-cancelled
 									@endif 
 									
 									">{{ $model->getStatusFormatted() }}</td>

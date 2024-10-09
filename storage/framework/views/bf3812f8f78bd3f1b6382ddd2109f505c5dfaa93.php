@@ -24,6 +24,11 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 	color:white !important;
 	 font-weight: bold !important;
 }
+.bg-cancelled{
+	background-color:orange;
+	color:white !important;
+	 font-weight: bold !important;
+}
     th {
         background-color: #0742A6;
         color: white;
@@ -165,6 +170,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									
 									<?php if($model->isExpired()): ?>
 									bg-expired
+									
+									<?php elseif($model->isCancelled()): ?>
+									bg-cancelled
 									<?php endif; ?> 
 									
 									"><?php echo e($model->getStatusFormatted()); ?></td>
@@ -292,6 +300,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="
 									<?php if($model->isExpired()): ?>
 									bg-expired
+									<?php elseif($model->isCancelled()): ?>
+									bg-cancelled
 									<?php endif; ?> 
 									
 									"> <?php echo e($model->getStatusFormatted()); ?></td>
@@ -411,13 +421,15 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<td class="
 									<?php if($model->isExpired()): ?>
 									bg-expired
+									<?php elseif($model->isCancelled()): ?>
+									bg-cancelled
 									<?php endif; ?> 
 									
 									"><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
-                                    <td class="text-transform"><?php echo e($model->getLgCurrentAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLgCurrentAmountFormatted()); ?> <br> <?php echo e($model->getLgCurrency()); ?> </td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
@@ -429,7 +441,6 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 											<?php if(!$model->advancedPaymentHistories->count() && !$model->isCancelled()): ?>  
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$model->getSource()])); ?>">
 											<i class="fa fa-pen-alt"></i>
-											
 											</a>
 											<?php endif; ?>
 											<?php if(!$model->isCancelled()): ?>
@@ -538,6 +549,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="
 									<?php if($model->isExpired()): ?>
 									bg-expired
+									<?php elseif($model->isCancelled()): ?>
+									bg-cancelled
 									<?php endif; ?> 
 									
 									"><?php echo e($model->getStatusFormatted()); ?></td>

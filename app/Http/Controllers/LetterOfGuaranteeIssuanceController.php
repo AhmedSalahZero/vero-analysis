@@ -8,12 +8,10 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
-use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeIssuanceAdvancedPaymentHistory;
 use App\Models\LetterOfGuaranteeStatement;
-use App\Models\Partner;
 use App\Models\PurchaseOrder;
 use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
@@ -49,8 +47,9 @@ class LetterOfGuaranteeIssuanceController
 		})
 		->when($filterStartDate , function($collection) use ($filterStartDate,$filterEndDate){
 			return $collection->filterByIssuanceDate($filterStartDate,$filterEndDate);
-		})
-		->sortByDesc('id')->values();
+		});
+		// ->sortBy('renewal_date')
+		// ->values();
 
 		return $collection;
 	}
@@ -165,8 +164,9 @@ class LetterOfGuaranteeIssuanceController
 		$issuanceFees = $request->get('issuance_fees',0);
 	
 		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
-		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($request->get('lg_fees_and_commission_account_number'),$company->id , $financialInstitutionId);
-		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId);
+		$lgFeesAndCommissionAccountNumber = $request->get('lg_fees_and_commission_account_number') ;
+		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($lgFeesAndCommissionAccountNumber,$company->id , $financialInstitutionId);
+		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number',$lgFeesAndCommissionAccountNumber),$company->id , $financialInstitutionId);
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
 		$openingBalanceFromCurrentAccountBankStatementForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceFromCurrentAccountBankStatement();
 		

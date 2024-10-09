@@ -157,7 +157,7 @@ class Company extends Model implements HasMedia
 	}
 	public function letterOfGuaranteeIssuances()
 	{
-		return $this->hasMany(LetterOfGuaranteeIssuance::class , 'company_id','id');
+		return $this->hasMany(LetterOfGuaranteeIssuance::class , 'company_id','id')->orderByRaw("case status when 'cancelled' then 2 else 1 end , renewal_date asc ");
 	}
 	public function letterOfCreditIssuances()
 	{
