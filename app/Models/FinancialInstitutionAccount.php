@@ -171,7 +171,11 @@ class FinancialInstitutionAccount extends Model
 	}
 	public function getOpeningBalanceFromCurrentAccountBankStatement()
 	{
-		return $this->currentAccountBankStatements->sortBy('full_date')->first();
+		return $this->currentAccountBankStatements->where('is_beginning_balance',1)->first();
+	}
+	public function getOpeningBalanceDate():string
+	{
+		return $this->accountInterests->sortBy('start_date')->first()->start_date;
 	}
 	public function getAmount(string $currencyName , string $accountNumber,int $financialInstitutionId , int $companyId)
 	{

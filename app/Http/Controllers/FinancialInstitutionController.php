@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Helpers\HArr;
 use App\Http\Requests\StoreCurrentAccountRequest;
 use App\Http\Requests\StoreFinancialInstitutionRequest;
 use App\Models\Bank;
@@ -10,6 +12,7 @@ use App\Models\FinancialInstitution;
 use App\Models\LetterOfCreditFacility;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
+use Arr;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
@@ -157,6 +160,7 @@ class FinancialInstitutionController
 	}
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution){
 		$exceptBanks = FinancialInstitution::where('company_id',$company->id)->pluck('bank_id')->toArray() ;
+		$exceptBanks = HArr::removeKeyFromArrayByValue($exceptBanks,[$financialInstitution->bank_id]);
 		$banks = Bank::whereNotIn('id',$exceptBanks)->pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		

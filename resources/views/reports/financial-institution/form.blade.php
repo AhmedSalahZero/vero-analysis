@@ -75,8 +75,6 @@
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
                                     <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Financial Institution')"></x-sectionTitle>
-
-                                    {{-- {{ }} --}}
                                 </h3>
                             </div>
                         </div>
@@ -108,7 +106,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-5 bank_class hidden">
-                                        <label>{{__('Select Bank ')}} @include('star') </label>
+								                                        <label>{{__('Select Bank ')}} @include('star') </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="bank_id" data-live-search="true" data-actions-box="true" class="form-control select2-select ">

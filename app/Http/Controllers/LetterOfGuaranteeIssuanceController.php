@@ -168,12 +168,12 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($lgFeesAndCommissionAccountNumber,$company->id , $financialInstitutionId);
 		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number',$lgFeesAndCommissionAccountNumber),$company->id , $financialInstitutionId);
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
-		$openingBalanceFromCurrentAccountBankStatementForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceFromCurrentAccountBankStatement();
+		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
 		
 		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id ?? 0;
 		
 		
-		$openingBalanceDateOfCurrentAccount = $openingBalanceFromCurrentAccountBankStatementForFeesAndCommission->date ;
+
 		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_number',[]),[28,29]);
 		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar') );
@@ -181,6 +181,7 @@ class LetterOfGuaranteeIssuanceController
 		if(!$isOpeningBalance){
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		}
+	
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,0,$cdOrTdId,'credit-lg-amount');
 		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lg-amount');
 		

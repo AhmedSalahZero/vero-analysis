@@ -78,8 +78,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$financialInstitutionId = $letterOfGuaranteeIssuance->getFinancialInstitutionBankId();
 		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getLgFeesAndCommissionAccountNumber(),$company->id , $financialInstitutionId);
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
-		$openingBalanceFromCurrentAccountBankStatementForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceFromCurrentAccountBankStatement();
-		$openingBalanceDateOfCurrentAccount = $openingBalanceFromCurrentAccountBankStatementForFeesAndCommission->date ;
+		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
 		$isOpeningBalance = $letterOfGuaranteeIssuance->isOpeningBalance();
 		$letterOfGuaranteeIssuance->storeCommissionAmountCreditBankStatement( $lgCommissionInterval ,  $numberOfIterationsForQuarter ,  $issuanceDate, $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount, $financialInstitutionAccountIdForFeesAndCommission, $transactionName, $lgType, $isOpeningBalance,$lgRenewalDateHistoryId);
 		
