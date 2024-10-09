@@ -2,11 +2,11 @@
 namespace App\Http\Controllers;
 use App\Models\AccountType;
 use App\Models\Bank;
-use App\Models\MediumTermLoan;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LcSettlementInternalMoneyTransfer;
 use App\Models\LetterOfCreditIssuance;
+use App\Models\MediumTermLoan;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -39,7 +39,7 @@ class LoansController
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		})
-		->sortByDesc('id');
+		->sortByDesc('id')->values();
 		
 		return $collection;
 	}

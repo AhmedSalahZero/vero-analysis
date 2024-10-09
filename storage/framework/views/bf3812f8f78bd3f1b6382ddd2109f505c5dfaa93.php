@@ -152,6 +152,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
+							
                                 <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
@@ -170,7 +171,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getTransactionReference()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?> <br> <?php echo e($model->getLgCurrency()); ?> </td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getTransactionDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
@@ -296,7 +297,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									"> <?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
@@ -415,7 +416,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									"><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
                                     <td class="text-transform"><?php echo e($model->getLgCurrentAmountFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
@@ -525,6 +526,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
+					
                                 <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
@@ -541,7 +543,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									"><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
 
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>

@@ -39,7 +39,7 @@ class LcSettlementInternalMoneyTransferController
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		})
-		->sortByDesc('id');
+		->sortByDesc('id')->values();
 		
 		return $collection;
 	}

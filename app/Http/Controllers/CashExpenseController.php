@@ -70,7 +70,7 @@ class CashExpenseController
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		})
-		->sortByDesc('payment_date');
+		->sortByDesc('payment_date')->values();
 
 		return $collection;
 	}
