@@ -170,7 +170,7 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
 		$openingBalanceFromCurrentAccountBankStatementForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceFromCurrentAccountBankStatement();
 		
-		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id;
+		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id ?? 0;
 		
 		
 		$openingBalanceDateOfCurrentAccount = $openingBalanceFromCurrentAccountBankStatementForFeesAndCommission->date ;

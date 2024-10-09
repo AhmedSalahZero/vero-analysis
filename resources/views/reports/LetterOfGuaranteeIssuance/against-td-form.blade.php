@@ -400,10 +400,10 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-number-based-on-account-type">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -416,7 +416,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0 }}" name="lg_fees_and_commission_account_number" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>

@@ -755,14 +755,14 @@ use App\Models\LetterOfCreditIssuance;
 					url = url.replace('replace_financial_institution_id', financialInstitutionId);
                     
 		if(accountType &&accountNumber &&financialInstitutionId){
-			
-        $.ajax({
+			 $.ajax({
             url
             , success: function(res) {
                 parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
             }
         });
 		}
+       
     })
 	
 

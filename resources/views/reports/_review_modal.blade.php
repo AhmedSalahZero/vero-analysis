@@ -1,5 +1,5 @@
  @if(!$model->isReviewed() && auth()->user()->can(getReviewPermissionName(getModelNameWithoutNamespace($model))))
- <a data-toggle="modal" data-target="#review-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-success btn-icon" title="{{ __('Reviewed') }}" href="#"><i class="fa fa-key"></i></a>
+ <a data-toggle="modal" data-target="#review-id-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-success btn-icon" title="{{ __('Reviewed') }}" href="#"><i class="fa fa-check"></i></a>
  <div class="modal fade" id="review-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered" role="document">
          <div class="modal-content">
