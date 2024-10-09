@@ -66,9 +66,7 @@ class ChequeAgingService
          */
 
         foreach ($invoices as $index => $invoice) {
-			// if(!$invoice->{$modelModelName}){
-			// 	dd($invoice	);
-			// }
+			
             $clientName = $invoice->{$modelModelName}->getName() ;
             $invoiceNumber = $invoice->getNumber();
             $invoiceDueDate = $invoice->getDueDate();

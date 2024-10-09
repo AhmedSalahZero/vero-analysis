@@ -15,7 +15,6 @@
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($type == 'sales_discount') {{  route('salesBreakdown.salesDiscounts.analysis.result',$company)}}@elseif ($type == 'comparing') {{route('comparing',$company)}} @else{{  route('salesBreakdown.analysis.result',$company)  }} @endif   enctype="multipart/form-data">
             @csrf
-            {{-- @dd($type) --}}
             <div class="kt-portlet">
                 <input type="hidden" name="type" value="{{$type}}">
                 <input type="hidden" name="view_name" value="{{$view_name}}">

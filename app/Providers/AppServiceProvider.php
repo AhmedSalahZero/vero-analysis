@@ -53,8 +53,6 @@ class AppServiceProvider extends ServiceProvider
 		// DB::table('role_has_permissions')->delete();
 		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
-		
-		// dd(phpinfo());
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
@@ -114,7 +112,6 @@ class AppServiceProvider extends ServiceProvider
 			 * @var Collection $this 
 			 */
 			return $this->when($startDate && $endDate ,function(Collection $items) use ($startDate,$endDate){
-				// dd();
 				return $items->where('created_at','>=',Carbon::make($startDate)->startOfDay())->where('created_at','<=',Carbon::make($endDate)->endOfDay());
 			}) ;
 		});

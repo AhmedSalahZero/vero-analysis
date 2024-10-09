@@ -39,10 +39,6 @@ class DynamicItemsController extends Controller
 	public function createLabelingForm(Company $company ,Request $request )
 	{
 		
-		// dd(session()->flush());
-		
-		// $exportables = getExportableFieldsForModel($company->id,'SalesGathering');
-		// dd($exportables);
 		$subItemsCount = session()->get('sub_items_'.$company->id,[]);
 		$subItemNames = session()->get('sub_item_names_'.$company->id,[]);
 		$tableHeaders = array_merge(
@@ -110,7 +106,6 @@ class DynamicItemsController extends Controller
 			);
 			
 			$howManyItems = $subItemsCount['how_many_items'] ?? 0;
-			// dd($tableHeaders);
 		return view('admin.dynamic-items.ffe-label',[
 			'pageTitle'=>__('Create'),
 			'type'=>'_create',

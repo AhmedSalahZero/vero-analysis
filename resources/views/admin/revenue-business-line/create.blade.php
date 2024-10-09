@@ -26,9 +26,7 @@
     <div class="col-md-12">
 
         @csrf
-        {{-- {{ dd($revenueBusinessLines[0]['value']) }} --}}
-        {{-- {{ dd() }} --}}
-		{{-- {{ dd($editMode) }} --}}
+     
         <x-form.body method="post" action="{{ !isset($editMode) ? route('admin.store.revenue-business-line',$company->getIdentifier()) : route('admin.update.revenue',$company->getIdentifier()) }}">
             <x-form.hidden id="current_service_category_id" value="{{ isset($model) ? $model->getServiceCategoryId() : 0 }}"></x-form.hidden>
             <x-form.hidden name="old_revenue_business_line_id" value="{{ isset($revenueBusinessLineId) ? $revenueBusinessLineId : ''  }}"></x-form.hidden>

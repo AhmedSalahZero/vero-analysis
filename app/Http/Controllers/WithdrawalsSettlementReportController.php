@@ -101,7 +101,6 @@ class WithdrawalsSettlementReportController
 		$accountType = AccountType::find($accountTypeId);
 		$fullClassName = ('\App\Models\\'.$accountType->model_name) ;
 		$tableNameFormatted = $fullClassName::getTableNameFormatted();
-		// dd('qqq');
 		$overdraftWithdrawals = $this->getOverdraftWithdrawals($startDate, $endDate,$currency,$accountTypeId ,$company->id, $financialInstitutionIds);
 
 	

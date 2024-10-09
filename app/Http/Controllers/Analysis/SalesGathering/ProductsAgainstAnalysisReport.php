@@ -36,14 +36,7 @@ class ProductsAgainstAnalysisReport
 			$type  = 'country';
 			$view_name = 'Products Against Countries Trend Analysis';
 		}
-		// dd('q');
-		// elseif (request()->route()->named('products.categories.analysis')) {
-		//     $type  = 'category';
-		//     $view_name = 'Products Against Categories Trend Analysis';
-		// } elseif (request()->route()->named('products.principles.analysis')) {
-		//     $type  = 'principle';
-		//     $view_name = 'Products Against Principles Trend Analysis';
-		// }
+	
 		elseif (request()->route()->named('products.Items.analysis')) {
 			$type  = 'product_item';
 			$view_name = 'Products Against Products Items Trend Analysis';
@@ -70,7 +63,6 @@ class ProductsAgainstAnalysisReport
 			 $type  = 'principle';;
 			$view_name = 'Products Against Principle';
 		}	
-		// dd(request()->route()->getName());
 		$name_of_selector_label = ($type == 'averagePricesProductItems') ? 'Products Items' : str_replace(['Products Against ', ' Trend Analysis'], '', $view_name);
 		return view('client_view.reports.sales_gathering_analysis.products_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
 	}
@@ -86,7 +78,6 @@ class ProductsAgainstAnalysisReport
 		$view_name = $request->view_name;
 		$name_of_report_item  = ($result == 'view') ? 'Sales Values' : 'Avg. Prices';
 		$data_type = ($request->data_type === null || $request->data_type == 'value') ? 'net_sales_value' : 'quantity';
-		// dd($mainData);
 		foreach ($mainData as  $main_row) {
 			if ($result == 'view' || $result == 'data') {
 				$main_row = str_replace("'", "''", $main_row);
@@ -233,7 +224,6 @@ class ProductsAgainstAnalysisReport
 		}
 
 
-		// dd($report_data);
 
 		// Total Zones & Growth Rate
 
@@ -455,9 +445,7 @@ class ProductsAgainstAnalysisReport
         {
             return $report_data;
         }
-		// dd($branches_data   , $total_branches);
 		$dates = array_keys( $total_branches ?? []); 
-		// dd($final_report_data,$dates);
 		
 		
         return view('client_view.reports.sales_gathering_analysis.product_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));

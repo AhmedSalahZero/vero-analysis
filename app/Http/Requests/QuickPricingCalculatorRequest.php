@@ -50,7 +50,6 @@ class QuickPricingCalculatorRequest extends CustomJsonRequest
     public static function rules():array
     {
 
-		// dd(Request()->all());
         return [
             'date'=>'required',
             'revenue_business_line_id'=>'required',

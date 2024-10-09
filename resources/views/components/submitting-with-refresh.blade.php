@@ -1,7 +1,6 @@
 @props([
 'returnRedirectRoute'=>''
 ])
-{{-- @dd() --}}
 <div class="kt-portlet">
     <div class="kt-portlet__foot">
         <div class="kt-form__actions">

@@ -218,7 +218,6 @@
                                     </div>
                                 </td>
 								
-                                {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -506,7 +505,6 @@
                                     </div>
                                 </td>
 								
-                                {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -658,7 +656,6 @@
                                     </div>
                                 </td>
 								
-                            {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                             <td>
                                 <div class="d-flex align-items-center">
                                     <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -1007,7 +1004,6 @@
                                     </div>
                                 </td>
 								
-                        {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                         <td>
                             <div class="d-flex align-items-center">
                                 <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -1285,7 +1281,6 @@
                                     </div>
                                 </td>
 								
-                {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                 <td>
                     <div class="d-flex align-items-center">
                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
@@ -1404,7 +1399,6 @@
                                         <input @if($isRepeater) name="is_deductible" @else name="{{ $tableId }}[0][is_deductible]" @endif class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false)  checked @endif type="checkbox">
                                     </div>
                                 </td>
-                {{-- {{ dd($subModel->getWithholdTaxRate()) }} --}}
                 <td>
                     <div class="d-flex align-items-center">
                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">

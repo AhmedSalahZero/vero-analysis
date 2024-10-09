@@ -2,7 +2,6 @@
 
                        <div class="col-md-3 mb-4">
                            
-						   {{-- {{ dd($salesAndMarketingExpense->) }} --}}
 						   <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'sales-and-market-expense'" :add-new-modal-modal-name="'PricingExpense'" :add-new-modal-modal-title="__('Sales And Marketing Expense')" :is-select2="false" :options="$salesAndMarketExpenses??[]" :add-new="false"  :label="__('Sales And Market Expense')" class="" data-filter-type="{{ $type }}" :all="false" name="expense_id" id="{{$type.'_'.'name' }}"  :selected-value="isset($salesAndMarketingExpense) ? $salesAndMarketingExpense->getName() : 0" ></x-form.select>
                                                 <div class="d-md-none m--margin-bottom-10"></div>
 												

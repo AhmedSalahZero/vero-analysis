@@ -229,7 +229,6 @@ class LetterOfCreditFacilityController
 			->orderByRaw('full_date desc')
 			->first();
 			$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
-			// dd($lcTypeId , $selectedLcType);
 			if($lcTypeId == $selectedLcType ){
 				$currentLcOutstanding = $letterOfCreditStatementEndBalance;
 			}

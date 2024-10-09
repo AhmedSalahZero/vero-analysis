@@ -29,8 +29,6 @@ class DeletingClass
 
     public function multipleRowsDeleting(Request $request, Company $company, $model)
     {
-        // dd($request->all());
-        // if($request->ajax)
 
         if ($request->rows === null || count($request->rows) == 0) {
             toastr()->error('No Rows Were Selected');

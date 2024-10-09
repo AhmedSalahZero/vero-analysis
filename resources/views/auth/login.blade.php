@@ -51,7 +51,6 @@
                                 Password / Change Password</b></a>
                     </div>
                 </div>
-				{{-- {{ dd(session()->all()) }} --}}
 
             </form>
         </div>

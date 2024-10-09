@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    {{-- @dd($errors) --}}
+            
                     @if ($errors->has('percentages_total'))
                         <h4 style="color: red"><i class="fa fa-hand-point-right">
                             </i></i>{{ $errors->first('percentages_total') }}</h4>
@@ -84,7 +84,7 @@
                                     @else
                                         <td> {{ $item }} </td>
                                     @endif
-									{{-- {{ dd($product_seasonality) }} --}}
+							
                                     @foreach ($product_seasonality as $index2=>$product)
                                         <?php
                                             if($allocations_base_row === null){

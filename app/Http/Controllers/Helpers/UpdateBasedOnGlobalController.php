@@ -28,7 +28,6 @@ class UpdateBasedOnGlobalController extends Controller
             $result =  formatSelects($childrenModels , $request->selectedItem , $request->model_id , $request->model_value , $request->get('add_new_item') , $request->get('select_all'));
 
         }
-        // dd($result);
         return response()->json([
             'status'=>true ,
             'append_id'=>$request->append_id ,

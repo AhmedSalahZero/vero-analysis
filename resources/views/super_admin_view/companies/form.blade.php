@@ -64,7 +64,6 @@
 					
 
                         <div class="form-group row col-12">
-						{{-- {{ dd($companySection->users) }} --}}
 						   <div class="col-md-4">
                                         <label>{{ __('Systems') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">

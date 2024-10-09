@@ -117,11 +117,9 @@ use App\Models\MoneyReceived;
 			@endif 
         </div>
     </div>
-    {{-- {{ dd($start_date) }} --}}
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
             <!--Begin:: Tab Content-->
-            {{-- {{ dd($filterDates[MoneyReceived::CHEQUE]['startDate']) }} --}}
             <div class="tab-pane {{ !Request('active') || Request('active') == MoneyReceived::CHEQUE ?'active':'' }}" id="{{ MoneyReceived::CHEQUE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="MoneyReceived::CHEQUE" :title="__('Cheques In Safe')" :startDate="$filterDates[MoneyReceived::CHEQUE]['startDate']??''" :endDate="$filterDates[MoneyReceived::CHEQUE]['endDate']??''">

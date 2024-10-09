@@ -313,7 +313,6 @@ class HomeController extends Controller
 	}
 	public function dashboardBreakdownAnalysis(Request $request, Company $company)
 	{
-		// dd('d');
 		if($company->isCachingNow()){
 			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
 		}
@@ -331,7 +330,6 @@ class HomeController extends Controller
 			$start_date = $request['start_date'];
 			$end_date = $request['end_date'];
 		}
-		// dd('ww');
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 		
 		$db_names = array_keys($exportableFields);
@@ -364,8 +362,6 @@ class HomeController extends Controller
 				} else {
 					$breakdown_data = Cache::get($cacheKeyName);
 				}
-				// dd($breakdown_data);
-				// $breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
 				
 				if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 					$first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key) {

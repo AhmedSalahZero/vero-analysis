@@ -43,7 +43,6 @@
                             $count = count($types);
                             $col = 12/$count;
                         ?>
-                        {{-- @dd($types) --}}
                         @foreach ($types as $type => $color)
                             <div class="col-md-{{$col}}">
                                 <!--begin::Total Profit-->
@@ -83,9 +82,7 @@
                 </div>
             </div>
     </div>
-    {{-- @dd($reports_data) --}}
     <div class="row">
-        {{-- @dd($reports_data) --}}
         @foreach ($reports_data as $type => $report_data)
             <div class="col-{{$count == 1 ? 12 : 6}}">
                 <div class="kt-portlet">

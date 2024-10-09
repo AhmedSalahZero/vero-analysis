@@ -73,7 +73,6 @@
 
                     </tr>
                     @endfor
-                    {{-- @dd($total_sales_targets_percentages) --}}
                     <tr class="table-active">
                         <td class="text-center active-style"> {{__('Total')}}</td>
 

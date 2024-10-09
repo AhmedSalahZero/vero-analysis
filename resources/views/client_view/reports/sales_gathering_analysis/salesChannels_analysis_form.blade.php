@@ -8,13 +8,11 @@
 @endsection
 @section('content')
 <div class="row">
-{{-- {{ dd() }} --}}
 
     <div class="col-md-12">
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action=@if($name_of_selector_label=='Sales Discount' ) {{ route('salesChannels.salesDiscount.analysis.result', $company) }} @elseif ($type=='averagePrices' || ($type=='averagePricesProductItems' ) ) {{ route('averagePrices.result', $company) }} @else {{route('salesChannels.analysis.result', $company) }} @endif enctype="multipart/form-data">
             @csrf
-            {{-- @dd($type == 'averagePrices') --}}
             @if ($type == 'averagePrices')
             <input type="hidden" name="type_of_report" value="salesChannels_products_avg">
             <?php
@@ -52,7 +50,6 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         @if (! in_array('SalesChannelsProductsAveragePricesView',Request()->segments() ) && !in_array('SalesChannelsProductsItemsAveragePricesView',Request()->segments()))
-                        {{-- @dd('q') --}}
                         <div class="col-md-6">
                             <label>{{ __('Data Type') }} </label>
                             <div class="kt-input-icon">
@@ -75,10 +72,8 @@
 
                     </div>
 					
-					{{-- {{dd()}} --}}
 
                     <div class="form-group row">
-					{{-- {{ dd($type) }} --}}
 					@if(isset(get_defined_vars()['__data']['type']) && get_defined_vars()['__data']['type'] !='averagePrices' &&get_defined_vars()['__data']['type']!='averagePricesProductItems')
 					 <div class="col-md-4  first-interval">
 						<label></label>
@@ -164,7 +159,6 @@
                         </div>
 
                         @endif
-						{{-- {{ dd($name_of_selector_label) }} --}}
                         @if ( $name_of_selector_label == 'Sales Discount')
 
                         <div class="col-md-{{$column}}">

@@ -10,8 +10,6 @@
 <div class="row">
     <div class="col-md-12">
 
-{{-- @dd(get_defined_vars()) --}}
-
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action="{{  $type == 'discounts' ?  route('discounts.Ranking.analysis.result',$company) : route('TwoDimensionalBreakdownRanking.result',$company)}}" enctype="multipart/form-data">
             @csrf

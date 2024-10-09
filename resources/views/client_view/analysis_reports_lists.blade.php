@@ -41,7 +41,6 @@
                             ($subSection->name['en'] == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0) )) || 
                             ($subSection->name['en'] == INVOICES && (count(array_intersect(['Document Type','Document Number'],$viewing_names)) > 0) )
                         ||(false !== $found = array_search(\Str::singular($name),       $viewing_names) || $subSection->name['en'] == "Average Prices" ))
-								{{-- {{ dd($subSection->name) }} --}}
 								@if($user->canViewReport(generateReportName($subSection->name['en'])) || $subSection->name['en']=='One Dimension'||$subSection->name['en']=='Two Dimension' ||$subSection->name['en']=='Interval Comparing'  )
                                 <li class="nav-item">
 
@@ -111,12 +110,10 @@
                                             @elseif($name_of_section == "Products Items")
                                                 @php  $name_of_section = "Product Items" @endphp
                                             @endif
-                                            {{-- @dd($name_of_section) --}}
 											
 											
 											
 
-                                            {{-- @if($sub_section->name['en'] == '') --}}
                                             @if ( ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
 

@@ -31,7 +31,6 @@
 </style>
 @endsection
 @section('content')
-{{-- {{ dd($allocation_data_total) }} --}}
 <form action="{{ route('second.new.product.seasonality', $company) }}" method="POST">
     @csrf
     @if($new_products_allocations)
@@ -53,12 +52,8 @@
                 @endslot
                 @slot('table_body')
                 @php
-				// DD($allocation_data_total);
-                //sortTwoDimensionalExcept($allocation_data_total , ['Total'] );
-				 //dd($allocation_data_total);
                 @endphp
-				{{-- {{ dd($allocation_data_total) }} --}}
-				{{-- {{ dd($allocation_data_total) }} --}}
+		
                 @foreach ($allocation_data_total as $base_name => $value)
 				@php
 					$class_name = $base_name == 'Total' ? 'active-style' : '' ;
@@ -67,18 +62,12 @@
                 			
                 <tr>
                     <td class="{{$class_name}}">{{ $base_name }} </td>
-					{{-- {{ dd($allocation_data_total[$base_name] , get_defined_vars()) }} --}}
-                    {{-- @foreach ($allocation_data_total[$base_name] as $date => $total) --}}
-					{{-- {{ dd($allocation_data_total[$base_name],$date,$total) }} --}}
-					{{-- @foreach($total as $currentDate => $currentValue) --}}
-					{{-- {{ dd($allocation_data_total,$date,$total) }} --}}
-					{{-- {{ dd() }} --}}
+		
 					@php
 						$currentRowTotal = 0 ;
 					@endphp
 					@foreach(array_keys(array_first($value) ) as $date )
 					@php
-					//dd();
 						$currentTdTotal = array_sum_at_date($allocation_data[$base_name],$date) ;
 						$currentRowTotal += $currentTdTotal ;
 					@endphp
@@ -96,8 +85,7 @@
                     <?php
                                             $total_products_items[$base_name][$date] = ($value[$date] ?? 0);
                                         ?>
-										{{-- {{ dd($value , $date) }} --}}
-										{{-- {{ dd($value , $date) }} --}}
+								
                     <td class="text-center {{$class_name}}"> {{ number_format($value[$date] ?? 0) }} </td>
                     @endforeach
                     <td style="color:white !important;background-color:#086691 !important" class="{{$class_name}}">{{number_format(array_sum($value))}}</td>

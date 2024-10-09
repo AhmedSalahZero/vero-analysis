@@ -85,8 +85,6 @@ class QuantityCollectionController extends Controller
         $second_allocation_setting_base = QuantitySecondAllocationSetting::company()->first()->allocation_base?? null;
 
         $collection = [];
-		// dd($collection_settings,);
-		// dd($first_allocation_setting_base);
 		// $collection_settings->collection_base = $first_allocation_setting_base;
         if ($collection_settings->collection_base == 'general_collection_policy') {
             $total_company_sales_target = (new QuantitySalesForecastReport)->productsAllocations($company,$request,'total_company_sales_target');
@@ -97,7 +95,6 @@ class QuantityCollectionController extends Controller
         } elseif ($collection_settings->collection_base == $first_allocation_setting_base) {
 
             $total_company_sales_target = (new QuantityAllocationsReport)->NewProductsSeasonality($request,$company,'total_company_sales_target');
-            // dd($total_company_sales_target);
             $collection_data = $collection_settings->first_allocation_collection;
 
             foreach ($total_company_sales_target as $base => $base_targets) {
@@ -121,7 +118,6 @@ class QuantityCollectionController extends Controller
             $monthly_dates[$date] = '';
             $counter++;
         }
-        // dd($result);
         $forecast_year = date('Y',strtotime($sales_forecast->start_date));
         if ($result == 'view') {
             return view('client_view.quantity_forecast.collection_report',compact('company',

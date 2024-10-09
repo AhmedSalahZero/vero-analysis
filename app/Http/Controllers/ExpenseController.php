@@ -19,7 +19,6 @@ class ExpenseController
 		// 	'01-06-2023',
 		// ];
 		$model = IncomeStatement::first();
-		// dd();
 		return view('admin.ready-made-forms.expense',[
 			'company'=>$company , 
 			'pageTitle'=>__('Marketing Expense Form'),
@@ -36,27 +35,17 @@ class ExpenseController
 		$modelName = $request->get('model_name');
 		$model = ('\App\Models\\'.$modelName)::find($modelId);
 		foreach((array)$request->get('tableIds') as $tableId){
-			// delete all first 
 			#::delete all
-			// dd($request->get($tableId));
 			$model->generateRelationDynamically($tableId)->delete();
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['relation_name']  = $tableId ;
 					$tableDataArr['company_id']  = $company_id ;
 					$tableDataArr['model_id']   = $modelId ;
 					$tableDataArr['model_name']   = $modelName ;
-					// dd($tableDataArr);
 					if($tableDataArr['payment_terms'] == 'customize'){
 						$tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate '],$tableDataArr['due_days']);
 					}
-					
-					// if(isset($tableDataArr['id']) && $tableDataArr['id']  && is_numeric($tableDataArr['id'])){
-					// 	dd($model , $model->generateRelationDynamically($tableId)->where('id',$tableDataArr['id']) , $tableDataArr['id']);
-					// 	$model->generateRelationDynamically($tableId)->where('id',$tableDataArr['id'])->first()->update($tableDataArr);
-					// }
-					// else{
 						$model->generateRelationDynamically($tableId)->create($tableDataArr);
-					// }
 					
 				
 			}

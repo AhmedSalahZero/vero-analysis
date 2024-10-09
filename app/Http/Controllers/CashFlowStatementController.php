@@ -111,17 +111,12 @@ class CashFlowStatementController extends Controller
 			
 			$mainItemId = $mainItem->id;
 			$subItemsOfCurrentMainItem = $mainItem->load('subItems')->withSubItemsFor($incomeStatement->id , $reportType)->wherePivot('is_quantity',0)->wherePivot('is_depreciation_or_amortization',0)->get()->pluck('pivot');
-			// dd($subIt	emsOfCurrentMainItem);
 			foreach($subItemsOfCurrentMainItem as $subItemOfCurrentMainItem){
 				$subItemName = $subItemOfCurrentMainItem->sub_item_name ;
 				$subItemVatRate = $subItemOfCurrentMainItem->vat_rate ;
 				$isDeductible = $subItemOfCurrentMainItem->is_deductible ;
-				// dd();
 				$payload = (array)json_decode($subItemOfCurrentMainItem->payload) ;
 				$payload = $subItemOfCurrentMainItem->is_financial_expense ? removeMinusFromArr($payload) : $payload; 
-				// $payloadsWithoutVat[$mainItemId][$subItemName] =  $subItemVatRate  > 0 && $isDeductible ?  $this->removeVatFrom($payload,$subItemVatRate) : $payload ;
-				// $payloadsWithVat[$mainItemId][$subItemName] = $this->calculateVatRate($payloadsWithoutVat[$mainItemId][$subItemName] , $subItemVatRate ) ;
-				// calculate collection policy 
 				$hasCollectionPolicy = $subItemOfCurrentMainItem->has_collection_policy;
 				$collectionPolicyType = $subItemOfCurrentMainItem->collection_policy_type ;
 				$collectionPolicyValue = $subItemOfCurrentMainItem->collection_policy_value;
@@ -166,7 +161,6 @@ class CashFlowStatementController extends Controller
 			$vatPaymentSubItem = 'VAT Payment' ;
 			$cashes[$cashOutKeyName][$vatPaymentSubItem ]=$vatPayment;
 			$this->calculateTotalAndAccumulated($cashes,$cashInKeyName , $cashOutKeyName,$dates);
-			// dd($cashes);
 		return $cashes ;
 	}
 	protected function calculateVat(array $items , float $vatRate ){

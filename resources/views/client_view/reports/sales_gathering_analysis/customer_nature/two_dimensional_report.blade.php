@@ -114,10 +114,8 @@ $getIterableTimes = getIterableItems(array_merge($customersNaturesActive , $cust
     @endslot
     @slot('table_body')
     @php
-    // dd();
     $totalForTotalSales = calcTotalsForTotalsActiveItems($customersNaturesActive , 'total_sales') ;
     @endphp
-    {{-- @dd($getIterableTimes) --}}
     @foreach($getIterableTimes as $mainTypeItem=>$totalPerType)
     <tr>
         <th class="max-w-classes">  {{ __($mainTypeItem) }} </th>

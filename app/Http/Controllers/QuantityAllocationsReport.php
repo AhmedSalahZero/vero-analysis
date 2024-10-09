@@ -360,7 +360,6 @@ class QuantityAllocationsReport
             $seasonality = $row->seasonality;
             $seasonality_data = $row->seasonality_data;
             foreach ($base_items as $base => $percentage) {
-                // dd($base_items);
                 $percentage = $percentage ?? 0;
                 $allocation_data_per_allocation_base[$base][$product_name]['target'] = $sales_target_value * ($percentage / 100);
                 $allocation_data_per_allocation_base[$base][$product_name]['seasonality'] = $seasonality;
@@ -381,7 +380,6 @@ class QuantityAllocationsReport
         $year = date('Y', strtotime($sales_forecast->start_date));
         $allocation_data = [];
         $allocation_data_total = [];
-		// dd($products_seasonality,$allocation_data_per_allocation_base);
         if (count($products_seasonality) > 0) {
             foreach ($allocation_data_per_allocation_base as $base_item => $products_data) {
                 foreach ($products_data as $product_name => $product_data) {
@@ -412,7 +410,6 @@ class QuantityAllocationsReport
         $existing_product_data = $this->existingProducts($request, $company, $type);
         $year = date('Y', strtotime($sales_forecast->start_date));
         if ($result == 'view') {
-			// dd($products_seasonality,$existing_product_data);
             return view('client_view.quantity_forecast.new_product_seasonality', compact(
                 'new_products_allocations',
                 'allocation_data_total',
@@ -423,12 +420,8 @@ class QuantityAllocationsReport
             ));
         }
          else {
-			// dd($allocation_data_total);
 			return $existing_product_data ;
-
-
             $total_sales_targets = [];
-            // dd($existing_product_data);
             foreach ($allocation_data_total as $base => $base_data) {
                 foreach ($base_data as $date => $value) {
                     $month = date('F', strtotime(('01-' . $date)));
@@ -473,7 +466,6 @@ class QuantityAllocationsReport
 
 
         $existing_product_allocation_base =  QuantityExistingProductAllocationBase::company()->first();
-        // dd($existing_product_allocation_base);
         $existing_sales_targets  = $existing_product_allocation_base->existing_products_target ?? [];
         $sales_targets = [];
 
@@ -589,7 +581,6 @@ class QuantityAllocationsReport
             {
                  foreach ($products_items as $product_item_name => $product_value) {
                 $name = strstr($product_item_name, 'Others') ? 'Others' : $product_item_name;
-                // dd( $seasonality['Others']);
                 $product_seasonality = $seasonality[$name] ?? [] ;
                 $existing_product_per_allocation_base[$product_item_name] = $this->operationAmongArrayAndNumber($product_seasonality, $product_value, 'multiply');
                 }

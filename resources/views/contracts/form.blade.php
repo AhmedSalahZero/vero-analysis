@@ -852,9 +852,7 @@ use App\Models\MoneyReceived ;
     })
 
 </script>
-@if(count(old()))
-{{-- {{ dd('old',old()) }} --}}
-@endif
+
 <script>
 	$(document).on('change','.regenerate-code-ajax',function(e){
 		e.preventDefault();

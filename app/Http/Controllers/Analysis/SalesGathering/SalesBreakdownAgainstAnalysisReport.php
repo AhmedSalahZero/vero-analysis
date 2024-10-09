@@ -332,7 +332,6 @@ class SalesBreakdownAgainstAnalysisReport
 		$end_date = $request->get('end_date');
 		$type = $request->get('type');
 		$modal_id = $request->get('modal_id');
-		// dd($selectedType , $modal_id);
 		$db = DB::select(DB::raw(
 			'
              SELECT "' . $selectedType . '" as selected_type_name , "' . $modal_id . '" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person ,

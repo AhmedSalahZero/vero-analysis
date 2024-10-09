@@ -106,7 +106,6 @@ class UnappliedAmountsController extends Controller
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
 
-		// dd($invoices);
 		return view('contracts-down-payment.settlement_form',[
 			'modelType'=>'MoneyReceived',
 			'customerNameText'=>__('Customer Name'),

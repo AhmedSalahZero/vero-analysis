@@ -16,7 +16,7 @@ $endDateInputName = $type ? 'endDate['. $type .']' : 'endDate';
         <h3 style="font-size:20px !important;" class="kt-portlet__head-title text-main-color text-nowrap">
             {{ $title }}
         </h3>
-        {{-- {{ dd($startDate) }} --}}
+  
         <form class="w-full flex-2  " @if($lang=='ar' ) style="margin-right:5rem !important" @else style="margin-left:5rem !important" @endif>
             <input type="hidden" name="active" value="{{ $type }}">
             <div class="row align-items-center ">

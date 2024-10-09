@@ -265,7 +265,6 @@ data-can-delete-financial-statement="{{ $user->can('delete financial statement')
                                                         select += ` <option ${selected} value=" ${slugify(duration)} "> ${durationTranslated}  </option>`
                                                     })
                                                     select += '</select>';
-                                                    // dddd
                                                     if (false) {
                                                     //if (row.can_edit_duration_type) {
                                                         return select;

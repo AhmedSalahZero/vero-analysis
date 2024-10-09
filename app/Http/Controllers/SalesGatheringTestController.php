@@ -250,7 +250,6 @@ class SalesGatheringTestController extends Controller
 	{
 		$exportables = getExportableFieldsForModel($company->id,$modelName);
 		$model = ('\App\Models\\'.$modelName)::find($modelId);
-		// dd();
 		return view('admin.create-excel-by-form',[
 			'pageTitle'=>__('Create'),
 			'type'=>'_create',

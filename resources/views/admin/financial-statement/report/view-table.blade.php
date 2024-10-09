@@ -145,7 +145,6 @@ $tableId = 'kt_table_1';
                 </th>
                 <input type="hidden" name="dates[]" value="{{ json_encode(array_keys($financialStatement->getIntervalFormatted())) }}" id="dates">
                 @foreach($financialStatement->getIntervalFormatted() as $defaultDateFormate=>$interval)
-                {{-- {{ dd() }} --}}
                 <th data-date="{{ $defaultDateFormate }}" data-month-year="{{explode('-',$defaultDateFormate)[0].'-'.explode('-',$defaultDateFormate)[1]}}" class="view-table-th header-th" data-is-collection-relation="0" data-collection-item-id="0" data-db-column-name="name" data-relation-name="ServiceCategory" data-is-relation="1" class="header-th" data-is-json="0">
                     {{ $interval }}
                 </th>

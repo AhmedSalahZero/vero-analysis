@@ -198,7 +198,6 @@ class LetterOfGuaranteeFacilityController
 		})
 		->pluck('name','id')
 		->toArray();
-		// dd($request->all());
 		$currentSource = $request->get('source');
 		
 		$currentLgOutstanding = 0 ;

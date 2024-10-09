@@ -278,7 +278,6 @@ class MoneyReceivedController
 		$formattedSalesOrders = [];
 		foreach($salesOrders as $index=>$salesOrder){
 			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
-		//	dd($moneyReceived , $moneyReceived->downPaymentSettlements ,$salesOrder);
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
@@ -420,13 +419,7 @@ class MoneyReceivedController
 		if(!$isDownPayment){
 			unset($data['contract_id']);
 		}
-		// if($isDown){
-		// 	dd($isDownPayment,$request->all());
-		// }
-		
 		$moneyReceived = MoneyReceived::create($data);
-		
-		// $receivingDate = $data['receiving_date'] ?? null ; 
 		
 		$statementDate = $moneyReceived->getStatementDate(); 
 		

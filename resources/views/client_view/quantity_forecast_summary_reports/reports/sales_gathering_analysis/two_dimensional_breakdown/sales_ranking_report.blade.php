@@ -63,7 +63,6 @@
         <?php $main_type_name = ucwords(str_replace('_', ' ', $main_type));  ?>
         <th>{{ __($main_type_name) 
                  }}</th>
-        {{-- @dd($all_items) --}}
         @for($i = 1 ; $i <= count($data) ; $i++) @foreach(['Rank [ '.$i.' ] '.ucwords(str_replace(' _', ' ' , $type)) , 'Percentage %' , 'Value' , 'Percentage %' ] as $item) <th>{{ __($item) }}</th>
             @endforeach
             @endfor
@@ -77,10 +76,9 @@
     @slot('table_body')
     {{-- $final_percentage = $final_total == 0 ? 0 : (($final_total ?? 0) / $final_total) * 100; ?> --}}
     @foreach ($data as $branchName => $statistics)
-    {{-- @dd(count($data)) --}}
     <tr>
         <th> {{ __($branchName) }} </th>
-        @for($rankNumber = 1 ;$rankNumber <= count($data) ; $rankNumber++ ) @php $totalForBranch=countTotalForBranch($data[$branchName]) @endphp @php $allRanksTotals=countSumForAllRank($data , $rankNumber) @endphp {{-- @dd($allRanksTotals) --}} <td class="text-center">
+        @for($rankNumber = 1 ;$rankNumber <= count($data) ; $rankNumber++ ) @php $totalForBranch=countTotalForBranch($data[$branchName]) @endphp @php $allRanksTotals=countSumForAllRank($data , $rankNumber) @endphp  <td class="text-center">
             {{-- <td class="text-center"> --}}
 
 
@@ -175,7 +173,6 @@
 @endif --}}
 
 
-{{-- @dd( ?? []) --}}
 
 
 
@@ -191,7 +188,7 @@
 <tr class="table-active text-center">
     <th class="text-center"> {{ __('Total') }} </th>
     @foreach ($data as $branchName => $statistics)
-    @for($rankNumber = 1 ;$rankNumber <= count($data) ; $rankNumber++ ) @php $allRanksTotals=countSumForAllRank($data , $rankNumber) @endphp {{-- @dd($allRanksTotals) --}} <td class="text-center">
+    @for($rankNumber = 1 ;$rankNumber <= count($data) ; $rankNumber++ ) @php $allRanksTotals=countSumForAllRank($data , $rankNumber) @endphp  <td class="text-center">
         {{ $allRanksTotals['total'] }}
         </td>
 

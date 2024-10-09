@@ -213,7 +213,6 @@ $tableId = 'kt_table_1';
                     <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize  is-close"> @if($hasSubRows) + @endif</td>
                     <td class="sub-text-bg  max-w-classes editable-text is-name-cell ">{{ $cashName }}</td>
                     @foreach($cashFlowStatement->getIntervalFormatted() as $defaultDateFormate=>$interval)
-                    {{-- {{ dd() }} --}}
                     <td class="  sub-numeric-bg text-center editable-date" @if($isAccumulatedRow) style="color:white !important" @endif>{{ number_format($elements['total'][$defaultDateFormate] ??0,0) }}</td>
                     @endforeach
                     <td @if($isMonthlyRow) class="sub-numeric-bg text-center" @endif @if($isAccumulatedRow) style="color:white !important" @endif>{{ $isAccumulatedRow ? '-' : number_format(array_sum($elements['total'] ?? []),0) }}</td>

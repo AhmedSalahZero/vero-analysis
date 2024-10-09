@@ -12,7 +12,6 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
     use GeneralFunctions;
     public function index(Request $request, Company $company)
     {
-        // dd(request()->route()->getName());
         
         if (request()->route()->named('branches.vs.ItemsRanking.view')) {
             $main_type = 'branch';
@@ -73,7 +72,6 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
         uasort($data , function($a , $b){
         return  array_sum(flatten($a)) < array_sum(flatten($b)); 
         });
-        // dd($data);
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_ranking_report',compact('data','company','view_name', 'main_type','type'
         // , 'all_items','main_type_items','report_data',
         ,'last_date','dates',

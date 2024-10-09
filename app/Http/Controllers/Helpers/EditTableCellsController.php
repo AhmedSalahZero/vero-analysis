@@ -27,20 +27,13 @@ class EditTableCellsController extends Controller
         $isJson = $request->get('isJson');
         $relationName = $request->get('relationName');
         $modelNamespace = getModelNamespace();
-        // dd(($modelNamespace.$modelName));
-        // $theSameItemAlreadyExist = ($modelNamespace.$modelName)::find($modelId);
         $model = ($modelNamespace.$modelName)::find($modelId);
-        // dd($isRelation);
       
         $model = $isRelation ? $model->{$relationName} : $model ;
           if($isCollectionRelation)
             {
                 $model = $model->where('id',$collectionItemId)->first();
             }
-        // dd($model);
-        // dd();
-        // dd($model);
-        // dd(get_class($model));
         if(get_class($model)::where('company_id',getCurrentCompanyId())->where($columnName , $data)->exists())
         {
             // this record already exist ;
@@ -64,10 +57,7 @@ class EditTableCellsController extends Controller
           $model->{$columnName} = $data ;
                         
         }
-        // dd($request->get('dataTableId'));
-        // dd(now());
              $model->updated_at = now();
-            //  dd($model);
              $model->save();
              return response()->json([
                  'dataTableId'=>$request->get('dataTableId')

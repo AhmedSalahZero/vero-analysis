@@ -16,7 +16,6 @@
 @endsection
 @section('content')
     <form action="{{ route('products.seasonality.quantity', $company) }}" method="POST">
-	{{ dd('e') }}
         @csrf
         <div class="kt-portlet">
             <div class="kt-portlet__head">
@@ -132,7 +131,6 @@
 
 
         <?php $key = 0;?>
-        {{-- @dd($errors) --}}
         @for ($number = 1; $number <= $sales_forecast->number_of_products; $number++)
             <div class="row">
                 <div class="col-md-12">

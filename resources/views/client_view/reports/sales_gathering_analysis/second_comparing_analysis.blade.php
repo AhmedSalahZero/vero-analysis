@@ -58,7 +58,6 @@
 @endsection
 
 @section('content')
-{{-- @dd(get_defined_vars()) --}}
 
 <div class="row">
     <div class="col-lg-12">
@@ -94,7 +93,6 @@
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
                 <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
-                    {{-- @dd($report_data , $secondReportData['report_data']) --}}
                     <tr class="table-active text-center">
                         <th class="text-center absorbing-column">{{ __('Product Item') }}</th>
                         {{-- @foreach ($dates as $date) --}}

@@ -468,9 +468,7 @@ class CategoriesAgainstAnalysisReport
             $final_report_data[$category]['Growth Rate %'] = ($growth_rate_data[$category]??[]);
             $categories_names[] = (str_replace( ' ','_', $category));
         }
-		// dd(get_defined_vars());
 		$dates = array_keys($total_categories ?? []); 
-		// dd($total_categories , $categories_data);
         return view('client_view.reports.sales_gathering_analysis.categories_sales_report',compact('company','categories_names','total_categories_growth_rates','final_report_data','total_categories','dates'));
 
     }

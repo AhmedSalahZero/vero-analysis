@@ -119,8 +119,6 @@ class SummaryController extends Controller
         $second_allocation_setting_base = SecondAllocationSetting::company()->first();
         // Company Sales Target
         $company_sales_targets = (new SalesForecastReport)->productsAllocations($company, $request, 'total_sales_target');
-        // dd($company_sales_targets);
-        // dd($company_sales_targets);
         $reports_data['product_sales_target'] = $this->breakdownData($company_sales_targets);
         $types['product_sales_target'] = 'brand';
         $top_data['product_sales_target'] = $reports_data['product_sales_target'][0] ?? '-';
@@ -130,33 +128,25 @@ class SummaryController extends Controller
             $first_allocation_total_sales_targets = (new AllocationsReport)->NewProductsSeasonality($request, $company, 'array');
             $base = $first_allocation_setting_base->allocation_base;
             arsort($first_allocation_total_sales_targets);
-            // dd($first_allocation_total_sales_targets);
             $name = $base.'_sales_targets';
-            // dd($first_allocation_total_sales_targets);
             $reports_data[$name] = $this->breakdownData($first_allocation_total_sales_targets);
-// dd($reports_data[$name]);
             $types[$name] = 'warning';
-            // dd($reports_data[$name]);
             $top_data[$name] = $reports_data[$name][0] ?? '-';
         }
         // Second Allocation sales targets
         $second_allocation_total_sales_targets = [];
         if (isset($second_allocation_setting_base)) {
             $second_allocation_total_sales_targets = (new SecondAllocationsReport)->NewProductsSeasonality($request, $company, 'array');
-			// dd($second_allocation_total_sales_targets);
             $base = $second_allocation_setting_base->allocation_base;
             arsort($second_allocation_total_sales_targets);
             $name = $base.'_sales_targets';
             $reports_data[$name] = $this->breakdownData($second_allocation_total_sales_targets);
-            // dd($reports_data);
             $types[$name] = 'danger';
             
             $top_data[$name] = $reports_data[$name][0] ?? '-';
         
         }
 		
-		// dd('report_data',$reports_data);
-        // dd($reports_data);
         return view('client_view.forecast_summary_reports.breakdown_dashboard', compact(
                 'company',
             'reports_data',
@@ -286,12 +276,6 @@ class SummaryController extends Controller
         }
         
 
-        // dd($request['existing_products_target'] , $request['total_existing_target']  , $request['modify_sales_target'] , $request['use_modified_targets']);
-
-
-
-
-          // 
           $collectionSetting = CollectionSetting::company()->first();
           $request['collection_base'] = $collectionSetting->collection_base ;
           $request['general_collection']  = $collectionSetting->general_collection ;

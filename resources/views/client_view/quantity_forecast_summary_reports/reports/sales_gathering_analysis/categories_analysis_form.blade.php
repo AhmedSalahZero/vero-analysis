@@ -25,15 +25,7 @@
 
 
                 <?php 
-                    // $categoriesData = App\Models\SalesGathering::company()
-                    //     ->whereNotNull('category')
-                    //     ->where('category','!=','')
-                    //     ->groupBy('category')
-                    //     ->selectRaw('category')
-                    //     ->get()
-                    //     ->pluck('category')
-                    //     ->toArray();
-                    // dd($type);
+               
                     
                     if(isCustomerExceptionalCase($type , $name_of_selector_label) 
                     || isCustomerExceptionalForProducts($type , $name_of_selector_label)
@@ -66,13 +58,10 @@
                             $column = 6 ; 
                         }
 
-                        // dd();
+   
 
                     ?>
 
-                {{-- @dd($name_of_selector_label) --}}
-
-                {{-- @dd($type) --}}
                 <input type="hidden" name="type" value="{{$type}}">
                 <input type="hidden" name="view_name" value="{{$view_name}}">
                 <div class="kt-portlet__body">
@@ -266,8 +255,6 @@
 
 
                         @else
-                        {{-- @dd($name_of_selector_label) --}}
-                        {{-- @dd() --}}
 
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select '.$name_of_selector_label.' ') }} <span class="multi_selection"></span> @include('max-option-span') </label>
@@ -284,7 +271,6 @@
                     </div>
 
                 </div>
-                {{-- @dd($name_of_selector_label) --}}
                 <x-submitting />
             </div>
 
@@ -299,7 +285,6 @@
         <!--end::Portlet-->
     </div>
 </div>
-{{-- @dd(get_defined_vars()) --}}
 @endsection
 @section('js')
 <!--begin::Page Scripts(used by this page) -->

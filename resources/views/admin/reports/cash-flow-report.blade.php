@@ -4,7 +4,6 @@
 	use Carbon\Carbon ;
 @endphp
 <x-styles.commons></x-styles.commons>
-{{-- {{ dd($weeks) }} --}}
 <style>
     .bg-lighter ,
     .bg-lighter * 
@@ -274,7 +273,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                 <div class="table-custom-container position-relative  ">
 
 
-{{-- {{ dd($datesWithWeeks) }} --}}
                     <div class="responsive">
                         <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                             <thead>

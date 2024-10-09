@@ -99,7 +99,6 @@ class  BalanceSheetItem extends Model implements IFinancialStatementAbleItem
 		$secondItems = self::getItemsForInterval($secondItems, $secondIntervalOfDates, $secondBalanceSheetDurationType);
 		$firstIntervalDate  = $firstIntervalOfDates[0] . '/' . $firstIntervalOfDates[count($firstIntervalOfDates) - 1];
 		$secondIntervalDate  = $secondIntervalOfDates[0] . '/' . $secondIntervalOfDates[count($secondIntervalOfDates) - 1];
-		// dd($firstIntervalDate);
 		if (secondIntervalGreaterThanFirst($firstIntervalDate, $secondIntervalDate)) {
 			return [
 				'second-interval#' . $secondIntervalDate => sum_each_key($secondItems),

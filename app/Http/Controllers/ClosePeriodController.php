@@ -9,6 +9,5 @@ class ClosePeriodController
     use GeneralFunctions;
     public function execute(Company $company,Request $request)
 	{
-		dd($request->all());
     }
 }

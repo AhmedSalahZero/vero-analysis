@@ -132,7 +132,6 @@
                 <div class="col-md-4">
                     <label><b>{{__('Income Statements')}}</b></label>
                 </div>
-				{{-- {{ dd($incomeStatements) }} --}}
                 <div class="col-md-4">
                     <label>{{__('First Income Statement')}}</label>
 

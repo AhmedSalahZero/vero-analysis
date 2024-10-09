@@ -84,7 +84,6 @@
             @endif
 
 
-{{-- {{ dd(get_defined_Vars()) }} --}}
             <a href="{{ route('create.sales.form',['company'=>$company->id , 'model'=>in_array('LoanSchedule',Request()->segments())?'LoanSchedule':getLastSegmentInRequest()]) }}" class="btn  active-style btn-icon-sm {{$class}}">
                 <i class="fas fa-plus"></i>
                 {{ __('Create New Record') }}

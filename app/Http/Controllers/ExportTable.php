@@ -179,7 +179,6 @@ class ExportTable extends Controller
 		if($request->get('model_name') == 'LoanSchedule'){
 			return ;
 		}
-		// dd($request->all());
 		$validation = [];
 		if (!isset($request->fields) || (count($request->fields) == 0)) {
 			$validation['fields'] = 'required';

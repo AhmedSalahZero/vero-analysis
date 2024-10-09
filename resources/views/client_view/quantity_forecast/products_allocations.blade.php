@@ -137,8 +137,6 @@
                         $totals_per_month = [];
 
                         ?>
-{{-- {{ dd($existing_products_targets) }} --}}
-                        {{-- @dd() --}}
                         @foreach ($existing_products_targets as $item => $product_data)
                             <?php $total_existing_targets = 0; ?>
                             <tr>
@@ -184,7 +182,6 @@
                     <div class="kt-portlet kt-portlet--mobile">
 
                         <div class="kt-portlet__body">
-{{-- @dd($totals_per_month) --}}
                             <!--begin: Datatable -->
                             <x-table :tableTitle="__('Total Company Sales Target')"
                                 :tableClass="'kt_table_with_no_pagination_no_scroll'">

@@ -51,7 +51,6 @@
             </div>
         </div>
     </div>
-    {{-- @dd( json_encode($chart_data) ) --}}
     <input type="hidden" id="data{{formatChartNameForDom($chart_name)}}" data-total="{{ json_encode($chart_data) }}">
     @endforeach
 </div>
@@ -110,7 +109,6 @@
                     $countVals = count($vals) ;
                     $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
                     @endphp
-                    {{-- @dd(($vals->total_sales / $totalSales)*100) --}}
                     <tr>
                         <th>{{$staticName}}</th>
                         <td class="text-center">{{$countVals}}</td>
@@ -305,7 +303,6 @@ $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
 <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
 </script>
 <!-- Chart code -->
-{{-- @dd($reportDataFormatted) --}}
 @foreach ($reportDataFormatted as $chart_name => $chart_data)
 
 <script>
