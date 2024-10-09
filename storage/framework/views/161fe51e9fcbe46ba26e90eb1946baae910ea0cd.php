@@ -85,8 +85,6 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-
-                                    
                                 </h3>
                             </div>
                         </div>
@@ -128,7 +126,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-5 bank_class hidden">
-                                        <label><?php echo e(__('Select Bank ')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+								                                        <label><?php echo e(__('Select Bank ')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select name="bank_id" data-live-search="true" data-actions-box="true" class="form-control select2-select ">
