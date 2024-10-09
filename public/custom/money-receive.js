@@ -293,7 +293,6 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	const val = $(this).val()
 	let appendTo = $(this).attr('data-append-to-query');
 	appendTo = appendTo ? appendTo : '.js-account-number';
-	console.log(appendTo)
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
 	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')

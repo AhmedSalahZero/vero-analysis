@@ -1178,7 +1178,10 @@ td{
         }
 
         function number_unformat(formattedNumber) {
-            return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
+			if(formattedNumber){
+            		return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
+			}
+			return 0;
         }
 
         function orderObjectKeys(myObj) {
@@ -1491,7 +1494,6 @@ $(document).on('change','.update-exchange-rate',function(){
 	let toCurrency = $('input[type="hidden"].to-currency').val() 
 	toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
 	const date = $('.exchange-rate-date').val()
-	console.log(fromCurrency,toCurrency,date);
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-exchange-rate-for-date-and-currencies/'
@@ -1703,15 +1705,13 @@ $(document).on('change','.update-exchange-rate',function(){
                     , contentType: false
                     , processData: false
                     , success: function(res) {
-						console.log('ress')
-						console.log(res)
 				
                         if (res.reloadCurrentPage) {
                             return window.location.reload()
 
                         }
                         if (res.redirectTo) {
-							console.log('redirect',res.redirectTo)
+					
                             window.location.href = res.redirectTo;
                             return
                         }

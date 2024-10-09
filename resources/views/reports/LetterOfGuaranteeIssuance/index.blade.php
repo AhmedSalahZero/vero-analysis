@@ -73,19 +73,19 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
             <div class="flex-tabs">
 				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New From LG Facility') }}
+					{{ __('From LG Facility') }}
 				</a>
 				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_CD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New LG Agnist CDs') }}
+					{{ __('LG Agnist CDs') }}
 				</a>
 				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_TD  ]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New LG Agnist TDs') }}
+					{{ __('LG Agnist TDs') }}
 				</a>
 				<a href="{{ route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER]) }}" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					{{ __('New LG 100% Cash Cover') }}
+					{{ __('LG 100% Cash Cover') }}
 				</a>
 			</div >
 
