@@ -456,8 +456,8 @@
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_number', accountNumber);
 					url = url.replace('replace_financial_institution_id', financialInstitutionId);
-					
-                $.ajax({
+					if(accountType &&accountNumber &&financialInstitutionId){
+						$.ajax({
                     url
                     , success: function(res) {
                         parent.find('#cd-or-td-amount-id').val(number_format(res.amount)).trigger('change')
@@ -465,6 +465,8 @@
 						$('#borrowing-rate-id').val(number_format(res.interest_rate,2)).trigger('change')
                     }
                 });
+					}
+                
             })
             $('[js-cd-or-td-account-number]').trigger('change')
 
