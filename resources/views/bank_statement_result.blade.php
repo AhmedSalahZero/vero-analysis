@@ -2,6 +2,9 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
+#DataTables_Table_0_info{
+	margin-bottom:20px;
+}
     .max-w-serial {
         width: 5% !important;
         min-width: 5% !important;
@@ -400,9 +403,10 @@
 
 
                                 </tbody>
+								
                             </table>
+{{ $results->appends(Request()->all())->links() }}
                         </div>
-
                     </div>
 
                     @push('js')

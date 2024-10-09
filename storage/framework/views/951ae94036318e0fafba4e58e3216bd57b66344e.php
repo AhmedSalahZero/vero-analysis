@@ -11,6 +11,9 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
+#DataTables_Table_0_info{
+	margin-bottom:20px;
+}
     .max-w-serial {
         width: 5% !important;
         min-width: 5% !important;
@@ -432,9 +435,11 @@
 
 
                                 </tbody>
+								
                             </table>
-                        </div>
+<?php echo e($results->appends(Request()->all())->links()); ?>
 
+                        </div>
                     </div>
 
                     <?php $__env->startPush('js'); ?>

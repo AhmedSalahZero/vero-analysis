@@ -18,7 +18,7 @@
 
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action="<?php echo e(route('result.bank.statement',['company'=>$company->id ])); ?>" enctype="multipart/form-data">
+        <form class="kt-form kt-form--label-right" method="get" action="<?php echo e(route('result.bank.statement',['company'=>$company->id ])); ?>" enctype="multipart/form-data">
             <?php echo csrf_field(); ?>
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
