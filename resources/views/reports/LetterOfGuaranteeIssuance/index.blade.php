@@ -249,7 +249,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 							@php
 								$index = 0 ;
 							@endphp
-                                @foreach($models[$currentTab] as $index=>$model)
+                                @foreach($models[$currentTab] as $model)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
@@ -354,7 +354,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 							@php
 								$index = 0 ;
 							@endphp
-                                @foreach($models[$currentTab] as $index=>$model)
+                                @foreach($models[$currentTab] as $model)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
@@ -465,7 +465,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 					@php
 						$index = 0 ;
 					@endphp
-                                @foreach($models[$currentTab] as $index=>$model)
+                                @foreach($models[$currentTab] as $model)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
