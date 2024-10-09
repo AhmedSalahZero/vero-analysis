@@ -412,7 +412,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label>{{__('Deducted From Account # (Fees & Commission)')}}
+                                        <label>{{__('Deducted From Account # ( Fees & Commission)')}}
                                             @include('star')
                                         </label>
                                         <div class="kt-input-icon">

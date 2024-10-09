@@ -218,7 +218,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                    <select data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId():0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                                         
                                                         <?php $__currentLoopData = $beneficiaries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option <?php if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ): ?> selected <?php endif; ?> value="<?php echo e($customer->getId()); ?>"><?php echo e($customer->getName()); ?></option>
@@ -545,10 +545,10 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type ">
+                                                <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-number-based-on-account-type ">
                                                     
                                                     <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
@@ -556,13 +556,13 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label><?php echo e(__('Deducted From Account # (Cover & Commission)')); ?>
+                                        <label><?php echo e(__('Deducted From Account # (Cash & Commission)')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0); ?>" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0); ?>" name="lg_fees_and_commission_account_number" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -799,7 +799,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $('.js-toggle-bond').trigger('change')
+                $(function(){
+					$('.js-toggle-bond').trigger('change')
+				})
 
             </script>
             <script>
@@ -820,7 +822,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , success: function(res) {
 							
 							
-							let customerOptions = '';
+						let customerOptions = '<option value=""><?php echo e(__("Please Select")); ?></option>';
 							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
 							
 							for(var customerId in res.customers ){

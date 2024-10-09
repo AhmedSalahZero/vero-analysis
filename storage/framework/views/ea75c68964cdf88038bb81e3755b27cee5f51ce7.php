@@ -157,7 +157,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-2 hidden">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['label' => __('Outstanding Date'),'required' => true,'model' => $model??null,'name' => 'outstanding_date','placeholder' => __('Select Outstanding Date')]]); ?>
 <?php $component->withName('form.date'); ?>
@@ -172,7 +172,7 @@
                             </div>
 
 
-                            <div class="col-md-2 ">
+                            <div class="col-md-2 hidden">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Outstanding Amount'),'type' => 'text','placeholder' => __('Outstanding Amount'),'name' => 'outstanding_amount','class' => 'only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -214,7 +214,7 @@
                         ?>
                         <div class="form-group row" style="flex:1;">
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <label class="label"><?php echo __('LG  <br> Type'); ?></label>
                                 <input class="form-control" type="hidden" readonly value="<?php echo e($name); ?>" name="termAndConditions[<?php echo e($index); ?>][lg_type]">
                                 <input class="form-control" type="text" readonly value="<?php echo e($nameFormatted); ?>">
@@ -222,14 +222,14 @@
 
 
 
-                            <div class="col-2">
+                            <div class="col-2 hidden">
                                 <label class="form-label font-weight-bold ">
 								<?php echo __('Outstanding  <br> Balance'); ?>
 
                                 </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input placeholder="<?php echo e(__('Outstanding Balance')); ?>" type="text" class="form-control only-greater-than-zero-allowed" name="termAndConditions[<?php echo e($index); ?>][outstanding_balance]" value="<?php echo e(isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0)); ?>">
+                                        <input placeholder="<?php echo e(__('Outstanding Balance')); ?>" type="text" class="form-control only-greater-than-or-equal-zero-allowed" name="termAndConditions[<?php echo e($index); ?>][outstanding_balance]" value="<?php echo e(isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0)); ?>">
                                     </div>
                                 </div>
                             </div>

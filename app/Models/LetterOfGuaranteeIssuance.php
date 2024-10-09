@@ -67,10 +67,13 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function isExpired()
 	{
-		return $this->getStatus() == self::EXPIRED;
+		return $this->getStatus() == self::EXPIRED && !$this->isCancelled();
 	}
 	public function getStatus()
 	{
+		if($this->status == self::CANCELLED){
+			return $this->status ;
+		}
 		if($this->getRenewalDate() <= now()){
 			return self::EXPIRED;
 		}

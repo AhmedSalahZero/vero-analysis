@@ -133,12 +133,12 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-2 hidden">
                                 <x-form.date :label="__('Outstanding Date')" :required="true" :model="$model??null" :name="'outstanding_date'" :placeholder="__('Select Outstanding Date')"></x-form.date>
                             </div>
 
 
-                            <div class="col-md-2 ">
+                            <div class="col-md-2 hidden">
                                 <x-form.input :model="$model??null" :label="__('Outstanding Amount')" :type="'text'" :placeholder="__('Outstanding Amount')" :name="'outstanding_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                             </div>
 
@@ -169,7 +169,7 @@
                         @endphp
                         <div class="form-group row" style="flex:1;">
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <label class="label">{!! __('LG  <br> Type') !!}</label>
                                 <input class="form-control" type="hidden" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lg_type]">
                                 <input class="form-control" type="text" readonly value="{{ $nameFormatted }}">
@@ -177,13 +177,13 @@
 
 
 
-                            <div class="col-2">
+                            <div class="col-2 hidden">
                                 <label class="form-label font-weight-bold ">
 								{!! __('Outstanding  <br> Balance') !!}
                                 </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input placeholder="{{ __('Outstanding Balance') }}" type="text" class="form-control only-greater-than-zero-allowed" name="termAndConditions[{{ $index }}][outstanding_balance]" value="{{ isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0) }}">
+                                        <input placeholder="{{ __('Outstanding Balance') }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed" name="termAndConditions[{{ $index }}][outstanding_balance]" value="{{ isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0) }}">
                                     </div>
                                 </div>
                             </div>
