@@ -126,6 +126,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
+							
                                 @foreach($models[$currentTab] as $index=>$model)
                                 <tr>
                                     <td>
@@ -143,7 +144,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }} <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
@@ -247,7 +248,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									"> {{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
@@ -344,7 +345,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
@@ -433,6 +434,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
+					
                                 @foreach($models[$currentTab] as $index=>$model)
                                 <tr>
                                     <td>
@@ -448,7 +450,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
-                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
 
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>

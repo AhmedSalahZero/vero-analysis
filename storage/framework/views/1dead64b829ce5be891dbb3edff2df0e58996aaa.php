@@ -258,11 +258,12 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
+									
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
-                                                        
+                                                    <select data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId():0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                        <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         <?php $__currentLoopData = $beneficiaries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option <?php if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ): ?> selected <?php endif; ?> value="<?php echo e($customer->getId()); ?>"><?php echo e($customer->getName()); ?></option>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -796,7 +797,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $('.js-toggle-bond').trigger('change')
+                $(function(){
+					$('.js-toggle-bond').trigger('change')
+				})
 
             </script>
             <script>
@@ -818,7 +821,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , type: "GET"
                         , success: function(res) {
 							
-							let customerOptions = '';
+							let customerOptions = '<option value=""><?php echo e(__("Please Select")); ?></option>';
 							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
 							
 							for(var customerId in res.customers ){

@@ -166,7 +166,7 @@ use App\Models\LetterOfCreditIssuance;
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                    <select data-current-selected="{{ isset($model) ? $model->getBeneficiaryId():0 }}" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                                         {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         @foreach($beneficiaries as $customer)
                                                         <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option>
@@ -586,7 +586,9 @@ use App\Models\LetterOfCreditIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $('.js-toggle-bond').trigger('change')
+              $(function(){
+					$('.js-toggle-bond').trigger('change')
+				})
 
             </script>
             <script>

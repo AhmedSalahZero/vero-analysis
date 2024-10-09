@@ -259,7 +259,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select  data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId() : 0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                    <select data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId():0); ?>" data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId() : 0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                             
                                                     </select>
                                                 </div>
@@ -880,7 +880,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $('.js-toggle-bond').trigger('change')
+                 $(function(){
+					$('.js-toggle-bond').trigger('change')
+				})
 
             </script>
             <script>
@@ -898,7 +900,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         }
                         , type: "GET"
                         , success: function(res) {
-							let customerOptions = '';
+							let customerOptions = '<option value=""><?php echo e(__("Please Select")); ?></option>';
 							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
 							
 							for(var customerId in res.customers ){
@@ -1001,12 +1003,15 @@ use App\Models\LetterOfGuaranteeIssuance;
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_number', accountNumber);
                     url = url.replace('replace_financial_institution_id', financialInstitutionId);
-                    $.ajax({
-                        url
-                        , success: function(res) {
-                            parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
-                        }
-                    });
+					if(accountType &&accountNumber &&financialInstitutionId){
+						$.ajax({
+							url
+							, success: function(res) {
+								parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
+							}
+						});
+						
+					}
                 })
 
             </script>

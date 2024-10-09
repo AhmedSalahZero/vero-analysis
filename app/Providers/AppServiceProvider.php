@@ -11,6 +11,8 @@ use Artisan;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -41,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		
+	
 		// logger('start app service');
 		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();

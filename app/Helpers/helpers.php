@@ -3849,21 +3849,22 @@ function getPermissions(array $systemsNames  = []):array
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 			'group'=>'opening-balances',
 			'view-name'=>'update cash & cheques'
-        ],[
-            'name'=>'update lg opening balances',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'opening-balances',
-			'view-name'=>'update lg opening balances'
-		],
-		[
-            'name'=>'update lc opening balances',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'opening-balances',
-			'view-name'=>'update lc opening balances'
-        ]
-		,
+        ],
+		// [
+        //     'name'=>'update lg opening balances',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'opening-balances',
+		// 	'view-name'=>'update lg opening balances'
+		// ],
+		// [
+        //     'name'=>'update lc opening balances',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'opening-balances',
+		// 	'view-name'=>'update lc opening balances'
+        // ]
+		// ,
 		[
             'name'=>'view customers contracts',
 			'systems'=>[CASH_VERO],
@@ -5713,9 +5714,11 @@ function getHeaderMenu($currentCompany = null)
 	
 	
 	$canUpdateCashAndChequesOpeningBalances  =$user->can('update cash & cheques opening balances');
-	$canUpdateLgOpeningBalances  =$user->can('update lg opening balances');
-	$canUpdateLcOpeningBalances  =$user->can('update lc opening balances');
-	$canViewOpeningBalances =$canUpdateCashAndChequesOpeningBalances || $canUpdateLgOpeningBalances || $canUpdateLcOpeningBalances ;
+	// $canUpdateLgOpeningBalances  =$user->can('update lg opening balances');
+	// $canUpdateLcOpeningBalances  =$user->can('update lc opening balances');
+	$canViewOpeningBalances =$canUpdateCashAndChequesOpeningBalances 
+	// || $canUpdateLgOpeningBalances || $canUpdateLcOpeningBalances 
+	;
 	$cashManagementSubItems = [
 
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
@@ -5952,18 +5955,18 @@ function getHeaderMenu($currentCompany = null)
 							'link'=>route('opening-balance.index', ['company'=>$companyId]),
 							'show'=>$canUpdateCashAndChequesOpeningBalances,
 						],
-						[
+					// 	[
 
-					'title'=>__('LGs Opening Balances'),
-					'link'=>route('lg-opening-balance.index',['company'=>$companyId]),
-					'show'=>$canUpdateLgOpeningBalances
-						],
-						[
+					// 'title'=>__('LGs Opening Balances'),
+					// 'link'=>route('lg-opening-balance.index',['company'=>$companyId]),
+					// 'show'=>$canUpdateLgOpeningBalances
+					// 	],
+						// [
 
-							'title'=>__('LCs Opening Balances'),
-							'link'=>route('lc-opening-balance.index',['company'=>$companyId]),
-							'show'=>$canUpdateLcOpeningBalances
-								]
+						// 	'title'=>__('LCs Opening Balances'),
+						// 	'link'=>route('lc-opening-balance.index',['company'=>$companyId]),
+						// 	'show'=>$canUpdateLcOpeningBalances
+						// 		]
 					]
 						],
 						

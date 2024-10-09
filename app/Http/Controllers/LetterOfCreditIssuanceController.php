@@ -49,7 +49,7 @@ class LetterOfCreditIssuanceController
 		->when($filterStartDate , function($collection) use ($filterStartDate,$filterEndDate){
 			return $collection->filterByIssuanceDate($filterStartDate,$filterEndDate);
 		})
-		->sortByDesc('id');
+		->sortByDesc('id')->values();
 
 		return $collection;
 	}

@@ -703,8 +703,8 @@ Route::middleware([])->group(function () {
 					Route::get('safe-statement', 'SafeStatementController@index')->name('view.safe.statement');
                     Route::post('safe-statement', 'SafeStatementController@result')->name('result.safe.statement');
 
-					Route::get('bank-statement', 'BankStatementController@index')->name('view.bank.statement');
-                    Route::post('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
+					Route::get('bank-statement1', 'BankStatementController@index')->name('view.bank.statement');
+                    Route::get('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
 					
 					Route::get('lg-lc-bank-statement', 'LGLCSBanktatementController@index')->name('view.lg.lc.bank.statement');
                     Route::post('lg-lc-bank-statement', 'LGLCSBanktatementController@result')->name('result.lg.lc.bank.statement');

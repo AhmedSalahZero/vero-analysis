@@ -212,11 +212,12 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label>{{__('Beneficiary Name')}}
                                             @include('star')
                                         </label>
+									
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
-                                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                    <select data-current-selected="{{ isset($model) ? $model->getBeneficiaryId():0 }}" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                        <option value="" selected>{{__('Select')}}</option>
                                                         @foreach($beneficiaries as $customer)
                                                         <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option>
                                                         @endforeach
@@ -627,7 +628,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $('.js-toggle-bond').trigger('change')
+                $(function(){
+					$('.js-toggle-bond').trigger('change')
+				})
 
             </script>
             <script>
@@ -649,7 +652,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , type: "GET"
                         , success: function(res) {
 							
-							let customerOptions = '';
+							let customerOptions = '<option value="">{{ __("Please Select") }}</option>';
 							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
 							
 							for(var customerId in res.customers ){

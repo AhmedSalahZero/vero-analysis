@@ -11,8 +11,15 @@ use App\Models\FullySecuredOverdraft;
 use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Traits\GeneralFunctions;
+use Illuminate\Container\Container;
+
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+
+
 use Illuminate\Support\Facades\DB;
+
 
 class BankStatementController
 {
@@ -134,7 +141,7 @@ class BankStatementController
         if (!count($results)) {
             return redirect()->back()->with('fail', __('No Data Found'));
         }
-
+		$results = $this->paginate($results,50);
         return view('bank_statement_result', [
             'results' => $results,
             'currency' => $currencyName,
@@ -146,4 +153,22 @@ class BankStatementController
 			'isAgainstAssignmentOfContract'=>$accountType->isOverdraftAgainstAssignmentOfContractAccount()
         ]);
     }
+	
+function paginate(\Illuminate\Support\Collection $results, $pageSize)
+{
+	$page = Paginator::resolveCurrentPage('page');
+	
+	$total = $results->count();
+	return $this->paginator($results->forPage($page, $pageSize), $total, $pageSize, $page, [
+		'path' => Paginator::resolveCurrentPath(),
+		'pageName' => 'page',
+	]);
+
+}
+ function paginator($items, $total, $perPage, $currentPage, $options)
+{
+	return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
+		'items', 'total', 'perPage', 'currentPage', 'options'
+	));
+}
 }

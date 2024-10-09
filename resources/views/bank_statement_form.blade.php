@@ -18,7 +18,7 @@
 
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action="{{ route('result.bank.statement',['company'=>$company->id ]) }}" enctype="multipart/form-data">
+        <form class="kt-form kt-form--label-right" method="get" action="{{ route('result.bank.statement',['company'=>$company->id ]) }}" enctype="multipart/form-data">
             @csrf
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
