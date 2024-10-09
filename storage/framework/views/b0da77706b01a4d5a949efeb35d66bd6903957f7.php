@@ -199,9 +199,11 @@ use App\Models\MoneyReceived;
                                     <td class="font-weight-bold" style="color:<?php echo e($dueStatus['color']); ?>!important"><?php echo e($dueStatus['status']); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+									
 											<?php if(auth()->user()->can('update money received')): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-										<?php if(!$moneyReceived->isOpenBalance()): ?>
+											
+										     <?php if(!$moneyReceived->isOpenBalance()): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
                                             <a data-id="<?php echo e($moneyReceived->id); ?>" data-type="single" data-currency="<?php echo e($moneyReceived->getCurrency()); ?>" data-money-type="<?php echo e(MoneyReceived::CHEQUE); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyReceived::CHEQUE); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Send Under Collection')); ?>" href=""><i class="fa fa-money-bill"></i></a>
@@ -523,10 +525,12 @@ use App\Models\MoneyReceived;
                                             </div>
 											
 											<?php endif; ?> 
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="<?php echo e(__('Send In Safe')); ?>" href="<?php echo e(route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ])); ?>"><i class="fa fa-sync-alt"></i></a>
+                                            <a type="button" class="btn  btn-secondary btn-outline-hover-warning   btn-icon" title="<?php echo e(__('Send In Safe')); ?>" href="<?php echo e(route('cheque.send.to.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ])); ?>"><i class="fa fa-undo"></i></a>
 											<?php if($moneyReceived->cheque->getDueStatus()): ?>
 											<?php if(auth()->user()->can('delete money received')): ?>
-                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="<?php echo e(__('Rejected')); ?>" href="<?php echo e(route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ])); ?>"><i class="fa fa-undo"></i></a>
+                                            <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="<?php echo e(__('Rejected')); ?>" href="<?php echo e(route('cheque.send.to.rejected.safe',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ])); ?>">
+											<i class="fa fa-ban"></i>
+											</a>
                                             <div class="modal fade" id="delete-cheque-id-<?php echo e($moneyReceived->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
