@@ -226,7 +226,7 @@ class LetterOfGuaranteeFacilityController
 			->where('currency',getCurrentCompany()->getMainFunctionalCurrency())
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('lg_type',$lgTypeId)
-			->when($request->has('accountTypeId'),function(Builder $builder) use ($request,$accountTypeId){
+			->when($request->has('accountTypeId'),function( $builder) use ($request,$accountTypeId){
 				$accountType = AccountType::find($accountTypeId);
 				$currentSource = LetterOfGuaranteeIssuance::AGAINST_TD;
 				if($accountType->isCertificateOfDeposit()){

@@ -53,7 +53,6 @@ class FinancialInstitutionController
 		$type = $request->get('active','bank') ;
 		$financialInstitutionsBanks = $company->financialInstitutionsBanks() ;
 		$financialInstitutionsBanks = $type == 'bank' ?  $this->applyFilter($request,$financialInstitutionsBanks)  :$financialInstitutionsBanks ;
-// dd($financialInstitutionsBanks,$financialInstitutionsBanks->pluck('name')->toArray());
 		$financialInstitutionsLeasingCompanies = $company->financialInstitutionsLeasingCompanies() ;
 		$financialInstitutionsLeasingCompanies = $type == 'leasing_companies' ? $this->applyFilter($request,$financialInstitutionsLeasingCompanies) : $financialInstitutionsLeasingCompanies ;
 		$financialInstitutionsFactoringCompanies = $company->financialInstitutionsFactoringCompanies() ;

@@ -101,7 +101,6 @@ class LetterOfGuaranteeIssuanceController
 		elseif($source == LetterOfGuaranteeIssuance::AGAINST_TD){
 			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
 		}
-		
 		return [
 			'financialInstitutionBanks'=> FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get(),
 			'beneficiaries'=>[],
@@ -172,7 +171,6 @@ class LetterOfGuaranteeIssuanceController
 		$openingBalanceFromCurrentAccountBankStatementForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceFromCurrentAccountBankStatement();
 		
 		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id;
-		// $openingBalanceFromCurrentAccountBankStatementForCashCover = $financialInstitutionAccountForCashCover->getOpeningBalanceFromCurrentAccountBankStatement();
 		
 		
 		$openingBalanceDateOfCurrentAccount = $openingBalanceFromCurrentAccountBankStatementForFeesAndCommission->date ;

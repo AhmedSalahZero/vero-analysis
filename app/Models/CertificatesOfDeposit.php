@@ -139,9 +139,6 @@ class CertificatesOfDeposit extends Model
 		return $this->getInterestRate() .' %';
 	}
 
-
-
-
 	public function getInterestAmount()
 	{
 		return $this->interest_amount?:0;

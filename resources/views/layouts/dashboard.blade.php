@@ -1178,7 +1178,10 @@ td{
         }
 
         function number_unformat(formattedNumber) {
-            return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
+			if(formattedNumber){
+            		return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
+			}
+			return 0;
         }
 
         function orderObjectKeys(myObj) {

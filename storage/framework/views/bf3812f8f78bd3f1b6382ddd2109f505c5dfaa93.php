@@ -74,22 +74,22 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
             <div class="flex-tabs">
 				<a href="<?php echo e(route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::LG_FACILITY  ])); ?>" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					<?php echo e(__('New From LG Facility')); ?>
+					<?php echo e(__('From LG Facility')); ?>
 
 				</a>
 				<a href="<?php echo e(route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_CD  ])); ?>" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					<?php echo e(__('New LG Agnist CDs')); ?>
+					<?php echo e(__('LG Agnist CDs')); ?>
 
 				</a>
 				<a href="<?php echo e(route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::AGAINST_TD  ])); ?>" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					<?php echo e(__('New LG Agnist TDs')); ?>
+					<?php echo e(__('LG Agnist TDs')); ?>
 
 				</a>
 				<a href="<?php echo e(route('create.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER])); ?>" class="btn btn-sm active-style btn-icon-sm align-self-center">
 					<i class="fas fa-plus"></i>
-					<?php echo e(__('New LG 100% Cash Cover')); ?>
+					<?php echo e(__('LG 100% Cash Cover')); ?>
 
 				</a>
 			</div >

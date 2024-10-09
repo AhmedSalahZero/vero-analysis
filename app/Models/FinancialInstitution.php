@@ -223,13 +223,13 @@ class FinancialInstitution extends Model
 			 * * current account bank Statement
 			 */
 			$startDate = isset($accountArr['start_date']) && $accountArr['start_date'] ? Carbon::make($accountArr['start_date'])->format('Y-m-d') : $startDate;
-			if($balanceAmount != 0){
+			if($startDate){
 				$account->currentAccountBankStatements()->create([
 					'company_id'=>getCurrentCompanyId() ,
 					'beginning_balance'=>0,
-					'is_beginning_balance'=>1 ,
+					// 'is_beginning_balance'=>1 ,
 					'debit'=>$balanceAmount,
-					'is_debit'=>$isDebit =$balanceAmount > 0 ,
+					'is_debit'=>$isDebit =$balanceAmount >= 0 ,
 					'is_credit' => !$isDebit,
 					'date'=>$startDate ,
 					'comment_en'=>__('Beginning Balance',[],'en'),
