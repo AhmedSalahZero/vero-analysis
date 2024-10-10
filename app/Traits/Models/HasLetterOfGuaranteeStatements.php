@@ -5,7 +5,7 @@ namespace App\Traits\Models;
 
 trait HasLetterOfGuaranteeStatements
 {
-    public function generateLetterOfGuaranteeData(int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , int $lgAdvancedPaymentId = 0 , int $cdOrTdId = 0 , $type =null):array
+    public function generateLetterOfGuaranteeData(int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , int $lgAdvancedPaymentId = 0 , int $cdOrTdId = 0 , $type =null,$commentEn=null,$commentAr=null):array
     {
         return [
 			'type'=>$type , // beginning-balance for example
@@ -21,6 +21,8 @@ trait HasLetterOfGuaranteeStatements
 			'debit'=>$debit,
 			'credit'=>$credit ,
 			'date'=>$date,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		];
     }
 		/**
@@ -28,23 +30,11 @@ trait HasLetterOfGuaranteeStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleLetterOfGuaranteeStatement(int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $lgAdvancedPaymentId = 0 , $cdOrTdId = 0 , $type =null)
+	public function handleLetterOfGuaranteeStatement(int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $lgAdvancedPaymentId = 0 , $cdOrTdId = 0 , $type =null,$commentEn = null, $commentAr=null)
 	{
-		$data = $this->generateLetterOfGuaranteeData($financialInstitutionId , $source  , $lgFacilityId, $lgType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName ,$lgAdvancedPaymentId, $cdOrTdId , $type) ;
+		$data = $this->generateLetterOfGuaranteeData($financialInstitutionId , $source  , $lgFacilityId, $lgType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName ,$lgAdvancedPaymentId, $cdOrTdId , $type,$commentEn,$commentAr) ;
 		$this->letterOfGuaranteeStatements()->create($data);
 
 	}
-
-	
-	// public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId)
-	// {
-	// 	return $this->currentAccountDebitBankStatement()->create([
-	// 		'financial_institution_account_id'=>$financialInstitutionAccountId,
-	// 		'company_id'=>$this->company_id ,
-	// 		'credit'=>0,
-	// 		'debit'=>$debit,
-	// 		'date'=>$date
-	// 	]);
-	// }
 
 }

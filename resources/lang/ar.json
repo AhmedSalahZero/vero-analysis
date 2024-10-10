@@ -1191,5 +1191,10 @@
 "Outgoing Transfer To Pay [:expenseName - :expenseNameName]":"تحويل بنكي للمصروف [:expenseName - :expenseNameName]",
 "Payable Cheque To Pay [:expenseName - :expenseNameName] [ :chequeNumber ]":"صرف شيك للمصروف [:expenseName - :expenseNameName] [ :chequeNumber ]",
 "Down Payment For Contract :contractName":"دفعة مقدمة للتعاقد :contractName",
-"Beginning Balance":"رصيد اول المدة"
+"Beginning Balance":"رصيد اول المدة",
+"Issuance [ :customerName ] [ :transactionName ] [ :lgCode ]" :"إصدار [ :customerName ] [ :transactionName ] [ :lgCode ]",
+"Canceled [ :customerName ] [ :transactionName ] [ :lgCode ]" :"إلغاء [ :customerName ] [ :transactionName ] [ :lgCode ]",
+"Decreased Amount [ :customerName ] [ :transactionName ] [ :lgCode ]" :"تخفيض [ :customerName ] [ :transactionName ] [ :lgCode ]",
+"Return LG Cash Cover [ :customerName ] [ :transactionName ] [ :lgCode ]":"رد الغطاء النقدي لخطاب ضمان [ :customerName ] [ :transactionName ] [ :lgCode ]"
+
 }

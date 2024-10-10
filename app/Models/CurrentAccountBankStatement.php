@@ -245,6 +245,11 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 			
 		});
 	}
-	
+	public static function generateReturnLgCashCoverComment($lang,string $customerName,?string $transactionName,?string $lgCode):string 
+	{
+		$transactionName = is_null($transactionName) ? '-' : $transactionName ;
+		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
+		return __('Return LG Cash Cover [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName,'transactionName'=>$transactionName,'lgCode'=>$lgCode],$lang) ;
+	}	
 	
 }

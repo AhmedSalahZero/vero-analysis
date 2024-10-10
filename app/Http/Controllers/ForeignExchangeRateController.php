@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Company;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\ForeignExchangeRate;
 use App\Traits\GeneralFunctions;
 use Arr;
@@ -52,6 +53,8 @@ class ForeignExchangeRateController
 		$searchFields = [];
 		$models = [];
 		$existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency')->toArray();
+		$existingCurrencies =FinancialInstitutionAccount::getAllCurrentAccountCurrenciesForCompany($company->id,[$mainFunctionalCurrency]);
+
 		
 		$isMainFunctionCurrencyExistInHisCurrency = in_array($mainFunctionalCurrency,$existingCurrencies );
 		$activeType = $isMainFunctionCurrencyExistInHisCurrency ? $mainFunctionalCurrency : Arr::first($existingCurrencies);

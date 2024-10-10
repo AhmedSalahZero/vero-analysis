@@ -153,7 +153,7 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getBeneficiaryName()
 	{
 		$beneficiary = $this->beneficiary ;
-		return  $beneficiary ? $beneficiary->getName(): 0 ;
+		return  $beneficiary ? $beneficiary->getName(): __('N/A');
 	}
 	public function getBeneficiaryId()
 	{
@@ -324,7 +324,7 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function getCashCoverDeductedFromAccountNumber()
 	{
-		return $this->cash_cover_deducted_from_account_number;
+		return $this->cash_cover_deducted_from_account_number ?: $this->lg_fees_and_commission_account_number;
 	}
 	
 	public function getLgFeesAndCommissionAccountTypeId()

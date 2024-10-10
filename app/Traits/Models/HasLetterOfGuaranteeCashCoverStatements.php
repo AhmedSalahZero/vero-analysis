@@ -36,7 +36,7 @@ trait HasLetterOfGuaranteeCashCoverStatements
 	}
 
 	
-	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , int $lgAdvancedPaymentHistoryId = 0 , int $letterOfGuaranteeIssuanceId = 0)
+	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , int $lgAdvancedPaymentHistoryId = 0 , int $letterOfGuaranteeIssuanceId = 0 , $commentEn = null , $commentAr= null)
 	{
 		return $this->currentAccountDebitBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
@@ -46,6 +46,8 @@ trait HasLetterOfGuaranteeCashCoverStatements
 			'lg_advanced_payment_history_id'=>$lgAdvancedPaymentHistoryId,
 			'letter_of_guarantee_issuance_id'=>$letterOfGuaranteeIssuanceId,
 			'date'=>$date,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr
 		]);
 	}
 	public function storeCurrentAccountCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lgAdvancedPaymentHistoryId = 0 ,  $isActive = 1 , ? string $commentEn = null , ? string $commentAr = null , bool $isRenewalFees = false, bool $isCommissionFees = false , int $lgRenewalDateHistoryId = null)

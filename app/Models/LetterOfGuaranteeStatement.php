@@ -16,7 +16,24 @@ class LetterOfGuaranteeStatement extends Model
     protected $guarded = [
         'id'
     ];
-
+	public static function generateIssuanceComment(string $lang,string $customerName,?string $transactionName,?string $lgCode)
+	{
+		$transactionName = is_null($transactionName) ? '-' : $transactionName ;
+		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
+		return __('Issuance [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName ,'transactionName'=>$transactionName ,'lgCode'=>$lgCode],$lang);
+	}
+	public static function generateCancelComment(string $lang,string $customerName,?string $transactionName,?string $lgCode)
+	{
+		$transactionName = is_null($transactionName) ? '-' : $transactionName ;
+		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
+		return __('Canceled [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName ,'transactionName'=>$transactionName ,'lgCode'=>$lgCode],$lang);
+	}
+	public static function generateAdvancedPaymentLgComment(string $lang,string $customerName,?string $transactionName,?string $lgCode)
+	{
+		$transactionName = is_null($transactionName) ? '-' : $transactionName ;
+		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
+		return __('Decreased Amount [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName ,'transactionName'=>$transactionName ,'lgCode'=>$lgCode],$lang);
+	}
 	public static function updateNextRows(LetterOfGuaranteeStatement $model):string 
 	{
 		$minDate  = $model->full_date ;

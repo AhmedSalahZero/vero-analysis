@@ -11,6 +11,13 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
+.max-w-comment{
+	width:700px !important;
+	max-width:700px !important;
+	min-width:700px !important;
+	text-wrap:wrap !important;
+	
+}
 #DataTables_Table_0_info{
 	margin-bottom:20px;
 }
@@ -297,7 +304,6 @@
 
 
                 <div class="table-custom-container position-relative  ">
-                    
                     <?php if(!$isCurrentAccount): ?>
                     <div class="d-flex z-index-6" style="justify-content:right">
                         <a href="<?php echo e(route('view.withdrawals.settlement.report',['company'=>$company->id ])); ?>" class="btn active-style btn-icon-sm align-self-center">
@@ -317,7 +323,7 @@
 
                                     <tr class="header-tr ">
 
-                                        <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                        <th class="view-table-th  header-th  align-middle text-center">
                                             <?php echo e(__('#')); ?>
 
                                         </th>
@@ -327,43 +333,43 @@
 
                                         </th>
                                         <?php if(! $isCurrentAccount): ?>
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Limit')); ?>
 
                                         </th>
                                         <?php endif; ?>
                                         <?php if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract): ?>
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Actual Limit')); ?>
 
                                         </th>
                                         <?php endif; ?>
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Beginning Balance')); ?>
 
                                         </th>
 
 
-                                        <th class="view-table-th max-w-currency    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Debit')); ?>
 
                                         </th>
 
-                                        <th class="view-table-th max-w-amount    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Credit')); ?>
 
                                         </th>
-                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('End Balance')); ?>
 
                                         </th>
 
                                         <?php if(! $isCurrentAccount): ?>
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Room')); ?>
 
                                         </th>
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo __('Calculated <br> Interest'); ?>
 
                                         </th>
@@ -375,7 +381,7 @@
                                             <?php echo e(__('Reviewed')); ?>
 
                                         </th>
-                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                        <th class="view-table-th   header-th  align-middle text-center max-w-comment">
                                             <?php echo e(__('Comment')); ?>
 
                                         </th>
@@ -392,21 +398,21 @@
                                     </script>
                                     <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$modelAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                        <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
+                                        <td class="sub-text-bg  "><?php echo e($index+1); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e(\Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y')); ?></td>
                                         <?php if(! $isCurrentAccount): ?>
-                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->limit)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->limit)); ?></td>
                                         <?php if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract): ?>
-                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->statement_limit)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->statement_limit)); ?></td>
                                         <?php endif; ?>
                                         <?php endif; ?>
-                                        <td class="sub-text-bg text-center max-w-invoice-number"><?php echo e(number_format($modelAsStdClass->beginning_balance)); ?></td>
-                                        <td class="sub-text-bg text-center max-w-invoice-date"><?php echo e(number_format($modelAsStdClass->debit)); ?></td>
-                                        <td class="sub-text-bg text-center max-w-currency"><?php echo e(number_format($modelAsStdClass->credit)); ?></td>
-                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->end_balance)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->beginning_balance)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->debit)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->credit)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->end_balance)); ?></td>
                                         <?php if(! $isCurrentAccount): ?>
-                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->room)); ?></td>
-                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->interest_amount)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->room)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->interest_amount)); ?></td>
                                         <?php endif; ?>
 										<?php
 								
@@ -418,7 +424,7 @@
 										?>
 								
                                         <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
-                                        <td class="sub-text-bg text-left max-w-amount"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
+                                        <td class="sub-text-bg text-left max-w-comment"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
 
                                  
 
