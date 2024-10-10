@@ -11,7 +11,7 @@ trait HasBlockedAgainst
 			return __('Blocked Against Overdraft');
 		}
 		if($this->letterOfGuaranteeIssuance){
-			return self::getBlockedAgainstMessage();
+			return __('Blocked Against LG');
 		}
 		return __('Free To Use');
 	}

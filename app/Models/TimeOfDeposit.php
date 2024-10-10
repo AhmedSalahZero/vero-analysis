@@ -256,8 +256,5 @@ class TimeOfDeposit extends Model
 		return $this->hasOne(LetterOfGuaranteeIssuance::class,'cash_cover_deducted_from_account_number','account_number')
 		->where('cash_cover_deducted_from_account_type',$tdAccount->id);
 	}
-	public static function getBlockedAgainstMessage()
-	{
-		return __('Blocked Against TD');
-	}
+	
 }
