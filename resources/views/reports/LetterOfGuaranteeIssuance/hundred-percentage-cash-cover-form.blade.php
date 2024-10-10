@@ -102,6 +102,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label>{{__('Category Name')}}
                                             @include('star')
                                         </label>
+		
                                         <div class="input-group">
                                             <select name="category_name" class="form-control repeater-select">
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
@@ -599,7 +600,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const lgAmount = number_unformat($('.lg-amount-js').val())
                     const rate = number_unformat($('.lg-commission-rate-js').val()) / 100
                     const lgCommissionAmount = lgAmount * rate
-                    $('.lg-commission-amount-js').val(lgCommissionAmount)
+                    $('.lg-commission-amount-js').val(toFixed(lgCommissionAmount))
                 })
 
                 $('.recalc-renewal-date').trigger('change')
