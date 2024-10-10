@@ -104,6 +104,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
+		
                                         <div class="input-group">
                                             <select name="category_name" class="form-control repeater-select">
                                                 <?php $__currentLoopData = LetterOfGuaranteeIssuance::getCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -773,14 +774,14 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const lgAmount = number_unformat($('.lg-amount-js').val())
                     const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
                     const cashCoverAmount = lgAmount * cashCoverRateJs
-                    $('.cash-cover-amount-js').val(cashCoverAmount)
+                    $('.cash-cover-amount-js').val(toFixed(cashCoverAmount))
                 })
 
                 $(document).on('change', '.recalculate-lg-commission-amount-js', function() {
                     const lgAmount = number_unformat($('.lg-amount-js').val())
                     const rate = number_unformat($('.lg-commission-rate-js').val()) / 100
                     const lgCommissionAmount = lgAmount * rate
-                    $('.lg-commission-amount-js').val(lgCommissionAmount)
+                    $('.lg-commission-amount-js').val(toFixed(lgCommissionAmount))
                 })
 
                 $('.recalc-renewal-date').trigger('change')

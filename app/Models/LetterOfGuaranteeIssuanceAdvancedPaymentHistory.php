@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Carbon\Carbon;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfGuaranteeIssuanceAdvancedPaymentHistory extends Model
 {
-	use HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
+	use HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
 	protected $table ='lg_issuance_advanced_payment_histories';
 	protected $guarded =  [
 		'id'

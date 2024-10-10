@@ -424,13 +424,13 @@ class LetterOfGuaranteeIssuance extends Model
 	public function deleteAllRelations():self
 	{
 		// currentAccountCreditBankStatement
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->advancedPaymentHistories);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
+		LetterOfGuaranteeIssuanceAdvancedPaymentHistory::deleteButTriggerChangeOnLastElement($this->advancedPaymentHistories);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeCashCoverStatements);
+		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeCashCoverStatements);
 		return $this;
 	}
 	public function renewalDateHistories():HasMany
@@ -453,7 +453,10 @@ class LetterOfGuaranteeIssuance extends Model
 				}
 			}
 		}else{
-			$this->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,1, __('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
+			$currentDate = Carbon::make($issuanceDate)->format('Y-m-d');
+			if(!$isOpeningBalance ||  Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount) ){
+				$this->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,1, __('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en'),__('Commission Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
+			}
 		}
 	}
 	public function getMinLgCommissionFees():float
