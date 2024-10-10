@@ -28,7 +28,7 @@ $endDateInputName = $type ? 'endDate['. $type .']' : 'endDate';
             <?php echo e($title); ?>
 
         </h3>
-        
+  
         <form class="w-full flex-2  " <?php if($lang=='ar' ): ?> style="margin-right:5rem !important" <?php else: ?> style="margin-left:5rem !important" <?php endif; ?>>
             <input type="hidden" name="active" value="<?php echo e($type); ?>">
             <div class="row align-items-center ">

@@ -29,7 +29,7 @@
                                     <div class="kt-widget5__item">
                                         <div class="kt-widget5__content">
                                             <div class="kt-widget5__pic">
-                                                
+                                         
                                                 <img class="kt-widget7__img" src="<?php echo e($company->getFirstMediaUrl()); ?>" alt="">
                                             </div>
                                             <div class="kt-widget5__section">

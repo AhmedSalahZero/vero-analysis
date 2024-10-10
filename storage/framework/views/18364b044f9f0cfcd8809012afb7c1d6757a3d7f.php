@@ -585,7 +585,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label><?php echo e(__('Cash Cover From Account Type')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select id="account_type_id" name="cash_cover_deducted_from_account_number" class="form-control js-update-account-number-based-on-account-type">
+                                                <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
                                                     <?php $__currentLoopData = $cashCoverAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <option <?php if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ): ?> selected <?php endif; ?> value="<?php echo e($accountType->id); ?>"><?php echo e($accountType->getName()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -854,14 +854,14 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const lgAmount = number_unformat($('.lg-amount-js').val())
                     const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
                     const cashCoverAmount = lgAmount * cashCoverRateJs
-                    $('.cash-cover-amount-js').val(cashCoverAmount)
+                    $('.cash-cover-amount-js').val(toFixed(cashCoverAmount))
                 })
 
                 $(document).on('change', '.recalculate-lg-commission-amount-js', function() {
                     const lgAmount = number_unformat($('.lg-amount-js').val())
                     const rate = number_unformat($('.lg-commission-rate-js').val()) / 100
                     const lgCommissionAmount = lgAmount * rate
-                    $('.lg-commission-amount-js').val(lgCommissionAmount)
+                    $('.lg-commission-amount-js').val(toFixed(lgCommissionAmount))
                 })
 
                 $('.recalc-renewal-date').trigger('change')

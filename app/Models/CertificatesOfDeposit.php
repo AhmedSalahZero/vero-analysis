@@ -244,5 +244,15 @@ class CertificatesOfDeposit extends Model
 	{
 		return number_format($this->amount) ;
 	}
+	public function letterOfGuaranteeIssuance()
+	{
+		$cdAccount = AccountType::onlyCdAccounts()->first();
+		return $this->hasOne(LetterOfGuaranteeIssuance::class,'cash_cover_deducted_from_account_number','account_number')
+		->where('cash_cover_deducted_from_account_type',$cdAccount->id);
+	}
+	public static function getBlockedAgainstMessage()
+	{
+		return __('Blocked Against TD');
+	}
 
 }

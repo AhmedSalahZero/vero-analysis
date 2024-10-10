@@ -560,14 +560,14 @@ use App\Models\LetterOfCreditIssuance;
                     const lcAmount = number_unformat($('.amount-in-main-currency-js-hidden').val())
                     const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
                     const cashCoverAmount = lcAmount * cashCoverRateJs
-                    $('.cash-cover-amount-js').val(cashCoverAmount)
+                    $('.cash-cover-amount-js').val(toFixed(cashCoverAmount))
                 })
 
                 $(document).on('change', '.recalculate-lc-commission-amount-js', function() {
                     const lcAmount = number_unformat($('.lc-amount-js').val())
                     const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
                     const lcCommissionAmount = lcAmount * rate
-                    $('.lc-commission-amount-js').val(Math.round(lcCommissionAmount,2))
+                    $('.lc-commission-amount-js').val(toFixed(lcCommissionAmount))
                 })
 
                 $('.recalc-due-date').trigger('change')

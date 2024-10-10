@@ -602,7 +602,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const lgAmount = number_unformat($('.lg-amount-js').val())
                     const cashCoverRateJs = number_unformat($('.cash-cover-rate-js').val()) / 100
                     const cashCoverAmount = lgAmount * cashCoverRateJs
-                    $('.cash-cover-amount-js').val(cashCoverAmount)
+                    $('.cash-cover-amount-js').val(toFixed(cashCoverAmount))
                 })
 
                 $(document).on('change', '.recalculate-lg-commission-amount-js', function() {
