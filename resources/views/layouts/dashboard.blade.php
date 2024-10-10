@@ -1922,8 +1922,16 @@ $(document).on('change','.checkbox-for-row',function(e){
 </script>
 
 
-
 <script>
+function toFixed(num,points = 2){
+	if(!num){
+		return 0;
+	}
+	return (Math.round(num * 100) / 100).toFixed(points);
+}
+</script>
+<script>
+
 $('#kt_datepicker_max_date_is_today').datepicker({
  autoclose: true,
  todayHighlight: true,

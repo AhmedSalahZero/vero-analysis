@@ -52,7 +52,6 @@
                                 Password / Change Password</b></a>
                     </div>
                 </div>
-				
 
             </form>
         </div>

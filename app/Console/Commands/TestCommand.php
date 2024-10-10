@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\TimeOfDeposit;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -42,12 +43,7 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		foreach(Company::all() as $company){
-			$companyId = $company->id ;
-			$bank = DB::table('branch')->where('company_id',$companyId)->orderByRaw('created_at asc')->first();
-			if(!$bank){
-				Branch::storeHeadOffice($companyId);
-			}
-		}
+		$timeOfDeposit = TimeOfDeposit::where('account_number',7878)->first();
+		dd($timeOfDeposit->letterOfGuaranteeIssuance);
 	}
 }

@@ -157,8 +157,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
-							
-                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<?php
+								$index = 0 ;
+							?>
+                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
                                         <?php echo e($index+1); ?>
@@ -219,6 +221,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         </span>
                                     </td>
                                 </tr>
+								<?php
+									$index++;
+								?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
@@ -289,7 +294,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<?php
+								$index = 0 ;
+							?>
+                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
                                         <?php echo e($index+1); ?>
@@ -343,6 +351,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         </span>
                                     </td>
                                 </tr>
+								<?php
+									$index++;
+								?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
@@ -410,7 +421,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<?php
+								$index = 0 ;
+							?>
+                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
                                         <?php echo e($index+1); ?>
@@ -470,6 +484,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         </span>
                                     </td>
                                 </tr>
+								<?php
+									$index++;
+								?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
@@ -537,8 +554,10 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 </tr>
                             </thead>
                             <tbody>
-					
-                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+					<?php
+						$index = 0 ;
+					?>
+                                <?php $__currentLoopData = $models[$currentTab]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
                                         <?php echo e($index+1); ?>
@@ -594,6 +613,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                     </span>
                     </td>
                     </tr>
+					<?php
+						$index++;
+					?>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                     </table>

@@ -623,7 +623,7 @@ use App\Models\LetterOfCreditIssuance;
         const lcAmount = number_unformat($('.lc-amount-js').val())
         const rate = number_unformat($('.lc-commission-rate-js').val()) / 100
         const lcCommissionAmount = lcAmount * rate
-        $('.lc-commission-amount-js').val(Math.round(lcCommissionAmount,2))
+        $('.lc-commission-amount-js').val(toFixed(lcCommissionAmount))
     })
 
     $('.recalc-due-date').trigger('change')
