@@ -14,6 +14,7 @@ use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\FullySecuredOverdraft;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
@@ -103,9 +104,6 @@ class CustomerInvoiceDashboardController extends Controller
 			}
 			
 			
-			
-			// $cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
-			
 			// start fully secured overdraft
 			$totalFullySecuredOverdraftRoom = 0 ;
 			$fullySecuredOverdraftCardCommonQuery = FullySecuredOverdraft::getCommonQueryForCashDashboard($company,$currencyName,$date);
@@ -170,29 +168,32 @@ class CustomerInvoiceDashboardController extends Controller
                 /**
                  * * حساب ال current account
                  */
-
-
-                $currentAccountEndBalanceForCurrency = DB::table('current_account_bank_statements')
+				$allAccountNumbersForThisCurrencyAndFinancialInstitution = FinancialInstitutionAccount::getAllAccountNumberForCurrency($company->id,$currencyName,$financialInstitutionBankId,true);
+				foreach($allAccountNumbersForThisCurrencyAndFinancialInstitution as $currentAccountNumber){
+					$currentAccountEndBalanceForCurrency = DB::table('current_account_bank_statements')
                 ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
                 ->where('financial_institution_accounts.company_id', $company->id)
                 ->where('currency', $currencyName)
                 ->where('date', '<=', $date)
+				->where('account_number',$currentAccountNumber)
                 ->where('financial_institution_accounts.financial_institution_id', '=', $financialInstitutionBankId)
                 ->orderBy('current_account_bank_statements.full_date', 'desc')
                 ->limit(1)
                 ->first();
+
+		
 				
 		
 					$details[$currencyName]['current_account'][] = [
-						'amount'=>$currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0 ,
-						'account_number'=>$currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->account_number : 0,
+						'amount'=>$currentAmount = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0 ,
+						'account_number'=>$currentAccountNumber,
 						'financial_institution_name'=>$currentFinancialInstitution->getName()
 					] ;
-					
-				
-                $currentAccountEndBalanceForCurrency = $currentAccountEndBalanceForCurrency ? $currentAccountEndBalanceForCurrency->end_balance : 0;
 
-                $currentAccountInBanks += $currentAccountEndBalanceForCurrency ;
+             	   $currentAccountInBanks += $currentAmount ;
+				}
+
+                
 
                 /**
                  * * حساب certificates_of_deposits
