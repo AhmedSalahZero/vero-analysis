@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Helpers\HHelpers;
+
 use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
@@ -702,6 +702,7 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(MoneyReceived::class,'money_received_id','id');
 	}
+
 	
 	
 }

@@ -78,7 +78,7 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-3">
                             <label>{{__('Receiving Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -91,6 +91,24 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
                         </div>
+						
+						
+						 <div class="col-md-2">
+                            <label>{{__('Select Partner Type')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="partner_type" id="type" class="form-control">
+                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
+										@foreach(['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')] as $type =>$title)
+                                 	       <option @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
+										@endforeach 
+                                       
+                                    </select>
+                                </div>
+                            </div>
+                            </div>
+							
+						
 
                         <div class="col-md-2">
                             <label>{{__('Select Invoice Currency')}} @include('star')</label>
