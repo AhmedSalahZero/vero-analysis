@@ -425,14 +425,14 @@ class LetterOfCreditIssuance extends Model
 	public function deleteAllRelations():self
 	{
 		
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->settlements);
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
+		PaymentSettlement::deleteButTriggerChangeOnLastElement($this->settlements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements()->withoutGlobalScope('only_active')->get());
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditStatements);
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditCashCoverStatements);
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($this->lcOverdraftBankStatements);
+		LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($this->letterOfCreditCashCoverStatements);
+		LcOverdraftBankStatement::deleteButTriggerChangeOnLastElement($this->lcOverdraftBankStatements);
 		return $this;
 	}	
 	public function expenses()

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentSettlement extends Model
 {
+	use HasDeleteButTriggerChangeOnLastElement;
 	protected $guarded = ['id'];
 	
 	public function moneyPayment()

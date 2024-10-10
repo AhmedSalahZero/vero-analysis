@@ -4,6 +4,7 @@ use App\Enums\LcTypes;
 use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\LetterOfCreditCashCoverStatement;
 use App\Models\LetterOfCreditFacility;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfCreditStatement;
@@ -145,7 +146,7 @@ class LetterOfCreditFacilityController
      $letterOfCreditFacility->update($data);
      $currencyName = $letterOfCreditFacility->getCurrency();
      LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
-     LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
+     LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
 		$letterOfCreditFacility->termAndConditions->each(function($termAndCondition){
 			$termAndCondition->delete();
 		});
@@ -178,7 +179,7 @@ class LetterOfCreditFacilityController
 	{
 
          LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
-         LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
+         LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
 
 		$letterOfCreditFacility->termAndConditions->each(function($termAndCondition){
             $termAndCondition->delete();

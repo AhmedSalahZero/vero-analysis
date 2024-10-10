@@ -120,8 +120,8 @@ class LoanScheduleSettlement extends Model
 	}
 	public function deleteAllRelations()
 	{
-		self::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
-		self::deleteButTriggerChangeOnLastElement($this->loanStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);
+		LoanStatement::deleteButTriggerChangeOnLastElement($this->loanStatements);
 	}
 	public function handleLoanStatement(int $companyId , int $financialInstitutionId  , string $accountNumber,string $date , $debitAmount , string $commentEn , string $commentAr)
 	{
