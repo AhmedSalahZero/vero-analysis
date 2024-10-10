@@ -104,15 +104,20 @@
         <ul style="margin-bottom:0 ;" class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
             <?php
             $index = 0 ;
+			$activeCurrency = null ;
             ?>
             <?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyUpper=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-            <li class="nav-item <?php if($index ==0 ): ?> active <?php endif; ?>">
-                <a class="nav-link <?php if($index ==0 ): ?> active <?php endif; ?>" data-toggle="tab" href="#kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tab">
+			<?php if(AtLeastOnKeyIsTrue($canShowDashboardPerCurrency,$currency)): ?>
+			<?php
+				$activeCurrency = is_null($activeCurrency) ? $currency :$activeCurrency ; 
+			?>
+            <li class="nav-item <?php if($activeCurrency == $currency ): ?> active <?php endif; ?>">
+                <a class="nav-link <?php if($activeCurrency == $currency  ): ?> active <?php endif; ?>" data-toggle="tab" href="#kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tab">
                     <i class="flaticon2-checking icon-lg"></i>
                     <span style="font-size:18px !important;"><?php echo e($currency); ?></span>
                 </a>
             </li>
+			<?php endif; ?>
 
             <?php
             $index++;
@@ -128,8 +133,8 @@
     ?>
 
     <?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-    <div class="tab-pane  <?php if($index == 0): ?> active <?php endif; ?>" id="kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tabpanel">
+	
+    <div class="tab-pane  <?php if($activeCurrency == $currency): ?> active <?php endif; ?>" id="kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tabpanel">
         <?php $__currentLoopData = [
 			'lg'=>[
 				'main_title'=>__('Letters Of Guarantee Position'),
@@ -157,7 +162,7 @@
 				] 
 				
 				]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lgOrLcType => $lcOrLgOptionsArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-		
+		<?php if($canShowDashboardPerCurrency[$lgOrLcType][$currency]): ?>
 		<div class="kt-portlet">
             <div class="kt-portlet__head sky-border">
                 <div class="kt-portlet__head-label">
@@ -450,6 +455,7 @@
 
 
         </div>
+		<?php endif; ?>
 		<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
        
   
