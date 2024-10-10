@@ -126,11 +126,9 @@ use App\Models\MoneyReceived;
 			<?php endif; ?> 
         </div>
     </div>
-    
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
             <!--Begin:: Tab Content-->
-            
             <div class="tab-pane <?php echo e(!Request('active') || Request('active') == MoneyReceived::CHEQUE ?'active':''); ?>" id="<?php echo e(MoneyReceived::CHEQUE); ?>" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>

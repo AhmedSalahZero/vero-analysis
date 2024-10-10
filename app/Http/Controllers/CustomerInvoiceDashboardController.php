@@ -8,6 +8,7 @@ use App\Helpers\HDate;
 use App\Http\Controllers\CashFlowReportController;
 use App\Http\Controllers\WithdrawalsSettlementReportController;
 use App\Models\AccountType;
+use App\Models\Branch;
 use App\Models\CashInSafeStatement;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
@@ -86,18 +87,24 @@ class CustomerInvoiceDashboardController extends Controller
 			$currentAccountInBanks = 0 ;
 			$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount = 0 ;
             $totalTimeDepositsForCurrentFinancialInstitutionAmount = 0 ;
-			
 			$cashInSafeStatementAmountForCurrency = 0 ;
-			$cashInSafeStatementAmountForCurrency = CashInSafeStatement::
-			where('date', '<=', $date)
-			->where('company_id', $company->id)
-			->where('currency', $currencyName)
-			->orderByRaw('full_date desc')->limit(1)->first();
-			$details[$currencyName]['cash_in_safe'][] = [
-				'amount'=>$cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0 ,
-				'branch_name'=>$cashInSafeStatementAmountForCurrency && $cashInSafeStatementAmountForCurrency->branch ? $cashInSafeStatementAmountForCurrency->branch->getName() : __('N/A'),
-			] ;
-			$cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
+			foreach(Branch::getBranchesForCurrentCompany($company->id) as $currentBranchId => $currentBranchName){
+				$cashInSafeStatementAmountForCurrencyAndBranch = CashInSafeStatement::
+				where('date', '<=', $date)
+				->where('company_id', $company->id)
+				->where('currency', $currencyName)
+				->where('branch_id',$currentBranchId)
+				->orderByRaw('full_date desc')->limit(1)->first();
+				$details[$currencyName]['cash_in_safe'][] = [
+					'amount'=>$currentBranchEndBalanceForCurrency=$cashInSafeStatementAmountForCurrencyAndBranch ? $cashInSafeStatementAmountForCurrencyAndBranch->end_balance : 0 ,
+					'branch_name'=>$currentBranchName,
+				] ;
+				$cashInSafeStatementAmountForCurrency += $currentBranchEndBalanceForCurrency;
+			}
+			
+			
+			
+			// $cashInSafeStatementAmountForCurrency = $cashInSafeStatementAmountForCurrency ? $cashInSafeStatementAmountForCurrency->end_balance : 0;
 			
 			// start fully secured overdraft
 			$totalFullySecuredOverdraftRoom = 0 ;

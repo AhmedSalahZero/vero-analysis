@@ -75,4 +75,9 @@ trait IsMoney
 
         return  $downPaymentSettlement ? Carbon::make($downPaymentSettlement)->format('d-m-Y') : null ;
     }
+	public function isUserType(string $type):bool
+	{
+		return $this->user_type == $type; 
+	}
+	
 }
