@@ -2,6 +2,13 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
+.max-w-comment{
+	width:700px !important;
+	max-width:700px !important;
+	min-width:700px !important;
+	text-wrap:wrap !important;
+	
+}
 #DataTables_Table_0_info{
 	margin-bottom:20px;
 }
@@ -296,7 +303,7 @@
 
                                     <tr class="header-tr ">
 
-                                        <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                        <th class="view-table-th  header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
 
@@ -304,36 +311,36 @@
                                             {{ __('Date') }}
                                         </th>
                                         @if(! $isCurrentAccount)
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('Limit') }}
                                         </th>
                                         @endif
                                         @if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract)
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('Actual Limit') }}
                                         </th>
                                         @endif
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('Beginning Balance') }}
                                         </th>
 
 
-                                        <th class="view-table-th max-w-currency    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('Debit') }}
                                         </th>
 
-                                        <th class="view-table-th max-w-amount    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('Credit') }}
                                         </th>
-                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('End Balance') }}
                                         </th>
 
                                         @if(! $isCurrentAccount)
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {{ __('Room') }}
                                         </th>
-                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                        <th class="view-table-th     header-th  align-middle text-center">
                                             {!! __('Calculated <br> Interest') !!}
                                         </th>
 
@@ -343,7 +350,7 @@
                                         <th class="view-table-th   header-th  align-middle text-center">
                                             {{ __('Reviewed') }}
                                         </th>
-                                        <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
+                                        <th class="view-table-th   header-th  align-middle text-center max-w-comment">
                                             {{ __('Comment') }}
                                         </th>
 
@@ -359,21 +366,21 @@
                                     </script>
                                     @foreach($results as $index=>$modelAsStdClass)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                        <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
+                                        <td class="sub-text-bg  ">{{ $index+1 }}</td>
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y') }}</td>
                                         @if(! $isCurrentAccount)
-                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->limit) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->limit) }}</td>
                                         @if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract)
-                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->statement_limit) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->statement_limit) }}</td>
                                         @endif
                                         @endif
-                                        <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($modelAsStdClass->beginning_balance) }}</td>
-                                        <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>
-                                        <td class="sub-text-bg text-center max-w-currency">{{ number_format($modelAsStdClass->credit) }}</td>
-                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->end_balance) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->beginning_balance) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->debit) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->credit) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->end_balance) }}</td>
                                         @if(! $isCurrentAccount)
-                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->room) }}</td>
-                                        <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->interest_amount) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->room) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($modelAsStdClass->interest_amount) }}</td>
                                         @endif
 										@php
 								
@@ -385,7 +392,7 @@
 										@endphp
 								
                                         <td class="sub-text-bg text-left ">{{   $reviewedText   }}</td>
-                                        <td class="sub-text-bg text-left max-w-amount">{{ $comment?: getBankStatementComment($modelAsStdClass)   }}</td>
+                                        <td class="sub-text-bg text-left max-w-comment">{{ $comment?: getBankStatementComment($modelAsStdClass)   }}</td>
 
                                  
 

@@ -48,7 +48,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <label for="" class="visibility-hidden">d</label>
-                                            <input id="from-currency-input" type="text" value="1 USD = " disabled class="form-control"> <span></span>
+                                            <input id="from-currency-input" type="text" value="1 {{ $currentTab }} = " disabled class="form-control"> <span></span>
                                         </div>
                                         <div class="col-md-2 mb-4">
                                             <label>{{__('Exchange Rate')}} </label>

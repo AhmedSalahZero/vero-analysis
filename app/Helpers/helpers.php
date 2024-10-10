@@ -6629,6 +6629,7 @@ if (!function_exists('getFixedLoanTypes')) {
 	}
 	function getBankStatementReviewed($stdClass){
 		$tableName = null ;
+		
 		if($id = $stdClass->money_received_id){
 			$tableName = 'money_received';
 		}

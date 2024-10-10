@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use App\Helpers\HArr;
 use App\Models\AccountInterest;
 use App\Traits\HasLastStatementAmount;
 use Illuminate\Database\Eloquent\Builder;
@@ -121,6 +121,9 @@ class FinancialInstitutionAccount extends Model
 	public function isActive():bool
 	{
 		return $this->is_active;
+	}
+	public static function getAllCurrentAccountCurrenciesForCompany(int $companyId,array $exceptCurrenciesNames){
+		return HArr::removeKeyFromArrayByValue(self::where('company_id',$companyId)->pluck('currency','currency')->toArray(),$exceptCurrenciesNames);
 	}
 	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId , $onlyActiveAccounts = true ):array
 	{

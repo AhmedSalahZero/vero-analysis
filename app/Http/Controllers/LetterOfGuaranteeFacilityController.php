@@ -111,7 +111,6 @@ class LetterOfGuaranteeFacilityController
 			}
 			if($currentOutstandingBalance > 0){
 				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
-				
 			}
 			$cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
 			if( $cashCoverOpeningBalance > 0 ){
@@ -237,6 +236,7 @@ class LetterOfGuaranteeFacilityController
 			->where('source',$currentSource)
 			->orderByRaw('full_date desc')
 			->first();
+	
 			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
 			if($lgTypeId == $selectedLgType ){
 				$currentLgOutstanding = $letterOfGuaranteeStatementEndBalance;
