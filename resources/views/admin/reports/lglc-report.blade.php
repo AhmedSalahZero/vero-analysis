@@ -102,15 +102,20 @@
         <ul style="margin-bottom:0 ;" class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
             @php
             $index = 0 ;
+			$activeCurrency = null ;
             @endphp
             @foreach($selectedCurrencies as $currencyUpper=>$currency)
-
-            <li class="nav-item @if($index ==0 ) active @endif">
-                <a class="nav-link @if($index ==0 ) active @endif" data-toggle="tab" href="#kt_apps_contacts_view_tab_main{{ $index }}" role="tab">
+			@if(AtLeastOnKeyIsTrue($canShowDashboardPerCurrency,$currency))
+			@php
+				$activeCurrency = is_null($activeCurrency) ? $currency :$activeCurrency ; 
+			@endphp
+            <li class="nav-item @if($activeCurrency == $currency ) active @endif">
+                <a class="nav-link @if($activeCurrency == $currency  ) active @endif" data-toggle="tab" href="#kt_apps_contacts_view_tab_main{{ $index }}" role="tab">
                     <i class="flaticon2-checking icon-lg"></i>
                     <span style="font-size:18px !important;">{{ $currency }}</span>
                 </a>
             </li>
+			@endif
 
             @php
             $index++;
@@ -126,8 +131,8 @@
     @endphp
 
     @foreach($selectedCurrencies as $name=>$currency)
-
-    <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
+	
+    <div class="tab-pane  @if($activeCurrency == $currency) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
         @foreach([
 			'lg'=>[
 				'main_title'=>__('Letters Of Guarantee Position'),
@@ -155,7 +160,7 @@
 				] 
 				
 				] as $lgOrLcType => $lcOrLgOptionsArr)
-		
+		@if($canShowDashboardPerCurrency[$lgOrLcType][$currency])
 		<div class="kt-portlet">
             <div class="kt-portlet__head sky-border">
                 <div class="kt-portlet__head-label">
@@ -437,6 +442,7 @@
 
 
         </div>
+		@endif
 		@endforeach 
        
   

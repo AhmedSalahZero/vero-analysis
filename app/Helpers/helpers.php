@@ -6837,3 +6837,12 @@ function getReviewPermissionName($modelName):string{
 	}
 	dd('please add permission name here');
 }
+function AtLeastOnKeyIsTrue(array $items , string $key){
+	$show = false ;
+	foreach(array_column($items,$key) as $boolean){
+		if($boolean){
+			$show= true ;	
+		}
+	}
+	return $show ;
+}

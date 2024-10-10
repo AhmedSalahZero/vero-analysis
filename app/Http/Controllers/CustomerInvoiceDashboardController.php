@@ -8,7 +8,6 @@ use App\Helpers\HDate;
 use App\Http\Controllers\CashFlowReportController;
 use App\Http\Controllers\WithdrawalsSettlementReportController;
 use App\Models\AccountType;
-use App\Models\ActiveJob;
 use App\Models\CashInSafeStatement;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
@@ -17,7 +16,6 @@ use App\Models\FinancialInstitution;
 use App\Models\FullySecuredOverdraft;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
-use App\Models\LetterOfGuaranteeStatement;
 use App\Models\MediumTermLoan;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Models\Partner;
@@ -580,7 +578,6 @@ class CustomerInvoiceDashboardController extends Controller
 			];
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
-		// $selectedFinancialInstitutionBankIds = $request->has('financial_institution_ids') ? $request->get('financial_institution_ids') : $financialInstitutionBankIds ;
 		$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
 	
 		$currentDate = now()->format('Y-m-d') ;
@@ -597,25 +594,32 @@ class CustomerInvoiceDashboardController extends Controller
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
 		$source = $request->get('lgSource');
         $reports = [];
-		
+		$canShowDashboardPerCurrency = [];
+		 
 		foreach(['lg'=>
 		[
 			'letter_of_facility_table_name'=>'letter_of_guarantee_facilities',
+			'statement_table_name'=>'letter_of_guarantee_statements',
+			
 			'statement_table'=>'\App\Models\LetterOfGuaranteeStatement'
 			] ,
 			
 			'lc'=>
 		[
 			'letter_of_facility_table_name'=>'letter_of_credit_facilities',
+			'statement_table_name'=>'letter_of_credit_statements',
 			'statement_table'=>'\App\Models\LetterOfCreditStatement'
 			] 
 			
 			] as $currentLgOrLcType => $lgOrLcOptionsArr){
 			$statementTableFullClassName = $lgOrLcOptionsArr['statement_table'];
 			$letterOfFacilityTableName = $lgOrLcOptionsArr['letter_of_facility_table_name'];
+			$currentStatementTableName = $lgOrLcOptionsArr['statement_table_name'];
 			$lgOrLcTypes = $typesForLgAndLc[$currentLgOrLcType];
 			
 			foreach ($selectedCurrencies as $currencyName) {
+					$canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = DB::table($currentStatementTableName)->where('company_id',$company->id)->where('currency',$currencyName)->exists();
+				
 				foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
 					$statementTableFullClassName::getDashboardOutstandingPerTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
 				}
@@ -668,6 +672,7 @@ class CustomerInvoiceDashboardController extends Controller
 				'charts'=>$charts
 			]);
 		}
+	
         return view('admin.reports.lglc-report', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
@@ -682,8 +687,8 @@ class CustomerInvoiceDashboardController extends Controller
 			'lgSources'=>LetterOfGuaranteeIssuance::lgSources(),
 			'lcSources'=>LetterOfCreditIssuance::lcSources(),
 			'tablesData'=>$tablesData,
-			'financialInstitutions'=>$financialInstitutions
-				
+			'financialInstitutions'=>$financialInstitutions,
+			'canShowDashboardPerCurrency'=>$canShowDashboardPerCurrency
 			
         ]);
     }
