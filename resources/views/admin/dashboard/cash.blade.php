@@ -148,7 +148,7 @@
 											$currentModalId = 'safe';
 										@endphp
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
-										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['cash_in_safe'] ?? [],$details[$name]['current_account'])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
+										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['current_account'],$details[$name]['cash_in_safe'] ?? [])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
                                     </h4>
 
                                 </div>
@@ -242,7 +242,10 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Total') }}
+                                        {{ __('Total')  . ' [ ' . $currency . ' ]' }} 
+										<button class="visibility-hidden btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" 
+										{{-- data-toggle="modal" data-target="#{{ $currency }}-past-due-modal" --}}
+										>{{ __('Details') }}</button>
                                     </h4>
 
                                 </div>
@@ -272,9 +275,8 @@
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{ __('Short Term Cash Facilities Position') }}
-                            </h3>
+						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Short Term Cash Facilities Position') }} </h3>
+                            
                         </div>
                     </div>
                 </div>

@@ -151,7 +151,7 @@
 											$currentModalId = 'safe';
 										?>
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModalId.$currency); ?>"><?php echo e(__('Details')); ?></button>
-										<?php echo $__env->make('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['cash_in_safe'] ?? [],$details[$name]['current_account'])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+										<?php echo $__env->make('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['current_account'],$details[$name]['cash_in_safe'] ?? [])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </h4>
 
                                 </div>
@@ -250,8 +250,10 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        <?php echo e(__('Total')); ?>
-
+                                        <?php echo e(__('Total')  . ' [ ' . $currency . ' ]'); ?> 
+										<button class="visibility-hidden btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" 
+										
+										><?php echo e(__('Details')); ?></button>
                                     </h4>
 
                                 </div>
@@ -282,10 +284,8 @@
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
-                                <?php echo e(__('Short Term Cash Facilities Position')); ?>
-
-                            </h3>
+						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Short Term Cash Facilities Position')); ?> </h3>
+                            
                         </div>
                     </div>
                 </div>
