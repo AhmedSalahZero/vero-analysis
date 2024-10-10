@@ -4,6 +4,7 @@ use App\Enums\LgTypes;
 use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\LetterOfGuaranteeCashCoverStatement;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
@@ -146,7 +147,7 @@ class LetterOfGuaranteeFacilityController
      $letterOfGuaranteeFacility->update($data);
      $currencyName = $letterOfGuaranteeFacility->getCurrency();
      LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
-     LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
+     LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
 		$letterOfGuaranteeFacility->termAndConditions->each(function($termAndCondition){
 			$termAndCondition->delete();
 		});
@@ -179,7 +180,7 @@ class LetterOfGuaranteeFacilityController
 	{
 
          LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
-         LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
+         LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeFacility->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE));
 
 		$letterOfGuaranteeFacility->termAndConditions->each(function($termAndCondition){
             $termAndCondition->delete();

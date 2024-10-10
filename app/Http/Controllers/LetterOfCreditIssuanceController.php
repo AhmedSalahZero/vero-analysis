@@ -9,10 +9,13 @@ use App\Models\Contract;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\LcIssuanceExpense;
+use App\Models\LcOverdraftBankStatement;
+use App\Models\LetterOfCreditCashCoverStatement;
 use App\Models\LetterOfCreditFacility;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfCreditStatement;
 use App\Models\Partner;
+use App\Models\PaymentSettlement;
 use App\Models\PurchaseOrder;
 use App\Models\SupplierInvoice;
 use App\Models\TimeOfDeposit;
@@ -241,10 +244,10 @@ class LetterOfCreditIssuanceController
 			'payment_date'=>null
 		]);
 	
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->settlements);
+		PaymentSettlement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->settlements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source));
+		LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
+		LcOverdraftBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source));
 		
 		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$request->get('lc_type')])->with('success',__('Data Store Successfully'));
 	}
@@ -281,8 +284,8 @@ class LetterOfCreditIssuanceController
 		
 		$diffBetweenLcAmountAndCashCover = ($lcAmountInMainCurrency - $cashCoverAmount) *  $letterOfCreditFacility->getBorrowingRate() / 100 ;
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
-		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source));
+		LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
+		LcOverdraftBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source));
 		$letterOfCreditFacilityId = $letterOfCreditFacility ? $letterOfCreditFacility->id : 0 ;
 		$letterOfCreditCurrency = $source == LetterOfCreditIssuance::AGAINST_TD || $source == LetterOfCreditIssuance::AGAINST_CD ? $letterOfCreditIssuance->getTdOrCdCurrency($source,$company->id) : $letterOfCreditIssuance->getLcCashCoverCurrency() ;
 		$letterOfCreditIssuance->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,$lcAmountInMainCurrency , 0,$letterOfCreditCurrency,0,$letterOfCreditIssuance->getCdOrTdId(),LetterOfCreditIssuance::FOR_PAID);

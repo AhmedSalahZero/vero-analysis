@@ -6,8 +6,10 @@ use App\Models\AccountType;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\LetterOfGuaranteeCashCoverStatement;
 use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeIssuanceAdvancedPaymentHistory;
@@ -238,8 +240,8 @@ class LetterOfGuaranteeIssuanceController
 		]);
 	
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);
+		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);
 		
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
@@ -378,8 +380,8 @@ class LetterOfGuaranteeIssuanceController
 	public function deleteAdvancedPayment(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory)
 	{
 		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements);
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->currentAccountBankStatements);
+		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->currentAccountBankStatements);
 		$lgAdvancedPaymentHistory->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgAdvancedPaymentHistory->letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
 	
