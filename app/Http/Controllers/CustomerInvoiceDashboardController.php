@@ -220,8 +220,11 @@ class CustomerInvoiceDashboardController extends Controller
 				
 				->orderBy('certificates_of_deposits.end_date', 'desc')
 				
-				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , certificates_of_deposits.account_number as account_number,certificates_of_deposits.amount as amount, case when fully_secured_overdrafts.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "'.  __('Overdraft') 
+				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , certificates_of_deposits.account_number as account_number,certificates_of_deposits.amount as amount, case 
+					when fully_secured_overdrafts.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "'.  __('Overdraft') 
 				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "' .  __('LG') 
+				.'" when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$cdAccountTypeId .' then "' .  __('LG') 
+				
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
 				 * ! credit issuance
@@ -263,8 +266,11 @@ class CustomerInvoiceDashboardController extends Controller
 				// 	$q->on('letter_of_credit_issuances.cd_or_td_account_number','=','time_of_deposits.account_number')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
 				// })
 				->orderBy('time_of_deposits.end_date', 'desc')
-				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
+				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case 
+					when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
 				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LG') 
+				
+				.'" when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$tdAccountTypeId .' then "' .  __('LG') 
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
 				 * ! credit issuance
