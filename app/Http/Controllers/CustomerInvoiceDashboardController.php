@@ -221,9 +221,9 @@ class CustomerInvoiceDashboardController extends Controller
 				->orderBy('certificates_of_deposits.end_date', 'desc')
 				
 				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , certificates_of_deposits.account_number as account_number,certificates_of_deposits.amount as amount, case 
-					when fully_secured_overdrafts.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "'.  __('Overdraft') 
+					when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$cdAccountTypeId .' then "' .  __('LG') 
 				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "' .  __('LG') 
-				.'" when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$cdAccountTypeId .' then "' .  __('LG') 
+				.'" when fully_secured_overdrafts.cd_or_td_account_type_id = '.$cdAccountTypeId .' then "'.  __('Overdraft') 
 				
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
@@ -267,10 +267,10 @@ class CustomerInvoiceDashboardController extends Controller
 				// })
 				->orderBy('time_of_deposits.end_date', 'desc')
 				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case 
-					when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
+				when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$tdAccountTypeId .' then "' .  __('LG') 
 				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LG') 
+				.'" when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
 				
-				.'" when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$tdAccountTypeId .' then "' .  __('LG') 
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
 				 * ! credit issuance
@@ -279,7 +279,7 @@ class CustomerInvoiceDashboardController extends Controller
 				.
 				'"  else "'. __('Free To Use') .'" end as blocked')
 				->get();
-				;
+				;	
 			
 				foreach($timeDepositsForCurrentFinancialInstitution as $timeDepositsForCurrentFinancialInstitutionDetail){
 					$details[$currencyName]['time_of_deposits'][] = (array)$timeDepositsForCurrentFinancialInstitutionDetail ;
@@ -290,7 +290,7 @@ class CustomerInvoiceDashboardController extends Controller
 		
                 $totalTimeDepositsForCurrentFinancialInstitutionAmount += $timeDepositsForCurrentFinancialInstitutionAmount ? $timeDepositsForCurrentFinancialInstitutionAmount : 0;
                
-				
+			
 
 
 
