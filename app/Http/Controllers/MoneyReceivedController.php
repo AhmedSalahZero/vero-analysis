@@ -538,7 +538,7 @@ class MoneyReceivedController
 			'selectedBanks'=>$selectedBanks,
 			'model'=>$moneyReceived,
 			'singleModel'=>$customerInvoiceId,
-			'currencies'=>$currencies
+			'currencies'=>$customerInvoiceCurrencies
 		]);
 		
 	}

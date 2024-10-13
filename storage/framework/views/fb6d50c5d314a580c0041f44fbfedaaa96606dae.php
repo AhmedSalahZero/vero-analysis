@@ -94,20 +94,7 @@ use App\Models\MoneyReceived ;
                         </div>
 						
 						
-						 <div class="col-md-2">
-                            <label><?php echo e(__('Select Partner Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select required name="partner_type" id="type" class="form-control">
-                                        
-										<?php $__currentLoopData = ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type =>$title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                 	       <option <?php if(isset($model) && $model->isUserType($type) ): ?> selected <?php endif; ?> value="<?php echo e($type); ?>"><?php echo e($title); ?></option>
-										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
-                                       
-                                    </select>
-                                </div>
-                            </div>
-                            </div>
+						 
 							
 						
 
