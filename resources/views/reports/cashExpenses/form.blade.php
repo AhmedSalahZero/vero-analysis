@@ -953,9 +953,11 @@ $(document).on('change', 'select.contracts-js', function() {
         const parent = $(this).closest('tr')
         const code = $(this).find('option:selected').data('code')
         const amount = $(this).find('option:selected').data('amount')
-        const currency = $(this).find('option:selected').data('currency').toUpperCase()
-        $(parent).find('.contract-code').val(code)
-        $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
+        const currency = $(this).find('option:selected').data('currency') ?  $(this).find('option:selected').data('currency').toUpperCase() : null;
+		if(currency){
+			$(parent).find('.contract-code').val(code)
+			$(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
+		}
         // $(parent).find('.contract-currency').val(currency)
 
     })

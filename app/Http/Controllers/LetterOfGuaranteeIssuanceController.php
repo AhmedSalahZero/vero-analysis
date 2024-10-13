@@ -267,7 +267,6 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
 		
 		$cancellationDate = $request->get('cancellation_date',now()->format('Y-m-d')) ;
-		// dd($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber());
 		 $letterOfGuaranteeIssuance->update([
 			'status' => $letterOfGuaranteeIssuanceStatus,
 			'cancellation_date'=>$cancellationDate

@@ -173,16 +173,8 @@ class MoneyPaymentController
 	{
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		
-		$currencies = DB::table('supplier_invoices')
-		->when($supplierInvoiceId,function($q) use($supplierInvoiceId) {
-			$q->where('id',$supplierInvoiceId);
-		})
-		->select('currency')
-		->where('currency','!=','')
-		->where('company_id',$company->id)
-		->orderByRaw('currency asc')
-		->get()
-		->unique('currency')->pluck('currency','currency');
+		
+		$currencies = SupplierInvoice::getCurrencies($supplierInvoiceId);
 		$isDownPayment = Request()->has('type');
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 		
@@ -450,12 +442,7 @@ class MoneyPaymentController
 	}
 	public function edit(Company $company , Request $request , moneyPayment $moneyPayment ,$supplierInvoiceId = null){
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
-		$currencies = DB::table('customer_invoices')
-		->select('currency')
-		->where('company_id',$company->id)
-		->where('currency','!=','')
-		->get()
-		->unique('currency')->pluck('currency','currency');
+		$currencies = SupplierInvoice::getCurrencies($supplierInvoiceId);
 		$isDownPayment = $moneyPayment->isDownPayment(); 
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 		$banks = Bank::pluck('view_name','id');
