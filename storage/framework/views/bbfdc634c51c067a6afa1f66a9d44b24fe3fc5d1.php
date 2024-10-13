@@ -362,7 +362,8 @@ use Carbon\Carbon;
 										
                                         <div class="col-md-3 mb-4">
                                             <label><?php echo e(__('Expiry Date')); ?> </label>
-                                            <input type="text" class="form-control" disabled value="<?php echo e($letterOfGuaranteeIssuance->getRenewalDateFormatted()); ?>">
+											<input type="hidden" name="expiry_date" value="<?php echo e(isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate()); ?>">
+                                            <input type="text" class="form-control" disabled  value="<?php echo e(isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate()); ?>">
                                         </div>
 										
 										  <div class="col-md-3">

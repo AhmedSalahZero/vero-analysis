@@ -1,4 +1,5 @@
 @if($model->isRunning() || $model->isExpired())
+
  <a data-toggle="modal" data-target="#cancel-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Cancel Letter') }}" href="#"><i class="fa fa-ban"></i></a>
  <div class="modal fade" id="cancel-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
@@ -56,6 +57,7 @@
          </div>
      </div>
  </div>
+
 @endif
  @if($model->isRunning())
  @if($model->isAdvancedPayment())

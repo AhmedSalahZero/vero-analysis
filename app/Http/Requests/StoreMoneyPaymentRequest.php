@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\MoneyPayment;
+use App\Rules\AtLeaseOneSettlementMustBeExist;
 use App\Rules\SettlementPlusWithoutCanNotBeGreaterNetBalance;
 use App\Rules\UnappliedAmountForContractAsDownPaymentRule;
 use App\Rules\UniqueChequeNumberRule;
@@ -39,10 +40,11 @@ class StoreMoneyPaymentRequest extends FormRequest
 			'paid_amount.'.$type => ['required','gt:0'],
 			'unapplied_amount'=>'sometimes|gte:0',
 			'net_balance_rules'=>new SettlementPlusWithoutCanNotBeGreaterNetBalance($this->get('settlements',[])),
+			'settlements'=>new AtLeaseOneSettlementMustBeExist($this->get('settlements',[])),
 			'cheque_number'=>$type == MoneyPayment::PAYABLE_CHEQUE ? ['required',new UniqueChequeNumberRule(Request()->input('delivery_bank_id.payable_cheque'),Request()->get('current_cheque_id'),__('Cheque Number Already Exist'))] : [],
 			'receipt_number'=>$type== MoneyPayment::CASH_PAYMENT ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_payments',$this->delivery_branch_id?:0,$this->current_branch,__('Receipt Number For This Branch Already Exist'))] : [],
 			'purchases_orders_amounts'=>[new UnappliedAmountForContractAsDownPaymentRule($this->unapplied_amount?:0,$this->is_down_payment,$paidAmount)],
-			'allocations'=>[new ValidAllocationsRule()]
+			'allocations'=>[new ValidAllocationsRule()],
         ];
     }
 	public function messages()

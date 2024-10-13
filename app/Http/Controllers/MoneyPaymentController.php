@@ -103,21 +103,18 @@ class MoneyPaymentController
 		$payableChequesEndDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['endDate'] ?? null ;
 
 
-		$user = $request->user()->load('moneyPayments') ;
-		/**
-		* @var User $user
-		*/
-		$cashPayments = $user->getCashPayments($cashPaymentsStartDate ,$cashPaymentsEndDate ) ;
-
-		$outgoingTransfer = $user->getOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
-		$payableCheques = $user->getPayableCheques($payableChequesStartDate,$payableChequesEndDate);
+	
+		$cashPayments = $company->getMoneyPaymentCashPayments($cashPaymentsStartDate ,$cashPaymentsEndDate ) ;
+		$outgoingTransfer = $company->getMoneyPaymentOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
+	
+		$payableCheques = $company->getMoneyPaymentPayableCheques($payableChequesStartDate,$payableChequesEndDate);
 
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$cashPayments = $moneyType == MoneyPayment::CASH_PAYMENT ? $this->applyFilter($request,$cashPayments) :$cashPayments  ;
-		$outgoingTransfer = $moneyType === MoneyPayment::OUTGOING_TRANSFER ? $this->applyFilter($request,$outgoingTransfer) : $outgoingTransfer  ;
 
+		$outgoingTransfer = $moneyType === MoneyPayment::OUTGOING_TRANSFER ? $this->applyFilter($request,$outgoingTransfer) : $outgoingTransfer  ;
 
 		$payableCheques = $moneyType == MoneyPayment::PAYABLE_CHEQUE ? $this->applyFilter($request,$payableCheques) : $payableCheques;
 
@@ -181,6 +178,8 @@ class MoneyPaymentController
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		$selectedCurrency = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getCurrency() : null;
+
 		// $supplierInvoices =  $singleModel ?  SupplierInvoice::where('id',$singleModel)->pluck('supplier_name','id') :SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
 		$invoiceNumber = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getInvoiceNumber():null;
 		/**
@@ -197,6 +196,7 @@ class MoneyPaymentController
 		->pluck('name','id')->toArray();
 	
 		$contracts = [];
+
 		
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
@@ -207,7 +207,8 @@ class MoneyPaymentController
 			'accountTypes'=>$accountTypes,
 			'suppliers'=>$suppliers,
 			'contracts'=>$contracts,
-			'clientsWithContracts'=>$clientsWithContracts
+			'clientsWithContracts'=>$clientsWithContracts,
+			'selectedCurrency'=>$selectedCurrency
 		]);
     }
 
@@ -354,12 +355,14 @@ class MoneyPaymentController
 			];
 		}
 	
-		$data['paid_amount'] = $paidAmount ;
+		// $data['paid_amount'] = $paidAmount ;
+		$data['paid_amount'] = $isDownPayment || ! $request->has('settlements') ?  $paidAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
 		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
 		$data['money_payment_id'] = $moneyPaymentId;
+
 		/**
 		 * @var MoneyPayment $moneyPayment ;
 		 */
@@ -443,6 +446,7 @@ class MoneyPaymentController
 	public function edit(Company $company , Request $request , moneyPayment $moneyPayment ,$supplierInvoiceId = null){
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		$currencies = SupplierInvoice::getCurrencies($supplierInvoiceId);
+		$selectedCurrency = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getCurrency() : null;
 		$isDownPayment = $moneyPayment->isDownPayment(); 
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 		$banks = Bank::pluck('view_name','id');
@@ -477,7 +481,8 @@ class MoneyPaymentController
 			'model'=>$moneyPayment,
 			'singleModel'=>$supplierInvoiceId,
 			'currencies'=>$currencies,
-			'clientsWithContracts'=>$clientsWithContracts 
+			'clientsWithContracts'=>$clientsWithContracts ,
+			'selectedCurrency'=>$selectedCurrency
 		]);
 
 	}

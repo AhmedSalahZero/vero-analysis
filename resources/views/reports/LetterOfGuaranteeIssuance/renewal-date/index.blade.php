@@ -342,7 +342,8 @@ use Carbon\Carbon;
 										
                                         <div class="col-md-3 mb-4">
                                             <label>{{__('Expiry Date')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getRenewalDateFormatted() }}">
+											<input type="hidden" name="expiry_date" value="{{ isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate() }}">
+                                            <input type="text" class="form-control" disabled  value="{{ isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate() }}">
                                         </div>
 										
 										  <div class="col-md-3">
