@@ -28,14 +28,11 @@ class ValidAllocationsRule implements ImplicitRule
     {
         foreach((array)$allocationItems as $invoiceNumber=>$arrayOfAllocations){
 			$totalAllocationsForInvoiceNumber = array_sum(array_column($arrayOfAllocations,'allocation_amount'));
-			if($totalAllocationsForInvoiceNumber != Request()->input('settlements.'.$invoiceNumber.'.settlement_amount',0)){
+			if($totalAllocationsForInvoiceNumber > Request()->input('settlements.'.$invoiceNumber.'.settlement_amount',0)){
 				$this->failedMessage  = __('Invalid Allocation For Invoice :invoiceNumber' ,['invoiceNumber'=>$invoiceNumber]);  
 				return false ;
 			}
-			
-			// foreach($arrayOfAllocations as  $allocationArr){
-			
-			// }
+		
 		}
 		return true ;
 		

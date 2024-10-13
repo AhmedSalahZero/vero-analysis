@@ -132,6 +132,9 @@ $selectedBanks = [];
 
                 <div class="col-md-2">
                     <label>{{__('Select Invoice Currency')}} @include('star')</label>
+@php
+	$selectedFound = false ;
+@endphp
 
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -141,14 +144,26 @@ $selectedBanks = [];
 							invoice-currency-class 
 							@endif
 							 update-exchange-rate 
-							 current-invoice-currency  ajax-get-invoice-numbers">
+							 current-invoice-currency  ajax-get-invoice-numbers {{ $selectedCurrency }}">
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                 @php
-                                $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+								$selected = $selectedCurrency == $currentName ;
+								
+								if($selected){
+									$selectedFound = true ;
+								}
+							
+								if(!$selected && !$selectedFound){
+	                                $selected =   isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency();
+									if($selected){
+										$selectedFound = true ;
+										
+									}
+								}
                                 $selected = $selected ? 'selected':'';
-                                if($selected || (isset($singleModel) && $singleModel) ){
-                                $currentPaymentCurrency = $currencyId ;
+                                if(($selected || (isset($singleModel) && $singleModel)) && !isset($model)){
+                               	 $currentPaymentCurrency = $currencyId ;
                                 }
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
@@ -175,10 +190,11 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-               
+				@php
+					$selectedFound = false ;
+				@endphp
                 <div class="col-md-2">
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
-
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select when-change-trigger-account-type-change name="payment_currency" class="form-control
@@ -187,15 +203,20 @@ $selectedBanks = [];
 							receiving-currency-class
 							update-exchange-rate
 							 current-currency">
+							
                                 {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                 @foreach(getCurrencies() as $currencyId=>$currentName)
                                 @php
                                 $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
                                 $selected = $selected ? 'selected':'';
-                                if(!$selected && $currentPaymentCurrency == $currencyId){
+                                if((!$selected && $currentPaymentCurrency == $currencyId) && !$selectedFound){
                                 $selected = 'selected';
+								$selectedFound = true ;
                                 }
+								if(!$selected && !$selectedFound){
 								 $selected = isset($singleModel) && in_array($currentName,$currencies) ? 'selected':$selected;
+								 $selectedFound= true ;
+								}
                                 @endphp
                                 <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                                 @endforeach

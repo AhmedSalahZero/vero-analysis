@@ -81,17 +81,15 @@ class MoneyReceivedController
 		
 		
 	
-		$user = $request->user()->load('moneyReceived') ;
-		/** 
-		* @var User $user
-		*/
-		$receivedCashesInSafe = $user->getReceivedCashesInSafe($receivedCashesInSafeStartDate ,$receivedCashesInSafeEndDate ) ;
-		$receivedCashesInBanks = $user->getReceivedCashesInBank($cashesInBankStartDate,$cashesInBankEndDate) ;
-		$receivedTransfer = $user->getReceivedTransfer($incomingTransferStartDate,$incomingTransferEndDate) ;
-		$receivedChequesInSafe = $user->getReceivedChequesInSafe($chequesInSafeStartDate,$chequesInSafeEndDate);
-		$receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe($chequesRejectedStartDate,$chequesRejectedEndDate);
-		$receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
-		$collectedCheques=  $user->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
+	
+		
+		$receivedCashesInSafe = $company->getReceivedCashesInSafe($receivedCashesInSafeStartDate ,$receivedCashesInSafeEndDate ) ;
+		$receivedCashesInBanks = $company->getReceivedCashesInBank($cashesInBankStartDate,$cashesInBankEndDate) ;
+		$receivedTransfer = $company->getReceivedTransfer($incomingTransferStartDate,$incomingTransferEndDate) ;
+		$receivedChequesInSafe = $company->getReceivedChequesInSafe($chequesInSafeStartDate,$chequesInSafeEndDate);
+		$receivedRejectedChequesInSafe = $company->getReceivedRejectedChequesInSafe($chequesRejectedStartDate,$chequesRejectedEndDate);
+		$receivedChequesUnderCollection=  $company->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
+		$collectedCheques=  $company->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
 		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		
@@ -401,7 +399,7 @@ class MoneyReceivedController
 			];
 		}
 		
-		$data['received_amount'] = $receivedAmount ;
+		$data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
 		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 	

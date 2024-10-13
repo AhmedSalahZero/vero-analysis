@@ -464,7 +464,6 @@ class LetterOfGuaranteeIssuance extends Model
 		return $this->min_lg_commission_fees;
 	}
 	public function getRenewalDateBefore(string $date):string{
-	
 		return  $this->renewalDateHistories->where('renewal_date','<',$date)->first()->renewal_date;
 	}
 	

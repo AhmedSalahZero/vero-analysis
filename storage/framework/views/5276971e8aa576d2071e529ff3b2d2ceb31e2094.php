@@ -133,6 +133,9 @@ $selectedBanks = [];
 
                 <div class="col-md-2">
                     <label><?php echo e(__('Select Invoice Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+<?php
+	$selectedFound = false ;
+?>
 
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -142,14 +145,26 @@ $selectedBanks = [];
 							invoice-currency-class 
 							<?php endif; ?>
 							 update-exchange-rate 
-							 current-invoice-currency  ajax-get-invoice-numbers">
+							 current-invoice-currency  ajax-get-invoice-numbers <?php echo e($selectedCurrency); ?>">
                                 
                                 <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
-                                $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+								$selected = $selectedCurrency == $currentName ;
+								
+								if($selected){
+									$selectedFound = true ;
+								}
+							
+								if(!$selected && !$selectedFound){
+	                                $selected =   isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency();
+									if($selected){
+										$selectedFound = true ;
+										
+									}
+								}
                                 $selected = $selected ? 'selected':'';
-                                if($selected || (isset($singleModel) && $singleModel) ){
-                                $currentPaymentCurrency = $currencyId ;
+                                if(($selected || (isset($singleModel) && $singleModel)) && !isset($model)){
+                               	 $currentPaymentCurrency = $currencyId ;
                                 }
                                 ?>
                                 <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
@@ -176,10 +191,11 @@ $selectedBanks = [];
                     </div>
 
                 </div>
-               
+				<?php
+					$selectedFound = false ;
+				?>
                 <div class="col-md-2">
                     <label><?php echo e(__('Select Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select when-change-trigger-account-type-change name="payment_currency" class="form-control
@@ -188,15 +204,20 @@ $selectedBanks = [];
 							receiving-currency-class
 							update-exchange-rate
 							 current-currency">
+							
                                 
                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
                                 $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
                                 $selected = $selected ? 'selected':'';
-                                if(!$selected && $currentPaymentCurrency == $currencyId){
+                                if((!$selected && $currentPaymentCurrency == $currencyId) && !$selectedFound){
                                 $selected = 'selected';
+								$selectedFound = true ;
                                 }
+								if(!$selected && !$selectedFound){
 								 $selected = isset($singleModel) && in_array($currentName,$currencies) ? 'selected':$selected;
+								 $selectedFound= true ;
+								}
                                 ?>
                                 <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

@@ -186,8 +186,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			//	console.log('--------------------')
 				var invoiceNumber = res.invoices[i].invoice_number
 				if($(lastNode).find('[data-target]').attr('data-target')){
-					lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',invoiceNumber));
-					lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',invoiceNumber));
+					lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',coverStringToValidClass(invoiceNumber)));
+					lastNode.find('.modal-class-js').attr('id',$(lastNode).find('.modal-class-js').attr('id').replace('--0',coverStringToValidClass(invoiceNumber)));
 				}
 			
 				var currentSettlementAllocation = res.invoices[i].settlement_allocations;

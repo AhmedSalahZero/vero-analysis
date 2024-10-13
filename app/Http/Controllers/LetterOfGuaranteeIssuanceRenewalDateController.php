@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreLgRenewalDateRequest;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitutionAccount;
@@ -21,12 +22,11 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 			'renewalDateHistories'=>$renewalDateHistories,
 		]);
     }
-	public function store(Request $request, Company $company, LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance){
+	public function store(StoreLgRenewalDateRequest $request, Company $company, LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance){
 
 		$date = $request->get('renewal_date') ;
 		$renewalFeesAmount = $request->get('fees_amount');
 		$expiryDate = $letterOfGuaranteeIssuance->getRenewalDate();
-
 		$date = explode('/',$date);
 		$month = $date[0];
 		$day = $date[1];
@@ -92,7 +92,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 			'model'=>$LgRenewalDateHistory
 		]);
 	}
-	public function update(Request $request , Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance  , LgRenewalDateHistory $LgRenewalDateHistory){
+	public function update(StoreLgRenewalDateRequest $request , Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance  , LgRenewalDateHistory $LgRenewalDateHistory){
 		$date = $request->get('renewal_date') ;
 		$renewalFeesAmount = $request->get('fees_amount');
 		$date = explode('/',$date);
@@ -100,8 +100,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$day = $date[1];
 		$year = $date[2];
 		$renewalDate = $year.'-'.$month.'-'.$day ;
-		$oldRenewalDate = $letterOfGuaranteeIssuance->getRenewalDate();
-		$expiryDate = $letterOfGuaranteeIssuance->getRenewalDateBefore($oldRenewalDate);
+		$expiryDate = $request->get('expiry_date');
 		$renewalFeesCurrentAccountBankStatement = $letterOfGuaranteeIssuance->renewalFeesCurrentAccountBankStatement($expiryDate) ;
 
 		$time  = now()->format('H:i:s');
@@ -111,6 +110,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 	
 		$this->storeCommissionToCreditCurrentAccountBankStatement($LgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
+		
 		$renewalFeesCurrentAccountBankStatement->update([
 			'date'=>$renewalDate,
 			'full_date'=>$fullDateTime,
@@ -134,7 +134,9 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$oldRenewalDate = $letterOfGuaranteeIssuance->getRenewalDate();
 		$expiryDate = $letterOfGuaranteeIssuance->getRenewalDateBefore($oldRenewalDate);
 		$renewalFeesCurrentAccountBankStatement = $letterOfGuaranteeIssuance->renewalFeesCurrentAccountBankStatement($expiryDate) ;
-		$renewalFeesCurrentAccountBankStatement->delete();
+		if($renewalFeesCurrentAccountBankStatement){
+			$renewalFeesCurrentAccountBankStatement->delete();
+		}
 		if($renewalFeesCurrentAccountBankStatement){
 			
 		}

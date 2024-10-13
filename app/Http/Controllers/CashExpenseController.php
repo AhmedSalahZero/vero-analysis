@@ -116,10 +116,10 @@ class CashExpenseController
 
 	
 		
-		$cashPayments = $company->getCashPayments($cashPaymentsStartDate ,$cashPaymentsEndDate ) ;
+		$cashPayments = $company->getCashExpenseCashPayments($cashPaymentsStartDate ,$cashPaymentsEndDate ) ;
 
-		$outgoingTransfer = $company->getOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
-		$payableCheques = $company->getPayableCheques($payableChequesStartDate,$payableChequesEndDate);
+		$outgoingTransfer = $company->getCashExpenseOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
+		$payableCheques = $company->getCashExpensePayableCheques($payableChequesStartDate,$payableChequesEndDate);
 		// $receivedRejectedChequesInSafe = $user->getReceivedRejectedChequesInSafe($chequesRejectedStartDate,$chequesRejectedEndDate);
 		// $receivedChequesUnderCollection=  $user->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
 		// $collectedCheques=  $user->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
@@ -396,8 +396,9 @@ class CashExpenseController
 		 * @var SupplierInvoice $supplierInvoice
 		 */
 		$activeTab = $moneyType;
-
-		return redirect()->route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
+		return response()->json([
+			'redirectTo'=>route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])
+		]);
 
 	}
 	protected function getActiveTab(string $moneyType)
@@ -479,7 +480,9 @@ class CashExpenseController
 		$cashExpense->delete();
 		$this->store($company,$request);
 		 $activeTab = $newType;
-		return redirect()->route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
+		 return response()->json([
+			'redirectTo'=>route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])
+		]);
 	}
 
 	public function destroy(Company $company , CashExpense $cashExpense)
