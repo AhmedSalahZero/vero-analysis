@@ -393,7 +393,6 @@
                                         <td class="sub-text-bg text-center  is-name-cell "><?php echo e($invoice->getNetInvoiceAmountFormatted()); ?></td>
                                         <td class="sub-text-bg text-center  is-name-cell "><?php echo e($invoice->getDueDateFormatted()); ?></td>
                                         <td class="sub-text-bg text-center "><?php echo e($invoice->getNetBalanceFormatted()); ?></td>
-										
                                         <td class="sub-text-bg text-center"><?php echo e($invoice->getStatusFormatted()); ?></td>
                                         <td class="sub-text-bg  text-center">
                                             <?php echo e($invoice->getAging()); ?>

@@ -490,12 +490,9 @@ class MoneyReceivedController
 	public function edit(Company $company , Request $request ,  MoneyReceived $moneyReceived ,$customerInvoiceId = null){
 		
 		$isDownPayment = $moneyReceived->isDownPayment();
-		$currencies = DB::table('customer_invoices')
-		->select('currency')
-		->where('company_id',$company->id)
-		->where('currency','!=','')
-		->get()
-		->unique('currency')->pluck('currency','currency');
+		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies($customerInvoiceId);
+		
+		
 		$viewName = $isDownPayment  ?  'reports.moneyReceived.down-payments-form' : 'reports.moneyReceived.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
@@ -526,7 +523,7 @@ class MoneyReceivedController
 				'singleModel'=>$customerInvoiceId,
 				'accountTypes'=>$accountTypes,
 				'financialInstitutionBanks'=>$financialInstitutionBanks,
-				'currencies'=>$currencies,
+				'currencies'=>$customerInvoiceCurrencies,
 				
 			]); 
 		}

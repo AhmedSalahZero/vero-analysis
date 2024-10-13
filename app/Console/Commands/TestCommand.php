@@ -43,7 +43,6 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$timeOfDeposit = TimeOfDeposit::where('account_number',7878)->first();
-		dd($timeOfDeposit->letterOfGuaranteeIssuance);
+		
 	}
 }

@@ -289,7 +289,7 @@ td{
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
 										@if(auth()->user()->can('update supplier payment'))
-										@include('reports._review_modal',['model'=>$moneyPayment])
+										@include('reports._review_modal',['model'=>$money])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
 @endif 
 @endif 

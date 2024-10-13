@@ -164,7 +164,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select">
+                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select supplier-js">
                                   {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                     @foreach($suppliers as $supplierId => $supplierName)
                                     <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
@@ -1094,4 +1094,18 @@ $selectedBanks = [];
 	
 
 </script>
+
+
+@if (!$singleModel&&!isset($model))
+	<script>
+	
+	$(function(){
+
+	setTimeout(function(){
+		console.log($('select.ajax-get-invoice-numbers:eq(0)').length)
+		$('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
+	},500)
+})
+	</script>
+@endif
 @endsection
