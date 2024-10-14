@@ -116,9 +116,10 @@ class AccountType extends Model
 	{
 		return $this->id ;
 	}
-	public function getName()
+	public function getName($lang = null)
 	{
-		return $this['name_'.app()->getLocale()];
+		$lang = is_null($lang) ? app()->getLocale() : $lang;
+		return $this['name_'.$lang];
 	}
 
 

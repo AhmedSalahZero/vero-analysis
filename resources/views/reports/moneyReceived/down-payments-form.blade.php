@@ -180,8 +180,9 @@ use App\Models\MoneyReceived ;
                             <label>{{__('Select Invoice Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select id="currency-for-contracts" name="currency" class="form-control 
+                                    <select id="invoice-currency-id" name="currency" class="form-control 
 							currency-class
+							currency-for-contracts
 							invoice-currency-class
 					
 							
@@ -228,7 +229,7 @@ use App\Models\MoneyReceived ;
                             <label>{{__('Select Receiving Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
 							current-currency
 							currency-class
 							receiving-currency-class
@@ -707,24 +708,17 @@ use App\Models\MoneyReceived ;
     })
 
 
-    $(document).on('change', 'select#type', function(e) {
-        const moneyType = $(this).val();
-        const activeClass = 'js-' + moneyType + '-received-amount';
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
-        // if (invoiceCurrency != receivingCurrency) {
-        //     $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //     $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        // } else {
-        //     $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //     $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        // }
-    })
+
     $(document).on('change', 'select.currency-class', function() {
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
+		
+        const invoiceCurrency = $('select#invoice-currency-id').val();
+        const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-        if (invoiceCurrency != receivingCurrency) {
+		
+		const partnerType = $('select#partner_type').val();
+		
+		
+        if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 
         } else {
@@ -751,7 +745,7 @@ use App\Models\MoneyReceived ;
     $(document).on('change', '.ajax-get-contracts-for-customer', function(e) {
         e.preventDefault()
         const customerId = $('select#customer_name').val()
-        const currency = $('select#currency-for-contracts').val()
+        const currency = $('select.currency-for-contracts').val()
 
         if (customerId && currency) {
             $.ajax({

@@ -130,7 +130,7 @@ $selectedBanks = [];
                 $currentPaymentCurrency = null ;
                 @endphp
 
-                <div class="col-md-2">
+                <div class="col-md-2" id="invoice-currency-div-id">
                     <label>{{__('Select Invoice Currency')}} @include('star')</label>
 @php
 	$selectedFound = false ;
@@ -138,7 +138,7 @@ $selectedBanks = [];
 
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="currency" class="form-control
+                            <select id="invoice-currency-id" name="currency" class="form-control
 							contract-currency currency-class ajax-update-contracts
 							@if(!$singleModel && !isset($model) )
 							invoice-currency-class 
@@ -197,7 +197,7 @@ $selectedBanks = [];
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select when-change-trigger-account-type-change name="payment_currency" class="form-control
+                            <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
 							
 							currency-class
 							receiving-currency-class
@@ -593,7 +593,7 @@ $selectedBanks = [];
 
 
     {{-- Settlement Information "Commen Card" --}}
-    <div class="kt-portlet">
+    <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
@@ -973,25 +973,21 @@ $selectedBanks = [];
     $(function() {
         $('#type').trigger('change');
     })
-
-    $(document).on('change', 'select#type', function(e) {
-        const moneyType = $(this).val();
-        const activeClass = 'js-' + moneyType + '-received-amount';
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
-        //  if (invoiceCurrency != receivingCurrency) {
-        //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //  } else {
-        //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //  }
-    })
+;
+   
     $(document).on('change', 'select.currency-class', function() {
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
+        const invoiceCurrency = $('select#invoice-currency-id').val();
+        const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-        if (invoiceCurrency != receivingCurrency) {
+		
+		const partnerType = $('select#partner_type').val();
+		if(partnerType && partnerType != 'is_supplier'){
+			  $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+			  return ;
+		}
+		
+		
+        if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 
         } else {

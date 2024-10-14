@@ -302,7 +302,7 @@ class MoneyPaymentController
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency','partner_type']);
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];
 		
@@ -407,7 +407,7 @@ class MoneyPaymentController
 		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 		
 		
-		if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 ){
+		if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 && $partnerType == 'is_supplier' ){
 			// start store unapplied amount as new down payment
 			return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]],['allocations'=>[]])),$moneyPayment->id);
 			

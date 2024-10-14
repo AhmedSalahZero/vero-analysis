@@ -77,7 +77,7 @@ trait IsMoney
     }
 	public function isUserType(string $type):bool
 	{
-		return $this->user_type == $type; 
+		return $this->partner_type == $type; 
 	}
 	
 }
