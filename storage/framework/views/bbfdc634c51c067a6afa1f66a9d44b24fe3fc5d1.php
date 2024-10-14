@@ -319,7 +319,7 @@ use Carbon\Carbon;
 
 
 
-
+                <?php if($letterOfGuaranteeIssuance->isExpired()): ?>
                 <div class="row">
                     <div class="col-md-12">
                         <!--begin::Portlet-->
@@ -406,6 +406,7 @@ use Carbon\Carbon;
                         </form>
                     </div>
                 </div>
+				<?php endif; ?>
 
                 <div class="kt-portlet">
 

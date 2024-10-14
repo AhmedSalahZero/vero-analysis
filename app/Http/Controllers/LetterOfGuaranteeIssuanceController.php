@@ -190,7 +190,7 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeStatementCommentEn = LetterOfGuaranteeStatement::generateIssuanceComment('en',$customerName,$transactionName,$lgCode); ;
 		$letterOfGuaranteeStatementCommentAr = LetterOfGuaranteeStatement::generateIssuanceComment('ar',$customerName,$transactionName,$lgCode); ;
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,0,$cdOrTdId,'credit-lg-amount',$letterOfGuaranteeStatementCommentEn,$letterOfGuaranteeStatementCommentAr);
-		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lg-amount');
+		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'debit-lg-amount');
 		
 		$lgDurationMonths = $request->get('lg_duration_months',1);
 		$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 
@@ -230,24 +230,35 @@ class LetterOfGuaranteeIssuanceController
 		 * * running
 		 * * اكنه كان عامله انه اتلغى بالغلط
 	 */
-	public function bankToRunningStatus(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
+	public function backToRunningStatus(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
 	{
 		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::RUNNING ;
 		/**
 		 * * هنشيل قيم ال
 		 * * letter of guarantee statement
 		 */
-		// $financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
+		$financialInstitutionId = $letterOfGuaranteeIssuance->getFinancialInstitutionId() ;
 
 		 $letterOfGuaranteeIssuance->update([
 			'status' => $letterOfGuaranteeIssuanceStatus,
 			'cancellation_date'=>null
 		]);
 	
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
-		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('status',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements);
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
 		
+		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements->where('is_debit',1));
+		
+		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
+		$lgType = $letterOfGuaranteeIssuance->getLgType();
+		// $amount = $letterOfGuaranteeIssuance->getLgAmount();
+		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
+		$issuanceDate = $letterOfGuaranteeIssuance->getIssuanceDate();
+		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
+		
+		$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->id : null ;
+		
+		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'debit-lg-amount');
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
 	

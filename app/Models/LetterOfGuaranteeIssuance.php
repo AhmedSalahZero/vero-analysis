@@ -27,6 +27,7 @@ class LetterOfGuaranteeIssuance extends Model
     const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
     const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
     const AGAINST_TD_BEGINNING_BALANCE = 'against-td-beginning-balance';
+	
 	const FOR_CANCELLATION ='for-cancellation'; // هي الفلوس اللي انت حيطتها بسبب انه عمل الغاء
 	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
@@ -104,6 +105,10 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getTransactionName()
 	{
 		return $this->transaction_name;
+	}
+	public function getFinancialInstitutionId():int 
+	{
+		return $this->financial_institution_id;
 	}
 	public function financialInstitutionBank()
 	{

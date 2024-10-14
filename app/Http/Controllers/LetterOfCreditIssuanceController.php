@@ -231,7 +231,7 @@ class LetterOfCreditIssuanceController
 		 * * running
 		 * * اكنه كان عامله انه اتلغى بالغلط
 	 */
-	public function bankToRunningStatus(Company $company,Request $request,LetterOfCreditIssuance $letterOfCreditIssuance,string $source)
+	public function backToRunningStatus(Company $company,Request $request,LetterOfCreditIssuance $letterOfCreditIssuance,string $source)
 	{
 		$letterOfCreditIssuanceStatus = LetterOfCreditIssuance::RUNNING ;
 		/**

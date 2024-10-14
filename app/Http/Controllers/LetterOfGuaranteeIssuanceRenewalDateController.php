@@ -137,9 +137,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		if($renewalFeesCurrentAccountBankStatement){
 			$renewalFeesCurrentAccountBankStatement->delete();
 		}
-		if($renewalFeesCurrentAccountBankStatement){
-			
-		}
+	
 		$LgRenewalDateHistory->delete();
 		$letterOfGuaranteeIssuance = $letterOfGuaranteeIssuance->refresh();
 		$lastHistory = $letterOfGuaranteeIssuance->renewalDateHistories->last();
