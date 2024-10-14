@@ -23,15 +23,22 @@
                                  <input disabled value="{{  $model->getFinancialInstitutionBankName()  }}" type="text" class="form-control">
                              </div>
                          </div>
-
-                         <div class="col-md-3 mb-4">
+						 
+						  <div class="col-md-2 mb-4">
+                             <label>{{__('LG Code')}} </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="{{  $model->getLgCode()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
+                             </div>
+                         </div>
+						 
+                         <div class="col-md-2 mb-4">
                              <label>{{__('LG Amount')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getLgAmount()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
+                                 <input disabled value="{{  $model->getLgAmountFormatted()  }}" type="text" class="form-control text-center only-greater-than-or-equal-zero-allowed">
                              </div>
                          </div>
 
-                         <div class="col-md-3 mb-4">
+                         <div class="col-md-2 mb-4">
                              <label>{{__('Cancellation Date')}}</label>
                              <div class="kt-input-icon">
                                  <div class="input-group date">

@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfGuaranteeStatement;
 use App\Models\TimeOfDeposit;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +45,6 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		
+
 	}
 }
