@@ -5,6 +5,7 @@ namespace App\Models;
 
 use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
+use App\Traits\Models\HasCreditPartnerStatement;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\HasReviewedBy;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ,HasDebitStatements,HasCreditStatements,HasReviewedBy;
+	use IsMoney ,HasDebitStatements,HasCreditStatements,HasCreditPartnerStatement,HasReviewedBy;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';

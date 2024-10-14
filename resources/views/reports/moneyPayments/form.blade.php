@@ -130,7 +130,7 @@ $selectedBanks = [];
                 $currentPaymentCurrency = null ;
                 @endphp
 
-                <div class="col-md-2">
+                <div class="col-md-2" id="invoice-currency-div-id">
                     <label>{{__('Select Invoice Currency')}} @include('star')</label>
 @php
 	$selectedFound = false ;
@@ -138,7 +138,7 @@ $selectedBanks = [];
 
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="currency" class="form-control
+                            <select id="invoice-currency-id" name="currency" class="form-control
 							contract-currency currency-class ajax-update-contracts
 							@if(!$singleModel && !isset($model) )
 							invoice-currency-class 
@@ -593,7 +593,7 @@ $selectedBanks = [];
 
 
     {{-- Settlement Information "Commen Card" --}}
-    <div class="kt-portlet">
+    <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">

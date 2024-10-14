@@ -337,7 +337,7 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $moneyReceivedId = null){
-		
+		$partnerType = $request->get('partnerType');
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
 		$financialInstitutionId = null;
@@ -348,6 +348,8 @@ class MoneyReceivedController
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency','receiving_currency']);
 		$currency = $data['currency'] ;
+		
+		
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
 
@@ -398,6 +400,7 @@ class MoneyReceivedController
 				'drawee_bank_id'=>$request->input('drawee_bank_id')
 			];
 		}
+		$bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
 		
 		$data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
 		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
@@ -411,9 +414,7 @@ class MoneyReceivedController
 		 */
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
-		/**
-		 * @var MoneyReceived $moneyReceived
-		 */
+		
 		if(!$isDownPayment){
 			unset($data['contract_id']);
 		}
@@ -425,9 +426,14 @@ class MoneyReceivedController
 		$receivingBranchId = $relationData['receiving_branch_id'] ?? null ;
 		$relationData['company_id'] = $company->id ;  
 		$moneyReceived->$relationName()->create($relationData);
+		/**
+		 * @var MoneyReceived $moneyReceived
+		 */
 		$moneyReceived = $moneyReceived->refresh();
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
-		
+		if($partnerType != 'customer_id'){
+			$moneyReceived->handlePartnerCreditStatement($partnerType,$moneyReceivedId,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+		}
 		
 		
 
@@ -799,6 +805,19 @@ class MoneyReceivedController
 	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 		return response()->json([
 			'customerInvoices'=>CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id')
+		]);
+	}
+	public function getPartnersBasedOnCurrency(Request $request , Company $company , string $currencyName){
+		$partnerColumnName = $request->get('partnerColumnName');
+		if($partnerColumnName == 'is_customer'){
+			$partners = CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id');
+			
+		}else{
+			$partners = Partner::where('company_id',$company->id)->where($partnerColumnName,1)->pluck('name','id')->toArray();
+			
+		}
+		return response()->json([
+			'partners'=>$partners
 		]);
 	}
 	public function markAsConfirmed(Company $company,Request $request,int $modelId)

@@ -1195,6 +1195,7 @@
 "Issuance [ :customerName ] [ :transactionName ] [ :lgCode ]" :"إصدار [ :customerName ] [ :transactionName ] [ :lgCode ]",
 "Canceled [ :customerName ] [ :transactionName ] [ :lgCode ]" :"إلغاء [ :customerName ] [ :transactionName ] [ :lgCode ]",
 "Decreased Amount [ :customerName ] [ :transactionName ] [ :lgCode ]" :"تخفيض [ :customerName ] [ :transactionName ] [ :lgCode ]",
-"Return LG Cash Cover [ :customerName ] [ :transactionName ] [ :lgCode ]":"رد الغطاء النقدي لخطاب ضمان [ :customerName ] [ :transactionName ] [ :lgCode ]"
+"Return LG Cash Cover [ :customerName ] [ :transactionName ] [ :lgCode ]":"رد الغطاء النقدي لخطاب ضمان [ :customerName ] [ :transactionName ] [ :lgCode ]",
+"Received In [ :bankName ] [ :accountType ] [ :accountNumber ]":"Received In [ :bankName ] [ :accountType ] [ :accountNumber ]"
 
 }

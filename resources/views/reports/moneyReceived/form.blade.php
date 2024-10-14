@@ -93,27 +93,26 @@ use App\Models\MoneyReceived ;
                         </div>
 						
 						
-						 {{-- <div class="col-md-2">
+						 <div class="col-md-2">
                             <label>{{__('Select Partner Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select required name="partner_type" id="type" class="form-control">
+                                    <select required name="partner_type" id="partner_type" class="form-control">
 										@foreach(['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')] as $type =>$title)
                                  	       <option @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
 										@endforeach 
-                                       
                                     </select>
                                 </div>
                             </div>
-                            </div> --}}
+                            </div>
 							
 						
 
-                        <div class="col-md-2">
-                            <label>{{__('Select Invoice Currency')}} @include('star')</label>
+                        <div class="col-md-1" id="invoice-currency-div-id">
+                            <label class="text-nowrap">{{__('Invoice Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select name="currency" class="form-control 
+                                    <select id="invoice-currency-id" name="currency" class="form-control 
 							currency-class
 							contract-currency
 							ajax-update-contracts
@@ -158,7 +157,7 @@ use App\Models\MoneyReceived ;
 
 
                         <div class="col-md-2 ">
-                            <label>{{__('Select Receiving Currency')}} @include('star')</label>
+                            <label class="text-nowrap">{{__('Receiving Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select  when-change-trigger-account-type-change name="receiving_currency" class="form-control 
@@ -183,8 +182,8 @@ use App\Models\MoneyReceived ;
                             </div>
                         </div>
 
-                        <div class="col-md-2">
-                            <label>{{__('Select Money Type')}} @include('star')</label>
+                        <div class="col-md-1">
+                            <label>{{__('Money Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="type" id="type" class="form-control">
@@ -629,7 +628,7 @@ use App\Models\MoneyReceived ;
 
 
             {{-- Settlement Information "Commen Card" --}}
-            <div class="kt-portlet">
+            <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
