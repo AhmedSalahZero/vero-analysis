@@ -197,7 +197,7 @@ $selectedBanks = [];
                     <label>{{__('Select Payment Currency')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select when-change-trigger-account-type-change name="payment_currency" class="form-control
+                            <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
 							
 							currency-class
 							receiving-currency-class
@@ -973,25 +973,21 @@ $selectedBanks = [];
     $(function() {
         $('#type').trigger('change');
     })
-
-    $(document).on('change', 'select#type', function(e) {
-        const moneyType = $(this).val();
-        const activeClass = 'js-' + moneyType + '-received-amount';
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
-        //  if (invoiceCurrency != receivingCurrency) {
-        //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //  } else {
-        //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //  }
-    })
+;
+   
     $(document).on('change', 'select.currency-class', function() {
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
+        const invoiceCurrency = $('select#invoice-currency-id').val();
+        const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-        if (invoiceCurrency != receivingCurrency) {
+		
+		const partnerType = $('select#partner_type').val();
+		if(partnerType && partnerType != 'is_supplier'){
+			  $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+			  return ;
+		}
+		
+		
+        if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 
         } else {

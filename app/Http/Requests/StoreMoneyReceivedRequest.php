@@ -42,7 +42,7 @@ class StoreMoneyReceivedRequest extends FormRequest
 			'settlements'=>$partnerType =='is_customer' ? new AtLeaseOneSettlementMustBeExist($this->get('settlements',[])) : [],
 			'cheque_number'=>$type == MoneyReceived::CHEQUE  ? ['required',new UniqueChequeNumberForCustomerRule(Request()->get('drawee_bank_id'),Request('current_cheque_id'),__('Cheque Number Already Exist'))] : [],
 			'receipt_number'=>$type== MoneyReceived::CASH_IN_SAFE ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_in_safes',$this->receiving_branch_id?:0,$this->current_branch,__('Receipt Number For This Branch Already Exist'))] : [],
-			'sales_orders_amounts'=>[new UnappliedAmountForContractAsDownPaymentRule($this->unapplied_amount?:0,$this->is_down_payment,$receivedAmount)]
+			'sales_orders_amounts'=>$partnerType =='is_customer' ? [new UnappliedAmountForContractAsDownPaymentRule($this->unapplied_amount?:0,$this->is_down_payment,$receivedAmount)] : []
         ];
     }
 	public function messages()

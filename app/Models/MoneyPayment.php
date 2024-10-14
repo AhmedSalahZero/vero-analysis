@@ -482,6 +482,7 @@ class MoneyPayment extends Model
 		if($currentStatement){
 			$currentStatement->delete();
 		}
+		$this->deletePartnerStatement();
 	}
 	/**
 	 * * دا عباره عن التاريخ اللي هنستخدمة في ال

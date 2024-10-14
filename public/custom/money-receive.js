@@ -372,9 +372,11 @@ $(document).on('change','select#partner_type',function(){
 	if(partnerColumnName == 'is_customer'){
 		$('#settlement-card-id').fadeIn();
 		$('#invoice-currency-div-id').fadeIn();
+		$('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 	}else{
 		$('#settlement-card-id').fadeOut();
 		$('#invoice-currency-div-id').fadeOut();
+		$('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
 	}
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')

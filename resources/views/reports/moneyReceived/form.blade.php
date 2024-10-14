@@ -78,7 +78,7 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-2 mb-3">
                             <label>{{__('Receiving Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -99,7 +99,7 @@ use App\Models\MoneyReceived ;
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
 										@foreach(['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')] as $type =>$title)
-                                 	       <option @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
+                                 	       <option  @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
 										@endforeach 
                                     </select>
                                 </div>
@@ -160,7 +160,7 @@ use App\Models\MoneyReceived ;
                             <label class="text-nowrap">{{__('Receiving Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select  when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
 							current-currency
 							currency-class
 							receiving-currency-class update-exchange-rate
@@ -182,7 +182,7 @@ use App\Models\MoneyReceived ;
                             </div>
                         </div>
 
-                        <div class="col-md-1">
+                        <div class="col-md-2">
                             <label>{{__('Money Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -725,24 +725,17 @@ use App\Models\MoneyReceived ;
     $(function() {
         $('#type').trigger('change');
     })
-    $(document).on('change', 'select#type', function(e) {
-        const moneyType = $(this).val();
-        const activeClass = 'js-' + moneyType + '-received-amount';
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
-        //     if (invoiceCurrency != receivingCurrency) {
-        //         $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //     } else {
-        //         $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //     }
-    })
+  
     $(document).on('change', 'select.currency-class', function() {
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
+        const invoiceCurrency = $('select#invoice-currency-id').val();
+        const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-        if (invoiceCurrency != receivingCurrency) {
+		const partnerType = $('select#partner_type').val();
+		if(partnerType && partnerType != 'is_customer'){
+			  $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+			  return ;
+		}
+        if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
         } else {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')

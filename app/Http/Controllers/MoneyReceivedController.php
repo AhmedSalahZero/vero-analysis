@@ -337,7 +337,8 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $moneyReceivedId = null){
-		$partnerType = $request->get('partnerType');
+
+		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
 		$financialInstitutionId = null;
@@ -346,8 +347,9 @@ class MoneyReceivedController
 		$customerName = $customer->getName();
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency','receiving_currency']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency','partner_type']);
 		$currency = $data['currency'] ;
+		
 		
 		
 		$receivingCurrency = $data['receiving_currency'] ; 
@@ -400,6 +402,8 @@ class MoneyReceivedController
 				'drawee_bank_id'=>$request->input('drawee_bank_id')
 			];
 		}
+		$receivedBank = FinancialInstitution::find($financialInstitutionId);
+		$receivedBankName = $receivedBank ? $receivedBank->getName() : null;
 		$bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
 		
 		$data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
@@ -431,8 +435,10 @@ class MoneyReceivedController
 		 */
 		$moneyReceived = $moneyReceived->refresh();
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
+		
+		
 		if($partnerType != 'customer_id'){
-			$moneyReceived->handlePartnerCreditStatement($partnerType,$moneyReceivedId,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId,$moneyReceivedId ?: $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
 		
 		
@@ -450,7 +456,7 @@ class MoneyReceivedController
 		 * * For Contract Only
 		 */
 		
-		 if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 ){
+		 if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 && $partnerType == 'is_customer' ){
 			// start store unapplied amount as new down payment
 			return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
 		}

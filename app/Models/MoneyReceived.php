@@ -558,9 +558,8 @@ class MoneyReceived extends Model
 		$this->downPaymentSettlements->each(function($downPaymentSettlement){
 			$downPaymentSettlement->delete();
 		});
-		// $this->unappliedAmounts->each(function($unappliedAmount){
-		// 	$unappliedAmount->delete();
-		// });
+		
+		$this->deletePartnerStatement();
 	}
 	public function getCurrentStatement()
 	{
