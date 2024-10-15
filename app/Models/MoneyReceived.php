@@ -5,9 +5,9 @@ namespace App\Models;
 
 use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
-use App\Traits\Models\HasCreditPartnerStatement;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
+use App\Traits\Models\HasPartnerStatement;
 use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ,HasDebitStatements,HasCreditStatements,HasCreditPartnerStatement,HasReviewedBy;
+	use IsMoney ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy;
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
@@ -36,16 +36,28 @@ class MoneyReceived extends Model
 		
 		$customerName = $moneyReceived->getCustomerName();
 		if($moneyReceived->isCheque()){
-		
-			return __('Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ]',['name'=>$customerName,'number'=>$moneyReceived->getChequeNumber()?:Request('cheque_number'),'numbers'=>$settledInvoiceNumbers],$lang) ;
+			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
+			if($moneyReceived->getPartnerType()!='is_customer'){
+				return __('Cheque From :name [ :partnerType ] With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang);
+			}
+			return __('Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ]',['name'=>$customerName,'number'=>$chequeNumber,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInSafe()){
+			if($moneyReceived->getPartnerType()!='is_customer'){
+				return __('Cash In Safe From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
+			}
 			return __('Cash In Safe From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInBank()){
+			if($moneyReceived->getPartnerType()!='is_customer'){
+				return __('Bank Deposit From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
+			}
 			return __('Bank Deposit From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isIncomingTransfer()){
+			if($moneyReceived->getPartnerType()!='is_customer'){
+				return __('Incoming Transfer From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
+			}
 			return __('Incoming Transfer From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 	}
@@ -518,8 +530,12 @@ class MoneyReceived extends Model
 	public function getMoneyTypeFormatted()
 	{
 		$moneyType = $this->getMoneyType();
+		$partnerType = $this->getPartnerType();
 		if($moneyType == 'money-received'){
 			$moneyType = 'invoice-settlement';
+		}
+		if($partnerType != 'is_customer'){
+			return __('Money Received From :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
 		return camelizeWithSpace($moneyType) ;
 	}
@@ -702,6 +718,10 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(MoneyReceived::class,'money_received_id','id');
 	}
+	public  function getForeignKeyName()
+	{
+		return 'money_received_id';
+	}  
 
 	
 	

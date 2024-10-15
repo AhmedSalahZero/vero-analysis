@@ -294,11 +294,13 @@ class MoneyPaymentController
 	}
 
 	public function store(Company $company , StoreMoneyPaymentRequest $request , $moneyPaymentId = null){
+		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
+		
 		$bankId = null;
 		$contractId = $request->get('contract_id');
-		$supplierInvoiceId = $request->get('supplier_id');
-		$supplier = Partner::find($supplierInvoiceId);
+		$partnerId = $request->get('supplier_id');
+		$supplier = Partner::find($partnerId);
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
@@ -357,6 +359,13 @@ class MoneyPaymentController
 	
 		// $data['paid_amount'] = $paidAmount ;
 		$data['paid_amount'] = $isDownPayment || ! $request->has('settlements') ?  $paidAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
+		if($partnerType != 'is_supplier'){
+			$data['paid_amount'] = $request->input('paid_amount.'.$moneyType ,0);
+		}
+		$deliveryBank = FinancialInstitution::find($bankId);
+		$deliveryBankName = $deliveryBank ? $deliveryBank->getName() : null;
+		$bankNameOrBranchName =  $moneyType == MoneyPayment::CASH_PAYMENT ? Branch::find($relationData['delivery_branch_id'])->getName() : $deliveryBankName ;
+		
 		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
@@ -369,6 +378,9 @@ class MoneyPaymentController
 		if(!$isDownPayment){
 			unset($data['contract_id']);
 		}
+		/**
+		 * @var MoneyPayment $moneyPayment
+		 */
 		 $moneyPayment = MoneyPayment::create($data);
 
 		 $relationData['company_id'] = $company->id ;
@@ -381,6 +393,9 @@ class MoneyPaymentController
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$moneyPayment->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$paymentCurrency);
 		
+		if($partnerType != 'is_supplier'){
+			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId,$moneyPaymentId ?: $moneyPayment->id,$company->id,$statementDate,$paidAmountInPayingCurrency,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+		}
 		/**
 		 * * For Money Received Only
 		 */

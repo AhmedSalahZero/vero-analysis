@@ -3929,6 +3929,13 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'safe statement'
 		],
 		[
+			'name'=>'view partners statement report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'reports',
+			'view-name'=>'partners statement'
+		],
+		[
 			'name'=>'view bank statement report',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
@@ -5602,6 +5609,7 @@ function getHeaderMenu($currentCompany = null)
     $hasSelectCustomerNameInTemplate = isset($exportablesForSalesGathering['customer_name']);
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
 	$canViewSafeStatement = $user->can('view safe statement report');
+	$canViewPartnersStatement = $user->can('view partners statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
 	$canViewLgLcStatement = $user->can('view lc & lg statement report') ;
 	$canViewCashFlow = $user->can('view cash flow report');
@@ -5900,12 +5908,18 @@ function getHeaderMenu($currentCompany = null)
 				[
 					'title'=>__('Statement Reports'),
 					'link'=>'#',
-					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewBankStatement|| $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
+					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
 					'submenu'=>[
 						[
 							'title'=>__('Safe Statement'),
 							'link'=>route('view.safe.statement',['company'=>$company->id]) ,
 							'show'=>$canViewSafeStatement,
+							'submenu'=>[]
+						],
+						[
+							'title'=>__('Partners Statement'),
+							'link'=>route('view.partners.statement',['company'=>$company->id]) ,
+							'show'=>$canViewPartnersStatement,
 							'submenu'=>[]
 						],
 						[

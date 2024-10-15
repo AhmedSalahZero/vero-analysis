@@ -95,7 +95,7 @@ use App\Models\MoneyReceived ;
 						
 						
 						 <div class="col-md-2">
-                            <label><?php echo e(__('Select Partner Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <label><?php echo e(__('Partner Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">

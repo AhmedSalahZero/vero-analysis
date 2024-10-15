@@ -353,7 +353,7 @@ td{
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('Type') }}</th>
-                                    <th class="bank-max-width">{{ __('Supplier Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Partner Name') }}</th>
                                     <th>{{ __('Payment Date') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th>{{ __('Payment Amount') }}</th>

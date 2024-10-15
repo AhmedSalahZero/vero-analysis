@@ -406,7 +406,7 @@ td{
                             <thead>
                                 <tr class="table-standard-color">
                                     <th><?php echo e(__('Type')); ?></th>
-                                    <th class="bank-max-width"><?php echo e(__('Supplier Name')); ?></th>
+                                    <th class="bank-max-width"><?php echo e(__('Partner Name')); ?></th>
                                     <th><?php echo e(__('Payment Date')); ?></th>
                                     <th><?php echo e(__('Branch')); ?></th>
                                     <th><?php echo e(__('Payment Amount')); ?></th>

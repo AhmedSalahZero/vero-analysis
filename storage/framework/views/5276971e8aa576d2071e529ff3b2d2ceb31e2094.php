@@ -113,7 +113,7 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label><?php echo e(__('Payment Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -127,19 +127,33 @@ $selectedBanks = [];
                     </div>
                 </div>
 
+
+ <div class="col-md-2">
+                            <label><?php echo e(__('Partner Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="partner_type" id="partner_type" class="form-control">
+										<?php $__currentLoopData = ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type =>$title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                 	       <option  <?php if(isset($model) && $model->isUserType($type) ): ?> selected <?php endif; ?> value="<?php echo e($type); ?>"><?php echo e($title); ?></option>
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+                                    </select>
+                                </div>
+                            </div>
+                            </div>
+							
                 <?php
                 $currentPaymentCurrency = null ;
                 ?>
 
-                <div class="col-md-2">
-                    <label><?php echo e(__('Select Invoice Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                <div class="col-md-2" id="invoice-currency-div-id">
+                    <label><?php echo e(__('Invoice Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
 <?php
 	$selectedFound = false ;
 ?>
 
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select name="currency" class="form-control
+                            <select id="invoice-currency-id" name="currency" class="form-control
 							contract-currency currency-class ajax-update-contracts
 							<?php if(!$singleModel && !isset($model) ): ?>
 							invoice-currency-class 
@@ -195,10 +209,10 @@ $selectedBanks = [];
 					$selectedFound = false ;
 				?>
                 <div class="col-md-2">
-                    <label><?php echo e(__('Select Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <label><?php echo e(__('Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <select when-change-trigger-account-type-change name="payment_currency" class="form-control
+                            <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
 							
 							currency-class
 							receiving-currency-class
@@ -228,7 +242,7 @@ $selectedBanks = [];
 
 
                 <div class="col-md-2">
-                    <label><?php echo e(__('Select Money Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <label><?php echo e(__('Money Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select required name="type" id="type" class="form-control">
@@ -606,7 +620,7 @@ $selectedBanks = [];
 
 
     
-    <div class="kt-portlet">
+    <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
@@ -1012,9 +1026,6 @@ $selectedBanks = [];
 <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
 <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
 <script>
-
-</script>
-<script>
     $('#type').change(function() {
         selected = $(this).val();
         $('.js-section-parent').addClass('hidden');
@@ -1039,25 +1050,21 @@ $selectedBanks = [];
     $(function() {
         $('#type').trigger('change');
     })
-
-    $(document).on('change', 'select#type', function(e) {
-        const moneyType = $(this).val();
-        const activeClass = 'js-' + moneyType + '-received-amount';
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
-        //  if (invoiceCurrency != receivingCurrency) {
-        //      $('.main-amount-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //  } else {
-        //      $('.main-amount-class[data-type="' + moneyType + '"]').addClass(activeClass)
-        //      $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').removeClass(activeClass)
-        //  }
-    })
+;
+   
     $(document).on('change', 'select.currency-class', function() {
-        const invoiceCurrency = $('select.invoice-currency-class').val();
-        const receivingCurrency = $('select.receiving-currency-class').val();
+        const invoiceCurrency = $('select#invoice-currency-id').val();
+        const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-        if (invoiceCurrency != receivingCurrency) {
+		
+		const partnerType = $('select#partner_type').val();
+		if(partnerType && partnerType != 'is_supplier'){
+			  $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+			  return ;
+		}
+		
+		
+        if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 
         } else {

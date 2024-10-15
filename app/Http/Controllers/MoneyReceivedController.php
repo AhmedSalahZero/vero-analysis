@@ -366,6 +366,7 @@ class MoneyReceivedController
 		$exchangeRate = $currency == $receivingCurrency ? 1 : $request->input('exchange_rate.'.$moneyType,1) ;
 	
 		$receivedAmount = $request->input('received_amount.'.$moneyType ,0) ;
+		
 		$receivedAmount = unformat_number($receivedAmount);
 		
 		$amountInReceivingCurrency = $receivedAmount *  $exchangeRate ;
@@ -407,6 +408,10 @@ class MoneyReceivedController
 		$bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
 		
 		$data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
+		if($partnerType != 'is_customer'){
+			$data['received_amount'] = $request->input('received_amount.'.$moneyType ,0);
+		}
+	
 		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 	
@@ -437,7 +442,7 @@ class MoneyReceivedController
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		
 		
-		if($partnerType != 'customer_id'){
+		if($partnerType != 'is_customer'){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId,$moneyReceivedId ?: $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
 		
