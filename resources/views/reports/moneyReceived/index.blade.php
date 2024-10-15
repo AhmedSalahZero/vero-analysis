@@ -233,7 +233,7 @@ use App\Models\MoneyReceived;
                                     <th>{{ __('Select') }}</th>
 
                                     <th>{{ __('Type') }}</th>
-                                    <th class="bank-max-width">{{ __('Customer Name') }}</th>
+                                    <th class="bank-max-width">{{ __('Partner Name') }}</th>
                                     <th>{{ __('Receiving Date') }}</th>
                                     <th>{{ __('Cheque Number') }}</th>
                                     <th>{{ __('Cheque Amount') }}</th>

@@ -94,7 +94,7 @@ use App\Models\MoneyReceived ;
 						
 						
 						 <div class="col-md-2">
-                            <label>{{__('Select Partner Type')}} @include('star')</label>
+                            <label>{{__('Partner Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">

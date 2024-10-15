@@ -6,6 +6,7 @@ use App\Http\Controllers\MoneyPaymentController;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
 use App\Traits\Models\HasCreditStatements;
+use App\Traits\Models\HasPartnerStatement;
 use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyPayment extends Model
 {
-	use IsMoney ,HasCreditStatements,HasReviewedBy;
+	use IsMoney ,HasCreditStatements,HasPartnerStatement,HasReviewedBy;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
@@ -28,12 +29,22 @@ class MoneyPayment extends Model
 		$paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		
 		if($moneyPayment->isPayableCheque()){
-			return __('Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ]',['name'=>$supplierName,'number'=>$moneyPayment->getPayableChequeNumber()?:Request('cheque_number'),'numbers'=>$paidInvoiceNumbers],$lang) ;
+			$chequeNumber = $moneyPayment->getPayableChequeNumber()?:Request('cheque_number');
+			if($moneyPayment->getPartnerType()!='is_supplier'){
+				return __('Payable Cheque To :name With Number [:number ] [ :partnerType ]',['name'=>$supplierName,'number'=>$chequeNumber,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
+			}
+			return __('Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ]',['name'=>$supplierName,'number'=>$chequeNumber,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 		if($moneyPayment->isCashPayment()){
+			if($moneyPayment->getPartnerType()!='is_supplier'){
+				return __('Cash Payment To :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
+			}
 			return __('Cash Payment To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 		if($moneyPayment->isOutgoingTransfer()){
+			if($moneyPayment->getPartnerType()!='is_supplier'){
+				return __('Outgoing Transfer To :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
+			}
 			return __('Outgoing Transfer To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 	}
@@ -436,8 +447,12 @@ class MoneyPayment extends Model
 	public function getMoneyTypeFormatted()
 	{
 		$moneyType = $this->getMoneyType();
+		$partnerType = $this->getPartnerType();
 		if($moneyType == 'money-payment'){
 			$moneyType = 'invoice-settlement';
+		}
+		if($partnerType != 'is_supplier'){
+			return __('Money Paid To :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
 		return camelizeWithSpace($moneyType) ;
 	}
@@ -587,5 +602,9 @@ class MoneyPayment extends Model
 		return $this->hasOne(MoneyPayment::class,'money_payment_id','id');
 	}
 	
-	
+	public  function getForeignKeyName()
+	{
+		return 'money_payment_id';
+	}  
+
 }

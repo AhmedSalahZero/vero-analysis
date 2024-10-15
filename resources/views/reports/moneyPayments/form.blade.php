@@ -112,7 +112,7 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -126,12 +126,26 @@ $selectedBanks = [];
                     </div>
                 </div>
 
+
+ <div class="col-md-2">
+                            <label>{{__('Partner Type')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="partner_type" id="partner_type" class="form-control">
+										@foreach(['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')] as $type =>$title)
+                                 	       <option  @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
+										@endforeach 
+                                    </select>
+                                </div>
+                            </div>
+                            </div>
+							
                 @php
                 $currentPaymentCurrency = null ;
                 @endphp
 
                 <div class="col-md-2" id="invoice-currency-div-id">
-                    <label>{{__('Select Invoice Currency')}} @include('star')</label>
+                    <label>{{__('Invoice Currency')}} @include('star')</label>
 @php
 	$selectedFound = false ;
 @endphp
@@ -194,7 +208,7 @@ $selectedBanks = [];
 					$selectedFound = false ;
 				@endphp
                 <div class="col-md-2">
-                    <label>{{__('Select Payment Currency')}} @include('star')</label>
+                    <label>{{__('Payment Currency')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
@@ -227,7 +241,7 @@ $selectedBanks = [];
 
 
                 <div class="col-md-2">
-                    <label>{{__('Select Money Type')}} @include('star')</label>
+                    <label>{{__('Money Type')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select required name="type" id="type" class="form-control">
@@ -945,9 +959,6 @@ $selectedBanks = [];
 </script>
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
-<script>
-
-</script>
 <script>
     $('#type').change(function() {
         selected = $(this).val();

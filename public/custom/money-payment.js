@@ -496,3 +496,39 @@ function updateInputsNames(element,invoiceNumber)
 		 })
 	 })
 }
+
+
+
+$(document).on('change','select#partner_type',function(){
+	const partnerColumnName = $(this).val();
+	if(partnerColumnName == 'is_supplier'){
+		$('#settlement-card-id').fadeIn();
+		$('#invoice-currency-div-id').fadeIn();
+		$('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
+	}else{
+		$('#settlement-card-id').fadeOut();
+		$('#invoice-currency-div-id').fadeOut();
+		$('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+	}
+	const companyId = $('body').data('current-company-id')
+	const lang = $('body').data('lang')
+	const currencyName = $('select#invoice-currency-id').val();
+	const url = '/' + lang + '/' + companyId + '/get-partners-based-on-type/'+currencyName;
+	
+	
+	$.ajax({
+		url,
+		data:{partnerColumnName},
+		type:"get",
+		success:function(res){
+			const partners = res.partners;
+			let elements = '';
+			for(var id in partners){
+				elements+=`<option value="${id}">${partners[id]}</option>`
+			}
+			$('select#supplier_name').empty().append(elements).trigger('change')
+		}
+	});
+	
+})		
+$('select#partner_type').trigger('change')

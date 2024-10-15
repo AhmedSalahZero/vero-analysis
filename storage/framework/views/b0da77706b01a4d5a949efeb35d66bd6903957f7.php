@@ -284,7 +284,7 @@ use App\Models\MoneyReceived;
                                     <th><?php echo e(__('Select')); ?></th>
 
                                     <th><?php echo e(__('Type')); ?></th>
-                                    <th class="bank-max-width"><?php echo e(__('Customer Name')); ?></th>
+                                    <th class="bank-max-width"><?php echo e(__('Partner Name')); ?></th>
                                     <th><?php echo e(__('Receiving Date')); ?></th>
                                     <th><?php echo e(__('Cheque Number')); ?></th>
                                     <th><?php echo e(__('Cheque Amount')); ?></th>
