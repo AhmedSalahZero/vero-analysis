@@ -3,6 +3,8 @@ namespace App\Traits\Models;
 
 use App\Models\AccountType;
 use App\Models\EmployeeStatement;
+use App\Models\MoneyPayment;
+use App\Models\MoneyReceived;
 use App\Models\ShareholderStatement;
 use App\Models\SubsidiaryCompanyStatement;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -30,7 +32,16 @@ trait HasPartnerStatement
 	}
 	public function getPartnerType()
 	{
-		return $this->partner_type ;
+		$partnerType = $this->partner_type ;
+		if(!$partnerType){
+			if($this instanceof MoneyReceived){
+				return 'is_customer'
+			}
+			if($this instanceof MoneyPayment){
+				return 'is_supplier';
+			}
+		}
+		return $partnerType ;
 	}
 	public function getPartnerTypeFormatted()
 	{
