@@ -35,7 +35,7 @@ trait HasPartnerStatement
 		$partnerType = $this->partner_type ;
 		if(!$partnerType){
 			if($this instanceof MoneyReceived){
-				return 'is_customer'
+				return 'is_customer';
 			}
 			if($this instanceof MoneyPayment){
 				return 'is_supplier';
