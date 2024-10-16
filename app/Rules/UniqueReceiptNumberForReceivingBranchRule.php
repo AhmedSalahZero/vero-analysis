@@ -38,7 +38,6 @@ class UniqueReceiptNumberForReceivingBranchRule implements Rule
 		if(!is_numeric($this->branch_id)){
 			return true ;
 		}
-	
         return !DB::table($this->table_name)->where('company_id',getCurrentCompanyId())
 		->where($this->table_name =='cash_in_safes' ? 'receiving_branch_id' : 'delivery_branch_id',$this->branch_id)
 		->where($attribute,'=',$value)->where('id','!=',$this->id)

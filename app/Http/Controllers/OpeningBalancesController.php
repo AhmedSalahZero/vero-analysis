@@ -6,6 +6,7 @@ use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Http\Requests\StoreOpeningBalanceRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
+use App\Models\Branch;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
@@ -30,6 +31,7 @@ class OpeningBalancesController
         $selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
         $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->get()->formattedForSelect(true, 'getId', 'getName');
         $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
+		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 
         $banks = Bank::pluck('view_name', 'id');
 
@@ -41,7 +43,8 @@ class OpeningBalancesController
             'customersFormatted' => $customers,
             'financialInstitutionBanks' => $financialInstitutionBanks,
             'accountTypes' => $accountTypes,
-			'suppliersFormatted'=>$suppliers
+			'suppliersFormatted'=>$suppliers,
+			'selectedBranches'=>$selectedBranches
         ]);
     }
 
@@ -53,20 +56,21 @@ class OpeningBalancesController
             'date' => $openingBalanceDate,
             'company_id' => $company->id
         ]);
-        foreach ($request->get('cash-in-safe') as $index => $cashInSaveArr) {
+        foreach ($request->get('cash-in-safe') as $index => $cashInSafeArr) {
             /**
              * @var MoneyReceived $moneyReceived
              */
-            $amount = $cashInSaveArr['received_amount'] ?: 0 ;
-            $receivingBranchId = $cashInSaveArr['received_branch_id'] ?: null ;
-            $exchangeRate = isset($cashInSaveArr['exchange_rate']) ? $cashInSaveArr['exchange_rate'] : 1  ;
-            $openingBalance->cashInSafes()->create([
+            $amount = number_unformat($cashInSafeArr['received_amount'] ?: 0) ;
+            $receivingBranchId = $cashInSafeArr['received_branch_id'] ?: null ;
+            $exchangeRate = isset($cashInSafeArr['exchange_rate']) ? $cashInSafeArr['exchange_rate'] : 1  ;
+			
+            $openingBalance->cashInSafeStatements()->create([
 				'type'=>OpeningBalance::OPEN_BALANCE,
                 'branch_id' => $receivingBranchId,
-                'currency' => $cashInSaveArr['currency'],
+                'currency' => $cashInSafeArr['currency'],
                 'exchange_rate' => $exchangeRate,
                 'company_id' => $company->id,
-                'debit' => $amount,
+                'debit' =>$amount,
                 'credit' => 0,
                 'date' => $openingBalanceDate,
             ]);
@@ -188,7 +192,7 @@ class OpeningBalancesController
          * * هنا تحديث ال
          * * cash in safe
          */
-        $oldIdsFromDatabase = $openingBalance->cashInSafes->pluck('id')->toArray();
+        $oldIdsFromDatabase = $openingBalance->cashInSafeStatements->pluck('id')->toArray();
         $idsFromRequest = array_column($request->input(MoneyReceived::CASH_IN_SAFE, []), 'id') ;
 
         $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
@@ -196,19 +200,27 @@ class OpeningBalancesController
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 
-        $openingBalance->cashInSafes()->whereIn('cash_in_safe_statements.id', $elementsToDelete)->delete();
+        $openingBalance->cashInSafeStatements()->whereIn('cash_in_safe_statements.id', $elementsToDelete)->delete();
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CASH_IN_SAFE), 'id', $id);
-            $openingBalance->cashInSafes()->where('cash_in_safe_statements.id', $id)->first()->update($dataToUpdate);
+            $openingBalance->cashInSafeStatements()->where('cash_in_safe_statements.id', $id)->first()->update(array_merge($dataToUpdate,[
+				'debit'=>number_unformat($dataToUpdate['received_amount']),
+				'branch_id'=>$dataToUpdate['received_branch_id']
+			]));
+			
         }
         foreach ($request->get(MoneyReceived::CASH_IN_SAFE, []) as $data) {
             if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' )  ) {
                 unset($data['id']);
-                $openingBalance->cashInSafes()->create(array_merge($data, [
+                $openingBalance->cashInSafeStatements()->create(array_merge($data, [
                     'company_id' => $company->id,
                     'type' => MoneyReceived::CASH_IN_SAFE,
                     'user_id' => auth()->id(),
+					'debit'=>number_unformat($data['received_amount']),
+					'branch_id'=>$data['received_branch_id']
                 ]));
+				
+				
             }
         }
         /**

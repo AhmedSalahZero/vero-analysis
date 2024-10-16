@@ -32,7 +32,8 @@ class OpeningBalance extends Model
 	{
 		return $this->hasMany(MoneyPayment::class,'opening_balance_id');
 	}
-	public function cashInSafes()
+	
+	public function cashInSafeStatements()
 	{
 		return $this->hasMany(CashInSafeStatement::class , 'opening_balance_id','id');
 	}

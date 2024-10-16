@@ -399,5 +399,5 @@ $(document).on('change','select#partner_type',function(){
 	});
 	
 })		
-$('select#partner_type').trigger('change')
+
 		//$('select.invoice-currency-class').trigger('change')

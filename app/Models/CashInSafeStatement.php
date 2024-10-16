@@ -182,4 +182,8 @@ class CashInSafeStatement extends Model
 		return $this->belongsTo(Branch::class,'branch_id','id');
 	}
 	
+	public function getBranchId():int 
+	{
+		return $this->branch_id?:0 ;
+	}
 }

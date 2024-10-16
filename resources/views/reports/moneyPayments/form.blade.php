@@ -1135,5 +1135,8 @@ $selectedBanks = [];
 	},500)
 })
 	</script>
+	<script>
+	$('select#partner_type').trigger('change')
+	</script>
 @endif
 @endsection

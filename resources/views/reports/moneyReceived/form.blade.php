@@ -787,5 +787,10 @@ use App\Models\MoneyReceived ;
     })
 
 </script>
+@if(!$singleModel && !isset($model))
+<script>
 
+$('select#partner_type').trigger('change')
+</script>
+@endif
 @endsection
