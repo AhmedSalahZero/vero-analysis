@@ -170,8 +170,10 @@ class OpeningBalancesController
 		
 		
 		
-
-        return redirect()->route('opening-balance.index', ['company' => $company->id]);
+		return response()->json([
+			'redirectTo'=>route('opening-balance.index',['company'=>$company->id])
+		]);
+      
     }
 
     public function update(Company $company, Request $request, OpeningBalance $openingBalance)
@@ -321,33 +323,7 @@ class OpeningBalancesController
         }
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 		 /**
          * * هنا تحديث ال payable cheques
          * * payable cheques
@@ -405,9 +381,9 @@ class OpeningBalancesController
 				 $payableCheque->update(['updated_at'=>now()]);
 			 }
 		 }
-		 
+		 return response()->json([
+			'redirectTo'=>route('opening-balance.index',['company'=>$company->id])
+		]);
 		
-		
-        return redirect()->route('opening-balance.index', ['company' => $company->id]);
     }
 }
