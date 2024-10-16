@@ -724,7 +724,6 @@ class MoneyReceived extends Model
 	}  
 	public function getChequeDraweeBankId():int
 	{
-		dd($this->cheque ? $this->cheque->getDraweeBankId() : 0);
 		return $this->cheque ? $this->cheque->getDraweeBankId() : 0 ;
 	}
 
