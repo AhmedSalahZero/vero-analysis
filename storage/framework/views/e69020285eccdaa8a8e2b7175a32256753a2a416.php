@@ -82,7 +82,6 @@
             <?php endif; ?>
 
 
-
             <a href="<?php echo e(route('create.sales.form',['company'=>$company->id , 'model'=>in_array('LoanSchedule',Request()->segments())?'LoanSchedule':getLastSegmentInRequest()])); ?>" class="btn  active-style btn-icon-sm <?php echo e($class); ?>">
                 <i class="fas fa-plus"></i>
                 <?php echo e(__('Create New Record')); ?>

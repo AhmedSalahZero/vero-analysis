@@ -398,7 +398,7 @@ class OpeningBalancesController
 				 $data['supplier_name'] = is_numeric($data['supplier_id']) ? Partner::find($data['supplier_id'])->getName() : $data['supplier_id'] ;
 				 $moneyPayment = $openingBalance->payableCheques()->create(array_merge($data, [
 					 'type' => MoneyPayment::PAYABLE_CHEQUE,
-					 'user_id' => auth()->id()
+					 'user_id' => auth()->id(),
 				 ]));
 				 $payableCheque = $moneyPayment->payableCheque()->create($pivotData);
 				 $payableCheque->update(['updated_at'=>now()]);
